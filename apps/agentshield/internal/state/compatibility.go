@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/privatefs"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"strings"
@@ -240,7 +241,7 @@ func checkUnmarkedState(dir string) (StateCompatibility, error) {
 		// Validate the actual bounded file; environment overrides are not evidence.
 		info, keyErr := os.Lstat(filepath.Join(dir, "keys"))
 		if keyErr == nil && info.IsDir() {
-			raw, readErr := readInitializationFile(filepath.Join(dir, "keys", "signing.seed"))
+			raw, readErr := privatefs.ReadFile(filepath.Join(dir, "keys", "signing.seed"), 1024)
 			seed, decodeErr := base64.StdEncoding.Strict().DecodeString(strings.TrimSpace(string(raw)))
 			if readErr == nil && len(raw) <= 1024 && decodeErr == nil && len(seed) == 32 {
 				return StateCompatibility{Status: CompatStatusLegacy}, nil

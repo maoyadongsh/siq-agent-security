@@ -103,6 +103,28 @@ DefaultDir、Open、兼容诊断、Writer、目录身份、初始化/迁移、�
 
 目录 0700，文件 0600（Windows 不检查 POSIX 位，依赖用户目录 ACL）。
 
+Windows 私密状态增量（2026-09-18，Issue #42）：上述 Windows 描述不能用作 ACL 已安全的证明。新增仅标准库的 privatefs 平台边界与 statefs 显式私密接口；普通扫描输入仍使用既有通用接口，不按文件名猜测敏感性。当前 Windows 任务按用户最新目标承担此共享修复，原待主修确认的准备状态不再阻止实施。
+
+Windows 缓存凭据边界：生产 serve 必须向 HTTP 服务注入私密状态检查，在构造服务及每次请求经过兼容屏障后、处理业务之前，重新验证状态根、decision token、恢复 token 和实际从文件加载的签名 seed 的父目录与文件 ACL；失败返回固定 `state_private_permissions` 类别的 503，不泄露路径或秘密、不产生业务副作用。环境或内存直接注入的签名身份没有伪造磁盘来源；纯内存服务单测可注入自己的检查，但生产 launcher 不得省略。运行时身份每次认证还须检查状态根和对应凭据文件，不因只比较已签名 hash 而跳过 ACL。原始内容存储在每次使用缓存密钥加密/解密前重新读取、验证根/keys/密钥并与已加载值常量时间比较；删除、改值、ACL 变宽或无法查询均拒绝，不生成替代密钥。非 Windows 保留既有访问语义。此为实时权限快照，不提供 ACL 变宽后再次收紧的历史泄漏撤销保证。
+
+Windows 新建私密目录/文件必须在 CreateDirectory/CreateFile 的安全描述符中直接指定当前进程用户为 owner，设置受保护 DACL，只授予当前用户、SYSTEM、Builtin Administrators 完全访问（目录可安全继承）。不能先以宽继承创建再收紧。已有对象不得自动改 ACL；owner 必须为当前用户，DACL 必须存在且有效，只接受普通 allow/deny ACE，allow 主体限上述三类，未知/条件/对象 ACE、null DACL、未识别主体和查询失败均拒绝。安全继承允许，不要求三条 ACE 或已有 DACL 必须 protected；不根据本地化账户名比较。这个保守集合可能拒绝复杂企业组 ACL，返回明确私密权限错误，不自动修复。
+
+显式私密读取先执行兼容屏障，再在同一个非重解析点的普通单链接文件句柄上查询 owner/DACL，验证后才读取有界内容。权限错误不能降级为 NotExist；token 创建仅在确实缺失时进入，竞争重读不得无限递归。Windows 私密根/keys、维护目录、恢复凭据、运行时身份与凭据、原始内容密钥、迁移 journal/backup 等必须沿该边界逐步覆盖；未覆盖的调用点和适配器缓存不得宣称已保护。新秘密文件排他创建且已有文件不覆盖。
+
+Windows 适配器恢复材料增量（2026-09-18）：`adapter-backup.key`、`adapter-transactions` 下的密封计划/终态文件，以及 `adapter-operations`、`adapter-write` 目录必须使用同一私密边界。既存密钥、恢复文件或操作目录的 ACL 变宽后，预览/接入/恢复拒绝，不读出密钥或解密备份，不自动修复 ACL、轮换密钥或修改宿主配置。仅内部私密恢复材料使用显式私密发布，用户宿主配置文件仍走原有备份/确认与写入语义，不将通用配置读写全部私密化。
+
+私密不可变文件排他发布共用 `privatefs.PublishNew`：Windows 对已同步、关闭的本次暂存重新打开不共享 READ + DELETE 句柄，验证普通单链接、ACL 和创建身份，校验源/目标父目录后通过 FileRenameInfo（ReplaceIfExists=false）原子移动；保留 ACL/只读属性，成功返回源已移动，失败不覆盖目标。目标存在保留明确冲突类别；不引入双链接窗口、不 copy、不清只读、不删除未知对象。非 Windows 继续 os.Link，由调用方清理自己的暂存。statefs 包装先执行源/目标兼容屏障；迁移在已有特殊屏障内直接调用 privatefs。适配器发布失败保留私密暂存，不因名字曾属于本次尝试而删除可能已替换的对象；成功的非 Windows 硬链接发布按既有语义清理本次暂存。该 Win32 使用属于既有平台文件操作限定例外，仍只用标准库。
+
+Windows Skill 安装/更新元数据增量（2026-09-18）：`skill-installations` 私有根及 plans、update-plans、operations、runtime-bindings、removals、update-operations、update-installations、update-sources 等内部记录沿显式私密边界创建/读取。每次内部计划或签名记录读取复验实际状态根、私有元数据根、所在目录和同一文件句柄的 ACL；缓存 Store 不豁免权限漂移。拒绝宽 ACL 不修改文件字节、宿主目标、Grant 或 ACL，不降级为缺失或自动重建。
+
+新私有目录在创建时设置 DACL；普通安装计划和其他不可变内部记录使用私密暂存与 PublishPrivateNew 原子不覆盖发布，不留下成功发布的双链接窗口。失败暂存保留，不能按文件名前缀删除未知对象。用户显式保存的可替换更新检查配置仍使用既有原子替换，但先验证已有目标（存在时）及目录私密性，新暂存自创建即私密；宽权限旧目标不能通过替换被静默修复。既有规范化、签名、期限、CAS、兼容屏障与确认要求不变。
+
+内部签名元数据读取与宿主侧 owner 标记验证必须显式分开。宿主目标文件和 owner 标记仍按完整内容/签名/归属规则验证，允许 Hermes 已定义的操作池硬链接证明；不得把所有 readBounded 或宿主文件统一改为私密单链接读取。上述目录范围不代表普通 Skill 源内容或用户整个 profile 已成为私密状态，不检查或修改其所有祖先的 DACL。
+
+Windows Intent 私密记录增量（2026-09-18）：intents、intent-bindings、intent-binding-revocations、intent-revocations、context-assertions 与本地引用 evidence 的内部读取必须复验实际状态根、记录目录与文件 ACL；Store 缓存不能免除验证。状态根/记录目录不可信或缺失不能被解释为“没有撤销记录”或“会话尚未绑定”。仅安全目录下确实缺失的文件保留原 NotExist 语义。目录枚举使用已验证的目录句柄，文件读取使用已验证的普通单链接句柄并保留大小限制。内部新目录显式私密创建，不可变授权、绑定、撤销和上下文记录使用私密暂存与既有 PublishPrivateNew 发布；碰撞仍执行原签名/摘要重试判定，不覆盖、不重签旧记录。拒绝不得自动修复 ACL 或撤销现有授权；既有签名 Schema、合同与资源约束语义不变。
+
+私密 API 限本机普通磁盘路径，拒绝 UNC、设备命名空间和重解析对象；不检查或收紧所有系统祖先的 DACL，不修改用户日常目录。检查是当前打开时的权限快照，不隔离同用户/管理员，不撤销其他进程已有句柄，不保证消除历史泄漏。完整 #42 验收仍需各秘密入口、备份/计划目录、适配器行为及真实第二登录身份的独立证据；不能用手工私有测试根或 Chmod 返回成功替代产品保证。
+
 ### 2.3 并发
 
 - 单写者：`serve` 通过 `state.AcquireWriter` 持有 `<state>/serve.lock`（O_EXCL；内含 pid/owner；启动时若 pid 不存活则将旧锁 rename 为 `serve.lock.stale.*` 后接管，禁止无条件删除）。离线 `grant` 子命令须取得同一写锁；锁被存活 `serve` 占用时拒绝直写。

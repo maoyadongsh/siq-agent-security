@@ -110,6 +110,9 @@ func Open(authority *state.Store, key *signing.Key, imports *skillimport.Store, 
 	if authority == nil || key == nil || imports == nil || resolve == nil {
 		return nil, ErrInvalid
 	}
+	if err := statefs.CheckPrivateDir(authority.Dir); err != nil {
+		return nil, ErrChanged
+	}
 	dir := filepath.Join(authority.Dir, "skill-installations")
 	for _, path := range []string{dir, filepath.Join(dir, "plans"), filepath.Join(dir, "stages"), filepath.Join(dir, "operations"), filepath.Join(dir, "runtime-bindings"), filepath.Join(dir, "removals"), filepath.Join(dir, "update-plans"), filepath.Join(dir, "update-stages"), filepath.Join(dir, "update-operations"), filepath.Join(dir, "update-installations")} {
 		if err := privateDirectory(path); err != nil {

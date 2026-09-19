@@ -1,0 +1,49 @@
+{
+  "production_source": "f04a31a",
+  "modifications": "Added only the same ACL test fixtures and tests; no production changes.",
+  "checks": {
+    "old-runtimeidentity": {
+      "top_level": {
+        "pass": 0,
+        "skip": 0,
+        "fail": 1
+      },
+      "subtests": {
+        "pass": 0,
+        "skip": 0,
+        "fail": 3
+      },
+      "failed_tests": [
+        "TestWindowsIdentityCachedCredentialRejectsACLDrift/root",
+        "TestWindowsIdentityCachedCredentialRejectsACLDrift/secret-directory",
+        "TestWindowsIdentityCachedCredentialRejectsACLDrift/secret",
+        "TestWindowsIdentityCachedCredentialRejectsACLDrift"
+      ],
+      "skipped_tests": []
+    },
+    "old-rawcontent": {
+      "top_level": {
+        "pass": 0,
+        "skip": 0,
+        "fail": 2
+      },
+      "subtests": {
+        "pass": 0,
+        "skip": 0,
+        "fail": 6
+      },
+      "failed_tests": [
+        "TestWindowsRawContentCachedKeyRejectsACLDrift/root",
+        "TestWindowsRawContentCachedKeyRejectsACLDrift/keys",
+        "TestWindowsRawContentCachedKeyRejectsACLDrift/key",
+        "TestWindowsRawContentCachedKeyRejectsACLDrift/content",
+        "TestWindowsRawContentCachedKeyRejectsACLDrift",
+        "TestWindowsRawContentCachedKeyRejectsMissingOrChangedKey/changed",
+        "TestWindowsRawContentCachedKeyRejectsMissingOrChangedKey/missing",
+        "TestWindowsRawContentCachedKeyRejectsMissingOrChangedKey"
+      ],
+      "skipped_tests": []
+    }
+  },
+  "observation": "Three identity ACL drift cases and six raw-content ACL/deleted-or-changed-key cases reproduce unsafe acceptance on old production code."
+}

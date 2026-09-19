@@ -1,0 +1,380 @@
+{
+  "source_sha": "6a6e47ce17801074ae5d3e3244928b417814cc08",
+  "binary_sha256": "b2a37de466b86634f36627f9bdd51347a4213ae4f135ca814228b8a761eeed19",
+  "method": "native SIQ daemon and API against isolated synthetic OpenClaw profile; host/model not invoked",
+  "checks": [
+    {
+      "name": "init",
+      "passed": true
+    },
+    {
+      "name": "owned-daemon-healthy",
+      "passed": true
+    },
+    {
+      "name": "synthetic-profile-discovered",
+      "passed": true
+    },
+    {
+      "name": "installed-unverified",
+      "passed": true
+    },
+    {
+      "name": "actual-content-copied",
+      "passed": true
+    },
+    {
+      "name": "preparation-keeps-old-target",
+      "passed": true
+    },
+    {
+      "name": "update-plan-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "update-plan-wide-read-denied",
+      "passed": true,
+      "http_status": 409
+    },
+    {
+      "name": "update-plan-target-preserved",
+      "passed": true
+    },
+    {
+      "name": "update-plan-metadata-preserved",
+      "passed": true
+    },
+    {
+      "name": "update-plan-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "update-plans-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "update-plans-wide-read-denied",
+      "passed": true,
+      "http_status": 409
+    },
+    {
+      "name": "update-plans-target-preserved",
+      "passed": true
+    },
+    {
+      "name": "update-plans-metadata-preserved",
+      "passed": true
+    },
+    {
+      "name": "update-plans-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "updated-unverified",
+      "passed": true
+    },
+    {
+      "name": "actual-version-two",
+      "passed": true
+    },
+    {
+      "name": "repeat-same-result",
+      "passed": true
+    },
+    {
+      "name": "repeat-no-host-side-effect",
+      "passed": true
+    },
+    {
+      "name": "previous-grant-revoked",
+      "passed": true
+    },
+    {
+      "name": "update-plans-0-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "update-operations-0-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "update-operations-1-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "update-installations-0-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "updated-target-removed",
+      "passed": true
+    },
+    {
+      "name": "original-config-preserved",
+      "passed": true
+    },
+    {
+      "name": "signed-stop",
+      "passed": true
+    },
+    {
+      "name": "owned-daemon-exit",
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "label": "01-init",
+      "args": [
+        "init",
+        "--port",
+        "59250"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "15-stop",
+      "args": [
+        "stop",
+        "--confirm-stop"
+      ],
+      "exit": 0
+    }
+  ],
+  "http": [
+    {
+      "label": "02-pairing",
+      "method": "POST",
+      "path": "/v1/session/pairing",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "03-pair",
+      "method": "POST",
+      "path": "/v1/pair",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "04-instances",
+      "method": "GET",
+      "path": "/v1/adapter/instances?platform=openclaw",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "05-import",
+      "method": "POST",
+      "path": "/v1/skill-imports",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "06-permissions",
+      "method": "POST",
+      "path": "/v1/skill-imports/si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/permissions",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "07-tools",
+      "method": "POST",
+      "path": "/v1/grants/grt-si-4879c3ce6750331e79337b5994e9d5673ba87195eb8bb628a62aa70511359940/patch-desired",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "08-challenge",
+      "method": "POST",
+      "path": "/v1/grants/grt-si-4879c3ce6750331e79337b5994e9d5673ba87195eb8bb628a62aa70511359940/challenge",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "09-approve",
+      "method": "POST",
+      "path": "/v1/grants/grt-si-4879c3ce6750331e79337b5994e9d5673ba87195eb8bb628a62aa70511359940/approve",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "10-stage",
+      "method": "POST",
+      "path": "/v1/skill-installations/plans",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "12-install",
+      "method": "POST",
+      "path": "/v1/skill-installations/apply",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "22-import-v2",
+      "method": "POST",
+      "path": "/v1/skill-imports",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "23-permissions-v2",
+      "method": "POST",
+      "path": "/v1/skill-imports/si-dddddddddddddddddddddddddddddddd/permissions",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "24-tools-v2",
+      "method": "POST",
+      "path": "/v1/grants/grt-si-0a5ae7b97b2fa6032167f1c229ce768cd89a6052c5c20cbf6010bbec5a89e9c0/patch-desired",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "25-challenge-v2",
+      "method": "POST",
+      "path": "/v1/grants/grt-si-0a5ae7b97b2fa6032167f1c229ce768cd89a6052c5c20cbf6010bbec5a89e9c0/challenge",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "26-approve-v2",
+      "method": "POST",
+      "path": "/v1/grants/grt-si-0a5ae7b97b2fa6032167f1c229ce768cd89a6052c5c20cbf6010bbec5a89e9c0/approve",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "27-stage-update",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/sin-3328718a100d425ee5ebfb450ec7c9966ffa60bd19c04ceb71826c46e1d7ad6c/update-plans",
+      "status": 201,
+      "error": null
+    },
+    {
+      "label": "28-restored-update-plan",
+      "method": "GET",
+      "path": "/v1/skill-installations/update-plans/sup-a91944eac84992a8767758b2b066e36a5270ef7ba6ddd01770dc43ffda6c2ed6",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "28-restored-update-plans",
+      "method": "GET",
+      "path": "/v1/skill-installations/update-plans/sup-a91944eac84992a8767758b2b066e36a5270ef7ba6ddd01770dc43ffda6c2ed6",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "29-commit",
+      "method": "POST",
+      "path": "/v1/skill-installations/updates",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "30-repeat-commit",
+      "method": "POST",
+      "path": "/v1/skill-installations/updates",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "31-old-grant",
+      "method": "GET",
+      "path": "/v1/grants/grt-si-4879c3ce6750331e79337b5994e9d5673ba87195eb8bb628a62aa70511359940",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "32-read-new-install",
+      "method": "GET",
+      "path": "/v1/skill-installations/operations/sin-c4896841a509c2cda501a5e20e8b08a364213a84e15cb640617a3012595d1786",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "33-removal-preview",
+      "method": "GET",
+      "path": "/v1/skill-installations/operations/sin-c4896841a509c2cda501a5e20e8b08a364213a84e15cb640617a3012595d1786/removal",
+      "status": 200,
+      "error": null
+    },
+    {
+      "label": "34-remove",
+      "method": "POST",
+      "path": "/v1/skill-installations/operations/sin-c4896841a509c2cda501a5e20e8b08a364213a84e15cb640617a3012595d1786/removal",
+      "status": 200,
+      "error": null
+    }
+  ],
+  "passed": true,
+  "all_fixture_acls_restored": true,
+  "owned_process_exited": true,
+  "model_calls": 0,
+  "listener_closed": true,
+  "scope": "Native SIQ API + synthetic OpenClaw profile + real NTFS updates; no actual host/model execution."
+}

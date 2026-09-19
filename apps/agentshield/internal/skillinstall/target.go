@@ -29,6 +29,12 @@ func privateDirectory(path string) error {
 	if err := checkDirectories(filepath.Dir(path)); err != nil {
 		return err
 	}
+	if runtime.GOOS == "windows" {
+		if err := statefs.MkdirAllPrivate(path); err != nil {
+			return ErrInvalid
+		}
+		return nil
+	}
 	if err := statefs.Mkdir(path, 0700); err != nil && !os.IsExist(err) {
 		return ErrUnavailable
 	}

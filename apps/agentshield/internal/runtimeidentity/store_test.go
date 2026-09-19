@@ -161,10 +161,7 @@ func TestIdentityIssuanceRestartRevocationAndReplacement(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, path := range []string{s.recordPath(r.IdentityID), filepath.Join(s.dir, "runtime-identity-secrets", r.IdentityID+".token")} {
-		info, err := os.Stat(path)
-		if err != nil || info.Mode().Perm() != 0600 {
-			t.Fatal("private file", err)
-		}
+		assertPrivateIdentityFile(t, path)
 	}
 	public, _ := json.Marshal(r)
 	if bytes.Contains(public, []byte(token)) || bytes.Contains(public, []byte(token[36:])) {
@@ -348,9 +345,7 @@ func TestIdentityCorruptAndAliasedRecordsFailClosed(t *testing.T) {
 					t.Fatal(err)
 				}
 			case "permissions":
-				if err = os.Chmod(path, 0644); err != nil {
-					t.Fatal(err)
-				}
+				broadenIdentityFile(t, s.dir, path)
 			}
 			switch kind {
 			case "missing_record", "ancestor_link", "record_link", "permissions":

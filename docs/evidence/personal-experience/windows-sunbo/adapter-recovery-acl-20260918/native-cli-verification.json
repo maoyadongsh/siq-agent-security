@@ -1,0 +1,262 @@
+{
+  "source_sha": "17763748f957606bd04f0608cc90ee917a2f2aad",
+  "binary_sha256": "7199ffb61c80aa1e407106e5030be1cff0cd0d71d5a57755a21884d47853308b",
+  "method": "native SIQ CLI against isolated synthetic OpenClaw profile; host/model not invoked",
+  "checks": [
+    {
+      "name": "init",
+      "passed": true
+    },
+    {
+      "name": "preview-install",
+      "passed": true
+    },
+    {
+      "name": "preview-host-unchanged",
+      "passed": true
+    },
+    {
+      "name": "install",
+      "passed": true
+    },
+    {
+      "name": "one-sealed-plan-and-result",
+      "passed": true
+    },
+    {
+      "name": "key-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "plans-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "sealed-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "result-independent-acl",
+      "passed": true,
+      "descriptor": {
+        "unknown_allow_count": 0,
+        "allowed_classes": [
+          "system",
+          "administrators",
+          "current_user"
+        ],
+        "protected": true,
+        "owner_current": true
+      }
+    },
+    {
+      "name": "key-unsafe-preview-denied",
+      "passed": true
+    },
+    {
+      "name": "key-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "key-state-preserved",
+      "passed": true
+    },
+    {
+      "name": "key-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "sealed-unsafe-preview-denied",
+      "passed": true
+    },
+    {
+      "name": "sealed-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "sealed-state-preserved",
+      "passed": true
+    },
+    {
+      "name": "sealed-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "plans-unsafe-preview-denied",
+      "passed": true
+    },
+    {
+      "name": "plans-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "plans-state-preserved",
+      "passed": true
+    },
+    {
+      "name": "plans-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "operations-unsafe-preview-denied",
+      "passed": true
+    },
+    {
+      "name": "operations-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "operations-state-preserved",
+      "passed": true
+    },
+    {
+      "name": "operations-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "writer-unsafe-preview-denied",
+      "passed": true
+    },
+    {
+      "name": "writer-host-preserved",
+      "passed": true
+    },
+    {
+      "name": "writer-state-preserved",
+      "passed": true
+    },
+    {
+      "name": "writer-acl-not-repaired",
+      "passed": true
+    },
+    {
+      "name": "uninstall",
+      "passed": true
+    },
+    {
+      "name": "original-config-restored",
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "label": "01-init",
+      "args": [
+        "init"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "02-preview",
+      "args": [
+        "adapter",
+        "preview",
+        "openclaw",
+        "install"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "03-install",
+      "args": [
+        "adapter",
+        "install",
+        "openclaw"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "04-deny-0",
+      "args": [
+        "adapter",
+        "preview",
+        "openclaw",
+        "uninstall"
+      ],
+      "exit": 1
+    },
+    {
+      "label": "04-deny-1",
+      "args": [
+        "adapter",
+        "preview",
+        "openclaw",
+        "uninstall"
+      ],
+      "exit": 1
+    },
+    {
+      "label": "04-deny-2",
+      "args": [
+        "adapter",
+        "preview",
+        "openclaw",
+        "uninstall"
+      ],
+      "exit": 1
+    },
+    {
+      "label": "04-deny-3",
+      "args": [
+        "adapter",
+        "preview",
+        "openclaw",
+        "uninstall"
+      ],
+      "exit": 1
+    },
+    {
+      "label": "04-deny-4",
+      "args": [
+        "adapter",
+        "preview",
+        "openclaw",
+        "uninstall"
+      ],
+      "exit": 1
+    },
+    {
+      "label": "05-uninstall",
+      "args": [
+        "adapter",
+        "uninstall",
+        "openclaw"
+      ],
+      "exit": 0
+    }
+  ],
+  "passed": true,
+  "all_fixture_acls_restored": true,
+  "service_started": false,
+  "model_calls": 0
+}

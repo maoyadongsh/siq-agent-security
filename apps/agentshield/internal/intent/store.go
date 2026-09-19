@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"siq-agent-security/apps/agentshield/internal/canon"
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/statefs"
@@ -35,8 +36,17 @@ func Open(dir string, key *signing.Key, grantLookups ...GrantLookup) (*Store, er
 	if dir == "" || key == nil {
 		return nil, errors.New("intent: directory and key required")
 	}
+	if runtime.GOOS == "windows" {
+		if err := statefs.MkdirAllPrivate(dir); err != nil {
+			return nil, violation("intent_state_unavailable")
+		}
+	}
 	for _, name := range []string{"intents", "intent-bindings", "intent-binding-revocations", "intent-revocations", "context-assertions"} {
-		if err := statefs.MkdirAll(filepath.Join(dir, name), 0700); err != nil {
+		mkdir := func(path string) error { return statefs.MkdirAll(path, 0700) }
+		if runtime.GOOS == "windows" {
+			mkdir = statefs.MkdirAllPrivate
+		}
+		if err := mkdir(filepath.Join(dir, name)); err != nil {
 			return nil, err
 		}
 	}
@@ -92,6 +102,9 @@ func digest(m map[string]any) (string, error) {
 
 // Publish a complete fsynced file exclusively; never expose a partially written authority.
 func publish(path string, b []byte) error {
+	if runtime.GOOS == "windows" {
+		return publishPrivateRecord(path, b)
+	}
 	f, err := statefs.CreateTemp(filepath.Dir(path), ".intent-*")
 	if err != nil {
 		return err
@@ -110,6 +123,9 @@ func publish(path string, b []byte) error {
 	return statefs.Link(f.Name(), path)
 }
 func readRecord(path string, out any) error {
+	if err := checkRecordDirectory(filepath.Dir(path)); err != nil {
+		return err
+	}
 	fi, err := os.Lstat(path)
 	if err != nil {
 		return err
@@ -117,11 +133,15 @@ func readRecord(path string, out any) error {
 	if !fi.Mode().IsRegular() || fi.Size() > maxRecordBytes {
 		return violation("intent_invalid_record")
 	}
-	f, err := statefs.Open(path)
+	f, err := openRecord(path)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
+	opened, err := f.Stat()
+	if err != nil || !os.SameFile(fi, opened) || !opened.Mode().IsRegular() || opened.Size() > maxRecordBytes {
+		return violation("intent_invalid_record")
+	}
 	dec := json.NewDecoder(io.LimitReader(f, maxRecordBytes+1))
 	dec.DisallowUnknownFields()
 	dec.UseNumber()
@@ -135,7 +155,7 @@ func readRecord(path string, out any) error {
 	return nil
 }
 func recordIDs(dir string) ([]string, error) {
-	f, err := statefs.Open(dir)
+	f, err := openRecords(dir)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +200,16 @@ func (s *Store) checkEvidence(c Contract) error {
 		if err != nil || !fi.Mode().IsRegular() || fi.Size() > maxRecordBytes {
 			return violation("intent_evidence_missing")
 		}
-		raw, err := statefs.ReadFile(p)
+		read := statefs.ReadFile
+		if runtime.GOOS == "windows" {
+			read = func(path string) ([]byte, error) {
+				if err := checkRecordDirectory(filepath.Dir(path)); err != nil {
+					return nil, err
+				}
+				return statefs.ReadPrivateFile(path, maxRecordBytes)
+			}
+		}
+		raw, err := read(p)
 		if err != nil || json.Unmarshal(raw, &evidence) != nil || evidence.EvidenceID != id {
 			return violation("intent_evidence_missing")
 		}

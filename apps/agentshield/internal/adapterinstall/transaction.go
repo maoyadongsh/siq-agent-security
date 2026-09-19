@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/privatefs"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
@@ -52,6 +53,9 @@ func validPlanID(id string) bool {
 }
 
 func privateRead(path string, limit int64) ([]byte, error) {
+	if runtime.GOOS == "windows" {
+		return statefs.ReadPrivateFile(path, limit)
+	}
 	info, err := os.Lstat(path)
 	if err != nil {
 		return nil, err
@@ -110,7 +114,7 @@ func backupAEAD(dir string, create bool) (cipher.AEAD, error) {
 		if _, err = rand.Read(key); err != nil {
 			return nil, err
 		}
-		if err = publishFile(path, key, 0o600, false); os.IsExist(err) {
+		if err = publishRecoveryFile(path, key); os.IsExist(err) {
 			key, err = privateRead(path, 32)
 		}
 	}
@@ -138,7 +142,7 @@ func sealPlan(p *Plan) error {
 		return err
 	}
 	sealed := aead.Seal(nonce, nonce, raw, []byte(p.payload.View.PlanID))
-	return publishFile(transactionPath(p.payload.Options.StateDir, p.payload.View.PlanID, ".sealed"), sealed, 0o600, false)
+	return publishRecoveryFile(transactionPath(p.payload.Options.StateDir, p.payload.View.PlanID, ".sealed"), sealed)
 }
 
 func unsealPlan(dir string, claim operationClaim) (*Plan, error) {
@@ -192,7 +196,7 @@ func endState(dir string, claim operationClaim) (string, error) {
 
 func finishOperation(dir string, claim operationClaim, status string) error {
 	raw, _ := json.Marshal(operationEnd{ID: claim.ID, Digest: claim.Digest, State: status})
-	return publishFile(transactionPath(dir, claim.ID, ".end.json"), raw, 0o600, false)
+	return publishRecoveryFile(transactionPath(dir, claim.ID, ".end.json"), raw)
 }
 
 func latestManagedRecord(dir, platform string, namespace ...string) (*Record, bool, error) {
@@ -501,6 +505,9 @@ func validateTransactionStore(dir string) error {
 			continue
 		}
 		if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 || runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0 {
+			return errors.New("adapter: private operation directory invalid")
+		}
+		if err := privatefs.CheckDir(filepath.Join(dir, name)); err != nil {
 			return errors.New("adapter: private operation directory invalid")
 		}
 	}

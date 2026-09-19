@@ -1,0 +1,881 @@
+{
+  "source_sha": "82a7da5b978dbbb7c72a10a97ad77976cf84a35f",
+  "command": "go test -json -p 2 -count=1 -timeout=15m ./...",
+  "exit": 1,
+  "raw_log_sha256": "5fdf9cf01c23225f6d28e00437e2b2b22133ec3b77a548aa9e122c25d0264822",
+  "top_level": {
+    "pass": 1210,
+    "skip": 67,
+    "fail": 50
+  },
+  "packages": {
+    "skip": 7,
+    "pass": 27,
+    "fail": 14
+  },
+  "failed_tests": [
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/load"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/reuse_running"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/writer_conflict"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/foreign"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/query_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/bootstrap_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/readback_absent"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/readback_foreign"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/source_changed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/link_changed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/appeared"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent/wrong_domain"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLoadRegisteredLaunchAgent"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/start"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/reuse"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/unhealthy"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/no_PID"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/kickstart_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/foreign"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/writer_conflict"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent/health_drift"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStartRegisteredLaunchAgent"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/stop"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/idle"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/absent"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/foreign"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/stop_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/still_running"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/exit_error"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/missing_exit"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/writer_conflict"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent/disappeared"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestStopRegisteredLaunchAgent"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentUpgradeThenRollback"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentFailedStartRecovers"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation/unregistered"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation/foreign_loaded_configuration"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation/binary_drift"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation/recheck_failure"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation/no_bindings"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation/pending_blocks_load"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation/running_source_refuses_recovery"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestSwitchLaunchAgentRefusesWithoutMutation"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/unregister"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/already_unloaded"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/already_removed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/running"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/foreign"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/writer_conflict"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/bootout_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/still_loaded"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/readback_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/unknown_link"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/link_changed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent/missing_link_loaded"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterLaunchAgent"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestServeStateDirectorySelection"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestPrepareRollbackMissingBinary"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry/false"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry/true"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterExactLinkAndRetry"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUnregisterRejectsUnknownAndFailedReload"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/running"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/idle"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/already_removed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/stop_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/unload_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/query_failed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/missing_link_loaded"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention/unknown_link"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownLaunchAgentRecoveryAndRetention"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapters",
+      "test": "TestPolicyExecRejectsSymlinkedStagedRoot"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestAddFileDetectsReplacedInode"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/completion",
+      "test": "TestCompletionRequiresActualSignedMaterialAndRetainsConflicts"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestActualFileWriteAndFakeSuccess"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestFileCaptureBoundsAndUnsafeTargets"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestPendingFileImmutableRestartAndTamper"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryConcurrentDifferentOwnersHaveOneWinner"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryStoredCapacityAndFailureIsolation"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/gap"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/unknown-field"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/oversized"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed/unpublished-temp"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestRecoveryMalformedStorageFailsClosed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestStoreRejectsUnsafeStateAndInput"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestFindConnectorBinWindowsRejectsSymlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestMCPSymlinkIsSkipped"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/pending",
+      "test": "TestAppendWritesUnsignedJSONL"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestRuntimeCheckContractFixtures"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed/ancestor_link"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed/record_link"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimeidentity",
+      "test": "TestIdentityCorruptAndAliasedRecordsFailClosed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass/at_finish"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed/tamper"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestInstanceAndPlanV2ContractFixtures"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestGitImportClonesFixedCopyWithoutHooks"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestGitImportSubDirectorySelectsSubtree"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestRemoteImportContractSamples"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestFileObservationHTTPReadsRealState/block"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestFileObservationHTTPReadsRealState/warn"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestFileObservationHTTPReadsRealState"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestToolSuccessConflictsWithIndependentMissingOutputHTTP"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestImportTamperAndAnalysisBinding/executable"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestImportTamperAndAnalysisBinding"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestImportLocalSymlinksAndWrongSigningKey/false"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestImportLocalSymlinksAndWrongSigningKey/true"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestImportLocalSymlinksAndWrongSigningKey"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestUpstreamCheckGitSeesAdvancedHeadWithoutTouchingRecord"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestGrantDraftContractSamples"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents/type_changed"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestInspectionSeparatesHistoricalRecordAndCurrentContents"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestManagedPlanV3ContractFixture"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestImportedPermissionRejectsAmbiguousAndSymlinkOpenClawTargets/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestImportedPermissionRejectsAmbiguousAndSymlinkOpenClawTargets"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestTaskExportsAcrossRawRevocationDeletionAndExpiry"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestPythonHashSkillDirRejectsEscape"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestIndependentProcessesPublishUniqueVersions"
+    }
+  ],
+  "skipped_tests": [
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestDesktopNotifierDarwinDefaultResolves"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLaunchRegistrationExclusiveReuseAndPreservation"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLaunchRegistrationRefusesRedirectedDirectoriesAndLinks/library"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLaunchRegistrationRefusesRedirectedDirectoriesAndLinks/agents"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLaunchRegistrationRefusesRedirectedDirectoriesAndLinks/foreign"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLaunchRegistrationRefusesRedirectedDirectoriesAndLinks/relative"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLaunchRegistrationRefusesRedirectedDirectoriesAndLinks/invalid-label"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestLaunchRegistrationRefusesRedirectedDirectoriesAndLinks/source"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestCodeBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestDiagnosticsRejectUnsafeFilesWithoutLeakingContents"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestHermesNativeCLIProfileIsolationAndDrift"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestHermesNativeCLIRejectsInvalidConfigWithoutHostWrites"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestHermesNativeCLIFreshConfig"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeLaunchAgentUpgrade"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeLaunchAgentUpgradeTransientFailure"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestDarwinPathSpellingAndExclusivePublish"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestDarwinReadOnlyCaseSensitiveAndCrossVolume"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeServeSignedStop"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeStopRequestCLI"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeStopCLI"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeServeExplicitDirectory"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUserLoginExactLinkAndInterruptedDisable"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUserUnitQuotingAndNoJournalCredentials"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestServiceUnitRequiresInitializationAndDoesNotWrite"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUserUnitInstanceHome"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestUserUnitHomeDriftCannotReplaceSignedOwnership"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeUserServiceUpgrade"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeUserServiceUpgradeTransientFailure"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestServiceUpgradeRequiresConfirmation"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestSymlinkConfigRefused"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestNativeSetupAndReuse"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestPlanRejectsInstanceRootSymlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestDefaultInstanceUpgradeRestoresLegacyWrapper"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestOpenClawInstalledPluginLoadsNatively"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/cmd/agentshield",
+      "test": "TestTeardownResumesAfterRegistrationRemoval"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestNativeRuntimeTargetPinsConfigurationServiceAndCLI"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestAdapterRealProcessDeathRecovery"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-transactions"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-operations"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestTransactionPrivateStoreRejectsSymlinks/adapter-write"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestHermesWrapperQuotesPathsAndRefusesFailedAdmission"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestRecoveryRejectsTamperedCiphertext"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestWorkBuddyHookQuotesBinaryAndStatePaths"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestWorkBuddyInvalidConfigOverrideNeverFallsBack/ancestor-symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestSymlinkEscapeIsQuarantined"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestInRootSymlinkIsNotAnEscape"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestFIFOIsRefusedWithoutOpening"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestHashDirRejectsSymlinkEscape"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestRootSymlinkHashesTheSameTree"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestOpenRegularRefusesSymlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestOpenRegularFIFODoesNotHang"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/admission",
+      "test": "TestAddFileDetectsSymlinkSwap"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/clientrelease",
+      "test": "TestDigestRejectsInvalidSources"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/clientrelease",
+      "test": "TestRetainedManifestDriftAndBudget/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/clientrelease",
+      "test": "TestSnapshotRejectsEmptyAndSymlinkSource/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/clientrelease",
+      "test": "TestStageTrustAndPins/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/effectevidence",
+      "test": "TestEffectStageBaseline"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/hermeshome",
+      "test": "TestRejectsUntrustedRootsAndLimitsEnumeration"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestDiscoveryRejectsSymlinkAndOversizedConfig"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/notify",
+      "test": "TestDefaultCommandDarwinOsascript"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestBindingRevocationTamperingFailsClosed/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/openshell",
+      "test": "TestO05LiveCrossBoundaryEnforcement"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/openshell",
+      "test": "TestO05LiveRollbackRestore"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/openshell",
+      "test": "TestOpenShellLivePolicyFidelityAndRollback"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/receipt",
+      "test": "TestO04PerfScenario"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/receipt",
+      "test": "TestRuntimeStageBaseline"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/provenance",
+      "test": "TestIssuerMalformedAndSymlinkRecordsRejected"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/signing",
+      "test": "TestMissingIdentityRejectsDanglingSeedLink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestReviewerGitFetchRejectsPrivateDNSBeforeTransport"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestInstallationSnapshotRejectsPostOpenChanges/link"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestInstallationSnapshotRejectsPostOpenChanges/executable"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestImportTamperAndAnalysisBinding/link"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillimport",
+      "test": "TestImportPublicationFailureRemovesOnlyOwnedCandidate"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestStageAuthorityAndTargetFailures/symlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillinstall",
+      "test": "TestDarwinSkillUnicodeCasePermissionClockAndOccupancy"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/skillmanifest",
+      "test": "TestResolveStagesVerifiedBinary"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestCompatibilityRejectsSymlinks"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestCompatibilityCoreDirectorySymlinkNoPartialOpen"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestRecoveryCredentialRefusesCorruptionAndSymlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestHistoricalAdmissionRejectsLinks"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestDirectoryIdentity"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestInitializationRequiresWriterAndRejectsSymlinks"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/stateformat",
+      "test": "TestCheckParentsRejectsFileAndIntermediateSymlink"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/stateformat",
+      "test": "TestNonDarwinRootSymlinkStillRejected"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/stateformat",
+      "test": "TestDarwinKnownAliasesAreAncestorsOnly"
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/state",
+      "test": "TestMigrationRejectsDriftAndUntrustedPlan/symlink-backup"
+    }
+  ],
+  "timeouts": [
+    "siq-agent-security/apps/agentshield/internal/server",
+    "siq-agent-security/apps/agentshield/internal/skillinstall"
+  ],
+  "completion": "controller terminated naturally; no full-suite pass claim"
+}
