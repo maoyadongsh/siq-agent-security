@@ -156,10 +156,26 @@ def validate_map(root, data):
         require(any(covered(name, prefix) for e in entries for prefix in e['paths']),
                 f'unclassified tracked path: {name}')
     for item in data['changes']:
-        require(item['action'] in ('edit', 'add', 'retain', 'defer'), 'invalid migration action')
+        require(item['action'] in ('edit', 'add', 'retain', 'defer', 'delete'), 'invalid migration action')
         require(item.get('reason') and item.get('consumers') and item.get('validation'),
                 'incomplete change record')
-        if item['action'] != 'add' or (root / item['path']).exists():
+        if item['action'] == 'delete':
+            name = item['path']
+            require(bool(name) and not Path(name).is_absolute() and '\\' not in name
+                    and '..' not in Path(name).parts, 'unsafe retired path')
+            parent = (root / name).parent
+            while not parent.exists() and not parent.is_symlink():
+                parent = parent.parent
+            safe_path(root, parent.relative_to(root).as_posix())
+            require(not (root / name).exists() and not (root / name).is_symlink(),
+                    f'retired path still exists: {name}')
+            source = item.get('source_commit', '')
+            blob = item.get('source_blob', '')
+            require(re.fullmatch(r'[0-9a-f]{40}', source)
+                    and re.fullmatch(r'[0-9a-f]{40}', blob), 'retirement requires source identity')
+            require(git(root, 'rev-parse', f'{source}:{name}').decode().strip() == blob,
+                    f'retired source identity mismatch: {name}')
+        elif item['action'] != 'add' or (root / item['path']).exists():
             safe_path(root, item['path'])
     return len(entries)
 

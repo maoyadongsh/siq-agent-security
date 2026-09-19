@@ -44,6 +44,39 @@ class NavigationTest(unittest.TestCase):
 
 
 class MapTest(unittest.TestCase):
+    def test_retired_path_requires_absence_and_original_git_identity(self):
+        with tempfile.TemporaryDirectory(prefix='retired path ') as tmp:
+            root = Path(tmp)
+            check.git(root, 'init', '-q')
+            check.git(root, 'config', 'user.name', 'Test')
+            check.git(root, 'config', 'user.email', 'test@example.invalid')
+            old = root / 'old' / 'README.md'
+            old.parent.mkdir()
+            old.write_text('historic entry\n')
+            check.git(root, 'add', '.')
+            check.git(root, 'commit', '-qm', 'original')
+            source = check.git(root, 'rev-parse', 'HEAD').decode().strip()
+            blob = check.git(root, 'rev-parse', 'HEAD:old/README.md').decode().strip()
+            entry = {'id': 'old', 'paths': ['old/'], 'kind': 'navigation', 'owner_role': 'maintainer',
+                     'strategy': 'retire', 'consumers': ['README'], 'license': 'LICENSE',
+                     'validation': ['check']}
+            change = {'path': 'old/README.md', 'action': 'delete', 'source_commit': source,
+                      'source_blob': blob, 'reason': 'replaced', 'consumers': ['README'],
+                      'validation': ['check']}
+            data = {'schema_version': 'siq-repository-map/v1', 'assets': [entry], 'changes': [change]}
+            with self.assertRaisesRegex(ValueError, 'still exists'):
+                check.validate_map(root, data)
+            old.unlink()
+            old.parent.rmdir()
+            self.assertEqual(check.validate_map(root, data), 1)
+            for extra in ({'source_blob': '0' * 40}, {'source_commit': 'HEAD'},
+                          {'path': '../outside.md'}, {'path': '/outside.md'}):
+                with self.subTest(extra=extra), self.assertRaises(ValueError):
+                    check.validate_map(root, {**data, 'changes': [{**change, **extra}]})
+            (root / 'old').symlink_to(root, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, 'symlink'):
+                check.validate_map(root, data)
+
     def test_duplicate_ids_unclassified_paths_and_private_outputs_rejected(self):
         entry = {'id': 'index', 'paths': ['evaluations/'], 'kind': 'index', 'owner_role': 'maintainer',
                  'strategy': 'index', 'consumers': ['README'], 'license': 'LICENSE', 'validation': ['check']}
