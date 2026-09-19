@@ -5,7 +5,7 @@
 <h1 align="center">SIQ Agent Security</h1>
 
 <p align="center"><strong>Secure Runtime for Agent Skills</strong><br />
-Agent permissions, runtime checks and execution audit for individuals and organizations</p>
+Agent security research and implementation: permissions, runtime checks and execution evidence</p>
 
 <p align="center">Agent Skills define what agents can do. SIQ defines what they are allowed to do.</p>
 
@@ -21,12 +21,14 @@ Agent permissions, runtime checks and execution audit for individuals and organi
 </p>
 
 <p align="center">
-  <a href="#quick-start">Quick start</a> · <a href="RESEARCH.md">Research map</a> · <a href="#research-and-evidence">Research evidence</a> · <a href="#components-and-integrations">Integrations</a> · <a href="#contributing-and-next-steps">Contributing</a>
+  <a href="#quick-start">Quick start</a> · <a href="research/README.md">Research map</a> · <a href="#research-and-evidence">Research evidence</a> · <a href="#components-and-integrations">Integrations</a> · <a href="#contributing-and-next-steps">Contributing</a>
 </p>
 
 ---
 
-**SIQ Agent Security is an open-source security management project for agents and Skills.** It helps individuals and organizations inventory agents in local or connected environments, review tool and resource permissions, manage installation and updates, and check authorization on integrated execution paths. Users keep working in their existing agents while SIQ provides permission management, action approval and task evidence.
+**SIQ Agent Security is an open-source research project on agent authorization boundaries and execution evidence, with a working security management system for individuals and organizations.** It helps individuals and organizations inventory agents in local or connected environments, review tool and resource permissions, manage installation and updates, and check authorization on integrated execution paths. Users keep working in their existing agents while SIQ provides permission management, action approval and task evidence.
+
+The research asks how model proposals receive independent authorization, how provenance constrains execution, and how observed effects establish task completion. Root-level [research/](research/README.md) connects literature, questions, methods, experiments, findings and governance; [evaluations/](evaluations/README.md) separates research observations, engineering acceptance and external reproductions.
 
 The **personal client** provides a local service and browser console for agents, Skills and tasks. The **enterprise control plane**, Edge and Connectors support environment inventory, policy approval and deployment readback. Current delivery focuses on the personal client, with the signed `0.3.0` regular release available; convenient LAN team-device workflows remain planned.
 
