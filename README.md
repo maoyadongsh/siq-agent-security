@@ -234,65 +234,87 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 
 ### 组件与授权链路
 
-下图展示本地运行时与企业控制面的主要关系。企业控制面是可选部署；个人控制台与企业控制台使用各自的身份和服务，不会因同时部署而自动同步授权。个人端还可独立接入 OpenShell，流程见下方[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
+下图展示当前本地运行时与企业控制面的主要关系：受管实例通过真实宿主会话接入，Context、参数来源和按需签发的 Skill 执行上下文（SEC）参与服务端复验。企业控制面是可选部署；个人控制台与企业控制台使用各自的身份和服务，不会因同时部署而自动同步授权。个人端还可独立接入 OpenShell，流程见下方[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
 
 ```mermaid
 flowchart TB
-    Human[操作者确认授权] --> Console[本地控制台 / 管理 API]
-    Skill[SIQ Skill：交互与操作指引] --> Agent[业务 Agent]
-    Candidate[候选 Skill / 配置] --> Admission[静态准入与能力提取]
+    subgraph Local[个人接入链路：宿主与本地服务]
+        direction TB
+    Human[操作者] --> Console[本地控制台 / 管理 API]
+    Skill[SIQ Skill：操作指引] --> Agent[业务 Agent]
+    Candidate[候选 Skill] --> Admission[静态准入 / 内容摘要]
     Admission --> Console
     Console --> Authority[签名 Grant / Intent / 会话绑定]
-    Agent --> Adapter[运行时适配器]
-    Adapter --> Gate[本地决策引擎]
+    Agent --> Adapter[宿主运行时适配器]
+    Adapter --> Identity[受管实例身份 / 原生会话登记]
+    Identity --> Gate[本地授权与决策引擎]
+    Adapter -->|具体动作与参数| Gate
     Authority --> Gate
-    Gate --> Decision[allow / deny / hold / redact]
-    Decision --> Adapter
-    Adapter --> Tool[获准的工具调用]
-    Tool --> Observe[结果关联与 Observation]
-    Gate --> Receipts[签名回执链]
+    Context[受信 Context / 参数来源 / 按需 SEC] --> Gate
+    Gate --> Decision[裁决交给适配器 / 保留宿主门禁]
+    Decision -->|满足执行条件| Tool[宿主工具]
+    Tool --> Observe[调用结果关联 / Observation]
+    Gate --> Receipts[签名决策与执行回执链]
     Observe --> Receipts
-    Receipts --> Console
+    Receipts --> View[控制台追溯与核对]
+    Console -.->|显式接入| LocalBackend[本地 OpenShell 适配 / 策略加载与读回]
+    end
 
-    Connectors[只读 Connector] --> Edge[Edge Agent]
-    Edge --> Control[企业 Control API / Worker]
-    EnterpriseUI[企业控制台] --> Control
-    Control --> DB[(PostgreSQL)]
-    Control --> Backend[执行后端适配 / 读回验证]
-
+    subgraph Enterprise[可选企业部署：独立身份与服务]
+        direction TB
+        Connectors[只读 Connectors] --> Edge[Edge：任务核验 / 证据签名]
+        Edge --> Control[Control API / Worker]
+        EnterpriseUI[企业控制台 / 人工审批] --> Control
+        Control --> DB[(PostgreSQL / 审计 / outbox)]
+        Control --> Backend[企业执行后端适配 / 策略读回]
+    end
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Human,Authority authority
-    class Admission,Gate,Decision runtime
+    class Human,Authority,Identity,Context authority
+    class Admission,Gate,LocalBackend,Control runtime
     class Observe,Receipts evidence
 ```
 
 ### 任务执行与效果核验
 
 ```mermaid
-flowchart LR
-    Task[用户任务] --> Agent[Agent 规划与选择 Skills]
-    Agent --> Proposal[工具调用提议]
-    Authority[受信授权与参数来源] --> Runtime[SIQ 运行时检查]
-    Proposal --> Runtime
-    Runtime -->|允许执行| Tool[工具执行]
-    Runtime --> Receipts[签名决策回执]
-    Tool --> Observer[独立效果采集]
-    Observer --> Completion[SIQ 完成判定]
+flowchart TB
+    Task[用户任务] --> Proposal[Agent 规划 / Skill 选择 / 工具提议]
+    Authority[Grant / Intent / 来源与上下文约束] --> Gate[SIQ 执行前复验]
+    Proposal --> Gate
+    Gate -->|allow 或宿主支持的 redact| Tool[宿主门禁内执行获准参数]
+    Gate -->|deny / 不满足条件| Stop[阻断本次调用]
+    Gate -->|hold| Approval[等待本地批准 / 按宿主协议恢复]
+    Approval --> Recheck[重验当前授权与最终参数]
+    Recheck -->|无效 / 过期 / 已撤销| Stop
+    Recheck -->|有效| Reserve[原子持久化唯一签名执行预留]
+    Reserve -->|预留成功且响应明确| Tool
+    Reserve -.->|已预留但执行未确认| Uncertain[uncertain：核对事实 / 不盲目重放]
+    Tool --> Observation[宿主结果报告 / Observation]
+    Observation --> Receipts[关联 action / decision / reservation 回执]
+    Gate --> Receipts
+    Reserve --> Receipts
+    Tool -.->|已接入的观察器采样| Effect[文件或接收端材料 / EffectEvidence]
+    Requirements[签名 Intent 中的效果要求] --> Completion[SIQ 校验材料与动作 / 逐项判定完成]
+    Receipts --> Completion
+    Effect --> Completion
+    Completion --> Result[verified / incomplete / conflicting / unknown]
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Authority authority
-    class Runtime,Completion runtime
-    class Receipts,Observer evidence
+    class Authority,Approval,Requirements authority
+    class Gate,Recheck,Reserve,Completion runtime
+    class Observation,Receipts,Effect,Result,Uncertain evidence
 ```
 
-- **执行前**：静态扫描 Skill，记录能力需求；通过 Grant、Intent、受信 Context 和参数来源约束动作。模型输出不能创建有效权限。
-- **执行时**：在已接入的工具入口检查授权；需要审批的动作在执行前重新核验。适配器将实际调用与决策关联。
-- **执行后**：记录签名回执，采集文件或受控接收端的效果证据。工具自报成功、已观察效果和任务完成状态分别记录。
+- **执行前**：静态检查 Skill 并固定内容摘要；通过 Grant、Intent、实例/会话身份、受信 Context 和参数来源约束动作。需要可信 Skill 归属时复验 SEC，名称或安装路径本身不构成证明。模型输出不能创建有效权限。
+- **执行时**：适配器在已接入入口执行裁决并保留宿主自身门禁。支持的 hold 恢复路径在本地批准后重验权限与最终参数，先持久化唯一执行预留再尝试工具；拒绝、过期、撤权或恢复能力缺失时阻断。已预留而执行未确认记为 `uncertain`，不自动重放。
+- **执行后**：按动作/决策/预留身份关联结果与签名回执；在已接入的文件或接收端观察器中采集效果材料。Completion 结合签名 Intent 的效果要求、动作授权与有效材料判定，证据缺失或冲突不能显示为完成。
 
-普通 Observation 的结果关联与独立 EffectEvidence 的效果核验具有不同证明范围。架构、合同和方法细节见[技术报告](docs/research/technical-report.md)、[合同目录](packages/contracts/README.md)与[安全边界](#安全边界)。
+图中虚线表示显式接入或条件性路径，不代表所有工具都有独立效果采集。审批与宿主门禁的先后由各适配协议约束；OpenClaw 原版与固定检查点补丁副本的能力分开验证。`redact` 仅在宿主支持改参时使用；不支持的映射按适配器协议处理。
+
+普通 Observation 的结果关联与独立 EffectEvidence 的效果核验具有不同证明范围；`uncertain` 是执行预留状态，不是 Completion 的第五种完成结论。架构、合同和方法细节见[技术报告](docs/research/technical-report.md)、[合同目录](packages/contracts/README.md)与[安全边界](#安全边界)。
 
 ## DGX Spark 与 NVIDIA OpenShell 深度适配
 

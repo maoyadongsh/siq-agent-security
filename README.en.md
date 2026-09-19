@@ -119,65 +119,87 @@ These demonstrations use explicit model fixtures to drive real SIQ components. T
 
 ### Components and authorization chain
 
-This diagram shows the main local-runtime and enterprise control-plane relationships. The optional enterprise deployment uses its own identity and service; running both consoles does not automatically synchronize authority. The personal runtime also has an independent OpenShell integration, described in the [Chinese integration overview](README.md#dgx-spark-与-nvidia-openshell-深度适配).
+This diagram shows the current local-runtime and enterprise control-plane relationships. Managed instances enroll real host sessions; trusted Context, parameter provenance and an optional Skill Execution Context (SEC) enter server-side verification. The optional enterprise deployment uses its own identity and service; running both consoles does not automatically synchronize authority. The personal runtime also has an independent OpenShell integration, described in the [Chinese integration overview](README.md#dgx-spark-与-nvidia-openshell-深度适配).
 
 ```mermaid
 flowchart TB
-    Human[Operator confirms authority] --> Console[Local console / management API]
-    Skill[SIQ Skill: interaction and operating guidance] --> Agent[Application Agent]
-    Candidate[Candidate Skill / configuration] --> Admission[Static admission and capability extraction]
+    subgraph Local[Personal integration: host and local service]
+        direction TB
+    Human[Operator] --> Console[Local console / management API]
+    Skill[SIQ Skill: operating guidance] --> Agent[Application Agent]
+    Candidate[Candidate Skill] --> Admission[Static admission / content digest]
     Admission --> Console
     Console --> Authority[Signed Grant / Intent / session binding]
-    Agent --> Adapter[Runtime adapter]
-    Adapter --> Gate[Local decision engine]
+    Agent --> Adapter[Host runtime adapter]
+    Adapter --> Identity[Managed instance identity / native session enrollment]
+    Identity --> Gate[Local authority and decision engine]
+    Adapter -->|Concrete action and parameters| Gate
     Authority --> Gate
-    Gate --> Decision[allow / deny / hold / redact]
-    Decision --> Adapter
-    Adapter --> Tool[Authorized tool call]
-    Tool --> Observe[Result correlation and Observation]
-    Gate --> Receipts[Signed receipt chain]
+    Context[Trusted Context / parameter provenance / optional SEC] --> Gate
+    Gate --> Decision[Adapter handles decision / host gate retained]
+    Decision -->|Execution conditions met| Tool[Host tool]
+    Tool --> Observe[Call result correlation / Observation]
+    Gate --> Receipts[Signed decision and execution receipt chain]
     Observe --> Receipts
-    Receipts --> Console
+    Receipts --> View[Console review and trace]
+    Console -.->|Explicit integration| LocalBackend[Local OpenShell adapter / policy load and readback]
+    end
 
-    Connectors[Read-only Connector] --> Edge[Edge Agent]
-    Edge --> Control[Enterprise Control API / Worker]
-    EnterpriseUI[Enterprise console] --> Control
-    Control --> DB[(PostgreSQL)]
-    Control --> Backend[Execution backend adapter / readback verification]
-
+    subgraph Enterprise[Optional enterprise deployment: separate identity and service]
+        direction TB
+        Connectors[Read-only Connectors] --> Edge[Edge: task verification / evidence signing]
+        Edge --> Control[Control API / Worker]
+        EnterpriseUI[Enterprise console / human approval] --> Control
+        Control --> DB[(PostgreSQL / audit / outbox)]
+        Control --> Backend[Enterprise backend adapter / policy readback]
+    end
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Human,Authority authority
-    class Admission,Gate,Decision runtime
+    class Human,Authority,Identity,Context authority
+    class Admission,Gate,LocalBackend,Control runtime
     class Observe,Receipts evidence
 ```
 
 ### Task execution and effect verification
 
 ```mermaid
-flowchart LR
-    Task[User task] --> Agent[Agent planning and Skill selection]
-    Agent --> Proposal[Proposed tool call]
-    Authority[Trusted authority and parameter provenance] --> Runtime[SIQ runtime checks]
-    Proposal --> Runtime
-    Runtime -->|Execution allowed| Tool[Tool execution]
-    Runtime --> Receipts[Signed decision receipts]
-    Tool --> Observer[Independent effect collection]
-    Observer --> Completion[SIQ completion decision]
+flowchart TB
+    Task[User task] --> Proposal[Agent plan / Skill selection / tool proposal]
+    Authority[Grant / Intent / provenance and context constraints] --> Gate[SIQ pre-execution checks]
+    Proposal --> Gate
+    Gate -->|allow or host-supported redact| Tool[Execute approved parameters within host gate]
+    Gate -->|deny / unmet conditions| Stop[Block this call]
+    Gate -->|hold| Approval[Local approval / host-specific resume protocol]
+    Approval --> Recheck[Recheck current authority and final parameters]
+    Recheck -->|Invalid / expired / revoked| Stop
+    Recheck -->|Valid| Reserve[Atomically persist unique signed execution reservation]
+    Reserve -->|Reserved with unambiguous response| Tool
+    Reserve -.->|Reserved but execution unconfirmed| Uncertain[uncertain: inspect facts / no blind replay]
+    Tool --> Observation[Host result report / Observation]
+    Observation --> Receipts[Correlated action / decision / reservation receipts]
+    Gate --> Receipts
+    Reserve --> Receipts
+    Tool -.->|An integrated observer samples effects| Effect[File or receiver material / EffectEvidence]
+    Requirements[Effect requirements in signed Intent] --> Completion[SIQ validates material and actions / evaluates requirements]
+    Receipts --> Completion
+    Effect --> Completion
+    Completion --> Result[verified / incomplete / conflicting / unknown]
     classDef authority fill:#fff8e6,stroke:#9a7417,color:#513b08
     classDef runtime fill:#eaf1fb,stroke:#43658f,color:#142f53
     classDef evidence fill:#eaf6f1,stroke:#3b7965,color:#174d3d
-    class Authority authority
-    class Runtime,Completion runtime
-    class Receipts,Observer evidence
+    class Authority,Approval,Requirements authority
+    class Gate,Recheck,Reserve,Completion runtime
+    class Observation,Receipts,Effect,Result,Uncertain evidence
 ```
 
-- **Before execution**: statically scan Skills and record capability requirements. Constrain actions with Grants, Intent, trusted Context and parameter provenance. Model output cannot create effective permissions.
-- **During execution**: check authority at integrated tool entry points and recheck held approvals before execution. Adapters associate actual calls with decisions.
-- **After execution**: record signed receipts and collect file or controlled-receiver effect evidence. Tool-reported success, observed effects and task completion are separate records.
+- **Before execution**: statically inspect Skills and pin content digests. Constrain actions with Grants, Intent, instance/session identity, trusted Context and parameter provenance. Verify SEC when trusted Skill attribution is required; a name or installation path alone is not proof. Model output cannot create effective permissions.
+- **During execution**: enforce decisions at integrated entry points while retaining the host gate. Supported hold-resume paths recheck authority and final parameters after local approval, then persist a unique reservation before attempting execution. Denial, expiry, revocation or missing resume capability blocks the call. Reserved but unconfirmed execution remains `uncertain`, without automatic replay.
+- **After execution**: correlate results and signed receipts by action, decision and reservation. Integrated file or receiver observers collect effect material. Completion checks signed Intent requirements, action authority and valid material; missing or conflicting evidence cannot be shown as completed.
 
-Ordinary Observation correlation and independent EffectEvidence establish different things. See the [technical report](docs/research/technical-report.md), [contracts](packages/contracts/README.md) and [security boundaries](#security-boundaries) for architecture and protocol details.
+Dashed edges denote explicit integration or conditional paths, not universal effect coverage. Approval and host-gate ordering follows each adapter protocol; stock OpenClaw and a pinned checkpoint-patched copy have separate acceptance. `redact` requires host parameter-rewrite support; other mappings follow the adapter contract.
+
+Ordinary Observation correlation and independent EffectEvidence establish different things. `uncertain` is an execution-reservation state, not a fifth Completion outcome. See the [technical report](docs/research/technical-report.md), [contracts](packages/contracts/README.md) and [security boundaries](#security-boundaries) for architecture and protocol details.
 
 ## Quick start
 
