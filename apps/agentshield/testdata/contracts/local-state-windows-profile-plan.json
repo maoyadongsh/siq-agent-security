@@ -1,0 +1,7 @@
+{
+  "schema": "state-windows-profile-plan/v1",
+  "filesystem_profile": "windows-local-drive/v1",
+  "source_marker": "{\"schema\":\"state-format/v2\",\"program_version\":\"fixture-old\",\"format_version\":2,\"published_at\":\"2026-09-18T00:00:00Z\",\"min_reader\":2,\"min_writer\":2,\"state_directory_id\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"instance_id\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}\n",
+  "target_marker": "{\"schema\":\"state-format/v2\",\"program_version\":\"fixture-new\",\"format_version\":2,\"published_at\":\"2026-09-18T01:00:00Z\",\"min_reader\":3,\"min_writer\":3,\"state_directory_id\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"instance_id\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}\n",
+  "migration_history_sha256": "absent"
+}

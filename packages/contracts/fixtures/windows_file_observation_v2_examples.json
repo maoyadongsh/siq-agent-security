@@ -1,0 +1,534 @@
+{
+  "description": "Schema-only component fixtures. Digests and zero signatures are shape placeholders, not cryptographic evidence, authority or native-desktop results. Runtime semantic and signature checks are covered separately by Go component tests.",
+  "cases": [
+    {
+      "name": "missing-leaf",
+      "schema": "file-snapshot.v2.schema.json",
+      "valid": true,
+      "document": {
+        "schema_version": "file-snapshot/v2",
+        "filesystem_profile": "windows-local-drive/v1",
+        "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "exists": false,
+        "digest": "",
+        "size": 0,
+        "mtime": "",
+        "captured_at": "2026-09-18T00:00:00Z"
+      }
+    },
+    {
+      "name": "existing-leaf",
+      "schema": "file-snapshot.v2.schema.json",
+      "valid": true,
+      "document": {
+        "schema_version": "file-snapshot/v2",
+        "filesystem_profile": "windows-local-drive/v1",
+        "identity_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "exists": true,
+        "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "size": 3,
+        "mtime": "2026-09-18T00:00:01Z",
+        "captured_at": "2026-09-18T00:00:02Z"
+      }
+    },
+    {
+      "name": "creation-material",
+      "schema": "file-observation.v2.schema.json",
+      "valid": true,
+      "document": {
+        "schema_version": "file-observation/v2",
+        "before": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": false,
+          "digest": "",
+          "size": 0,
+          "mtime": "",
+          "captured_at": "2026-09-18T00:00:00Z"
+        },
+        "after": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": true,
+          "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "size": 3,
+          "mtime": "2026-09-18T00:00:01Z",
+          "captured_at": "2026-09-18T00:00:02Z"
+        },
+        "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "execution_state": "completed",
+        "result": "expected"
+      }
+    },
+    {
+      "name": "signed-pending-shape",
+      "schema": "file-observation-pending.v2.schema.json",
+      "valid": true,
+      "document": {
+        "schema_version": "file-observation-pending/v2",
+        "intent_id": "int-fixture",
+        "intent_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "observation_id": "file-fixture",
+        "action_id": "action-fixture",
+        "decision_receipt_id": "receipt-fixture",
+        "scope": {
+          "platform": "hermes",
+          "session_id": "s-fixture",
+          "agent_id": "a-fixture",
+          "task_id": "task-fixture"
+        },
+        "source": {
+          "type": "host_observer",
+          "source_id": "component-schema-fixture",
+          "independence": "host_independent"
+        },
+        "before": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": false,
+          "digest": "",
+          "size": 0,
+          "mtime": "",
+          "captured_at": "2026-09-18T00:00:00Z"
+        },
+        "owner_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "max_bytes": 1024,
+        "expires_at": "2026-09-18T01:00:00Z",
+        "signing_schema": "local_canonical/v1",
+        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "name": "signed-record-shape",
+      "schema": "effect-evidence-record.v2.schema.json",
+      "valid": true,
+      "document": {
+        "schema_version": "effect-evidence-record/v2",
+        "evidence": {
+          "schema_version": "effect-evidence/v1",
+          "effect_evidence_id": "file-fixture",
+          "action_id": "action-fixture",
+          "decision_receipt_id": "receipt-fixture",
+          "effect_type": "file.write",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "execution_state": "completed",
+          "source": {
+            "type": "host_observer",
+            "source_id": "component-schema-fixture",
+            "independence": "host_independent"
+          },
+          "coverage": "partial",
+          "result": "expected",
+          "evidence_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "observed_at": "2026-09-18T00:00:02Z",
+          "signing_schema": "local_canonical/v1",
+          "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "file_observation": {
+          "schema_version": "file-observation/v2",
+          "before": {
+            "schema_version": "file-snapshot/v2",
+            "filesystem_profile": "windows-local-drive/v1",
+            "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "exists": false,
+            "digest": "",
+            "size": 0,
+            "mtime": "",
+            "captured_at": "2026-09-18T00:00:00Z"
+          },
+          "after": {
+            "schema_version": "file-snapshot/v2",
+            "filesystem_profile": "windows-local-drive/v1",
+            "identity_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "exists": true,
+            "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "size": 3,
+            "mtime": "2026-09-18T00:00:01Z",
+            "captured_at": "2026-09-18T00:00:02Z"
+          },
+          "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "execution_state": "completed",
+          "result": "expected"
+        },
+        "finding_code": "",
+        "request_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "task_id": "task-fixture",
+        "signing_schema": "local_canonical/v1",
+        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "name": "recovery-with-path",
+      "schema": "file-observation-recovery-request.v2.schema.json",
+      "valid": true,
+      "document": {
+        "schema_version": "file-observation-recovery-request/v2",
+        "observation_id": "file-fixture",
+        "observer_id": "observer-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "expected_owner": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "path": "C:/Approved/Output.txt"
+      }
+    },
+    {
+      "name": "missing-parent-identity",
+      "schema": "file-snapshot.v2.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-snapshot/v2",
+        "filesystem_profile": "windows-local-drive/v1",
+        "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "exists": false,
+        "digest": "",
+        "size": 0,
+        "mtime": "",
+        "captured_at": "2026-09-18T00:00:00Z"
+      }
+    },
+    {
+      "name": "wrong-profile",
+      "schema": "file-snapshot.v2.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-snapshot/v2",
+        "filesystem_profile": "posix/v1",
+        "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "exists": false,
+        "digest": "",
+        "size": 0,
+        "mtime": "",
+        "captured_at": "2026-09-18T00:00:00Z"
+      }
+    },
+    {
+      "name": "unbound-pending-intent",
+      "schema": "file-observation-pending.v2.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-observation-pending/v2",
+        "intent_id": "int-fixture",
+        "observation_id": "file-fixture",
+        "action_id": "action-fixture",
+        "decision_receipt_id": "receipt-fixture",
+        "scope": {
+          "platform": "hermes",
+          "session_id": "s-fixture",
+          "agent_id": "a-fixture",
+          "task_id": "task-fixture"
+        },
+        "source": {
+          "type": "host_observer",
+          "source_id": "component-schema-fixture",
+          "independence": "host_independent"
+        },
+        "before": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": false,
+          "digest": "",
+          "size": 0,
+          "mtime": "",
+          "captured_at": "2026-09-18T00:00:00Z"
+        },
+        "owner_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "max_bytes": 1024,
+        "expires_at": "2026-09-18T01:00:00Z",
+        "signing_schema": "local_canonical/v1",
+        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "name": "null-pending-intent",
+      "schema": "file-observation-pending.v2.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-observation-pending/v2",
+        "intent_id": "int-fixture",
+        "intent_digest": null,
+        "observation_id": "file-fixture",
+        "action_id": "action-fixture",
+        "decision_receipt_id": "receipt-fixture",
+        "scope": {
+          "platform": "hermes",
+          "session_id": "s-fixture",
+          "agent_id": "a-fixture",
+          "task_id": "task-fixture"
+        },
+        "source": {
+          "type": "host_observer",
+          "source_id": "component-schema-fixture",
+          "independence": "host_independent"
+        },
+        "before": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": false,
+          "digest": "",
+          "size": 0,
+          "mtime": "",
+          "captured_at": "2026-09-18T00:00:00Z"
+        },
+        "owner_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "max_bytes": 1024,
+        "expires_at": "2026-09-18T01:00:00Z",
+        "signing_schema": "local_canonical/v1",
+        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "name": "recovery-path-required",
+      "schema": "file-observation-recovery-request.v2.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-observation-recovery-request/v2",
+        "observation_id": "file-fixture",
+        "observer_id": "observer-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "expected_owner": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    },
+    {
+      "name": "v2-record-cannot-mix-network-material",
+      "schema": "effect-evidence-record.v2.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "effect-evidence-record/v2",
+        "evidence": {
+          "schema_version": "effect-evidence/v1",
+          "effect_evidence_id": "file-fixture",
+          "action_id": "action-fixture",
+          "decision_receipt_id": "receipt-fixture",
+          "effect_type": "file.write",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "execution_state": "completed",
+          "source": {
+            "type": "host_observer",
+            "source_id": "component-schema-fixture",
+            "independence": "host_independent"
+          },
+          "coverage": "partial",
+          "result": "expected",
+          "evidence_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "observed_at": "2026-09-18T00:00:02Z",
+          "signing_schema": "local_canonical/v1",
+          "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "file_observation": {
+          "schema_version": "file-observation/v2",
+          "before": {
+            "schema_version": "file-snapshot/v2",
+            "filesystem_profile": "windows-local-drive/v1",
+            "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "exists": false,
+            "digest": "",
+            "size": 0,
+            "mtime": "",
+            "captured_at": "2026-09-18T00:00:00Z"
+          },
+          "after": {
+            "schema_version": "file-snapshot/v2",
+            "filesystem_profile": "windows-local-drive/v1",
+            "identity_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "exists": true,
+            "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "size": 3,
+            "mtime": "2026-09-18T00:00:01Z",
+            "captured_at": "2026-09-18T00:00:02Z"
+          },
+          "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "execution_state": "completed",
+          "result": "expected"
+        },
+        "finding_code": "",
+        "request_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "task_id": "task-fixture",
+        "signing_schema": "local_canonical/v1",
+        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "network_observation": {}
+      }
+    },
+    {
+      "name": "v2-material-rejected-by-v1",
+      "schema": "file-observation.v1.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-observation/v2",
+        "before": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": false,
+          "digest": "",
+          "size": 0,
+          "mtime": "",
+          "captured_at": "2026-09-18T00:00:00Z"
+        },
+        "after": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": true,
+          "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "size": 3,
+          "mtime": "2026-09-18T00:00:01Z",
+          "captured_at": "2026-09-18T00:00:02Z"
+        },
+        "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "execution_state": "completed",
+        "result": "expected"
+      }
+    },
+    {
+      "name": "v2-pending-rejected-by-v1",
+      "schema": "file-observation-pending.v1.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-observation-pending/v2",
+        "intent_id": "int-fixture",
+        "intent_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "observation_id": "file-fixture",
+        "action_id": "action-fixture",
+        "decision_receipt_id": "receipt-fixture",
+        "scope": {
+          "platform": "hermes",
+          "session_id": "s-fixture",
+          "agent_id": "a-fixture",
+          "task_id": "task-fixture"
+        },
+        "source": {
+          "type": "host_observer",
+          "source_id": "component-schema-fixture",
+          "independence": "host_independent"
+        },
+        "before": {
+          "schema_version": "file-snapshot/v2",
+          "filesystem_profile": "windows-local-drive/v1",
+          "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "exists": false,
+          "digest": "",
+          "size": 0,
+          "mtime": "",
+          "captured_at": "2026-09-18T00:00:00Z"
+        },
+        "owner_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "max_bytes": 1024,
+        "expires_at": "2026-09-18T01:00:00Z",
+        "signing_schema": "local_canonical/v1",
+        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "name": "v2-record-rejected-by-v1",
+      "schema": "effect-evidence-record.v1.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "effect-evidence-record/v2",
+        "evidence": {
+          "schema_version": "effect-evidence/v1",
+          "effect_evidence_id": "file-fixture",
+          "action_id": "action-fixture",
+          "decision_receipt_id": "receipt-fixture",
+          "effect_type": "file.write",
+          "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "execution_state": "completed",
+          "source": {
+            "type": "host_observer",
+            "source_id": "component-schema-fixture",
+            "independence": "host_independent"
+          },
+          "coverage": "partial",
+          "result": "expected",
+          "evidence_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "observed_at": "2026-09-18T00:00:02Z",
+          "signing_schema": "local_canonical/v1",
+          "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "file_observation": {
+          "schema_version": "file-observation/v2",
+          "before": {
+            "schema_version": "file-snapshot/v2",
+            "filesystem_profile": "windows-local-drive/v1",
+            "identity_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "exists": false,
+            "digest": "",
+            "size": 0,
+            "mtime": "",
+            "captured_at": "2026-09-18T00:00:00Z"
+          },
+          "after": {
+            "schema_version": "file-snapshot/v2",
+            "filesystem_profile": "windows-local-drive/v1",
+            "identity_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "parent_identity_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "resource_ref": "filesystem:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "exists": true,
+            "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "size": 3,
+            "mtime": "2026-09-18T00:00:01Z",
+            "captured_at": "2026-09-18T00:00:02Z"
+          },
+          "expected_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "execution_state": "completed",
+          "result": "expected"
+        },
+        "finding_code": "",
+        "request_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "task_id": "task-fixture",
+        "signing_schema": "local_canonical/v1",
+        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "name": "v2-recovery-rejected-by-v1",
+      "schema": "file-observation-recovery-request.v1.schema.json",
+      "valid": false,
+      "document": {
+        "schema_version": "file-observation-recovery-request/v2",
+        "observation_id": "file-fixture",
+        "observer_id": "observer-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "expected_owner": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "path": "C:/Approved/Output.txt"
+      }
+    }
+  ]
+}

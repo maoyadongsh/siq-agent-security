@@ -1,0 +1,797 @@
+{
+  "counting": "Unique (Package,Test) identities; generations/repeated rounds/count=2 are not additional tests.",
+  "runtimecheck_v5_unique": [
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestRuntimeTargetRequiresExplicitReadyHermesInstance",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/adapter-boundaries.stdout.log",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/grant",
+      "test": "TestRuntimeCheckDraftRequiresSignedBoundedTemplate",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 237
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentCannotDowngradeOrUseRegex",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentMissingRevocationDirectoryDenies",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 109
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentNestedAuthorityFieldsAreExact",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentNestedStrictnessPreservesLegacyDecoding",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 73
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentPrivateReadAndCachedStore",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentPublishAndOpenRejectBroadDirectory",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentRetryDoesNotAccumulatePrivateScratch",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 137
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 105
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentUsesComponentBoundaryAndRejectsAliases",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentWireAndBindingRejectProfileSmuggling",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsRuntimeCheckDecodeRejectsAliasesAndVersionMix",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 197
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsRuntimeCheckEnvelopeIsClosed",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsRuntimeCheckStaticSignatureVector",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 57
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-positive.stdout.log",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestExitSuccessCannotReplaceObservationsOrSideEffectCheck",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 73
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestLaunchAttachmentRejectsSubstitutionExpiryAndReplay",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 53
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestPlanRequiresSameAdminSnapshotAndSingleUse",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 49
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestPreviewExpiryReplacementAndCapacity",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 93
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 77
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 105
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestWindowsCheckCurrentAuthorityRevalidated",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestWindowsCheckPreviewRequiresActivatedProfileAndTrustedRoot",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestRuntimeCheckHTTPAuthorizationAndStrictInput",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/http-boundaries.stdout.log",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestRuntimeCheckHTTPConfirmationDriftAndFailureCleanup",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/http-boundaries.stdout.log",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestWindowsRuntimeCheckRejectsOrdinaryIssuerBindingAndObserver",
+      "evidence": [
+        {
+          "log": "logs/runtimecheck-v5/r2/http-boundaries.stdout.log",
+          "line": 5
+        }
+      ]
+    }
+  ],
+  "inventory_final_events": [
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 2,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 4,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 6,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 8,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 13,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 17,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "go test -json"
+    }
+  ],
+  "discovery_final_events": [
+    {
+      "log": "logs/inventory-discovery/r2/discovery-windows-verify.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/discovery-windows-verify.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/server-linux-verify.stdout.log",
+      "line": 2,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/server-linux-verify.stdout.log",
+      "line": 4,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    }
+  ],
+  "all_recorded_events": [
+    {
+      "log": "logs/inventory-discovery/r1/inventory-windows-generate.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r1/inventory-windows-verify.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r1/inventory-windows-verify.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/discovery-windows-generate.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/discovery-windows-verify.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/discovery-windows-verify.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/inventory-linux-verify.stdout.log",
+      "line": 2,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/inventory-linux-verify.stdout.log",
+      "line": 4,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/server-linux-generate.stdout.log",
+      "line": 2,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/server-linux-verify.stdout.log",
+      "line": 2,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r2/server-linux-verify.stdout.log",
+      "line": 4,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestDiscoveryContractFixtures",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 2,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 4,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 6,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-linux-verify.stdout.log",
+      "line": 8,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "WSL go test binary -test.v"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-generate.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-generate.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 13,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestSampleIsCurrent",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/inventory-discovery/r4/inventory-windows-verify.stdout.log",
+      "line": 17,
+      "package": "siq-agent-security/apps/agentshield/internal/inventory",
+      "test": "TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/adapter-boundaries.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/adapterinstall",
+      "test": "TestRuntimeTargetRequiresExplicitReadyHermesInstance",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/http-boundaries.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestWindowsRuntimeCheckRejectsOrdinaryIssuerBindingAndObserver",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/http-boundaries.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestRuntimeCheckHTTPAuthorizationAndStrictInput",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/http-boundaries.stdout.log",
+      "line": 13,
+      "package": "siq-agent-security/apps/agentshield/internal/server",
+      "test": "TestRuntimeCheckHTTPConfirmationDriftAndFailureCleanup",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentUsesComponentBoundaryAndRejectsAliases",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 9,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentCannotDowngradeOrUseRegex",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 13,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentWireAndBindingRejectProfileSmuggling",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 61,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentNestedAuthorityFieldsAreExact",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 73,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentNestedStrictnessPreservesLegacyDecoding",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 89,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentPrivateReadAndCachedStore",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 105,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentUnsafeRevocationDirectoryIsNotAbsence",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 109,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentMissingRevocationDirectoryDenies",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 133,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentPublishAndOpenRejectBroadDirectory",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 137,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsIntentRetryDoesNotAccumulatePrivateScratch",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 193,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsRuntimeCheckEnvelopeIsClosed",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 197,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsRuntimeCheckDecodeRejectsAliasesAndVersionMix",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 201,
+      "package": "siq-agent-security/apps/agentshield/internal/intent",
+      "test": "TestWindowsRuntimeCheckStaticSignatureVector",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/intent-grant-contracts.stdout.log",
+      "line": 237,
+      "package": "siq-agent-security/apps/agentshield/internal/grant",
+      "test": "TestRuntimeCheckDraftRequiresSignedBoundedTemplate",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 29,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestWindowsCheckCurrentAuthorityRevalidated",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 45,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestWindowsCheckPreviewRequiresActivatedProfileAndTrustedRoot",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 49,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestPlanRequiresSameAdminSnapshotAndSingleUse",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 53,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestLaunchAttachmentRejectsSubstitutionExpiryAndReplay",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 57,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCancelStopsLaunchAndRevokesAuthority",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 73,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestExitSuccessCannotReplaceObservationsOrSideEffectCheck",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 77,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestRecoveryFindsBindingPublishedBeforeJournalUpdate",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 89,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestAuditFailureNeverStartsHostOrReportsPass",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 93,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestPreviewExpiryReplacementAndCapacity",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-authority.stdout.log",
+      "line": 105,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestTamperedOrTrailingRecordCannotBeReadAsPassed",
+      "action": "pass",
+      "format": "go test -json"
+    },
+    {
+      "log": "logs/runtimecheck-v5/r2/runtimecheck-positive.stdout.log",
+      "line": 5,
+      "package": "siq-agent-security/apps/agentshield/internal/runtimecheck",
+      "test": "TestCheckTemporaryAuthorityAndVerifiedCleanup",
+      "action": "pass",
+      "format": "go test -json"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "reinstall_regression": {
+    "exit_code": 0,
+    "stdout": "=== RUN   TestWorkBuddyReinstallPreservesHostChangesAndFirstSnapshot\n--- PASS: TestWorkBuddyReinstallPreservesHostChangesAndFirstSnapshot (9.74s)\n=== RUN   TestWorkBuddyReinstallRejectsUnprovenSnapshot\n=== RUN   TestWorkBuddyReinstallRejectsUnprovenSnapshot/no-history\n=== RUN   TestWorkBuddyReinstallRejectsUnprovenSnapshot/changed-snapshot\n=== RUN   TestWorkBuddyReinstallRejectsUnprovenSnapshot/wrong-root\n=== RUN   TestWorkBuddyReinstallRejectsUnprovenSnapshot/tampered-history\n--- PASS: TestWorkBuddyReinstallRejectsUnprovenSnapshot (23.73s)\n    --- PASS: TestWorkBuddyReinstallRejectsUnprovenSnapshot/no-history (1.17s)\n    --- PASS: TestWorkBuddyReinstallRejectsUnprovenSnapshot/changed-snapshot (8.40s)\n    --- PASS: TestWorkBuddyReinstallRejectsUnprovenSnapshot/wrong-root (6.97s)\n    --- PASS: TestWorkBuddyReinstallRejectsUnprovenSnapshot/tampered-history (7.19s)\nPASS\nok  \tsiq-agent-security/apps/agentshield/internal/adapterinstall\t37.967s\n",
+    "stderr": ""
+  },
+  "budget_tests": {
+    "command": "go test ./cmd/agentshield ./internal/adapterinstall -run TestWorkBuddyManaged(HTTP|RepairRestoresCoverage) -count=1 -timeout=100s",
+    "exit_code": 0,
+    "package_seconds": [
+      42.441,
+      1.629
+    ]
+  },
+  "vet": {
+    "packages": [
+      "./cmd/agentshield",
+      "./internal/adapterinstall"
+    ],
+    "exit_code": 0
+  },
+  "gofmt": "clean",
+  "gitleaks_changed_code": "no leaks",
+  "full_suite": "not rerun; existing failures and 120s WorkBuddy timeout retained"
+}

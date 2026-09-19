@@ -46,9 +46,21 @@ func (m *Manager) execute(ctx context.Context, r *run, target adapterinstall.Run
 			status, reason = "invalidated", "runtime_check_snapshot_changed"
 		}
 	}
+	if status == "passed" && (ctx.Err() != nil || !time.Now().Before(mustDeadline(r.record.Result.ExpiresAt))) {
+		status, reason = "failed", "runtime_check_timeout"
+		if errors.Is(ctx.Err(), context.Canceled) {
+			status, reason = "cancelled", "runtime_check_cancelled"
+		}
+	}
 	m.cleanup(&r.record)
 	if r.record.Result.Cleanup != "complete" {
 		status, reason = "failed", "runtime_check_cleanup_failed"
+	}
+	if status == "passed" && (ctx.Err() != nil || !time.Now().Before(mustDeadline(r.record.Result.ExpiresAt))) {
+		status, reason = "failed", "runtime_check_timeout"
+		if errors.Is(ctx.Err(), context.Canceled) {
+			status, reason = "cancelled", "runtime_check_cancelled"
+		}
 	}
 	now := time.Now().UTC().Format(time.RFC3339Nano)
 	r.record.Result.Status, r.record.Result.Reason, r.record.Result.FinishedAt = status, reason, &now
@@ -68,7 +80,15 @@ func (m *Manager) execute(ctx context.Context, r *run, target adapterinstall.Run
 	}
 }
 
+func mustDeadline(raw string) time.Time {
+	deadline, _ := time.Parse(time.RFC3339Nano, raw)
+	return deadline
+}
+
 func (m *Manager) verify(r *run, p probes) error {
+	if err := m.checkBoundAuthority(r); err != nil {
+		return err
+	}
 	if r.session == "" {
 		return errors.New("runtime_check_native_session_missing")
 	}
@@ -127,5 +147,5 @@ func (m *Manager) verify(r *run, p probes) error {
 		return errors.New("runtime_check_receipts_missing")
 	}
 	r.record.Result.Checks = map[string]bool{"native_session_bound": true, "allowed_read": true, "write_denied_before_execution": true, "allowed_after_denial": true, "receipt_chain_verified": true}
-	return nil
+	return m.checkBoundAuthority(r)
 }

@@ -1,9 +1,11 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
@@ -34,6 +36,13 @@ func (s *Server) resolveAdapterOptions(platform, id string) (adapterinstall.Opti
 	if id == "" {
 		return opts, nil
 	}
+	if platform == adapterinstall.WorkBuddy {
+		target, err := s.resolveRuntimeIdentityTarget(context.Background(), id)
+		if err != nil || target.Platform != platform {
+			return opts, adapterinstall.ErrPlanChanged
+		}
+		return adapterinstall.WithWorkBuddyInstance(opts, target.Root), nil
+	}
 	if platform == adapterinstall.OpenClaw {
 		// OpenClaw has one default config root; a missing root or a foreign
 		// instance ID must fail closed rather than fall back to defaults.
@@ -59,8 +68,12 @@ func (s *Server) adapterInstances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	platform := r.URL.Query().Get("platform")
-	if platform != adapterinstall.Hermes && platform != adapterinstall.OpenClaw {
-		writeJSON(w, 400, map[string]any{"error": "instance listing requires hermes or openclaw"})
+	if platform != adapterinstall.Hermes && platform != adapterinstall.OpenClaw && platform != adapterinstall.WorkBuddy {
+		writeJSON(w, 400, map[string]any{"error": "instance listing requires hermes, openclaw or workbuddy"})
+		return
+	}
+	if platform == adapterinstall.WorkBuddy {
+		s.workBuddyInstanceRow(w)
 		return
 	}
 	if platform == adapterinstall.OpenClaw {
@@ -80,6 +93,22 @@ func (s *Server) adapterInstances(w http.ResponseWriter, r *http.Request) {
 		rows = append(rows, AdapterInstance{ID: root.ID, Platform: adapterinstall.Hermes, Name: root.Name, ConfigDir: shown, Source: root.Source, Default: root.Default, Active: root.Active, Detected: root.Detected, Diagnosis: s.diagnoseInstance(opts)})
 	}
 	writeJSON(w, 200, map[string]any{"schema_version": "local-adapter-instances/v1", "platform_changes": false, "native_available": adapterinstall.FindHermesCLI(s.d.HermesCLI) != "", "instances": rows, "issues": scan.Issues})
+}
+
+func (s *Server) workBuddyInstanceRow(w http.ResponseWriter) {
+	rows, issues := []AdapterInstance{}, []string{}
+	managed := false
+	root, source, err := s.workBuddyRoot()
+	if err != nil {
+		issues = append(issues, "WorkBuddy 配置目录不存在或无法验证")
+	} else if target, err := s.resolveRuntimeIdentityTarget(context.Background(), hermeshome.Identifier(root)); err != nil || target.Platform != adapterinstall.WorkBuddy {
+		issues = append(issues, "WorkBuddy 实例目录存在歧义")
+	} else {
+		opts := adapterinstall.WithWorkBuddyInstance(s.adapterOptions(adapterinstall.WorkBuddy), root)
+		rows = append(rows, AdapterInstance{ID: target.InstanceID, Platform: adapterinstall.WorkBuddy, Name: "default", ConfigDir: target.Display, Source: source, Default: true, Active: true, Detected: true, Diagnosis: s.diagnoseInstance(opts)})
+		managed = runtime.GOOS == "windows"
+	}
+	writeJSON(w, 200, map[string]any{"schema_version": "local-adapter-instances/v2", "platform_changes": false, "native_available": false, "managed_runtime_available": managed, "instances": rows, "issues": issues})
 }
 
 // openClawInstanceRow lists OpenClaw's single default instance. Its config

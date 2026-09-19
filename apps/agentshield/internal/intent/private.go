@@ -32,6 +32,10 @@ func openRecord(path string) (*os.File, error) {
 	return statefs.OpenPrivate(path)
 }
 
+func readPrivateRecord(path string) ([]byte, error) {
+	return statefs.ReadPrivateRecord(filepath.Dir(filepath.Dir(path)), path, maxRecordBytes)
+}
+
 func openRecords(dir string) (*os.File, error) {
 	if runtime.GOOS != "windows" {
 		return statefs.Open(dir)

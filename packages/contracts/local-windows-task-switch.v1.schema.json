@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-windows-task-switch.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binary_bindings",
+    "source_record",
+    "target_record",
+    "source_xml",
+    "target_xml",
+    "signature",
+    "transaction_nonce"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-windows-task-switch/v1"
+    },
+    "binary_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_sha256",
+        "target_sha256"
+      ],
+      "properties": {
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "target_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "source_record": {
+      "$ref": "#/definitions/task"
+    },
+    "target_record": {
+      "$ref": "#/definitions/task"
+    },
+    "source_xml": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16384
+    },
+    "target_xml": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16384
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "transaction_nonce": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    }
+  },
+  "definitions": {
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instance_id",
+        "state_directory_id",
+        "xml_sha256",
+        "schema_version",
+        "task_name",
+        "signature",
+        "user_sid"
+      ],
+      "properties": {
+        "instance_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "state_directory_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "xml_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "schema_version": {
+          "const": "local-windows-task-record/v1"
+        },
+        "task_name": {
+          "type": "string",
+          "pattern": "^\\\\SIQ-Agent-Security-[a-f0-9]{64}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{128}$"
+        },
+        "user_sid": {
+          "type": "string",
+          "pattern": "^S-1-(0|[1-9][0-9]{0,14})(-(0|[1-9][0-9]{0,9})){1,15}$",
+          "not": {
+            "enum": [
+              "S-1-5-18",
+              "S-1-5-19",
+              "S-1-5-20"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

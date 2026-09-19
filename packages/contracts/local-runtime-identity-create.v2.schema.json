@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "Explicitly confirm a newly approved Windows managed authority",
+  "required": [
+    "schema_version",
+    "instance_id",
+    "grant_id",
+    "expected_grant_revision",
+    "actor_id",
+    "session_ttl_seconds",
+    "confirm_filesystem_profile"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-identity-create/v2"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "expected_grant_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "session_ttl_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 86400
+    },
+    "confirm_filesystem_profile": {
+      "const": true,
+      "description": "Confirm the filesystem interpretation shown for the verified Grant; does not select a profile from client input."
+    }
+  }
+}

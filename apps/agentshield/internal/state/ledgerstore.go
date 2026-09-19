@@ -85,6 +85,13 @@ func (s *Store) LatestSeq(subdir, fileID string) (int, []byte, error) {
 // Existing versions are never overwritten; only name collisions are retried.
 // Prefer PutVersionedCAS for read-modify-write state transitions.
 func (s *Store) PutVersioned(subdir, fileID string, doc any) error {
+	if isGrantNamespace(subdir) {
+		unlock, err := s.lockGrantPublication()
+		if err != nil {
+			return err
+		}
+		defer unlock()
+	}
 	tmp, cleanup, err := s.stageVersion(subdir, fileID, doc)
 	if err != nil {
 		return err
@@ -105,6 +112,13 @@ func (s *Store) PutVersioned(subdir, fileID string, doc any) error {
 // PutVersionedCAS publishes expected+1 only when the current head equals expected
 // (-1 means no version yet). On conflict it does not skip ahead to a later n.
 func (s *Store) PutVersionedCAS(subdir, fileID string, expected int, doc any) (int, error) {
+	if isGrantNamespace(subdir) {
+		unlock, err := s.lockGrantPublication()
+		if err != nil {
+			return -1, err
+		}
+		defer unlock()
+	}
 	if expected < -1 {
 		return -1, errors.New("state: invalid expected revision")
 	}
@@ -140,11 +154,17 @@ func (s *Store) stageVersion(subdir, fileID string, doc any) (tmp string, cleanu
 		return "", nil, errors.New("state: invalid file id")
 	}
 	dir := filepath.Join(s.Dir, subdir)
-	if err := statefs.MkdirAll(dir, 0o700); err != nil {
-		return "", nil, err
-	}
 	raw, err := json.MarshalIndent(doc, "", "  ")
 	if err != nil {
+		return "", nil, err
+	}
+	namespace := filepath.Clean(subdir)
+	if namespace == "grants" || runtime.GOOS == "windows" && strings.EqualFold(namespace, "grants") {
+		if err := checkGrantProfileWrite(s.Dir, raw); err != nil {
+			return "", nil, err
+		}
+	}
+	if err := statefs.MkdirAll(dir, 0o700); err != nil {
 		return "", nil, err
 	}
 	f, err := statefs.CreateTemp(dir, ".pending-*")

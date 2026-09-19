@@ -1,0 +1,64 @@
+{
+  "source_dirty": true,
+  "scope": "runtimecheck v5 targeted development components; no host/model",
+  "private_temp": ".tmp/rcv5r1",
+  "results": [
+    {
+      "label": "gofmt",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\gofmt.exe",
+        "-w",
+        "<WORKTREE>\\apps\\agentshield\\internal\\adapterinstall\\runtime_target.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\runtime_check.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\runtime_check_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\filesystem_profile.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\binding.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\types.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\validate.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\intent\\matcher.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\grant\\runtime_check_draft.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\grant\\runtime_check_draft_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\intent_http.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\file_observation_profile.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_fixture_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_fixture_other_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\server\\runtime_check_authority_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\authority.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\authority_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\contracts_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\execute.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\fixture_other_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\fixture_windows_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\manager.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\manager_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\native.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\records.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\recovery_test.go",
+        "<WORKTREE>\\apps\\agentshield\\internal\\runtimecheck\\types.go"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 0.279918
+    },
+    {
+      "label": "compile",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "./internal/intent",
+        "./internal/grant",
+        "./internal/runtimecheck",
+        "./internal/server",
+        "./internal/adapterinstall"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "exit_code": 0,
+      "seconds": 37.03083
+    }
+  ]
+}

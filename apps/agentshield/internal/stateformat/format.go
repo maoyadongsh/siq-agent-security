@@ -1,4 +1,4 @@
-// Package stateformat provides dependency-free state compatibility checks.
+// Package stateformat provides state compatibility checks independent of business stores.
 package stateformat
 
 import (
@@ -18,8 +18,8 @@ import (
 
 const MarkerName = "state-format.json"
 const Budget = 4096
-const ReaderVersion = 2
-const WriterVersion = 2
+const ReaderVersion = 3
+const WriterVersion = 3
 const PlanName = "logs/migration-plan.json"
 const MigrationDir = "state-migration-v2"
 
@@ -255,6 +255,10 @@ func ReadMarker(dir string) (Marker, error) {
 	return Decode(b)
 }
 func ValidateBinding(dir string, m Marker) error {
+	return validateBindingRead(dir, m, ReadRegular)
+}
+
+func validateBindingRead(dir string, m Marker, read func(string, int64) ([]byte, error)) error {
 	if m.Schema != "state-format/v2" {
 		return nil
 	}
@@ -265,7 +269,7 @@ func ValidateBinding(dir string, m Marker) error {
 	if id != m.DirectoryID {
 		return errors.Join(ErrCorrupt, ErrBinding)
 	}
-	raw, e := ReadRegular(filepath.Join(dir, "local-instance.json"), 65536)
+	raw, e := read(filepath.Join(dir, "local-instance.json"), 65536)
 	if e != nil {
 		return ErrCorrupt
 	}
@@ -292,6 +296,11 @@ func Check(dir string, write, ignoreMigration bool) error {
 	}
 	m, e := ReadMarker(dir)
 	if errors.Is(e, os.ErrNotExist) {
+		if !ignoreMigration {
+			if e := checkWindowsProfile(dir, Marker{}); e != nil {
+				return Fail(e)
+			}
+		}
 		return nil
 	}
 	if e != nil {
@@ -301,19 +310,43 @@ func Check(dir string, write, ignoreMigration bool) error {
 		if m.FormatVersion != 1 {
 			return Fail(ErrFuture)
 		}
+		if !ignoreMigration {
+			if e := checkWindowsProfile(dir, m); e != nil {
+				return Fail(e)
+			}
+		}
 		return nil
 	}
 	if m.MinReader > ReaderVersion || (write && m.MinWriter > WriterVersion) {
 		return Fail(ErrFuture)
 	}
-	if e := ValidateBinding(dir, m); e != nil {
+	if !ignoreMigration {
+		if e := checkWindowsProfile(dir, m); e != nil {
+			return Fail(e)
+		}
+	} else if e := ValidateBinding(dir, m); e != nil {
 		return Fail(e)
 	}
 	return nil
 }
 func checkMigration(dir string) error {
+	return checkMigrationCompletion(dir, false)
+}
+
+// CheckCompletedMigration verifies an active legacy migration's completion
+// record. Only the explicit migration recovery path may use this check, while
+// holding its Writers and separately validating state version compatibility.
+// It does not permit ordinary access while the active barrier remains.
+func CheckCompletedMigration(dir string) error {
+	return checkMigrationCompletion(dir, true)
+}
+
+func checkMigrationCompletion(dir string, recovery bool) error {
 	plan, e := ReadRegular(filepath.Join(dir, PlanName), 8<<20)
 	if errors.Is(e, os.ErrNotExist) {
+		if recovery {
+			return ErrMigration
+		}
 		return nil
 	}
 	if e != nil {
@@ -322,7 +355,18 @@ func checkMigration(dir string) error {
 	var header struct {
 		Schema string `json:"schema"`
 	}
-	if json.Unmarshal(plan, &header) != nil || header.Schema != "state-migration-plan/v1" {
+	if json.Unmarshal(plan, &header) != nil {
+		return ErrCorrupt
+	}
+	if header.Schema == WindowsProfilePlanSchema {
+		if _, err := DecodeWindowsProfilePlan(plan); err != nil {
+			return errors.Join(ErrCorrupt, ErrWindowsProfileMigration)
+		}
+		// Even a completed journal needs the explicit activation entry point to
+		// remove its exact active barrier. Ordinary clients never finish it.
+		return errors.Join(ErrMigration, ErrWindowsProfileMigration)
+	}
+	if header.Schema != "state-migration-plan/v1" {
 		return ErrCorrupt
 	}
 	done, e := ReadRegular(filepath.Join(dir, MigrationDir, "done.json"), Budget)
@@ -340,6 +384,9 @@ func checkMigration(dir string) error {
 	marker, e := ReadRegular(filepath.Join(dir, MarkerName), Budget)
 	if e != nil || d.Marker != Hash(marker) {
 		return ErrCorrupt
+	}
+	if !recovery {
+		return ErrMigration
 	}
 	return nil
 }
@@ -359,7 +406,7 @@ func RequirePath(path string, write bool) error {
 		return Fail(ErrCorrupt)
 	}
 	for {
-		for _, n := range []string{MarkerName, PlanName} {
+		for _, n := range []string{MarkerName, PlanName, WindowsProfileDir + "/plan.json"} {
 			_, e := os.Lstat(filepath.Join(p, filepath.FromSlash(n)))
 			if e == nil {
 				if err := Check(p, write, false); err != nil {
@@ -382,6 +429,9 @@ func RecoveryMessage() string {
 // RecoveryMessageFor selects the operator hint for a compatibility failure.
 // A binding mismatch is a path spelling problem, not marker corruption.
 func RecoveryMessageFor(err error) string {
+	if errors.Is(err, ErrWindowsProfileMigration) {
+		return "Windows 资源解释启用未完成或记录损坏。请保留状态目录；中断启用可用原兼容程序执行 state-enable-windows-resources --confirm 恢复。记录损坏时保留现场核查，不删除标记或回放旧授权。"
+	}
 	if errors.Is(err, ErrBinding) {
 		return "状态目录绑定与当前路径拼写不一致（大小写、Unicode 规范化、卷别名或目录已移动）。请使用初始化时的规范路径重新指定状态目录；不要复制、改名或重新初始化该目录。"
 	}

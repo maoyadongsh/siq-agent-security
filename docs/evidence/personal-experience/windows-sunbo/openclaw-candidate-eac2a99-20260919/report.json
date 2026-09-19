@@ -1,0 +1,110 @@
+{
+  "schema_version": "windows-openclaw-minimum/v1",
+  "passed": true,
+  "candidate": "eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8",
+  "binary_sha256": "112f30fc30c10ec4516bf5244736a9f10477fbeac524badde83a667b335ac31a",
+  "host": "OpenClawGateway WSL / OpenClaw 2026.9.4 public agent --local",
+  "checks": [
+    "formal_install",
+    "native_allowed_read",
+    "native_denied_write_no_effect",
+    "service_offline_denied_read",
+    "revoked_identity_denied_read",
+    "uninstalled",
+    "receipt_chain_verified"
+  ],
+  "receipts": [
+    {
+      "seq": 0,
+      "record_type": "decision",
+      "tool_call_id": "writedenied",
+      "action": "deny",
+      "reason_code": "grant_scope_violation"
+    },
+    {
+      "seq": 1,
+      "record_type": "decision",
+      "tool_call_id": "allowedfirst",
+      "action": "allow",
+      "reason_code": "allow"
+    },
+    {
+      "seq": 2,
+      "record_type": "observation",
+      "tool_call_id": "allowedfirst",
+      "action": "allow",
+      "reason_code": "observation_accepted"
+    },
+    {
+      "seq": 3,
+      "record_type": null,
+      "tool_call_id": null,
+      "action": "deny",
+      "reason_code": null
+    }
+  ],
+  "model_requests": [
+    {
+      "tool_results": 0,
+      "stream": true
+    },
+    {
+      "tool_results": 0,
+      "stream": true
+    },
+    {
+      "tool_results": 1,
+      "stream": true
+    },
+    {
+      "tool_results": 2,
+      "stream": true
+    },
+    {
+      "tool_results": 2,
+      "stream": true
+    },
+    {
+      "tool_results": 3,
+      "stream": true
+    },
+    {
+      "tool_results": 3,
+      "stream": true
+    },
+    {
+      "tool_results": 4,
+      "stream": true
+    }
+  ],
+  "limitations": [
+    "synthetic local model",
+    "not Windows-native Agent",
+    "no approval-resume claim"
+  ],
+  "independent_verification": {
+    "passed": true,
+    "persisted_receipts": 4,
+    "allowed_read_observed": true,
+    "denied_write_absent": true,
+    "sentinel_unchanged": true,
+    "binary_hash_matches": true,
+    "managed_config_and_entry_removed": true,
+    "owned_processes_remaining": 0,
+    "pending_denials": [
+      {
+        "outcome": "deny",
+        "reason": "decision service unavailable (instance session could not be verified)"
+      },
+      {
+        "outcome": "deny",
+        "reason": "decision service unavailable (instance session could not be verified)"
+      }
+    ],
+    "config_byte_for_byte_restore_claimed": false
+  },
+  "elapsed_seconds": 66.6,
+  "source_dirty": false,
+  "candidate_sha": "eac2a99089e8d17a752bd6159ce15dcdf9b9c2b8",
+  "fixture_manifest_sha256": "153c53470ba2cf71a7a48f8c4e37e4e43696bdde52e32dbd1187ed48cc634baa"
+}

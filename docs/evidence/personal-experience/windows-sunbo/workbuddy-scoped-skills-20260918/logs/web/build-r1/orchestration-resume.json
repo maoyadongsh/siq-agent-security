@@ -1,0 +1,6 @@
+{
+  "reason": "Enterprise build completed and logs were saved. Printing its UTF-8 checkmark to the GBK parent console raised UnicodeEncodeError before the local command started. Local build is resumed only once; enterprise is not repeated.",
+  "original_parent_exit_code": 1,
+  "enterprise_exit_code": 0,
+  "local_started_before_resume": false
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": "windows-runtime-discovery-development-evidence/v1",
+  "date": "2026-09-18",
+  "evidence_kind": "targeted development components and generated contract fixtures",
+  "all_checks_source_dirty": true,
+  "implementation_commit_references": {
+    "contracts": "3d19833d5119a4edaf44007327da3ec659a56605",
+    "inventory": "001b64408023c8153163ff7df79f38ff2a000a07",
+    "runtimecheck_v5": "7a9c8d89678263e82e5c56fb8926cb3891d633cf"
+  },
+  "commit_claim": "Full references supplied by integration owner after checks and independent implementation review; no claim these checks ran on those clean commits.",
+  "source_boundaries": {
+    "discovery": "72140795963244d293232c905a34ef00312b8253 source copy plus one discovery test patch; 1337-file manifest and 13 relevant production comparisons captured before recovery",
+    "inventory": "evolving integration source; r1/r2 before Evidence contract fix, r4 after minimal manifest fix; archive-time digests are not pre-run identities",
+    "runtimecheck_v5": "r1 compile only; r2 five-package components; source-sha256-after-checks.json explicitly captured after checks"
+  },
+  "runtimecheck_v5": {
+    "r1_compile_exit_code": 0,
+    "r1_test_cases": 0,
+    "r2_unique_go_top_level_passed": 29,
+    "r2_go_by_package": {
+      "adapterinstall": 1,
+      "grant": 1,
+      "intent": 13,
+      "runtimecheck": 11,
+      "server": 3
+    },
+    "schema_cases_passed": 1,
+    "ruff_exit_code": 0,
+    "vet_exit_code": 0
+  },
+  "inventory_discovery": {
+    "inventory_unique_go_cases": 2,
+    "inventory_final_per_os": {
+      "windows": "2 cases, count=2, pass",
+      "wsl_linux": "same 2 cases, count=2, pass"
+    },
+    "discovery_unique_go_cases": 1,
+    "discovery_final_per_os": {
+      "windows": "1 case, count=2, pass",
+      "wsl_linux": "same case, count=2, pass"
+    },
+    "schema_cases_passed": 2,
+    "ruff_exit_code": 0,
+    "counting_note": "Two HTTP fixtures live inside one discovery Go case. Generation, retries, repetitions and OS runs do not increase unique case totals; no aggregate added to v5."
+  },
+  "preserved_failures": [
+    {
+      "run": "inventory/discovery r1 Linux copy",
+      "exit_code": 1,
+      "reason": "/mnt/c absent in existing distribution with automount/interop disabled; no test executed at that stage"
+    },
+    {
+      "run": "inventory/discovery r2 Ruff",
+      "exit_code": 1,
+      "reason": "I001/E731 in then-new v5 Schema test; owner repaired and later checks passed"
+    },
+    {
+      "run": "inventory/discovery r3 Schema",
+      "exit_code": 1,
+      "reason": "1 pass, 1 fail; actual WorkBuddy Evidence source_type directory_manifest violated existing Evidence enum"
+    }
+  ],
+  "repair": "Use existing legal Evidence source_type manifest; keep workbuddy_profile Candidate; no contract enumeration/identity-algorithm/formal-signature relaxation.",
+  "ledger_303": {
+    "changed": false,
+    "new_passes_claimed": 0
+  },
+  "native_host_execution": false,
+  "model_calls": false,
+  "not_covered": [
+    "real three-host execution journeys",
+    "native WorkBuddy desktop",
+    "final clean-candidate full regression",
+    "formal release signing",
+    "other-device acceptance",
+    "maintenance merge/publication"
+  ],
+  "raw_log_policy": "Raw local files untouched. Separate raw/public hashes; public UTF-8/LF with private-path/SID/credential placeholders; empty streams omitted with their digests; no binaries or raw fixture backups included."
+}

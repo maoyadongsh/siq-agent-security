@@ -1,0 +1,252 @@
+{
+  "document_kind": "windows-entry-flows-development-verification/v1",
+  "implementation_commit": "4449c94eb4707c8b32984635ac84209aad3b4ec8",
+  "tests_ran_on_dirty_tree": true,
+  "r1_base_sha": "edbf5d1e5a52a92f126f58302a59fd4dc27f60d2",
+  "r4_base_sha": "6d3cd12a691b914b86a0c2b118aa70fccea17393",
+  "source_identity_limit": "Committed source digests were recorded after checks, not captured as a clean candidate before execution. This is development evidence, not final native acceptance.",
+  "checks": {
+    "resource_input_r1": "pass",
+    "notification_r4": {
+      "passed_top_level": 26,
+      "skipped": [
+        "TestDefaultCommandDarwinOsascript: osascript unavailable"
+      ]
+    },
+    "client_install_and_wiring_r4": {
+      "passed_top_level": 16,
+      "skipped": [
+        "TestDesktopNotifierDarwinDefaultResolves: darwin-only"
+      ]
+    },
+    "targeted_vet": "pass",
+    "gofmt_l_module": {
+      "exit_code": 0,
+      "output_empty": true,
+      "evidence_kind": "root tool completion; no raw log"
+    },
+    "builds": [
+      "windows/amd64",
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64"
+    ]
+  },
+  "preserved_failures": [
+    "r1: existing task fixture exceeded canonical task path length under long TEMP; nine subcases failed. No assertions or product limits were removed.",
+    "r2: preflight only, Windows PowerShell security module could not autoload under inherited PowerShell 7 PSModulePath; no product checks ran.",
+    "r3: preflight only, case-sensitive environment dictionary lacked SystemRoot key; no product checks ran."
+  ],
+  "r4_fixture": "New short directory with a protected current-user/SYSTEM/Administrators DACL at creation; no existing ACL changed. Windows PowerShell used its own system module path in that child only.",
+  "native_host_or_desktop_acceptance": false,
+  "acceptance_ledger_changes": 0,
+  "remaining": [
+    "Actual Windows notification display/click/denied-desktop behavior",
+    "Trusted-release native first/repeated client install",
+    "Final integrated host journeys and regression"
+  ],
+  "committed_source_after_checks": [
+    {
+      "path": "apps/agentshield/AGENTS.md",
+      "git_blob_sha256": "cc3d05d283daaffee887ad2f8117d656e055b4ac1179cb1fc1a09ad414751b12"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/client_install.go",
+      "git_blob_sha256": "9c70319efbaa54060c0c035d7e05d61f5fdbe5bb025c12f449e699b662da2500"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/client_install_bootstrap_windows_test.go",
+      "git_blob_sha256": "0b62033d06014c57f48e96ce45ff2c36fea7b2aa5323a0c3f77059929653ecc3"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/desktop_notify.go",
+      "git_blob_sha256": "eacb5ea2fc4fe5935e48702a2b3a87bb61816052573e7e81d66ea0e7e158ca6a"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/resources.go",
+      "git_blob_sha256": "0d5e688f7fd3d2ddcf45777a4b7775ea99060547e5b1d3d197725fb35c44ba89"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/resources_input_windows_test.go",
+      "git_blob_sha256": "211a5c6275f11aa494f55e2185cc44dbd7658953fd690056bc2ac1ababc555c0"
+    },
+    {
+      "path": "apps/agentshield/internal/notify/desktop.go",
+      "git_blob_sha256": "f8c5d15c79880db4e8f990b2e1e5eb2790f04d07960bf323baedec26697ef4ad"
+    },
+    {
+      "path": "apps/agentshield/internal/notify/desktop_other.go",
+      "git_blob_sha256": "d076e7cd1cb6ea577d739ee3327782cbce96110874fdd62d3637ba1c6a391cb8"
+    },
+    {
+      "path": "apps/agentshield/internal/notify/desktop_test.go",
+      "git_blob_sha256": "29ad86944214c25d96b73228be0dc28690a23a477614abc92ddc3eda5ca0508d"
+    },
+    {
+      "path": "apps/agentshield/internal/notify/desktop_windows.go",
+      "git_blob_sha256": "a9d9c01186225ac477ffe0fbf7fb524c08c77dabfa160a56a37eaf864203eb68"
+    },
+    {
+      "path": "apps/agentshield/internal/notify/desktop_windows_test.go",
+      "git_blob_sha256": "2abb41e940da3696c48d08551790db2ddabc50c2951a001f4010f44259c51597"
+    },
+    {
+      "path": "apps/agentshield/internal/notify/notify.go",
+      "git_blob_sha256": "7155c652ff11b3b26354c3eb7cb80320b95c234d98cdd302586bf08549a75d35"
+    },
+    {
+      "path": "docs/agentshield-dev-spec-v1.md",
+      "git_blob_sha256": "4d199b3443a58f8eaefa053a5e7cc02cab5953797e80257ed1605b7c5a552c7c"
+    },
+    {
+      "path": "docs/windows-client-install-bootstrap-v1.md",
+      "git_blob_sha256": "dc2d872dd25952f542bbf9a5d3f94041b9c1d7e2eedd9c423834b68c4e99406f"
+    },
+    {
+      "path": "docs/windows-desktop-notifications-v1.md",
+      "git_blob_sha256": "5edef5801f70408e2a5cf988846f18197a14bbbc137074409c0aac11f2f1301b"
+    }
+  ],
+  "log_normalization": [
+    {
+      "run": "r1",
+      "name": "client-install-and-notification-wiring.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r1-client-install-and-notification-wiring.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r1",
+      "name": "client-install-and-notification-wiring.stdout.log",
+      "source_sha256": "53aecd82f1726b2c63c28eff173317df81e1b1ca63e60b325d6a6041de8b10e4",
+      "redacted_path": "checks/r1-client-install-and-notification-wiring.stdout.log",
+      "redacted_sha256": "a002319c35ffa29dd1a88225ee7819c14f08784ea4fbcfa6cb570085fcdc9d20"
+    },
+    {
+      "run": "r1",
+      "name": "notify.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r1-notify.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r1",
+      "name": "notify.stdout.log",
+      "source_sha256": "f3ee08d743b5f6aed954ab26f2d1ff6173bc4365050050c49ef2d49558d5817c",
+      "redacted_path": "checks/r1-notify.stdout.log",
+      "redacted_sha256": "3d8c2415852e9c68e57dba6a1b28be5eea66e331b26ce02b913bc54d4b65dcf5"
+    },
+    {
+      "run": "r1",
+      "name": "windows-resource-input.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r1-windows-resource-input.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r1",
+      "name": "windows-resource-input.stdout.log",
+      "source_sha256": "637b21277c3c4215bbfd7ee683e85088e339397f127131210d4e26b8b09b08fc",
+      "redacted_path": "checks/r1-windows-resource-input.stdout.log",
+      "redacted_sha256": "94e04922886eab145b9ee38bed9e569ce2e51e89f41aaeadc656ba3216d6ed53"
+    },
+    {
+      "run": "r4",
+      "name": "client-install-and-notification-wiring.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-client-install-and-notification-wiring.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "client-install-and-notification-wiring.stdout.log",
+      "source_sha256": "7f57f18a72d4bfd47642af1cd34a5258ead39a8cc7b7f4f5d410c23b2dde556c",
+      "redacted_path": "checks/r4-client-install-and-notification-wiring.stdout.log",
+      "redacted_sha256": "12e019de6243f7b4e3beb12893559d33459b5b712f8c8a70f79f7336dd48f752"
+    },
+    {
+      "run": "r4",
+      "name": "darwin-arm64-build.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-darwin-arm64-build.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "darwin-arm64-build.stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-darwin-arm64-build.stdout.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "linux-amd64-build.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-linux-amd64-build.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "linux-amd64-build.stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-linux-amd64-build.stdout.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "linux-arm64-build.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-linux-arm64-build.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "linux-arm64-build.stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-linux-arm64-build.stdout.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "notify.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-notify.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "notify.stdout.log",
+      "source_sha256": "c27640365f7fa4a7281cf0e55f66b11bdf52c3e211adccccfa209eb07481e5fc",
+      "redacted_path": "checks/r4-notify.stdout.log",
+      "redacted_sha256": "070334331c3a34e7693fec0662ea064b1fb9dd26d639c9bc941f7d93ec687bd4"
+    },
+    {
+      "run": "r4",
+      "name": "vet.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-vet.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "vet.stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-vet.stdout.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "windows-amd64-build.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-windows-amd64-build.stderr.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "run": "r4",
+      "name": "windows-amd64-build.stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "redacted_path": "checks/r4-windows-amd64-build.stdout.log",
+      "redacted_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

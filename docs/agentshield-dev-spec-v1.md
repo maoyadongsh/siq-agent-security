@@ -5,6 +5,8 @@
 - 上游文档：ADR-011（决策）→ `agentshield-design-v1.md`（方案）→ **本文（规格）** → `packages/contracts/`（合同事实源）
 - 相关：`research/agentshield-market-survey-2026-09.md`、`detection-baseline.md`、`compatibility.md`、ADR-003/004/005
 - W7 增量计划（本地台账与企业能力对齐，待按期回写本文）：[`agentshield-local-ledger-dev-plan-v1.md`](./agentshield-local-ledger-dev-plan-v1.md)
+- OpenClaw 原生会话轮换：[`openclaw-native-session-spec-v1.md`](./openclaw-native-session-spec-v1.md)；运行身份必须同时覆盖可信 hook 的路由键与 UUID，禁止旧 raw key 授权回退。
+- Windows 新版授权执行链：[`windows-authority-runtime-v1.md`](./windows-authority-runtime-v1.md)、[`windows-file-observation-spec-v2.md`](./windows-file-observation-spec-v2.md) 与 [`windows-authority-ui-v1.md`](./windows-authority-ui-v1.md)；在显式状态升级后绑定经批准的路径事实，最终裁决和审批恢复复验同一解释，保留旧记录签名字节。
 
 > 文档分工：设计方案回答「做什么、为什么」；本文回答「怎么做、边界在哪、怎么验证」。合同细节以 schema 为准，本文只解释语义与算法，不复制字段表。W7 新接口与状态文件必须先回写本文再实现。
 
@@ -709,7 +711,11 @@ Linux `client-install --manifest FILE --binary FILE --confirm-install [--port N]
 
 首次安装的身份顺序：可信清单及原始二进制验证通过后、Stage 向 `client-releases/` 发布任何文件前，必须在所选状态目录建立或读取持久签名身份。否则暂存文件会使首次 `setup` 的缺失密钥保护将新安装误判为丢失历史身份。无效清单不得创建身份；已有历史但缺少原签名密钥仍拒绝并要求恢复。安装后台服务不接受仅由调用者临时环境变量提供的签名 seed，因为 systemd 单元不会继承该环境，重启后会失去同一身份。身份准备失败时不暂存、不启动服务。
 
-setup 完成后父进程重新核对目录健康、发行版本、签名 unit 指向暂存程序以及 manager 活跃进程，再报告安装成功并输出稳定程序路径和管理地址。可选打开页面发生在上述验证之后。不同已有 unit 不被安装入口覆盖，升级使用 service-upgrade；重复同版本安装可复用，原下载文件移动不会影响后台程序路径。安装入口不修改 PATH、不启用登录自启、不授予智能体权限，不把交叉构建称为跨系统安装验收。无确认/非法参数/非 Linux 在落盘和执行前拒绝。
+setup 完成后父进程重新核对目录健康、发行版本、签名 unit 指向暂存程序以及 manager 活跃进程，再报告安装成功并输出稳定程序路径和管理地址。可选打开页面发生在上述验证之后。不同已有 unit 不被安装入口覆盖，升级使用 service-upgrade；重复同版本安装可复用，原下载文件移动不会影响后台程序路径。安装入口不修改 PATH、不启用登录自启、不授予智能体权限，不把交叉构建称为跨系统安装验收。无确认/非法参数/不支持的 OS 在落盘和执行前拒绝；Windows 扩展见下文。
+
+Windows 安装增量（2026-09-18，对应 §3.11.20）：`client-install --manifest FILE --binary FILE --confirm-install [--port N] [--open-ui]` 复用同一内置发行根、当前状态兼容预检和二次暂存验签，目标固定为 `client-releases/<sha256>/siq-agent-security.exe`。不接受额外信任根或绕过验签参数。Windows 的 `--runtime` 在任何落盘或启动前拒绝；仅明确安装确认后从验证过的稳定路径执行已有 Windows `setup --confirm-setup`。子进程明确固定状态目录，Windows 环境变量名按不区分大小写去除旧覆盖值。
+
+Windows 父进程须以暂存程序路径、当前状态实例和当前用户 SID 重新构造预期任务，核验本地签名任务记录、真实 Task Scheduler 完整定义、单个运行实例，并在读取运行态前后核对归属；再验证同状态实例健康及发行版本，全部通过才报告安装完成。下载位置或当前安装器路径不能替代暂存程序路径。失败保留自有暂存程序和可诊断状态，不自动停止服务、覆盖已有任务或宣称取消全部后台影响。安装不修改 PATH、不提权、不启用登录自启。不同版本切换仍须走独立升级流程；组件测试不替代正式签名制品的原生安装旅程。
 
 ### 3.11.21 明确启用和关闭用户登录自启（UX-003）
 
@@ -1259,6 +1265,7 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 **卸载**：`siq-agent-security adapter uninstall openclaw` 按归属移除本插件注册及自建文件，保留无关配置；不整文件覆盖用户改动。卸载在移除本产品插件文件后，若 `plugins/<product>` 为真实空目录（非符号链接、无未知条目）则删除该目录；含未知文件时保留目录。OpenClaw 外科卸载后，若接入前无 `plugins` 且剥离本产品登记后仅剩空 allow/entries/load.paths 容器，删除 `plugins` 键，避免把空登记写回用户配置。
 - **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。重装与首备比较按 JSON 语义，不把缩进或键序差异当成“原文已改需人工审阅”。
+- Windows WorkBuddy 正式卸载后重装：仅当同一状态目录的最新操作为已提交卸载、加密计划认证及摘要验证通过、实例配置根匹配，且当前首备与卸载计划固定的首备字节一致时，允许保留首次备份并在当前配置上重新添加产品钩子。宿主在卸载后新增的字段必须保留；不继承旧运行身份或已删除文件的归属。没有该证明、备份漂移、其他配置根、损坏或未完成的操作仍拒绝；预览后的配置及备份变化继续由现有输入摘要检查拒绝。
 - **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy/WorkBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。剩余文档若与首备语义相同，写回快照原文。首备仅供人工恢复参考。
 - OpenClaw 重装记录保留先前由本产品创建的插件目录/文件及本产品配置的归属；损坏的既有安装记录拒绝继续。卸载同时移除本插件运行时注册，不把“安装资产存在”当作原生运行时已验收。
 
@@ -1871,6 +1878,8 @@ This changes resource selection, not taint policy or authority requirements.
 
 带 `instance_id` 的接入预览返回 `local-adapter-plan/v2`，应用与恢复绑定同一实例，按实例隔离操作记录；旧默认预览继续 v1。原生 CLI 只处理配置副本，由已有事务应用用户确认的输出。原生配置解析证据不能替代实际工具调用自检。 Windows 原生 Hermes CLI 冷启动采用每条命令 30 秒上限（其他系统保持 8 秒），以容纳已实测超过 8 秒的解释器启动；仍仅处理隔离配置副本、无模型调用，输出上限与失败拒绝不变，超时不得把配置登记报告为已完成。
 
+接入管理 HTTP 的 `preview/install/uninstall/recover` 单请求写期限为 175 秒，Web 仅这四个精确路径等待 180 秒；全局 HTTP 15 秒、宿主钩子及运行自检 120 秒预算不变。预览工作有 165 秒总预算，覆盖卸载最多五条各 30 秒的隔离元数据命令并留收尾时间；请求取消和总预算向每条原生命令传递，保留单命令原上限，部分输出不能生成计划。预览结束即移除进程内 context 引用，不将已取消请求带入随后独立确认的 Apply，也不序列化 context。管理操作锁竞争立即返回 429 `adapter_busy`，不排队耗尽响应预算。设置写期限失败或开始前请求已取消时拒绝启动工作；沿既有管理接口保留 `http.ErrNotSupported` 的 ResponseWriter 兼容例外，真实服务使用支持该能力的标准 net/http writer，不能将不支持期限的内存 writer 当作网络超时验证。响应期限不是自动回滚依据，已进入撤销/应用或恢复事务后仍同步按既有提交、审计与恢复规则收尾，不创建后台写事务、不把断连当作无副作用。计划绑定、过期、摘要复验和重复应用规则保持。
+
 接入预览还在进程内固定实例配置根的文件系统身份：准备计划前从打开的目录句柄读取身份，准备完成和确认应用前用 `os.SameFile` 复核。配置根缺失、变为符号链接或被另一目录替换（包括移走后在原路径重建）时返回 `ErrPlanChanged`，不得写入适配器配置。路径派生的 instance_id 不能代替这项校验；原路径重建后必须重新预览。身份快照不进入公开合同或加密恢复载荷，进程重启后不能恢复待确认计划；既有已开始事务的恢复仍按文件前后像和归属校验执行。此校验不宣称抵御同 UID 在校验后并发替换文件系统对象。
 
 卸载时对保留用户字段的配置执行局部恢复，也须恢复首次接入记录的原始权限位；Windows 权限位不作 POSIX 等价声明。恢复仅作用于归属文件，不影响其他实例或用户自有文件。
@@ -1878,6 +1887,8 @@ This changes resource selection, not taint policy or authority requirements.
 ### 个人运行自检与授权期限增量（ADR-024）
 
 运行自检采用真实宿主会话，不以工具 registry 的直接调用替代钩子链路；控制器与临时授权边界见 ADR-024。公开 Hermes CLI 先以隔离实例验证，尚未接入用户实例前不得写入成功状态。
+
+Windows 原生自检的路径与临时权限增量见 [Windows Hermes 运行自检规格](windows-runtime-check-v1.md)：仅已确认的活动自检可签发 `intent/v5`，使用 `local-runtime-check` issuer、Windows 文件系统 profile、独立 120 秒只读 Grant/v2 与 Binding/v2；普通发行、绑定与独立文件观察入口拒绝该权限。每次调用和结束前重新核验实际实例、目标快照、当前签名授权和目录身份，结束或恢复只撤销清理。原 POSIX v2 与 managed v4 语义保持；组件检查不替代真实宿主验收。
 
 授权期限的前置实现：管理接口 `POST /v1/grants/{id}/expiry` 接收 `grant-expiry-edit/v1`，仅允许 pending_approval Grant 在精确 revision 下修改期限。duration_seconds 为 60–2592000 的整数，按服务器当前时间计算到期点；null 明确表示不设期限。期限写入已有 signed Grant.expires_at，与审计同事务。变更使既有批准 challenge 失效，不延长已批准或已部署 Grant，不产生 effective。
 
@@ -2116,3 +2127,56 @@ D08 数据库、种子与控制台日志必须在忽略规则命中的 `d08-priv
 ### v6 CI 补充：执行端点绑定
 
 任务执行、加载校验与实例读回要求 ResolveInvocation 成功且来源为显式 CLI/endpoint 对。缓存指纹可包含未配置或错误状态，非空指纹不能替代端点绑定。无配置、PATH、脚本、缺半对或非法 endpoint 均在后端 I/O 前拒绝。
+
+## 2026-09-16 Windows 文件资源解释候选（#39）
+
+按 [Windows 本地盘符资源专项规格](windows-resource-profile-spec-v1.md) 建立明确签名的新 managed 权限解释。旧 Intent v2/v3、Grant、identity 和会话保持 POSIX 原义；不得全局放宽 NormalizeResource。新版 Authority 必须完成可恢复状态升级，经明确的资源确认及批准，再由运行身份产生 Intent 和会话绑定；最终裁决、审批恢复与文件观察沿同一解释复验。实施接线见本文开头的三个专项增量。组件实现不代表 Hermes B 或其他真实宿主旅程已通过。
+
+2026-09-18 接续 Windows 资源事实层：`internal/runtimepath` 按上述专项规格核对本地 NTFS、真实长名称、父组件、目录大小写、硬链接及删除/替换状态，逐次复验并拒绝不确定对象。该层不产生 Authority、不改变旧路径语义，也不单独启用新版 Grant/Intent/identity；批准与最终调用链仍须完整接通。
+
+2026-09-18 真实首次启用顺序按 [初始身份专项增量](windows-profile-identity-bootstrap-v1.md) 修复：显式启用 Windows profile 写历史前建立初始签名身份，既有历史缺钥保护及活跃屏障恢复保持。WorkBuddy Windows 的受管实例、专属凭据和原生 command 会话接线按 [WorkBuddy 受管增量](workbuddy-managed-runtime-spec-v1.md) 执行；旧接入不冒充受管保护，审批恢复与桌面验证缺口仍须独立收口。界面继续遵守 [Windows 权限确认](windows-authority-ui-v1.md)，不能根据浏览器 OS 自动选择权限解释。
+
+2026-09-18 真实 Skill 准入与实例授权的作用域按 [实例权限草稿增量](instance-baseline-draft-v1.md) 分开：管理用户明确确认后，通过独立 instance-drafts 接口从可信准入创建无 SkillRef 的新 pending 实例草稿，不清除、重签或改写原 Skill 授权。Windows 资源解释、批准、部署与身份签发仍为后续独立步骤。
+
+2026-09-18 WorkBuddy 安装中断恢复按 [实例恢复增量](workbuddy-adapter-recovery-v1.md) 绑定当前可信实例与加密计划的原始配置根；在原事务锁内复验，不从明文记录或当前环境重新解释旧根，不恢复被撤销的身份。Windows 状态检查成本按 [只读快照增量](windows-state-check-cost-spec-v1.md) 减少同次重复元数据读取；仍在每次请求验证当前 ACL、状态与迁移屏障，不建立跨请求 Authority 缓存。
+
+2026-09-18 WorkBuddy 审批恢复按 [审批恢复增量](workbuddy-approval-resume-v1.md) 保存首次真实 pre 的有限私有关联，并在后续真实 pre 中在线核对原 hold 与唯一执行预留；批准来自 SIQ 独立管理操作，参数变化、缺失关联、重复调用和不确定结果均不得复用原执行许可。组件验证与实际桌面验收分别记录。
+
+2026-09-18 Windows 默认后台通知按 [通知与待办导航增量](windows-desktop-notifications-v1.md) 接通既有显式开启配置。固定计数提醒、仅本实例 loopback 待办导航、启动冷却和关闭清理均不改变工具裁决或管理授权；API 接受不冒充桌面实测通过。
+
+## Windows 当前用户任务升级增量（2026-09-18）
+
+Windows `service-upgrade/service-rollback` 的签名事务、系统任务替换、恢复、二进制与状态兼容约束见 [专项规格](windows-task-upgrade-spec-v1.md)。实现复用 clientrelease 与既有受签名 Task 生命周期；配置切换不回放历史权限，原生与测试签名证据分别记录。
+
+Windows `client-install` 的首次身份创建和运行中重复安装按 [安装身份顺序](windows-client-install-bootstrap-v1.md) 执行：受信发行检查先于身份建立，已有身份只读复用，仅确切缺钥时进入原 Writer 保护的初始化路径；已有历史缺钥、ACL、迁移和版本屏障不得绕过。
+
+Windows WorkBuddy 的用户级与已登记项目级 Skill 安装按 [目标与安装链增量](windows-workbuddy-skill-install-v1.md) 执行：版本化计划固定安装目标、真实根身份及父链事实，复用既有安装、更新、移除和恢复事务；导入 Grant 的 Windows 资源编辑保留来源与 Skill 绑定，并在管理边界复验固定副本。SEC 继续表示管理员明确绑定的整个受控会话，不把项目目录或安装成功解释为逐调用因果或运行隔离。旧 v1 签名字节与身份域保持不变。
+
+Windows WorkBuddy 实测补充（2026-09-19）：受管钩子 enroll/decide/observe 的单次调用链共用 20 秒 HTTP 总预算，宿主同步 command hook 为 30 秒，给本机 ACL、签名台账及退出留出时间；不按阶段重置预算、不自动重试，超时或响应不确定仍拒绝且不得重放。原 4 秒 HTTP / 5 秒宿主预算在真实桌面正常写入中超时，不能作为可用配置。仅调整 WorkBuddy 受管路径，其他宿主不变。
+
+安装后会话绑定管理接线（2026-09-19）：在既有安装权限面板中选择后端已登记、仍有效且绑定同安装 Grant 的会话，明确确认整个会话归并该 Skill（不含逐调用因果），通过原 SEC issue/revoke 管理合同操作。新增只读 capAdmin `GET /v1/skill-contexts/management?install_id=...`，响应 `local-skill-context-management/v1`，从安装记录派生实例及 Grant，不接受客户端路径、主体、平台或权限摘要。枚举沿用签名 binding/SEC 存储的 4096 项硬上限；结果各最多 64 个会话/历史上下文，超限或损坏拒绝，取消请求停止继续读取。会话选择经当前 runtime identity 与 ResolveBinding 复验；它只供选择，签发时仍完整重验。历史上下文验签并读撤销墓碑，不把历史记录或未撤销直接标为有效权限。读回用于刷新和响应丢失后的确认，不自动重发写请求；撤销绑定最新读回的原签名。UI 不存管理凭据或密钥，不把受控会话绑定声称为宿主加载或项目隔离。
+
+守护进程 SEC 安装读取接线：Server.New 在开始提供 HTTP 服务之前，一次性将既有 SEC store 的安装读取依赖绑定到服务端 OpenWithTargets 安装库。保留同一个 SEC store、签名密钥和引擎查找，不改变判定规则；修复旧 CLI Hermes-only reader 在在线 WorkBuddy/OpenClaw 管理路径上的误用。绑定只能执行一次且要求非空 store，仍通过 RecordByID 完整读取和校验。离线 CLI 支持边界不因此扩大。只读会话查询整体限时按下文授权管理预算执行。Windows 不受支持的长安装目标映射为明确的 invalid request，仍拒绝且不改写路径，不返回误导性的服务不可用。
+
+### Windows Hermes 已安装 Skill 的 HTTP 等待预算（2026-09-19）
+
+真实 Windows Hermes 安装绑定 Skill 调用发现：安装内容逐次复验及签名台账开销使原 5 秒客户端 HTTP 等待先于有效服务端响应结束，导致有 allow 回执但工具实际未执行。Windows Hermes 新安装的 `timeout_s` 与无配置默认值统一为 20 秒/请求；非 Windows Hermes 保持 5 秒。显式配置和调用处更短的超时继续生效，原生原文采集 0.25 秒上限不变。此项只调整已有 HTTP 请求等待，不是整条 hook 的总时限；不增加重试，不更改安装内容校验的服务端 5 秒限额，不缓存 Authority，任何超时仍按原 managed/block 规则拒绝。旧已安装配置不静默改写，须经正常预览、确认接入流程更新。
+
+
+### 运行身份管理响应预算（2026-09-19）
+
+Windows WorkBuddy 安装激活后的身份签发包含私密文件、签名和实例复验，可能超过全局 15 秒 HTTP 写期限；旧行为可能已经签发但客户端只收到断连。仅 capAdmin 运行身份枚举、明确签发及撤销操作使用 65 秒响应写期限，管理界面等待 70 秒，失败或取消不自动重发写请求。开始存储操作前若响应期限无法设置或请求已经取消，拒绝且不写身份/撤销状态。保持状态库原有串行化、权限确认、同实例冲突与审计；不放宽运行时会话登记、工具钩子、判定或服务失联拒绝的预算。响应不确定仍需读回身份列表，不把断连当成未执行，也不保证期限能取消已经开始的同步存储操作。
+
+同轮 WorkBuddy 实机还确认 SEC 会话目录查询具有相同响应断连问题。身份及 SEC 管理读回、明确签发/撤销共同使用 65 秒响应期限，界面等待 70 秒；会话目录的上下文预算改为 60 秒，以容纳 Windows 已撤销身份历史的逐份验签读取。4096/64 项上限、签名/撤销/安装内容复验和显式确认不变；不缓存已验证权限、不扩大工具运行时预算、不根据模型输出自动授权。响应期限不可用或请求已取消时，在 SEC 审计和签名写入之前拒绝。运行时 SEC Validate 与宿主钩子仍使用原有期限及 fail-closed。
+
+
+### WorkBuddy Windows 安装载荷单链接发布（2026-09-19）
+
+真实桌面 Read 已确认：旧 WorkBuddy 安装载荷与操作池保持硬链接，造成已安装 SKILL.md 链接数为 2，Windows runtimepath 因而正确拒绝读取。WorkBuddy 的新安装和更新载荷改用既有排他独立文件发布；保留操作池完整副本，并逐文件复验两侧摘要、大小和可执行位。目录 owner 标记继续与操作池保持原硬链接及签名证明，目标锚点、未知文件保护、更新回滚和卸载归属规则不变。现存安装仍可按原记录检查、撤权与移除，不原地改写文件或旧签名；要获得单链接载荷须经正式重新安装/更新。OpenClaw 的独立发布和 Hermes 的既有发布方式不变。运行时继续拒绝多链接、重解析和不确定对象；不允许用放松 runtimepath 来兼容旧载荷。此为发布实现修复，不增加 Authority 或变更对外 JSON 字段。
+
+
+### WorkBuddy 安装 Skill 运行链响应预算（2026-09-19）
+
+真实 Windows 桌面在安装 Skill 的完整复验中出现有效 allow 回执但客户端未收到可用结果。WorkBuddy 受管单次 hook 的登记、判定及关联记录共用 60 秒预算，宿主同步 hook 为 75 秒；各阶段不得重置预算或自动重试。Windows 服务端会话登记，以及 WorkBuddy 的 decide/observe 响应使用 65 秒写期限；其他平台的判定/观察及全局 15 秒期限不变。设置响应期限失败或请求已取消时，在登记/判定/观察写入前拒绝；不缓存权限，不减少安装、签名、撤销或文件身份复验，不扩大其内部安全验证期限。超时、不完整响应或关联记录不确定继续 fail-closed，不重放工具。旧配置经正式预览和安装更新。审批恢复接口的期限不在此次增量中。
+
+WorkBuddy 登记超时仅输出固定阶段分类：请求前截止（含输入解析等待），或请求中截止；两者仍拒绝、无自动重试。不得输出底层错误、URL、凭据或原始响应。其他错误保持原泛化拒绝。阶段分类不作为已执行或未执行的证明，仍核对回执和副作用。

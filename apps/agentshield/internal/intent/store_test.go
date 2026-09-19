@@ -186,12 +186,18 @@ func TestDirectBindingLookupVerifiesTargetWithoutGlobalScan(t *testing.T) {
 		t.Fatal(err)
 	}
 	var target Binding
-	for _, session := range []string{"target", "unrelated"} {
+	targetSession, err := OpenClawSessionID("target", "11111111-1111-4111-8111-111111111111")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Use one valid identity for both platforms so changing only the platform
+	// still proves isolation after the OpenClaw epoch gate.
+	for _, session := range []string{targetSession, "unrelated"} {
 		b, err := s.Bind(Binding{Platform: "hermes", SessionID: session, AgentID: "a-1", IntentID: c.IntentID})
 		if err != nil {
 			t.Fatal(err)
 		}
-		if session == "target" {
+		if session == targetSession {
 			target = b
 		}
 	}
@@ -199,14 +205,14 @@ func TestDirectBindingLookupVerifiesTargetWithoutGlobalScan(t *testing.T) {
 	if err = os.WriteFile(unrelated, []byte("corrupt"), 0600); err != nil {
 		t.Fatal(err)
 	}
-	resolved, _, err := s.ResolveBinding("hermes", "target", "a-1")
+	resolved, _, err := s.ResolveBinding("hermes", targetSession, "a-1")
 	if err != nil || resolved.IntentID != c.IntentID {
 		t.Fatal(resolved, err)
 	}
 	if _, err = s.ListBindings(); err == nil {
 		t.Fatal("management list missed unrelated corruption")
 	}
-	for _, identity := range [][3]string{{"hermes", "missing", "a-1"}, {"openclaw", "target", "a-1"}, {"hermes", "target", "other"}} {
+	for _, identity := range [][3]string{{"hermes", "missing", "a-1"}, {"openclaw", targetSession, "a-1"}, {"hermes", targetSession, "other"}} {
 		c, b, err := s.ResolveBinding(identity[0], identity[1], identity[2])
 		if err != nil || c != nil || b != nil {
 			t.Fatal("authority crossed identity", c, b, err)
@@ -218,6 +224,6 @@ func TestDirectBindingLookupVerifiesTargetWithoutGlobalScan(t *testing.T) {
 	if err = os.WriteFile(p, raw, 0600); err != nil {
 		t.Fatal(err)
 	}
-	_, _, err = s.ResolveBinding("hermes", "target", "a-1")
+	_, _, err = s.ResolveBinding("hermes", targetSession, "a-1")
 	assertCode(t, err, "intent_signature_invalid")
 }

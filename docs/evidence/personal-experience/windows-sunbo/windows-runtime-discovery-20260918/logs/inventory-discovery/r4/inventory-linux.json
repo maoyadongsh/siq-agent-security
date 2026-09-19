@@ -1,0 +1,198 @@
+{
+  "scope": "isolated Go contract components, not host/model or clean-candidate acceptance",
+  "base_sha": "72140795963244d293232c905a34ef00312b8253",
+  "source_dirty": true,
+  "phase": "inventory-linux",
+  "results": [
+    {
+      "label": "inventory-linux-architecture",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/uname",
+        "-m"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.390056
+    },
+    {
+      "label": "inventory-linux-private-temp",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/mktemp",
+        "-d",
+        "<WSL_TMP>"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.294281
+    },
+    {
+      "label": "inventory-linux-build",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "-c",
+        "./internal/inventory",
+        "-o",
+        "<WORKSPACE>\\.tmp\\windows-goal-20260916\\inventory-discovery-fixtures-r4\\inventory-linux-amd64.test"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {
+        "GOOS": "linux",
+        "GOARCH": "amd64"
+      },
+      "exit_code": 0,
+      "seconds": 8.030863
+    },
+    {
+      "label": "inventory-linux-create-cwd",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/mkdir",
+        "-p",
+        "-m",
+        "700",
+        "--",
+        "<WSL_TMP>/module/internal/inventory",
+        "<WSL_TMP>/module/testdata/contracts"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.417782
+    },
+    {
+      "label": "inventory-linux-transfer",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/tar",
+        "--extract",
+        "--file=-",
+        "--directory=<WSL_TMP>"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "stdin_sha256": "51e9f4ed1a1a7f4e8bf166b213b635f6fc5a3870855c181dd73d9a124fb55d1d",
+      "exit_code": 0,
+      "seconds": 0.40545
+    },
+    {
+      "label": "inventory-linux-verify",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--cd",
+        "<WSL_TMP>/module/internal/inventory",
+        "--exec",
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "HOME=<WSL_TMP>",
+        "TMPDIR=<WSL_TMP>",
+        "<WSL_TMP>/inventory-linux-amd64.test",
+        "-test.v",
+        "-test.run=^(TestSampleIsCurrent|TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence)$",
+        "-test.count=2",
+        "-test.timeout=90s"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.414455
+    },
+    {
+      "label": "inventory-linux-clean-files",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/rm",
+        "--",
+        "<WSL_TMP>/inventory-linux-amd64.test",
+        "<WSL_TMP>/module/testdata/contracts/inventory.sample.json"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.528879
+    },
+    {
+      "label": "inventory-linux-clean-directories",
+      "command": [
+        "wsl.exe",
+        "--distribution",
+        "<WSL_DISTRO>",
+        "--exec",
+        "/usr/bin/rmdir",
+        "--",
+        "<WSL_TMP>/module/internal/inventory",
+        "<WSL_TMP>/module/internal",
+        "<WSL_TMP>/module/testdata/contracts",
+        "<WSL_TMP>/module/testdata",
+        "<WSL_TMP>/module",
+        "<WSL_TMP>"
+      ],
+      "cwd": "<WORKTREE>\\apps\\agentshield",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.511308
+    }
+  ],
+  "private_temp": ".tmp/isc3r4",
+  "protected_dacl_verified": true,
+  "helper_sha256": "aef152e1706c2d89caab077178ae23d3c4bb8235fab703fe71aa27f4061e3711",
+  "wsl_temp": "<WSL_TMP>",
+  "transfer_manifest": [
+    {
+      "path": "inventory-linux-amd64.test",
+      "sha256": "927e7b8e6c94a5846e39c14f4c09be7fc4ebc8cbb9c0d0e51862481836d8b680",
+      "mode": "0o700"
+    },
+    {
+      "path": "module/testdata/contracts/inventory.sample.json",
+      "sha256": "92928985e2c3e828585d739392227454e5cff177ada5f4cb065d419a795ecae7",
+      "mode": "0o600"
+    }
+  ],
+  "inventory_linux_binary_sha256": "927e7b8e6c94a5846e39c14f4c09be7fc4ebc8cbb9c0d0e51862481836d8b680",
+  "samples": [
+    {
+      "name": "inventory.sample.json",
+      "sha256": "92928985e2c3e828585d739392227454e5cff177ada5f4cb065d419a795ecae7"
+    },
+    {
+      "name": "discovery-status.json",
+      "sha256": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf"
+    },
+    {
+      "name": "discovery-preview.json",
+      "sha256": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d"
+    },
+    {
+      "name": "discovery-status-windows.json",
+      "sha256": "b587c7d6f0af0cf54e560e5c15b9dbed7a297096e1e737a0155505f30174d7ac"
+    },
+    {
+      "name": "discovery-preview-windows.json",
+      "sha256": "860608e55587ff311789f9ee58dc7b09a2adab196e0a214518fa871303d2900d"
+    }
+  ],
+  "result": "pass"
+}

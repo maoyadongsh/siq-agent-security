@@ -1,0 +1,203 @@
+{
+  "editorial_correction": {
+    "initial_validation_json_preserved": true,
+    "original_evidence_rerun_or_reread": false,
+    "previous_archive_generator_sha256": "8c2cbadc89f8364f9a822a9c418b09792e4048da9e035b4cc0dd3da07eb47347",
+    "public_manifest_rechecked_after_correction": true,
+    "scope": "Correct r5 diagnosis: blocked/instance session condition omitted normal denied wording; not case sensitivity.",
+    "validation_note": "The 87-input check in validation.json describes initial archive creation; this correction changes only public explanation/provenance and generator text."
+  },
+  "original_private_root_alias": "<ISOLATED_PRIVATE_ROOT>",
+  "original_records": [
+    {
+      "bytes": 339,
+      "role": "private-original-digest-only",
+      "sha256": "c207b5cbf963b21a98c88ad32fbe3091de6dbcb33ee146b8a9ebc05a703bf12e",
+      "source_label": "driver/r4/identity.json"
+    },
+    {
+      "bytes": 1185,
+      "role": "private-original-digest-only",
+      "sha256": "d0d99d4f3efca00b18750695eefeaa1facd182c613f187518ddcaf4eb842f87c",
+      "source_label": "driver/r4/run.command.json"
+    },
+    {
+      "bytes": 366,
+      "role": "private-original-digest-only",
+      "sha256": "041c9020923088720b81c3d33d3f3678a6c717540da5337b811e2d9c832b5315",
+      "source_label": "driver/r4/run.result.json"
+    },
+    {
+      "bytes": 335,
+      "role": "private-original-digest-only",
+      "sha256": "c876c7b848674912226bc7094c993bbeece188509c8fcb24476946119d153df3",
+      "source_label": "driver/r4/run.stdout.log"
+    },
+    {
+      "bytes": 0,
+      "role": "private-original-digest-only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_label": "driver/r4/run.stderr.log"
+    },
+    {
+      "bytes": 7344,
+      "role": "failed-attempt-original-digest-only",
+      "sha256": "6103e6326741bf8d9d6cc44f7bcf1c6e71cb1e633f2c8480d5baec5397c1df05",
+      "source_label": "private-attempt/r4/report.json"
+    },
+    {
+      "bytes": 339,
+      "role": "private-original-digest-only",
+      "sha256": "6cca4a1acfeee6b080cc7e6f0e652131228430961c65fcc1d1629bbbe80908d5",
+      "source_label": "driver/r5/identity.json"
+    },
+    {
+      "bytes": 1185,
+      "role": "private-original-digest-only",
+      "sha256": "96d280ea75a5d3b6e8619f864b8e78c94db0198f26385d90a9f4a3bfb9a1fdf7",
+      "source_label": "driver/r5/run.command.json"
+    },
+    {
+      "bytes": 367,
+      "role": "private-original-digest-only",
+      "sha256": "8903ab76bb06096336068c55b97278b021e2f9e1458edfa6a8fb760c0caff24a",
+      "source_label": "driver/r5/run.result.json"
+    },
+    {
+      "bytes": 335,
+      "role": "private-original-digest-only",
+      "sha256": "0229dbb4bea4da53d7bbd186a979d3d6a091771a0fc9459153d899b99b02a65b",
+      "source_label": "driver/r5/run.stdout.log"
+    },
+    {
+      "bytes": 0,
+      "role": "private-original-digest-only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_label": "driver/r5/run.stderr.log"
+    },
+    {
+      "bytes": 8618,
+      "role": "failed-attempt-original-digest-only",
+      "sha256": "5707db829189e6d7bdf421821ce91d006d1693b2eef3dd672929647b65c96e60",
+      "source_label": "private-attempt/r5/report.json"
+    },
+    {
+      "bytes": 339,
+      "role": "private-original-digest-only",
+      "sha256": "22cf861f661351a595ce23a7d6377a1cb8c86c6cb5d7b08e62bb5ee98fc980d6",
+      "source_label": "driver/r6/identity.json"
+    },
+    {
+      "bytes": 1185,
+      "role": "private-original-digest-only",
+      "sha256": "82bcde185bd04d30c6ed628983b45228abde2ce43ba6eab9e37d2089c456f971",
+      "source_label": "driver/r6/run.command.json"
+    },
+    {
+      "bytes": 367,
+      "role": "private-original-digest-only",
+      "sha256": "7c9997db9852b0916fb8297f1a428731d1a34be2606efc0a0cba3a543c334056",
+      "source_label": "driver/r6/run.result.json"
+    },
+    {
+      "bytes": 255,
+      "role": "private-original-digest-only",
+      "sha256": "4bdc370ef1c6cf5e717d11ad1fc0d41f6031ad76d8774deb2db383ce676f9887",
+      "source_label": "driver/r6/run.stdout.log"
+    },
+    {
+      "bytes": 0,
+      "role": "private-original-digest-only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_label": "driver/r6/run.stderr.log"
+    },
+    {
+      "bytes": 1186,
+      "role": "private-original-digest-only",
+      "sha256": "797c21bf6aa94e9ae45eacea09bee76ffbfdc9e15e0716d6f11714ba787a5931",
+      "source_label": "driver/r6/plan.command.json"
+    },
+    {
+      "bytes": 366,
+      "role": "private-original-digest-only",
+      "sha256": "9ea26920e3c41697c3dcdf3e060415ef0fe720f2ea74ec3484ae68b8148e8b5c",
+      "source_label": "driver/r6/plan.result.json"
+    },
+    {
+      "bytes": 4491,
+      "role": "private-original-digest-only",
+      "sha256": "aaa6371cee6b8dc7adeb73fe823b591612add3516fbda3f8dccc231571c371a7",
+      "source_label": "driver/r6/plan.stdout.log"
+    },
+    {
+      "bytes": 0,
+      "role": "private-original-digest-only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_label": "driver/r6/plan.stderr.log"
+    },
+    {
+      "bytes": 8702,
+      "role": "after-verification-private-input-manifest",
+      "sha256": "c17cfbecc1df4c42e9dfdb8355f3b9d875612e9523340b98bb3244002dbdf2d4",
+      "source_label": "independent/hermes-r6-independent-inputs.json"
+    },
+    {
+      "bytes": 2637,
+      "role": "independent-verification-result",
+      "sha256": "a5909df53fb85999af3919b32c21267f61c5bf02737699d3d13c1d17968e8ee1",
+      "source_label": "independent/hermes-r6-independent-result.json"
+    },
+    {
+      "bytes": 12579,
+      "role": "independent-verifier-source",
+      "sha256": "df922ee7d8659f2d463d2022b2087d7784f4fe18086d393cf58f449b1add20a3",
+      "source_label": "independent/hermes-r6-independent-verify.py"
+    },
+    {
+      "bytes": 0,
+      "role": "verification-attempt-private-log-digest-only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_label": "independent/hermes-r6-independent-verify-r1.stdout.log"
+    },
+    {
+      "bytes": 443,
+      "role": "verification-attempt-private-log-digest-only",
+      "sha256": "b8a618e0666397e61c8f32238c14c9ad5e04449a5a2b82be42ab2bfe5b024e7a",
+      "source_label": "independent/hermes-r6-independent-verify-r1.stderr.log"
+    },
+    {
+      "bytes": 0,
+      "role": "verification-attempt-private-log-digest-only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_label": "independent/hermes-r6-independent-verify-r2.stdout.log"
+    },
+    {
+      "bytes": 1290,
+      "role": "verification-attempt-private-log-digest-only",
+      "sha256": "02a63ad3becfa4188eb9254009d70e4190ac626c6e8cf870424972ea3872a043",
+      "source_label": "independent/hermes-r6-independent-verify-r2.stderr.log"
+    },
+    {
+      "bytes": 2268,
+      "role": "verification-attempt-private-log-digest-only",
+      "sha256": "f5c5e4dc21eccc30f75c10f9274ec764bb20673aa0bb754eb26ac298aecf0924",
+      "source_label": "independent/hermes-r6-independent-verify-r3.stdout.log"
+    },
+    {
+      "bytes": 0,
+      "role": "verification-attempt-private-log-digest-only",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_label": "independent/hermes-r6-independent-verify-r3.stderr.log"
+    },
+    {
+      "bytes": 24708,
+      "role": "local-archive-generator-source",
+      "sha256": "6dbd69a6856bceb5929c281417264573a3be5e2a2a1d07853311fe2e9f2bfc0e",
+      "source_label": "archive-script"
+    }
+  ],
+  "private_inputs_manifest": "private-inputs-sha256.json",
+  "public_hash_manifest": "SHA256SUMS.txt",
+  "public_method": "Explicit evidence-field whitelist; private evidence bodies excluded. Reviewed independent verifier source retained exactly.",
+  "raw_original_hashes_are_not_public_projection_hashes": true
+}

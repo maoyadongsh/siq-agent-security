@@ -1,0 +1,34 @@
+//go:build windows
+
+package state
+
+import (
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+// TestHistoricalMigrationAuditCrash is a local evidence driver. Only the test
+// binary contains this driver; the recovery CLI and production code are unmodified.
+func TestHistoricalMigrationAuditCrash(t *testing.T) {
+	dir := os.Getenv("SIQ_HISTORICAL_CRASH_DIR")
+	point := os.Getenv("SIQ_HISTORICAL_CRASH_POINT")
+	if dir == "" || point == "" {
+		t.Skip("explicit isolated historical audit only")
+	}
+	if !filepath.IsAbs(dir) || !strings.Contains(filepath.ToSlash(dir), "/historical-migration-crash-r1/") {
+		t.Fatal("unexpected test state")
+	}
+	if _, err := os.Stat(filepath.Join(dir, "state-format.json")); !os.IsNotExist(err) {
+		t.Fatal("expected authentic unmarked historical state")
+	}
+	s := &Store{Dir: dir}
+	_, err := s.migrateState("historical-crash-test-driver", func(at string) error {
+		if at == point {
+			os.Exit(73)
+		}
+		return nil
+	})
+	t.Fatal("requested crash boundary not reached", err)
+}

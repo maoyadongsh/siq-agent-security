@@ -1,0 +1,21 @@
+{
+  "base_source_sha": "c945c10990685e422c2a1d2728cc138d92052960",
+  "source_dirty": true,
+  "exit": 1,
+  "seconds": 8.492,
+  "suite": {
+    "counts": {
+      "test_fail": 1,
+      "package_fail": 1
+    },
+    "failed_tests": [
+      "TestPythonHashSkillDirRejectsEscape"
+    ],
+    "passed_tests": [],
+    "skipped_tests": [],
+    "log_sha256": "30918169a14984b29985f3940cf2779c4b11ed064e4a454cf410c3a9f1ee7034"
+  },
+  "observation": "Go rejected the real external directory junction; Python returned a successful hash before the fix.",
+  "fixture": "Windows native NTFS junction in owned temporary directories; not file symlink",
+  "test_added_before_fix": true
+}

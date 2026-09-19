@@ -1,0 +1,29 @@
+{
+  "schema_version": "local-skill-install-targets/v1",
+  "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "targets": [
+    {
+      "target_id": "sit-123326bcffdbbca156af2e10a90af05a03f28abefc4a908dea9ed79a7465feff",
+      "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "platform": "workbuddy",
+      "scope": "user",
+      "root_display": "WorkBuddy user",
+      "target_display": "WorkBuddy user/skills",
+      "filesystem_profile": "windows-local-drive/v1",
+      "available": true,
+      "error_code": null
+    },
+    {
+      "target_id": "sit-112b9c11595f39953c2f17b24eaae94cb9315d331382b441b411d78c6a4d1a39",
+      "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "platform": "workbuddy",
+      "scope": "project",
+      "root_display": "Registered project",
+      "target_display": "Registered project/.codebuddy/skills",
+      "filesystem_profile": "windows-local-drive/v1",
+      "available": true,
+      "error_code": null
+    }
+  ],
+  "platform_changes": false
+}

@@ -1,0 +1,86 @@
+{
+  "source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "facts-and-lexical",
+      "exit": 0,
+      "seconds": 6.687
+    },
+    {
+      "name": "intent-compatibility",
+      "exit": 0,
+      "seconds": 9.07
+    },
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 0.809,
+      "output_empty": true
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 41.552
+    },
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 17.313
+    },
+    {
+      "name": "native-build-info",
+      "exit": 0,
+      "seconds": 0.708
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 14.187
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 13.084
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 14.54
+    },
+    {
+      "name": "schema",
+      "exit": 0,
+      "seconds": 13.973
+    }
+  ],
+  "binary_sha256": "1a361858570c8573b70c1152508e04aa70de8f7bcbe2f6ca653ae85c4e741c38",
+  "finished": true,
+  "artifacts": [
+    {
+      "name": "agent.exe",
+      "sha256": "1a361858570c8573b70c1152508e04aa70de8f7bcbe2f6ca653ae85c4e741c38",
+      "embedded_source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+      "vcs_modified": false
+    },
+    {
+      "name": "agent-linux-amd64",
+      "sha256": "438e656330e8dc8b5721a8cfb2f457731b4c68dc3d0acfa315636c07baeb99a1",
+      "embedded_source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+      "vcs_modified": false
+    },
+    {
+      "name": "agent-linux-arm64",
+      "sha256": "fa00a8acf61a1d3c536b89db3139f2f68df7aabf0492b5b79b96136dc181361e",
+      "embedded_source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+      "vcs_modified": false
+    },
+    {
+      "name": "agent-darwin-arm64",
+      "sha256": "a25bc989e67ce759b5970251378fb5d913aba5d701afd0e3268adad1c4e0f7ce",
+      "embedded_source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+      "vcs_modified": false
+    }
+  ],
+  "scope_note": "Main builds preserve legacy production behavior; runtimepath is not yet imported by the production authorization chain. Separate cross-package test compilation verifies the new implementation."
+}

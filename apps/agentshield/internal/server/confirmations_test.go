@@ -34,7 +34,7 @@ func confirmationHTTPFixture(t *testing.T) (*Server, map[string]any, string) {
 	if code != 200 {
 		t.Fatal(a)
 	}
-	code, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "agent_id": "inbox-agent", "session_id": "inbox-session", "tool": "exec", "tool_call_id": "call-fixture", "params": map[string]any{"command": "printf fixture"}})
+	code, d := call(t, s, "POST", "/v1/decide", token, map[string]any{"platform": "openclaw", "agent_id": "inbox-agent", "session_id": nativeOpenClawSession(t, "inbox-session"), "tool": "exec", "tool_call_id": "call-fixture", "params": map[string]any{"command": "printf fixture"}})
 	if code != 200 || d["action"] != "hold" {
 		t.Fatal(d)
 	}
@@ -123,7 +123,7 @@ func TestHoldExecutionReconcileHTTPIsStrictAndAdminOnly(t *testing.T) {
 	decisionID := approval["decision_receipt_id"].(string)
 	reserve := map[string]any{
 		"schema_version": "hold-execution-reserve/v1", "platform": "openclaw",
-		"session_id": "inbox-session", "agent_id": "inbox-agent", "tool": "exec",
+		"session_id": nativeOpenClawSession(t, "inbox-session"), "agent_id": "inbox-agent", "tool": "exec",
 		"original_tool_call_id": "call-fixture", "retry_tool_call_id": "call-retry",
 		"action_id": actionID, "decision_receipt_id": decisionID,
 		"params": map[string]any{"command": "printf fixture"},

@@ -75,15 +75,17 @@ type Report struct {
 
 // Options for Run.
 type Options struct {
-	HermesHome   string
-	LocalAppData string
-	Home         string   // defaults to os.UserHomeDir
-	Cwd          string   // project-level skill dirs are discovered under Cwd
-	ProjectDirs  []string // persisted explicit project roots
-	SkillDirs    []string // persisted explicit Skill roots (individual or collection)
-	Now          time.Time
-	Version      string
-	Key          *signing.Key
+	HermesHome         string
+	WorkBuddyConfigDir string // explicit host configuration root; never CodeBuddy's root
+	WorkBuddyDisabled  bool   // unavailable server-selected root must not fall back to the default
+	LocalAppData       string
+	Home               string   // defaults to os.UserHomeDir
+	Cwd                string   // project-level skill dirs are discovered under Cwd
+	ProjectDirs        []string // persisted explicit project roots
+	SkillDirs          []string // persisted explicit Skill roots (individual or collection)
+	Now                time.Time
+	Version            string
+	Key                *signing.Key
 	// HasAdmission tells whether a skill content_hash already has an admission.
 	HasAdmission func(contentHash string) (verdict string, ok bool)
 	Limits       admission.Limits
@@ -132,6 +134,9 @@ func Run(opts Options) (*Report, error) {
 		if opts.LocalAppData == "" {
 			opts.LocalAppData = os.Getenv("LOCALAPPDATA")
 		}
+		if opts.WorkBuddyConfigDir == "" {
+			opts.WorkBuddyConfigDir = os.Getenv("WORKBUDDY_CONFIG_DIR")
+		}
 	}
 	if opts.Now.IsZero() {
 		opts.Now = time.Now().UTC()
@@ -152,6 +157,12 @@ func Run(opts Options) (*Report, error) {
 		projects = append(projects, opts.Cwd)
 	}
 	for _, p := range platforms {
+		if p.name == "workbuddy" {
+			if r.workBuddyDiscovery(seenSkillDir) {
+				r.report.Platforms = append(r.report.Platforms, "workbuddy")
+			}
+			continue
+		}
 		if p.name == "hermes" {
 			if r.hermesInstances(seenSkillDir) {
 				r.report.Platforms = append(r.report.Platforms, "hermes")
@@ -174,7 +185,11 @@ func Run(opts Options) (*Report, error) {
 		}
 		for _, project := range projects {
 			for _, d := range p.projectDir {
-				r.skillDir(p, filepath.Join(project, d), seenSkillDir)
+				full := filepath.Join(project, d)
+				if p.name == "codebuddy" {
+					r.addRootOwners(full, r.platformOwners(p.name), "project_directory")
+				}
+				r.skillDir(p, full, seenSkillDir)
 			}
 		}
 		if present {
@@ -190,6 +205,7 @@ func Run(opts Options) (*Report, error) {
 		r.skillDir(platformSpec{name: "openclaw", framework: "openclaw"}, root.dir, seenSkillDir)
 	}
 	r.buildRelationships()
+	r.annotateWorkBuddyConsumers()
 	r.mcpConfigs()
 	r.mergeConnectors()
 	sort.Strings(r.report.Platforms)

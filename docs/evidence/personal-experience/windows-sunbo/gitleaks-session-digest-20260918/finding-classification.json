@@ -1,0 +1,189 @@
+{
+  "fixed_head": "72140795963244d293232c905a34ef00312b8253",
+  "ci_merge": "4c7a29574e88b99fb75603dd5fda82a7c801ec82",
+  "head_findings": 12,
+  "merge_added_findings": 6,
+  "ci_findings": 18,
+  "initial_difference_resolved_by_merge_object_scan": true,
+  "same_summary_blob": true,
+  "summary_blob_sha256": "3d34aa53dee031fcd7337c64a30595a90dae6e767ab83161d7867175c71eaf3d",
+  "classification": "SHA-256 content digest of isolated native session routing metadata, not a credential",
+  "proof_source_sha256": "84dceec4642dbdbd13dcba87a480b0e675dd32f807356501f2bc2970bbaed12e",
+  "collector_sha256": "2b4aa184675b5683a5a1d9268f71107de4b8956936bea548e307f67679d39f09",
+  "case_proof": [
+    {
+      "case": "read-deny",
+      "batch": "epoch067-r1",
+      "report_digest_matches_original_evidence": true,
+      "summary_hash_matches_runtime_binding_source": true,
+      "manifest_hash_matches": true,
+      "frozen_support_hash_matches": true,
+      "frozen_support_hash_expression_present": true,
+      "native_key_origin": "meta.systemPromptReport.sessionKey; crosschecked with meta.agentMeta.sessionFile and fixture workspace/provider",
+      "binding_source_kind": "native_cli_metadata_crosschecked_with_signed_hook_receipt"
+    },
+    {
+      "case": "idle-unbound",
+      "batch": "epoch067-r1",
+      "report_digest_matches_original_evidence": true,
+      "summary_hash_matches_runtime_binding_source": true,
+      "manifest_hash_matches": true,
+      "frozen_support_hash_matches": true,
+      "frozen_support_hash_expression_present": true,
+      "native_key_origin": "meta.systemPromptReport.sessionKey; crosschecked with meta.agentMeta.sessionFile and fixture workspace/provider",
+      "binding_source_kind": "native_cli_metadata_crosschecked_with_signed_hook_receipt"
+    },
+    {
+      "case": "managed-idle",
+      "batch": "epoch067-r1",
+      "report_digest_matches_original_evidence": true,
+      "summary_hash_matches_runtime_binding_source": true,
+      "manifest_hash_matches": true,
+      "frozen_support_hash_matches": true,
+      "frozen_support_hash_expression_present": true,
+      "native_key_origin": "meta.systemPromptReport.sessionKey; crosschecked with meta.agentMeta.sessionFile and fixture workspace/provider",
+      "binding_source_kind": "native_cli_metadata_crosschecked_with_signed_hook_receipt"
+    },
+    {
+      "case": "missing-block",
+      "batch": "epoch067-r2",
+      "report_digest_matches_original_evidence": true,
+      "summary_hash_matches_runtime_binding_source": true,
+      "manifest_hash_matches": true,
+      "frozen_support_hash_matches": true,
+      "frozen_support_hash_expression_present": true,
+      "native_key_origin": "meta.systemPromptReport.sessionKey; crosschecked with meta.agentMeta.sessionFile and fixture workspace/provider",
+      "binding_source_kind": "native_cli_metadata_crosschecked_with_signed_hook_receipt"
+    },
+    {
+      "case": "missing-warn",
+      "batch": "epoch067-r2",
+      "report_digest_matches_original_evidence": true,
+      "summary_hash_matches_runtime_binding_source": true,
+      "manifest_hash_matches": true,
+      "frozen_support_hash_matches": true,
+      "frozen_support_hash_expression_present": true,
+      "native_key_origin": "meta.systemPromptReport.sessionKey; crosschecked with meta.agentMeta.sessionFile and fixture workspace/provider",
+      "binding_source_kind": "native_cli_metadata_crosschecked_with_signed_hook_receipt"
+    },
+    {
+      "case": "missing-audit_only",
+      "batch": "epoch067-r2",
+      "report_digest_matches_original_evidence": true,
+      "summary_hash_matches_runtime_binding_source": true,
+      "manifest_hash_matches": true,
+      "frozen_support_hash_matches": true,
+      "frozen_support_hash_expression_present": true,
+      "native_key_origin": "meta.systemPromptReport.sessionKey; crosschecked with meta.agentMeta.sessionFile and fixture workspace/provider",
+      "binding_source_kind": "native_cli_metadata_crosschecked_with_signed_hook_receipt"
+    }
+  ],
+  "head_finding_locations": [
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 29,
+      "EndLine": 29,
+      "Commit": "ff1a2c9904e2e40cbb20c2ac5c59dbf1a410d635"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 89,
+      "EndLine": 89,
+      "Commit": "ff1a2c9904e2e40cbb20c2ac5c59dbf1a410d635"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 145,
+      "EndLine": 145,
+      "Commit": "ff1a2c9904e2e40cbb20c2ac5c59dbf1a410d635"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 205,
+      "EndLine": 205,
+      "Commit": "ff1a2c9904e2e40cbb20c2ac5c59dbf1a410d635"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 248,
+      "EndLine": 248,
+      "Commit": "ff1a2c9904e2e40cbb20c2ac5c59dbf1a410d635"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 291,
+      "EndLine": 291,
+      "Commit": "ff1a2c9904e2e40cbb20c2ac5c59dbf1a410d635"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 29,
+      "EndLine": 29,
+      "Commit": "10735eacbe1d1f54d332bb45818f4ca7b11bd2ab"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 89,
+      "EndLine": 89,
+      "Commit": "10735eacbe1d1f54d332bb45818f4ca7b11bd2ab"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 145,
+      "EndLine": 145,
+      "Commit": "10735eacbe1d1f54d332bb45818f4ca7b11bd2ab"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 205,
+      "EndLine": 205,
+      "Commit": "10735eacbe1d1f54d332bb45818f4ca7b11bd2ab"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 248,
+      "EndLine": 248,
+      "Commit": "10735eacbe1d1f54d332bb45818f4ca7b11bd2ab"
+    },
+    {
+      "RuleID": "generic-api-key",
+      "File": "docs/evidence/personal-experience/windows-sunbo/openclaw-session-epoch-20260918/summary.json",
+      "StartLine": 291,
+      "EndLine": 291,
+      "Commit": "10735eacbe1d1f54d332bb45818f4ca7b11bd2ab"
+    }
+  ],
+  "merge_reproduction": {
+    "merge": "4c7a29574e88b99fb75603dd5fda82a7c801ec82",
+    "exit_code": 1,
+    "seconds": 2.72,
+    "findings": 6,
+    "exact_metadata_matches_head_findings": true,
+    "summary_blob_equal": true,
+    "summary_blob_sha256": "3d34aa53dee031fcd7337c64a30595a90dae6e767ab83161d7867175c71eaf3d",
+    "head_findings": 12,
+    "head_plus_merge_findings": 18,
+    "ci_reported_findings": 18,
+    "raw_values_output": false,
+    "command": [
+      "<workspace>\\.tmp\\windows-gitleaks-8.24.2\\bin\\gitleaks.exe",
+      "git",
+      "--redact",
+      "--log-opts=-m 4c7a29574e88b99fb75603dd5fda82a7c801ec82^!",
+      "--report-format=json",
+      "--report-path=<workspace>\\.tmp\\windows-goal-20260916\\gitleaks-merge-check-r1\\redacted-report.json"
+    ],
+    "rule_sha256": "e7ee7c9969928bf97590c038ef98e2eddc34fd506932a2ad1c760b64ac8a5a89"
+  }
+}

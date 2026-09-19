@@ -32,11 +32,14 @@ import { isSkillRemovalView } from './skillRemoval';
 import type { SkillRemoveRequest } from './types';
 import { isSkillInstallationCatalog, isSkillInstallationInspection } from './skillInspection';
 import { isSkillActivated, isSkillRuntimeReadiness } from './skillRuntime';
+import { isSkillContextManagement, isInstalledContext, isContextRevocation, type SkillSessionContext } from './skillContextManagement';
+import type { SkillInstallView, SkillRuntimeReadiness } from './types';
 import type { SkillActivateRequest } from './types';
-import { isSkillInstallCreated, isSkillInstallPlan, isSkillInstallView } from './skillInstall';
+import { isSkillInstallCreated, isSkillInstallPlan, isSkillInstallView, isSkillInstallationTargets, isSkillInstallRequest } from './skillInstall';
 import { isImportPermissionResult } from "./importPermissions";
 import { isSkillImportList, isSkillImportResult } from "./skillImports";
 import type { RuntimeIdentity } from "./types";
+import { identityFilesystemProfile, windowsFilesystemProfile } from './filesystemProfile';
 /**
  * siq-agent-security 本地 API 客户端。
  * 管理会话只留在模块闭包里，不进 React state、不写 localStorage。
@@ -53,6 +56,7 @@ import type {
   AdapterInstances,
   Grant,
   GrantResourceEdit,
+  FilesystemConfirmation,
   RuntimeCheckPlan,
   RuntimeCheckResult,
   LedgerAsset,
@@ -103,7 +107,10 @@ async function fetchLocal(path: string, init: RequestInit = {}): Promise<Respons
   if (init.signal?.aborted) controller.abort();
   else init.signal?.addEventListener('abort', cancel, { once: true });
   const importRequest = path === '/v1/skill-imports' || path.startsWith('/v1/skill-imports/') || path.startsWith('/v1/skill-installations/');
-  const timeout = setTimeout(cancel, importRequest ? 70000 : path === '/v1/adapter/preview' ? 45000 : 8000);
+  const adapterManagementRequest = ['/v1/adapter/preview', '/v1/adapter/install', '/v1/adapter/uninstall', '/v1/adapter/recover'].includes(path);
+  const identityManagementRequest = path === '/v1/runtime-identities' || /^\/v1\/runtime-identities\/[^/]+\/revoke$/.test(path);
+  const skillContextManagementRequest = path === '/v1/skill-contexts' || path.startsWith('/v1/skill-contexts/');
+  const timeout = setTimeout(cancel, adapterManagementRequest ? 180000 : (importRequest || identityManagementRequest || skillContextManagementRequest) ? 70000 : 8000);
   try {
     const response = await fetch(path, { ...init, credentials: 'same-origin', cache: 'no-store', signal: controller.signal });
     if (response.status === 503) {
@@ -145,9 +152,11 @@ function acceptSession(data: Record<string, unknown>): string {
 
 export class LocalApiError extends Error {
   status: number;
-  constructor(status: number, message: string) {
+  code?: string;
+  constructor(status: number, message: string, code?: string) {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -294,12 +303,46 @@ async function request<T>(path: string, init: RequestInit = {}, allowSessionTran
       expiredListeners.forEach((listener) => listener());
     }
     const err = (parsed as { error?: string } | null)?.error;
-    throw new LocalApiError(resp.status, err || `HTTP ${resp.status}`);
+    if (err === 'adapter_busy') {
+      throw new LocalApiError(resp.status, '另一项接入操作正在进行，请等待完成后重试。', err);
+    }
+    if (err === 'adapter_interrupted') {
+      throw new LocalApiError(resp.status, '接入操作在开始前或预览时被取消，请重新预览后确认。', err);
+    }
+    if (err === 'adapter_response_unavailable') {
+      throw new LocalApiError(resp.status, '无法建立接入操作的响应通道，本次未开始操作，请检查服务后重试。', err);
+    }
+    if (path === '/v1/grants' && (!init.method || init.method === 'GET') && resp.status === 503 && err === 'grants_busy') {
+      throw new LocalApiError(503, '授权正在更新，请稍后刷新；当前显示的列表不是最新状态。', err);
+    }
+    if (err === 'windows_profile_activation_required') {
+      throw new LocalApiError(resp.status, 'Windows 路径授权的状态升级尚未完成或未通过校验。请先运行 siq-agent-security state-status 诊断并保留状态目录，再按诊断完成显式启用或中断恢复；不要删除状态或改用旧授权绕过。', err);
+    }
+    throw new LocalApiError(resp.status, err || `HTTP ${resp.status}`, err);
   }
   return parsed as T;
 }
 
 export const localApi = {
+  skillContextManagement: async (view: SkillInstallView, ready: SkillRuntimeReadiness, signal?: AbortSignal) => {
+    const data = await request<unknown>(`/v1/skill-contexts/management?install_id=${encodeURIComponent(view.install_id)}`, { signal, cache: 'no-store' });
+    if (!isSkillContextManagement(data, view, ready)) throw new LocalApiError(502, 'skill_context_incompatible_response');
+    return data;
+  },
+  issueSkillSession: async (view: SkillInstallView, ready: SkillRuntimeReadiness, session: string, actor: string, signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/skill-contexts', { method: 'POST', signal, body: JSON.stringify({
+      schema_version: 'local-skill-execution-context-issue/v1', instance_id: view.plan.instance_id, install_id: view.install_id,
+      session_id: session, task_id: '', ttl_seconds: 3600, actor_id: actor, confirm_issue: true,
+    }) });
+    if (!isInstalledContext(data, view, ready) || data.subject.session_id !== session || data.evidence_level !== 'controlled_session') throw new LocalApiError(502, 'skill_context_incompatible_response');
+    return data;
+  },
+  revokeSkillSession: async (context: SkillSessionContext, actor: string, signal?: AbortSignal) => {
+    const data = await request<unknown>(`/v1/skill-contexts/${encodeURIComponent(context.context_id)}/revoke`, { method: 'POST', signal, body: JSON.stringify({
+      schema_version: 'local-skill-execution-context-revoke/v1', expected_context_signature: context.signature, actor_id: actor, confirm_revoke: true,
+    }) });
+    if (!isContextRevocation(data, context.context_id)) throw new LocalApiError(502, 'skill_context_incompatible_response');
+  },
   taskActivitySources: async (detail: TaskActivityDetail, signal?: AbortSignal) => {
     const query = new URLSearchParams({ view: detail.view, offset: String(detail.offset), limit: '50', snapshot: detail.snapshot });
     const data = await request<unknown>(`/v1/task-activities/${encodeURIComponent(detail.activity.activity_id)}/sources?${query}`, { signal, cache: 'no-store' });
@@ -348,6 +391,10 @@ export const localApi = {
   removeSkill: (id: string, body: SkillRemoveRequest, signal?: AbortSignal) => request<unknown>(`/v1/skill-installations/operations/${encodeURIComponent(id)}/removal`, { method: 'POST', body: JSON.stringify(body), signal }).then((data) => {
     if (!isSkillRemovalView(data, id) || !data.claim || data.claim.operation_signature !== body.operation_signature ||
       data.claim.grant_revision !== body.expected_grant_revision || data.claim.binding_signature !== body.expected_binding_signature || data.claim.actor_id !== body.actor_id) throw new LocalApiError(502, 'skill_install_incompatible_response');
+    return data;
+  }),
+  skillInstallationTargets: (instanceId: string, signal?: AbortSignal) => request<unknown>(`/v1/skill-installation-targets?instance_id=${encodeURIComponent(instanceId)}`, { signal }).then((data) => {
+    if (!isSkillInstallationTargets(data, instanceId)) throw new LocalApiError(502, 'skill_install_incompatible_response');
     return data;
   }),
   skillInstallations: (signal?: AbortSignal) => request<unknown>('/v1/skill-installations/operations', { signal }).then((data) => {
@@ -401,7 +448,7 @@ export const localApi = {
     return data;
   }),
 
-  createInstallPlan: (body: SkillInstallRequest, signal?: AbortSignal) => request<unknown>('/v1/skill-installations/plans', { method: 'POST', body: JSON.stringify(body), signal }).then((data) => {
+  createInstallPlan: (body: SkillInstallRequest, signal?: AbortSignal) => !isSkillInstallRequest(body) ? Promise.reject(new LocalApiError(400, 'skill_install_invalid')) : request<unknown>('/v1/skill-installations/plans', { method: 'POST', body: JSON.stringify(body), signal }).then((data) => {
     if (!isSkillInstallCreated(data, body)) throw new LocalApiError(502, 'skill_install_incompatible_response');
     return data;
   }),
@@ -554,14 +601,39 @@ export const localApi = {
   admissions: () => request<{ admissions: Admission[] }>("/v1/admissions").then((data) => ({
     admissions: data.admissions ?? [],
   })),
-  runtimeIdentities: () => request<{ items: RuntimeIdentity[] }>("/v1/runtime-identities").then((data) => ({
-    items: data.items ?? [],
-  })),
-  createRuntimeIdentity: (instanceId: string, grantId: string, revision: number, actorId: string, ttl: number) =>
-    request<{ identity: RuntimeIdentity }>("/v1/runtime-identities", { method: "POST", body: JSON.stringify({
-      schema_version: "local-runtime-identity-create/v1", instance_id: instanceId, grant_id: grantId,
+  runtimeIdentities: () => request<{ schema_version: 'local-runtime-identities/v1' | 'local-runtime-identities/v2'; items: RuntimeIdentity[] }>("/v1/runtime-identities").then((data) => {
+    if (!['local-runtime-identities/v1', 'local-runtime-identities/v2'].includes(data.schema_version) || !Array.isArray(data.items)
+      || data.items.some((item) => !item || !item.grant_ref || !['hermes', 'openclaw', 'workbuddy'].includes(item.platform) || identityFilesystemProfile(item) === 'unsupported'
+        || (item.platform === 'workbuddy' && identityFilesystemProfile(item) !== windowsFilesystemProfile)
+        || (data.schema_version === 'local-runtime-identities/v1' && identityFilesystemProfile(item) !== 'posix/v1'))) {
+      throw new LocalApiError(502, '实例身份的路径解释与响应版本不一致，请检查服务版本后重新读取。');
+    }
+    return data;
+  }),
+  createRuntimeIdentity: (instanceId: string, grantId: string, revision: number, actorId: string, ttl: number, filesystem: FilesystemConfirmation = { profile: 'posix/v1' }, expectedPlatform?: RuntimeIdentity['platform']) => {
+    const windows = filesystem.profile === windowsFilesystemProfile;
+    if (filesystem.profile !== 'posix/v1' && (!windows || filesystem.confirmed !== true)) {
+      return Promise.reject(new LocalApiError(400, '请明确确认使用 Windows 本地盘符路径解释。'));
+    }
+    if (expectedPlatform === 'workbuddy' && !windows) {
+      return Promise.reject(new LocalApiError(400, 'WorkBuddy 的实例权限接入需要明确确认 Windows 本地盘符路径解释，请先编辑或重新起草授权。'));
+    }
+    return request<{ schema_version: 'local-runtime-identity-issued/v1' | 'local-runtime-identity-issued/v2'; identity: RuntimeIdentity }>("/v1/runtime-identities", { method: "POST", body: JSON.stringify({
+      schema_version: windows ? "local-runtime-identity-create/v2" : "local-runtime-identity-create/v1", instance_id: instanceId, grant_id: grantId,
       expected_grant_revision: revision, actor_id: actorId, session_ttl_seconds: ttl,
-    }) }),
+      ...(windows ? { confirm_filesystem_profile: true } : {}),
+    }) }).then((result) => {
+      if (!result.identity || !result.identity.grant_ref || result.identity.instance_id !== instanceId || result.identity.grant_ref.grant_id !== grantId
+        || !['hermes', 'openclaw', 'workbuddy'].includes(result.identity.platform)
+        || (expectedPlatform !== undefined && result.identity.platform !== expectedPlatform)
+        || (result.identity.platform === 'workbuddy' && !windows)
+        || result.schema_version !== (windows ? 'local-runtime-identity-issued/v2' : 'local-runtime-identity-issued/v1')
+        || identityFilesystemProfile(result.identity) !== filesystem.profile) {
+        throw new LocalApiError(502, '无法确认新身份的实例、授权或路径解释，请重新读取身份列表；不要重复签发。');
+      }
+      return result;
+    });
+  },
   revokeRuntimeIdentity: (id: string, actorId: string) => request(`/v1/runtime-identities/${encodeURIComponent(id)}/revoke`, {
     method: "POST", body: JSON.stringify({ schema_version: "local-runtime-identity-revoke/v1", actor_id: actorId }),
   }),
@@ -584,6 +656,24 @@ export const localApi = {
     subject_id: string;
     redact_secrets?: boolean;
   }) => request<{ grant: Grant; state_revision?: number }>('/v1/grants', { method: 'POST', body: JSON.stringify(body) }),
+  createInstanceDraft: (instanceId: string, admissionId: string, actorId: string, requestId: string, confirmInstanceScope: boolean, expectedPlatform: RuntimeIdentity['platform']) => {
+    if (confirmInstanceScope !== true || !instanceId || !admissionId || !actorId.trim() || !/^gid-[a-f0-9]{32}$/.test(requestId)) {
+      return Promise.reject(new LocalApiError(400, '请明确确认所选实例的权限作用域，并核对检查结果与操作者。'));
+    }
+    return request<{ schema_version: 'grant-instance-draft-created/v1'; instance_id: string; grant: Grant; state_revision: number; reused: boolean }>('/v1/grants/instance-drafts', {
+      method: 'POST', body: JSON.stringify({ schema_version: 'grant-instance-draft-create/v1', instance_id: instanceId,
+        admission_id: admissionId, actor_id: actorId, request_id: requestId, confirm_instance_scope: true }),
+    }).then((result) => {
+      if (result.schema_version !== 'grant-instance-draft-created/v1' || result.instance_id !== instanceId || typeof result.reused !== 'boolean'
+        || !Number.isSafeInteger(result.state_revision) || result.state_revision < 0 || !result.grant || !/^grt-id-[a-f0-9]{64}$/.test(result.grant.grant_id)
+        || result.grant.admission_id !== admissionId || result.grant.platform !== expectedPlatform || result.grant.skill !== undefined
+        || result.grant.subject?.type !== 'agent_instance' || result.grant.subject.id !== `hri-${instanceId.slice(3)}`
+        || (!result.reused && result.grant.status !== 'pending_approval')) {
+        throw new LocalApiError(502, '无法核对实例权限草稿，请刷新权限列表；不要重复创建或直接批准。');
+      }
+      return result;
+    });
+  },
   draftGrant: (id: string, revision: number, actor: string, requestId: string) =>
     request<{ schema_version: 'grant-draft-created/v1'; source_grant_id: string; source_revision: number; grant: Grant; state_revision: number; reused: boolean }>(`/v1/grants/${id}/draft`, {
       method: 'POST', body: JSON.stringify({ schema_version: 'grant-draft-create/v1', expected_revision: revision, actor_id: actor, request_id: requestId }),
@@ -604,11 +694,16 @@ export const localApi = {
       body: JSON.stringify({ schema_version: 'grant-expiry-edit/v1', expected_revision: revision,
         actor_id: actorId, duration_seconds: durationSeconds }),
     }),
-  setGrantResources: (id: string, revision: number, actorId: string, resources: GrantResourceEdit) =>
-    request<{ grant: Grant; state_revision: number }>(`/v1/grants/${encodeURIComponent(id)}/resources`, {
-      method: 'POST', body: JSON.stringify({ schema_version: 'grant-resource-edit/v1',
-        expected_revision: revision, actor_id: actorId, ...resources }),
-    }),
+  setGrantResources: (id: string, revision: number, actorId: string, resources: GrantResourceEdit, filesystem: FilesystemConfirmation = { profile: 'posix/v1' }) => {
+    const windows = filesystem.profile === windowsFilesystemProfile;
+    if (filesystem.profile !== 'posix/v1' && (!windows || filesystem.confirmed !== true)) {
+      return Promise.reject(new LocalApiError(400, '请明确确认使用 Windows 本地盘符路径解释。'));
+    }
+    return request<{ grant: Grant; state_revision: number }>(`/v1/grants/${encodeURIComponent(id)}/resources`, {
+      method: 'POST', body: JSON.stringify({ ...resources, schema_version: windows ? 'grant-resource-edit/v2' : 'grant-resource-edit/v1',
+        expected_revision: revision, actor_id: actorId, ...(windows ? { confirm_filesystem_profile: true } : {}) }),
+    });
+  },
   runtimeCheckPreview: (instanceId: string) => request<RuntimeCheckPlan>('/v1/runtime-checks/preview', {
     method: 'POST', body: JSON.stringify({ schema_version: 'local-runtime-check-preview/v1', instance_id: instanceId }),
   }),
@@ -687,7 +782,15 @@ export const localApi = {
     }),
   adapterStatus: () =>
     request<{ detected: string[]; platforms: PlatformInfo[] }>('/v1/adapter/status'),
-  adapterInstances: (platform: string) => request<AdapterInstances>(`/v1/adapter/instances?platform=${encodeURIComponent(platform)}`),
+  adapterInstances: (platform: string) => request<AdapterInstances>(`/v1/adapter/instances?platform=${encodeURIComponent(platform)}`).then((data) => {
+    if (platform === 'workbuddy' && (data.schema_version !== 'local-adapter-instances/v2'
+      || typeof data.managed_runtime_available !== 'boolean' || data.platform_changes !== false
+      || !Array.isArray(data.instances) || !Array.isArray(data.issues)
+      || data.instances.some((item) => !item || item.platform !== 'workbuddy' || typeof item.instance_id !== 'string' || !item.instance_id))) {
+      throw new LocalApiError(502, '无法核对 WorkBuddy 实例或受管接入能力，请检查服务版本并重新读取。');
+    }
+    return data;
+  }),
   adapterPreview: (platform: string, action: 'install' | 'uninstall', instance_id?: string, native_enable = false, runtime_identity_id?: string) =>
     request<AdapterPlan>('/v1/adapter/preview', { method: 'POST', body: JSON.stringify({ platform, action, instance_id, native_enable, runtime_identity_id }) }),
   adapterApply: (plan: AdapterPlan, actor_id?: string) =>

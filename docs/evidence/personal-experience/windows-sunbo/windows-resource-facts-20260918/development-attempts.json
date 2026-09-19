@@ -1,0 +1,26 @@
+{
+  "source_scope": "dirty development before d384e24, not an old released vulnerability",
+  "attempts": [
+    {
+      "name": "initial native suite",
+      "top_pass": 7,
+      "sub_pass": 2,
+      "scope": "before sharing/delete tests were added"
+    },
+    {
+      "name": "resource-facts-development-r1",
+      "exit": 1,
+      "failure": "Delete-on-close test was accepted by attribute-only handles; fixture did not separately establish DeletePending."
+    },
+    {
+      "name": "standard-info refinement",
+      "exit": 1,
+      "failure": "Delete-on-close alone still did not establish the intended pending-delete fixture."
+    },
+    {
+      "name": "final correction",
+      "exit": 0,
+      "changes": "READ_DATA/LIST_DIRECTORY participates in sharing checks; actual FileDispositionInfo fixture, explicit live StandardInfo query; added rename pin test. Sharing conflicts and pending deletion reject."
+    }
+  ]
+}

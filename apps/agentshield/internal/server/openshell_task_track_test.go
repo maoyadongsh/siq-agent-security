@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/openshell"
 	"siq-agent-security/apps/agentshield/internal/receipt"
 )
@@ -136,10 +137,11 @@ func taskTrackChainLen(t *testing.T, s *Server) int {
 // exactly what the production execute route itself submits, and it is the shape
 // that must keep working.
 func taskTrackStatusBody(reservationID string, decision map[string]any) map[string]any {
+	session, _ := intent.OpenClawSessionID("hold-session", "11111111-1111-4111-8111-111111111111")
 	return map[string]any{
 		"schema_version":         openshellTaskStatusReqSchema,
 		"platform":               "openclaw",
-		"session_id":             "hold-session",
+		"session_id":             session,
 		"agent_id":               taskExecTarget(),
 		"tool":                   "exec",
 		"action_id":              decision["action_id"],
@@ -149,6 +151,7 @@ func taskTrackStatusBody(reservationID string, decision map[string]any) map[stri
 }
 
 func taskTrackStopBody(reservationID string, decision map[string]any) map[string]any {
+	session, _ := intent.OpenClawSessionID("hold-session", "11111111-1111-4111-8111-111111111111")
 	return map[string]any{
 		"schema_version":         openshellTaskStopSchema,
 		"reservation_receipt_id": reservationID,
@@ -156,7 +159,7 @@ func taskTrackStopBody(reservationID string, decision map[string]any) map[string
 		"decision_receipt_id":    decision["receipt_id"],
 		"target":                 taskExecTarget(),
 		"platform":               "openclaw",
-		"session_id":             "hold-session",
+		"session_id":             session,
 		"agent_id":               taskExecTarget(),
 		"tool":                   "exec",
 		"actor_id":               "fixture-admin",

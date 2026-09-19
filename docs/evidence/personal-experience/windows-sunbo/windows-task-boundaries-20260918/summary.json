@@ -1,0 +1,48 @@
+{
+  "test_source_sha": "adf5812be2959fc40e7b14f17fca0da9784a4381",
+  "runtime_source_sha": "319d3ac4cf4f56a17f212ed45a927e7e29957490",
+  "runtime_changes_in_followup": false,
+  "runs": {
+    "development-fixture-failure.jsonl": {
+      "exit_code": 1,
+      "sub_pass": 3,
+      "sub_fail": 3,
+      "top_fail": 2,
+      "top_pass": 1,
+      "package_fail": 1
+    },
+    "component.jsonl": {
+      "exit_code": 0,
+      "sub_pass": 6,
+      "top_pass": 3,
+      "package_pass": 1
+    },
+    "native.jsonl": {
+      "exit_code": 0,
+      "top_pass": 1,
+      "package_pass": 1
+    },
+    "race.jsonl": {
+      "exit_code": 0,
+      "sub_pass": 68,
+      "top_pass": 13,
+      "package_pass": 2
+    }
+  },
+  "checks": {
+    "gofmt_new_files": 0,
+    "go_vet_cmd_agentshield": 0,
+    "independent_history": 0,
+    "independent_cleanup": 0
+  },
+  "acceptance_promotions": 0,
+  "final_candidate": null,
+  "limitations": [
+    "Task controller is simulated in component/race tests; Windows file handles are real.",
+    "Native test uses real Task Scheduler and processes, product orchestration called by test driver.",
+    "Two test versions share runtime source; neither is claimed as a historical official release.",
+    "Revoked pending_approval declaration, not previously deployed effective permission.",
+    "Formal signed v3 CLI positive upgrade/rollback, historical permission and compatibility matrix remain incomplete.",
+    "Full module and affected host regressions on final integrated candidate remain incomplete."
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "head": "6841a4957b179484f8dcd0faa9dddccb1f9a7ade",
+  "success": 38,
+  "skipped": 2,
+  "failed": 2,
+  "failures": [
+    {
+      "name": "agentshield",
+      "status": "completed",
+      "conclusion": "failure",
+      "details_url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35404235149/job/105790536485",
+      "failed_tests": [
+        "TestCommittedReleaseManifest",
+        "TestAdapterAndBootstrapShareVerifiedResolve",
+        "TestPythonVerifierAcceptsCommittedRelease"
+      ],
+      "log_sha256": "12acd2611dd743f6710394384a7d9096e8e406ff9c1de851357de7c726d5be57"
+    },
+    {
+      "name": "runtime-security-toolchain",
+      "status": "completed",
+      "conclusion": "failure",
+      "details_url": "https://github.com/maoyadongsh/siq-agent-security/actions/runs/35404235162/job/105790536258",
+      "failed_tests": [
+        "TestCommittedReleaseManifest",
+        "TestAdapterAndBootstrapShareVerifiedResolve",
+        "TestPythonVerifierAcceptsCommittedRelease"
+      ],
+      "log_sha256": "fe85e24db262bde8971964d574c9a11c6c30a8a0f0e8fe8b651f1e839348e8c5"
+    }
+  ],
+  "tracking_issue": 87,
+  "other_heads_not_inferred": true
+}

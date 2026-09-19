@@ -6,7 +6,10 @@ It holds no rules, no policy and no signing key. Configuration (all optional)
 comes from ``~/.hermes/plugins/siq-agent-security/config.json`` or environment:
 
     {"endpoint": "http://127.0.0.1:47611", "token_path": "<state>/token",
-     "enforcement_mode": "block", "timeout_s": 5}
+     "enforcement_mode": "block", "timeout_s": 20}
+
+The per-request default is 20 seconds on Windows and 5 elsewhere. Explicit
+shorter operation timeouts remain bounded; a timeout never implies execution.
 
 Fail-closed table (dev-spec §3.8.4): in ``block`` mode an unreachable /
 timed-out / 401 / malformed decision service blocks the tool call; in
@@ -36,7 +39,7 @@ _DEFAULTS = {
     "endpoint": "http://127.0.0.1:47611",
     "token_path": "",
     "enforcement_mode": "block",
-    "timeout_s": 5,
+    "timeout_s": 20 if sys.platform == "win32" else 5,
     "platform": "hermes",
     "agent_id": "",
     "mcp_sources": {},

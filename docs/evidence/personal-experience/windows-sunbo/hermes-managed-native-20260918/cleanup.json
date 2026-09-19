@@ -1,0 +1,118 @@
+{
+  "adapter_cleanup": "uninstalled-from-isolated-profile",
+  "jobs": [
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 2
+      },
+      "job_closed": true,
+      "job_number": 1,
+      "role": "candidate-cli"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 2
+      },
+      "job_closed": true,
+      "job_number": 2,
+      "role": "candidate-cli"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 2
+      },
+      "job_closed": true,
+      "job_number": 3,
+      "role": "candidate-cli"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 58
+      },
+      "job_closed": true,
+      "job_number": 4,
+      "role": "B01-hermes"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 3
+      },
+      "job_closed": true,
+      "job_number": 5,
+      "role": "B02-hermes"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 2,
+        "terminated_processes": 0,
+        "total_processes": 2
+      },
+      "job_closed": true,
+      "job_number": 6,
+      "role": "siq-daemon"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 3
+      },
+      "job_closed": true,
+      "job_number": 7,
+      "role": "B03-hermes"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 58
+      },
+      "job_closed": true,
+      "job_number": 8,
+      "role": "B04-hermes"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 0,
+        "terminated_processes": 0,
+        "total_processes": 3
+      },
+      "job_closed": true,
+      "job_number": 9,
+      "role": "B05-hermes"
+    },
+    {
+      "exit_code": 0,
+      "job_before_close": {
+        "active_processes": 2,
+        "terminated_processes": 0,
+        "total_processes": 2
+      },
+      "job_closed": true,
+      "job_number": 10,
+      "role": "siq-daemon"
+    }
+  ],
+  "private_evidence_retained": true,
+  "recorded_owned_jobs_closed": 10,
+  "scope": "Only owned isolated test jobs and the isolated adapter profile; not system restart or daily profiles."
+}

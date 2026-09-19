@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"time"
 
@@ -16,6 +17,8 @@ import (
 )
 
 type PendingFile struct {
+	IntentID       string           `json:"intent_id,omitempty"`
+	IntentDigest   string           `json:"intent_digest,omitempty"`
 	SchemaVersion  string           `json:"schema_version"`
 	ID             string           `json:"observation_id"`
 	ActionID       string           `json:"action_id"`
@@ -39,9 +42,16 @@ func (p PendingFile) unsigned() map[string]any {
 	return m
 }
 func (p PendingFile) valid() bool {
+	if p.SchemaVersion == "file-observation-pending/v1" {
+		if p.Before.SchemaVersion != "" || p.IntentID != "" || p.IntentDigest != "" {
+			return false
+		}
+	} else if p.SchemaVersion != "file-observation-pending/v2" || p.Before.SchemaVersion != "file-snapshot/v2" || !idPattern.MatchString(p.IntentID) || !digestPattern.MatchString(p.IntentDigest) {
+		return false
+	}
 	expiry, err := time.Parse(time.RFC3339Nano, p.ExpiresAt)
 	captured, e := time.Parse(time.RFC3339Nano, p.Before.CapturedAt)
-	if err != nil || e != nil || !expiry.After(captured) || len(p.ExpiresAt) > 64 || !validSnapshot(p.Before) || p.SchemaVersion != "file-observation-pending/v1" || !idPattern.MatchString(p.ID) || !digestPattern.MatchString(p.OwnerDigest) || !digestPattern.MatchString(p.ExpectedDigest) || p.MaxBytes < 1 || p.MaxBytes > MaxFileBytes || p.Before.Size > p.MaxBytes || p.Source.Type != "host_observer" || p.Source.Independence != "host_independent" || p.SigningSchema != signing.SchemaLocalCanonicalV1 {
+	if err != nil || e != nil || !expiry.After(captured) || len(p.ExpiresAt) > 64 || !validSnapshot(p.Before) || !idPattern.MatchString(p.ID) || !digestPattern.MatchString(p.OwnerDigest) || !digestPattern.MatchString(p.ExpectedDigest) || p.MaxBytes < 1 || p.MaxBytes > MaxFileBytes || p.Before.Size > p.MaxBytes || p.Source.Type != "host_observer" || p.Source.Independence != "host_independent" || p.SigningSchema != signing.SchemaLocalCanonicalV1 {
 		return false
 	}
 	for _, s := range []string{p.ActionID, p.ReceiptID, p.Scope.Platform, p.Scope.SessionID, p.Scope.AgentID, p.Scope.TaskID, p.Source.SourceID} {
@@ -92,7 +102,17 @@ func (s *Store) getPending(id string) (PendingFile, error) {
 	if d.Decode(&extra) != io.EOF || !p.valid() || !signing.VerifyCanonical(s.key.Public(), p.unsigned(), p.Signature) || p.ID != id {
 		return PendingFile{}, ErrState
 	}
+	if err := s.checkPendingProfile(p); err != nil {
+		return PendingFile{}, err
+	}
 	return p, nil
+}
+
+func (s *Store) checkPendingProfile(p PendingFile) error {
+	if p.SchemaVersion == "file-observation-pending/v2" && stateformat.RequireWindowsProfile(filepath.Dir(s.dir)) != nil {
+		return ErrState
+	}
+	return nil
 }
 func (s *Store) GetPendingFile(id string) (PendingFile, error) {
 	storeMu.Lock()
@@ -104,6 +124,9 @@ func (s *Store) SavePendingFile(p PendingFile) (PendingFile, error) {
 	defer storeMu.Unlock()
 	if !p.valid() || p.Signature != "" {
 		return PendingFile{}, ErrInvalid
+	}
+	if err := s.checkPendingProfile(p); err != nil {
+		return PendingFile{}, err
 	}
 	old, err := s.getPending(p.ID)
 	if err == nil {

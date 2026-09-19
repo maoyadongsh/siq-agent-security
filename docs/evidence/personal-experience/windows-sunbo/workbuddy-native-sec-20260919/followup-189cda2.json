@@ -1,0 +1,74 @@
+{
+  "runs": [
+    {
+      "run": "r3",
+      "candidate": "189cda23f21b0f79d5003aad021443c3768953ab",
+      "native_tasks": 2,
+      "verified_chain_entries": 13,
+      "verified_identity_sec_documents": 4,
+      "last_decision": {
+        "seq": 12,
+        "action": "deny",
+        "tool": "Read",
+        "reason_code": "grant_scope_violation",
+        "authority_status": "valid"
+      },
+      "marker_absent": true,
+      "cleanup_verified": true,
+      "private_evidence_sha256": {
+        "baseline-before.json": "ee6a091513e54c7b678d4a195249961f3a1db792fef7c1bdbda06ac5029d2c9f",
+        "cleanup.json": "634c9e97d8d19ea740890133251b7077bc482bf7f6adb56ba0b775ce2a6fddd3",
+        "desktop-send-1.json": "ae45f21ed7d58283805544f3f8d527efe1b953abd0aa2a2dd1db03d0d0c31a8e",
+        "desktop-send-2.json": "0ff942839014ad1e6316d31bd8a580f10f639692ca20ef1269d71c60698f3e27",
+        "desktop-terminal-1.json": "41899eb9ccf970de164eb00a69d328bb271f667dd67308df2e36c89c6c70ce85",
+        "desktop-terminal-2.json": "15062e4aef3f010876e27a25e18488951e08a9abe5490d66c8855e6d7a6e807a",
+        "enrollment-diagnostic.json": "6c1b0cdb1cfd1635382416c805a8e48ba48e9e99ff65a95b86ce3dde16d3e847",
+        "native-session-bound.json": "cf53adbae38b4b1bdcd1ff768cdc951c8f1caa02a32e628101f770f87c8c3b63",
+        "payload-observation.json": "02fdb53b45daf3df4de265d047c91c09be16298c750e3a57ff440482ba6a946a",
+        "ready.json": "1461c087734b39b685852858526ebac3148bf36f14d88983f99bbd5a462d6cf6",
+        "service-1.json": "60049cbbdb5e29b1bd5293000bc4f1c4dbec44e659b0f34ccf55a3d204c1dba9",
+        "skill-removal.json": "4de011bb154590569e4fc76971800a3d15963f272f1da186dc4f7a7e949a4c35",
+        "snapshot-1.json": "82ba52ac7d9f4ba3c8eddae32107e2d03ff70132a5edc1cbcc7cdcbc0da72e55"
+      }
+    },
+    {
+      "run": "r5",
+      "candidate": "189cda23f21b0f79d5003aad021443c3768953ab",
+      "native_tasks": 2,
+      "verified_chain_entries": 16,
+      "verified_identity_sec_documents": 4,
+      "last_decision": {
+        "seq": 15,
+        "action": "allow",
+        "tool": "Read",
+        "reason_code": "allow",
+        "authority_status": "valid"
+      },
+      "marker_absent": true,
+      "cleanup_verified": true,
+      "private_evidence_sha256": {
+        "baseline-active.json": "31f9b1f598ee1f022440bde05169996a4293b450bd3727c6a250a37c6a755676",
+        "baseline-before.json": "7d152051ad86c0e53e7fa03cdef5392cea39ad5e01dd0414c1cac38e009eeaeb",
+        "baseline-revoked.json": "0caa0567f38793bd131875b128ef3182f5a6b907237a2e7b4d92aef91dc46825",
+        "cleanup.json": "634c9e97d8d19ea740890133251b7077bc482bf7f6adb56ba0b775ce2a6fddd3",
+        "desktop-send-1.json": "cad8a35d4a56e005db3c0dc53661944825d52fa12daaa8cfee4f2516fe403c8a",
+        "desktop-send-2.json": "aeabb1ed7d5aa733f0d3ae7cfc8eb0a5c531842cc2bd2dc1dbc1def99dc3902b",
+        "desktop-terminal-1.json": "6b3d6c9a45cfb1f7d6930bf1ade615a51211188a0e14f885d5048eb6b262f327",
+        "desktop-terminal-2.json": "be59fdebd81f2afff645ef0669041096681645f112fcc2e0a8344276a168fc31",
+        "enrollment-diagnostic.json": "a2b3d87583e732519b5c5b96c6e3eaa8f12c81cdbdfae9ca5701476adccfd152",
+        "fresh-enrollment-diagnostic.json": "e40558409eb657c9e82d5429c7f722d56c58e641b344d416f2136a6459a3d909",
+        "fresh-valid-enrollment-diagnostic.json": "0ae62a37b866c1fdb87e7fb177d8f1155c39ef88051c023046789636be5575a5",
+        "native-session-bound.json": "8fc649d1add732e988619fef9c7b61339c67ecc22faa3c5be02ac7f66688d685",
+        "ready.json": "914d1f2b5c33c14ebfe81fa71cf84b3223d77a1bba26ab1a2d6fd3da68a237b2",
+        "service-1.json": "28a57a564ecfd42767084d8b320d68bf2494264b072b3034e68ee15c91e258c9",
+        "skill-removal.json": "4de011bb154590569e4fc76971800a3d15963f272f1da186dc4f7a7e949a4c35",
+        "snapshot-1.json": "3db38508e2735b5d53a67e4d0847c74bd5d9bd1569e1aae18c63b6199aa26628"
+      }
+    }
+  ],
+  "result": "not_accepted",
+  "r3": "baseline scope deny",
+  "r5": "valid allow receipt but desktop uncertain; no tool file effect",
+  "synthetic_enrollment_diagnostic": "r5 diagnostic-only fresh session; not native evidence",
+  "next": "bounded runtime response repair; no automatic replay"
+}

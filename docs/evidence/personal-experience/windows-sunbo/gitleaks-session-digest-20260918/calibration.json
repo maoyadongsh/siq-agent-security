@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "synthetic_only": true,
+  "checks": [
+    "ordinary credential detected",
+    "new credential in allowed test path detected",
+    "new credential in hash-evidence path detected",
+    "exact fixture exception restricted to test path",
+    "private-key block detected",
+    "source hash metadata is not a secret",
+    "historical synthetic value exception is exact and path-restricted",
+    "reviewed session digest exception is exact by value, field and path",
+    "new digest and credentials in the same evidence file are detected",
+    "same reviewed digest under a prefixed copy of the path is detected",
+    "removed credentials in root, independent history and merge-only additions detected"
+  ],
+  "raw_values_retained": false
+}

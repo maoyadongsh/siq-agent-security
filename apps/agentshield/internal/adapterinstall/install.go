@@ -531,7 +531,8 @@ func Status(opts Options) (*Result, error) {
 					return nil, err
 				}
 				var doc map[string]any
-				if json.Unmarshal(raw, &doc) == nil && hasRecordedToolHook(doc, opts.Platform, rec.Binary, opts.StateDir) {
+				managed := opts.Platform == WorkBuddy && rec.RuntimeIdentityID != ""
+				if json.Unmarshal(raw, &doc) == nil && (hasRecordedToolHook(doc, opts.Platform, rec.Binary, opts.StateDir) || managed && hostHookRegisteredCommand(doc, workBuddyManagedCommand(rec.Binary, opts))) {
 					note = "installed"
 					paths = []string{p}
 				}

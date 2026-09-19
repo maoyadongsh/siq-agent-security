@@ -1,0 +1,78 @@
+{
+  "source_sha": "2cca13b9dd57b314974ac1e1a7f14c71f2c7a34d",
+  "source_dirty": false,
+  "checks": [
+    {
+      "name": "grant-path-identity",
+      "exit": 1,
+      "seconds": 67.375
+    },
+    {
+      "name": "state-commit",
+      "exit": 0,
+      "seconds": 24.327
+    },
+    {
+      "name": "receipt-authority",
+      "exit": 0,
+      "seconds": 18.316
+    },
+    {
+      "name": "race",
+      "exit": 1,
+      "seconds": 135.223
+    },
+    {
+      "name": "intent-compatibility",
+      "exit": 0,
+      "seconds": 15.003
+    },
+    {
+      "name": "fmt",
+      "exit": 0,
+      "seconds": 2.41,
+      "output_empty": false
+    },
+    {
+      "name": "vet",
+      "exit": 0,
+      "seconds": 23.863
+    },
+    {
+      "name": "native-build",
+      "exit": 0,
+      "seconds": 18.348
+    },
+    {
+      "name": "native-build-info",
+      "exit": 0,
+      "seconds": 1.089
+    },
+    {
+      "name": "build-linux-amd64",
+      "exit": 0,
+      "seconds": 17.156
+    },
+    {
+      "name": "build-linux-arm64",
+      "exit": 0,
+      "seconds": 16.968
+    },
+    {
+      "name": "build-darwin-arm64",
+      "exit": 0,
+      "seconds": 18.73
+    },
+    {
+      "name": "schema",
+      "exit": 0,
+      "seconds": 13.942
+    }
+  ],
+  "binary_sha256": "15eeeeda7e887cb07ea2dedd49df1aee63303c050f8f7717e4f20de7c7dd2beb",
+  "finished": true,
+  "limitations": [
+    "Runtime Identity ancestor_link and record_link fixtures fail with Windows error 1314; entire mixed command and race command failed.",
+    "fmt emitted only an ignored diagnostic harness path; subsequently formatted, tracked product files unchanged."
+  ]
+}

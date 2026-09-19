@@ -154,6 +154,10 @@ func migrationReadRegular(path string, limit int64) ([]byte, error) {
 // Migration-only raw publication. Callers hold every writer and validate the
 // immutable plan. Ordinary statefs intentionally refuses this active barrier.
 func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr error) {
+	return migrationPublishInJournal(root, path, filepath.Join(root, stateformat.MigrationDir, "tmp"), b, mode)
+}
+
+func migrationPublishInJournal(root, path, scratch string, b []byte, mode os.FileMode) (resultErr error) {
 	if err := privatefs.CheckDir(root); err != nil {
 		return err
 	}
@@ -172,7 +176,6 @@ func migrationPublish(root, path string, b []byte, mode os.FileMode) (resultErr 
 	} else if !errors.Is(e, os.ErrNotExist) {
 		return errors.New("state-migrate: unsafe output")
 	}
-	scratch := filepath.Join(root, stateformat.MigrationDir, "tmp")
 	if e := migrationPrivateDir(scratch); e != nil {
 		return e
 	}
@@ -339,6 +342,14 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 	if err := stateformat.ValidatePath(s.Dir); err != nil {
 		return result, err
 	}
+	if raw, err := migrationReadRegular(filepath.Join(s.Dir, stateformat.PlanName), 8<<20); err == nil {
+		var header struct {
+			Schema string `json:"schema"`
+		}
+		if json.Unmarshal(raw, &header) == nil && header.Schema == stateformat.WindowsProfilePlanSchema {
+			return result, stateformat.Fail(stateformat.ErrWindowsProfileMigration)
+		}
+	}
 	fail := func(at string) error {
 		if fault != nil {
 			return fault(at)
@@ -435,7 +446,7 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 	digest := stateformat.Hash(raw)
 	// A crash after done need not compare an obsolete business snapshot. The
 	// completed target and archived plan are verified before removing the barrier.
-	if e := stateformat.Check(s.Dir, true, false); e == nil {
+	if e := stateformat.CheckCompletedMigration(s.Dir); e == nil {
 		if m, e := stateformat.ReadMarker(s.Dir); e == nil && m.Schema == "state-format/v2" {
 			if e = s.finishMigrationBarrier(raw); e != nil {
 				return result, e
@@ -549,7 +560,10 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 }
 
 func (s *Store) finishMigrationBarrier(raw []byte) error {
-	if e := stateformat.Check(s.Dir, true, false); e != nil {
+	if e := stateformat.Check(s.Dir, true, true); e != nil {
+		return e
+	}
+	if e := stateformat.CheckCompletedMigration(s.Dir); e != nil {
 		return e
 	}
 	archive, e := migrationReadRegular(filepath.Join(s.Dir, stateformat.MigrationDir, "plan.json"), 8<<20)

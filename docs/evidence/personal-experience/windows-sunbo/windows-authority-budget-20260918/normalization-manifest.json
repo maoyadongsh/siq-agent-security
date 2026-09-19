@@ -1,0 +1,102 @@
+{
+  "format_version": 1,
+  "rules": [
+    "Existing raw inputs are read-only.",
+    "Text copies: UTF-8 without BOM; CRLF/CR converted to LF.",
+    "Private user and absolute workspace paths use fixed placeholders or repository-relative paths.",
+    "Dynamic loopback ports use <EPHEMERAL_PORT>.",
+    "Raw input digests and normalized/generated digests are recorded separately.",
+    "The vet record is explicitly a tool-result summary, not a raw log."
+  ],
+  "placeholders": {
+    "<WORKTREE>": "integration worktree root",
+    "<GO_TOOLCHAIN>": "local Go 1.27.1 toolchain root",
+    "<PRIVATE_TEMP_ROOT>": "existing protected physical temporary root",
+    "<USER_HOME>": "private user home",
+    "<EPHEMERAL_PORT>": "dynamic local test listener port"
+  },
+  "inputs": [
+    {
+      "source_basename": "http-budget-r1.log",
+      "source_location": "local-only .tmp/windows-authority-cost-fix-20260918-r1/",
+      "source_kind": "existing_raw_file",
+      "original_file_modified": false,
+      "raw_byte_count": 2308,
+      "raw_sha256": "0c3a7374829c5e44e2c2feb8f37c255d901ccfd0bab2cb854981757a140dba00",
+      "normalized_file": "http-budget-r1.log",
+      "normalized_byte_count": 2298,
+      "normalized_sha256": "4c7ec199c9e5277ac2a9ff65131a87539783251f70662973309c0715ef80029d"
+    },
+    {
+      "source_basename": "http-budget-r2.log",
+      "source_location": "local-only .tmp/windows-authority-cost-fix-20260918-r1/",
+      "source_kind": "existing_raw_file",
+      "original_file_modified": false,
+      "raw_byte_count": 2236,
+      "raw_sha256": "a930d7dcdbd6e4f5fb9254613c905736d258f00dc7ea1cb6ee044c596a45659d",
+      "normalized_file": "http-budget-r2.log",
+      "normalized_byte_count": 2227,
+      "normalized_sha256": "54c30dfb6c73d96c7f146fb1226aee5cb94736ace461502937f56084f4f1b4c6"
+    },
+    {
+      "source_basename": "http-budget-r3-quiet.log",
+      "source_location": "local-only .tmp/windows-authority-cost-fix-20260918-r1/",
+      "source_kind": "existing_raw_file",
+      "original_file_modified": false,
+      "raw_byte_count": 2233,
+      "raw_sha256": "a3af927a83cc0faa9083a3b2211fa5db8b783a426e1f6d2bd0d5b3d42d7d76ee",
+      "normalized_file": "http-budget-r3-quiet.log",
+      "normalized_byte_count": 2224,
+      "normalized_sha256": "32bb9d0d56d88c552e206182d3af6e358357ceeb63e751a6799a3e44372fc54a"
+    },
+    {
+      "source_basename": "http-budget-r4-record-read.log",
+      "source_location": "local-only .tmp/windows-authority-cost-fix-20260918-r1/",
+      "source_kind": "existing_raw_file",
+      "original_file_modified": false,
+      "raw_byte_count": 2209,
+      "raw_sha256": "d94b43f0e88400d93df1bb1366762c0afbbd6d13ae82f7f6433a78cb1950733a",
+      "normalized_file": "http-budget-r4-record-read.log",
+      "normalized_byte_count": 2189,
+      "normalized_sha256": "6dcf7ba399452026e56ceb7709737b8ccbe6cd703847fe14454711f6ff899475"
+    },
+    {
+      "source_basename": "record-read-safety-test.log",
+      "source_location": "local-only .tmp/windows-authority-cost-fix-20260918-r1/",
+      "source_kind": "existing_raw_file",
+      "original_file_modified": false,
+      "raw_byte_count": 3507,
+      "raw_sha256": "80765c73b3c18ac343c9f65e0e7112440a8d8cff6156c490b207859b6a12467c",
+      "normalized_file": "record-read-safety-test.log",
+      "normalized_byte_count": 3455,
+      "normalized_sha256": "29e7107906fd9375abd49630dc9790a9e09a926efd983d00d26ef2d7c0502cdb"
+    },
+    {
+      "source_basename": "record-read-frozen-files.json",
+      "source_location": "local-only .tmp/windows-authority-cost-fix-20260918-r1/",
+      "source_kind": "existing_raw_file",
+      "original_file_modified": false,
+      "raw_byte_count": 1768,
+      "raw_sha256": "1f05677f1202e6aa4880277a1a889e342ec5a0f3c39598acf1116c79eb1edbff",
+      "normalized_file": "tested-source-files.json",
+      "normalized_byte_count": 1553,
+      "normalized_sha256": "d9a3af62a935473e45486d016b4bb2f245c7c2ef6cfa74bb69edeb55dbe0ede0",
+      "transformation": "Absolute private paths replaced by repository-relative paths; hash values preserved; scope metadata added."
+    },
+    {
+      "source_basename": null,
+      "source_kind": "recorded_execution_tool_result",
+      "source_reference": {
+        "exec_session_id": 35098,
+        "completion_chunk_id": "84c1f7"
+      },
+      "original_raw_log_file_exists": false,
+      "recorded_exit_code": 0,
+      "recorded_output_byte_count": 0,
+      "recorded_empty_output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "generated_summary_file": "record-read-vet-result.log",
+      "generated_summary_sha256": "67036340e17f314689b47114456cc7120fb241ca31924707baa502414745cd02",
+      "not_a_copied_raw_log": true
+    }
+  ]
+}

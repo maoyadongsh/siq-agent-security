@@ -1,0 +1,22 @@
+--- FAIL: TestWindowsClientInstallTask (6.11s)
+    --- FAIL: TestWindowsClientInstallTask/running (0.66s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/ready (0.65s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/queued (0.67s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/multiple (0.65s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/runtime_error (0.66s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/initial_drift (0.65s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/final_drift (0.66s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/wrong_binary (0.64s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+    --- FAIL: TestWindowsClientInstallTask/wrong_sid (0.66s)
+        client_install_windows_test.go:72: task: canonical local Windows paths without environment expansion required
+FAIL
+FAIL	siq-agent-security/apps/agentshield/cmd/agentshield	21.198s
+FAIL

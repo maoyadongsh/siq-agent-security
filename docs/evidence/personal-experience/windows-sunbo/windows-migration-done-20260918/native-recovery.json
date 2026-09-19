@@ -1,0 +1,47 @@
+{
+  "source_sha": "e09b68489a495fa263488634508e11f661b5936f",
+  "source_dirty": false,
+  "binary_sha256": "5f7118b53ff270d25147f07e66b7e496b3117d8c3592c6d1e55b2e17a5db90d6",
+  "scope": "exact real-history done crash fixture; ordinary refusal and explicit native recovery",
+  "before_fix_source_sha": "d1e7fd0aa3747874b3c9841d41a1a2a679863ac7",
+  "passed": true,
+  "steps": [
+    {
+      "command": "init",
+      "exit": 1,
+      "expected_reason": true
+    },
+    {
+      "command": "state-migrate",
+      "exit": 0,
+      "expected_reason": true
+    },
+    {
+      "command": "grant",
+      "exit": 1,
+      "expected_reason": true
+    },
+    {
+      "command": "grant",
+      "exit": 1,
+      "expected_reason": true
+    },
+    {
+      "command": "state-migrate",
+      "exit": 0,
+      "expected_reason": true
+    },
+    {
+      "command": "state-status",
+      "exit": 0,
+      "expected_reason": true
+    }
+  ],
+  "ordinary_access_refused_without_mutation": true,
+  "backup_entries_verified": 37,
+  "backup_bytes_identical": true,
+  "archived_hashes_verified": true,
+  "revoked_record_and_revision_preserved": true,
+  "repeated_recovery_without_mutation": true,
+  "active_barrier_removed": true
+}

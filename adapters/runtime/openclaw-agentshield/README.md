@@ -2,6 +2,8 @@
 
 插件将 `before_tool_call` / `after_tool_call` 接到本机决策 API，不包含规则、判定或签名密钥。
 
+2026-09-18 会话轮换修复（#77）：当前运行身份为 `openclaw-session/v1:<sha256>`，同时绑定宿主 hook context 的 `sessionKey` 与 `sessionId` UUID。旧文档中的 raw `sessionKey` 绑定仅作为历史证据保留，不再用于新版本授权。新插件不接受 event、工具参数、模型或配置提供的 epoch；宿主缺字段时所有模式拒绝，并提示更新宿主/适配器。旧绑定须以真实宿主元数据重新建立，不能猜测 UUID 或自动继承；managed 模式按已验证实例权限自动建立新 epoch 的独立 Intent。daemon 与插件须成对更新，详细编码和兼容边界见 [会话规格](../../../docs/openclaw-native-session-spec-v1.md)。实现与组件检查不代表原生 idle/reset 回归已通过。
+
 ## Skill 安装检查
 
 请通过 SIQ 的 Skill 导入、检查和确认安装流程安装 Skill。已验证的 OpenClaw 2026.5.12 不接受顶层 `security.installPolicy`；默认安装器仍不写入该字段。OpenClaw 2026.9.4 已支持 operator-owned `security.installPolicy`，可在确认目标实例版本后显式执行 `siq-agent-security adapter preview openclaw install --enable-install-policy`、审阅后执行 `adapter install openclaw --enable-install-policy`。此策略只覆盖原生 Skill 安装/更新，不覆盖 Plugin；未知既有策略不得覆盖。
@@ -34,6 +36,7 @@ siq-agent-security adapter install openclaw
 | --- | --- | --- |
 | 非托管服务不可达 / 超时 / 401 / 非法 JSON / 无 token | `block: true` | 放行 + `console.warn` |
 | 托管身份验证或决策失败 / 非法配置 / 非本机地址 | `block: true` | `block: true` |
+| 缺失/非法宿主 sessionKey 或 sessionId；后端旧 raw key | 拒绝 | 拒绝 |
 | OpenClaw 钩子 15 s 超时 | OpenClaw 自身 fail-closed | 同左 |
 
 ## 卸载
@@ -80,4 +83,4 @@ Managed 安装器写入 camelCase 配置 `runtimeIdentityId` / `agentId` / `toke
 
 凭据仅发送至显式端口的 HTTP loopback，localhost 固定为 127.0.0.1，不跟随重定向。托管模式要求真实会话、有效身份凭据及带 action/receipt 的允许裁决。输出原文仅在允许执行或 hold 最终复验通过后按精确调用关联采集一次；重复调用保持失效至关联过期。
 
-macOS Homebrew OpenClaw 2026.9.4 的默认会话仓是 `agents/<id>/agent/openclaw-agent.sqlite`（`session_nodes.session_key`），不再写 `sessions/sessions.json`。本插件仍只使用 hook 提供的 `sessionKey`，不读取宿主会话文件。实测夹具若要对账原生会话身份，必须读当前版本实际存储，不能假定 2026.5.12 的 JSON 路径。
+macOS Homebrew OpenClaw 2026.9.4 的默认会话仓是 `agents/<id>/agent/openclaw-agent.sqlite`（`session_nodes.session_key`），不再写 `sessions/sessions.json`。该段记录历史版本行为；当前插件使用 hook 提供的 `sessionKey` 与 `sessionId`，不读取宿主会话文件，具体以本文开头的会话轮换说明为准。实测夹具若要对账原生会话身份，必须读当前版本实际存储，不能假定 2026.5.12 的 JSON 路径。

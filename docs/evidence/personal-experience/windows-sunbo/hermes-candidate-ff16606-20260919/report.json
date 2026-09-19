@@ -1,0 +1,55 @@
+{
+  "implementation_source_sha": "ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8",
+  "source_inspected": "b1e2f73deefa1a09cb9cac06f1637f456b56824d",
+  "binary_sha256": "b549e0fdee9fdfcc29dc850be17c6d9d95800167d50f7f9c63f89ad40a85b027",
+  "source_difference": "subsequent tests/docs only; embedded runtime source unchanged",
+  "platform": "hermes",
+  "os": "windows",
+  "method": "native Hermes CLI + local synthetic model",
+  "status": "pass",
+  "paid_model_calls": false,
+  "seconds": 290.91,
+  "cases": [
+    {
+      "case": "B01",
+      "verified": true
+    },
+    {
+      "case": "B02",
+      "verified": true
+    },
+    {
+      "case": "B03",
+      "verified": true
+    },
+    {
+      "case": "B04",
+      "verified": true
+    },
+    {
+      "case": "B05",
+      "verified": true
+    }
+  ],
+  "case_meanings": {
+    "B01": "allowed write and read",
+    "B02": "out-of-scope write denied; no file effect",
+    "B03": "local decision service offline; write denied",
+    "B04": "local decision service restored; allowed write and read",
+    "B05": "runtime identity revoked; write denied"
+  },
+  "signed_documents_verified": 17,
+  "receipt_chain_count": 10,
+  "owned_jobs_closed": 10,
+  "owned_plugin_files_absent_after_uninstall": true,
+  "original_fixture_config_present": true,
+  "fixture_config_byte_for_byte_restoration": "not independently asserted; native enable configuration was prepared before the install",
+  "controller_sha256": "c3b2c8d1d36986f9114d35dfe5ca369cb89b5c415a14526dfecd5c35e37352aa",
+  "retained_private_report_sha256": "982b4d1e3c0234672660c05ae5ee12b74c95f79788510d587d0b4967066cf632",
+  "limitations": [
+    "Not product runtime-check v5 or approval-resume acceptance.",
+    "No restart after identity revocation.",
+    "Does not verify OpenClaw, WorkBuddy, paid-provider routes or trusted Skill attribution.",
+    "Single isolated run; not an independent second native rerun."
+  ]
+}

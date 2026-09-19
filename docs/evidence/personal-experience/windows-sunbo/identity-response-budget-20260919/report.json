@@ -1,0 +1,35 @@
+{
+  "candidate": "198c73ebfce2cc7af075a92068911699f2386449",
+  "status": "development_and_real_management_pass",
+  "problem": "Native preparation on d9ad885 disconnected during identity creation after the signed identity had already been written. The fixture grant was revoked during cleanup.",
+  "fix": "Scope 65s server response deadline and 70s UI wait to admin identity management; no retry; reject canceled/unusable responses before storage work. Runtime hook and decision budgets unchanged.",
+  "checks": {
+    "real_http_old_deadline_disconnect_and_new_response": "pass",
+    "response_failure_and_cancel_before_mutation": "pass",
+    "existing_identity_http_isolation_revocation_strict_contract": "pass (28.309s)",
+    "web_api_tests": "15 passed",
+    "typescript_and_embedded_build": "pass",
+    "go_vet_all": "pass",
+    "four_clean_builds": "pass",
+    "prior_identity_read_back_and_explicitly_revoked": "pass",
+    "new_import_install_activate_identity_issue_adapter_install": "pass",
+    "signed_identity_and_revocation_documents_verified": 3
+  },
+  "model_tasks_submitted_this_turn": 1,
+  "workbuddy_desktop_tasks_used": 5,
+  "workbuddy_desktop_tasks_limit": 5,
+  "native_skill_execution": "not_passed: catalog recognized and one task submitted; session management query disconnected, controller cleaned up; task canceled; no marker file",
+  "isolated_state": "both SIQ service and desktop owned Jobs closed; identity revoked; adapter uninstalled; fixture Skill removed; no target file",
+  "controller_sha256": "7e0a78365ac0ffbe5ca41906df80cac4b2a3b184fd3742ab2785b56051b0ae79",
+  "private_evidence_sha256": {
+    "failed_error": "39bde29d1a8026a8655332f613c2040c46d102e87acbbd9ccd18ba5228142f3f",
+    "failed_cleanup": "634c9e97d8d19ea740890133251b7077bc482bf7f6adb56ba0b775ce2a6fddd3",
+    "fixed_management_http": "0fa35cd615fdc8bbda4a5342f3f34e4845ce7cb1ecf928955f535d6e51edffba"
+  },
+  "limits": [
+    "Not a native desktop Skill execution result.",
+    "No full Go/race rerun; previous failures and formal signing Issue #87 remain.",
+    "65s is a response deadline, not cancellation of already-started synchronous storage operations.",
+    "The first identity-only fix did not cover the SEC management catalog; a following management-response fix is being validated. No further desktop task authorization remains."
+  ]
+}

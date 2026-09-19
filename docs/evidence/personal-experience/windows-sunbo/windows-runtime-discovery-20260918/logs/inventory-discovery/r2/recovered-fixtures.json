@@ -1,0 +1,29 @@
+{
+  "source_scope": "7214079 public-source module copy plus only the discovery fixture test patch",
+  "windows_component_passes": 2,
+  "wsl_linux_component_passes": 2,
+  "production_source_rechecked": true,
+  "generated_files": [
+    {
+      "name": "discovery-status.json",
+      "before_sha256": "dcf80e15ccb5ebd56d5cbb1d8b14669b481c4757ca68196d8f67c38b3c76bb11",
+      "after_sha256": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf"
+    },
+    {
+      "name": "discovery-preview.json",
+      "before_sha256": "bb29b13d13df31e618341b81319452c5d553975b20e4713e8c0c398f5be9745e",
+      "after_sha256": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d"
+    },
+    {
+      "name": "discovery-status-windows.json",
+      "before_sha256": null,
+      "after_sha256": "b587c7d6f0af0cf54e560e5c15b9dbed7a297096e1e737a0155505f30174d7ac"
+    },
+    {
+      "name": "discovery-preview-windows.json",
+      "before_sha256": null,
+      "after_sha256": "860608e55587ff311789f9ee58dc7b09a2adab196e0a214518fa871303d2900d"
+    }
+  ],
+  "no_native_host_or_clean_candidate_claim": true
+}

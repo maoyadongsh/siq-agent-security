@@ -1,0 +1,28 @@
+{
+  "candidate_sha": "d9ad885f2f894dce3f7c9dd036130df7bb436e2a",
+  "change": "Windows Hermes per-request default/install timeout 5s to 20s; shorter deadlines and fail-closed preserved",
+  "checks": {
+    "hermes_adapter_pytest": {
+      "passed": 114,
+      "seconds": 78.85
+    },
+    "old_5s_behavior_rejected": true,
+    "windows_install_uninstall_and_embedded_assets": {
+      "passed": true,
+      "seconds": 7.286
+    },
+    "go_vet_all": {
+      "exit_code": 0
+    },
+    "four_target_clean_build": {
+      "passed": true
+    }
+  },
+  "old_behavior_log_sha256": "bbce9d439c4976ef9b76ec2b7140c28db32eae4fbf1b559879042dd9c4e12120",
+  "limitations": [
+    "Full Go suite not rerun; previous failures retained.",
+    "Default TEMP rejected private-state permissions; tests passed using existing canonical private TEMP, without changing ACLs.",
+    "Native controller final JSON parser failed on host budget annotation; separate signed/file/cleanup verification proves native chain.",
+    "No new WorkBuddy model tasks; remains 4/5."
+  ]
+}

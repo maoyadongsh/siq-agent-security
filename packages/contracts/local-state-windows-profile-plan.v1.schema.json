@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Explicit Windows resource state compatibility transition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "filesystem_profile",
+    "source_marker",
+    "target_marker",
+    "migration_history_sha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "state-windows-profile-plan/v1"
+    },
+    "filesystem_profile": {
+      "const": "windows-local-drive/v1"
+    },
+    "source_marker": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "target_marker": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "migration_history_sha256": {
+      "type": "string",
+      "pattern": "^(absent|[a-f0-9]{64})$"
+    }
+  },
+  "description": "Metadata transition only, not an authorization. Runtime validates exact source/target versions, directory and instance identity, archived history, canonical plan and bounded bytes."
+}

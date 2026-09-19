@@ -1,0 +1,48 @@
+{
+  "evidence_kind": "source-derived synthetic fixtures; not captured desktop events",
+  "source_relative_path": "resources/app.asar.unpacked/cli/dist/codebuddy.js",
+  "source_sha256": "eb018e35d80673db02ebdaa7547b72f43d130d660c9c907c338d35e2f7b42ff7",
+  "offset_unit": "zero-based UTF-16 code units in decoded source",
+  "source_offsets": {
+    "command_serialization": 8814059,
+    "input_processor_dispatch": 8832740,
+    "generation_context_processor": 8866118,
+    "client_info_processor": 8867700,
+    "pre_and_post_assembly": 12661700
+  },
+  "pre": {
+    "hook_event_name": "PreToolUse",
+    "session_id": "synthetic-host-session",
+    "tool_use_id": "synthetic-host-call",
+    "call_id": "synthetic-host-call",
+    "tool_name": "Read",
+    "tool_input": {"file_path": "C:\\synthetic-workbuddy\\input.txt"},
+    "cwd": "C:\\synthetic-workbuddy",
+    "transcript_path": "C:\\synthetic-workbuddy\\transcript.jsonl",
+    "permission_mode": "default",
+    "agent_id": "synthetic-host-store",
+    "agent_type": "synthetic-host-agent",
+    "generation_id": "synthetic-generation",
+    "model": "synthetic-model",
+    "client": "synthetic-client",
+    "version": "0.0.0-synthetic"
+  },
+  "post": {
+    "hook_event_name": "PostToolUse",
+    "session_id": "synthetic-host-session",
+    "tool_use_id": "synthetic-host-call",
+    "call_id": "synthetic-host-call",
+    "tool_name": "Read",
+    "tool_input": {"file_path": "C:\\synthetic-workbuddy\\input.txt"},
+    "tool_response": "synthetic-file-content",
+    "cwd": "C:\\synthetic-workbuddy",
+    "transcript_path": "C:\\synthetic-workbuddy\\transcript.jsonl",
+    "permission_mode": "default",
+    "agent_id": "synthetic-host-store",
+    "agent_type": "synthetic-host-agent",
+    "generation_id": "synthetic-generation",
+    "model": "synthetic-model",
+    "client": "synthetic-client",
+    "version": "0.0.0-synthetic"
+  }
+}

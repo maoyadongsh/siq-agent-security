@@ -32,6 +32,7 @@ type NativeRegistration struct {
 type nativeStage struct {
 	dir, cli string
 	env      []string
+	ctx      context.Context
 }
 type boundedNativeOutput struct {
 	bytes.Buffer
@@ -128,7 +129,11 @@ func (n *nativeStage) command(profile string, args ...string) ([]byte, error) {
 	if runtime.GOOS == "windows" {
 		timeout = 30 * time.Second
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	parent := n.ctx
+	if parent == nil {
+		parent = context.Background()
+	}
+	ctx, cancel := context.WithTimeout(parent, timeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, n.cli, args...)
 	cmd.Dir = n.dir
@@ -139,6 +144,9 @@ func (n *nativeStage) command(profile string, args ...string) ([]byte, error) {
 	cmd.Stdout = output
 	cmd.Stderr = discard
 	if err := cmd.Run(); err != nil {
+		if ctx.Err() != nil {
+			return nil, errors.Join(ErrNativeCLI, ctx.Err())
+		}
 		return nil, ErrNativeCLI
 	}
 	return output.Bytes(), nil
@@ -331,6 +339,7 @@ func (p *Plan) prepareHermesNative(uninstall bool) error {
 		return err
 	}
 	defer stage.close()
+	stage.ctx = p.prepareCtx
 	doc, err := stage.document(before.Data)
 	if err != nil {
 		return err

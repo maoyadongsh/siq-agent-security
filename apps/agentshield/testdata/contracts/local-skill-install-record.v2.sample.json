@@ -1,0 +1,55 @@
+{
+  "schema_version": "local-skill-install-record/v2",
+  "install_id": "sin-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+  "plan": {
+    "schema_version": "local-skill-install-plan/v2",
+    "plan_id": "sip-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+    "request_id": "is-dddddddddddddddddddddddddddddddd",
+    "source": {
+      "schema_version": "local-skill-import-permission-source/v1",
+      "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "artifact_digest": "5616f02435c352c063ab2587f17c78c40012548318a44dd1c52a88a7e387d459",
+      "analysis_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "grant_id": "grt-si-3333333333333333333333333333333333333333333333333333333333333333",
+    "grant_revision": 0,
+    "grant_signature": "330945472e0b9f236ea9d9d06f40361c54a8c25e24f3c1e64f7d1c4dcbed2ead32ec9685bed47c1b26ae643b37d730f4f463316b43969380176b51baad61a30b",
+    "grant_permission_digest": "96cf4e302d4a87a28bcd3bf46e035d98c101f5700c37cb64219d8228e537bcc4",
+    "platform": "workbuddy",
+    "instance_id": "hi-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "directory_name": "example",
+    "target_locator_digest": "e3be9ae433011f717d9d1c792d891943bb71c431e67a657015cc93486cdc29b2",
+    "target_display": "Registered project/.codebuddy/skills/example",
+    "actor_id": "human",
+    "created_at": "2026-09-11T03:00:00Z",
+    "expires_at": "2026-09-11T03:05:00Z",
+    "file_count": 2,
+    "total_bytes": 135,
+    "installed": false,
+    "runtime_verified": false,
+    "target_ref": {
+      "target_id": "sit-112b9c11595f39953c2f17b24eaae94cb9315d331382b441b411d78c6a4d1a39",
+      "scope": "project",
+      "filesystem_profile": "windows-local-drive/v1",
+      "root_locator_digest": "3a3e77126e1c3ce5a8211279d0541b2588854e9c74ff477b31417c516fe35429",
+      "root_identity_digest": "8260c6b97031c8e1a804837a800d1a8ad6743e23de754e47410d529355f1525c",
+      "config_root_identity_digest": "26eb88153e365ad6d24a97e612da7f66895c542e45e71e3a0efd4d9e470da3d6",
+      "existing_parent_relative_path": "",
+      "existing_parent_identity_digest": "8260c6b97031c8e1a804837a800d1a8ad6743e23de754e47410d529355f1525c"
+    },
+    "signature": "ad69e0e9fa1fec8a0f2878d0c02915f8a60740b3405a3e601bb5959c85cb015e504db093ef7dcc9a10896b91a16ed398883803757687240460ba0abad5a74c01"
+  },
+  "claim_signature": "720e24399aae39342c75279468550e18f2391fe948c79a8398b7098a82f0a1e7db1de8d574e8093bf3a7763008cfd576c3795d20830e209c630516009809c30b",
+  "recorded_status": "installed_unverified",
+  "operation": {
+    "schema_version": "local-skill-install-operation/v1",
+    "install_id": "sin-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+    "plan_id": "sip-8e88b111bc616a80704c2c78c6a12ac915d03d26ad8e435cca1498862e2d976f",
+    "claim_signature": "720e24399aae39342c75279468550e18f2391fe948c79a8398b7098a82f0a1e7db1de8d574e8093bf3a7763008cfd576c3795d20830e209c630516009809c30b",
+    "status": "installed_unverified",
+    "actor_id": "human",
+    "recorded_at": "2026-09-11T03:00:02Z",
+    "runtime_verified": false,
+    "signature": "935866dd5d44656b517f70b1faa0eaf51fd002f7d7e7467525058f2c19e984dc587b1e49cf74f8569fee699ab22ddabcb9ad7998222d89a62d0345a39f26850f"
+  }
+}

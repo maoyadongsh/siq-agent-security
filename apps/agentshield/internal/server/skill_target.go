@@ -4,10 +4,12 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"siq-agent-security/apps/agentshield/internal/runtimepath"
 	"siq-agent-security/apps/agentshield/internal/skillinstall"
 )
 
@@ -15,6 +17,16 @@ import (
 // server-owned platform root. The request never supplies a platform or path,
 // so a stale, missing, or ambiguous target fails closed.
 func (s *Server) resolveSkillTarget(ctx context.Context, id string) (skillinstall.Target, error) {
+	target, err := s.resolveRuntimeIdentityTarget(ctx, id)
+	if err != nil || target.Platform == adapterinstall.WorkBuddy {
+		return skillinstall.Target{}, skillinstall.ErrChanged
+	}
+	return target, nil
+}
+
+// All product roots participate in ambiguity checks. WorkBuddy installation
+// still requires the separate versioned scope resolver; v1 never infers one.
+func (s *Server) resolveRuntimeIdentityTarget(ctx context.Context, id string) (skillinstall.Target, error) {
 	if err := ctx.Err(); err != nil {
 		return skillinstall.Target{}, err
 	}
@@ -41,10 +53,38 @@ func (s *Server) resolveSkillTarget(ctx context.Context, id string) (skillinstal
 			Display:    displayTargetRoot(openClawRoot, home),
 		})
 	}
+	if root, _, err := s.workBuddyRoot(); err == nil && hermeshome.Identifier(root) == id {
+		matches = append(matches, skillinstall.Target{InstanceID: id, Platform: adapterinstall.WorkBuddy, Root: root, Display: displayTargetRoot(root, home)})
+	}
 	if len(matches) != 1 {
 		return skillinstall.Target{}, skillinstall.ErrChanged
 	}
 	return matches[0], nil
+}
+
+// Preserve the configured spelling until the native path checker has rejected
+// aliases; filepath.Clean must not hide a rejected drive/path interpretation.
+func (s *Server) workBuddyRoot() (string, string, error) {
+	home := s.d.Home
+	if home == "" {
+		home, _ = os.UserHomeDir()
+	}
+	root, source := filepath.Join(home, ".workbuddy"), "default_directory"
+	if configured := os.Getenv("WORKBUDDY_CONFIG_DIR"); configured != "" {
+		root, source = configured, "environment"
+	}
+	if !filepath.IsAbs(root) {
+		return "", source, skillinstall.ErrChanged
+	}
+	if runtime.GOOS == "windows" {
+		snapshot, err := runtimepath.InspectWindows(root, false)
+		if err != nil || !snapshot.IsDirectory() {
+			return "", source, skillinstall.ErrChanged
+		}
+	} else if info, err := os.Lstat(root); err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return "", source, skillinstall.ErrChanged
+	}
+	return root, source, nil
 }
 
 func displayTargetRoot(path, home string) string {

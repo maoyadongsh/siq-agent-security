@@ -11,6 +11,7 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { register } from "node:module";
 
+const EPOCH = "11111111-1111-4111-8111-111111111111";
 const RI = "ri-" + "a".repeat(32);
 const AGENT = "hri-" + "b".repeat(32);
 const CREDENTIAL = `${RI}.${"c".repeat(64)}`;
@@ -93,11 +94,11 @@ async function loadPlugin(endpoint) {
 
 const before = (handlers, params) => handlers.before_tool_call(
   { toolName: "write_file", toolCallId: "call-1", params, sessionKey: "s1" },
-  { sessionKey: "s1", agentId: AGENT },
+  { sessionKey: "s1", sessionId: EPOCH, agentId: AGENT },
 );
 const after = (handlers, result) => handlers.after_tool_call(
   { toolName: "write_file", toolCallId: "call-1", params: {}, result, sessionKey: "s1" },
-  { sessionKey: "s1", agentId: AGENT },
+  { sessionKey: "s1", sessionId: EPOCH, agentId: AGENT },
 );
 
 const scenarios = {
@@ -126,16 +127,16 @@ const scenarios = {
     const enroll = requests[0];
     assert.equal(enroll.auth, `Bearer ${CREDENTIAL}`);
     assert.equal(enroll.body.schema_version, "local-runtime-session-enroll/v1");
-    assert.equal(enroll.body.session_id, "s1");
+    assert.match(enroll.body.session_id, /^openclaw-session\/v1:[0-9a-f]{64}$/);
     const decide = requests[1];
     assert.equal(decide.body.platform, "openclaw");
     assert.equal(decide.body.agent_id, AGENT);
-    assert.equal(decide.body.session_id, "s1");
+    assert.equal(decide.body.session_id, enroll.body.session_id);
     const capture = requests[2];
     assert.equal(capture.body.schema_version, "local-raw-task-content-native-capture/v1");
     assert.equal(capture.body.platform, "openclaw");
     assert.equal(capture.body.agent_id, AGENT);
-    assert.equal(capture.body.session_id, "s1");
+    assert.equal(capture.body.session_id, enroll.body.session_id);
     assert.equal(capture.body.kind, "parameters");
     assert.ok(capture.body.fields.some((f) => f.path === "/tool/name" && f.value === "write_file"));
     assert.ok(capture.body.fields.some((f) => f.path === "/tool/arguments/path" && f.value === '"/work/public/report"'));
@@ -254,7 +255,7 @@ const scenarios = {
     process.env.__OC_HOME = home;
     const { server, requests, port } = await makeServer(allowHandlers());
     const handlers = await loadPlugin(`http://127.0.0.1:${port}`);
-    const hostCtx = { sessionKey: "s1", agentId: "intent-v2-fixture-agent" };
+    const hostCtx = { sessionKey: "s1", sessionId: EPOCH, agentId: "intent-v2-fixture-agent" };
     assert.equal(
       await handlers.before_tool_call(
         { toolName: "read", toolCallId: "call-9", params: { path: "/work/r" }, sessionKey: "s1" },
@@ -353,7 +354,7 @@ for (const flow of [
       const decision = await handlers.before_tool_call(
         { toolName: "write_file", toolCallId: "call-1", params: {}, sessionKey: "s1" },
         {
-          sessionKey: "s1",
+          sessionKey: "s1", sessionId: EPOCH,
           approvalExecutionRecheckVersion:
             flow === "approved-hold" || flow.startsWith("reserve-") ? 1 : undefined,
         });

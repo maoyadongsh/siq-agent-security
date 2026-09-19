@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/local-skill-context-management.v1.schema.json",
+  "title": "Installed Skill session context management V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "install_id", "instance_id", "sessions", "contexts"],
+  "properties": {
+    "schema_version": {"const": "local-skill-context-management/v1"},
+    "install_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "instance_id": {"type": "string", "pattern": "^hi-[0-9a-f]{32}$"},
+    "sessions": {"type": "array", "maxItems": 64, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["session_id", "expires_at"],
+      "properties": {"session_id": {"type": "string", "minLength": 1, "maxLength": 256}, "expires_at": {"type": "string", "format": "date-time"}}
+    }},
+    "contexts": {"type": "array", "maxItems": 64, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["context", "revoked"],
+      "properties": {"context": {"$ref": "skill-execution-context.v1.schema.json"}, "revoked": {"type": "boolean"}}
+    }}
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "scope": "isolated Go contract components, not host/model or clean-candidate acceptance",
+  "base_sha": "72140795963244d293232c905a34ef00312b8253",
+  "source_dirty": true,
+  "phase": "discovery-windows",
+  "results": [
+    {
+      "label": "discovery-windows-generate",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "./internal/server",
+        "-json",
+        "-run",
+        "^TestDiscoveryContractFixtures$",
+        "-timeout=90s",
+        "-count=1"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {
+        "AGENTSHIELD_UPDATE_SAMPLES": "1"
+      },
+      "exit_code": 0,
+      "seconds": 43.774867
+    },
+    {
+      "label": "discovery-windows-verify",
+      "command": [
+        "<WORKSPACE>\\.tmp\\toolchain\\go\\bin\\go.exe",
+        "test",
+        "./internal/server",
+        "-json",
+        "-run",
+        "^TestDiscoveryContractFixtures$",
+        "-timeout=90s",
+        "-count=2"
+      ],
+      "cwd": "<FIXED_MODULE_COPY>",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 10.919888
+    }
+  ],
+  "source_scope": "fixed 7214079 module copy with only discovery_http_test.go fixture patch",
+  "module_source": "<FIXED_MODULE_COPY>",
+  "private_temp": ".tmp/isc2r2",
+  "protected_dacl_verified": true,
+  "helper_sha256": "aef152e1706c2d89caab077178ae23d3c4bb8235fab703fe71aa27f4061e3711",
+  "samples": [
+    {
+      "name": "inventory.sample.json",
+      "sha256": "f46e4b27500a0258d8771490e6cf1df0b250ca1c96449b09ae38e67e4f1e23e5"
+    },
+    {
+      "name": "discovery-status.json",
+      "sha256": "dcf80e15ccb5ebd56d5cbb1d8b14669b481c4757ca68196d8f67c38b3c76bb11"
+    },
+    {
+      "name": "discovery-preview.json",
+      "sha256": "bb29b13d13df31e618341b81319452c5d553975b20e4713e8c0c398f5be9745e"
+    },
+    {
+      "name": "discovery-status-windows.json",
+      "sha256": "b587c7d6f0af0cf54e560e5c15b9dbed7a297096e1e737a0155505f30174d7ac"
+    },
+    {
+      "name": "discovery-preview-windows.json",
+      "sha256": "860608e55587ff311789f9ee58dc7b09a2adab196e0a214518fa871303d2900d"
+    }
+  ],
+  "result": "pass"
+}

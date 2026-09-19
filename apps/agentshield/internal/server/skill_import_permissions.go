@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"reflect"
+	"runtime"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
@@ -52,8 +54,8 @@ func (s *Server) skillImportPermissions(w http.ResponseWriter, r *http.Request, 
 		skillImportError(w, skillimport.ErrChanged)
 		return
 	}
-	target, err := s.resolveSkillTarget(ctx, req.InstanceID)
-	if err != nil {
+	target, err := s.resolveRuntimeIdentityTarget(ctx, req.InstanceID)
+	if err != nil || target.Platform == "workbuddy" && runtime.GOOS != "windows" {
 		writeJSON(w, 409, map[string]string{"error": "skill_import_permission_target_unavailable"})
 		return
 	}
@@ -73,7 +75,11 @@ func (s *Server) skillImportPermissions(w http.ResponseWriter, r *http.Request, 
 		if reused {
 			status = 200
 		}
-		writeJSON(w, status, map[string]any{"schema_version": "local-skill-import-permission-created/v1", "import_id": id, "source": source, "grant": g, "state_revision": revision, "reused": reused, "installed": false})
+		schema := "local-skill-import-permission-created/v1"
+		if g.SchemaVersion == "grant/v2" {
+			schema = "local-skill-import-permission-created/v2"
+		}
+		writeJSON(w, status, map[string]any{"schema_version": schema, "import_id": id, "source": source, "grant": g, "state_revision": revision, "reused": reused, "installed": false})
 	}
 	if existing, revision, err := s.d.Store.GetGrantWithSeq(grantID); err == nil {
 		if !grant.Verify(s.d.Key.Public(), *existing) || existing.AdmissionID != derived.Admission.AdmissionID || existing.Subject != opts.Subject || existing.Platform != opts.Platform {
@@ -120,7 +126,7 @@ func (s *Server) validateImportedGrant(ctx context.Context, g grant.Grant) error
 		return skillimport.ErrChanged
 	}
 	adm, err := s.d.Store.GetAdmission(g.AdmissionID)
-	if err != nil {
+	if err != nil || g.Skill == nil || g.Skill.SkillID != adm.SkillID || g.Skill.ContentHash != adm.ContentHash || !reflect.DeepEqual(g.Skill.Version, adm.SkillVersion) {
 		return skillimport.ErrChanged
 	}
 	return s.skillImports.ValidatePermissionAdmission(ctx, *adm)

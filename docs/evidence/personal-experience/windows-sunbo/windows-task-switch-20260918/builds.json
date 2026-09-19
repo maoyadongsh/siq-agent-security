@@ -1,0 +1,47 @@
+[
+  {
+    "source_sha": "319d3ac4cf4f56a17f212ed45a927e7e29957490",
+    "platform": "windows/amd64",
+    "name": "source.exe",
+    "version": "0.0.0-win-switch-source",
+    "exit_code": 0,
+    "sha256": "f8fadd2fc44f41643fbac5885045cc17483e65d8553d1c7d5a41108933cc01bc",
+    "clean_build": true
+  },
+  {
+    "source_sha": "319d3ac4cf4f56a17f212ed45a927e7e29957490",
+    "platform": "windows/amd64",
+    "name": "target.exe",
+    "version": "0.0.0-win-switch-target",
+    "exit_code": 0,
+    "sha256": "581c027f329dc6761567d300a5090e4dafd249e52ce0988663b6942278b957e3",
+    "clean_build": true
+  },
+  {
+    "source_sha": "319d3ac4cf4f56a17f212ed45a927e7e29957490",
+    "platform": "linux/amd64",
+    "name": "linux-amd64",
+    "version": "0.0.0-dev",
+    "exit_code": 0,
+    "sha256": "0a260941ad50b753a5d3f85f1cf9a25b8db50bb1f458d8a96c5b71f148118ef2",
+    "clean_build": true
+  },
+  {
+    "source_sha": "319d3ac4cf4f56a17f212ed45a927e7e29957490",
+    "platform": "linux/arm64",
+    "name": "linux-arm64",
+    "version": "0.0.0-dev",
+    "exit_code": 0,
+    "sha256": "5f4c8f09d421e2fbd40fba3b8b1c8ee871ab7cd974a336e137428717e4df1f63",
+    "clean_build": true
+  },
+  {
+    "source_sha": "319d3ac4cf4f56a17f212ed45a927e7e29957490",
+    "platform": "darwin/arm64",
+    "name": "darwin-arm64",
+    "version": "0.0.0-dev",
+    "exit_code": 0,
+    "sha256": "2ba1f752f3e8e9f5fca58ac540566ef32df974d95b75dd7febc90ddce13b4c3f",
+    "clean_build": true
+  }
+]

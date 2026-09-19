@@ -1,0 +1,12 @@
+{"Time":"2026-09-18T19:13:25.1165166+08:00","Action":"start","Package":"siq-agent-security/apps/agentshield/internal/inventory"}
+{"Time":"2026-09-18T19:13:27.3420331+08:00","Action":"run","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestSampleIsCurrent"}
+{"Time":"2026-09-18T19:13:27.3420331+08:00","Action":"output","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestSampleIsCurrent","Output":"=== RUN   TestSampleIsCurrent\n","OutputType":"frame"}
+{"Time":"2026-09-18T19:13:27.680834+08:00","Action":"output","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestSampleIsCurrent","Output":"--- PASS: TestSampleIsCurrent (0.34s)\n","OutputType":"frame"}
+{"Time":"2026-09-18T19:13:27.680834+08:00","Action":"pass","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestSampleIsCurrent","Elapsed":0.34}
+{"Time":"2026-09-18T19:13:27.680834+08:00","Action":"run","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence"}
+{"Time":"2026-09-18T19:13:27.680834+08:00","Action":"output","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence","Output":"=== RUN   TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence\n","OutputType":"frame"}
+{"Time":"2026-09-18T19:13:27.8798317+08:00","Action":"output","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence","Output":"--- PASS: TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence (0.20s)\n","OutputType":"frame"}
+{"Time":"2026-09-18T19:13:27.8803861+08:00","Action":"pass","Package":"siq-agent-security/apps/agentshield/internal/inventory","Test":"TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence","Elapsed":0.2}
+{"Time":"2026-09-18T19:13:27.8803861+08:00","Action":"output","Package":"siq-agent-security/apps/agentshield/internal/inventory","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-09-18T19:13:27.8852113+08:00","Action":"output","Package":"siq-agent-security/apps/agentshield/internal/inventory","Output":"ok  \tsiq-agent-security/apps/agentshield/internal/inventory\t2.768s\n"}
+{"Time":"2026-09-18T19:13:27.8852113+08:00","Action":"pass","Package":"siq-agent-security/apps/agentshield/internal/inventory","Elapsed":2.769}

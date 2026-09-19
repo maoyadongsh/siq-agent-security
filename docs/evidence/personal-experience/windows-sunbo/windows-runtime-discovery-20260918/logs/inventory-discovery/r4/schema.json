@@ -1,0 +1,65 @@
+{
+  "scope": "isolated Go contract components, not host/model or clean-candidate acceptance",
+  "base_sha": "72140795963244d293232c905a34ef00312b8253",
+  "source_dirty": true,
+  "phase": "schema",
+  "results": [
+    {
+      "label": "schema-ruff",
+      "command": [
+        "<WORKSPACE>\\.tmp\\win-stage-r2-20260917\\apps\\control-api\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "app/tests/test_schema_contracts.py"
+      ],
+      "cwd": "<WORKTREE>\\apps\\control-api",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 0.361577
+    },
+    {
+      "label": "schema-inventory-discovery",
+      "command": [
+        "<WORKSPACE>\\.tmp\\win-stage-r2-20260917\\apps\\control-api\\.venv\\Scripts\\python.exe",
+        "-I",
+        "-B",
+        "-m",
+        "pytest",
+        "app/tests/test_schema_contracts.py",
+        "-q",
+        "-k",
+        "personal_discovery_contracts_and_inferred_relationships or go_inventory_sample_conforms"
+      ],
+      "cwd": "<WORKTREE>\\apps\\control-api",
+      "extra_env": {},
+      "exit_code": 0,
+      "seconds": 3.042296
+    }
+  ],
+  "samples": [
+    {
+      "name": "inventory.sample.json",
+      "sha256": "92928985e2c3e828585d739392227454e5cff177ada5f4cb065d419a795ecae7"
+    },
+    {
+      "name": "discovery-status.json",
+      "sha256": "4676c84505bb7d56386610e80c6a43da5c676e28ff822adbe96a371dc7fb68cf"
+    },
+    {
+      "name": "discovery-preview.json",
+      "sha256": "2e3df6f0b1cd55700e985c1fabe938a313f4e55a2d5884ee6630d8c61810ea7d"
+    },
+    {
+      "name": "discovery-status-windows.json",
+      "sha256": "b587c7d6f0af0cf54e560e5c15b9dbed7a297096e1e737a0155505f30174d7ac"
+    },
+    {
+      "name": "discovery-preview-windows.json",
+      "sha256": "860608e55587ff311789f9ee58dc7b09a2adab196e0a214518fa871303d2900d"
+    }
+  ],
+  "result": "pass"
+}

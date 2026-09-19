@@ -1,0 +1,59 @@
+{
+  "candidate": "2d5ee6c725e865b2c0769f0d35ac839161dbb717",
+  "binary_sha256": "5e29ca5e6cbdba76565ea7f86f5bd023e9b6c9fcd0b6ffdadf9393c0631fe82a",
+  "host": "WorkBuddy 5.5.6 Windows desktop",
+  "model": "GLM-5.3-Flash",
+  "permission_mode": "default",
+  "desktop_tasks_used": 4,
+  "desktop_tasks_limit": 5,
+  "passed": [
+    "formal_managed_install",
+    "desktop_write_with_pre_post",
+    "desktop_outside_grant_denied",
+    "desktop_service_offline_denied",
+    "identity_revoked",
+    "managed_uninstall",
+    "owned_jobs_closed"
+  ],
+  "receipt_count": 7,
+  "desktop_receipt_sequences": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "synthetic_probe_sequences": [
+    0,
+    1,
+    2
+  ],
+  "independent_signatures_verified": 9,
+  "normal_file_sha256": "83f784c774dcb0011126da4f994dd848d21d278a60f809130609cae8c0dca316",
+  "outside_file_absent": true,
+  "offline_file_absent": true,
+  "first_backup_present": true,
+  "host_login_field_preserved": true,
+  "whole_profile_byte_equality_asserted": false,
+  "historical_failures_retained": [
+    "initial desktop task hook timeout 5000ms; no file created",
+    "setup fixture admission HTTP 500 before unique fixture was used",
+    "whole WorkBuddy component suite exceeded 120s; focused tests passed"
+  ],
+  "limits": [
+    "approval resumption and complete original taskbook journey not desktop-validated",
+    "normal probe at sequence 2 was synthetic and never executed a tool",
+    "formal signed release external via issue 87",
+    "binary embedded version 0.0.0-dev; release requires versioned rebuild"
+  ],
+  "cleanup_errors": [],
+  "owned_siq_jobs_closed": 2,
+  "owned_desktop_launcher_exit": 0,
+  "evidence_files_sha256": {
+    "snapshot-4.json": "6387fc9f83e4097108a095732a7085b26aa08233613e5a9e90425a2f7f89a323",
+    "cleanup.json": "9827c1e14f57ca0a3253ff643c841e4148d9d74e24172c96f203d82232d827be",
+    "cleanup-relaunch3.json": "f0a0f50a7dfea857511be6bc0c1f64c2815b91f6d4068ae07b85bd9ab5d46d5f",
+    "verify-workbuddy-desktop.py": "7bc012590b4a3fc0373bb398f021ffd44182cd9554ab9dce9d8efa33f167025e",
+    "workbuddy-service-fixed3.py": "5395e15310599b43a11f3486e4bd696c1a90e9a9e135dd942ab878da0e13048f",
+    "workbuddy-relaunch3.py": "177f75b022eeced1824f9c0db3d72a00d01133e267ef7f4e8090e82df72fece3"
+  }
+}

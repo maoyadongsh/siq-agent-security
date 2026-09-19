@@ -3,7 +3,6 @@ package inventory
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -229,18 +228,16 @@ func TestEmptyHomeYieldsEmptyReport(t *testing.T) {
 }
 
 func TestSampleIsCurrent(t *testing.T) {
-	// deterministic: fixed key/time; home is redacted to "~" so temp paths do not leak into the sample
+	// Fixed key/time and test-only instance identities make this a synthetic
+	// contract fixture, independent of the temporary physical home.
 	rep := runInv(t, fakeHome(t))
-	// Instance identities hash absolute directories; use stable synthetic IDs only in this contract fixture.
-	for i := range rep.Candidates {
-		if rep.Candidates[i].Attributes["instance_id"] != "" {
-			rep.Candidates[i].Attributes["instance_id"] = fmt.Sprintf("hi-%032x", i+1)
-		}
-	}
+	normalizeInventorySample(t, rep)
 	got, _ := json.MarshalIndent(rep, "", "  ")
 	p := filepath.Join("..", "..", "testdata", "contracts", "inventory.sample.json")
 	if os.Getenv("AGENTSHIELD_UPDATE_SAMPLES") == "1" {
-		_ = os.WriteFile(p, append(got, '\n'), 0o644)
+		if err := os.WriteFile(p, append(got, '\n'), 0o644); err != nil {
+			t.Fatal(err)
+		}
 	}
 	want, err := os.ReadFile(p)
 	if err != nil {

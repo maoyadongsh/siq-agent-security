@@ -1,0 +1,35 @@
+{
+  "archive": "windows-unsigned-candidate-ff16606.zip",
+  "bytes": 47639499,
+  "sha256": "bc0f37e6b690b1d63bd720d7f1a57181e55b1fc200acd012daf411e0d3196a91",
+  "source_sha": "ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8",
+  "candidate_version": "0.2.1-windows-candidate.1",
+  "candidate_skill_content_hash": "d815fc4a118aaafb2efbb7f2baa454832a21f63776b1b13110632e848d88d0b1",
+  "artifacts": [
+    {
+      "file": "bin/siq-agent-security-windows-amd64.exe",
+      "bytes": 20879360,
+      "sha256": "b549e0fdee9fdfcc29dc850be17c6d9d95800167d50f7f9c63f89ad40a85b027",
+      "seconds": 41.5
+    },
+    {
+      "file": "bin/siq-agent-security-linux-amd64",
+      "bytes": 20299936,
+      "sha256": "19813a073bc21edb795cfc516eb665f7b645168071c7f3d4b81bde7e51f23f4b",
+      "seconds": 44.2
+    },
+    {
+      "file": "bin/siq-agent-security-linux-arm64",
+      "bytes": 19071136,
+      "sha256": "51fe9143b9287ecd5510107f0e318b14e93e4b5a0a6d994f3ca9986904de779b",
+      "seconds": 43.3
+    },
+    {
+      "file": "bin/siq-agent-security-darwin-arm64",
+      "bytes": 19336722,
+      "sha256": "cd7631d58dd37dace7fc3f20c45bbc3f4da240d932a65d9ab286fc61277d6a25",
+      "seconds": 42.8
+    }
+  ],
+  "signed": false
+}

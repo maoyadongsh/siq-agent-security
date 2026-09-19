@@ -191,6 +191,11 @@ func New(d Deps) (*Server, error) {
 	if err := s.initSkillInstallations(); err != nil {
 		return nil, err
 	}
+	if s.skillContexts != nil {
+		if err := s.skillContexts.BindInstallationStore(s.skillInstallations); err != nil {
+			return nil, err
+		}
+	}
 	s.refreshRawContentLocked()
 	s.mux.HandleFunc("/v1/raw-task-content/status", s.auth(s.rawTaskContentStatus, capAdmin))
 	s.mux.HandleFunc("/v1/raw-task-content/activation", s.auth(s.rawTaskContentActivation, capAdmin))
@@ -206,6 +211,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/skill-installations/updates", s.auth(s.skillUpdateCommit, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/updates/", s.auth(s.skillUpdateOperation, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/plans", s.auth(s.skillInstallPlanCreate, capAdmin))
+	s.mux.HandleFunc("/v1/skill-installation-targets", s.auth(s.skillInstallationTargets, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/plans/", s.auth(s.skillInstallPlanRead, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/apply", s.auth(s.skillInstallApply, capAdmin))
 	s.mux.HandleFunc("/v1/skill-installations/operations", s.auth(s.skillInstallCatalog, capAdmin))
@@ -219,6 +225,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/runtime-identities/", s.auth(s.runtimeIdentityOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-sessions", s.runtimeSessionEnroll)
 	s.mux.HandleFunc("/v1/skill-contexts", s.auth(s.skillContextCollection, capAdmin))
+	s.mux.HandleFunc("/v1/skill-contexts/management", s.auth(s.skillContextManagement, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/", s.auth(s.skillContextOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/preview", s.auth(s.runtimeCheckPreview, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks", s.auth(s.runtimeCheckLatest, capAdmin))
@@ -273,6 +280,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/adapter/diagnostics", s.auth(s.adapterDiagnostics, capAdmin))
 	s.mux.HandleFunc("/v1/grant-scenarios", s.auth(s.grantScenarios))
 	s.mux.HandleFunc("/v1/grants", s.auth(s.grants))
+	s.mux.HandleFunc("/v1/grants/instance-drafts", s.auth(s.grantInstanceDraft, capAdmin))
 	s.mux.HandleFunc("/v1/grants/", s.auth(s.grantAction))
 	s.mux.HandleFunc("/v1/config", s.auth(s.config))
 	s.mux.HandleFunc("/v1/adapter/status", s.auth(s.adapterStatus))
@@ -477,7 +485,6 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 405, map[string]any{"error": "POST required"})
 		return
 	}
-	s.promotePendingBestEffort()
 	var req receipt.Request
 	if err := readJSON(r, &req, 4<<20); err != nil || req.Tool == "" || req.SessionID == "" || req.Platform == "" {
 		writeJSON(w, 400, map[string]any{"error": "invalid request: platform, session_id and tool are required"})
@@ -487,6 +494,10 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]string{"error": "inline_intent_rejected", "reason_code": "inline_intent_rejected"})
 		return
 	}
+	if req.Platform == "workbuddy" && !workBuddyRuntimeResponseReady(w, r) {
+		return
+	}
+	s.promotePendingBestEffort()
 	d, err := s.d.Engine.Decide(req)
 	if err != nil {
 		if errors.Is(err, receipt.ErrSessionCapacity) || errors.Is(err, receipt.ErrActionCapacity) {
@@ -551,6 +562,9 @@ func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(body.Result) > 64<<10 {
 		writeJSON(w, 413, map[string]string{"error": "observation_result_too_large"})
+		return
+	}
+	if body.Platform == "workbuddy" && !workBuddyRuntimeResponseReady(w, r) {
 		return
 	}
 	rec, err := s.d.Engine.Observe(body.Request, body.Result)
@@ -700,7 +714,9 @@ func (s *Server) runInventory(cwd string) (*inventory.Report, error) {
 	for _, a := range admissions {
 		byHash[a.ContentHash] = a.Verdict
 	}
+	workBuddyRoot, workBuddyDisabled := s.inventoryWorkBuddyRoot()
 	return inventory.Run(inventory.Options{HermesHome: s.d.HermesHome, LocalAppData: s.d.LocalAppData, Home: s.d.Home, Cwd: cwd, Version: s.d.Version, Key: s.d.Key,
+		WorkBuddyConfigDir: workBuddyRoot, WorkBuddyDisabled: workBuddyDisabled,
 		ProjectDirs: roots.ProjectDirs, SkillDirs: roots.SkillDirs,
 		ConnectorsDir: strings.TrimSpace(os.Getenv("SIQ_AS_CONNECTORS_DIR")),
 		HasAdmission:  func(h string) (string, bool) { v, ok := byHash[h]; return v, ok }})
@@ -815,16 +831,15 @@ func (s *Server) grantScenarios(w http.ResponseWriter, r *http.Request) {
 func (s *Server) grants(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		list, err := s.d.Store.ListGrants()
+		list, revs, err := s.d.Store.ListGrantsWithRevisions()
 		if err != nil {
+			if errors.Is(err, state.ErrGrantsBusy) {
+				w.Header().Set("Retry-After", "1")
+				writeJSON(w, 503, map[string]any{"error": "grants_busy"})
+				return
+			}
 			writeJSON(w, 500, map[string]any{"error": "store unreadable"})
 			return
-		}
-		revs := map[string]int{}
-		for _, g := range list {
-			if _, seq, err := s.d.Store.GetGrantWithSeq(g.GrantID); err == nil {
-				revs[g.GrantID] = seq
-			}
 		}
 		writeJSON(w, 200, map[string]any{"grants": list, "state_revisions": revs})
 	case http.MethodPost:
@@ -927,7 +942,7 @@ func (s *Server) grantAction(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]any{"error": "platform_out_of_scope"})
 		return
 	}
-	if importsource.Reserved(g.AdmissionID) && (parts[1] == "challenge" || parts[1] == "approve" || parts[1] == "draft") {
+	if importsource.Reserved(g.AdmissionID) && (parts[1] == "challenge" || parts[1] == "approve" || parts[1] == "draft" || parts[1] == "resources") {
 		if !s.skillImportSlot(w) {
 			return
 		}

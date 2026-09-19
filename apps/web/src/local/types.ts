@@ -92,7 +92,15 @@ export interface GrantResourceEdit {
   models: string[];
 }
 
+export type WindowsFilesystemProfile = 'windows-local-drive/v1';
+export type FilesystemConfirmation = { profile: 'posix/v1' } | { profile: WindowsFilesystemProfile; confirmed: true };
+
 export interface Grant {
+
+  schema_version?: 'grant/v2';
+  filesystem_profile?: WindowsFilesystemProfile;
+  filesystem_bindings?: Record<string, string>;
+  skill?: { skill_id: string; [key: string]: unknown } | null;
   signature?: string;
   hermes_toolset_allowlist?: string[];
   openclaw_tool_policy?: { allow: string[]; deny: string[]; require_approval: string[] };
@@ -191,7 +199,7 @@ export interface Receipt {
 
 export interface AdapterInstance {
   instance_id: string;
-  platform: 'hermes' | 'openclaw';
+  platform: 'hermes' | 'openclaw' | 'workbuddy';
   name: string;
   config_dir: string;
   source: string;
@@ -201,7 +209,8 @@ export interface AdapterInstance {
   diagnosis: AdapterDiagnosis;
 }
 export interface AdapterInstances {
-  schema_version: 'local-adapter-instances/v1';
+  schema_version: 'local-adapter-instances/v1' | 'local-adapter-instances/v2';
+  managed_runtime_available?: boolean;
   platform_changes: false;
   native_available: boolean;
   instances: AdapterInstance[];
@@ -209,7 +218,7 @@ export interface AdapterInstances {
 }
 
 export interface AdapterPlan {
-  schema_version: 'local-adapter-plan/v1' | 'local-adapter-plan/v2' | 'local-adapter-plan/v3';
+  schema_version: 'local-adapter-plan/v1' | 'local-adapter-plan/v2' | 'local-adapter-plan/v3' | 'local-adapter-plan/v4';
   runtime_identity_id?: string;
   instance_id?: string;
   instance_name?: string;
@@ -359,11 +368,13 @@ export interface LedgerFinding {
 }
 
 export interface RuntimeIdentity {
+
+  filesystem_profile?: WindowsFilesystemProfile;
   identity_id: string;
   instance_id: string;
   agent_id: string;
-  platform: 'hermes' | 'openclaw';
-  grant_ref: { grant_id: string; admission_id: string; permission_digest: string };
+  platform: 'hermes' | 'openclaw' | 'workbuddy';
+  grant_ref: { grant_id: string; admission_id: string; permission_digest: string; permission_digest_schema?: 'grant-permissions/v2' };
   actor_id: string;
   created_at: string;
   session_ttl_seconds: number;
@@ -511,19 +522,17 @@ export interface ImportPermissionRequest {
   instance_id: string;
   actor_id: string;
 }
-export interface ImportPermissionResult {
-  schema_version: 'local-skill-import-permission-created/v1';
+interface ImportPermissionResultFields {
   import_id: string;
   source: ImportPermissionSource;
-  grant: Grant;
   state_revision: number;
   reused: boolean;
   installed: false;
 }
+export type ImportPermissionResult = ImportPermissionResultFields & GrantVersionedResponse<'local-skill-import-permission-created'>;
 
 
-export interface SkillInstallRequest {
-  schema_version: 'local-skill-install-stage-create/v1';
+interface SkillInstallRequestFields {
   request_id: string;
   grant_id: string;
   expected_revision: number;
@@ -531,8 +540,8 @@ export interface SkillInstallRequest {
   directory_name: string;
   actor_id: string;
 }
-export interface SkillInstallPlan {
-  schema_version: 'local-skill-install-plan/v1';
+export type SkillInstallRequest = SkillInstallRequestFields & ({ schema_version: 'local-skill-install-stage-create/v1'; target_id?: never } | { schema_version: 'local-skill-install-stage-create/v2'; target_id: string });
+interface SkillInstallPlanFields {
   plan_id: string;
   request_id: string;
   source: ImportPermissionSource;
@@ -540,7 +549,6 @@ export interface SkillInstallPlan {
   grant_revision: number;
   grant_signature: string;
   grant_permission_digest: string;
-  platform: 'hermes' | 'openclaw';
   instance_id: string;
   directory_name: string;
   target_locator_digest: string;
@@ -554,11 +562,14 @@ export interface SkillInstallPlan {
   runtime_verified: false;
   signature: string;
 }
-export interface SkillInstallCreated {
-  schema_version: 'local-skill-install-plan-created/v1';
-  plan: SkillInstallPlan;
+export type SkillInstallPlanV1 = SkillInstallPlanFields & { schema_version: 'local-skill-install-plan/v1'; platform: 'hermes' | 'openclaw'; target_ref?: never };
+export type SkillInstallPlanV2 = SkillInstallPlanFields & { schema_version: 'local-skill-install-plan/v2'; platform: 'workbuddy'; target_ref: SkillInstallTargetRef };
+export type SkillInstallPlan = SkillInstallPlanV1 | SkillInstallPlanV2;
+type PlanVersionedResponse<Prefix extends string> = { schema_version: `${Prefix}/v1`; plan: SkillInstallPlanV1 } | { schema_version: `${Prefix}/v2`; plan: SkillInstallPlanV2 };
+interface SkillInstallCreatedFields {
   reused: boolean;
 }
+export type SkillInstallCreated = SkillInstallCreatedFields & PlanVersionedResponse<'local-skill-install-plan-created'>;
 
 export interface SkillInstallApply {
   schema_version: 'local-skill-install-apply/v1'; plan_id: string; plan_signature: string; actor_id: string; confirm_install: true;
@@ -567,10 +578,11 @@ export interface SkillInstallOperation {
   schema_version: 'local-skill-install-operation/v1'; install_id: string; plan_id: string; claim_signature: string;
   status: 'installed_unverified' | 'rolled_back' | 'recovery_required'; actor_id: string; recorded_at: string; runtime_verified: false; signature: string;
 }
-export interface SkillInstallView {
-  schema_version: 'local-skill-install-view/v1'; install_id: string; plan: SkillInstallPlan; claim_signature: string;
+interface SkillInstallViewFields {
+  install_id: string; claim_signature: string;
   status: SkillInstallOperation['status']; operation: SkillInstallOperation | null;
 }
+export type SkillInstallView = SkillInstallViewFields & PlanVersionedResponse<'local-skill-install-view'>;
 
 export interface SkillRuntimeBinding {
   schema_version: 'local-skill-install-runtime-binding/v1'; binding_id: string; install_id: string;
@@ -578,10 +590,11 @@ export interface SkillRuntimeBinding {
   approved_signature: string; permission_digest: string; instance_id: string; source: ImportPermissionSource;
   actor_id: string; created_at: string; signature: string;
 }
-export interface SkillRuntimeReadiness {
-  schema_version: 'local-skill-install-runtime-readiness/v1'; install_id: string; grant: Grant;
+interface SkillRuntimeReadinessFields {
+  install_id: string;
   state_revision: number; status: 'not_prepared' | 'incomplete' | 'prepared' | 'no_tools'; binding: SkillRuntimeBinding | null;
 }
+export type SkillRuntimeReadiness = SkillRuntimeReadinessFields & GrantVersionedResponse<'local-skill-install-runtime-readiness'>;
 export interface SkillActivateRequest {
   schema_version: 'local-skill-install-activate/v1'; operation_signature: string; expected_revision: number;
   actor_id: string; confirm_instance_scope: true;
@@ -591,24 +604,32 @@ export interface SkillActivated {
   state_revision: number; runtime_verified: false;
 }
 
-export interface SkillInstallationRecord {
-  schema_version: 'local-skill-install-record/v1'; install_id: string; plan: SkillInstallPlan;
+interface SkillInstallationRecordFields {
+  install_id: string;
   claim_signature: string; recorded_status: SkillInstallOperation['status']; operation: SkillInstallOperation | null;
 }
-export interface SkillInstallationCatalog {
-  schema_version: 'local-skill-install-catalog/v1'; checked_at: string; platform_changes: false;
-  items: SkillInstallationRecord[]; issues: { install_id: string | null; code: 'record_unavailable' }[];
+export type SkillInstallationRecord = SkillInstallationRecordFields & PlanVersionedResponse<'local-skill-install-record'>;
+interface SkillInstallationCatalogFields {
+  checked_at: string; platform_changes: false;
+  issues: { install_id: string | null; code: 'record_unavailable' }[];
 }
+export type SkillInstallationCatalog = SkillInstallationCatalogFields & (
+  { schema_version: 'local-skill-install-catalog/v1'; items: SkillInstallationRecordV1[] } |
+  { schema_version: 'local-skill-install-catalog/v2'; items: SkillInstallationRecord[] });
+export type SkillInstallationRecordV1 = Extract<SkillInstallationRecord, { schema_version: 'local-skill-install-record/v1' }>;
+export type SkillInstallationRecordV2 = Extract<SkillInstallationRecord, { schema_version: 'local-skill-install-record/v2' }>;
+type RecordVersionedResponse<Prefix extends string> = { schema_version: `${Prefix}/v1`; record: SkillInstallationRecordV1 } | { schema_version: `${Prefix}/v2`; record: SkillInstallationRecordV2 };
 export interface SkillContentChange {
   path_display: string; path_digest: string; kind: 'file' | 'directory' | 'other';
   change: 'added' | 'modified' | 'removed' | 'type_changed' | 'ownership_changed';
 }
-export interface SkillInstallationInspection {
-  schema_version: 'local-skill-install-inspection/v1'; record: SkillInstallationRecord; checked_at: string;
+interface SkillInstallationInspectionFields {
+  checked_at: string;
   platform_changes: false; target_state: 'matched' | 'changed' | 'missing' | 'unavailable'; comparison_complete: boolean;
   changes: SkillContentChange[]; changes_total: number; changes_truncated: boolean;
   issue_code: null | 'target_unavailable' | 'comparison_budget_exceeded';
 }
+export type SkillInstallationInspection = SkillInstallationInspectionFields & RecordVersionedResponse<'local-skill-install-inspection'>;
 
 export interface SkillRemoveRequest {
   schema_version: 'local-skill-install-remove/v1'; operation_signature: string; expected_grant_revision: number;
@@ -624,12 +645,14 @@ export interface SkillRemovalResult {
   grant_id: string; grant_revision: number; grant_signature: string; grant_revoked: boolean; retained_install_id: string;
   actor_id: string; recorded_at: string; target_absent: true; signature: string;
 }
-export interface SkillRemovalView {
-  schema_version: 'local-skill-install-removal-view/v1'; record: SkillInstallationRecord;
-  claim: SkillRemovalClaim | null; result: SkillRemovalResult | null; grant: Grant | null; state_revision: number | null;
+interface SkillRemovalViewFields {
+  claim: SkillRemovalClaim | null; result: SkillRemovalResult | null; state_revision: number | null;
   status: 'not_requested' | 'revocation_pending' | 'cleanup_pending' | 'removed';
   will_revoke_grant: boolean; retained_install_id: string; binding_signature: string;
 }
+export type SkillRemovalView = SkillRemovalViewFields & (
+  { schema_version: 'local-skill-install-removal-view/v1'; record: SkillInstallationRecordV1; grant: LegacyGrant | null } |
+  { schema_version: 'local-skill-install-removal-view/v2'; record: SkillInstallationRecordV2; grant: Grant | null });
 
 export interface SkillUpdateCompareRequest {
   schema_version: 'local-skill-update-compare/v1'; operation_signature: string; candidate_grant_id: string; expected_candidate_revision: number;
@@ -638,9 +661,9 @@ export interface SkillUpdateContent { kind: 'file' | 'directory'; sha256: string
 export interface SkillUpdateRule {
   domain: string; action: string; resource: { type: string; value: string }; effect: 'allow' | 'deny'; conditions: Record<string, unknown> | null; state: string;
 }
-export interface SkillUpdateComparison {
-  schema_version: 'local-skill-update-comparison/v1'; record: SkillInstallationRecord; candidate_source: ImportPermissionSource;
-  previous_grant: Grant; previous_revision: number; candidate_grant: Grant; candidate_revision: number; checked_at: string;
+interface SkillUpdateComparisonFields {
+  candidate_source: ImportPermissionSource;
+  previous_revision: number; candidate_revision: number; checked_at: string;
   comparison_basis: 'signed_installation_manifest'; platform_changes: false; runtime_verified: false; requires_confirmation: true;
   content_changes: { path_display: string; path_digest: string; before: SkillUpdateContent | null; after: SkillUpdateContent | null }[];
   content_changes_total: number; content_changes_truncated: boolean;
@@ -648,29 +671,60 @@ export interface SkillUpdateComparison {
   permission_changes_total: number; permission_changes_truncated: boolean;
   settings_changed: string[];
 }
+export type SkillUpdateComparison = SkillUpdateComparisonFields & (
+  { schema_version: 'local-skill-update-comparison/v1'; record: SkillInstallationRecordV1; previous_grant: LegacyGrant; candidate_grant: LegacyGrant } |
+  { schema_version: 'local-skill-update-comparison/v2'; record: SkillInstallationRecordV2; previous_grant: Grant; candidate_grant: Grant });
 export interface SkillUpdateStageRequest {
   schema_version: 'local-skill-update-stage-create/v1'; request_id: string; operation_signature: string; candidate_grant_id: string;
   expected_candidate_revision: number; expected_previous_revision: number; expected_binding_signature: string; actor_id: string;
 }
-export interface SkillUpdatePlan {
-  schema_version: 'local-skill-update-plan/v1'; update_id: string; request_id: string; record: SkillInstallationRecord;
+interface SkillUpdatePlanFields {
+  update_id: string; request_id: string;
   candidate_source: ImportPermissionSource; candidate_grant_id: string; candidate_revision: number; candidate_signature: string;
   candidate_permission_digest: string; previous_revision: number; previous_signature: string; binding_signature: string;
   retained_install_id: string; revoke_previous_grant: boolean; actor_id: string; created_at: string; expires_at: string;
   file_count: number; total_bytes: number; platform_changes: false; runtime_verified: false; requires_confirmation: true; signature: string;
 }
-export interface SkillUpdateCreated { schema_version: 'local-skill-update-plan-created/v1'; plan: SkillUpdatePlan; reused: boolean }
+export type SkillUpdatePlan = SkillUpdatePlanFields & RecordVersionedResponse<'local-skill-update-plan'>;
+interface SkillUpdateCreatedFields { reused: boolean }
+export type SkillUpdateCreated = SkillUpdateCreatedFields & UpdatePlanVersionedResponse<'local-skill-update-plan-created'>;
 export interface SkillUpdateCommit { schema_version: 'local-skill-update-commit/v1'; update_id: string; plan_signature: string; actor_id: string; confirm_update: true }
 export interface SkillUpdateRecover { schema_version: 'local-skill-update-recover/v1'; update_id: string; claim_signature: string; actor_id: string; confirm_recovery: true }
-export interface SkillUpdateClaim {
-  schema_version: 'local-skill-update-claim/v1'; update_id: string; plan: SkillUpdatePlan; replacement_plan: SkillInstallPlan; actor_id: string; created_at: string; signature: string;
+interface SkillUpdateClaimFields {
+  update_id: string; actor_id: string; created_at: string; signature: string;
 }
+export type SkillUpdateClaim = SkillUpdateClaimFields & (
+  { schema_version: 'local-skill-update-claim/v1'; plan: SkillUpdatePlanV1; replacement_plan: SkillInstallPlanV1 } |
+  { schema_version: 'local-skill-update-claim/v2'; plan: SkillUpdatePlanV2; replacement_plan: SkillInstallPlanV2 });
+export type SkillUpdatePlanV1 = Extract<SkillUpdatePlan, { schema_version: 'local-skill-update-plan/v1' }>;
+export type SkillUpdatePlanV2 = Extract<SkillUpdatePlan, { schema_version: 'local-skill-update-plan/v2' }>;
+type UpdatePlanVersionedResponse<Prefix extends string> = { schema_version: `${Prefix}/v1`; plan: SkillUpdatePlanV1 } | { schema_version: `${Prefix}/v2`; plan: SkillUpdatePlanV2 };
 export interface SkillUpdateResult {
   schema_version: 'local-skill-update-result/v1'; update_id: string; claim_signature: string; status: 'updated_unverified' | 'aborted';
   removal_signature: string; installation_signature: string; actor_id: string; recorded_at: string; runtime_verified: false; signature: string;
 }
-export interface SkillUpdateView {
-  schema_version: 'local-skill-update-view/v1'; update_id: string; claim: SkillUpdateClaim; result: SkillUpdateResult | null;
-  removal: SkillRemovalView | null; installation: SkillInstallOperation | null;
+interface SkillUpdateViewFields {
+  update_id: string; result: SkillUpdateResult | null;
+  installation: SkillInstallOperation | null;
   status: 'confirmed' | 'removing_previous' | 'installing_candidate' | 'recovery_required' | 'updated_unverified' | 'aborted';
+}
+export type SkillUpdateView = SkillUpdateViewFields & (
+  { schema_version: 'local-skill-update-view/v1'; claim: Extract<SkillUpdateClaim, { schema_version: 'local-skill-update-claim/v1' }>; removal: Extract<SkillRemovalView, { schema_version: 'local-skill-install-removal-view/v1' }> | null } |
+  { schema_version: 'local-skill-update-view/v2'; claim: Extract<SkillUpdateClaim, { schema_version: 'local-skill-update-claim/v2' }>; removal: Extract<SkillRemovalView, { schema_version: 'local-skill-install-removal-view/v2' }> | null });
+
+export type LegacyGrant = Grant & { schema_version?: never; filesystem_profile?: never; filesystem_bindings?: never };
+export type WindowsGrant = Grant & { schema_version: 'grant/v2'; filesystem_profile: WindowsFilesystemProfile; filesystem_bindings: Record<string, string> };
+type GrantVersionedResponse<Prefix extends string> = { schema_version: `${Prefix}/v1`; grant: LegacyGrant } | { schema_version: `${Prefix}/v2`; grant: WindowsGrant };
+export interface SkillInstallTargetRef {
+  target_id: string; scope: 'user' | 'project'; filesystem_profile: WindowsFilesystemProfile;
+  root_locator_digest: string; root_identity_digest: string; config_root_identity_digest: string;
+  existing_parent_relative_path: '' | 'skills' | '.codebuddy' | '.codebuddy/skills'; existing_parent_identity_digest: string;
+}
+export interface SkillInstallationTarget {
+  target_id: string; instance_id: string; platform: 'workbuddy'; scope: 'user' | 'project';
+  root_display: string; target_display: string; filesystem_profile: WindowsFilesystemProfile;
+  available: boolean; error_code: null | 'target_unavailable' | 'target_changed' | 'target_ambiguous' | 'target_unsupported';
+}
+export interface SkillInstallationTargets {
+  schema_version: 'local-skill-install-targets/v1'; instance_id: string; targets: SkillInstallationTarget[]; platform_changes: false;
 }

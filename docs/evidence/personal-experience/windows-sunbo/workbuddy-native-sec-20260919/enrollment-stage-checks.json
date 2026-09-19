@@ -1,0 +1,15 @@
+{
+  "candidate": "6841a4957b179484f8dcd0faa9dddccb1f9a7ade",
+  "fixed_classifications": [
+    "deadline before request",
+    "deadline during request"
+  ],
+  "fail_closed_no_decide_and_no_secret_error": "passed",
+  "client_stage_checks": "passed 9.394s",
+  "adapter_stage_checks": "passed 1.106s",
+  "go_vet_all": "passed",
+  "four_clean_target_builds": "passed",
+  "incremental_gitleaks": "passed",
+  "initial_test_harness_failure": "45s httptest.Close blocked on unread-body handler; bounded mock wait fixed then rerun passed",
+  "native_result": "see native-6841a49-report.json; no deadline occurred in successful run; earlier timeouts are not erased"
+}

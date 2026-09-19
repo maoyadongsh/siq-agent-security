@@ -95,9 +95,12 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 	if !found {
 		return violation("intent_tool_not_allowed")
 	}
-	descriptor := runtimeaction.Describe(tool, params)
+	descriptor := runtimeaction.DescribeForProfile(c.ResourceProfile(), tool, params)
 	if descriptor.ResourceError == runtimeaction.ErrParameterBudget {
 		return violation("runtime_parameter_budget_exceeded")
+	}
+	if c.windowsProfileContract() && descriptor.ResourceError != nil {
+		return violation("intent_resource_not_allowed")
 	}
 	for _, effect := range descriptor.Effects {
 		if effect == runtimeaction.EffectUnknown {
@@ -130,7 +133,7 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 				continue
 			}
 			seen = true
-			if !matchResource(resource, constraint) {
+			if !matchResourceForProfile(c.ResourceProfile(), resource, constraint) {
 				return violation("intent_resource_not_allowed")
 			}
 		}
@@ -142,12 +145,16 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 }
 
 func matchResource(resource runtimeaction.Resource, constraint ResourceConstraint) bool {
+	return matchResourceForProfile(runtimeaction.FilesystemPOSIXV1, resource, constraint)
+}
+
+func matchResourceForProfile(profile runtimeaction.FilesystemProfile, resource runtimeaction.Resource, constraint ResourceConstraint) bool {
 	normalized := func(wanted any) (string, bool) {
 		value, ok := wanted.(string)
 		if !ok {
 			return "", false
 		}
-		value, err := runtimeaction.NormalizeResource(resource.Domain, value)
+		value, err := runtimeaction.NormalizeResourceForProfile(profile, resource.Domain, value)
 		return value, err == nil
 	}
 	if constraint.Operator == "equals" || constraint.Operator == "one_of" {

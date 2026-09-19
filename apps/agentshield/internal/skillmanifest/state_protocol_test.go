@@ -26,7 +26,7 @@ func TestStateProtocolReleaseContract(t *testing.T) {
 	}
 	raw, _ := json.MarshalIndent(m, "", "  ")
 	raw = append(raw, '\n')
-	path := "../../testdata/contracts/skill-manifest.v3.sample.json"
+	path := "../../testdata/contracts/skill-manifest.v3.reader3.sample.json"
 	if os.Getenv("SIQ_UPDATE_STATE_PROTO_FIXTURES") == "1" {
 		if e = os.WriteFile(path, raw, 0600); e != nil {
 			t.Fatal(e)
@@ -35,6 +35,13 @@ func TestStateProtocolReleaseContract(t *testing.T) {
 	expected, e := os.ReadFile(path)
 	if e != nil || !bytes.Equal(raw, expected) {
 		t.Fatal("v3 fixture drift", e)
+	}
+	// Keep the actual older signed fixture intact and readable; increasing the
+	// current builder capability must not rewrite a historical signature.
+	legacy, e := os.ReadFile("../../testdata/contracts/skill-manifest.v3.sample.json")
+	var old Manifest
+	if e != nil || json.Unmarshal(legacy, &old) != nil || VerifyWithPublicKey(&old, key.Public()) != nil {
+		t.Fatal("legacy v3 manifest no longer verifies", e)
 	}
 	m.StateCompatibility.MaxFormat++
 	if e = VerifyWithPublicKey(m, key.Public()); e == nil {

@@ -11,6 +11,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
@@ -90,7 +91,11 @@ func newFixture(t *testing.T, mode string, g *grant.Grant, untrusted bool) *fixt
 }
 
 func req(platform, tool string, params map[string]any) Request {
-	return Request{Platform: platform, SessionID: "sess-1", AgentID: "inst_1", Tool: tool, ToolCallID: "tc-1", Params: params, Context: map[string]any{"cwd": "/home/u/proj"}}
+	session := "sess-1"
+	if platform == "openclaw" {
+		session, _ = intent.OpenClawSessionID(session, "11111111-1111-4111-8111-111111111111")
+	}
+	return Request{Platform: platform, SessionID: session, AgentID: "inst_1", Tool: tool, ToolCallID: "tc-1", Params: params, Context: map[string]any{"cwd": "/home/u/proj"}}
 }
 
 func TestNoGrantIsDefaultDeny(t *testing.T) {

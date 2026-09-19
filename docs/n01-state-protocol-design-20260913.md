@@ -48,3 +48,29 @@ macOS 原生补验发现的祖先检查增量（2026-09-15）：Darwin 的 `/var
 迁移最多 10,000 条目、单文件 128 MiB、总文件内容 2 GiB；超限需另行扩展并验收，不能静默跳过。备份记录普通文件内容与 POSIX 权限，拒绝 symlink、特殊文件及 setuid/setgid/sticky 位；不宣称复制 OS ACL/xattr 或提供任意目录重定位。私有 journal/backup/tmp 必须限制访问，未发布 scratch 位于 journal/tmp，重启保留它们，不凭文件名前缀删除未知数据。
 
 只有完整备份完成点及精确的 prepared target 都匹配计划时，才允许恢复失败 rename 后缺失的兼容标记；更早阶段缺失源标记仍拒绝。普通业务文件从不参与此替换例外。用户恢复必须使用原实例和原目录；无法证明身份/原数据/备份完整性时保留现场，不自动回放旧授权。
+
+## Windows 资源解释显式启用事务（reader/writer 3，2026-09-18）
+
+Windows Grant v2 / Runtime Identity v2 / Intent v4 必须在旧消费者拒绝的状态中发布。状态外形仍为 state-format/v2、format_version=2，显式启用将 min_reader/min_writer 从2提升到3；不重签或升级既有业务对象。全新初始化仍为2，不自动改变旧实例。只有完整启用记录可通过新版 Grant 的持久化门禁；完整新版授权消费链开放前，管理创建入口仍保持关闭。
+
+启用只接受已初始化且常规 v1→v2 迁移已收尾的 Windows 本机状态，明确 confirm，持主 Writer 与 service-control/adapter-write/client-releases/client-snapshots 全部维护 Writer。v1、未知格式、活跃旧迁移或非本机平台拒绝，不自动停服务、不提权。
+
+新增 state-windows-profile-plan/v1：filesystem_profile 固定 windows-local-drive/v1，source_marker 与 target_marker 保存两个标记的原始 JSON 字符串，migration_history_sha256 记录既有归档迁移的关联摘要，无历史为 absent。目标必须保留目录/实例身份，只提升兼容版本并更新信息性版本/时间；原 min_reader/min_writer 必须均为2，目标均为3。所有外层键严格且计划采用 Go JSON 紧凑编码加LF；两个内层标记按现有严格解析。预算16KiB，单标记不超过4096字节。合同 Schema 只检验外形，实施复验绑定、版本、历史与现场。
+
+历史摘要为 SHA256(UTF8("state-windows-profile-history/v1\0" + sha256(旧归档plan原始字节) + "\0" + sha256(旧done原始字节)))。旧done的计划摘要与标记摘要必须分别匹配旧plan和本次source_marker，旧plan target/目录/实例必须相符。旧归档plan/done及备份保持不变；这项关联不宣称重新验证了整个备份内容。
+
+先以旧程序已经识别的 logs/migration-plan.json 发布新schema活动屏障，旧程序对该schema拒绝。新私密目录 state-windows-profile-v1 保存不可变plan.json、prepared.json与done.json；暂存只在其tmp内，排他发布复用现有Windows单链接原语。prepared绑定计划摘要，并在标记切换前发布精确target.json。仅允许替换本次验证过的兼容标记，不恢复任何业务快照。
+
+目标标记发布并读回复验后，追加state-windows-profile-done/v1（plan_sha256、marker_sha256），复验完整链后移除精确活动屏障。完成后旧reader/writer2因最低版本3拒绝；新读取器必须验证归档计划、完成记录、目标标记及旧迁移关联，不能只信一个版本数字。已有对象的副作用与权限状态保持原样。
+
+任意中断后只可由同一显式启用事务持锁恢复；计划漂移、源标记替换、旧迁移历史变化、未知输出或权限异常均保留现场拒绝。标记缺失只在prepared与精确target暂存都匹配计划时可恢复；更早阶段不补造。done以后重试不比较过时业务快照、不回滚新业务写入。拒绝或未确认时不产生事务材料。测试覆盖逐阶段故障和真实隔离进程退出，Windows不据此宣称断电耐久性。
+
+显式入口为 `state-enable-windows-resources --confirm`；无确认/多余参数在访问状态前拒绝。`state-status` 对中断启用给出此恢复命令，损坏记录保持拒绝。命令返回 local-state-windows-profile-result/v1，仅表示兼容元数据 activated/up_to_date，不表示批准或启用某个宿主。发行清单的 reader/writer 声明随实现提升到3，已有清单不改写；旧最低版本2制品对升级状态的发行预检拒绝。
+
+完成后仍核验 prepared.json 的计划摘要；缺失、篡改或宽 ACL 不自动修复。活动屏障即使已有 done 也始终拒绝普通入口，只由显式启用命令完成清理。普通 state-migrate 在取锁前识别新版屏障并返回专属恢复指引。Windows 新增元数据读沿已有 privatefs 核查目录 DACL、单链接及文件 DACL，状态兼容层仍不依赖业务存储，也不经过会拒绝活动屏障的 statefs。
+
+目标标记已经发布时，恢复预检必须同时核验已有归档计划及 prepared 证明；缺失或损坏时不得补造归档、追加 done 或删除活动屏障。只有源标记仍在的正常前期检查点允许首次发布这些材料。
+
+## 旧迁移完成凭据与活动屏障（2026-09-18）
+
+原 `state-migration-plan/v1` 同样遵守普通入口拒绝规则：只要活动 `logs/migration-plan.json` 仍存在，即使其 plan/done/marker 摘要完整匹配，普通读取、初始化和写入仍返回迁移未完成。完成凭据证明迁移数据已提交，不替代显式恢复与活动屏障清理。只有持有迁移 Writer 的 `state-migrate --confirm` 可以独立核验完成凭据、版本兼容、归档计划和精确活动计划，然后移除屏障；完成凭据或归档不符时保留现场拒绝。恢复已完成迁移时不重放旧备份，也不比较可能过时的业务快照。所有故障检查点包括 done 均验证普通入口拒绝；真实历史授权的进程退出测试另外证明恢复后的撤销、版本和备份内容保持不变。

@@ -1,0 +1,166 @@
+{
+  "grant": {
+    "admission_id": "adm-4af17a9f9719",
+    "approved_by": null,
+    "created_at": "2026-09-18T00:00:00Z",
+    "default_effect": "deny",
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-id-74c51854cf92b15b87040bc3a9eef93b47723ab2df1a59c82887f6f40f82ae20",
+      "static_domains_unavailable": [
+        "process"
+      ],
+      "version": 1
+    },
+    "effective_readback": null,
+    "enforcement_mode": "block",
+    "expires_at": null,
+    "facts": [
+      {
+        "action": "http.request",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "domain": "network",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-6beaa3d2a2e0a49e"
+        ],
+        "fact_id": "pf-1-aa748b8b",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "endpoint",
+          "value": "api.github.com:443"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "http.request",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "domain": "network",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-b2a9fa42ff9052a5"
+        ],
+        "fact_id": "pf-2-ec32c7d9",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "endpoint",
+          "value": "astral.sh:443"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "process.exec",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "domain": "process",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-b31d513c126a901c"
+        ],
+        "fact_id": "pf-3-8c755530",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "shell"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "tool.invoke",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "domain": "tool",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-6a3aafe7e13b7ba0"
+        ],
+        "fact_id": "pf-4-811cbc58",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "tool.invoke",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "domain": "tool",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-6a3aafe7e13b7ba0"
+        ],
+        "fact_id": "pf-5-aa79ee81",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "terminal"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "tool.invoke",
+        "authority": "skill_manifest",
+        "authority_revision": null,
+        "domain": "tool",
+        "effect": "allow",
+        "evidence_ids": [
+          "ev-6a3aafe7e13b7ba0"
+        ],
+        "fact_id": "pf-6-df3ab44f",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "tool",
+          "value": "web_extract"
+        },
+        "state": "declared"
+      },
+      {
+        "action": "process.privilege_escalation",
+        "authority": "agentshield",
+        "authority_revision": null,
+        "domain": "process",
+        "effect": "deny",
+        "evidence_ids": [
+          "ev-059bcee25881ed23",
+          "ev-3c619bbfc0ad4c68",
+          "ev-543fb293c072eec4",
+          "ev-6a3aafe7e13b7ba0",
+          "ev-6beaa3d2a2e0a49e",
+          "ev-a7df2f5597611f22",
+          "ev-b2a9fa42ff9052a5",
+          "ev-b31d513c126a901c",
+          "ev-f7e6d3d7e734b349"
+        ],
+        "fact_id": "pf-inf-a9836a0d",
+        "readback_evidence_id": null,
+        "resource": {
+          "type": "capability",
+          "value": "setuid/sudo"
+        },
+        "state": "inferred"
+      }
+    ],
+    "grant_id": "grt-id-74c51854cf92b15b87040bc3a9eef93b47723ab2df1a59c82887f6f40f82ae20",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "terminal",
+      "web_extract"
+    ],
+    "overlap_conflicts": [],
+    "platform": "hermes",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "signing_schema": "local_canonical/v1",
+    "status": "pending_approval",
+    "subject": {
+      "id": "hri-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "type": "agent_instance"
+    }
+  },
+  "instance_id": "hi-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "reused": false,
+  "schema_version": "grant-instance-draft-created/v1",
+  "state_revision": 0
+}

@@ -1,0 +1,76 @@
+{
+  "source_sha": "017c405287f4286caff5fc10b9cc1fec374c2e4e",
+  "source_dirty": false,
+  "runtime_equivalent_candidate": "2d5ee6c725e865b2c0769f0d35ac839161dbb717",
+  "method": "component_fixture",
+  "native_host_launched": false,
+  "model_calls": 0,
+  "command": [
+    "test",
+    "./internal/skillinstall",
+    "./internal/skillcontext",
+    "-json",
+    "-run",
+    "^TestWorkBuddyV2(InstallUpdateRemoveBothScopes|InstallSupportsControlledSessionSEC|InstallSECRejectsMixedOrMissingTarget)$",
+    "-count=1",
+    "-timeout=300s"
+  ],
+  "exit_code": 1,
+  "seconds": 325.36,
+  "tests": [
+    {
+      "test": "TestWorkBuddyV2InstallSupportsControlledSessionSEC/user",
+      "action": "pass",
+      "elapsed": 0.27
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSupportsControlledSessionSEC/project",
+      "action": "pass",
+      "elapsed": 0.26
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSupportsControlledSessionSEC",
+      "action": "pass",
+      "elapsed": 0.53
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSECRejectsMixedOrMissingTarget/v1-record",
+      "action": "pass",
+      "elapsed": 0.08
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSECRejectsMixedOrMissingTarget/v1-plan",
+      "action": "pass",
+      "elapsed": 0.09
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSECRejectsMixedOrMissingTarget/missing-target",
+      "action": "pass",
+      "elapsed": 0.09
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSECRejectsMixedOrMissingTarget/changed-scope",
+      "action": "pass",
+      "elapsed": 0.1
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSECRejectsMixedOrMissingTarget/other-platform",
+      "action": "pass",
+      "elapsed": 0.11
+    },
+    {
+      "test": "TestWorkBuddyV2InstallSECRejectsMixedOrMissingTarget",
+      "action": "pass",
+      "elapsed": 0.48
+    },
+    {
+      "test": "TestWorkBuddyV2InstallUpdateRemoveBothScopes/user",
+      "action": "pass",
+      "elapsed": 160.43
+    }
+  ],
+  "private_log_sha256": {
+    "stdout.jsonl": "afeae29983ccec5023acb6fd460e6144ab84eca8c31c40d68b5f4f0aa6c3d105",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

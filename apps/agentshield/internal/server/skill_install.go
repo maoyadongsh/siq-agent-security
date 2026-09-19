@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -19,7 +21,7 @@ type installPlanCreated struct {
 
 func (s *Server) initSkillInstallations() error {
 	var err error
-	s.skillInstallations, err = skillinstall.Open(s.d.Store, s.d.Key, s.skillImports, s.resolveSkillTarget)
+	s.skillInstallations, err = skillinstall.OpenWithTargets(s.d.Store, s.d.Key, s.skillImports, s.resolveSkillTarget, s.resolveSkillInstallTarget)
 
 	if err == nil {
 		s.d.Store.SetRuntimeGrantCheck(func(g *grant.Grant) error {
@@ -96,7 +98,7 @@ func (s *Server) skillInstallPlanCreate(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var req skillinstall.Request
-	if !readStrictFlatRequest(w, r, &req, "skill_install_invalid", "schema_version", "request_id", "grant_id", "expected_revision", "instance_id", "directory_name", "actor_id") {
+	if !readInstallStageRequest(w, r, &req) {
 		return
 	}
 	if !s.skillInstallSlot(w) {
@@ -114,7 +116,34 @@ func (s *Server) skillInstallPlanCreate(w http.ResponseWriter, r *http.Request) 
 	if reused {
 		status = 200
 	}
-	writeJSON(w, status, installPlanCreated{"local-skill-install-plan-created/v1", plan, reused})
+	schema := "local-skill-install-plan-created/v1"
+	if plan.SchemaVersion == "local-skill-install-plan/v2" {
+		schema = "local-skill-install-plan-created/v2"
+	}
+	writeJSON(w, status, installPlanCreated{SchemaVersion: schema, Plan: plan, Reused: reused})
+}
+
+// Select the exact key set by version before decoding. An empty target_id on
+// v1 is still an unknown field, not a request to infer a WorkBuddy user scope.
+func readInstallStageRequest(w http.ResponseWriter, r *http.Request, req *skillinstall.Request) bool {
+	raw, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 16<<10))
+	var version struct {
+		SchemaVersion string `json:"schema_version"`
+	}
+	fields := []string{"schema_version", "request_id", "grant_id", "expected_revision", "instance_id", "directory_name", "actor_id"}
+	valid := err == nil && json.Unmarshal(raw, &version) == nil
+	switch version.SchemaVersion {
+	case "local-skill-install-stage-create/v1":
+	case "local-skill-install-stage-create/v2":
+		fields = append(fields, "target_id")
+	default:
+		valid = false
+	}
+	if !valid || !exactJSONObject(raw, fields...) || json.Unmarshal(raw, req) != nil {
+		writeJSON(w, 400, map[string]string{"error": "skill_install_invalid"})
+		return false
+	}
+	return true
 }
 func (s *Server) skillInstallPlanRead(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-store")
@@ -205,7 +234,11 @@ func (s *Server) skillInstallOperation(w http.ResponseWriter, r *http.Request) {
 		if reused {
 			status = 200
 		}
-		writeJSON(w, status, updatePlanCreated{"local-skill-update-plan-created/v1", plan, reused})
+		schema := "local-skill-update-plan-created/v1"
+		if plan.SchemaVersion == "local-skill-update-plan/v2" {
+			schema = "local-skill-update-plan-created/v2"
+		}
+		writeJSON(w, status, updatePlanCreated{SchemaVersion: schema, Plan: plan, Reused: reused})
 		return
 	}
 	if len(parts) == 2 && parts[0] != "" && parts[1] == "update-comparison" {

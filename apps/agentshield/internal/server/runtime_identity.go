@@ -145,12 +145,12 @@ func readStrictRequestLimit(w http.ResponseWriter, r *http.Request, out any, err
 }
 func (s *Server) initRuntimeIdentities() error {
 	var err error
-	s.runtimeIdentities, err = runtimeidentity.Open(s.d.Store.Dir, s.d.Key, s.intents, func(id string) (string, error) {
-		target, resolveErr := s.resolveSkillTarget(context.Background(), id)
+	s.runtimeIdentities, err = runtimeidentity.OpenWithInstances(s.d.Store.Dir, s.d.Key, s.intents, func(id string) (runtimeidentity.InstanceInfo, error) {
+		target, resolveErr := s.resolveRuntimeIdentityTarget(context.Background(), id)
 		if resolveErr != nil {
-			return "", resolveErr
+			return runtimeidentity.InstanceInfo{}, resolveErr
 		}
-		return target.Platform, nil
+		return runtimeidentity.InstanceInfo{Platform: target.Platform, Root: target.Root}, nil
 	})
 	return err
 }
@@ -158,6 +158,8 @@ func runtimeIdentityError(w http.ResponseWriter, err error) {
 	status := 503
 	code := "runtime_identity_unavailable"
 	switch {
+	case errors.Is(err, runtimeidentity.ErrProfileState):
+		status, code = 409, "windows_profile_activation_required"
 	case errors.Is(err, runtimeidentity.ErrNoTools):
 		status, code = 400, "runtime_identity_no_tools"
 	case errors.Is(err, runtimeidentity.ErrInvalid):
@@ -173,15 +175,27 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("Cache-Control", "no-store")
 	switch r.Method {
 	case http.MethodGet:
+		if !runtimeIdentityResponseReady(w, r) {
+			return
+		}
 		items, err := s.runtimeIdentities.List()
 		if err != nil {
 			runtimeIdentityError(w, err)
 			return
 		}
-		writeJSON(w, 200, map[string]any{"schema_version": "local-runtime-identities/v1", "items": items})
+		version := "local-runtime-identities/v1"
+		for _, item := range items {
+			if item.FilesystemProfile != "" {
+				version = "local-runtime-identities/v2"
+			}
+		}
+		writeJSON(w, 200, map[string]any{"schema_version": version, "items": items})
 	case http.MethodPost:
 		var req runtimeidentity.CreateRequest
-		if !readRuntimeIdentity(w, r, &req, "schema_version", "instance_id", "grant_id", "expected_grant_revision", "actor_id", "session_ttl_seconds") {
+		if !readRuntimeIdentityCreate(w, r, &req) {
+			return
+		}
+		if !runtimeIdentityResponseReady(w, r) {
 			return
 		}
 		record, err := s.runtimeIdentities.Create(req)
@@ -199,7 +213,11 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 			runtimeIdentityError(w, err)
 			return
 		}
-		writeJSON(w, 201, map[string]any{"schema_version": "local-runtime-identity-issued/v1", "identity": summary, "credential_path": path})
+		version := "local-runtime-identity-issued/v1"
+		if record.SchemaVersion == "local-runtime-identity/v2" {
+			version = "local-runtime-identity-issued/v2"
+		}
+		writeJSON(w, 201, map[string]any{"schema_version": version, "identity": summary, "credential_path": path})
 	default:
 		w.WriteHeader(405)
 	}
@@ -227,6 +245,9 @@ func (s *Server) runtimeIdentityOne(w http.ResponseWriter, r *http.Request) {
 		runtimeIdentityError(w, runtimeidentity.ErrInvalid)
 		return
 	}
+	if !runtimeIdentityResponseReady(w, r) {
+		return
+	}
 	_, err := s.runtimeIdentities.Revoke(id, req.ActorID)
 	if err != nil {
 		runtimeIdentityError(w, err)
@@ -245,11 +266,6 @@ func (s *Server) runtimeSessionEnroll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	credential := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-	record, err := s.runtimeIdentities.Authenticate(credential)
-	if err != nil {
-		writeJSON(w, 401, map[string]string{"error": "runtime_identity_required"})
-		return
-	}
 	var req runtimeidentity.EnrollRequest
 	if !readRuntimeIdentity(w, r, &req, "schema_version", "session_id") {
 		return
@@ -258,10 +274,21 @@ func (s *Server) runtimeSessionEnroll(w http.ResponseWriter, r *http.Request) {
 		runtimeIdentityError(w, runtimeidentity.ErrInvalid)
 		return
 	}
-	b, err := s.runtimeIdentities.Enroll(credential, req.SessionID)
+	if !workBuddyRuntimeResponseReady(w, r) {
+		return
+	}
+	record, b, err := s.runtimeIdentities.EnrollContext(credential, req.SessionID)
 	if err != nil {
+		if errors.Is(err, runtimeidentity.ErrCredential) {
+			writeJSON(w, 401, map[string]string{"error": "runtime_identity_required"})
+			return
+		}
 		runtimeIdentityError(w, err)
 		return
 	}
-	writeJSON(w, 200, map[string]any{"schema_version": "local-runtime-session-enrolled/v1", "identity_id": record.IdentityID, "platform": record.Platform, "agent_id": record.AgentID, "session_id": req.SessionID, "binding_id": b.BindingID, "intent_id": b.IntentID, "expires_at": b.ExpiresAt})
+	version := "local-runtime-session-enrolled/v1"
+	if record.Platform == "workbuddy" {
+		version = "local-runtime-session-enrolled/v2"
+	}
+	writeJSON(w, 200, map[string]any{"schema_version": version, "identity_id": record.IdentityID, "platform": record.Platform, "agent_id": record.AgentID, "session_id": req.SessionID, "binding_id": b.BindingID, "intent_id": b.IntentID, "expires_at": b.ExpiresAt})
 }

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { localApi, LocalApiError } from '../api';
 import { useLocalSession } from '../session';
-import { skillInstallErrorText } from '../skillInstall';
+import { skillInstallErrorText, skillInstallScopeLabel } from '../skillInstall';
 import type { SkillInstallView } from '../types';
 
 export default function SkillInstallationResult({ epoch, submissionMessage, processing }: { epoch: number; submissionMessage?: string; processing: boolean }) {
@@ -53,7 +53,7 @@ export default function SkillInstallationResult({ epoch, submissionMessage, proc
     {!working && !view && submissionMessage ? <p role="alert">{submissionMessage}</p> : null}
     {view ? <>
       <p role="status">{status === 'installed_unverified' ? 'Skill 文件已安装并完成内容核验，尚未验证运行保护。' : status === 'rolled_back' ? '安装未完成，已记录回滚完成。' : '安装未完成，需要恢复。'}</p>
-      <dl><dt>目标位置</dt><dd>{view.plan.target_display}</dd>
+      <dl><dt>安装范围</dt><dd>{skillInstallScopeLabel(view.plan)}</dd><dt>目标位置</dt><dd>{view.plan.target_display}</dd>
         <dt>记录时间</dt><dd>{view.operation ? new Date(view.operation.recorded_at).toLocaleString() : '尚无最终结果记录'}</dd>
       </dl>
       <details><summary>查看来源与授权记录</summary>

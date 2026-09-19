@@ -1,0 +1,133 @@
+{
+  "schema_version": "public-source-manifest/v1",
+  "source_objects_copied": false,
+  "source_paths_omitted": true,
+  "scope": "Retained evidence and helper source only; no credentials or Authority seed inputs.",
+  "sources": [
+    {
+      "label": "clean-candidate-build-summary",
+      "sha256": "c115563ebde6553288f5cfede094f3b3f692f77eaf313ff4d8631decb2a53d17",
+      "bytes": 1019
+    },
+    {
+      "label": "clean-candidate-windows-binary",
+      "sha256": "ad7680ba64672c9abbaab341ecebea4946e317e2fc3c6160cb5a0ade7e6d9d16",
+      "bytes": 26362880
+    },
+    {
+      "label": "r1-failed-controller-report",
+      "sha256": "2da133b45d2b12033f0a96ebea94593f484200307861cbd7a71c78b687875fcf",
+      "bytes": 13483
+    },
+    {
+      "label": "r1-diagnostic-v2-incomplete",
+      "sha256": "8bee7cb723aa0c8735d6224eb4920cafd28d74d9763fc2d16895fd13e3f6ddb9",
+      "bytes": 3036
+    },
+    {
+      "label": "r2-failed-controller-report",
+      "sha256": "0270ece7a81a6cb5548fa4f2eeeb8fee8d06ff79ab5fdc592de1490d00966608",
+      "bytes": 13484
+    },
+    {
+      "label": "r2-strict-verifier-failure",
+      "sha256": "8d20b8133f2361eae460697110a1344e9bec6bfcdb66899a9e9a92b4ddae8b13",
+      "bytes": 126
+    },
+    {
+      "label": "r3-driver-result",
+      "sha256": "2b4e149e7a3b8664605a5629aa726f8a8c1aeba85a3f69854e6e02ac5afc8dcc",
+      "bytes": 2175
+    },
+    {
+      "label": "r3-controller-report",
+      "sha256": "317876730b26d56ca4caea6e4bfda5ec0f593835351a70e2c49b6837d24a9c93",
+      "bytes": 13337
+    },
+    {
+      "label": "r3-strict-verification-v2-result",
+      "sha256": "ed841053d818b49ed135a8cc1b493d107014553fc23aa904bee1232de046e376",
+      "bytes": 2236
+    },
+    {
+      "label": "r3-independent-readonly-review",
+      "sha256": "26366944ebbede25f63a513b129a751984bdd52b3a5cc17a04b1833a5d6f5718",
+      "bytes": 4712
+    },
+    {
+      "label": "r3-process-observer-record",
+      "sha256": "30fdf5535e61e75d6c86a19a837efdf2558151606a2c24fe830f7fa9a8f47f0e",
+      "bytes": 37132
+    },
+    {
+      "label": "r3-approved-plan",
+      "sha256": "5f707221bd5b1732fc742e657aa9248613be0d7b3851399c660b1a4d78020064",
+      "bytes": 8484
+    },
+    {
+      "label": "r3-probe-samples",
+      "sha256": "f86251bf23cdb4447ddc96ecb7452e3cf3b01dd622c6ce55462c84cecd699e45",
+      "bytes": 33509
+    },
+    {
+      "label": "r3-controller-source",
+      "sha256": "4d685f2d25169685e192f8cfe49e8e80d07711c501ea1c866869ce5347d9929a",
+      "bytes": 32732
+    },
+    {
+      "label": "r3-observer-source",
+      "sha256": "6f5ead7153138e1b2f09772ad52efdb9d02854ced554c75a931d8f33796d538b",
+      "bytes": 11799
+    },
+    {
+      "label": "r3-snapshot-helper-source",
+      "sha256": "ff76ce7234e830222664ba6311e0fc9cc801ff337ac6a47337e02e6f4db90581",
+      "bytes": 7257
+    },
+    {
+      "label": "r3-preparation-result",
+      "sha256": "50294e21a0be4e04223a19c160142b4ca7369c5ec0fe0b9b46b6fb5765586a7f",
+      "bytes": 6991
+    },
+    {
+      "label": "r3-pure-snapshot-test-result",
+      "sha256": "50f7f53ed6a5ee79d7aa528de85934c502e4833b8694b31847c602345ec41bc4",
+      "bytes": 772
+    },
+    {
+      "label": "r3-static-preparation-result",
+      "sha256": "712419c6ced328fbcce4e655e4613e2377cf13b3e36096c503d6d4e7a3b43288",
+      "bytes": 694
+    },
+    {
+      "label": "strict-verifier-v2-source",
+      "sha256": "fca145094f073e4588a4bdfa8f60937c0ec12c9ff0b1c2d1d71ec55100310c97",
+      "bytes": 37178
+    },
+    {
+      "label": "snapshot-owned-process-component-source",
+      "sha256": "d62fdc932c1e2940dc21f1a01fdc82b378bd768c694ce56717e23f339d2cfee4",
+      "bytes": 4888
+    },
+    {
+      "label": "snapshot-owned-process-component-result",
+      "sha256": "967f8d0f513c6c9490d42b95afb4df123e974e9b91117787a93401e75224b28e",
+      "bytes": 2443
+    },
+    {
+      "label": "ci-494-current-triage",
+      "sha256": "47ef0a8680f2b11d7059d683a30f325022effef5842f5afe4e5606965ba5255c",
+      "bytes": 4639
+    },
+    {
+      "label": "ci-494-agentshield-failed-job-log",
+      "sha256": "d0f4f0c75115e19736fff531b5179f7f3d42b9db89b25646a108a6be3eaa3858",
+      "bytes": 24840
+    },
+    {
+      "label": "ci-494-runtime-security-failed-job-log",
+      "sha256": "639436a08d58f5942c41ad0f7c3013e5f210e1ddcd06e0d5386304104aa9bf78",
+      "bytes": 24525
+    }
+  ]
+}

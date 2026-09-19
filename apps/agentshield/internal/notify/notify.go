@@ -8,9 +8,9 @@
 //   - Delivery never blocks or fails a decision: the dispatcher logs delivery
 //     errors and retries after the coalesce interval. Notification absence
 //     must not gate the confirmation inbox, which stays fully usable.
-//   - The notifier is a fixed argv executed without a shell. Empty platform
-//     default means "unsupported here": the dispatcher stays silent instead
-//     of pretending delivery happened.
+//   - Command notifiers use fixed argv without a shell. The Windows native
+//     notifier owns its window/icon and only navigates to the local inbox.
+//     Missing platform support never fabricates successful delivery.
 package notify
 
 import (
@@ -107,7 +107,10 @@ func (c CommandNotifier) Notify(n Notification) error {
 type DispatcherOptions struct {
 	PollInterval     time.Duration
 	CoalesceInterval time.Duration
-	Title            string
+	// StartupDelay suppresses initial reminders after daemon startup. It is
+	// independent of delivery failures and never delays the confirmation inbox.
+	StartupDelay time.Duration
+	Title        string
 	// Log receives delivery failures; nil drops them. The dispatcher never
 	// propagates delivery errors to callers.
 	Log func(error)
@@ -124,6 +127,7 @@ type Dispatcher struct {
 	lastCount  int
 	lastNotify time.Time
 	retryAfter time.Time
+	readyAt    time.Time
 }
 
 // NewDispatcher builds a dispatcher over a pending-count source.
@@ -140,7 +144,11 @@ func NewDispatcher(pending func() int, n Notifier, opts DispatcherOptions) *Disp
 	if opts.Log == nil {
 		opts.Log = func(error) {}
 	}
-	return &Dispatcher{pending: pending, notifier: n, opts: opts}
+	d := &Dispatcher{pending: pending, notifier: n, opts: opts}
+	if opts.StartupDelay > 0 {
+		d.readyAt = time.Now().Add(opts.StartupDelay)
+	}
+	return d
 }
 
 // Run polls until ctx is done. It is the only method intended for a goroutine.
@@ -160,9 +168,12 @@ func (d *Dispatcher) Run(ctx context.Context) {
 // Tick performs one poll-and-maybe-notify step and reports whether a
 // notification was raised. Exposed for deterministic tests.
 func (d *Dispatcher) Tick(now time.Time) bool {
-	count := d.pending()
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	if now.Before(d.readyAt) {
+		return false
+	}
+	count := d.pending()
 	if count <= d.lastCount || count <= 0 {
 		d.lastCount = count
 		if count <= 0 {

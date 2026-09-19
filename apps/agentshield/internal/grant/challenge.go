@@ -41,6 +41,9 @@ type ApprovalChallenge struct {
 // approve decision must lock. Signature and approval metadata are excluded so
 // the digest describes the pending authorization body.
 func BindingDigest(g Grant) (string, error) {
+	if err := ValidateFilesystemProfile(g); err != nil {
+		return "", err
+	}
 	payload := map[string]any{
 		"grant_id":                 g.GrantID,
 		"admission_id":             g.AdmissionID,
@@ -55,6 +58,12 @@ func BindingDigest(g Grant) (string, error) {
 		"enforcement_mode":         g.EnforcementMode,
 		"status":                   g.Status,
 		"expires_at":               g.ExpiresAt,
+	}
+	if g.SchemaVersion == "grant/v2" {
+		payload["digest_schema"] = "grant-approval-binding/v2"
+		payload["schema_version"] = g.SchemaVersion
+		payload["filesystem_profile"] = g.FilesystemProfile
+		payload["filesystem_bindings"] = g.FilesystemBindings
 	}
 	raw, err := json.Marshal(payload)
 	if err != nil {
@@ -74,6 +83,9 @@ func BindingDigest(g Grant) (string, error) {
 
 // ScopeDigest summarizes tools/resources the human is authorizing.
 func ScopeDigest(g Grant) (string, error) {
+	if err := ValidateFilesystemProfile(g); err != nil {
+		return "", err
+	}
 	tools := map[string]struct{}{}
 	resources := map[string]struct{}{}
 	for _, f := range g.Facts {
@@ -99,6 +111,12 @@ func ScopeDigest(g Grant) (string, error) {
 	payload := map[string]any{
 		"tools":     sortedKeys(tools),
 		"resources": sortedKeys(resources),
+	}
+	if g.SchemaVersion == "grant/v2" {
+		payload["digest_schema"] = "grant-approval-scope/v2"
+		payload["schema_version"] = g.SchemaVersion
+		payload["filesystem_profile"] = g.FilesystemProfile
+		payload["filesystem_bindings"] = g.FilesystemBindings
 	}
 	raw, err := json.Marshal(payload)
 	if err != nil {

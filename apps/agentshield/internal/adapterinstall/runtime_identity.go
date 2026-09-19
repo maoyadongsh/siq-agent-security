@@ -6,8 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 
+	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
 	"siq-agent-security/apps/agentshield/internal/product"
 )
@@ -18,6 +20,9 @@ var ErrIdentityWithdrawalRequired = errors.New("adapter: managed identity must b
 // Managed config field names differ by host convention: Hermes plugin
 // config.json uses snake_case, OpenClaw's product config uses camelCase.
 func managedConfigKeys(platform string) (id, token, agent string) {
+	if platform == WorkBuddy {
+		return "runtime_identity_id", "credential_path", "agent_id"
+	}
 	if platform == OpenClaw {
 		return "runtimeIdentityId", "tokenPath", "agentId"
 	}
@@ -25,7 +30,7 @@ func managedConfigKeys(platform string) (id, token, agent string) {
 }
 
 func validManagedTarget(o Options) bool {
-	return (o.Platform == Hermes || o.Platform == OpenClaw) && o.Instance != nil && validateInstance(o) == nil && managedIdentityPattern.MatchString(o.RuntimeIdentityID)
+	return (o.Platform == Hermes || o.Platform == OpenClaw || o.Platform == WorkBuddy && runtime.GOOS == "windows") && o.Instance != nil && validateInstance(o) == nil && managedIdentityPattern.MatchString(o.RuntimeIdentityID)
 }
 func managedCredentialPath(o Options) string {
 	return filepath.Join(o.StateDir, "runtime-identity-secrets", o.RuntimeIdentityID+".token")
@@ -46,12 +51,17 @@ func (p *Plan) pinRuntimeIdentity() error {
 		return ErrPlanChanged
 	}
 	var identity struct {
-		ID         string `json:"identity_id"`
-		InstanceID string `json:"instance_id"`
-		AgentID    string `json:"agent_id"`
-		Platform   string `json:"platform"`
+		SchemaVersion     string `json:"schema_version"`
+		FilesystemProfile string `json:"filesystem_profile"`
+		ID                string `json:"identity_id"`
+		InstanceID        string `json:"instance_id"`
+		AgentID           string `json:"agent_id"`
+		Platform          string `json:"platform"`
 	}
 	if json.Unmarshal(meta.Data, &identity) != nil || identity.ID != o.RuntimeIdentityID || identity.InstanceID != o.Instance.ID || identity.AgentID != "hri-"+strings.TrimPrefix(o.Instance.ID, "hi-") || identity.Platform != o.Platform {
+		return ErrPlanChanged
+	}
+	if o.Platform == WorkBuddy && (identity.SchemaVersion != "local-runtime-identity/v2" || identity.FilesystemProfile != "windows-local-drive/v1") {
 		return ErrPlanChanged
 	}
 	revoked, err := p.input(managedRevocationPath(o))
@@ -68,6 +78,8 @@ func ConfiguredRuntimeIdentity(o Options) (string, error) {
 	if o.Platform == OpenClaw {
 		idKey = "runtimeIdentityId"
 		path = filepath.Join(o.configRoot(), product.Name+".json")
+	} else if o.Platform == WorkBuddy {
+		path = workBuddyManagedConfigPath(o)
 	} else if o.Platform != Hermes {
 		return "", nil
 	}
@@ -80,6 +92,17 @@ func ConfiguredRuntimeIdentity(o Options) (string, error) {
 	}
 	if err != nil {
 		return "", err
+	}
+	if o.Platform == WorkBuddy {
+		raw, err := inspectRead(o.Home, path)
+		if err != nil {
+			return "", err
+		}
+		cfg, err := adapters.DecodeWorkBuddyManagedConfig(raw, path, o.StateDir)
+		if err != nil {
+			return "", ErrPlanChanged
+		}
+		return cfg.RuntimeIdentityID, nil
 	}
 	value, exists := doc[idKey]
 	if !exists {

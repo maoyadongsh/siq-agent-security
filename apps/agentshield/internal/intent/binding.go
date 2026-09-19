@@ -1,6 +1,7 @@
 package intent
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -14,6 +15,7 @@ import (
 )
 
 type Binding struct {
+	SchemaVersion     string          `json:"schema_version,omitempty"`
 	GrantRef          *GrantReference `json:"grant_ref,omitempty"`
 	SelectedGrant     *grant.Grant    `json:"-"`
 	BindingID         string          `json:"binding_id"`
@@ -53,6 +55,9 @@ func (s *Store) Bind(b Binding) (Binding, error) {
 func (s *Store) bind(b Binding) (Binding, error) {
 	authorityWriteMu.Lock()
 	defer authorityWriteMu.Unlock()
+	if err := ValidateNativeSession(b.Platform, b.SessionID); err != nil {
+		return b, err
+	}
 	if b.Platform == "" || b.SessionID == "" || b.AgentID == "" || b.IntentID == "" {
 		return b, violation("intent_invalid_binding")
 	}
@@ -72,7 +77,17 @@ func (s *Store) bind(b Binding) (Binding, error) {
 	if b.TaskID != "" && b.TaskID != c.TaskID {
 		return b, violation("intent_task_mismatch")
 	}
-	if _, err := s.resolveGrantSelection(b); err != nil {
+	g, err := s.resolveGrantSelection(b)
+	if err != nil {
+		return b, err
+	}
+	if c.windowsProfileContract() {
+		b.SchemaVersion = "intent-grant-binding/v2"
+	}
+	if !bindingProfileMatches(c, b, g) {
+		return b, violation("intent_grant_profile_mismatch")
+	}
+	if err := s.checkProfileState(c); err != nil {
 		return b, err
 	}
 	b.BindingID = bindingID(b.Platform, b.SessionID, b.AgentID)
@@ -146,12 +161,22 @@ func (s *Store) bindingPath(id string) (string, error) {
 	return filepath.Join(s.bindingDir(), id+".json"), nil
 }
 func (s *Store) ListBindings() ([]Binding, error) {
+	return s.ListBindingsContext(context.Background())
+}
+
+func (s *Store) ListBindingsContext(ctx context.Context) ([]Binding, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	ids, err := recordIDs(s.bindingDir())
 	if err != nil {
 		return nil, err
 	}
 	out := []Binding{}
 	for _, id := range ids {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
 		b, err := s.GetBinding(id)
 		if err != nil {
 			return nil, err

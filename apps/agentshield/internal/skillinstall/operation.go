@@ -70,7 +70,7 @@ func (s *Store) claim(ctx context.Context, id string) (*Claim, error) {
 	if err := s.readSigned(ctx, s.operationPath(id, "claim"), &c); err != nil {
 		return nil, err
 	}
-	if c.SchemaVersion != "local-skill-install-claim/v1" || c.InstallID != id || installID(c.Plan.PlanID) != id || c.ActorID != c.Plan.ActorID {
+	if c.SchemaVersion != c.Plan.wireVersion("local-skill-install-claim") || c.InstallID != id || installID(c.Plan.PlanID) != id || c.ActorID != c.Plan.ActorID {
 		return nil, ErrChanged
 	}
 	p, err := s.readPlan(c.Plan.PlanID)
@@ -86,6 +86,10 @@ func (s *Store) claim(ctx context.Context, id string) (*Claim, error) {
 	return &c, nil
 }
 func (s *Store) destination(ctx context.Context, p Plan) (string, string, error) {
+	return s.resolvePlanTarget(ctx, p)
+}
+
+func (s *Store) legacyDestination(ctx context.Context, p Plan) (string, string, error) {
 	target, err := s.resolve(ctx, p.InstanceID)
 	if err != nil || target.InstanceID != p.InstanceID || target.Platform != p.Platform || !supportedPlatform(target.Platform) || !filepath.IsAbs(target.Root) || filepath.Clean(target.Root) != target.Root || checkDirectories(target.Root) != nil {
 		return "", "", ErrChanged
@@ -109,7 +113,7 @@ func (s *Store) checkAuthority(ctx context.Context, p Plan, full bool) error {
 		return err
 	}
 	g, rev, err := s.authority.GetGrantWithSeq(p.GrantID)
-	if err != nil || g == nil || rev != p.GrantRevision || g.Signature != p.GrantSignature || g.Status != "approved" || !grant.Verify(s.key.Public(), *g) || grant.ValidateLifetime(*g, s.now()) != nil {
+	if err != nil || g == nil || rev != p.GrantRevision || g.Signature != p.GrantSignature || g.Status != "approved" || !grant.Verify(s.key.Public(), *g) || !planGrantProfile(p, g) || grant.ValidateLifetime(*g, s.now()) != nil {
 		return ErrChanged
 	}
 	if err := s.validTime(&p); err != nil {
@@ -240,7 +244,7 @@ func (s *Store) apply(ctx context.Context, r ApplyRequest) (*Operation, error) {
 		return nil, sourceError(ctx, err)
 	}
 	metadata := snapshot.Metadata()
-	c := Claim{SchemaVersion: "local-skill-install-claim/v1", InstallID: id, Plan: *p, Directories: metadata.Directories, Files: metadata.Files, ActorID: r.ActorID, CreatedAt: s.now().UTC().Format(time.RFC3339Nano)}
+	c := Claim{SchemaVersion: p.wireVersion("local-skill-install-claim"), InstallID: id, Plan: *p, Directories: metadata.Directories, Files: metadata.Files, ActorID: r.ActorID, CreatedAt: s.now().UTC().Format(time.RFC3339Nano)}
 	for _, file := range c.Files {
 		if reservedMetadata(file.Path) {
 			return nil, ErrReservedMetadata
@@ -388,7 +392,7 @@ func (s *Store) ReadView(ctx context.Context, id string) (*View, error) {
 	if err != nil && !errors.Is(err, ErrRecoveryRequired) {
 		return nil, err
 	}
-	v := &View{SchemaVersion: "local-skill-install-view/v1", InstallID: id, Plan: c.Plan, ClaimSignature: c.Signature, Status: "recovery_required", Operation: result}
+	v := &View{SchemaVersion: c.Plan.wireVersion("local-skill-install-view"), InstallID: id, Plan: c.Plan, ClaimSignature: c.Signature, Status: "recovery_required", Operation: result}
 	if result != nil {
 		v.Status = result.Status
 	}

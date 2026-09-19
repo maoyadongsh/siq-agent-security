@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "runtime_identity_id",
+    "instance_id",
+    "agent_id",
+    "credential_path",
+    "endpoint",
+    "enforcement_mode",
+    "state_dir"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "workbuddy-managed-hook/v1"
+    },
+    "runtime_identity_id": {
+      "type": "string",
+      "pattern": "^ri-[a-f0-9]{32}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^hri-[a-f0-9]{32}$"
+    },
+    "credential_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "endpoint": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "enforcement_mode": {
+      "enum": [
+        "block",
+        "warn",
+        "audit_only"
+      ]
+    },
+    "state_dir": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    }
+  }
+}

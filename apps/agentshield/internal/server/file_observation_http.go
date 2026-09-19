@@ -16,6 +16,7 @@ var fileObservationID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`)
 var fileExpectedDigest = regexp.MustCompile(`^[0-9a-f]{64}$`)
 
 type pendingFileObservation struct {
+	IntentID, IntentDigest                     string
 	Before                                     effectevidence.FileSnapshot
 	ActionID, ReceiptID, ExpectedDigest, Owner string
 	MaxBytes                                   int64
@@ -87,7 +88,12 @@ func (s *Server) beginFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, err)
 		return
 	}
-	ref, err := fileResource(body.Path)
+	profile, err := s.fileActionProfile(a)
+	if err != nil {
+		effectError(w, err)
+		return
+	}
+	ref, err := fileResourceForProfile(profile, body.Path)
 	if err != nil {
 		effectError(w, err)
 		return
@@ -123,6 +129,10 @@ func (s *Server) beginFileObservation(w http.ResponseWriter, r *http.Request) {
 			effectError(w, effectevidence.ErrConflict)
 			return
 		}
+		if !snapshotProfileMatches(p.Before, profile) || profile == runtimeaction.FilesystemWindowsLocalDriveV1 && (p.IntentID != a.IntentID || p.IntentDigest != a.IntentDigest) || recheckObservedFile(profile, body.Path, p.MaxBytes, p.Before) != nil {
+			effectError(w, effectevidence.ErrCorrelation)
+			return
+		}
 		writeJSON(w, 200, map[string]any{"observation_id": body.ID, "before": p.Before, "completed": p.Completed})
 		return
 	}
@@ -145,11 +155,11 @@ func (s *Server) beginFileObservation(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		expires, parseErr := time.Parse(time.RFC3339Nano, persisted.ExpiresAt)
-		if parseErr != nil || !now.Before(expires) || current != owner || persisted.Scope != o.Scope || persisted.Source != o.Source || persisted.ActionID != a.ActionID || persisted.ReceiptID != a.DecisionReceiptID || persisted.Before.ResourceRef != ref || persisted.ExpectedDigest != body.Expected || persisted.MaxBytes != body.MaxBytes {
+		if parseErr != nil || !now.Before(expires) || current != owner || persisted.Scope != o.Scope || persisted.Source != o.Source || persisted.ActionID != a.ActionID || persisted.ReceiptID != a.DecisionReceiptID || persisted.Before.ResourceRef != ref || persisted.ExpectedDigest != body.Expected || persisted.MaxBytes != body.MaxBytes || !pendingFileAuthorityMatches(persisted, a, profile) || recheckObservedFile(profile, body.Path, persisted.MaxBytes, persisted.Before) != nil {
 			effectError(w, effectevidence.ErrConflict)
 			return
 		}
-		s.fileObservations[body.ID] = pendingFileObservation{Before: persisted.Before, ActionID: persisted.ActionID, ReceiptID: persisted.ReceiptID, ExpectedDigest: persisted.ExpectedDigest, Owner: owner, MaxBytes: persisted.MaxBytes, Expires: expires}
+		s.fileObservations[body.ID] = pendingFileObservation{IntentID: persisted.IntentID, IntentDigest: persisted.IntentDigest, Before: persisted.Before, ActionID: persisted.ActionID, ReceiptID: persisted.ReceiptID, ExpectedDigest: persisted.ExpectedDigest, Owner: owner, MaxBytes: persisted.MaxBytes, Expires: expires}
 		writeJSON(w, 200, map[string]any{"observation_id": body.ID, "before": persisted.Before, "completed": false})
 		return
 	}
@@ -157,17 +167,25 @@ func (s *Server) beginFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, pendingErr)
 		return
 	}
-	before, err := effectevidence.CaptureFile(body.Path, body.MaxBytes)
+	before, err := effectevidence.CaptureFileForProfile(profile, body.Path, body.MaxBytes)
 	if err != nil {
 		effectError(w, effectevidence.ErrInvalid)
 		return
 	}
-	_, err = s.effects.SavePendingFile(effectevidence.PendingFile{SchemaVersion: "file-observation-pending/v1", ID: body.ID, ActionID: a.ActionID, ReceiptID: a.DecisionReceiptID, Scope: o.Scope, Source: o.Source, Before: before, OwnerDigest: owner, ExpectedDigest: body.Expected, MaxBytes: body.MaxBytes, ExpiresAt: o.Expires.UTC().Format(time.RFC3339Nano), SigningSchema: "local_canonical/v1"})
+	pending := effectevidence.PendingFile{SchemaVersion: "file-observation-pending/v1", ID: body.ID, ActionID: a.ActionID, ReceiptID: a.DecisionReceiptID, Scope: o.Scope, Source: o.Source, Before: before, OwnerDigest: owner, ExpectedDigest: body.Expected, MaxBytes: body.MaxBytes, ExpiresAt: o.Expires.UTC().Format(time.RFC3339Nano), SigningSchema: "local_canonical/v1"}
+	if profile == runtimeaction.FilesystemWindowsLocalDriveV1 {
+		pending.SchemaVersion, pending.IntentID, pending.IntentDigest = "file-observation-pending/v2", a.IntentID, a.IntentDigest
+	}
+	if _, err := s.fileActionProfile(a); err != nil {
+		effectError(w, err)
+		return
+	}
+	_, err = s.effects.SavePendingFile(pending)
 	if err != nil {
 		effectError(w, err)
 		return
 	}
-	s.fileObservations[body.ID] = pendingFileObservation{Before: before, ActionID: a.ActionID, ReceiptID: a.DecisionReceiptID, ExpectedDigest: body.Expected, Owner: owner, MaxBytes: body.MaxBytes, Expires: o.Expires}
+	s.fileObservations[body.ID] = pendingFileObservation{IntentID: pending.IntentID, IntentDigest: pending.IntentDigest, Before: before, ActionID: a.ActionID, ReceiptID: a.DecisionReceiptID, ExpectedDigest: body.Expected, Owner: owner, MaxBytes: body.MaxBytes, Expires: o.Expires}
 	writeJSON(w, 201, map[string]any{"observation_id": body.ID, "before": before, "completed": false})
 }
 func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
@@ -215,7 +233,12 @@ func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, err)
 		return
 	}
-	ref, err := fileResource(body.Path)
+	profile, err := s.fileActionProfile(a)
+	if err != nil || !snapshotProfileMatches(p.Before, profile) || profile == runtimeaction.FilesystemWindowsLocalDriveV1 && (p.IntentID != a.IntentID || p.IntentDigest != a.IntentDigest) {
+		effectError(w, effectevidence.ErrCorrelation)
+		return
+	}
+	ref, err := fileResourceForProfile(profile, body.Path)
 	if err != nil || ref != p.Before.ResourceRef {
 		effectError(w, effectevidence.ErrCorrelation)
 		return
@@ -229,7 +252,7 @@ func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
 		effectError(w, storedErr)
 		return
 	}
-	after, err := effectevidence.CaptureFile(body.Path, p.MaxBytes)
+	after, err := effectevidence.CaptureFileForProfile(profile, body.Path, p.MaxBytes)
 	if err != nil {
 		effectError(w, effectevidence.ErrInvalid)
 		return
@@ -237,6 +260,10 @@ func (s *Server) finishFileObservation(w http.ResponseWriter, r *http.Request) {
 	material, err := effectevidence.FileWrite(p.Before, after, p.ExpectedDigest)
 	if err != nil {
 		effectError(w, effectevidence.ErrInvalid)
+		return
+	}
+	if _, err := s.fileActionProfile(a); err != nil {
+		effectError(w, err)
 		return
 	}
 	record, err = s.effects.SubmitFile(id, material, a, o.Source, time.Now())
@@ -254,11 +281,7 @@ func (s *Server) recoverFileObservation(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(405)
 		return
 	}
-	var body struct {
-		ID            string `json:"observation_id"`
-		ObserverID    string `json:"observer_id"`
-		ExpectedOwner string `json:"expected_owner"`
-	}
+	var body fileObservationRecoveryRequest
 	if !readEffect(w, r, &body) {
 		return
 	}
@@ -296,14 +319,33 @@ func (s *Server) recoverFileObservation(w http.ResponseWriter, r *http.Request) 
 		effectError(w, effectevidence.ErrObserver)
 		return
 	}
-	if _, err = s.fileAction(target, p.ActionID, p.ReceiptID); err != nil {
+	a, err := s.fileAction(target, p.ActionID, p.ReceiptID)
+	if err != nil {
 		effectError(w, err)
+		return
+	}
+	profile, err := s.fileActionProfile(a)
+	if err != nil || !pendingFileAuthorityMatches(p, a, profile) {
+		effectError(w, effectevidence.ErrCorrelation)
+		return
+	}
+	if profile == runtimeaction.FilesystemWindowsLocalDriveV1 {
+		if body.SchemaVersion != "file-observation-recovery-request/v2" || recheckObservedFile(profile, body.Path, p.MaxBytes, p.Before) != nil {
+			effectError(w, effectevidence.ErrCorrelation)
+			return
+		}
+	} else if body.SchemaVersion != "" || body.Path != "" {
+		effectError(w, effectevidence.ErrInvalid)
 		return
 	}
 	if _, err = s.effects.Get(p.ID, now); !errors.Is(err, effectevidence.ErrNotFound) {
 		if err == nil {
 			err = effectevidence.ErrConflict
 		}
+		effectError(w, err)
+		return
+	}
+	if _, err := s.fileActionProfile(a); err != nil {
 		effectError(w, err)
 		return
 	}

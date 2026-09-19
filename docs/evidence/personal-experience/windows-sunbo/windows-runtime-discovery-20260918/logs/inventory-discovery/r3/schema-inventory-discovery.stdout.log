@@ -1,0 +1,29 @@
+.F                                                                       [100%]
+================================== FAILURES ===================================
+______________________ test_go_inventory_sample_conforms ______________________
+
+    @pytest.mark.skipif(not GO_SAMPLES.exists(), reason="agentshield Go samples not present")
+    def test_go_inventory_sample_conforms():
+        rep = json.loads((GO_SAMPLES / "inventory.sample.json").read_text(encoding="utf-8"))
+        for c in rep["candidates"]:
+            errors = _validate("candidate", c)
+            assert not errors, (c["candidate_id"], [e.message for e in errors])
+            assert c["source_type"] in {
+                "skill_dir", "platform_config", "hermes_profile", "openclaw_agent", "mcp_server", "workbuddy_profile",
+            }
+        ids = set()
+        for ev in rep["evidence"]:
+            errors = _validate("evidence", ev)
+>           assert not errors, [e.message for e in errors]
+E           AssertionError: ["'directory_manifest' is not one of ['registry', 'manifest', 'openclaw_config', 'process', 'container', 'k8s', 'iam', 'gateway', 'openshell', 'human', 'deny_log', 'systemd', 'skill_dir', 'platform_config']"]
+E           assert not [<ValidationError: "'directory_manifest' is not one of ['registry', 'manifest', 'openclaw_config', 'process', 'container', 'k8s', 'iam', 'gateway', 'openshell', 'human', 'deny_log', 'systemd', 'skill_dir', 'platform_config']">]
+
+app\tests\test_schema_contracts.py:954: AssertionError
+============================== warnings summary ===============================
+..\..\..\win-stage-r2-20260917\apps\control-api\.venv\Lib\site-packages\fastapi\testclient.py:1
+  <WORKSPACE>\.tmp\win-stage-r2-20260917\apps\control-api\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED app/tests/test_schema_contracts.py::test_go_inventory_sample_conforms

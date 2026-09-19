@@ -1,0 +1,13 @@
+{
+  "exit": 0,
+  "tracked_source_matches": "e09b68489a495fa263488634508e11f661b5936f",
+  "test_context": "development tree before commit; additional isolated crash driver present but not selected",
+  "top_level_pass": 4,
+  "subtest_pass": 9,
+  "skipped": [
+    "TestMigrationRejectsDriftAndUntrustedPlan/symlink-backup: native symlink creation unavailable"
+  ],
+  "no_tests_matched_packages": [
+    "internal/stateformat (subsequently full package passed in build-and-checks.json)"
+  ]
+}

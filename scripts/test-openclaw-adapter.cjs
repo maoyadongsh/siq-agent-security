@@ -41,7 +41,9 @@ const sandbox = {
       mkdirSync() {}, appendFileSync() {},
     };
     if (name === 'node:os') return { homedir: () => '/isolated-test' };
-    if (name === 'node:path') return path;
+    // The VM deliberately models Linux. Keep its path implementation aligned
+    // even when the contract harness itself runs on Windows.
+    if (name === 'node:path') return path.posix;
     if (name === 'node:crypto') return crypto;
     throw Error('unexpected import: ' + name);
   },
@@ -84,7 +86,24 @@ assert.deepEqual(configReads, ['/isolated-profile/siq-agent-security.json'], 'is
 exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } });
 (async () => {
   const event = { toolName: 'read_file', toolCallId: 'call-1', params: { path: '/approved/report' }, result: 'ok' };
-  const context = { sessionKey: 'session-1', agentId: 'agent-1', approvalExecutionRecheckVersion: 1 };
+  const context = { sessionKey: 'session-1', sessionId: '11111111-1111-4111-8111-111111111111', agentId: 'agent-1', approvalExecutionRecheckVersion: 1 };
+  const firstIdentity = exportsObject.nativeSessionID(context);
+  const vector = JSON.parse(fs.readFileSync(path.join(__dirname, '../apps/agentshield/testdata/contracts/openclaw-native-session.json'), 'utf8'));
+  assert.equal(exportsObject.nativeSessionID({ ...context, sessionKey: 'agent:fixture:main' }), vector);
+  const nextContext = { ...context, sessionId: '22222222-2222-4222-8222-222222222222' };
+  assert.match(firstIdentity, /^openclaw-session\/v1:[0-9a-f]{64}$/);
+  assert.equal(exportsObject.nativeSessionID({ ...context }), firstIdentity);
+  assert.notEqual(exportsObject.nativeSessionID(nextContext), firstIdentity);
+  const previousRequests = seen.length;
+  assert.equal((await hooks.before_tool_call({ ...event, sessionKey: context.sessionKey, sessionId: context.sessionId,
+    params: { sessionKey: context.sessionKey, sessionId: context.sessionId } }, {})).block, true);
+  assert.equal(seen.length, previousRequests, 'event/model data cannot supply trusted epoch');
+  assert.equal(await hooks.before_tool_call({ ...event, toolCallId: 'epoch-source', sessionId: nextContext.sessionId }, context), undefined);
+  assert.equal(seen.at(-1).body.session_id, firstIdentity, 'event override ignored');
+  await hooks.after_tool_call({ ...event, toolCallId: 'epoch-source' }, nextContext);
+  assert.equal(seen.at(-1).body.action_id, undefined, 'new epoch cannot observe prior decision');
+  assert.equal(await hooks.before_tool_call({ ...event, toolCallId: 'epoch-source' }, nextContext), undefined);
+  assert.equal(seen.at(-1).body.session_id, exportsObject.nativeSessionID(nextContext));
   assert.equal(await hooks.before_tool_call(event, context), undefined);
   await hooks.after_tool_call(event, context);
   assert.equal(seen.at(-1).body.action_id, 'act-1');
@@ -164,9 +183,11 @@ exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } 
       process: { ...sandbox.process, env: { ...sandbox.process.env, SIQ_AGENT_SECURITY_MODE: mode } },
     }, { filename: sourcePath });
     modeExports.default.register({ on(name, callback) { modeHooks[name] = callback; } });
+    assert.equal((await modeHooks.before_tool_call({ ...event, sessionId: context.sessionId }, { sessionKey: 'session-1' })).block, true,
+      'missing native epoch must hard deny even in advisory modes');
     decision = { action: 'hold', action_id: 'act-' + mode, receipt_id: 'rcp-' + mode, reason: 'approval' };
     const queries = statusQueries;
-    assert.equal(await modeHooks.before_tool_call({ ...event, toolCallId: mode }, { sessionKey: 'session-1', agentId: 'agent-1' }), undefined);
+    assert.equal(await modeHooks.before_tool_call({ ...event, toolCallId: mode }, { sessionKey: 'session-1', sessionId: '11111111-1111-4111-8111-111111111111', agentId: 'agent-1' }), undefined);
     assert.equal(statusQueries, queries, 'advisory mode must not enter unsupported platform approval');
   }
   console.log('OpenClaw correlation, host capability and approval recheck gates passed');

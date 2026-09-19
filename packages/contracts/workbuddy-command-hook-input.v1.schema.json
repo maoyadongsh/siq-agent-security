@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Parser additionally enforces UTF-8 byte bounds (metadata: 4096 bytes), Unicode controls and edge whitespace, equal call IDs, depth 64, 1 MiB, and recursive duplicate rejection. generation_id/model/client/version are descriptive metadata, never Authority or retry proof.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "hook_event_name",
+    "session_id",
+    "tool_use_id",
+    "call_id",
+    "tool_name",
+    "tool_input"
+  ],
+  "properties": {
+    "hook_event_name": {
+      "enum": [
+        "PreToolUse",
+        "PostToolUse"
+      ]
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\s\\u0000-\\u001f\\u007f](?:[^\\u0000-\\u001f\\u007f]*[^\\s\\u0000-\\u001f\\u007f])?$"
+    },
+    "tool_use_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\s\\u0000-\\u001f\\u007f](?:[^\\u0000-\\u001f\\u007f]*[^\\s\\u0000-\\u001f\\u007f])?$"
+    },
+    "call_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\s\\u0000-\\u001f\\u007f](?:[^\\u0000-\\u001f\\u007f]*[^\\s\\u0000-\\u001f\\u007f])?$"
+    },
+    "tool_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\s\\u0000-\\u001f\\u007f](?:[^\\u0000-\\u001f\\u007f]*[^\\s\\u0000-\\u001f\\u007f])?$"
+    },
+    "tool_input": {
+      "type": "object"
+    },
+    "tool_response": {},
+    "cwd": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "transcript_path": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "permission_mode": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "agent_id": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "agent_type": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "generation_id": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "model": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "client": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 4096
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "hook_event_name": {
+            "const": "PostToolUse"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "tool_response"
+        ]
+      }
+    }
+  ]
+}

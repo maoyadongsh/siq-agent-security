@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Windows file observation material V2",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "before": {
+      "$ref": "file-snapshot.v2.schema.json"
+    },
+    "after": {
+      "$ref": "file-snapshot.v2.schema.json"
+    },
+    "expected_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "execution_state": {
+      "enum": [
+        "completed",
+        "failed",
+        "unknown"
+      ]
+    },
+    "result": {
+      "enum": [
+        "expected",
+        "unexpected",
+        "unknown"
+      ]
+    },
+    "schema_version": {
+      "const": "file-observation/v2"
+    }
+  },
+  "required": [
+    "before",
+    "after",
+    "expected_digest",
+    "execution_state",
+    "result",
+    "schema_version"
+  ]
+}

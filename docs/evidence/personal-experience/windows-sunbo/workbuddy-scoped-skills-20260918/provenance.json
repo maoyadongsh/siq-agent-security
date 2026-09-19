@@ -1,0 +1,370 @@
+{
+  "raw_files_unchanged": true,
+  "normalization": "Decode UTF-8 (remove BOM if present), redact fixed workspace/home paths and SID/credential forms, normalize actual newlines to LF, write UTF-8. JSON-escaped newlines inside log events remain original event text. Existing hashes inside copied result metadata still describe raw local files; this manifest separately records public-file hashes.",
+  "entries": [
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r1/imported-windows-profile.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r1/imported-windows-profile.stdout.log",
+      "raw_sha256": "f93522711fd8c41391848659fd1b578789a56a486ece4da0cd0d017cb7589b5d",
+      "raw_bytes": 13620,
+      "public_sha256": "f93522711fd8c41391848659fd1b578789a56a486ece4da0cd0d017cb7589b5d",
+      "public_bytes": 13620,
+      "public_path": "logs/go/r1/imported-windows-profile.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r1/summary.json",
+      "raw_sha256": "0ece32df60bcd8c9c9652036c8b06d85c67a028a5d37804fa33f57b4a61a64b1",
+      "raw_bytes": 1489,
+      "public_sha256": "4712f3e6139b127a8e959f88815826db65a7a29ee0bbe5aac15afb1c79035f85",
+      "public_bytes": 1193,
+      "public_path": "logs/go/r1/summary.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r1/workbuddy-contracts.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r1/workbuddy-contracts.stdout.log",
+      "raw_sha256": "5b113cb36345cddfd27a02a4db216ef0410932f39fdff0838230c6fc8be017ea",
+      "raw_bytes": 665,
+      "public_sha256": "d503de1c97f592872ebf6f850361864b6dbac48a49e654faff2876a0a82efc17",
+      "public_bytes": 618,
+      "public_path": "logs/go/r1/workbuddy-contracts.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r2/scoped-skill-integration.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r2/scoped-skill-integration.stdout.log",
+      "raw_sha256": "1dcaa6960d8c56fc65abb4971d619fcb4d0d44c04f28813b029e8f992c37925b",
+      "raw_bytes": 59950,
+      "public_sha256": "d08a9e6139549eac2ddcac1c08f24e80824b20b87f1919e24bb5218a6f281dc3",
+      "public_bytes": 57768,
+      "public_path": "logs/go/r2/scoped-skill-integration.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r2/summary.json",
+      "raw_sha256": "7cbe90f7d40fb15c2f9624fa2123dda2942b0237e7219a24bf9dfdf795f79102",
+      "raw_bytes": 1763,
+      "public_sha256": "f891f52e195089cb160f64c5fcc5710723d3f7a4a6241cb47df48e9c33f91750",
+      "public_bytes": 1464,
+      "public_path": "logs/go/r2/summary.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r2/targeted-vet.stderr.log",
+      "raw_sha256": "30640778ba2a04f534a9e2d1f58324bca133c5873b5c8dbf425046fb5699bd12",
+      "raw_bytes": 340,
+      "public_sha256": "30640778ba2a04f534a9e2d1f58324bca133c5873b5c8dbf425046fb5699bd12",
+      "public_bytes": 340,
+      "public_path": "logs/go/r2/targeted-vet.stderr.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r2/targeted-vet.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/canonical-contract-vectors.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/canonical-contract-vectors.stdout.log",
+      "raw_sha256": "ea6c975d5a5ce31e82f08933bea05123289c8b8ebdddb0565dd2b02ae125b763",
+      "raw_bytes": 5072,
+      "public_sha256": "ea6c975d5a5ce31e82f08933bea05123289c8b8ebdddb0565dd2b02ae125b763",
+      "public_bytes": 5072,
+      "public_path": "logs/go/r3/canonical-contract-vectors.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/scoped-installation-negative-recovery.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/scoped-installation-negative-recovery.stdout.log",
+      "raw_sha256": "3030cbb8edce935af97665f087c40693901298bec45e22ac6c0bf5af4c0271a1",
+      "raw_bytes": 13631,
+      "public_sha256": "3030cbb8edce935af97665f087c40693901298bec45e22ac6c0bf5af4c0271a1",
+      "public_bytes": 13631,
+      "public_path": "logs/go/r3/scoped-installation-negative-recovery.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/server-scoped-installation.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/server-scoped-installation.stdout.log",
+      "raw_sha256": "881884777a4178b275a42dbd6bc854a30eb78d3e8c22c9ae6d44b94d27a8b012",
+      "raw_bytes": 29793,
+      "public_sha256": "881884777a4178b275a42dbd6bc854a30eb78d3e8c22c9ae6d44b94d27a8b012",
+      "public_bytes": 29793,
+      "public_path": "logs/go/r3/server-scoped-installation.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/summary.json",
+      "raw_sha256": "21f06fc0bf296cc8855b3718aa49aa4696328af687b95fa3011b36aa96ae3c2e",
+      "raw_bytes": 2852,
+      "public_sha256": "fae864d47ee46d6ec7c79ac0b2dde8c7a7a639ba2974d3787c63ac1e3a71a8dc",
+      "public_bytes": 2274,
+      "public_path": "logs/go/r3/summary.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/targeted-vet.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKSPACE>/.tmp/windows-goal-20260916/workbuddy-skill-implementation-checks-r3/targeted-vet.stdout.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stdout/stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/types-r3.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": "logs/web/types-r3.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/types-r3.result.json",
+      "raw_sha256": "c65287a0190c2242768f3d0263b34fbb2b927095105f165b636424f57ad1ce0e",
+      "raw_bytes": 214,
+      "public_sha256": "aa3fea67f1916262590ffa95cbdb8f6d0e8435ba36dee9f22e8065ca64e673eb",
+      "public_bytes": 202,
+      "public_path": "logs/web/types-r3.result.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/vitest-r2.log",
+      "raw_sha256": "ddc3912fc79e3cb861520e87dfe50d984f8c00a1517d530d737128b8c3039170",
+      "raw_bytes": 280,
+      "public_sha256": "c229c7724f0455d69acdebb2982b3bbf45947e1d23e0a4740417a9bfe541455d",
+      "public_bytes": 206,
+      "public_path": "logs/web/vitest-r2.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/vitest-r2.result.json",
+      "raw_sha256": "9a1e8b497f186a0aa94cf7ddc0860a7f7bdbc8b1f6ad3e72c37ddfeb84dd33e9",
+      "raw_bytes": 528,
+      "public_sha256": "c5bd7d93c071781358d9da546667ba503d918b301942e04e5387ca5ce66e2b32",
+      "public_bytes": 509,
+      "public_path": "logs/web/vitest-r2.result.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/enterprise.stdout.log",
+      "raw_sha256": "5cd29c500ca3b29e12469dbab7897ed376c6039a4e1bc90fd295594426a08e03",
+      "raw_bytes": 30534,
+      "public_sha256": "5cd29c500ca3b29e12469dbab7897ed376c6039a4e1bc90fd295594426a08e03",
+      "public_bytes": 30534,
+      "public_path": "logs/web/build-r1/enterprise.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/enterprise.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/enterprise.result.json",
+      "raw_sha256": "4cc5e214b6b0d3fda22b05f91db2a0de899e51e6c97d06d590afa6cf3f5c9956",
+      "raw_bytes": 292,
+      "public_sha256": "de9eba9660ae84ecc37727003c8a88cbd3324a1ccb0964289596b1d4f9ce5b1f",
+      "public_bytes": 277,
+      "public_path": "logs/web/build-r1/enterprise.result.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/local.stdout.log",
+      "raw_sha256": "1e4eccd44bcdfe228798fd37c095ac01eadad408795135c8d35305fb00700378",
+      "raw_bytes": 22803,
+      "public_sha256": "1e4eccd44bcdfe228798fd37c095ac01eadad408795135c8d35305fb00700378",
+      "public_bytes": 22803,
+      "public_path": "logs/web/build-r1/local.stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/local.stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/local.result.json",
+      "raw_sha256": "37437a18e7250024cace90779474846a541017f1466ea01b2e0e568c43e5f64d",
+      "raw_bytes": 288,
+      "public_sha256": "997ad25ff67b2184d360b97f2e7b819bff868347cf4e9423f54ca5df3c6c99a2",
+      "public_bytes": 273,
+      "public_path": "logs/web/build-r1/local.result.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/summary.json",
+      "raw_sha256": "382301fa158a0eede3edab43a20e7136dbdc11a6dc470f6e6acba21c6157a439",
+      "raw_bytes": 2426,
+      "public_sha256": "44bab247a388c5aeb82d09e96a816efc73e7dd37b1e48258ad308bf58803e23c",
+      "public_bytes": 2357,
+      "public_path": "logs/web/build-r1/summary.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/orchestration-resume.json",
+      "raw_sha256": "601927a26021d593ba8ab7f62d20c723407e0d2c4ff0d3b6f953454d850f140e",
+      "raw_bytes": 352,
+      "public_sha256": "c295297c2a7b6c6774f10ac67293f33bea49d60c2a1dadae8d0a1b4fb3d2a5cb",
+      "public_bytes": 346,
+      "public_path": "logs/web/build-r1/orchestration-resume.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/artifact-check.json",
+      "raw_sha256": "4109cb3c30b642a6569d81ac5e75feb41f1b7c53dfc1c76843f17e6dc71b4ef7",
+      "raw_bytes": 431,
+      "public_sha256": "e8286426a1610bc2a1b2f5556826763485728efafee76e3f67cd2045bc3a6e2d",
+      "public_bytes": 419,
+      "public_path": "logs/web/build-r1/artifact-check.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/source-inputs.before.json",
+      "raw_sha256": "7953eccc6c767b70d3f4ac429cf2b0b9be4d86188907456cc2f60b63d6caf3f8",
+      "raw_bytes": 16441,
+      "public_sha256": "d24cf7be510e56a166675992cd17e425a52bab8b0fb95ba5a53972b8e22842aa",
+      "public_bytes": 16295,
+      "public_path": "logs/web/build-r1/source-inputs.before.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/embedded.after.json",
+      "raw_sha256": "56d4e4dcfc50a2ed5408232517d349ad37ecbbabb7acac62d4d5ac01c55ca45c",
+      "raw_bytes": 34578,
+      "public_sha256": "838ef698e34482d213f17e9defbddfb4a948ac03dc2122cb5333a90e703ca3e4",
+      "public_bytes": 34362,
+      "public_path": "logs/web/build-r1/embedded.after.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/generated-tracked-diff.txt",
+      "raw_sha256": "0a90fdb9de03cd46bbf505b18ed8cfdf6832bdd5cc8684ec7968c85f10a184cb",
+      "raw_bytes": 581,
+      "public_sha256": "0a90fdb9de03cd46bbf505b18ed8cfdf6832bdd5cc8684ec7968c85f10a184cb",
+      "public_bytes": 581,
+      "public_path": "logs/web/build-r1/generated-tracked-diff.txt",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/full-regression-r1/stdout.log",
+      "raw_sha256": "e2b54807dd9f166ca2d7b3e3810cea958fc76f71f28e195bfbc8da37282508d8",
+      "raw_bytes": 338,
+      "public_sha256": "e09c5cac3ceddeb504a08ba7ac71cd83376303c2526c51d60e097b76e7aad04c",
+      "public_bytes": 264,
+      "public_path": "logs/web/full-regression-r1/stdout.log",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/full-regression-r1/stderr.log",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_bytes": 0,
+      "public_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "public_bytes": 0,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "empty stderr stream; SHA and zero byte length retained"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/full-regression-r1/result.json",
+      "raw_sha256": "023503a039cb5c6e03875ebc066da8fc010009628fb06441e55ff7e9a51e111e",
+      "raw_bytes": 577,
+      "public_sha256": "201cdfc249a73d8767f3e0d3563cfedbd1bae85ab67bab68efcbab0bca964dd6",
+      "public_bytes": 559,
+      "public_path": "logs/web/full-regression-r1/result.json",
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders"
+    },
+    {
+      "source": "<WORKTREE>/.tmp/windows-workbuddy-skill-web-20260918/build-r1/source-inputs.after.json",
+      "raw_sha256": "7953eccc6c767b70d3f4ac429cf2b0b9be4d86188907456cc2f60b63d6caf3f8",
+      "raw_bytes": 16441,
+      "public_sha256": "d24cf7be510e56a166675992cd17e425a52bab8b0fb95ba5a53972b8e22842aa",
+      "public_bytes": 16295,
+      "public_path": null,
+      "normalization": "UTF-8 without BOM; LF; fixed private-path/SID/credential placeholders",
+      "omitted_reason": "identical to logs/web/build-r1/source-inputs.before.json; both raw/public digests retained"
+    }
+  ]
+}

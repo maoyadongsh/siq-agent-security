@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"time"
 )
@@ -103,6 +104,9 @@ func (e *Engine) resolveAction(req Request, now time.Time) (*actionRecord, error
 func (e *Engine) Observe(req Request, result string) (*Receipt, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	if err := intent.ValidateNativeSession(req.Platform, req.SessionID); err != nil {
+		return nil, err
+	}
 	now := e.opts.Now()
 	if len(result) > 64<<10 {
 		return nil, correlationError("observation_result_too_large")

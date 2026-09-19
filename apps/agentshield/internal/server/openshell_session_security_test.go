@@ -66,7 +66,7 @@ func TestOpenShellPolicyOperationCannotUseOtherApproval(t *testing.T) {
 
 func TestOpenShellPolicyOriginalUnrelatedHoldCannotBeRepurposed(t *testing.T) {
 	s, gw := newSessionExecServer(t)
-	d := sessionExecPostOK(t, s, "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": "hold-session", "agent_id": "inst_1", "tool": "exec", "tool_call_id": "held-call", "params": map[string]any{"command": "printf fixture"}})
+	d := sessionExecPostOK(t, s, "/v1/decide", token, map[string]any{"platform": "openclaw", "session_id": nativeOpenClawSession(t, "hold-session"), "agent_id": "inst_1", "tool": "exec", "tool_call_id": "held-call", "params": map[string]any{"command": "printf fixture"}})
 	sessionExecPostOK(t, s, "/v1/hold/"+d["receipt_id"].(string), s.bootAdmin, map[string]any{"approve": true, "actor_id": "fixture-admin"})
 	d["fixture_params"] = map[string]any{"command": "printf fixture"}
 	code, _ := sessionExecPost(t, s, "/v1/openshell/session-executions", token, sessionExecBody(d))

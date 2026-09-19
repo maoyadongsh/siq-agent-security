@@ -1,0 +1,102 @@
+{
+  "namespace_before": {
+    "source_sha": "2cca13b9dd57b314974ac1e1a7f14c71f2c7a34d",
+    "source_dirty": false,
+    "harness_sha256": "b2be2b9a5ba9c5b92b505d42b5a6814fad1d82e77e360a12f9609ef587ec0764",
+    "accepted": {
+      "grants": false,
+      "GRANTS": true,
+      "grants/.": true
+    },
+    "independent_file_count": 2,
+    "files": [
+      {
+        "name": "namespace-probe.0.json",
+        "sha256": "9b379c2b965b6c02f0969fdf766493fda0122b42e42c7faa922147feeac3d7db"
+      },
+      {
+        "name": "namespace-probe.1.json",
+        "sha256": "9b379c2b965b6c02f0969fdf766493fda0122b42e42c7faa922147feeac3d7db"
+      }
+    ]
+  },
+  "namespace_after_development": {
+    "source_sha": "2cca13b9dd57b314974ac1e1a7f14c71f2c7a34d",
+    "source_dirty": true,
+    "exit": 0,
+    "accepted": {
+      "GRANTS": false,
+      "grants": false,
+      "grants/.": false
+    },
+    "independent_file_count": 0,
+    "harness_sha256": "93a5cceae92ad77bfc20a9561b7dbeb2bec8956a3641f32a54a33d85d57f989e"
+  },
+  "namespace_before_unit": {
+    "production_source": "2cca13b",
+    "only_new_test_added": true,
+    "exit": 1
+  },
+  "approval_challenge_before": {
+    "source_dirty": true,
+    "scope": "New profile development, never enabled production authority",
+    "exit": 1,
+    "raw_sha256": "c3a3f2c6c25f44e4b5b5a497a73e8cb729c76e8397cb6b1d71c6f89173471ff2"
+  },
+  "evidence_reference_before": {
+    "source_sha": "834b86f5bfb058b77cf56784aa8a9d82a4f0af2b",
+    "new_test_only": true,
+    "exit": 1
+  },
+  "evidence_reference_after_development": {
+    "source_sha": "834b86f5bfb058b77cf56784aa8a9d82a4f0af2b",
+    "method": "native Go component producer + independent Python verification",
+    "production_authority": false,
+    "source_dirty": true,
+    "input_sha256": "a8465ce82460b99f49653824b231c5dcf5a66ede8bb9d02cafe9e2a3877fe711",
+    "rows": [
+      {
+        "platform": "hermes",
+        "status": "pending_approval",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      },
+      {
+        "platform": "hermes",
+        "status": "approved",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      },
+      {
+        "platform": "openclaw",
+        "status": "pending_approval",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      },
+      {
+        "platform": "openclaw",
+        "status": "approved",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      }
+    ],
+    "exit": 0
+  },
+  "producer_initial_attempts": "r1 omitted fixture evidence references; r2 supplied them and still produced null evidence_ids, proving PatchDesired lost references. r3 passed after production correction."
+}

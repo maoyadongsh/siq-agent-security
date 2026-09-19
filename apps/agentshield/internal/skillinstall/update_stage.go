@@ -55,7 +55,7 @@ type UpdatePlan struct {
 }
 
 func validUpdateRequest(r UpdateStageRequest) bool {
-	actor := Request{"local-skill-install-stage-create/v1", "is-" + strings.Repeat("0", 32), r.CandidateGrantID, r.ExpectedCandidateRevision, "hi-" + strings.Repeat("0", 32), "update", r.ActorID}
+	actor := Request{SchemaVersion: "local-skill-install-stage-create/v1", RequestID: "is-" + strings.Repeat("0", 32), GrantID: r.CandidateGrantID, ExpectedRevision: r.ExpectedCandidateRevision, InstanceID: "hi-" + strings.Repeat("0", 32), DirectoryName: "update", ActorID: r.ActorID}
 	return r.SchemaVersion == "local-skill-update-stage-create/v1" && updateRequestPattern.MatchString(r.RequestID) && signaturePattern.MatchString(r.OperationSignature) && validRequest(actor) && r.ExpectedPreviousRevision >= 0 && (r.ExpectedBindingSignature == "" || signaturePattern.MatchString(r.ExpectedBindingSignature))
 }
 func (p UpdatePlan) request() UpdateStageRequest {
@@ -85,7 +85,7 @@ func (s *Store) inspectUpdate(ctx context.Context, id string, req UpdateStageReq
 	if err != nil {
 		return nil, err
 	}
-	if comparison.CandidateGrant.Status != "approved" || comparison.PreviousRevision != req.ExpectedPreviousRevision {
+	if comparison.CandidateGrant.Status != "approved" || !planGrantProfile(comparison.Record.Plan, &comparison.CandidateGrant) || comparison.PreviousRevision != req.ExpectedPreviousRevision {
 		return nil, ErrChanged
 	}
 	_, installed, err := s.historicalRecord(ctx, id)
@@ -107,7 +107,7 @@ func (s *Store) inspectUpdate(ctx context.Context, id string, req UpdateStageReq
 	if err != nil {
 		return nil, sourceError(ctx, err)
 	}
-	p := &UpdatePlan{SchemaVersion: "local-skill-update-plan/v1", RequestID: req.RequestID, Record: comparison.Record, CandidateSource: comparison.CandidateSource, CandidateGrantID: req.CandidateGrantID, CandidateRevision: req.ExpectedCandidateRevision, CandidateSignature: comparison.CandidateGrant.Signature, CandidatePermissionDigest: digest, PreviousRevision: revision, PreviousSignature: old.Signature, BindingSignature: binding, RetainedInstallID: retained, RevokePreviousGrant: retained == "", ActorID: req.ActorID, FileCount: len(candidate.Files), RequiresConfirmation: true}
+	p := &UpdatePlan{SchemaVersion: comparison.Record.Plan.wireVersion("local-skill-update-plan"), RequestID: req.RequestID, Record: comparison.Record, CandidateSource: comparison.CandidateSource, CandidateGrantID: req.CandidateGrantID, CandidateRevision: req.ExpectedCandidateRevision, CandidateSignature: comparison.CandidateGrant.Signature, CandidatePermissionDigest: digest, PreviousRevision: revision, PreviousSignature: old.Signature, BindingSignature: binding, RetainedInstallID: retained, RevokePreviousGrant: retained == "", ActorID: req.ActorID, FileCount: len(candidate.Files), RequiresConfirmation: true}
 	for _, f := range candidate.Files {
 		if reservedMetadata(f.Path) {
 			return nil, ErrReservedMetadata
@@ -150,7 +150,7 @@ func (s *Store) readUpdatePlan(ctx context.Context, id string) (*UpdatePlan, err
 	if err := s.readSigned(ctx, s.updateRecord(id), &p); err != nil {
 		return nil, err
 	}
-	if p.SchemaVersion != "local-skill-update-plan/v1" || p.UpdateID != id || !validUpdateRequest(p.request()) || p.Record.RecordedStatus != "installed_unverified" || p.Record.Operation == nil || !validInstallID(p.Record.InstallID) || !signaturePattern.MatchString(p.CandidateSignature) || !signaturePattern.MatchString(p.PreviousSignature) || !digestPattern.MatchString(p.CandidatePermissionDigest) || p.FileCount < 1 || p.FileCount > 2000 || p.TotalBytes < 0 || p.TotalBytes > 64<<20 || p.PlatformChanges || p.RuntimeVerified || !p.RequiresConfirmation {
+	if p.SchemaVersion != p.Record.Plan.wireVersion("local-skill-update-plan") || !ValidRecordVersion(&p.Record) || p.UpdateID != id || !validUpdateRequest(p.request()) || p.Record.RecordedStatus != "installed_unverified" || p.Record.Operation == nil || !validInstallID(p.Record.InstallID) || !signaturePattern.MatchString(p.CandidateSignature) || !signaturePattern.MatchString(p.PreviousSignature) || !digestPattern.MatchString(p.CandidatePermissionDigest) || p.FileCount < 1 || p.FileCount > 2000 || p.TotalBytes < 0 || p.TotalBytes > 64<<20 || p.PlatformChanges || p.RuntimeVerified || !p.RequiresConfirmation {
 		return nil, ErrChanged
 	}
 	if p.RevokePreviousGrant {

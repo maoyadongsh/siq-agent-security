@@ -123,14 +123,18 @@ func TestOpenClawIdentityIssuedAndPlatformLocked(t *testing.T) {
 	if _, err := s.Authenticate(token); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := s.Enroll(token, "openclaw-native"); err != nil {
+	session, err := intent.OpenClawSessionID("openclaw-native", "11111111-1111-4111-8111-111111111111")
+	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := s.AuthorizeSession(token, "openclaw", r.AgentID, "openclaw-native"); err != nil {
+	if _, err := s.Enroll(token, session); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.AuthorizeSession(token, "openclaw", r.AgentID, session); err != nil {
 		t.Fatal("own platform rejected", err)
 	}
 	for _, platform := range []string{"hermes", "codebuddy"} {
-		if _, err := s.AuthorizeSession(token, platform, r.AgentID, "openclaw-native"); err == nil {
+		if _, err := s.AuthorizeSession(token, platform, r.AgentID, session); err == nil {
 			t.Fatal("cross-platform session accepted", platform)
 		}
 	}

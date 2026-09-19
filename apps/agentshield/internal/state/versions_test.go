@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -37,7 +38,13 @@ func TestIndependentProcessesPublishUniqueVersions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	budget := 20 * time.Second
+	if runtime.GOOS == "windows" {
+		// Each collision also verifies NTFS object identity and private DACLs.
+		// This is a completeness test, not a 20-second throughput requirement.
+		budget = 2 * time.Minute
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), budget)
 	defer cancel()
 	var wg sync.WaitGroup
 	for worker := 0; worker < 4; worker++ {
@@ -47,7 +54,7 @@ func TestIndependentProcessesPublishUniqueVersions(t *testing.T) {
 			cmd := exec.CommandContext(ctx, exe, "-test.run=^TestVersionProcessWorker$")
 			cmd.Env = append(os.Environ(), "SIQ_TEST_VERSION_DIR="+st.Dir, fmt.Sprintf("SIQ_TEST_VERSION_WORKER=%d", worker))
 			if out, err := cmd.CombinedOutput(); err != nil {
-				t.Errorf("worker %d: %v: %s", worker, err, out)
+				t.Errorf("worker %d: %v (deadline: %v): %s", worker, err, ctx.Err(), out)
 			}
 		}(worker)
 	}

@@ -23,7 +23,7 @@ func TestCodeBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
 		{"audit", `{"enforcement_mode":"audit_only"}`, "short", "allow"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			dir := t.TempDir()
+			dir := filepath.Join(t.TempDir(), "state")
 			if _, err := state.Open(dir); err != nil {
 				t.Fatal(err)
 			}
@@ -137,8 +137,8 @@ func TestWorkBuddyHookInvalidArgumentsStillDeny(t *testing.T) {
 }
 
 func TestWorkBuddyHookStateDirOverridesEnv(t *testing.T) {
-	ambient := t.TempDir()
-	selected := t.TempDir()
+	ambient := filepath.Join(t.TempDir(), "state")
+	selected := filepath.Join(t.TempDir(), "state")
 	if _, err := state.Open(ambient); err != nil {
 		t.Fatal(err)
 	}

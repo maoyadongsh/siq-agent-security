@@ -1,0 +1,69 @@
+{
+  "produced_grants": {
+    "source_sha": "a24e029b177c110a97637f3c6902ab99670b33b7",
+    "method": "native Go component producer + independent Python verification",
+    "production_authority": false,
+    "source_dirty": false,
+    "input_sha256": "989164efe636fb8ff48c4a9d687f07c459fedfb3097e18bb098af6b98848539b",
+    "rows": [
+      {
+        "platform": "hermes",
+        "status": "pending_approval",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      },
+      {
+        "platform": "hermes",
+        "status": "approved",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      },
+      {
+        "platform": "openclaw",
+        "status": "pending_approval",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      },
+      {
+        "platform": "openclaw",
+        "status": "approved",
+        "schema_valid": true,
+        "signature_valid": true,
+        "permission_digest_matches": true,
+        "approval_binding_matches": true,
+        "approval_scope_matches": true,
+        "filesystem_binding_count": 1
+      }
+    ],
+    "exit": 0
+  },
+  "producer": {
+    "source_sha": "a24e029b177c110a97637f3c6902ab99670b33b7",
+    "source_dirty": false,
+    "exit": 0,
+    "harness_sha256": "d5b96c41d254af64bb0a86e7dc0e4b101a29b7c0d009de43122a4a2d5748dcb2"
+  },
+  "native_namespace_probe": {
+    "source_sha": "a24e029b177c110a97637f3c6902ab99670b33b7",
+    "source_dirty": false,
+    "exit": 0,
+    "accepted": {
+      "GRANTS": false,
+      "grants": false,
+      "grants/.": false
+    },
+    "independent_file_count": 0
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "input_manifest_captured_after_verification": true,
+  "limitations": [
+    "No host/service/model was launched by verification.",
+    "Retained controller observations are verified, not a second independent native rerun.",
+    "The private fixture signing seed was used only to derive an in-memory verification public key; no signing performed or secret emitted.",
+    "Guard rejected ancillary subprocess attempts; exact SIQ denial and real allow file effects distinguish security results from those guard rejections.",
+    "This is managed Hermes v4 evidence, not product runtime-check v5, paid-model evidence, or final whole-project acceptance."
+  ],
+  "method": "independent-offline-evidence-verification",
+  "original_signed_objects_publicly_exported": false,
+  "pinned_files_verified": 14,
+  "public_key_sha256": "dc686cc0288d145a1c06344213f335b984ef9c09c67ac460f493847a5c8a25b6",
+  "public_projections_have_original_signature_validity": false,
+  "raw_result_sha256": "a5909df53fb85999af3919b32c21267f61c5bf02737699d3d13c1d17968e8ee1",
+  "receipt_chain_signature_count": 10,
+  "signed_authority_verification_calls": 17,
+  "signed_document_call_labels": [
+    "checkpoint",
+    "identity",
+    "identity-revocation",
+    "grant-revision-0",
+    "grant-revision-1",
+    "grant-revision-2",
+    "grant-revision-3",
+    "B01-intent-B01-write",
+    "B01-binding-B01-write",
+    "B01-intent-B01-read",
+    "B01-binding-B01-read",
+    "B02-intent-B02-write",
+    "B02-binding-B02-write",
+    "B04-intent-B04-write",
+    "B04-binding-B04-write",
+    "B04-intent-B04-read",
+    "B04-binding-B04-read"
+  ],
+  "source_files_verified": 1355,
+  "status": "pass",
+  "unique_signed_authority_documents": 13,
+  "verification_attempts": [
+    {
+      "cause": "Verifier assumed effective Grant instead of legitimate deployed Grant.",
+      "exit_code": 1,
+      "label": "r1"
+    },
+    {
+      "cause": "Verifier did not distinguish identity-create POST from identity-list GET.",
+      "exit_code": 1,
+      "label": "r2"
+    },
+    {
+      "cause": null,
+      "exit_code": 0,
+      "label": "r3"
+    }
+  ],
+  "verifier_sha256": "df922ee7d8659f2d463d2022b2087d7784f4fe18086d393cf58f449b1add20a3"
+}

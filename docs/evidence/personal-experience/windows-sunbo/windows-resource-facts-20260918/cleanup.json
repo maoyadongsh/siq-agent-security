@@ -1,0 +1,13 @@
+{
+  "source_sha": "d384e24690c8514fe4671dc39d255e7e86a566fc",
+  "test_root_entries_after_completed_clean_run": [
+    "siq-as-test-hov0rei4"
+  ],
+  "new_daemons": 0,
+  "model_calls": 0,
+  "system_lifecycle_actions": 0,
+  "global_drive_mapping_changes": 0,
+  "test_cleanup": "Passed Go tests include junction removal and case-sensitive flag restoration; temporary files are managed by testing.T.TempDir. Only owned test directories are used.",
+  "test_root_entries_after_cleanup": [],
+  "extra_cleanup": "Schema conftest left one verified empty siq-as-test directory; removed only that exact empty, non-reparse directory after confirming its parent. No recursive deletion."
+}
