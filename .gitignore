@@ -46,7 +46,7 @@ connectors/workbuddy/workbuddy
 .vscode/
 .DS_Store
 
-# 本机门禁构建产物（哈希钉在 skills/siq-agent-security/skill-manifest.json）
+# 本机门禁构建产物（签名清单只随发行包提供，开发源码目录不附清单）
 apps/agentshield/agentshield
 apps/agentshield/agentshield.exe
 apps/agentshield/siq-agent-security

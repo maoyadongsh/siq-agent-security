@@ -287,6 +287,7 @@ Updated through **2026-09-19**. Recent engineering/release checks and historical
 
 | Archived observation | Result | Evidence and scope |
 | --- | --- | --- |
+| Four-target Skill source checks | **4/4** native targets passed | [Fixed-candidate record](docs/evidence/repository-reorganization-final-20260919/README.md); PR #97 head `bf7dced`, actual merge checkout SHA in each report; Linux amd64/arm64, macOS arm64 and Windows amd64 self-admission, missing-manifest rejection, startup, pairing, console and stop. Source checks do not establish 0.3.0 system-service installation, upgrade or full host acceptance |
 | 0.3.0 release package | **14/14** checks passed | [Package verification](docs/evidence/releases/0.3.0/verification.json); source `83fde2d`, official-root verification, tamper rejection and Linux ARM64 installation checks; includes executing the bundled INSTALL.md from empty state through startup, pairing, console and stop; other targets lack native installation acceptance |
 | 0.3.0 publication and remote readback | **8/8** asset hashes match | [Publication verification](docs/evidence/releases/0.3.0/publication.json); regular Release and Latest, four binary pins, Skill signature/content and Linux ARM64 signed-URL download/staging verified |
 | 0.3.0 release-source CI | **5/5** workflows succeeded | [Source CI record](docs/evidence/releases/0.3.0/source-ci.json); commit `83fde2d`, ci, research, runtime-security, personal-experience and sonarcloud; separate from native release-asset installation acceptance |

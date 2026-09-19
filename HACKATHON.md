@@ -4,7 +4,9 @@
 
 StepFun plans the task. DGX Spark performs local analysis. SIQ independently
 authorizes consequential actions and separates tool reports from effect evidence.
-The competition runtime is frozen on main. See the [sole current submission state](docs/hackathon/final-submission-state.md) for source identity, CI, clean RC and video status. Official publication, publisher signing, branch protection and competition upload remain external actions.
+This is the historical V5 competition guide. The [frozen submission state](docs/hackathon/final-submission-state.md) records its source `d1277116e8291e72b09b0462a19d0268b68bf46c`, CI, clean RC and video status; main has continued to develop. Publication and governance limitations in that snapshot describe that submission, not today’s repository. The separately signed client [0.3.0](docs/evidence/releases/0.3.0/README.md) is already published. For current installation use the [signed package guide](docs/signed-release-packaging.md); for research use [REPRODUCIBILITY.md](REPRODUCIBILITY.md) and record the chosen commit.
+
+The walkthrough and numbers below retain their historical scope. Running its commands on a newer checkout produces a new candidate, not a rerun with the old source identity.
 
 ## Run the frozen demo story
 

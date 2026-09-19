@@ -2,6 +2,8 @@
 
 Choose a track. A and B use explicit model fixtures plus the real SIQ runtime; they require no provider key or GPU. C uses real models and is optional. All commands run from this repository. First-time toolchain/package/browser installation needs network access. Results reproduce behavior, not identical timestamps, signatures or archive bytes.
 
+Choose and record the source identity first: `research-v0.1.0-rc.1` identifies the archived research source, while current main produces a new run. Record `git rev-parse HEAD` and `git status --short`; a dirty checkout needs its own exact source record. The published client 0.3.0 has a different source/artifact identity. For ordinary installation use the [signed package guide](docs/signed-release-packaging.md); these tracks are research workflows. Find existing candidates and their separate denominators in the [evaluation catalog](evaluations/README.md).
+
 Use Linux, Git, Go 1.26.6, Python 3.12+, Node 22/npm and uv. Python verifier dependencies are locked in apps/control-api/uv.lock:
 
 ```bash
@@ -52,7 +54,7 @@ Read [the existing DGX runbook](deploy/dgx-spark/README.md) and [model configura
 
 `benchmarks/hackathon/run.py --cohort model-utility` is a separate real-model benign cohort. Record every attempt, model identifier, runtime/source digest, time, failure and cost; never merge it with control denominators. Repeat locality canary and local-failure tests only in your authorized environment. No new paid model run is implied by tracks A/B.
 
-See [environment matrix](docs/research/environment-matrix.md) for actual validation. V5 real-model results remain historical; they are not new measurements of this research branch.
+See [environment matrix](docs/research/environment-matrix.md) for actual validation. V5 real-model results remain historical; they are not new measurements of the current checkout. The later [four-target Skill source checks](docs/evidence/repository-reorganization-final-20260919/README.md) test source setup and lifecycle separately; they do not rerun these research cohorts or expand 0.3.0 native installation acceptance.
 
 ## Troubleshooting
 

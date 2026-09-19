@@ -4,12 +4,14 @@ The root Apache-2.0 grant applies to project-owned work. It does not replace the
 
 | Material | Attribution and license | Inventory |
 | --- | --- | --- |
-| OpenClaw 2026.5.12 candidate patches | Peter Steinberger and contributors; [upstream MIT](patches/openclaw/LICENSE). Local modifications are marked in patch metadata and README. | [Source inventory](docs/research/third-party-source-inventory.json) |
+| OpenClaw 2026.5.12 and 2026.9.4 candidate patches | Peter Steinberger and contributors; [upstream MIT](patches/openclaw/LICENSE). Local modifications are marked in patch metadata and README. | [Historical source inventory](docs/research/third-party-source-inventory.json); newer [2026.9.4 patch metadata](patches/openclaw/2026.9.4-approval-execution-recheck-v1.json) records exact target and patch digests |
 | Mermaid 11.4.1 static bundle | [Mermaid MIT license](site/vendor/mermaid-LICENSE); original bundle bytes preserved, export alias appended. | Same source inventory, including 70 source-map component versions |
 | Mermaid bundled components | Original notices remain in the JS; [extracted notices](site/vendor/mermaid-bundled-notices.txt) plus per-component license/notice copies below. | [LICENSES/third-party](LICENSES/third-party) |
 | Web runtime dependencies and fonts | React and router packages retain upstream licenses; four Fontsource font families retain OFL-1.1 and font names/attribution. | [Dependency inventory](docs/research/third-party-dependency-inventory.json), license files under LICENSES/third-party |
 | Python Control API dependencies | Installed separately from uv.lock; package-specific metadata/terms apply. | Dependency inventory includes all locked runtime and development packages |
 | Go runtime/toolchain | Project modules use the standard library and local module references. Redistributed Go binaries require the Go license as well. | [Go license](LICENSES/Go-BSD-3-Clause.txt) |
+
+The source inventory retains its recorded 2026.5.12 patch scope; the later 2026.9.4 patch is identified by its adjacent metadata rather than being implied to exist in that earlier inventory. These remain pinned candidate patches, not upstream acceptance or compatibility with arbitrary OpenClaw versions. The Web and Python dependency inventories match the current lockfile hashes as checked on 2026-09-19; recheck them after dependency changes.
 
 The Mermaid inventory is derived from the exact npm 11.4.1 distribution source map, not just its top-level dependency list. Original package license and notice files were obtained from each pinned npm archive; archive hashes and license-file paths are recorded. Preserve those notices when serving or redistributing the vendored JS. DOMPurify's alternative license choices remain upstream terms; it is not relicensed by this repository.
 
