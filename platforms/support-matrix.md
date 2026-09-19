@@ -1,6 +1,6 @@
 # 支持范围与证据等级
 
-核查对象：0.3.0 / `83fde2d`，日期 2026-09-19。本表是[实际证据](../docs/evidence/releases/0.3.0/README.md)与[产品范围](../docs/personal-platform-scope-decision-20260917.md)的导航摘要，不是新的运行时合同。签名包中的 `support_matrix` 和源码默认矩阵仍没有 `supported` 行。
+核查对象：0.3.1 / `f3d9c3f`，日期 2026-09-19。本表是[实际证据](../docs/evidence/releases/0.3.1/README.md)与[产品范围](../docs/personal-platform-scope-decision-20260917.md)的导航摘要，不是新的运行时合同。签名包中的 `support_matrix` 和源码默认矩阵仍没有 `supported` 行。
 
 | OS / 架构 | 当前宿主范围 | 本版构建/验签 | 本版原生安装链路 | 同候选完整宿主/升级验收 |
 | --- | --- | --- | --- | --- |

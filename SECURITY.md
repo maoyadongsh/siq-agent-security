@@ -12,7 +12,7 @@ Report a suspected vulnerability privately through [GitHub private vulnerability
 
 ## Supported versions
 
-The current development branch receives fixes on a best-effort basis. The published personal-client release is [0.3.0](docs/evidence/releases/0.3.0/README.md); report its exact tag and asset digest when affected. A fix merged into main is not yet a replacement signed download, and publication does not imply complete native acceptance on every platform. Older v0.1/v0.2 downloads and the frozen V5 competition snapshot are historical artifacts, with no promised backport window. There is currently no staffed response SLA or production support commitment.
+The current development branch receives fixes on a best-effort basis. The published personal-client release is [0.3.1](docs/evidence/releases/0.3.1/README.md); report its exact tag and asset digest when affected. A fix merged into main is not yet a replacement signed download, and publication does not imply complete native acceptance on every platform. Older v0.1/v0.2 downloads and the frozen V5 competition snapshot are historical artifacts, with no promised backport window. There is currently no staffed response SLA or production support commitment.
 
 ## What to include
 

@@ -43,3 +43,7 @@
 ## 正式发行后续（2026-09-19）
 
 用户随后要求正式发布，已从主线 `83fde2d` 签发并发布 [0.3.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.0)。新版本更新版本身份、签名清单和下载 URL，包内 `INSTALL.md` 补齐先验签、再初始化启动的步骤；最终包 14/14 检查及八个远端资产回读均通过。产品功能源码与 `58ab22e` 相同，原 `0.3.0-rc.1` 预发布及其证据保留。正式 Release 类型不替代其他目标的原生安装、升级与完整宿主验收。见[正式版签发与发布记录](evidence/releases/0.3.0/README.md)。
+
+## 0.3.1 正式发布补充（2026-09-19）
+
+已按用户授权从主线 `f3d9c3f` 签发并发布 [0.3.1 正式版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.1)，设为 Latest。包内 Skill 指引现与已整理的源码说明一致，八资产公开回读、官方根验签及 Linux ARM64 最终包首次启动链路通过；具体范围见[新发行记录](evidence/releases/0.3.1/README.md)。旧版资产和签名保持不变；main 的开发 Skill 仍不附发行清单，复制源码不会取得签名安装身份。

@@ -2390,6 +2390,162 @@
         "source/command review",
         "research metadata and frozen-evidence checks"
       ]
+    },
+    {
+      "path": "docs/signed-release-packaging.md",
+      "action": "edit",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/evidence/releases/0.3.1/README.md",
+      "action": "add",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/evidence/releases/0.3.1/SHA256SUMS",
+      "action": "add",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/evidence/releases/0.3.1/SOURCE-INFO.json",
+      "action": "add",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/evidence/releases/0.3.1/publication.json",
+      "action": "add",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/evidence/releases/0.3.1/source-ci.json",
+      "action": "add",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/evidence/releases/0.3.1/tamper-rejection.json",
+      "action": "add",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/evidence/releases/0.3.1/verification.json",
+      "action": "add",
+      "reason": "Record authorized 0.3.1 regular publication and current installation guidance; retain historical assets and evidence",
+      "consumers": [
+        "release users",
+        "repository navigation"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "action": "edit",
+      "reason": "Update current client release identity to 0.3.1 and retain research and historical evidence boundaries",
+      "consumers": [
+        "release users",
+        "contributors"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "REPRODUCIBILITY.md",
+      "action": "edit",
+      "reason": "Update current client release identity to 0.3.1 and retain research and historical evidence boundaries",
+      "consumers": [
+        "release users",
+        "contributors"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "SECURITY.md",
+      "action": "edit",
+      "reason": "Update current client release identity to 0.3.1 and retain research and historical evidence boundaries",
+      "consumers": [
+        "release users",
+        "contributors"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "docs/skill-source-release-boundary-20260919.md",
+      "action": "edit",
+      "reason": "Update current client release identity to 0.3.1 and retain research and historical evidence boundaries",
+      "consumers": [
+        "release users",
+        "contributors"
+      ],
+      "validation": [
+        "release signature and public readback",
+        "repository link and frozen-evidence guard"
+      ]
     }
   ],
   "frozen": {
@@ -2462,7 +2618,8 @@
     "apps/control-api/README.md",
     "connectors/README.md",
     "deploy/compose/README.md",
-    "edge/agent/README.md"
+    "edge/agent/README.md",
+    "docs/evidence/releases/0.3.1/README.md"
   ],
   "navigation_globs": [
     "docs/development/*.md",

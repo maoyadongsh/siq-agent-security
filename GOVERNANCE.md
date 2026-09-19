@@ -20,7 +20,7 @@ New research protocols identify hypotheses, task units, exclusions, model budget
 
 ## Release requirements
 
-Release publication requires identifiable source, passing checks, provenance and license review, credential disposition, artifact checksums and accurate signing status. Never label an unsigned archive as publisher-authenticated. The V5 freeze is a historical competition snapshot; a research version has its own identity. The published client [0.3.0](docs/evidence/releases/0.3.0/README.md) is separate from `research-v0.1.0-rc.1` in CITATION.cff. Changes to main or Skill source do not update existing signed assets; new client releases require a new source/artifact identity and signing. Use the [packaging guide](docs/signed-release-packaging.md) and [verification/readback tools](scripts/release/README.md). Native source smoke checks, release installation and complete host acceptance are separate scopes.
+Release publication requires identifiable source, passing checks, provenance and license review, credential disposition, artifact checksums and accurate signing status. Never label an unsigned archive as publisher-authenticated. The V5 freeze is a historical competition snapshot; a research version has its own identity. The published client [0.3.1](docs/evidence/releases/0.3.1/README.md) is separate from `research-v0.1.0-rc.1` in CITATION.cff. Changes to main or Skill source do not update existing signed assets; new client releases require a new source/artifact identity and signing. Use the [packaging guide](docs/signed-release-packaging.md) and [verification/readback tools](scripts/release/README.md). Native source smoke checks, release installation and complete host acceptance are separate scopes.
 
 ## Maintainer access and conflicts
 

@@ -1,0 +1,23 @@
+{
+  "version": "0.3.1",
+  "source_sha": "f3d9c3f0933f3b08d15b2d3dbc522f409c77a355",
+  "skill_zip_sha256": "bcd3efcc665f049dce83271a689a6edd4ed3c773237a2f5d22d4cb02ce40702c",
+  "scope": "Actual signed payload verification; no modified program executed",
+  "checks": [
+    {
+      "case": "modified-skill",
+      "result": "rejected",
+      "untrusted_binary_staged": false
+    },
+    {
+      "case": "wrong-publisher-key",
+      "result": "rejected",
+      "untrusted_binary_staged": false
+    },
+    {
+      "case": "modified-binary",
+      "result": "rejected",
+      "untrusted_binary_staged": false
+    }
+  ]
+}
