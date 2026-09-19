@@ -247,19 +247,63 @@ The Skill manifest authenticates Skill content and binary pins with the existing
 publisher trust root. SOURCE-INFO and SHA256SUMS are descriptive metadata, not
 independent publisher signatures. Cross compilation is not native OS acceptance.
 
-Extract the complete bundle into a new directory. Select your binary in bin/.
-On Linux/macOS, retain executable permissions (chmod +x on the selected file if
-your extractor dropped them). Set SIQ_AGENT_SECURITY_BIN to its absolute path.
-Run sh skills/siq-agent-security/scripts/bootstrap.sh on Linux/macOS, or invoke
-skills/siq-agent-security/scripts/bootstrap.ps1 on Windows using your normal
-PowerShell policy. Do not lower system execution policy for this package.
+Python 3 is required (3.12+ recommended). Extract the complete bundle into a new
+directory owned by you. The commands below create independent state in state/.
+The first run must initialize state: bootstrap calls serve and does not initialize
+an empty state directory. Verify first, then use the verified program's start.
 
-Bootstrap verifies the manifest, actual Skill content and chosen binary before
-starting the local service. It does not install an adapter or grant permissions.
-For the Skill-only ZIP, download must be explicitly enabled with
-SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1, and the same-version binary assets must
-already have been published at the signed URLs. GitHub's automatic source ZIP
-is not this signed installation package.
+## Linux/macOS (Linux arm64 example)
+
+Select linux-amd64 or darwin-arm64 instead when appropriate. Run in the extracted
+bundle directory. Keep the terminal open while the foreground service is running.
+
+```bash
+chmod +x bin/siq-agent-security-linux-arm64
+export SIQ_AGENT_SECURITY_BIN="$PWD/bin/siq-agent-security-linux-arm64"
+export SIQ_AGENT_SECURITY_STATE_DIR="$PWD/state"
+export SIQ_AGENT_SECURITY_STAGE_DIR="$PWD/.verified-bin"
+export SIQ_AGENT_SECURITY_REQUIRE_PINNED=1
+VERIFIED_BIN="$(sh skills/siq-agent-security/scripts/resolve_verified_bin.sh)" &&
+  "$VERIFIED_BIN" start --port 47611
+```
+
+## Windows PowerShell (Python available as python)
+
+The public key below is the existing publisher trust root, not a key taken from
+the manifest being verified. Keep the normal system execution policy.
+
+```powershell
+$ErrorActionPreference = 'Stop'
+$env:SIQ_AGENT_SECURITY_BIN = (Resolve-Path './bin/siq-agent-security-windows-amd64.exe').Path
+$env:SIQ_AGENT_SECURITY_STATE_DIR = Join-Path (Get-Location).Path 'state'
+$env:SIQ_AGENT_SECURITY_STAGE_DIR = Join-Path (Get-Location).Path '.verified-bin'
+$VerifiedBin = & python './skills/siq-agent-security/scripts/verify_manifest.py' `
+  --manifest './skills/siq-agent-security/skill-manifest.json' `
+  --pubkey 'LtEknKeTxzUQwErXI0MboUQQXKqrGp+R2x2RUv9/ZHY=' `
+  --skill-dir './skills/siq-agent-security' `
+  --bin $env:SIQ_AGENT_SECURITY_BIN --stage-to $env:SIQ_AGENT_SECURITY_STAGE_DIR
+if ($LASTEXITCODE -ne 0 -or -not $VerifiedBin) {{ throw 'Package verification failed' }}
+& "$VerifiedBin" start --port 47611
+```
+
+Open http://127.0.0.1:47611/overview and enter the one-time pairing code printed
+by the service. Ctrl+C stops this foreground instance. Reuse the same state path
+to retain identity and history. A matching running instance is reused; use pair
+--port 47611 with the same verified program and state directory for a fresh code.
+
+If you use bootstrap.sh/bootstrap.ps1 instead, first run init --port 47611 with
+the verified program and the same state directory, and check initialization
+succeeded. Check readiness with status --port 47611; a bootstrap log line alone
+is not health verification. Starting the service does not install an adapter or
+grant permissions.
+
+For the Skill-only ZIP, same-version binary assets must exist at the signed URLs.
+On Linux/macOS explicitly set SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1 and use the
+Skill's scripts/resolve_verified_bin.sh to obtain a verified program, then start
+it as above with independent state/staging directories. On Windows explicitly
+replace --bin with --fetch-artifact in the verifier command, retaining the fixed
+public key and --stage-to. GitHub's automatic source ZIP is not this signed
+installation package.
 """
 
 
