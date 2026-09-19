@@ -82,6 +82,15 @@ jobs:
         run: python3 scripts/check_capability_honesty.py
       - name: Research task evidence ledger
         run: python3 scripts/check_research_task_ledger.py
+      - name: Repository navigation and frozen evidence
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          python3 -m unittest discover -s scripts/repository -p 'test_*.py' -v
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            BASE_SHA=HEAD
+          fi
+          python3 scripts/repository/check.py --base "$BASE_SHA"
       - name: Release packaging boundaries
         run: python3 -m unittest discover -s scripts/release -p 'test_*.py' -v
       - name: OpenClaw checkpoint upgrade and rollback recovery

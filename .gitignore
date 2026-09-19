@@ -77,3 +77,13 @@ docs/evidence/**/*-private/
 # Runtime databases must never enter public acceptance evidence.
 /docs/evidence/**/*.db
 /docs/evidence/**/*.db-*
+
+# New public navigation/catalogs never carry private execution output.
+/research/**/*-private/
+/evaluations/**/*-private/
+/platforms/**/*-private/
+/research/**/state/
+/evaluations/**/state/
+/platforms/**/state/
+/evaluations/**/*.db
+/evaluations/**/*.db-*
