@@ -347,6 +347,328 @@
           "sha256": "77004e70268306b85e64fd43e90ff99d8784f5e2a26c927c876bebdc4c66eff3"
         }
       ]
+    },
+    {
+      "id": "openshell-b3-sixth",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "binary sha256:67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+        "source_sha": null,
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "not_recorded",
+        "host_mode": "real_openshell_private_sandbox",
+        "model_mode": "not_recorded",
+        "host_version": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "B3_functional_steps_passed",
+          "value": 57,
+          "total": 57
+        }
+      ],
+      "limits": [
+        "B3 verifies functional policy/apply/receipt/denial/revoke/rollback paths; it has no frozen performance budget.",
+        "No browser or desktop UI was exercised in this leg.",
+        "Backend v0.0.83 remote single-task stop and cross-system atomicity are not proven by this journey.",
+        "Sixth-candidate B2 and S1-S4 performance remain not measured while LX04 natural-expiry worker is live."
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx06-sec-hold-fix-b3-summary.json",
+          "sha256": "598d4ec117bd75641e28eb2cc65f80ff1fe610125eb331e71045cc26e7c447fb"
+        }
+      ],
+      "recorded_at": "2026-09-18T22:32:17.369478+00:00",
+      "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0",
+      "verifier_or_driver_sha256": "3623a058b5e1e67ad64047ac7b23e3dc3152a5ef36a1ffe761d40067562c84a1"
+    },
+    {
+      "id": "controlled-openclaw-2026-9-4-sixth",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "binary sha256:67bc48c4f751f9f6334295b78346e1290bd6f9d1d4e02a8695ca1ef26eb43428",
+        "source_sha": null,
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "arm64",
+        "host_mode": "pinned_controlled_patch_public_cli",
+        "model_mode": "synthetic",
+        "host_version": "OpenClaw 2026.9.4 / Node 24.18.0"
+      },
+      "results": [
+        {
+          "metric": "controlled_public_cli_checks_passed",
+          "value": 22,
+          "total": 22
+        }
+      ],
+      "limits": [
+        "The latest host ran from an isolated self-contained npm installation and pinned controlled-start patch, not the global stock installation.",
+        "The original 2026.9.4 host still lacks the SIQ approval execution checkpoint; its separate stock hold leg remains fail-closed.",
+        "Synthetic model/operator and harmless fixture files do not prove human desktop acceptance, OS isolation or atomic external effects.",
+        "This managed native CLI leg does not itself exercise the separate browser approval-hold workflow."
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx03-openclaw-2026.9.4-controlled-managed-native-summary.json",
+          "sha256": "f3e5127129e78a5f3acc8ac70be83dab1fd05513ace72b792a3b85820ef81784"
+        }
+      ],
+      "recorded_at": null,
+      "source_binding_sha256": "63643d40fc503dc524f2d8b9f5fc0eb8cac6726d944d7780085a16f0c2045aa0",
+      "verifier_or_driver_sha256": "3c5bae25640c263f71b96553e217b212985aa53a2fe3df85aef6b19f20d63dc5"
+    },
+    {
+      "id": "linux-direct-r07-eighth",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "binary sha256:a85c76b03292eafea5f92e10b2a5a87dc1d46a0c90563751796d3dc19f672c0e",
+        "source_sha": null,
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "arm64",
+        "host_mode": "OpenClaw public CLI / direct copied binary / headless Chromium",
+        "host_version": "OpenClaw 2026.5.12",
+        "model_mode": "local deterministic fixture"
+      },
+      "results": [
+        {
+          "metric": "direct_R07_checks_passed",
+          "value": 30,
+          "total": 30
+        },
+        {
+          "metric": "nested_R04_checks_passed",
+          "value": 31,
+          "total": 31
+        }
+      ],
+      "limits": [
+        "browser operator is automated (Playwright); UI journeys here are not human acceptance",
+        "step 1 starts a fixture-copied binary, not the R06 installed systemd service; the combined installation-to-journey gate remains open",
+        "step 6 is an HTTP decision plus browser approval test, not native host hold consumption or exactly-once execution",
+        "step 10 checks unexpired ciphertext preservation; expired deletion uses component clock fixtures, not elapsed real retention time",
+        "UP07 legacy/future signed state rejection is not covered by the stale source digest check",
+        "J11 default export exclusion, two native tasks' disjoint signed exports and administrator logout revocation are exercised; the 12-hour session natural expiry and elapsed-time native ciphertext expiry remain open; no plaintext export route exists in this product version",
+        "OS desktop notifications are not exercised in this headless journey; browser/OS notification layers are covered by the dedicated notification smokes",
+        "step 5 exercises missing-authority (no SEC) overreach; permission-scope overreach inside the granted read scope is not constructible at this fixture level because the host config restricts OpenClaw to the read tool",
+        "session-level attribution only (controlled_session), inherited from the L2 leg",
+        "local deterministic model and synthetic operator; no external or paid model",
+        "Historical pending 12-hour leg later cancelled; not counted as passed. No inherited installed-service/OpenShell acceptance."
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx05-session-transition-eighth-r07-summary.json",
+          "sha256": "9fb56e923d855d9395bfc2994cf2786cea0229122a2eeb9876e601bf753cfde0"
+        }
+      ],
+      "recorded_at": "2026-09-19T01:22:05.910552+00:00",
+      "source_binding_sha256": "163d5ded0c18b6a466b302f863edf534823882faf9ede1ea07ddddb0d4abfd31",
+      "verifier_or_driver_sha256": "90a89143a83b5857264b75f88de1cc1f285470ca1cab9aa53845d615fdedaf73"
+    },
+    {
+      "id": "enterprise-isolated-postgres-jwks",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "main@2187fea (apps/control-api clean in this worktree)",
+        "source_sha": "2187fea621ff40b368f2e01e51d26672239c9f8d",
+        "dirty": "apps/control-api recorded clean; other tree paths not asserted"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "linux",
+        "arch": "arm64",
+        "host_mode": "isolated PostgreSQL / loopback RS256 test issuer / real HTTP",
+        "model_mode": "not_applicable",
+        "backend": "postgres:17-alpine"
+      },
+      "results": [
+        {
+          "metric": "isolated_production_configuration_checks_passed",
+          "value": 27,
+          "total": 27
+        }
+      ],
+      "limits": [
+        "loopback JWKS is a local RS256 issuer fixture, not a customer IdP",
+        "single PostgreSQL container, not production HA/backup/operations",
+        "no customer data, cloud gateway, or Windows/macOS validation",
+        "loopback issuer rotation and outage are fixtures; customer IdP key rollover, HA, backup and production operations remain external"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/linux-dual-host-20260918-211200/lx07-postgres-oidc-jwks-rotation-summary.json",
+          "sha256": "091f0eb208bffa322cfd8354979c5033f3a24c1fc9abfd55225e42c28b72a2ba"
+        }
+      ],
+      "recorded_at": "2026-09-18T20:16:35.071557+00:00",
+      "source_binding_sha256": null,
+      "verifier_or_driver_sha256": "6e7984e3a25bebf5d5bcbaead3464b286f251f3c01e214e0fdc3836563e99260"
+    },
+    {
+      "id": "windows-openclaw-wsl-minimum",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "recorded candidate ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8",
+        "source_sha": "ff166068a9047d0cfca73f8dcfb6f8c2dd9102d8",
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "Windows controller / Linux WSL Agent",
+        "arch": "not_recorded",
+        "host_mode": "public agent --local in WSL",
+        "host_version": "OpenClaw 2026.9.4",
+        "model_mode": "synthetic local"
+      },
+      "results": [
+        {
+          "metric": "minimum_checks_passed",
+          "value": 7,
+          "total": 7
+        }
+      ],
+      "limits": [
+        "synthetic local model",
+        "not Windows-native Agent",
+        "no approval-resume claim",
+        "First-run harness failure retained in source report; integration is not same-candidate 0.3.0 acceptance."
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/windows-sunbo/openclaw-candidate-ff16606-20260919/report.json",
+          "sha256": "b0465b6e64eca334acfd3bfb087426a097142e82d4fff28cfee34062e1c59159"
+        }
+      ],
+      "recorded_at": null,
+      "source_binding_sha256": null,
+      "verifier_or_driver_sha256": null
+    },
+    {
+      "id": "windows-hermes-native-managed",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "binary sha256:b96cb374993811d6940ee9be2a8e721b14a0c89a984952d71134242b85401d7d",
+        "source_sha": "72140795963244d293232c905a34ef00312b8253",
+        "dirty": "clean recorded by original report"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "windows",
+        "arch": "not_recorded",
+        "host_mode": "native CLI / product managed hooks",
+        "model_mode": "synthetic",
+        "host_version": "not_recorded"
+      },
+      "results": [
+        {
+          "metric": "recorded_native_cases_passed",
+          "value": 5,
+          "total": 5
+        }
+      ],
+      "limits": [
+        "No desktop interaction or independent second native rerun",
+        "No restart after revocation; invalid-authority persistence across recovery unproven",
+        "Not product Runtime Check V5; not complete project/release acceptance"
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/windows-sunbo/hermes-managed-native-20260918/summary.json",
+          "sha256": "4f7062929cacd9c390006cd0db9153ebbdcfb57f34170441b57f484837b30f25"
+        }
+      ],
+      "recorded_at": "2026-09-18T11:21:30.856143+00:00",
+      "source_binding_sha256": null,
+      "verifier_or_driver_sha256": "c3b2c8d1d36986f9114d35dfe5ca369cb89b5c415a14526dfecd5c35e37352aa"
+    },
+    {
+      "id": "windows-workbuddy-minimal-native-io",
+      "kind": "engineering",
+      "relationship": "project-maintainer-or-contributor",
+      "implementation_candidate": {
+        "identity": "recorded candidate 6841a4957b179484f8dcd0faa9dddccb1f9a7ade",
+        "source_sha": "6841a4957b179484f8dcd0faa9dddccb1f9a7ade",
+        "dirty": "not_recorded"
+      },
+      "evidence_commit": null,
+      "integration_commit": null,
+      "environment": {
+        "os": "windows",
+        "arch": "not_recorded",
+        "host_mode": "native desktop; default permission mode",
+        "host_version": "WorkBuddy 5.5.6 Windows desktop",
+        "model_mode": "Quick (GLM-5.3-Flash)"
+      },
+      "results": [
+        {
+          "metric": "native_tasks_recorded",
+          "value": 2,
+          "total": 2
+        }
+      ],
+      "limits": [
+        "Direct native Read of installed SKILL followed by Write; slash/Skill tool is not covered or accepted.",
+        "Earlier native enrollment timeouts remain real failures; one successful journey does not establish repeatability or latency guarantees.",
+        "WorkBuddy approval resumption and desktop V1-to-V2 update journey remain unverified; component lifecycle tests are separate.",
+        "Cleanup revocations independently verified; no additional native tool call after revoke in this run.",
+        "Private fixture public key derived in memory for verification only; no new signatures or secret export.",
+        "Official release signing remains external via issue 87.",
+        "Task count is observed runs, not full acceptance pass rate; old signing blocker superseded by separate 0.3.0 release."
+      ],
+      "failure_and_rerun_record": "See original evidence; original failures and corrective records retained",
+      "supersedes": null,
+      "review_status": "indexed_existing_evidence",
+      "evidence": [
+        {
+          "path": "docs/evidence/personal-experience/windows-sunbo/workbuddy-native-sec-20260919/native-6841a49-report.json",
+          "sha256": "748bc85c82db8991fb4e1cd73249f5896b53b949d7a157460af4ee0e68989026"
+        }
+      ],
+      "recorded_at": null,
+      "source_binding_sha256": null,
+      "verifier_or_driver_sha256": null
     }
   ]
 }
