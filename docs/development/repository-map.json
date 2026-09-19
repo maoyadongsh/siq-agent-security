@@ -1,0 +1,678 @@
+{
+  "schema_version": "siq-repository-map/v1",
+  "base_main": "1173042275ae994faa4ed1c99cee58f7d541cb1c",
+  "scope": "RA-00 initial inventory; directories classify all tracked files, exact change rows describe the first batches; no physical moves authorized by this map",
+  "assets": [
+    {
+      "id": "apps",
+      "paths": [
+        "apps/"
+      ],
+      "kind": "product",
+      "owner_role": "application maintainers",
+      "strategy": "retain application/module/embedded resource paths",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "application tests; module builds; embed parity"
+      ]
+    },
+    {
+      "id": "edge",
+      "paths": [
+        "edge/"
+      ],
+      "kind": "product",
+      "owner_role": "enterprise maintainers",
+      "strategy": "retain protocol and Edge module",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "Go module tests"
+      ]
+    },
+    {
+      "id": "connectors",
+      "paths": [
+        "connectors/"
+      ],
+      "kind": "product",
+      "owner_role": "connector maintainers",
+      "strategy": "retain relative Go replace paths",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "connector module matrix"
+      ]
+    },
+    {
+      "id": "adapters",
+      "paths": [
+        "adapters/"
+      ],
+      "kind": "integration",
+      "owner_role": "host maintainers",
+      "strategy": "retain host adapters and embedded-copy parity",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "adapter parity and host negative tests"
+      ]
+    },
+    {
+      "id": "packages",
+      "paths": [
+        "packages/"
+      ],
+      "kind": "contracts",
+      "owner_role": "contract maintainers",
+      "strategy": "retain versioned contracts",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "schema and producer/consumer tests"
+      ]
+    },
+    {
+      "id": "skills",
+      "paths": [
+        "skills/"
+      ],
+      "kind": "signed-source",
+      "owner_role": "client maintainers",
+      "strategy": "retain source path; edit guidance only in a new candidate",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "self-admission; signature/content checks; platform acceptance"
+      ]
+    },
+    {
+      "id": "docs",
+      "paths": [
+        "docs/"
+      ],
+      "kind": "documentation-evidence",
+      "owner_role": "documentation maintainers",
+      "strategy": "index first; frozen evidence stays in place",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "navigation; frozen baseline; research ledger/metadata"
+      ]
+    },
+    {
+      "id": "frontier-references-on-agent-security",
+      "paths": [
+        "Frontier References on Agent Security/"
+      ],
+      "kind": "literature",
+      "owner_role": "research maintainers",
+      "strategy": "index original files; no PDF movement or license assumption",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "file hashes; source and rights statuses"
+      ]
+    },
+    {
+      "id": "scripts",
+      "paths": [
+        "scripts/"
+      ],
+      "kind": "tools",
+      "owner_role": "tool maintainers",
+      "strategy": "retain stable executors; register usage and add validators",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "focused Python tests and lint; consumers"
+      ]
+    },
+    {
+      "id": "benchmarks",
+      "paths": [
+        "benchmarks/"
+      ],
+      "kind": "evaluation-methods",
+      "owner_role": "research maintainers",
+      "strategy": "retain protocols, fixtures and executors",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "fixed protocol verification"
+      ]
+    },
+    {
+      "id": "patches",
+      "paths": [
+        "patches/"
+      ],
+      "kind": "upstream-patches",
+      "owner_role": "host maintainers",
+      "strategy": "retain exact upstream patches and licenses",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "upstream fingerprint and license checks"
+      ]
+    },
+    {
+      "id": "deploy",
+      "paths": [
+        "deploy/"
+      ],
+      "kind": "deployment",
+      "owner_role": "operations maintainers",
+      "strategy": "retain topology and build contexts",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "configuration/build checks when affected"
+      ]
+    },
+    {
+      "id": "site",
+      "paths": [
+        "site/"
+      ],
+      "kind": "public-site",
+      "owner_role": "site maintainers",
+      "strategy": "retain static site and vendored provenance",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "check_site and Pages workflow"
+      ]
+    },
+    {
+      "id": "demo",
+      "paths": [
+        "demo/"
+      ],
+      "kind": "demonstration",
+      "owner_role": "research maintainers",
+      "strategy": "retain fixture/deployment boundaries",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "benchmark and demo consumers"
+      ]
+    },
+    {
+      "id": "testdata",
+      "paths": [
+        "testdata/"
+      ],
+      "kind": "fixtures",
+      "owner_role": "test maintainers",
+      "strategy": "retain fixture paths",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "consumer tests"
+      ]
+    },
+    {
+      "id": "licenses",
+      "paths": [
+        "LICENSES/"
+      ],
+      "kind": "licensing",
+      "owner_role": "project maintainers",
+      "strategy": "retain imported license bytes and scope map",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "research metadata and license inventory"
+      ]
+    },
+    {
+      "id": "github",
+      "paths": [
+        ".github/"
+      ],
+      "kind": "automation",
+      "owner_role": "project maintainers",
+      "strategy": "extend existing checks without renaming required jobs",
+      "consumers": [
+        "README.md",
+        "existing module tests/build scripts/CI; enumerate affected files before any move"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; third-party originals retain their own terms",
+      "validation": [
+        "workflow contracts; action pins"
+      ]
+    },
+    {
+      "id": "root-entrypoints",
+      "paths": [
+        ".gitattributes",
+        ".gitignore",
+        ".gitleaks.toml",
+        "AGENTS.md",
+        "AGENTSHIELD.md",
+        "CITATION.cff",
+        "CODE_OF_CONDUCT.md",
+        "CONTRIBUTING.md",
+        "DCO",
+        "GOVERNANCE.md",
+        "HACKATHON.md",
+        "LICENSE",
+        "NOTICE",
+        "README.en.md",
+        "README.md",
+        "REPRODUCIBILITY.md",
+        "RESEARCH.md",
+        "SECURITY.md",
+        "THIRD_PARTY_NOTICES.md",
+        "sonar-project.properties"
+      ],
+      "kind": "governance-navigation",
+      "owner_role": "project maintainers",
+      "strategy": "retain stable root filenames; minimal navigation changes",
+      "consumers": [
+        "README.md",
+        "README.en.md",
+        "scripts/research/check_metadata.py",
+        "external repository links"
+      ],
+      "license": "LICENSES/scope.json",
+      "validation": [
+        "link/anchor checks; frozen consumer scan; metadata checks"
+      ]
+    },
+    {
+      "id": "research",
+      "paths": [
+        "research/"
+      ],
+      "kind": "navigation-index",
+      "owner_role": "research maintainers",
+      "strategy": "new thin navigation and versioned catalogs; existing evidence and runtime stay in place",
+      "consumers": [
+        "README.md",
+        "README.en.md",
+        "docs/development/current.md",
+        "scripts/repository/check.py"
+      ],
+      "license": "LICENSES/scope.json; indexes do not grant third-party rights",
+      "validation": [
+        "repository guard; catalog negative tests"
+      ]
+    },
+    {
+      "id": "platforms",
+      "paths": [
+        "platforms/"
+      ],
+      "kind": "navigation-index",
+      "owner_role": "platforms maintainers",
+      "strategy": "new thin navigation and versioned catalogs; existing evidence and runtime stay in place",
+      "consumers": [
+        "README.md",
+        "README.en.md",
+        "docs/development/current.md",
+        "scripts/repository/check.py"
+      ],
+      "license": "LICENSES/scope.json; indexes do not grant third-party rights",
+      "validation": [
+        "repository guard; catalog negative tests"
+      ]
+    },
+    {
+      "id": "evaluations",
+      "paths": [
+        "evaluations/"
+      ],
+      "kind": "navigation-index",
+      "owner_role": "evaluations maintainers",
+      "strategy": "new thin navigation and versioned catalogs; existing evidence and runtime stay in place",
+      "consumers": [
+        "README.md",
+        "README.en.md",
+        "docs/development/current.md",
+        "scripts/repository/check.py"
+      ],
+      "license": "LICENSES/scope.json; indexes do not grant third-party rights",
+      "validation": [
+        "repository guard; catalog negative tests"
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "path": "README.md",
+      "action": "edit",
+      "source_blob": "8c7b961b96971c2a892a5b0028f866d73a096858",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": "README.en.md",
+      "action": "edit",
+      "source_blob": "ef4463ca8853dec8b276905708b5f59df3efa62b",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": "RESEARCH.md",
+      "action": "edit",
+      "source_blob": "a1c7a6073e23dc8962a8fc532ee6b27b35faa7fc",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": "AGENTSHIELD.md",
+      "action": "edit",
+      "source_blob": "1e419260da37ae48e76660a6d4b3ed69b685470a",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "action": "edit",
+      "source_blob": "83fcab0ed179b0bbf2c71751f6bdb878a63577ea",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": "docs/personal-experience-current.md",
+      "action": "edit",
+      "source_blob": "2bb1643dd9dc448c648fd390090f59f6bb59bd02",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": "docs/repository-architecture-reorganization-proposal-20260918-095230.md",
+      "action": "edit",
+      "source_blob": "e4c0ff1e825a30c75a6df8a15d0707f99c8ae90a",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "action": "edit",
+      "source_blob": "458f1926ccfcea64eac1c2ebed0605cbf8b05f95",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": ".gitignore",
+      "action": "edit",
+      "source_blob": "7415cc2a40425fb336559f41a15dc32c181f4870",
+      "reason": "navigation, current status or checks; preserve runtime and published payload",
+      "consumers": [
+        "repository users",
+        "existing metadata/CI checks"
+      ],
+      "validation": [
+        "repository guard",
+        "metadata/capability/ledger checks",
+        "diff and secret scan"
+      ]
+    },
+    {
+      "path": "docs/README.md",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "docs/development/current.md",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "docs/development/reorganization-progress.md",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "docs/development/repository-map.json",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "scripts/repository/check.py",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "scripts/repository/test_check.py",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "research/README.md",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "platforms/README.md",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    },
+    {
+      "path": "evaluations/README.md",
+      "action": "add",
+      "reason": "scoped navigation or migration guard",
+      "consumers": [
+        "root navigation",
+        "CI"
+      ],
+      "validation": [
+        "repository guard",
+        "focused negative tests"
+      ]
+    }
+  ],
+  "frozen": {
+    "baseline": "1173042275ae994faa4ed1c99cee58f7d541cb1c",
+    "prefixes": [
+      "docs/evidence/",
+      "docs/hackathon/",
+      "docs/research/evidence/",
+      "docs/archive/",
+      "apps/agentshield/testdata/releases/"
+    ],
+    "paths": [
+      "docs/hackathon/benchmark-report.md",
+      "docs/hackathon/evidence/INDEX.md",
+      "docs/hackathon/evidence/final-hardening-v4/stepfun-cohort-v2.json",
+      "docs/hackathon/evidence/final-release-v5/local-failure.json",
+      "docs/hackathon/evidence/final-release-v5/locality.json",
+      "docs/hackathon/final-submission-state.md",
+      "docs/open-source-research-plan-20260908.md",
+      "docs/research/evidence/reproduction-a/browser.json",
+      "docs/research/evidence/reproduction-b/verification.json"
+    ]
+  },
+  "navigation_files": [
+    "README.md",
+    "README.en.md",
+    "RESEARCH.md",
+    "REPRODUCIBILITY.md"
+  ],
+  "navigation_globs": [
+    "docs/development/*.md",
+    "research/**/*.md",
+    "platforms/**/*.md",
+    "evaluations/**/*.md"
+  ]
+}
