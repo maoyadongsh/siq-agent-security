@@ -26,7 +26,13 @@ Agent security research and implementation: permissions, runtime checks and exec
 
 ---
 
-**SIQ Agent Security is an open-source research project on agent authorization boundaries and execution evidence, with a working security management system for individuals and organizations.** It helps individuals and organizations inventory agents in local or connected environments, review tool and resource permissions, manage installation and updates, and check authorization on integrated execution paths. Users keep working in their existing agents while SIQ provides permission management, action approval and task evidence.
+**SIQ is an open-source agent security system that uses a Skill to guide integration and a separate local program with host hooks to enforce protection.** It discovers and inventories agents and related assets in supported environments, manages Skill lifecycles and permissions, and connects assets, authorization, execution records and collected effect evidence.
+
+Users keep working in their existing agents while SIQ helps them answer:
+
+**Which agents exist → Which Skills are installed → What permissions they have → Which protections are active → What ran → What happened.**
+
+Discovering an asset does not establish that it is managed or that blocking protection is active. Management and protection require separate confirmation of identity bindings, authorization and working host integration. Outcome verification depends on integrated effect collection and actual evidence.
 
 The research asks how model proposals receive independent authorization, how provenance constrains execution, and how observed effects establish task completion. The implementation links trusted Intent, parameter provenance, Skill Execution Context (SEC), a unique post-approval execution reservation and effect verification: who authorized the action, which installation it belongs to, and what actually happened. Root-level [research/](research/README.md) connects literature, questions, methods, experiments, findings and governance; [evaluations/](evaluations/README.md) separates research observations, engineering acceptance and external reproductions.
 
@@ -42,7 +48,16 @@ The **personal client** provides a local service and browser console for agents,
 
 The product follows **discovery and review → admission and authorization → execution and approval → traceability and maintenance**. Personal features include asset inventory, Skill install/update/removal, permission review, task activity, signed receipts and opt-in raw-content management. Enterprise features include environment and Edge enrollment, multi-tenant inventory and risk management, policy approval, deployment readback and audit. The immediate priority is native acceptance of the integrated personal features on a fixed release candidate, followed by team-device workflows.
 
-The local Go service serves the personal browser console, the SIQ Skill provides operating guidance, and adapters connect host tool calls. Skill installation, asset discovery and runtime protection are confirmed separately; actual enforcement depends on the integrated host paths and platform evidence.
+The personal client combines **Skill guidance, local program decisions and host hook integration**:
+
+| Component | Role |
+| --- | --- |
+| [SIQ Skill](skills/siq-agent-security/SKILL.md) | Provides installation and operating guidance so the agent can invoke SIQ and present its decisions; the model does not judge safety or approve grants |
+| [Separate local program](apps/agentshield/README.md) | The Go runtime checks rules and authorization, manages approvals, signs receipts and serves the browser console |
+| [Host hooks and adapters](adapters/runtime/README.md) | Request local decisions before integrated tool calls, handle them under the host protocol and submit associated observations afterward; supported approval-resume paths also require a final check before execution |
+| [OpenShell (optional)](README.md#dgx-spark-与-nvidia-openshell-深度适配) | Provides execution isolation and resource constraints for explicitly integrated tasks within the verified version and configuration scope |
+
+**Installing the Skill alone does not install host hooks or establish active runtime protection.** Confirm that the local service is running and host hooks are loaded, then verify the actual checking and blocking behavior. A separate local program describes component responsibilities; it does not establish strong isolation from same-UID processes in the current desktop mode. Capabilities remain bounded by host integration and platform evidence.
 
 **Repository snapshot, 2026-09-19 (source for the regular `0.3.1` release fixed at main commit `f3d9c3f`; later publication records and README updates retain that identity):** The macOS stage, OpenShell policy and v6 constrained execution, Linux dual-host fixes and personal-client work are integrated. Windows #80–#83 added Writer, migration recovery, DACL, resource facts, host management and client lifecycle; #90 added junction verification and content-hash regressions. See the [local integration audit](docs/local-development-integration-audit-20260919.md), [Windows review](docs/windows-main-integration-review-20260919.md) and subsequent [source/release boundary update](docs/skill-source-release-boundary-20260919.md). The regular 0.3.1 release is published as Latest; all eight assets have been downloaded and verified. Historical component and native evidence remains bound to its recorded candidates; it does not establish full acceptance of this release.
 
