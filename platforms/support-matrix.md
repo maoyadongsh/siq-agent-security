@@ -9,6 +9,6 @@
 | macOS arm64 | OpenClaw、Hermes、WorkBuddy | 已验证 | 未运行 | 未完成；Apple 签名/公证另记 |
 | Windows amd64 | OpenClaw、Hermes、WorkBuddy | 已验证 | 未运行 | 未完成；WSL Agent 与原生 CLI 证据不同 |
 
-Linux/WorkBuddy 与全平台 CodeBuddy 已排除新增接入，历史拒绝、撤销、查看和卸载仍保留。未知目标不得从邻近行推断支持。项目 Ed25519 清单签名不代表 Apple 公证或 Windows Authenticode。
+Linux/WorkBuddy 不新增接入，已有 WorkBuddy 配置可查看或卸载。未知目标不得从邻近行推断支持。项目 Ed25519 清单签名不代表 Apple 公证或 Windows Authenticode。
 
 配置、读回、加载与行为拦截分别验收；L0/L1/L2/L3 能力也不与源码已合并或 GitHub Release 类型互换。[历史平台库存](../docs/personal-platform-validation-spec-v1.md)保留原 18 项范围，当前产品验收使用既有 N09 v2 机制而非删掉历史失败行。

@@ -16,7 +16,7 @@ Apache-2.0
 
 ## Use Case
 
-Install a local gate on OpenClaw, Hermes, CodeBuddy, or Trae so that untrusted
+Install a local gate on OpenClaw, Hermes, or WorkBuddy so that untrusted
 Agent Skills are admitted, least-privilege granted, and every tool call gets a
 signed receipt.
 

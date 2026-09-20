@@ -57,7 +57,7 @@
 | agent-asset-inventory | `agentshield inventory` | 平台配置目录（只读，不启动 MCP） | candidate + evidence + declared 事实 | `connectors/{hermes,openclaw,workbuddy,mcp,directory}`；**新增**：扫 `skills/` 目录 |
 | skill-admission | `agentshield admit <path\|zip\|git>` | Skill 目录 | `admission.json`（verdict / declared 能力 / findings / hash）+ `skill-card.md` | 规则包（Go 移植）、`/tmp/agentshield-backup` 的决策表与 evals |
 | least-privilege-grant | `agentshield grant <admission.json>` | declared 事实 + 用户签核 | Hermes toolset allowlist、OpenClaw tool policy、OpenShell `DesiredPolicy`、`effective` 读回 | `policy_compiler`（Go 移植）、permission-fact schema |
-| runtime-receipt | `agentshield serve` + `/v1/decide` | 钩子转发的工具调用 | allow / deny / hold / redact + 签名回执 | Hermes `pre_tool_call`、OpenClaw `before_tool_call`、CodeBuddy `PreToolUse` |
+| runtime-receipt | `agentshield serve` + `/v1/decide` | 钩子转发的工具调用 | allow / deny / hold / redact + 签名回执 | Hermes `pre_tool_call`、OpenClaw `before_tool_call`、WorkBuddy `PreToolUse` |
 
 ### 4.1 准入决策表（对标 SkillEvaluator triage）
 
@@ -90,7 +90,7 @@ POST /v1/decide
 | --- | --- | --- | --- |
 | OpenClaw | `security.installPolicy.exec` 指向 `agentshield policy-exec`（stdin JSON → allow/warn/block） | 插件 `before_tool_call` → `/v1/decide`；`after_tool_call` 上报结果 | 删插件 + 还原 `openclaw.json` |
 | Hermes | 包装 `hermes skills install`：先 `admit` 再放行；本地放入目录由 inventory 周期扫描 | 插件 `pre_tool_call` / `post_tool_call` | 删 `~/.hermes/plugins/agentshield` |
-| WorkBuddy/CodeBuddy | 无；SKILL.md 引导「先扫再装」 | 写 `~/.codebuddy/settings.json` `PreToolUse` 钩子脚本（需用户确认） | 移除该条钩子 |
+| WorkBuddy | 无；SKILL.md 引导「先扫再装」 | 写 `~/.workbuddy/settings.json` `PreToolUse` 钩子脚本（需用户确认） | 移除该条钩子 |
 | Trae/TraeWork | 无 | 无；控制台标「审计模式」 | 删 Skill |
 
 ### 4.4 OpenShell（L3）
@@ -114,7 +114,7 @@ apps/agentshield/                   Go module
   testdata/                         与 Python 共用的语料（软链或复制自 control-api fixtures）
 adapters/runtime/openclaw-agentshield/   TS 插件 + installPolicy 说明
 adapters/runtime/hermes-agentshield/     Python 插件（薄，只做 HTTP）
-adapters/runtime/codebuddy-agentshield/  PreToolUse 钩子脚本
+adapters/runtime/workbuddy-agentshield/  PreToolUse 钩子脚本
 packages/contracts/                 新增 admission / grant / receipt / manifest schema（升版本）
 ```
 
@@ -147,7 +147,7 @@ packages/contracts/                 新增 admission / grant / receipt / manifes
 | W0 合同 | 四份 schema + 示例；`docs/compatibility.md` 加平台 × OS × 档位矩阵 | `test_schema_contracts` 通过 |
 | W1 Go 核心 | rulepack（42 条直移 + crontab 改写 + dangerous-import 正则）、signing、admission、grant | Go 与 Python 对同一语料输出一致；官方 349 Skill 回归 |
 | W2 二进制与 UI | `serve` / `/v1/decide` / 哈希链回执 / embed 控制台；三 OS 交叉编译 | Linux/macOS/Windows 各跑 inventory + admit |
-| W3 适配器 | OpenClaw 插件 + installPolicy；Hermes 插件；CodeBuddy 钩子 | 每平台一次「越权被拒」E2E |
+| W3 适配器 | OpenClaw 插件 + installPolicy；Hermes 插件；WorkBuddy 钩子 | 每平台一次「越权被拒」E2E |
 | W4 OpenShell | 网络策略下发 + 读回；模型路由 | `effective` 读回；静态 fs 不伪装 |
 | W5 Skill 包 | SKILL.md（≤60 字符 description）、bootstrap、evals、Skill Card、release zip + manifest | 四平台安装成功；Trae 显示审计模式 |
 | W6 材料 | README、演示脚本、检测基线更新、十日谈 | 评委可离线复现 |

@@ -23,7 +23,7 @@
 | bootstrap | 找不到本地二进制就失败；不下载 Release 对象 |
 | 计划 §1.4 | 合 `main`、打 Release **除非另行明确要求** |
 
-OpenClaw / CodeBuddy linux 备注指向 2026-09-05 隔离 HOME 证据；**状态仍是 experimental**。改备注或改 Skill 目录（`skill-manifest.json` 除外）都会改变签名文档或 `content_hash`，必须重签。
+历史发布包 linux 备注指向 2026-09-05 隔离 HOME 证据；**状态仍是 experimental**。改备注或改 Skill 目录（`skill-manifest.json` 除外）都会改变签名文档或 `content_hash`，必须重签。
 
 ---
 

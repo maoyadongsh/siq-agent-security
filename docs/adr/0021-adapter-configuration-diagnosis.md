@@ -12,8 +12,8 @@
 - 文件检查将当前安装内容与二进制内嵌适配器摘要比较。相同只证明文件匹配；不同显示版本或内容变化，不能直接推定恶意。旧名安装单独标记，不能误认成已验证的新版本。
 - OpenClaw 验证 plugins 的全局开关、allow/deny、load.paths、entry.enabled，及产品配置中的 endpoint/tokenPath/mode 与当前 daemon 是否一致。仅读取精确字段；未识别结构报告检查失败，不推测宿主实际加载情况。
 - Hermes 的文件和产品 config.json 可验证；宿主 YAML 中 plugins.enabled/disabled 的解释交由原生平台验证，Go 不用正则或不完整 YAML 解析器赋予“已加载”结论。页面给出原生 `hermes plugins enable siq-agent-security` 及重启会话的下一步，当前仍需用户在正确 profile 执行。后续配置预览与受控接入任务继续实现原生登记和恢复。
-- CodeBuddy 的 PreToolUse/PostToolUse 结构按精确产品命令检查，不能用无关字段中出现同名文本代替。
-- WorkBuddy 独立返回尚未验证；不能继承 CodeBuddy 的接入结果。Trae 保留无工具钩子的既有范围。
+- WorkBuddy 的 PreToolUse/PostToolUse 结构按精确产品命令检查，不能用无关字段中出现同名文本代替。
+- WorkBuddy 独立返回尚未验证；须在目标桌面独立验证。Trae 保留无工具钩子的既有范围。
 - 运行状态本增量只返回 `unverified`，不产生 effective 权限或新的自检成功记录。真实调用、执行前拒绝、版本绑定与失效处理由后续 UX-006 的原生自检协议完成；回执存在本身也不证明宿主执行过拒绝。
 
 平台 HTTP 响应兼容保留 name/detected/adapter/tier/note，并附可选 diagnosis。未有当前实例原生验证时不再用文件存在将 tier 提升为 L2；UI 优先展示“配置待修复”“配置已就绪，待运行验证”等具体状态。CLI 旧 `adapter status` 的 installed 含义仍是文件存在，文档明确其证据范围，避免破坏已有脚本。

@@ -23,7 +23,7 @@
 | bundled `codebuddy.js:893` | 启动和内部 `reload-command` 等路径可清 Skill 缓存；未核实 SIQ 可调用的公开重载 API |
 | `main/server.js:86762` | 此安装版本桌面列表的项目扫描使用产品数据目录名（默认 `.workbuddy`），与 bundled CLI 的 `.codebuddy` 不同；用户目录一致 |
 
-内容身份：`workbuddy-paths.js` SHA256 为 `6ace7c90a1f783b7430bf09e94668394bfa96177c2911486844022cff5ed3f52`；`server.js` 为 `f396eb18957eacbe584282d8b5a7177a7ea3f4daa3070e4c7fa5eba3b034ae8b`；bundled CLI 为 `eb018e35d80673db02ebdaa7547b72f43d130d660c9c907c338d35e2f7b42ff7`。这些是 WorkBuddy 自身分发物，不能用独立 CodeBuddy 宿主测试替代 WorkBuddy 证据。
+内容身份：`workbuddy-paths.js` SHA256 为 `6ace7c90a1f783b7430bf09e94668394bfa96177c2911486844022cff5ed3f52`；`server.js` 为 `f396eb18957eacbe584282d8b5a7177a7ea3f4daa3070e4c7fa5eba3b034ae8b`；bundled CLI 为 `eb018e35d80673db02ebdaa7547b72f43d130d660c9c907c338d35e2f7b42ff7`。这些是 WorkBuddy 自身分发物，须在 WorkBuddy 桌面独立验收。
 
 ### 1.2 能力边界
 
@@ -117,7 +117,7 @@ stage、Load、apply 均重新读取批准版本/签名、权限摘要、完整�
 
 ### 4.3 原生发现、优先级和缓存
 
-inventory 新增显式 WorkBuddy 配置根输入，和 server 使用同一已核验根；不能继续只扫描静态 Home/.workbuddy。对已登记项目加入 `.codebuddy/skills` 的 WorkBuddy 能力关联，同目录也属于 CodeBuddy 时记录共享物理来源，不能因扫描先后把宿主混为同一产品或两次读回当两份证据。
+inventory 新增显式 WorkBuddy 配置根输入，和 server 使用同一已核验根；不能继续只扫描静态 Home/.workbuddy。对已登记项目加入 `.codebuddy/skills` 的 WorkBuddy 能力关联，该关联仅为推断，不宣称原生已选择或执行；同一物理目录不重复计为两份证据。
 
 WorkBuddy 实例候选保持 `source_type=workbuddy_profile`；其配置目录存在性证据使用既有 `evidence/v1` 合同允许的 `source_type=manifest`，不可混用 Candidate 的 `directory_manifest` 类型。该证据只签名绑定实例 ID 与 `configuration_directory_exists=true` 的规范化元数据摘要，不声称目录内容完整性、宿主已安装或实际执行归属；不扩宽旧 Evidence 合同枚举。
 

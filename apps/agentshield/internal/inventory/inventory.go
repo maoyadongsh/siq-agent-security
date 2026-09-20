@@ -76,7 +76,7 @@ type Report struct {
 // Options for Run.
 type Options struct {
 	HermesHome         string
-	WorkBuddyConfigDir string // explicit host configuration root; never CodeBuddy's root
+	WorkBuddyConfigDir string // explicit host configuration root
 	WorkBuddyDisabled  bool   // unavailable server-selected root must not fall back to the default
 	LocalAppData       string
 	Home               string   // defaults to os.UserHomeDir
@@ -106,7 +106,6 @@ type platformSpec struct {
 var platforms = []platformSpec{
 	{"hermes", "hermes", []string{".hermes/config.yaml"}, []string{".hermes/skills"}, nil},
 	{"openclaw", "openclaw", []string{".openclaw/openclaw.json"}, []string{".openclaw/skills", ".agents/skills"}, []string{"skills", ".agents/skills"}},
-	{"codebuddy", "codebuddy", []string{".codebuddy/settings.json"}, []string{".codebuddy/skills"}, []string{".codebuddy/skills"}},
 	{"workbuddy", "workbuddy", []string{".workbuddy/settings.json"}, []string{".workbuddy/skills"}, nil},
 	{"trae", "trae", nil, []string{".trae/skills"}, []string{".trae/skills", ".agents/skills"}},
 	{"claude_code", "claude_code", []string{".claude/settings.json"}, []string{".claude/skills"}, []string{".claude/skills"}},
@@ -186,9 +185,6 @@ func Run(opts Options) (*Report, error) {
 		for _, project := range projects {
 			for _, d := range p.projectDir {
 				full := filepath.Join(project, d)
-				if p.name == "codebuddy" {
-					r.addRootOwners(full, r.platformOwners(p.name), "project_directory")
-				}
 				r.skillDir(p, full, seenSkillDir)
 			}
 		}
@@ -291,7 +287,7 @@ func adapterInstalled(platform string, raw []byte) (installGate, toolHook bool) 
 			b, _ := json.Marshal(plugins)
 			toolHook = product.Mentions(string(b))
 		}
-	case "codebuddy", "workbuddy", "claude_code":
+	case "workbuddy", "claude_code":
 		if hooks, ok := doc["hooks"].(map[string]any); ok {
 			b, _ := json.Marshal(hooks["PreToolUse"])
 			toolHook = product.Mentions(string(b))

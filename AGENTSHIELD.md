@@ -60,7 +60,7 @@ Linux 开发版可在初始化后运行 `siq-agent-security service-unit` 导出
 | Linux / OpenClaw、Hermes | 0.3.1 的 Linux ARM64 安装链路已实测；amd64 为构建/验签。宿主阶段证据另绑定候选，原版与固定补丁副本分开 |
 | macOS / OpenClaw、Hermes、WorkBuddy | 已有阶段实现，0.3.1 提供 arm64 程序；本版原生安装/升级、同候选宿主复测与 Apple 公证仍待 |
 | Windows / OpenClaw、Hermes、WorkBuddy | 已有任务/权限/恢复实现，0.3.1 提供 amd64 程序；本版原生验收仍待。历史 OpenClaw WSL Agent 不等于 Windows 原生 |
-| 已排除的新接入 | CodeBuddy 全平台、WorkBuddy/Linux 不再新增；保留历史查看、拒绝、撤销、卸载与恢复能力 |
+| 已排除的新接入 | WorkBuddy/Linux 不再新增；已有 WorkBuddy 配置可查看或卸载 |
 | 历史其他探测项 | Trae/Claude Code/Codex 的库存或 L0 记录不构成本期产品交付承诺 |
 
 本轮另有[四目标原生源码检查](docs/evidence/repository-reorganization-final-20260919/README.md)：PR #97 head `bf7dced`，实际检出 SHA 分别保存在报告中；Linux amd64/arm64、macOS arm64、Windows amd64 均完成自建程序自扫描、缺清单拒绝及隔离状态启动/配对/控制台/停止。未注册系统服务，不扩展上表 0.3.1 正式包安装或真实宿主验收范围。

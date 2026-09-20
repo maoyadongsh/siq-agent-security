@@ -104,7 +104,7 @@ func cmdAdapter(args []string) error {
 			return fmt.Errorf("adapter: no platform config dirs found under %s; pass a currently supported platform", home)
 		}
 		if action == "status" && len(platforms) == 0 {
-			platforms = []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae}
+			platforms = []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.WorkBuddy, adapterinstall.Trae}
 		}
 	} else {
 		platforms = []string{rest[0]}

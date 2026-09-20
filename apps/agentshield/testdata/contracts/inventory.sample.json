@@ -2,7 +2,6 @@
   "generated_at": "2026-09-04T08:00:00Z",
   "home": "~",
   "platforms": [
-    "codebuddy",
     "hermes",
     "mcp",
     "openclaw",
@@ -166,26 +165,6 @@
         "ev-44b59b211fa828c4"
       ],
       "confidence": 0.9,
-      "status": "candidate"
-    },
-    {
-      "candidate_id": "platform:codebuddy",
-      "source_type": "platform_config",
-      "source_locator": "codebuddy://.codebuddy/settings.json",
-      "discovered_at": "2026-09-04T08:00:00Z",
-      "name": "codebuddy",
-      "framework": "codebuddy",
-      "artifact_digest": "2f15c5c86340d4fc146109852117114e61357fe0d2635649450c5c1b20f8e373",
-      "attributes": {
-        "agentshield_tool_hook": "true",
-        "bytes": "114",
-        "config": ".codebuddy/settings.json",
-        "platform": "codebuddy"
-      },
-      "evidence_ids": [
-        "ev-276866d2bba0a04f"
-      ],
-      "confidence": 1,
       "status": "candidate"
     },
     {
@@ -376,22 +355,6 @@
       "classification": "internal",
       "payload_ref": null,
       "signature": "029241c225eb59c9884536a4e9f1adc0e8f0af2cfae631465cc2d115c1400a35a0238f78bd3ed4ac3f1fddb7671a3576b0b501cc266a000e18bbf1d2c10bf00d",
-      "expires_at": null
-    },
-    {
-      "evidence_id": "ev-276866d2bba0a04f",
-      "source_type": "platform_config",
-      "source_locator": "codebuddy://.codebuddy/settings.json",
-      "subject_ref": null,
-      "observed_at": "2026-09-04T08:00:00Z",
-      "collected_at": "2026-09-04T08:00:00Z",
-      "collector_id": "agentshield-local",
-      "connector_version": "test",
-      "content_hash": "2f15c5c86340d4fc146109852117114e61357fe0d2635649450c5c1b20f8e373",
-      "redaction_profile": "siq.redaction.v1",
-      "classification": "internal",
-      "payload_ref": null,
-      "signature": "7b7d1bd724854886f1615868c166024a7bb7c2c51f3fe6e928572787c1b255fd6d2d6c32ea6e59d77e81d6f8764a5f8b097ded112964f460ed6bbea901d1550b",
       "expires_at": null
     },
     {
@@ -644,24 +607,6 @@
       "authority": "agentshield",
       "evidence_ids": [
         "ev-b5d42fc63d1ccff7"
-      ]
-    },
-    {
-      "subject": {
-        "type": "agent_asset",
-        "id": "codebuddy://.codebuddy/settings.json"
-      },
-      "domain": "control_plane",
-      "action": "tool.hook",
-      "resource": {
-        "type": "platform",
-        "value": "codebuddy"
-      },
-      "effect": "allow",
-      "state": "observed",
-      "authority": "agentshield",
-      "evidence_ids": [
-        "ev-276866d2bba0a04f"
       ]
     },
     {

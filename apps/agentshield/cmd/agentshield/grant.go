@@ -62,7 +62,7 @@ func cmdGrant(args []string) error {
 	}
 
 	fs := flag.NewFlagSet("grant", flag.ContinueOnError)
-	platform := fs.String("platform", "", "openclaw|hermes|workbuddy|trae (CodeBuddy historical records only)")
+	platform := fs.String("platform", "", "openclaw|hermes|workbuddy|trae")
 	subject := fs.String("subject", "", "agent instance id (grant subject)")
 	subjectType := fs.String("subject-type", "agent_instance", "subject type")
 	redact := fs.Bool("redact-secrets", true, "permit redact action on secret literals")

@@ -259,7 +259,7 @@ type Options struct {
 	Grants          GrantLookup
 	EnforcementMode string // audit_only | warn | block
 	Version         string
-	HoldChannel     string // console | openclaw_approval | hermes_cli | codebuddy_prompt | other
+	HoldChannel     string // console | openclaw_approval | hermes_cli | other
 	HoldTimeoutMS   int
 	// MaxSessions caps distinct in-memory session IDs (0 → defaultMaxSessions).
 	// Out of range values are rejected at New.
@@ -1188,6 +1188,11 @@ func (e *Engine) ResolveHold(held Receipt, approve bool, actorID string) (*Recei
 }
 
 func (e *Engine) resolveHoldLocked(held Receipt, approve bool, actorID string) (*Receipt, error) {
+	if approve {
+		if err := intent.ValidateNativeSession(held.Platform, held.SessionID); err != nil {
+			return nil, err
+		}
+	}
 	if actorID == "" {
 		return nil, errors.New("receipt: actor required to resolve hold")
 	}

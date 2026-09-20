@@ -29,9 +29,6 @@
 | openclaw | linux | evidenced | evidenced | evidenced | evidenced | unverified | unverified | experimental | [openclaw-linux-2026-09-05](evidence/agentshield/openclaw-linux-2026-09-05/) |
 | openclaw | darwin | evidenced | unverified | unverified | unverified | unverified | unverified | experimental | 无归档 |
 | openclaw | windows | evidenced | unverified | unverified | unverified | unverified | unverified | experimental | 无归档 |
-| codebuddy | linux | evidenced | evidenced | evidenced | evidenced | n/a | n/a | experimental | [codebuddy-linux-2026-09-05](evidence/agentshield/codebuddy-linux-2026-09-05/)；无 L3 档 |
-| codebuddy | darwin | evidenced | unverified | unverified | unverified | n/a | n/a | experimental | hook 落地，无 E2E |
-| codebuddy | windows | evidenced | unverified | unverified | unverified | n/a | n/a | experimental | hook 落地，无 E2E |
 | trae | * | evidenced | n/a→audit | n/a | n/a | n/a | n/a | audit_only | 无 tool hook，不能阻断 |
 | claude_code | * | evidenced | unverified | unverified | unverified | n/a | n/a | experimental | 本轮不做 |
 | codex | * | evidenced | unverified | unverified | unverified | n/a | n/a | experimental | 本轮不做 |
@@ -53,15 +50,14 @@ OpenShell 隔离探测归档（非 hermes 产品 L3 宣称）：[openshell-siq-r
 
 此表将源码/本地测试与真实平台归档分开，既有 L2 证据不自动证明 V2 关联。
 
-| 能力 | 核心实现 | Hermes 真平台 V2 | OpenClaw 真平台 V2 | CodeBuddy 真平台 V2 | 证据 |
-| --- | --- | --- | --- | --- | --- |
-| IntentContract schema | evidenced | n/a | n/a | n/a | Go 固定向量 + `test_intent_v2_contracts.py` |
-| Trusted Intent Issuance | evidenced | n/a | n/a | n/a | `intent_http_test.go` 管理权与 Decision token 403 |
-| Session Intent Binding | evidenced | unverified | unverified | unverified | `intent/store_test.go` 并发唯一、过期、重启 |
-| Intent Runtime Enforcement | evidenced | unverified | unverified | unverified | `receipt/intent_test.go` 交集、省略、替换、主体伪造 |
-| Decision/Observe Correlation | evidenced | unverified | unverified | unverified | `receipt/action_state_test.go`；Hermes 13 项单测；OpenClaw mock hook 测试 |
+| 能力 | 核心实现 | Hermes 真平台 V2 | OpenClaw 真平台 V2 | 证据 |
+| --- | --- | --- | --- | --- |
+| IntentContract schema | evidenced | n/a | n/a | Go 固定向量 + `test_intent_v2_contracts.py` |
+| Trusted Intent Issuance | evidenced | n/a | n/a | `intent_http_test.go` 管理权与 Decision token 403 |
+| Session Intent Binding | evidenced | unverified | unverified | `intent/store_test.go` 并发唯一、过期、重启 |
+| Intent Runtime Enforcement | evidenced | unverified | unverified | `receipt/intent_test.go` 交集、省略、替换、主体伪造 |
+| Decision/Observe Correlation | evidenced | unverified | unverified | `receipt/action_state_test.go`；Hermes 13 项单测；OpenClaw mock hook 测试 |
 
-CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID 时只允许参数一致且唯一的候选，歧义拒绝。
 本轮未声称 effect 实际发生已验证。单绑定性能记录：[local-20260907.json](evidence/intent-v2/local-20260907.json)。
 
 ### V2 补齐增量（20260907-164919）
@@ -98,11 +94,9 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 
 2026-09-07 22:36 新增 [宿主升级/回退证据](trusted-intent-v2-checkpoint-upgrade-20260907-223635.md)：固定指纹工具通过 15 项恢复/拒绝测试，完整副本经真实 CLI 升级后验证批准与撤销，经回退后验证新进程缺能力拒绝。仅验证 POSIX 文件级操作和新进程，未升级实际安装或证明真实会话迁移，综合状态不变。
 
-2026-09-07 23:11 新增 [CodeBuddy 原生 CLI 与隔离配置验收](trusted-intent-v2-codebuddy-validation-20260907-231146.md)：Linux 上腾讯 `@tencent-ai/codebuddy-code@2.146.0` 的真实安装/重装/卸载、8 次 CLI 会话调用、19 次 SSE、11 次工具调用与 13 条回执通过。当前适配器 pre/post 关联、资源拒绝、续聊/新会话、强杀/pending 恢复、optional 边界取得限定版本证据；配置覆盖已覆盖 CLI 与管理 API。GUI、hold/redact、历史适配器制品及其他 OS 未因此完成，综合状态仍为 `unverified`，代码仍为 experimental。
 
-2026-09-07 23:25 新增 [CodeBuddy 初始化故障原生复现与修复](trusted-intent-v2-codebuddy-bootstrap-fix-20260907-232551.md)：修复前退出码 1 导致非阻断执行；修复后 10 个场景、七条 pending 幂等提升与 11 条回执验证通过。正常 CLI 全链回归另有 13 条回执。该证据仅覆盖钩子可启动并输出 JSON 的初始化故障，不覆盖二进制缺失/强杀/宿主超时；综合状态不提升。
 
-2026-09-07 23:56 新增 [旧版兼容与升级恢复证据](trusted-intent-v2-legacy-upgrade-20260907-235638.md)：旧 OpenClaw/CodeBuddy 执行授权通过，但无 ID/参数的 post 没有产生关联观察，报告 `passed=false`。保留同一状态升级到当前适配器后，重复读取和重启恢复的关联观察通过，两平台各 14 条回执验签成功。此结果证明指定版本的迁移路径，不将旧版完整兼容或综合支持状态提升为通过。
+2026-09-07 23:56 新增 [旧版兼容与升级恢复证据](trusted-intent-v2-legacy-upgrade-20260907-235638.md)：旧 OpenClaw 执行授权通过，但无 ID/参数的 post 没有产生关联观察，报告 `passed=false`。保留同一状态升级到当前适配器后，重复读取和重启恢复的关联观察通过，归档回执验签成功。此结果证明指定版本的迁移路径，不将旧版完整兼容或综合支持状态提升为通过。
 
 2026-09-08，[最终工程验收](trusted-intent-v2-final-audit-20260908-000506.md) 按原文 T15 核对三平台原始基线 optional Grant/unbound 兼容；旧 post 完整兼容与平台综合支持仍保留独立限制。新增 [Hermes 原始基线复测](evidence/intent-v2/legacy-hermes-baseline-20260908.json) 与 `2305979` 的 28/28 CI 证据，未变更平台支持等级。
 
@@ -116,7 +110,7 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 | Context Assertion | evidenced | admin签名workspace、请求/scope/期限绑定，不能扩大Grant | 外部attestor部署、恶意同UID隔离 |
 | Provenance Assertion | evidenced | issuer registry、公钥验签、scope/期限/撤销、父图与最低trust | 来源数据真实性、企业trust bundle部署 |
 | Parameter Provenance | evidenced | Intent V3签名约束、参数摘要/引用匹配、V2双读 | 模型隐式推理lineage、所有平台自动传播 |
-| MCP Provenance | evidenced | 实际MCP组件、默认untrusted、确定性选择、Hermes显式桥接 | OpenClaw/CodeBuddy原生V3端到端与所有MCP传输 |
+| MCP Provenance | evidenced | 实际MCP组件、默认untrusted、确定性选择、Hermes显式桥接 | OpenClaw原生V3端到端与所有MCP传输 |
 | High-Impact Parameter IFC | evidenced | 显式参数来源与值联合约束、默认required/trusted、缺失拒绝 | 神经语义污点跟踪、未知转换的隐式来源推断 |
 | EffectEvidence | evidenced | 签名材料、action/rid关联、冲突/越权finding与持久化 | 任意工具/所有写路径自动采集、OS级隔离 |
 | Independent Effect Oracle | evidenced | 文件host_independent/partial；受控loopback接收端及重定向核对 | 公网provider审计、全平台每跳拦截、签名网络无效果证明 |
@@ -126,6 +120,6 @@ CodeBuddy 有 tool_use_id 时由服务端按身份和 ID 定位；无稳定 ID �
 | 性能 | evidenced | 八阶段及完整Decide各100次实测；原始数据/源码摘要 | 生产SLA、冷启动/饱和并发、全攻击与深图性能 |
 | CI与治理 | evidenced | 8eb4540全仓/运行时CI及三轮完整nightly成功，CODEOWNERS源码规则 | main保护强制性须独立核验 |
 
-`evidenced`仅指表中组件边界，不将任意平台综合状态提升。OpenClaw/CodeBuddy新增V3原生端到端保持`unverified`；Hermes显式桥接也不等于所有宿主原生事件调度已验证。性能与基准各自基线见工程报告，不能混称最新生产性能。
+`evidenced`仅指表中组件边界，不将任意平台综合状态提升。OpenClaw新增V3原生端到端保持`unverified`；Hermes显式桥接也不等于所有宿主原生事件调度已验证。性能与基准各自基线见工程报告，不能混称最新生产性能。
 
 复现入口与限制见[benchmark说明](../benchmarks/runtime-security/README.md)、[威胁T27–T35](threat-model.md)和[开发台账](provenance-bound-effect-v1-progress.md)。未修改GitHub Ruleset；main protection仍需发布前独立核验，不把源码审阅路由当作仓库管理设置已启用的证据。

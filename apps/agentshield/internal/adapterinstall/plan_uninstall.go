@@ -96,7 +96,7 @@ func (p *Plan) prepareUninstall() error {
 		if err := p.surgicalWrite(path, doc); err != nil {
 			return err
 		}
-	case CodeBuddy, WorkBuddy:
+	case WorkBuddy:
 		path := filepath.Join(root, "settings.json")
 		if !p.owns(path) {
 			return errors.New("adapter: host config directory differs from latest install record")

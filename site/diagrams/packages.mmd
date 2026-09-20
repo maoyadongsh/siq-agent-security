@@ -1,8 +1,10 @@
 flowchart LR
+  acltest["acltest"]
   adapterinstall["adapterinstall"]
   adapters["adapters"]
   admission["admission"]
   canon["canon"]
+  clientrelease["clientrelease"]
   completion["completion"]
   contractvectors["contractvectors"]
   controlsync["controlsync"]
@@ -11,32 +13,57 @@ flowchart LR
   export["export"]
   fileopen["fileopen"]
   grant["grant"]
+  hermeshome["hermeshome"]
+  importsource["importsource"]
   intent["intent"]
   inventory["inventory"]
   ledger["ledger"]
+  localcontrol["localcontrol"]
+  notify["notify"]
   openshell["openshell"]
   pending["pending"]
   perfbaseline["perfbaseline"]
+  privatefs["privatefs"]
   product["product"]
   provenance["provenance"]
+  rawcontent["rawcontent"]
   receipt["receipt"]
   rulepack["rulepack"]
   runtimeaction["runtimeaction"]
   runtimeauthz["runtimeauthz"]
+  runtimecheck["runtimecheck"]
+  runtimeidentity["runtimeidentity"]
+  runtimepath["runtimepath"]
   server["server"]
   signing["signing"]
+  skillcontext["skillcontext"]
+  skillimport["skillimport"]
+  skillinstall["skillinstall"]
   skillmanifest["skillmanifest"]
   state["state"]
+  stateformat["stateformat"]
+  statefs["statefs"]
   threat["threat"]
   trustedcontext["trustedcontext"]
   ui["ui"]
+  workbuddycorrelation["workbuddycorrelation"]
+  adapterinstall --> adapters
+  adapterinstall --> canon
+  adapterinstall --> hermeshome
+  adapterinstall --> privatefs
   adapterinstall --> product
+  adapterinstall --> runtimeaction
+  adapterinstall --> runtimepath
   adapterinstall --> state
+  adapterinstall --> stateformat
+  adapterinstall --> statefs
   adapters --> admission
+  adapters --> hermeshome
   adapters --> pending
   adapters --> product
   adapters --> receipt
   adapters --> rulepack
+  adapters --> runtimeidentity
   adapters --> signing
   admission --> canon
   admission --> display
@@ -44,6 +71,10 @@ flowchart LR
   admission --> rulepack
   admission --> signing
   admission --> threat
+  clientrelease --> skillmanifest
+  clientrelease --> state
+  clientrelease --> stateformat
+  clientrelease --> statefs
   completion --> effectevidence
   completion --> runtimeaction
   controlsync --> admission
@@ -54,26 +85,50 @@ flowchart LR
   effectevidence --> fileopen
   effectevidence --> provenance
   effectevidence --> runtimeaction
+  effectevidence --> runtimepath
   effectevidence --> signing
+  effectevidence --> stateformat
+  effectevidence --> statefs
   export --> canon
+  export --> completion
   export --> display
+  export --> effectevidence
+  export --> intent
   export --> ledger
   export --> receipt
   export --> signing
   export --> state
+  fileopen --> statefs
   grant --> admission
   grant --> canon
+  grant --> importsource
+  grant --> runtimeaction
+  grant --> runtimepath
   grant --> signing
+  hermeshome --> stateformat
+  hermeshome --> statefs
+  importsource --> admission
+  importsource --> canon
+  importsource --> signing
+  intent --> admission
   intent --> canon
   intent --> completion
+  intent --> grant
+  intent --> importsource
   intent --> provenance
   intent --> runtimeaction
   intent --> signing
+  intent --> stateformat
+  intent --> statefs
   intent --> trustedcontext
   inventory --> admission
   inventory --> canon
+  inventory --> hermeshome
   inventory --> product
+  inventory --> runtimepath
   inventory --> signing
+  inventory --> stateformat
+  inventory --> statefs
   ledger --> admission
   ledger --> canon
   ledger --> grant
@@ -81,61 +136,159 @@ flowchart LR
   ledger --> receipt
   ledger --> signing
   ledger --> state
+  localcontrol --> canon
+  localcontrol --> signing
+  openshell --> canon
+  openshell --> statefs
+  pending --> statefs
   perfbaseline --> export
   perfbaseline --> intent
   perfbaseline --> ledger
   perfbaseline --> receipt
   perfbaseline --> signing
+  perfbaseline --> statefs
   provenance --> canon
   provenance --> runtimeaction
   provenance --> signing
+  provenance --> statefs
+  rawcontent --> fileopen
+  rawcontent --> signing
+  rawcontent --> statefs
   receipt --> canon
   receipt --> effectevidence
   receipt --> grant
+  receipt --> importsource
   receipt --> intent
   receipt --> pending
   receipt --> provenance
   receipt --> rulepack
   receipt --> runtimeaction
   receipt --> runtimeauthz
+  receipt --> runtimepath
   receipt --> signing
+  receipt --> statefs
   receipt --> threat
   receipt --> trustedcontext
   rulepack --> canon
+  rulepack --> statefs
   runtimeaction --> canon
+  runtimecheck --> adapterinstall
+  runtimecheck --> admission
+  runtimecheck --> canon
+  runtimecheck --> grant
+  runtimecheck --> intent
+  runtimecheck --> privatefs
+  runtimecheck --> product
+  runtimecheck --> receipt
+  runtimecheck --> rulepack
+  runtimecheck --> runtimeaction
+  runtimecheck --> runtimepath
+  runtimecheck --> signing
+  runtimecheck --> state
+  runtimecheck --> stateformat
+  runtimecheck --> statefs
+  runtimeidentity --> canon
+  runtimeidentity --> grant
+  runtimeidentity --> intent
+  runtimeidentity --> runtimeaction
+  runtimeidentity --> runtimepath
+  runtimeidentity --> signing
+  runtimeidentity --> stateformat
+  runtimeidentity --> statefs
+  runtimepath --> canon
+  runtimepath --> runtimeaction
   server --> adapterinstall
+  server --> adapters
   server --> admission
   server --> canon
   server --> completion
   server --> effectevidence
   server --> export
   server --> grant
+  server --> hermeshome
+  server --> importsource
   server --> intent
   server --> inventory
   server --> ledger
+  server --> localcontrol
   server --> openshell
   server --> pending
   server --> product
   server --> provenance
+  server --> rawcontent
   server --> receipt
   server --> rulepack
   server --> runtimeaction
+  server --> runtimecheck
+  server --> runtimeidentity
+  server --> runtimepath
   server --> signing
+  server --> skillcontext
+  server --> skillimport
+  server --> skillinstall
   server --> state
+  server --> stateformat
   server --> trustedcontext
   signing --> canon
   signing --> product
+  signing --> stateformat
+  signing --> statefs
+  skillcontext --> canon
+  skillcontext --> grant
+  skillcontext --> importsource
+  skillcontext --> receipt
+  skillcontext --> runtimeidentity
+  skillcontext --> signing
+  skillcontext --> skillinstall
+  skillcontext --> statefs
+  skillcontext --> trustedcontext
+  skillimport --> admission
+  skillimport --> canon
+  skillimport --> fileopen
+  skillimport --> importsource
+  skillimport --> rulepack
+  skillimport --> signing
+  skillimport --> stateformat
+  skillimport --> statefs
+  skillinstall --> admission
+  skillinstall --> canon
+  skillinstall --> fileopen
+  skillinstall --> grant
+  skillinstall --> importsource
+  skillinstall --> runtimeaction
+  skillinstall --> runtimepath
+  skillinstall --> signing
+  skillinstall --> skillimport
+  skillinstall --> state
+  skillinstall --> stateformat
+  skillinstall --> statefs
   skillmanifest --> admission
   skillmanifest --> canon
   skillmanifest --> product
   skillmanifest --> rulepack
   skillmanifest --> signing
+  skillmanifest --> stateformat
+  skillmanifest --> statefs
   state --> admission
+  state --> canon
   state --> grant
+  state --> importsource
   state --> intent
+  state --> localcontrol
+  state --> privatefs
   state --> product
+  state --> receipt
   state --> signing
+  state --> stateformat
+  state --> statefs
+  stateformat --> privatefs
+  statefs --> privatefs
+  statefs --> stateformat
   threat --> rulepack
   trustedcontext --> canon
   trustedcontext --> runtimeaction
   trustedcontext --> signing
+  workbuddycorrelation --> adapters
+  workbuddycorrelation --> receipt
+  workbuddycorrelation --> runtimeidentity
+  workbuddycorrelation --> statefs

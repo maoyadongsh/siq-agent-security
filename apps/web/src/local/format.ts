@@ -142,8 +142,6 @@ export function platformLabel(name: string): string {
       return 'OpenClaw';
     case 'hermes':
       return 'Hermes';
-    case 'codebuddy':
-      return 'CodeBuddy';
     case 'workbuddy':
       return 'WorkBuddy';
     case 'trae':

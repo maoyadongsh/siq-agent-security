@@ -11,7 +11,7 @@ What it does, in order:
 
 1. `probe` locates a real Linux WorkBuddy runtime: the connector's documented
    root (~/.workbuddy with config.yaml + buddies.json), a small set of other
-   install layouts, a workbuddy/codebuddy executable on PATH or in a node
+   install layouts, a workbuddy executable on PATH or in a node
    package tree, and a running host process (read-only scan of /proc/*/comm).
    It never reads config.yaml, .env or any secret file; config.yaml is only
    ever stat'ed for presence, exactly like the connector.
@@ -56,13 +56,12 @@ LAYOUT_CANDIDATES = (
     "~/.workbuddy",
     "~/.config/workbuddy",
     "~/.local/share/workbuddy",
-    "~/.codebuddy",
     "/opt/workbuddy",
     "/usr/local/lib/workbuddy",
 )
-EXECUTABLE_NAMES = ("workbuddy", "codebuddy", "workbuddy-cli")
-PROCESS_NAMES = ("workbuddy", "codebuddy")
-NODE_PACKAGE_NAMES = ("workbuddy", "codebuddy", "@workbuddy/cli", "@codebuddy/cli")
+EXECUTABLE_NAMES = ("workbuddy", "workbuddy-cli")
+PROCESS_NAMES = ("workbuddy",)
+NODE_PACKAGE_NAMES = ("workbuddy", "@workbuddy/cli")
 
 # Secret-shaped material that must never appear in connector output. These are
 # patterns, not host values: matching them reports a redaction failure and
@@ -156,7 +155,7 @@ def probe_host(home: Path) -> dict:
                 processes.append({"comm": comm})
     # Layouts that exist but are not the connector's documented integration
     # point. Reported separately so an adjacent family install (for example
-    # ~/.codebuddy, which the CodeBuddy adapter owns) is never read as
+    # other platform configuration roots) is never read as
     # WorkBuddy host support.
     adjacent = [item["path"] for item in layouts
                 if item["exists"] and item["path"] != "~/" + ROOT_REL]

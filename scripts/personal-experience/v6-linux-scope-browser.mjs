@@ -17,7 +17,10 @@ try {
     .waitFor({ state: 'visible', timeout: 30000 });
   for (const route of ['/settings', '/bindings']) {
     await page.goto(`${endpoint}${route}`, { waitUntil: 'domcontentloaded' });
-    for (const platform of ['WorkBuddy', 'CodeBuddy']) {
+    if (await page.getByRole('row').filter({ hasText: 'CodeBuddy' }).count()) {
+      throw new Error(`${route} still exposes a retired platform`);
+    }
+    for (const platform of ['WorkBuddy']) {
       const row = page.getByRole('row').filter({ hasText: platform }).first();
       await row.waitFor({ state: 'visible', timeout: 30000 });
       const content = await row.innerText();
@@ -29,7 +32,7 @@ try {
       }
     }
   }
-  console.log(JSON.stringify({ settings: true, bindings: true, platforms: ['WorkBuddy', 'CodeBuddy'], install_buttons: 0 }));
+  console.log(JSON.stringify({ settings: true, bindings: true, platforms: ['WorkBuddy'], install_buttons: 0 }));
 } finally {
   await browser.close();
 }

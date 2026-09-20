@@ -69,7 +69,7 @@ func TestCLIIncompatibleHookEmitsBlockingDecision(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, state.StateFormatMarkerName), raw, 0600); err != nil {
 		t.Fatal(err)
 	}
-	cmd := exec.Command(os.Args[0], "-test.run=^TestCompatibilityCLIHelper$", "--", "hook", "codebuddy")
+	cmd := exec.Command(os.Args[0], "-test.run=^TestCompatibilityCLIHelper$", "--", "hook", "workbuddy")
 	cmd.Env = append(os.Environ(), "SIQ_COMPAT_CLI_HELPER=1")
 	cmd.Stdin = strings.NewReader(`{"hook_event_name":"PreToolUse","tool_name":"Read"}`)
 	out, err := cmd.CombinedOutput()

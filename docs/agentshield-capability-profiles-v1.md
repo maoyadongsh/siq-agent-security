@@ -32,7 +32,7 @@ CLI `grant approve --approve-as` 仍直接写本地 Store（DEV03-B 单写者之
 
 | 档位 | 含义 | 当前诚实状态 |
 | --- | --- | --- |
-| L0 | 盘点 / 审计 | Hermes/OpenClaw/CodeBuddy linux 有 2026-09-05 隔离或实机归档；矩阵行仍是 `experimental` / Trae `audit_only` |
+| L0 | 盘点 / 审计 | Hermes/OpenClaw linux 有 2026-09-05 隔离或实机归档；矩阵行仍是 `experimental` / Trae `audit_only` |
 | L1 | 安装门禁 | OpenClaw `policy-exec` 有归档；Hermes 包装安装脚本；WorkBuddy 无安装前拦截 |
 | L2 | 运行时决策 / 回执 | 三平台 linux 钩子/插件有归档；grant 由人类 `--approve-as` 批准 |
 | L3 | OpenShell 网络策略 | `verify` 最高 `readback_verified`。**配置读回 ≠ 网络强制。** DNS/IP/重定向/IPv6/失联/替代进程路径未作为 enforcement_verified |

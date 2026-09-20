@@ -243,7 +243,7 @@ func (e *WorkBuddyEnrollmentDeadline) Error() string { return "managed enrollmen
 
 // WorkBuddyManagedHook has no default session/agent or advisory transport
 // fallback. A valid server policy allow expresses no opinion to the host.
-func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode, stateDir string) CodeBuddyOutput {
+func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode, stateDir string) WorkBuddyOutput {
 	ev, err := ParseWorkBuddyManagedInput(in)
 	if err != nil {
 		return WorkBuddyManagedDeny("", "", mode, stateDir, "invalid managed hook input")
@@ -257,7 +257,7 @@ func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode
 		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, "invalid native call")
 	}
 	req := receipt.Request{Platform: "workbuddy", SessionID: session, AgentID: agentID, Tool: ev.ToolName, ToolCallID: call, Params: ev.ToolInput, Context: map[string]any{"cwd": ev.Cwd, "permission_mode": ev.PermissionMode}}
-	var out CodeBuddyOutput
+	var out WorkBuddyOutput
 	out.HookSpecificOutput.HookEventName = ev.HookEventName
 	if ev.HookEventName == "PostToolUse" {
 		if d != nil {
@@ -324,8 +324,8 @@ func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode
 	return out
 }
 
-func WorkBuddyManagedDeny(tool, session, mode, stateDir, reason string) CodeBuddyOutput {
-	var out CodeBuddyOutput
+func WorkBuddyManagedDeny(tool, session, mode, stateDir, reason string) WorkBuddyOutput {
+	var out WorkBuddyOutput
 	out.HookSpecificOutput.HookEventName = "PreToolUse"
 	out.HookSpecificOutput.PermissionDecision = "deny"
 	out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": " + reason + "; blocked (fail-closed)"

@@ -35,21 +35,6 @@
       "checks": [
         {
           "code": "product_scope",
-          "message": "CodeBuddy 已退出全平台产品范围；历史配置可查看或卸载",
-          "status": "not_applicable"
-        }
-      ],
-      "configuration_state": "unsupported",
-      "next_steps": [
-        "如有旧接入，可在设置中卸载；新权限请选当前支持的平台。"
-      ],
-      "platform": "codebuddy",
-      "runtime_state": "unverified"
-    },
-    {
-      "checks": [
-        {
-          "code": "product_scope",
           "message": "Linux 不支持 WorkBuddy 新接入；历史配置可查看或卸载",
           "status": "not_applicable"
         }

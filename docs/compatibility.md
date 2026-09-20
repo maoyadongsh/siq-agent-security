@@ -88,7 +88,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | OpenClaw | `security.installPolicy.exec`（allow/warn/block，fail-closed） | 插件 `before_tool_call`（block / 改参 / requireApproval，15s 超时 fail-closed） | L0–L3 | L0–L2；L3 需 Docker Desktop | L0–L2；L3 需 WSL2（Experimental） | P0 |
 | Hermes | 无原生装前钩子；包装 `hermes skills install` 先 admit | 插件 `pre_tool_call` 返回 block | L0–L3 | L0–L2；L3 需 Docker | L0–L2；L3 需 WSL2 | P0；本地放入 `~/.hermes/skills` 由 inventory 周期扫描补 L1 |
-| WorkBuddy / CodeBuddy | 无 | 全局 `settings.json` `PreToolUse`（需用户确认写入）；Skill frontmatter hooks 仅 `context: fork` 且默认关闭 | L0–L2 | L0–L2 | L0–L2 | P1；L3 未规划 |
+| WorkBuddy | 无 | 全局 `settings.json` `PreToolUse`（需用户确认写入）；Skill frontmatter hooks 仅 `context: fork` 且默认关闭 | 不新增接入 | L0–L2；须桌面验收 | L0–L2；须桌面验收 | P1；L3 未规划 |
 | Trae / TraeWork | 无 | 无 | L0 | L0 | L0 | P2；控制台必须显示「审计模式，无法阻断」 |
 | Claude Code | 无 | hooks | L0–L2 | L0–L2 | L0–L2 | P2，非本轮 |
 | Codex | `requirements.toml` MCP allowlist（管理面） | managed hooks | L0–L2 | L0–L2 | L0–L2 | P2，非本轮 |

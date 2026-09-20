@@ -30,4 +30,4 @@
 
 验证覆盖重复扫描、同名不同目录、内容变化身份稳定、共享多消费者、profile 隔离、嵌套分类目录、符号链接/超大配置拒绝、内容不执行、显式重扫、手动范围持久化、旧 ID 迁移和实际变化撤权。
 
-目录规则参考 [OpenClaw Skills](https://docs.openclaw.ai/tools/skills)、[Hermes Skills](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) 与 [Hermes Profiles](https://hermes-agent.nousresearch.com/docs/user-guide/profiles/)，检索日期 2026-09-10。解析测试不能代替真实版本运行验收；WorkBuddy 不以 CodeBuddy 结果替代。
+目录规则参考 [OpenClaw Skills](https://docs.openclaw.ai/tools/skills)、[Hermes Skills](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) 与 [Hermes Profiles](https://hermes-agent.nousresearch.com/docs/user-guide/profiles/)，检索日期 2026-09-10。解析测试不能代替真实版本运行验收；WorkBuddy 须独立桌面验收。

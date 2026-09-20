@@ -86,7 +86,7 @@
 
 **发现（浅）**
 
-- `internal/inventory`：只读扫描 Hermes / OpenClaw / CodeBuddy / Trae / Claude Code / Codex 的已知配置与 `SKILL.md` 目录，以及众所周知 MCP 客户端配置。
+- `internal/inventory`：只读扫描 Hermes / OpenClaw / WorkBuddy / Trae / Claude Code / Codex 的已知配置与 `SKILL.md` 目录，以及众所周知 MCP 客户端配置。
 - 产出 `platform_config`、`skill_dir`、`hermes_profile`、`openclaw_agent`、`mcp_server` 候选，带 content hash、是否已准入；不启动 MCP、不读密钥正文。
 - **P1 已补**：Hermes `profiles/*`、OpenClaw `agents.list`、`platform_toolset_modes` 键作为 tool 域 declared。
 - **MCP 原生只读已补**：`mcp_server` 候选（env 只出键名、url 只留 `scheme://host`）。可选 `--connectors-dir` 仍可 **exec** `connectors/mcp`，禁止 import。
@@ -96,7 +96,7 @@
 - 准入：静态规则 + 决策表；toxic → `quarantine`（退出码 3）。
 - 签发：人 `--approve-as` / 控制台点击；default-deny；`CompilePolicy` 与 Python `artifact_hash` 对等。
 - 运行时：`POST /v1/decide` + 签名回执链；block 模式 API 不可达则拒绝。
-- 适配器：Hermes 插件、OpenClaw `policy-exec`、CodeBuddy PreToolUse；Trae 仅审计。
+- 适配器：Hermes 插件、OpenClaw `policy-exec`、WorkBuddy PreToolUse；Trae 仅审计。
 - OpenShell：PATH / `SIQ_AS_OPENSHELL_ENV_SH` 发现 CLI；`status` 握手验明；禁止 `gateway start`。
 
 **算法共用（不要再搬一遍 Python）**

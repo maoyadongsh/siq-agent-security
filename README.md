@@ -72,7 +72,7 @@
 | Linux 个人管理 | 本地控制台、后台生命周期、Skill 安装/更新/移除、审批恢复、原文与导出已有实现及分批 Linux 验证；第六代本地候选的已装 B02、R07/R04 联合旅程已通过；原文保留与任务导出已按当前范围验收；0.3.1 完整包通过 Linux ARM64 验签、包内说明的空状态首次启动、配对、控制台和正常退出实测 | 原版 OpenClaw 审批后检查点、桌面通知视觉确认与稳定版完整验收；补充性的管理员会话连续 12 小时腿已移出当前范围，未记通过 |
 | macOS | LaunchAgent 生命周期、OpenClaw/Hermes/WorkBuddy 阶段成果及独立复核修复已合入；0.3.1 已提供纳入项目发行签名的 arm64 二进制 | 新候选的三宿主同候选复测、原生安装/升级、完整平台验收和 Apple 签名公证；项目清单签名不等于公证 |
 | Windows | Writer、迁移恢复、DACL、资源与身份复验、三宿主管理、任务安装升级回滚及 junction 防护已合入；0.3.1 已提供签名清单绑定的 amd64 二进制和 Skill | 新发行候选原生安装/升级及同候选宿主复测；历史 OpenClaw 证据来自 WSL Agent，Hermes 为原生 CLI，WorkBuddy 原生最小读写不等于完整审批恢复、桌面更新和重复稳定性验收 |
-| OpenClaw / Hermes / WorkBuddy | OpenClaw、Hermes 的部分本机 Linux 原生归属与批准重试路径已有验证；Skill 新版检查与更新流程已有实现 | Linux 只交付 OpenClaw、Hermes；Windows/macOS 的三宿主按各自同候选实机证据验收，WorkBuddy 不借用 CodeBuddy 证据 |
+| OpenClaw / Hermes / WorkBuddy | OpenClaw、Hermes 的部分本机 Linux 原生归属与批准重试路径已有验证；Skill 新版检查与更新流程已有实现 | Linux 只交付 OpenClaw、Hermes；Windows/macOS 的三宿主按各自同候选实机证据验收，WorkBuddy 单独进行桌面实测 |
 | DGX Spark / OpenShell | 已有 DGX Spark / GB10 / Linux ARM64 部署与本地推理证据；第六代本地候选的真实 OpenShell D05 为 373 步零 fail，B3 功能旅程 57/57 | 远端单任务停止协议、少数外部/协议残余项、性能与稳定版完整验收；不将旧候选或其他网关版本的结果迁移为当前通过 |
 | 局域网团队多设备管理 | 仓库已有可选企业 Control API、Edge、Connectors 与多租户治理基础 | 个人体验优先收口，再完成团队设备接入、统一管控与多设备验收 |
 
@@ -80,7 +80,7 @@
 
 OpenClaw 的版本能力也分别记账：已归档验证环境中的共享安装为 2026.5.12；第六代 Linux 候选另在隔离 Node 24.18.0 环境中，用[受控启动入口](docs/openclaw-controlled-start-linux-20260919.md)实际运行 OpenClaw 2026.9.4 公共 CLI，并完成产品托管原生旅程 22/22。该结果属于摘要固定的临时补丁副本；2026.9.4 原版仍没有 SIQ 所需的批准后、执行前最终参数复查合同，因此不能解释为默认升级、上游原版审批能力或正式发行支持。版本升级不会自动提升保护等级，具体范围以同版本、同候选证据为准。
 
-2026-09-17 的[平台范围决策](docs/personal-platform-scope-decision-20260917.md)明确本机 Linux 仅支持 Hermes 与 OpenClaw 的后续交付；Linux/WorkBuddy 不再排期，历史探测或矩阵占位不代表验收通过。**CodeBuddy 后续任务和新适配已全平台取消**，不在当前支持矩阵中；本地候选阻止其新安装、新 Grant 和旧待激活 Grant 的启用，保留历史配置和记录的安全查看、拒绝、撤销及卸载。Linux 控制台、管理 API 与 CLI 同样阻止新的 WorkBuddy 接入，保留既有配置的查看与卸载。第六代本地候选已完成同二进制 D05 与 B3 功能复测；条件项、性能及新发行候选的完整验收继续单独记账。
+2026-09-17 的[平台范围决策](docs/personal-platform-scope-decision-20260917.md)明确本机 Linux 仅支持 Hermes 与 OpenClaw 的后续交付；Linux/WorkBuddy 不再排期，历史探测或矩阵占位不代表验收通过。Linux 控制台、管理 API 与 CLI 同样阻止新的 WorkBuddy 接入，保留既有配置的查看与卸载。第六代本地候选已完成同二进制 D05 与 B3 功能复测；条件项、性能及新发行候选的完整验收继续单独记账。
 
 当前入口：[个人与团队 v5 总体任务书](docs/personal-experience-lan-team-next-development-taskbook-20260915-232155.md) · [接续进度与复核记录](docs/personal-experience-closure-progress-20260913.md) · [原始开发台账](docs/personal-experience-development-progress-20260910.md) · [Mac 后续任务](docs/personal-macos-luke-remaining-development-20260917.md) · [Mac 集成报告](docs/evidence/personal-experience/macos-stage-review-fixes-20260917/report.md) · [GLM/OpenShell 集成报告](docs/evidence/personal-experience/glm-stage-integration-20260917/report.md) · [Windows 整合复核](docs/windows-main-integration-review-20260919.md) · [当前签名发行记录](docs/evidence/releases/0.3.1/README.md)。历史文档中的“未提交”等表述是当时快照，当前提交范围以 Git 历史和后续复核为准。尚未合入的任务书不作为主线可用功能承诺。
 
@@ -138,7 +138,7 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 
 ## 从这里开始
 
-需要评估 `vercel-labs/skills` 的源码分发兼容性时，使用[固定版本验证工具](docs/research/skills-distribution.md)。该工具从 Git 提交复制开发源码，不能替代[签名安装包](docs/signed-release-packaging.md)；历史测试中的 CodeBuddy / Trae 目录投递结果也不扩展当前产品支持范围。
+需要评估 `vercel-labs/skills` 的源码分发兼容性时，使用[固定版本验证工具](docs/research/skills-distribution.md)。该工具从 Git 提交复制开发源码，不能替代[签名安装包](docs/signed-release-packaging.md)；历史目录投递测试结果也不扩展当前产品支持范围。
 
 | 你的目标 | 推荐入口 | 可以获得什么 |
 | :--- | :--- | :--- |
@@ -534,7 +534,7 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 | Secure Agent 与研究 Skills | 任务规划、动态选择研究 / 报告 / 交付能力 | [Agent 说明](apps/secure-agent/README.md)、[Skills](skills/) |
 | 本地 Go 运行时与个人控制台 | 准入、授权、Skill 生命周期、审批、任务与隐私管理、签名回执；个人 UI 随 Go 服务内嵌 | [个人 UI](apps/web/README.md)、[运行时说明](apps/agentshield/README.md)、[本地操作指南](AGENTSHIELD.md)、[开发规格](docs/agentshield-dev-spec-v1.md) |
 | SIQ Skill 与发行工具 | 操作指引、发行清单验签与安全暂存；从固定提交构建和签发安装包 | [Skill 源码](skills/siq-agent-security/)、[发行工具](scripts/release/package.py)、[安装说明](docs/signed-release-packaging.md) |
-| 运行时适配器 | 当前产品矩阵按 OS 接入 Hermes、OpenClaw、WorkBuddy；CodeBuddy 仅保留历史配置、记录和安全退出兼容 | [适配器目录](adapters/runtime/README.md)、[能力矩阵](docs/agentshield-capability-matrix-v1.md)、[平台范围决策](docs/personal-platform-scope-decision-20260917.md) |
+| 运行时适配器 | 当前产品矩阵按 OS 接入 Hermes、OpenClaw、WorkBuddy | [适配器目录](adapters/runtime/README.md)、[能力矩阵](docs/agentshield-capability-matrix-v1.md)、[平台范围决策](docs/personal-platform-scope-decision-20260917.md) |
 | OpenShell 与 DGX Spark 接入 | 专用部署预检、本地推理配置、策略授权/加载/恢复、受约束任务执行与分级诊断 | [DGX Spark 部署](deploy/dgx-spark/README.md)、[OpenShell 适配](apps/agentshield/internal/openshell/)、[实机证据](docs/openshell-policy-load-wait-repair-20260916.md) |
 | 企业控制面 | 多租户资产、证据、策略审批及 Edge 协调 | [API 模块](apps/control-api/README.md)、[控制面说明](docs/control-plane.md)、[生产运行手册](docs/enterprise-production-runbook-v1.md) |
 | Edge 与 Connectors | 配置、目录、框架、进程、容器及集群采集 | [Edge](edge/agent/README.md)、[Connectors](connectors/README.md)、[兼容说明](docs/compatibility.md) |

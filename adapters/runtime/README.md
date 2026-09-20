@@ -9,7 +9,6 @@
 | [Hermes](hermes-agentshield/README.md) | Python pre/post 插件、实例身份与原生会话桥接 | Linux/macOS/Windows 范围；hold 阻断后需同操作重试并取得唯一预留 |
 | [OpenClaw](openclaw-agentshield/README.md) | TypeScript 插件、before/after tool hooks | 会话 key + UUID 绑定；审批后最终检查依赖宿主检查点，原版与固定补丁副本分列 |
 | [WorkBuddy](workbuddy-agentshield/README.md) | 桌面 command hooks；Windows 专属受管身份 | Windows/macOS 范围，Linux 不新增接入；Windows 受管能力不外推到 macOS 旧接入 |
-| [CodeBuddy](codebuddy-agentshield/README.md) | 历史 CLI command hooks | 不新增接入；保留历史协议、回执与安全卸载兼容 |
 
 平台范围与实际通过情况分别见[范围决策](../../docs/personal-platform-scope-decision-20260917.md)、[矩阵](../../platforms/support-matrix.md)和[评测记录](../../evaluations/README.md)。底层适配代码存在不等于该 OS 当前受支持。
 

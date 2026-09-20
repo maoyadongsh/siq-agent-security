@@ -134,24 +134,6 @@ func TestUninstallKeepsUnknownPluginFiles(t *testing.T) {
 	}
 }
 
-func TestCodeBuddyIsIdempotentAndFailClosedUninstallWithoutRecord(t *testing.T) {
-	opts := testOpts(t, CodeBuddy)
-	if _, err := Install(opts); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := Install(opts); err != nil {
-		t.Fatal(err)
-	}
-	raw, _ := os.ReadFile(filepath.Join(opts.Home, ".codebuddy", "settings.json"))
-	if strings.Count(string(raw), "hook codebuddy") != 2 { // Pre + Post
-		t.Fatalf("expected one command per event, got %s", raw)
-	}
-	fresh := testOpts(t, CodeBuddy)
-	if _, err := Uninstall(fresh); err == nil {
-		t.Fatal("uninstall without a record must fail")
-	}
-}
-
 func TestTraeIsAuditOnly(t *testing.T) {
 	opts := testOpts(t, Trae)
 	res, err := Install(opts)
@@ -245,9 +227,9 @@ func TestSurgicalUninstallKeepsPostInstallUserFields(t *testing.T) {
 	}
 }
 
-func TestCodeBuddySurgicalUninstallKeepsUserSettings(t *testing.T) {
-	opts := testOpts(t, CodeBuddy)
-	settings := filepath.Join(opts.Home, ".codebuddy", "settings.json")
+func TestWorkBuddySurgicalUninstallKeepsUserSettings(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
+	settings := filepath.Join(opts.Home, ".workbuddy", "settings.json")
 	_ = os.MkdirAll(filepath.Dir(settings), 0o700)
 	_ = os.WriteFile(settings, []byte(`{"theme":"dark"}`), 0o600)
 	if _, err := Install(opts); err != nil {
@@ -271,7 +253,7 @@ func TestCodeBuddySurgicalUninstallKeepsUserSettings(t *testing.T) {
 	if got["user_pref"] != "keep-me" || got["theme"] != "dark" {
 		t.Fatalf("user settings lost: %s", restored)
 	}
-	if strings.Contains(string(restored), "hook codebuddy") {
+	if strings.Contains(string(restored), "hook workbuddy") {
 		t.Fatal("product hooks must be removed")
 	}
 }
@@ -349,8 +331,8 @@ func TestWorkBuddyIsIdempotentAndFailClosedUninstallWithoutRecord(t *testing.T) 
 }
 
 func TestUninstallConflictReturnsRecoveryPlan(t *testing.T) {
-	opts := testOpts(t, CodeBuddy)
-	settings := filepath.Join(opts.Home, ".codebuddy", "settings.json")
+	opts := testOpts(t, WorkBuddy)
+	settings := filepath.Join(opts.Home, ".workbuddy", "settings.json")
 	_ = os.MkdirAll(filepath.Dir(settings), 0o700)
 	_ = os.WriteFile(settings, []byte(`{"theme":"dark"}`), 0o600)
 	if _, err := Install(opts); err != nil {
@@ -374,8 +356,8 @@ func TestUninstallConflictReturnsRecoveryPlan(t *testing.T) {
 }
 
 func TestBadJSONRefusesRewrite(t *testing.T) {
-	opts := testOpts(t, CodeBuddy)
-	settings := filepath.Join(opts.Home, ".codebuddy", "settings.json")
+	opts := testOpts(t, WorkBuddy)
+	settings := filepath.Join(opts.Home, ".workbuddy", "settings.json")
 	_ = os.MkdirAll(filepath.Dir(settings), 0o700)
 	_ = os.WriteFile(settings, []byte("{not-json"), 0o600)
 	if _, err := Install(opts); err == nil || !strings.Contains(err.Error(), "invalid JSON") {
@@ -396,8 +378,8 @@ func TestUnknownModeRejected(t *testing.T) {
 }
 
 func TestSymlinkConfigRefused(t *testing.T) {
-	opts := testOpts(t, CodeBuddy)
-	dir := filepath.Join(opts.Home, ".codebuddy")
+	opts := testOpts(t, WorkBuddy)
+	dir := filepath.Join(opts.Home, ".workbuddy")
 	_ = os.MkdirAll(dir, 0o700)
 	real := filepath.Join(opts.Home, "elsewhere.json")
 	_ = os.WriteFile(real, []byte(`{"hooks":{}}`), 0o600)

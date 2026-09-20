@@ -28,9 +28,12 @@ func OpenClawSessionID(key, epoch string) (string, error) {
 	return openClawSessionPrefix + hex.EncodeToString(hash[:]), nil
 }
 
-// ValidateNativeSession rejects historical routing-key-only OpenClaw identities
+// ValidateNativeSession rejects retired hosts and routing-key-only OpenClaw identities
 // at live authority boundaries. Historical signed records remain readable.
 func ValidateNativeSession(platform, session string) error {
+	if platform == "codebuddy" {
+		return violation("platform_out_of_scope")
+	}
 	if platform != "openclaw" {
 		return nil
 	}

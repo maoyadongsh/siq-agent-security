@@ -12,12 +12,16 @@
 
 ---
 
+## 当前平台范围增量（2026-09-20）
+
+当前版本移除 CodeBuddy 平台的发现、适配器安装/卸载、钩子入口、新授权和发布支持声明。退役平台请求必须拒绝，已有记录仅保留读取、验签及撤销能力，不恢复执行权限。历史签名样例、冻结研究证据和版本化合同不改写；它们不代表当前支持范围。WorkBuddy 使用的原生项目路径 `.codebuddy/skills` 保留，共用钩子类型以 WorkBuddy 命名。验收覆盖退役平台入口拒绝、用户配置不变及剩余平台回归。
+
 ## 0. 阅读顺序与术语
 
 | 术语 | 定义 |
 | --- | --- |
 | Skill | 符合 agentskills.io 规范的目录：`SKILL.md`（YAML frontmatter + Markdown）+ 可选 `scripts/` `references/` `assets/` `evals/` |
-| 平台 | 承载 Agent 的运行时：OpenClaw / Hermes / CodeBuddy（WorkBuddy）/ Trae（TraeWork）/ Claude Code / Codex |
+| 平台 | 承载 Agent 的运行时：OpenClaw / Hermes / WorkBuddy/ Trae（TraeWork）/ Claude Code / Codex |
 | 适配器 | 把平台钩子接到本地二进制决策 API 的薄层 |
 | 档位 | L0 审计 / L1 安装门禁 / L2 运行时回执与阻断 / L3 OpenShell 策略下发 |
 | 五态 | permission-fact `state`：declared / inferred / observed / effective / unknown（ADR-004） |
@@ -150,7 +154,7 @@ Windows 回收在同一个 DELETE + 只读、禁止共享的文件句柄内读�
 
 本增量只实现受支持格式的入口防护，不实现跨格式迁移。`state-format.json` 的合同为 `state-format/v1`，字段见 `packages/contracts/local-state-format.v1.schema.json`：程序版本只作说明，格式版本才决定兼容性；目前仅支持 1。小于 1 的显式版本、未来版本、未知 schema/字段、重复键、多个 JSON 值、无效 UTF-8、缺失必需字段、超预算、非普通文件或符号链接一律拒绝，不自动改标记、迁移或修复。不输出文件原文或私有路径。
 
-检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，CodeBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。状态根本身必须是真实目录，不得为符号链接。已存在祖先必须是目录；仅 Darwin 的 `/var`→`/private/var`、`/tmp`→`/private/tmp`、`/etc`→`/private/etc` 三个固定系统别名允许作为祖先路径分量；Readlink 目标必须精确解析到对应位置，目标本身必须是真实目录。Linux/Windows 与未知根级别名维持符号链接拒绝，否则 Go 测试目录和 Darwin 临时状态会被误判 corrupt。用户在中间路径创建的符号链接仍拒绝。inventory 发现、adapter 配置镜像读取、Hermes profile 根（含 HOME 之外的 Override）走同一祖先规则，被检查的叶路径仍拒绝符号链接。读取标记在打开前/后校验普通文件身份并限读 4097 字节。DirectoryID / v2 `state_directory_id` 继续绑定 `EvalSymlinks` 后的规范路径。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
+检查顺序：CLI 分派前只读预检（version/help 等不访问状态的命令除外；serve 使用解析后的 --state-dir，WorkBuddy hook 走结构化 deny，不能仅退出 1）；`state.Open` 必须在 MkdirAll 前检查；`AcquireWriter` 必须在创建/隔离锁前检查并在取得锁后复验，维护锁使用显式 `AcquireScopedWriter(stateDir, scope)`，service-control/adapter-write/client-releases/client-snapshots 先检查传入的真实根状态，不能按目录 basename 猜父状态；`Initialize` 在任何配置/身份写入前复验。状态根本身必须是真实目录，不得为符号链接。已存在祖先必须是目录；仅 Darwin 的 `/var`→`/private/var`、`/tmp`→`/private/tmp`、`/etc`→`/private/etc` 三个固定系统别名允许作为祖先路径分量；Readlink 目标必须精确解析到对应位置，目标本身必须是真实目录。Linux/Windows 与未知根级别名维持符号链接拒绝，否则 Go 测试目录和 Darwin 临时状态会被误判 corrupt。用户在中间路径创建的符号链接仍拒绝。inventory 发现、adapter 配置镜像读取、Hermes profile 根（含 HOME 之外的 Override）走同一祖先规则，被检查的叶路径仍拒绝符号链接。读取标记在打开前/后校验普通文件身份并限读 4097 字节。DirectoryID / v2 `state_directory_id` 继续绑定 `EvalSymlinks` 后的规范路径。它不是抵抗任意同 UID 并发篡改的 OS 隔离保证。
 
 缺失标记不是自动认定格式 0：不存在/空目录（锁文件除外）允许初始化；已具有本版本 `state.Open` 建立的完整核心目录结构，或具有可解码合法本地 config.json、有效本地 signing.seed 的历史目录；根条目只含既有独立子存储 client-releases/client-snapshots/skill-imports/adapter-write/service-control 的真实目录也保留兼容，以 `legacy_unversioned` 兼容原有格式族，但不因打开/serve 就重打标记。未知非空目录拒绝。目录识别不意味着其中 Grant/回执可信，各模块仍逐对象验签、校验。HTTP 分派、Server 构造、原文清理及核心 Store 写入也复验格式；这不等于所有独立子存储已有统一事务或任意旧二进制都能拒写。明确 `init` 在既有初始化检查通过后，以不可变排他发布增加格式 1 标记；不覆盖已有标记，不改写历史授权、回执或已有配置。
 
@@ -199,7 +203,6 @@ Ornith 未提交实现中的自动 `ApplyMigration`/整树备份/可覆写标记
 | --- | --- | --- |
 | Hermes | `~/.hermes/config.yaml`、`profiles/*/`、`skills/**/SKILL.md`、`platform_toolset_modes` | candidate（agent）、candidate（skill）、declared 事实（toolsets allowlist → tool 域）|
 | OpenClaw | `~/.openclaw/openclaw.json` agents.list、`~/.openclaw/skills`、`~/.agents/skills`、`workspace/skills`、`security.installPolicy` 是否指向本机二进制 | 同上 + observed 事实（installPolicy 已接管 = L1 就位）|
-| CodeBuddy | `~/.codebuddy/settings.json` hooks、`.codebuddy/skills` | candidate（skill）、observed（PreToolUse 已接管 = L2 就位）|
 | Trae | `~/.trae/skills`、`.trae/skills`、`.agents/skills` | candidate（skill）；档位标 audit_only |
 | MCP 配置 | 原生只读众所周知客户端配置（`~/.cursor/mcp.json`、`~/.claude.json`、`~/.claude/mcp.json`、`~/.windsurf/mcp_config.json`、`~/.codeium/windsurf/mcp_config.json`）：只留 `env_keys`、`scheme://host`、command 基名；不连接、不 exec | candidate（mcp_server）|
 
@@ -250,7 +253,7 @@ Ornith 未提交实现中的自动 `ApplyMigration`/整树备份/可覆写标记
 
 - `SKILL.md` 必须以 `---\n` 开头、以 `\n---\n` 结束 frontmatter；否则 `frontmatter_valid=false`，finding `adm-frontmatter-invalid`（category integrity, disposition quarantine 仅当 `SKILL.md` 缺失；格式错误为 info）。
 - 只解析扁平 `key: value`、`key: [a, b]`、块列表 `- x`、以及 `metadata:` 下一层缩进映射；不实现完整 YAML（无锚点、无多文档）。不可解析的键记 info。
-- 识别字段：`name`（校验 agentskills 规则）、`description`、`version`、`license`、`compatibility`、`allowed-tools`（空格分隔或列表）、`platforms`、`metadata.hermes.*`、CodeBuddy 扩展 `context`/`hooks`/`agent`/`model`。
+- 识别字段：`name`（校验 agentskills 规则）、`description`、`version`、`license`、`compatibility`、`allowed-tools`（空格分隔或列表）、`platforms`、`metadata.hermes.*`、宿主扩展 `context`/`hooks`/`agent`/`model`。
 - **`hooks` 字段存在** → finding `adm-frontmatter-hooks`，category `capability_declaration`，disposition `declare`，产出 `process.exec` declared 事实（source_field `frontmatter.hooks`）。这是声明而不是隔离，但 Skill Card 必须高亮。
 
 #### 3.6.4 检查项与处置映射
@@ -1266,7 +1269,7 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 **卸载**：`siq-agent-security adapter uninstall openclaw` 按归属移除本插件注册及自建文件，保留无关配置；不整文件覆盖用户改动。卸载在移除本产品插件文件后，若 `plugins/<product>` 为真实空目录（非符号链接、无未知条目）则删除该目录；含未知文件时保留目录。OpenClaw 外科卸载后，若接入前无 `plugins` 且剥离本产品登记后仅剩空 allow/entries/load.paths 容器，删除 `plugins` 键，避免把空登记写回用户配置。
 - **安装首备（DEV07-A）：** 改写已有用户配置前，以 `*.siq-agent-security.orig`（O_EXCL、0600）保存首次见到的原文；重装不得覆盖。坏 JSON、指向配置的 symlink、未知 `enforcement_mode` 拒绝且不改写。配置写入同目录暂存+Rename。重装与首备比较按 JSON 语义，不把缩进或键序差异当成“原文已改需人工审阅”。
 - Windows WorkBuddy 正式卸载后重装：仅当同一状态目录的最新操作为已提交卸载、加密计划认证及摘要验证通过、实例配置根匹配，且当前首备与卸载计划固定的首备字节一致时，允许保留首次备份并在当前配置上重新添加产品钩子。宿主在卸载后新增的字段必须保留；不继承旧运行身份或已删除文件的归属。没有该证明、备份漂移、其他配置根、损坏或未完成的操作仍拒绝；预览后的配置及备份变化继续由现有输入摘要检查拒绝。
-- **外科卸载（DEV07-B）：** OpenClaw/CodeBuddy/WorkBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。剩余文档若与首备语义相同，写回快照原文。首备仅供人工恢复参考。
+- **外科卸载（DEV07-B）：** OpenClaw/WorkBuddy 在活配置上剥离本产品 `installPolicy`/hooks，保留安装后用户字段；冲突（坏 JSON 等）返回 `RecoveryPlan`，不静默整文件回滚。剩余文档若与首备语义相同，写回快照原文。首备仅供人工恢复参考。
 - OpenClaw 重装记录保留先前由本产品创建的插件目录/文件及本产品配置的归属；损坏的既有安装记录拒绝继续。卸载同时移除本插件运行时注册，不把“安装资产存在”当作原生运行时已验收。
 
 ### 4.2 Hermes（P0）
@@ -1282,36 +1285,15 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 
 **工具边界（grant 输出）**：写 `platform_toolset_modes` allowlist（Hermes siq-patches 支持闭世界模式）；写前备份。
 
-### 4.3 CodeBuddy / WorkBuddy（P1）
+### 4.3 WorkBuddy（macOS / Windows）
 
-**配置目录（2026-09-07 增量）**：安装、状态、自动发现与卸载统一读取进程环境 `CODEBUDDY_CONFIG_DIR`，未设置或为空时保留 `~/.codebuddy`。覆盖值须为绝对路径，现存路径及祖先不得为符号链接；非法覆盖明确拒绝操作，自动发现忽略该平台，不静默回退默认目录。CLI 与管理 API 使用相同解析逻辑；管理 API 不接受请求正文指定配置目录。新安装须核对最新安装记录中的唯一目标路径，环境改变或历史记录已混入多个配置根时在写入前拒绝，避免继续污染归属。卸载仍要求当前配置根属于该记录；对旧版本已认证记录中的多个 `settings.json`，同一事务逐一外科移除本产品 hook，任一配置冲突则整批不开始写入。多实例建议分别使用独立 SIQ 状态目录；本增量不扩展 inventory 的扫描范围。
+配置根使用 `WORKBUDDY_CONFIG_DIR`，未设置时为 `~/.workbuddy`。覆盖值须为绝对目录，现存祖先不得为符号链接。安装、状态、自动发现与卸载使用同一根；不读取数据库、登录态或配对凭据。新安装只能操作已核验的单一配置根，已有混合配置记录按事务整体复验；冲突时停止，不覆盖用户未知设置。
 
-**桌面 hook 所有权增量**：重装只替换本次欲写入的完全相同命令，或最新安装记录中二进制路径、平台及状态目录组合生成的当前/旧版命令；卸载同样只移除记录能精确证明的命令。状态只在可信安装记录与真实 hook 命令吻合时标记已安装。仅包含产品名和 `hook <platform>` 字样的用户命令（例如 `printf` 输出）不得被覆盖、删除或误报为安装。旧记录中无法精确复原的变体保留现场并要求人工恢复，不用子串猜测归属；该规则不把宿主缺失的可信 Skill/安装拦截能力伪称为已支持。
+`adapter install workbuddy` 先备份，再向 `settings.json` 的 `hooks.PreToolUse` / `hooks.PostToolUse` 幂等登记 `<abs>/siq-agent-security hook workbuddy --state-dir <abs-state>`；二进制和状态目录按目标 OS 引用，保留 `enabledPlugins` 及其他用户字段。卸载只移除归属已核实的本产品钩子。Windows 受管运行时另按 [WorkBuddy managed runtime](workbuddy-managed-runtime-spec-v1.md) 执行，不与旧桌面钩子合并宣称能力。
 
-**钩子启动失败（2026-09-07 增量）**：CodeBuddy 将普通非零退出视为非阻断错误，不能用进程退出码 1 代替 pre hook 的拒绝。状态目录、完整配置或 decision token 读取失败时，钩子仍读取事件并输出结构化 PreToolUse 结果；无有效完整配置时按 block，已验证 warn/audit_only 配置但 token 不可用时按 advisory allow。PostToolUse 在客户端不可用时只返回非阻断结果，不制造 observation。状态目录可用时沿用 pending 记录；目录不可用时拒绝仍生效，但不声称已持久化。返回原因仅使用固定类别，不含底层路径、配置内容或凭据。此机制不覆盖二进制未启动、被杀、超时或 stdout 管道不可写的宿主行为。
+钩子读取宿主事件并转发决策，输出 `hookSpecificOutput.permissionDecision`。回执及 pending 的 `platform` 固定为 `workbuddy`。状态、配置或 token 不可用时仍输出结构化结果：默认 block 下为 deny，已验证 warn/audit_only 按既有 advisory 规则处理。后置钩子在客户端不可用时不制造 observation。退出码 1 不能替代前置拒绝；二进制未启动、被杀或宿主超时不在该保证内。
 
-**运行时（L2）**：`~/.codebuddy/settings.json` 追加（需用户确认，幂等）：
-
-```json
-{"hooks":{"PreToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"<abs>/siq-agent-security hook codebuddy","timeout":5}]}],
-          "PostToolUse":[{"matcher":".*","hooks":[{"type":"command","command":"<abs>/siq-agent-security hook codebuddy --observe","timeout":5}]}]}}
-```
-
-`siq-agent-security hook codebuddy`：stdin 读 `{session_id, tool_name, tool_input, cwd, permission_mode}` → `/v1/decide` → stdout：
-
-```json
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow|deny|ask","permissionDecisionReason":"..."}}
-```
-
-`hold → ask`、`deny → deny`、`redact` → 当前适配器尚未接入原生改参，退化为 `ask`。
-
-不使用 Skill frontmatter hooks（仅 fork Skill 且默认关闭）。
-
-**WorkBuddy 桌面（与 CodeBuddy CLI 分列）**：macOS/Windows 桌面应用的配置根为 `WORKBUDDY_CONFIG_DIR`（须为无符号链接祖先的绝对路径），未设置时为 `~/.workbuddy`。SIQ 不把 `CODEBUDDY_CONFIG_DIR` 当作 WorkBuddy 配置根，也不静默回退。安装、状态、自动发现、卸载与 inventory 读取该根下的 `settings.json`；不读取 `config.yaml`、`workbuddy.db`、`claw` 或 pairing 凭据。`adapter install workbuddy` 在 `settings.json` 的 `hooks.PreToolUse` / `hooks.PostToolUse` 追加 `` `<abs>/siq-agent-security hook workbuddy --state-dir <abs-state>` ``（先备份、可卸载），保留 `enabledPlugins` 及其他未知键。命令中的二进制和状态目录都按目标 OS 的单参数规则引用，空格、单引号、中文不得改变 argv。Electron 子进程通常不继承 SIQ 环境变量，因此 WorkBuddy 钩子命令必须带绝对 `--state-dir`；`siq-agent-security hook workbuddy [--state-dir DIR]` 与 CodeBuddy 使用同一 JSON 合同，但回执与 pending 的 `platform` 必须为 `workbuddy`。WorkBuddy 与 CodeBuddy 使用上一段的单根新安装和历史混合记录整批外科卸载规则。`POST /v1/grants` 与 CLI `grant --platform workbuddy` 必须接受该平台；ActiveGrant 按 platform+agent_id 匹配，WorkBuddy 的 allow 不得签发到 `codebuddy` 或其他平台。CodeBuddy CLI 的 `~/.codebuddy` 与 `hook codebuddy` 不得替代 WorkBuddy 桌面证据。原生桌面验收使用隔离 `WORKBUDDY_CONFIG_DIR` 或项目级 `.workbuddy/settings.json`，不得改写日常 `~/.workbuddy` 的 claw/db。桌面安装入口（插件市场）未被接管，`install_interception` 保持 host_capability_missing，直到有受支持的装前拦截。`block` 下决策不可达必须输出结构化 `permissionDecision=deny`；宿主把退出码 1 视为非阻断错误，不能用 exit 1 代替拒绝。
-
-2026-09-17 个人版范围收紧：Linux 仅以 OpenClaw/Hermes 为本轮原生宿主目标，WorkBuddy 只保留 Windows/macOS 接入与历史数据读取。Linux 上 `/v1/adapter/status` 和诊断仍可展示已存在的 WorkBuddy 文件，但必须标明不在当前系统支持范围；控制台不得提供新的安装/重装按钮。Linux 上 `adapter install workbuddy`、安装预览及对应管理 API 应在写入或签发安装计划前拒绝，旧计划应用也须拒绝；显式卸载既有接入仍可用，避免把历史钩子困在系统中。自动安装跳过该平台，不能导致其他可用平台被连带拒绝。不能据此删除历史 WorkBuddy Grant/回执或改变旧 hook 的 fail-closed 行为；macOS/Windows 原规则保持。此范围调整不把 Linux/WorkBuddy 的历史探测记为产品验收通过。
-
-同日用户进一步明确：**全平台取消 CodeBuddy 后续任务与新适配**。CodeBuddy 与 WorkBuddy 不得合并：Windows/macOS WorkBuddy 任务继续。Linux/macOS/Windows 均不得新安装/重装 CodeBuddy 适配器或签发新的 CodeBuddy Grant；已有 pending Grant 不得继续批准或部署。控制台、管理 API、CLI 应标明停止新接入并拒绝相应动作，自动安装跳过 CodeBuddy。历史资产/配置/Grant/回执仍可查看、拒绝或撤销，已有配置可外科卸载；旧钩子在卸载前保持原 fail-closed 行为。底层跨平台解析、验签与卸载代码可为兼容旧安装保留，不据此恢复 CodeBuddy 支持宣称；新产品验收和发布支持矩阵不得把 CodeBuddy 算入当前目标。
+授权按 platform + agent_id 匹配，禁止跨平台复用。桌面安装入口未接管，`install_interception` 保持 `host_capability_missing`。配置成功不等于桌面保护已生效，须在目标宿主独立实测。Linux 不新增 WorkBuddy 接入，已有 WorkBuddy 配置可查看或卸载。
 
 ### 4.4 Trae / TraeWork（P2，审计）
 
@@ -1414,7 +1396,7 @@ Go 测试把 `admission/grant/receipt/skill-manifest` 样例写到 `apps/agentsh
 
 装恶意 Skill → `admit` quarantine（L1 平台：安装被拒）→ 装官方 Skill → grant → 越权工具调用 → deny 回执 → `verify` 通过。录屏 + 回执文件归档到 `docs/evidence/agentshield/<platform>-<date>/`（脱敏）。
 
-已归档（linux/arm64，矩阵仍无 `supported`）：Hermes 实机插件；OpenClaw 隔离 HOME 的 `policy-exec` + 插件形态 `/v1/decide`；CodeBuddy 隔离 HOME 的真实 `hook codebuddy`。OpenClaw 未挂到本机网关进程；CodeBuddy 未驱动 GUI。
+历史实测以归档证据为准，不代表当前平台范围；当前支持范围见本文开头及平台矩阵。
 
 ### 7.5 平台矩阵
 
@@ -1431,7 +1413,7 @@ apps/agentshield/            Go module（stdlib only；go.work 引入 connectors
   cmd/agentshield/
   internal/{canon,rulepack,threat,signing,inventory,admission,grant,receipt,openshell,ui,state}
   testdata/{contracts,skills}
-adapters/runtime/{openclaw,hermes,codebuddy}-agentshield/
+adapters/runtime/{openclaw,hermes,workbuddy}-agentshield/
 skills/siq-agent-security/
 packages/contracts/
 ```
@@ -1477,10 +1459,10 @@ make -C apps/agentshield ui
 | W0 合同 | 四 schema + 42 负向测试 + README + 兼容矩阵 | **完成** |
 | W1 Go 核心 | canon / rulepack / threat / signing / admission / grant / receipt / CLI | **完成**；每个模块的 Go 样例均回灌 Python schema 校验；grant 的 `artifact_hash` 与 Python 编译器一致 |
 | W2 二进制与 UI | serve、状态目录、embed UI、三 OS 构建 | `state` 包 + `serve` **完成**；HTTP E2E **完成**；`inventory` **完成**；embed UI **完成**（`src/local/` + `internal/ui`） |
-| W3 适配器 | OpenClaw、Hermes、CodeBuddy | Hermes 插件 **完成**；OpenClaw `policy-exec` **完成**；CodeBuddy `hook codebuddy` **完成**；`adapter install/uninstall`（备份还原）**完成** |
+| W3 适配器 | OpenClaw、Hermes、WorkBuddy | 当前能力以平台矩阵及各宿主验收为准 |
 | W4 OpenShell | probe / 网络 policy set / 读回 | **完成**（CLI 后端 + PATH/ENV_SH 发现 + 网关验明 + `openshell doctor` + `/v1/openshell/*` + 控制台 L3；假 CLI 正负测试。矩阵不标 `supported`） |
 | W5 Skill 包 | SKILL.md、bootstrap、evals、manifest、release | **完成**（Skill 目录、evals、bootstrap 验签、`grant` CLI、自扫描不得 quarantine、已签名 `skill-manifest.json` + 四目标哈希。GitHub Release `siq-agent-security-v0.2.0` 已挂二进制；bootstrap 仍不下载。矩阵仍无 `supported` 行） |
-| W6 材料 | README、演示、基线更新、十日谈 | **完成**：评委入口 `AGENTSHIELD.md` + 演示步骤；2026-09-05 Spark linux 证据已归档：Hermes 实机插件、OpenClaw `policy-exec`、CodeBuddy `hook`（隔离 HOME）。矩阵备注已对齐证据，**仍无 `supported` 行**。Release tag 已切（清单 [`agentshield-release-checklist-v1.md`](./agentshield-release-checklist-v1.md)）。L3 可选：须验明正身的 OpenShell |
+| W6 材料 | README、演示、基线更新 | 历史比赛与发布材料保留在归档目录，不作为当前平台支持承诺 |
 | W7 本地台账 | 企业治理语义在本地文件态落地（资产/五态权限/风险/漂移/导出）；Control API 仍非现场依赖 | **P0–P3 已落地**（§2.4 / §3.5 / §3.8.1 / §3.10）：assets 状态机、profiles/agents.list、五域补丁、漂移、exec 无 host deny、findings 接受、audit.jsonl、脱敏导出、`sync --control-api`（默认不跑）、可选 `--connectors-dir`、MCP 配置原生只读（`mcp_server`）。矩阵仍无 `supported` 行 |
 
 ---

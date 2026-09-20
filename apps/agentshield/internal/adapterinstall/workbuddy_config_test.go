@@ -352,15 +352,11 @@ func TestWorkBuddyUninstallIgnoresMetadataOnlyConfig(t *testing.T) {
 }
 
 func TestDesktopInstallUninstallPreservesUserHookQuotingProduct(t *testing.T) {
-	for _, platform := range []string{CodeBuddy, WorkBuddy} {
+	for _, platform := range []string{WorkBuddy} {
 		t.Run(platform, func(t *testing.T) {
 			opts := testOpts(t, platform)
 			dir := t.TempDir()
-			if platform == WorkBuddy {
-				t.Setenv("WORKBUDDY_CONFIG_DIR", dir)
-			} else {
-				t.Setenv("CODEBUDDY_CONFIG_DIR", dir)
-			}
+			t.Setenv("WORKBUDDY_CONFIG_DIR", dir)
 			userCommand := "printf 'siq-agent-security hook " + platform + "'"
 			original := encodePlanJSON(map[string]any{"hooks": map[string]any{
 				"PreToolUse":  []any{map[string]any{"matcher": ".*", "hooks": []any{map[string]any{"type": "command", "command": userCommand}}}},
@@ -405,7 +401,7 @@ func TestDesktopInstallUninstallPreservesUserHookQuotingProduct(t *testing.T) {
 }
 
 func TestRecordedToolHookAcceptsOnlyGeneratedCommands(t *testing.T) {
-	for _, platform := range []string{CodeBuddy, WorkBuddy} {
+	for _, platform := range []string{WorkBuddy} {
 		opts := testOpts(t, platform)
 		current := hookCommand(opts.Binary, platform, opts.StateDir)
 		if !isRecordedToolHook(current, platform, opts.Binary, opts.StateDir) {
@@ -531,35 +527,5 @@ func TestWorkBuddyInvalidConfigOverrideNeverFallsBack(t *testing.T) {
 				t.Fatal("default config was backed up")
 			}
 		})
-	}
-}
-
-func TestWorkBuddyUninstallLeavesCodeBuddyHook(t *testing.T) {
-	home := t.TempDir()
-	wb := testOptsAt(t, home)
-	wb.Platform = WorkBuddy
-	cb := testOptsAt(t, home)
-	cb.Platform = CodeBuddy
-	cb.StateDir = wb.StateDir
-	cb.Binary = wb.Binary
-	if _, err := Install(cb); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := Install(wb); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := Uninstall(wb); err != nil {
-		t.Fatal(err)
-	}
-	codebuddy, err := os.ReadFile(filepath.Join(home, ".codebuddy", "settings.json"))
-	if err != nil || !strings.Contains(string(codebuddy), "hook codebuddy") {
-		t.Fatal("codebuddy hook was removed")
-	}
-	workbuddy, err := os.ReadFile(filepath.Join(home, ".workbuddy", "settings.json"))
-	if err != nil && !os.IsNotExist(err) {
-		t.Fatal(err)
-	}
-	if err == nil && strings.Contains(string(workbuddy), "hook workbuddy") {
-		t.Fatal("workbuddy hook remained")
 	}
 }

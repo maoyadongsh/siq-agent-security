@@ -30,7 +30,7 @@
 
 ## 3. 原生验收如何工作
 
-入口为 [validate-intent-v2-codebuddy.py](../scripts/validate-intent-v2-codebuddy.py)，复用既有真实 Go daemon 和可信管理会话测试框架。测试通过真实 CLI 安装钩子，扫描合成 Skill、创建并审批 Grant、签发 Intent、绑定测试会话。测试操作者是合成管理主体，不是真人审批证据。
+入口为 [validate-intent-v2-codebuddy.py](https://github.com/maoyadongsh/siq-agent-security/blob/809b124171979bbbbf6dfa96583f73fd9b00d666/scripts/validate-intent-v2-codebuddy.py)，复用既有真实 Go daemon 和可信管理会话测试框架。测试通过真实 CLI 安装钩子，扫描合成 Skill、创建并审批 Grant、签发 Intent、绑定测试会话。测试操作者是合成管理主体，不是真人审批证据。
 
 运行时执行链：
 
@@ -48,7 +48,7 @@
 
 成功判定同时检查原生 JSON 结果中助手精确返回 `fixture-complete`、工具结果进入后续模型请求、实际文件副作用及签名回执。仅有退出码 0 或输入文本中出现完成标记不能算通过。
 
-[Node IO 守卫](../scripts/codebuddy-fixture-guard.mjs) 是测试防误操作措施，不是 OS 沙箱；不覆盖任意子进程系统调用。测试仅提供合成 Read/Write 计划及安装器生成的 Go 钩子命令，不调用真实模型或使用真实凭据。
+[Node IO 守卫](https://github.com/maoyadongsh/siq-agent-security/blob/809b124171979bbbbf6dfa96583f73fd9b00d666/scripts/codebuddy-fixture-guard.mjs) 是测试防误操作措施，不是 OS 沙箱；不覆盖任意子进程系统调用。测试仅提供合成 Read/Write 计划及安装器生成的 Go 钩子命令，不调用真实模型或使用真实凭据。
 
 ## 4. 原生结果
 

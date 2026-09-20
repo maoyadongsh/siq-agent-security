@@ -12,7 +12,7 @@
 
 1. `scripts/research/skills-upstream.json` 固定 upstream commit、npm 版本、官方 tarball URL 和摘要。
 2. `scripts/research/verify_skill_distribution.py` 仅以数据形式读取源目录与安装目录，比较相对路径、SHA-256、字节数与 POSIX 可执行位。拒绝 symlink、非普通文件、读取期间检测到的变化及超过读取预算的树。不执行或导入 Skill 内容。
-3. `scripts/research/skills_distribution_smoke.py` 在全新临时目录下载并先校验固定 npm 包；通过本机可信 Git 导出明确 commit 中的 SIQ Skill。Node 子进程使用显式文件读写许可、不允许子进程、关闭 telemetry、使用过滤后的环境。测试 source 为 local，分别安装到 OpenClaw/Hermes/CodeBuddy/Trae 的临时 project，比较实际内容，卸载并核对清理结果。
+3. `scripts/research/skills_distribution_smoke.py` 在全新临时目录下载并先校验固定 npm 包；通过本机可信 Git 导出明确 commit 中的 SIQ Skill。Node 子进程使用显式文件读写许可、不允许子进程、关闭 telemetry、使用过滤后的环境。测试 source 为 local，分别安装到 OpenClaw/Hermes/Trae 的临时 project，比较实际内容，卸载并核对清理结果。
 4. 每次报告使用独立输出路径，记录上游身份、SIQ source commit、执行环境、场景结果与证明范围；不覆盖旧证据，不记录私有主目录、token 或 Skill 正文。测试报告不创建任何 `effective` 权限。
 
 ## 边界

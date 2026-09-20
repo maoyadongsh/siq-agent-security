@@ -28,7 +28,7 @@ You must not call `siq-agent-security grant approve`.
 - The user asks to install, review, or "check" a skill from a hub, git URL,
   USB copy, or chat upload.
 - The user wants a runtime gate on OpenClaw or Hermes, or WorkBuddy on
-  macOS/Windows. Linux/WorkBuddy and new CodeBuddy integrations are excluded.
+  macOS/Windows. Linux/WorkBuddy is excluded.
 - The user asks what agents, skills, or MCP servers are on this machine.
 
 Do not use this skill to answer business questions. Do not approve grants.

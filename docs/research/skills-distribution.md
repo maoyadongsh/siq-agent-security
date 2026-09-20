@@ -23,13 +23,12 @@ python3 scripts/research/skills_distribution_smoke.py \
 
 工具从 **当前 HEAD 的 Git archive** 取得 `skills/siq-agent-security`，因此不包含尚未提交的 Skill 修改。记录中的 `source.commit` 是被分发的源码身份；`runner_sha256` 则标识本次验证工具。修改测试工具不要求改写发布身份。
 
-执行步骤是：校验固定 npm 包 → 安全提取普通文件 → 导出明确 commit 的 SIQ Skill → `--list` → 四个平台逐一 `--copy` 安装 → 比较完整文件集合、摘要、字节数与 POSIX 可执行位 → 卸载 → 核对安装目录与项目 lock 条目均已清除。同目录下另设一个无关 Skill 及 lock 条目，核对它们保留原样。源文件再次读回，确认测试没有改动候选内容。
+执行步骤是：校验固定 npm 包 → 安全提取普通文件 → 导出明确 commit 的 SIQ Skill → `--list` → 表中三个目标逐一 `--copy` 安装 → 比较完整文件集合、摘要、字节数与 POSIX 可执行位 → 卸载 → 核对安装目录与项目 lock 条目均已清除。同目录下另设一个无关 Skill 及 lock 条目，核对它们保留原样。源文件再次读回，确认测试没有改动候选内容。
 
 | Agent 目标 | 上游标识 | 临时项目中的目标目录 |
 | --- | --- | --- |
 | OpenClaw | `openclaw` | `skills/siq-agent-security` |
 | Hermes Agent | `hermes-agent` | `.hermes/skills/siq-agent-security` |
-| CodeBuddy | `codebuddy` | `.codebuddy/skills/siq-agent-security` |
 | Trae | `trae` | `.trae/skills/siq-agent-security` |
 
 报告保存在输出目录的 `result.json`，整体 `result=passed` 才算本轮通过。失败尝试也保留报告；不要覆盖或删除失败记录来呈现全绿。上游普通文本模式可能在单项失败时返回 0，所以工具同时验证 add 的 JSON、实际目录、完整文件内容以及 remove 后的 lock，而不是只看退出码。
@@ -42,7 +41,7 @@ python3 scripts/research/skills_distribution_smoke.py \
 - 子进程环境不继承 token、`NODE_OPTIONS`、代理凭据或用户命令搜索路径，关闭 telemetry；Node permission 限制写入为本次临时目录，并禁止子进程。
 - Node 的 `fs.cp` 会读取目标祖先的元数据，因此 Node 只读许可为 Linux 的 `/tmp` 或 macOS 的 `/private`，**读取范围比本次临时目录宽**。真实 home 读取、越界写入与子进程启动均在运行 CLI 前执行负向探针；任意探针未按预期拒绝则本轮失败。
 - Node permission 不在此处提供已验证的网络隔离；报告固定记录 `network_isolation_verified=false`。这套试验不是用于运行任意恶意程序的安全沙箱，也不提供同 UID 对手的零竞态保证。
-- 四个 Agent 的目录投递成功不代表四个原生 Agent 已运行，也不代表 L1/L2/L3 强制执行已成立。此工具只测试 project / copy / local source，不覆盖 global、默认 symlink、`skills update`、`skills use` 或 Windows CLI 主机。
+- 目录投递成功不代表原生 Agent 已运行，也不代表 L1/L2/L3 强制执行已成立。此工具只测试 project / copy / local source，不覆盖 global、默认 symlink、`skills update`、`skills use` 或 Windows CLI 主机。
 
 ## 单独核对安装内容
 

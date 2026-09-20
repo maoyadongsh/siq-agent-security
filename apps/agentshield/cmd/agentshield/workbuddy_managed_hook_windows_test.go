@@ -68,13 +68,13 @@ func managedWorkBuddyFixture(t *testing.T, handler http.HandlerFunc) (adapters.W
 	return cfg, path
 }
 
-func runManagedWorkBuddy(t *testing.T, cfg adapters.WorkBuddyManagedConfig, path, input string) adapters.CodeBuddyOutput {
+func runManagedWorkBuddy(t *testing.T, cfg adapters.WorkBuddyManagedConfig, path, input string) adapters.WorkBuddyOutput {
 	t.Helper()
 	var out bytes.Buffer
 	if err := runWorkBuddyManagedHook(path, cfg.StateDir, strings.NewReader(input), &out); err != nil {
 		t.Fatal("unsafe nonblocking CLI error", err)
 	}
-	var decoded adapters.CodeBuddyOutput
+	var decoded adapters.WorkBuddyOutput
 	if err := json.Unmarshal(out.Bytes(), &decoded); err != nil {
 		t.Fatal(err)
 	}
@@ -190,7 +190,7 @@ func TestWorkBuddyManagedBadConfigurationNeverUsesGlobalToken(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			var got adapters.CodeBuddyOutput
+			var got adapters.WorkBuddyOutput
 			if kind == "no-flag-residual" {
 				var out bytes.Buffer
 				if err := runWorkBuddySelectedHook("", false, strings.NewReader(managedWorkBuddyInput), &out); err != nil {
@@ -231,7 +231,7 @@ func TestWorkBuddyManagedHTTPBudgetDoesNotResetAfterEnroll(t *testing.T) {
 	if err := runWorkBuddyManagedHookWithBudget(path, cfg.StateDir, strings.NewReader(managedWorkBuddyInput), &out, 20*time.Second); err != nil {
 		t.Fatal(err)
 	}
-	var got adapters.CodeBuddyOutput
+	var got adapters.WorkBuddyOutput
 	if err := json.Unmarshal(out.Bytes(), &got); err != nil {
 		t.Fatal(err)
 	}
