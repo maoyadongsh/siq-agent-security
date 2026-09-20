@@ -2,12 +2,12 @@ flowchart LR
   subgraph host["this checkout"]
     skill["skills/siq-agent-security"]
     bin["apps/agentshield cmd"]
-    codebuddy_agentshield["codebuddy-agentshield"]
     hermes_agentshield["hermes-agentshield"]
     openclaw_agentshield["openclaw-agentshield"]
+    workbuddy_agentshield["workbuddy-agentshield"]
   end
   skill --> bin
-  codebuddy_agentshield --> bin
   hermes_agentshield --> bin
   openclaw_agentshield --> bin
+  workbuddy_agentshield --> bin
   bin --> api["/v1/decide"]

@@ -30,7 +30,7 @@ func workBuddyInventoryFixture(t *testing.T) Options {
 	return Options{Home: home, WorkBuddyConfigDir: root, ProjectDirs: []string{project}, Key: key, Version: "fixture"}
 }
 
-func TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence(t *testing.T) {
+func TestWorkBuddyInventoryUsesExplicitRootAndProjectEvidence(t *testing.T) {
 	opts := workBuddyInventoryFixture(t)
 	report, err := Run(opts)
 	if err != nil {
@@ -85,8 +85,8 @@ func TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence(t *testing.T
 	if user.CandidateID == "" || project.CandidateID == "" || user.CandidateID == project.CandidateID || user.ArtifactDigest == project.ArtifactDigest {
 		t.Fatal("project priority collapsed separate installed contents")
 	}
-	if project.Framework != "unknown" || project.Attributes["consumer_platforms"] != "codebuddy,workbuddy" || project.Attributes["workbuddy_selection"] != "unverified" {
-		t.Fatal("shared location was assigned to one native host or claimed selected", project)
+	if project.Framework != "workbuddy" || project.Attributes["consumer_platforms"] != "" || project.Attributes["workbuddy_selection"] != "unverified" {
+		t.Fatal("project location lost host association or claimed selected", project)
 	}
 	consumers := map[string]bool{}
 	for _, relationship := range report.Relationships {
@@ -97,8 +97,8 @@ func TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence(t *testing.T
 			consumers[relationship.SourceID] = true
 		}
 	}
-	if !consumers[owner] || !consumers["platform:codebuddy"] || len(consumers) != 2 {
-		t.Fatal("shared physical Skill lost a distinct consumer", consumers)
+	if !consumers[owner] || consumers["platform:codebuddy"] || len(consumers) != 1 {
+		t.Fatal("project Skill has an unexpected consumer", consumers)
 	}
 	evidenceCount := 0
 	for _, evidence := range report.Evidence {
@@ -119,8 +119,8 @@ func TestWorkBuddyInventoryUsesExplicitRootAndSharedProjectEvidence(t *testing.T
 			platforms[item.Platform] = true
 		}
 	}
-	if !platforms["workbuddy"] || !platforms["codebuddy"] {
-		t.Fatal("preview merged distinct host associations", platforms)
+	if !platforms["workbuddy"] || platforms["codebuddy"] {
+		t.Fatal("preview retained a retired host association", platforms)
 	}
 }
 

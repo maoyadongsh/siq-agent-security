@@ -14,7 +14,7 @@ import (
 // OpenClaw versions offer an explicitly enabled operator policy, but a
 // normal adapter install must not silently activate it.
 func TestInstallEntryIsNeverTakenOver(t *testing.T) {
-	for _, platform := range []string{Hermes, OpenClaw, CodeBuddy, Trae} {
+	for _, platform := range []string{Hermes, OpenClaw, WorkBuddy, Trae} {
 		t.Run(platform, func(t *testing.T) {
 			opts := testOpts(t, platform)
 			plan, err := Prepare(opts, "install")
@@ -58,17 +58,17 @@ func TestOpenClawFreshInstallAddsNoInterceptionFields(t *testing.T) {
 	}
 }
 
-func TestCodeBuddyFreshInstallAddsOnlyHooks(t *testing.T) {
-	opts := testOpts(t, CodeBuddy)
+func TestWorkBuddyFreshInstallAddsOnlyHooks(t *testing.T) {
+	opts := testOpts(t, WorkBuddy)
 	if _, err := Install(opts); err != nil {
 		t.Fatal(err)
 	}
-	doc, err := readJSONObject(filepath.Join(opts.Home, ".codebuddy", "settings.json"))
+	doc, err := readJSONObject(filepath.Join(opts.Home, ".workbuddy", "settings.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !reflect.DeepEqual(doc, map[string]any{"hooks": doc["hooks"]}) {
-		t.Fatalf("CodeBuddy install may only add hooks, got top-level keys %v", keysOf(doc))
+		t.Fatalf("WorkBuddy install may only add hooks, got top-level keys %v", keysOf(doc))
 	}
 }
 

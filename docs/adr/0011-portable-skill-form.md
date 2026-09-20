@@ -6,12 +6,12 @@
 
 ## 背景
 
-目标是让用户在任意支持 Agent Skills 规范的平台（OpenClaw、Hermes、WorkBuddy/CodeBuddy、Trae/TraeWork 等）安装一个 Skill，即获得本产品的智能体安全管控能力，并覆盖 Linux / macOS / Windows。
+目标是让用户在任意支持 Agent Skills 规范的平台（OpenClaw、Hermes、WorkBuddy、Trae/TraeWork 等）安装一个 Skill，即获得本产品的智能体安全管控能力，并覆盖 Linux / macOS / Windows。
 
 三个事实约束了形态：
 
 1. **Skill 没有执行权。** 所有平台上 Skill 都只是 `SKILL.md` + 脚本 + 资源，由模型决定加载、由模型调用工具运行脚本。拦截工具调用、锁文件系统、拦出网只能由平台钩子/插件和 OS 沙箱完成。
-2. **钩子能力因平台而异。** OpenClaw 有 `before_tool_call`（可 block / 改参 / requireApproval，超时 fail-closed）与 `security.installPolicy`（装前 allow/warn/block）；Hermes 有插件 `pre_tool_call`；CodeBuddy/WorkBuddy 有全局 `PreToolUse`，Skill 自带 hooks 仅限 `context: fork` 且默认关闭；Trae/TraeWork 无工具钩子。
+2. **钩子能力因平台而异。** OpenClaw 有 `before_tool_call`（可 block / 改参 / requireApproval，超时 fail-closed）与 `security.installPolicy`（装前 allow/warn/block）；Hermes 有插件 `pre_tool_call`；WorkBuddy 有全局 `PreToolUse`，Skill 自带 hooks 仅限 `context: fork` 且默认关闭；Trae/TraeWork 无工具钩子。
 3. **OpenShell 只在 Linux 原生强制。** macOS 经 Docker Desktop VM，Windows 经 WSL2 且官方标 Experimental。
 
 现有产品是「Edge Agent + Connector（Go）→ Control API（FastAPI + PostgreSQL）→ Web 控制台」的企业控制面形态，不能直接装进个人桌面。
@@ -53,7 +53,7 @@ SKILL.md 正文只允许「运行脚本并呈现结果」，**裁决由二进制
 | --- | --- | --- | --- |
 | P0 | OpenClaw | L0–L3 | 钩子最完整（装前 + 运行时 + requireApproval），官方已退役内置扫描器并把决策交给外部策略；NemoClaw 底座，与 NVIDIA 关联强 |
 | P0 | Hermes | L0–L3 | 仓内已有 connector 与 patch 治理；`pre_tool_call` 可 block；黑客松原生运行面 |
-| P1 | WorkBuddy / CodeBuddy | L0–L2 | 需写全局 `settings.json` `PreToolUse`，须用户确认且可卸载 |
+| P1 | WorkBuddy | L0–L2 | 需写全局 `settings.json` `PreToolUse`，须用户确认且可卸载 |
 | P2 | Trae / TraeWork | L0 | 无工具钩子，控制台必须标「审计模式，无法阻断」 |
 | P2 | Claude Code / Codex | L0–L2 | 有 hooks，非本轮目标 |
 

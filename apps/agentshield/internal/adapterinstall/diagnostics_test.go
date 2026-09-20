@@ -18,7 +18,7 @@ func checkStatus(d Diagnosis, code string) string {
 }
 
 func TestDiagnosisSeparatesFilesFromRuntime(t *testing.T) {
-	for _, platform := range []string{Hermes, OpenClaw, CodeBuddy, WorkBuddy} {
+	for _, platform := range []string{Hermes, OpenClaw, WorkBuddy} {
 		t.Run(platform, func(t *testing.T) {
 			opts := testOpts(t, platform)
 			if Inspect(opts).ConfigurationState != "not_installed" {
@@ -135,21 +135,6 @@ func TestDiagnosticsRejectUnsafeFilesWithoutLeakingContents(t *testing.T) {
 	}
 }
 
-func TestCodeBuddyDiagnosticRejectsTextOutsideHooks(t *testing.T) {
-	opts := testOpts(t, CodeBuddy)
-	path := filepath.Join(configDir(opts.Home, CodeBuddy), "settings.json")
-	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	raw, _ := json.Marshal(map[string]any{"description": opts.Binary + " hook codebuddy"})
-	if err := os.WriteFile(path, raw, 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if d := Inspect(opts); checkStatus(d, "host_registration") != "fail" || d.ConfigurationState != "incomplete" {
-		t.Fatal("unrelated string accepted as installed hooks")
-	}
-}
-
 func TestWorkBuddyDiagnosticRejectsTextOutsideHooks(t *testing.T) {
 	opts := testOpts(t, WorkBuddy)
 	path := filepath.Join(configDir(opts.Home, WorkBuddy), "settings.json")
@@ -215,12 +200,12 @@ func TestConfiguredEndpointReadsConnectionDocumentOnly(t *testing.T) {
 			t.Fatalf("%s endpoint mismatch: %q %v", platform, endpoint, ok)
 		}
 	}
-	opts := testOpts(t, CodeBuddy)
+	opts := testOpts(t, WorkBuddy)
 	if _, err := Install(opts); err != nil {
 		t.Fatal(err)
 	}
 	if _, ok := ConfiguredEndpoint(opts); ok {
-		t.Fatal("codebuddy has no readable connection document")
+		t.Fatal("workbuddy has no readable connection document")
 	}
 	opts = testOpts(t, WorkBuddy)
 	if _, err := Install(opts); err != nil {

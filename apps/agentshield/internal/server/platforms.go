@@ -22,7 +22,7 @@ func (s *Server) platforms() []PlatformInfo {
 	for _, p := range adapterinstall.Detect(home) {
 		detected[p] = true
 	}
-	names := []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae}
+	names := []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.WorkBuddy, adapterinstall.Trae}
 	out := make([]PlatformInfo, 0, len(names))
 	for _, name := range names {
 		res, err := adapterinstall.Status(adapterinstall.Options{Platform: name, Home: home, StateDir: s.d.Store.Dir})
@@ -34,11 +34,8 @@ func (s *Server) platforms() []PlatformInfo {
 		diagnosis := s.diagnoseAdapter(name)
 		info.Diagnosis = &diagnosis
 		if !adapterinstall.NewIntegrationSupportedOnOS(name, runtime.GOOS) {
-			if name == adapterinstall.CodeBuddy {
-				info.Note = "CodeBuddy 已退出全平台产品范围；已存在的配置仅供查看和卸载"
-			} else {
-				info.Note = "当前 Linux 产品范围不支持 WorkBuddy 新接入；已存在的配置仅供查看和卸载"
-			}
+			info.Note = "当前 Linux 产品范围不支持 WorkBuddy 新接入；已存在的配置仅供查看和卸载"
+
 			out = append(out, info)
 			continue
 		}
@@ -62,7 +59,7 @@ func (s *Server) platforms() []PlatformInfo {
 			}
 		}
 		if name == adapterinstall.WorkBuddy && info.Note != "" {
-			info.Note = info.Note + "。须在 WorkBuddy 桌面会话验证，不能沿用 CodeBuddy"
+			info.Note = info.Note + "。须在 WorkBuddy 桌面会话验证"
 		}
 		if name == adapterinstall.Hermes {
 			info.Note = "此处显示默认目录；其他 profile 请打开实例管理。" + info.Note

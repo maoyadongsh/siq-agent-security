@@ -28,7 +28,6 @@ var embedded embed.FS
 const (
 	OpenClaw  = "openclaw"
 	Hermes    = "hermes"
-	CodeBuddy = "codebuddy"
 	WorkBuddy = "workbuddy"
 	Trae      = "trae"
 )
@@ -89,7 +88,7 @@ type RecoveryPlan struct {
 	SuggestedActions []string `json:"suggested_actions"`
 }
 
-var known = map[string]bool{OpenClaw: true, Hermes: true, CodeBuddy: true, WorkBuddy: true, Trae: true}
+var known = map[string]bool{OpenClaw: true, Hermes: true, WorkBuddy: true, Trae: true}
 
 // Detect lists platforms whose well-known config dir exists under home.
 func Detect(home string) []string {
@@ -97,10 +96,7 @@ func Detect(home string) []string {
 		home, _ = os.UserHomeDir()
 	}
 	var out []string
-	for _, p := range []string{OpenClaw, Hermes, CodeBuddy, WorkBuddy, Trae} {
-		if p == CodeBuddy && validateCodeBuddyConfigDir() != nil {
-			continue
-		}
+	for _, p := range []string{OpenClaw, Hermes, WorkBuddy, Trae} {
 		if p == WorkBuddy && validateWorkBuddyConfigDir() != nil {
 			continue
 		}
@@ -117,11 +113,6 @@ func configDir(home, platform string) string {
 		return filepath.Join(home, ".openclaw")
 	case Hermes:
 		return filepath.Join(home, ".hermes")
-	case CodeBuddy:
-		if dir := os.Getenv("CODEBUDDY_CONFIG_DIR"); dir != "" {
-			return filepath.Clean(dir)
-		}
-		return filepath.Join(home, ".codebuddy")
 	case WorkBuddy:
 		if dir := os.Getenv("WORKBUDDY_CONFIG_DIR"); dir != "" {
 			return filepath.Clean(dir)
@@ -135,27 +126,6 @@ func configDir(home, platform string) string {
 
 // A bad override must never silently select a different user's configuration.
 // This is path validation, not protection against hostile concurrent renames.
-func validateCodeBuddyConfigDir() error {
-	dir := os.Getenv("CODEBUDDY_CONFIG_DIR")
-	if dir == "" {
-		return nil
-	}
-	if !filepath.IsAbs(dir) {
-		return errors.New("adapter: CODEBUDDY_CONFIG_DIR must be an absolute path")
-	}
-	for p := filepath.Clean(dir); ; p = filepath.Dir(p) {
-		info, err := os.Lstat(p)
-		if err != nil && !errors.Is(err, os.ErrNotExist) {
-			return errors.New("adapter: cannot inspect CODEBUDDY_CONFIG_DIR")
-		}
-		if err == nil && !stateformat.AcceptDirectory(info, p) {
-			return errors.New("adapter: CODEBUDDY_CONFIG_DIR requires directory ancestors without symlinks")
-		}
-		if filepath.Dir(p) == p {
-			return nil
-		}
-	}
-}
 
 func validateWorkBuddyConfigDir() error {
 	dir := os.Getenv("WORKBUDDY_CONFIG_DIR")
@@ -180,10 +150,7 @@ func validateWorkBuddyConfigDir() error {
 }
 
 func hookCommand(binary, platform, stateDir string) string {
-	name := "codebuddy"
-	if platform == WorkBuddy {
-		name = "workbuddy"
-	}
+	name := "workbuddy"
 	cmd := hookArg(binary) + " hook " + name
 	// Desktop Electron children do not inherit SIQ_AGENT_SECURITY_STATE_DIR.
 	if platform == WorkBuddy && filepath.IsAbs(stateDir) {
@@ -209,10 +176,7 @@ func isRecordedToolHook(command, platform, binary, stateDir string) bool {
 	if command == hookCommand(binary, platform, stateDir) {
 		return true
 	}
-	name := "codebuddy"
-	if platform == WorkBuddy {
-		name = "workbuddy"
-	}
+	name := "workbuddy"
 	legacy := binary + " hook " + name
 	if platform == WorkBuddy && filepath.IsAbs(stateDir) {
 		legacy += " --state-dir '" + strings.ReplaceAll(stateDir, "'", `'"'"'`) + "'"
@@ -269,11 +233,6 @@ func (p *RecoveryPlan) Error() string {
 func (o *Options) normalise() error {
 	if !known[o.Platform] {
 		return fmt.Errorf("adapter: unknown platform %q", o.Platform)
-	}
-	if o.Platform == CodeBuddy {
-		if err := validateCodeBuddyConfigDir(); err != nil {
-			return err
-		}
 	}
 	if o.Platform == WorkBuddy {
 		if err := validateWorkBuddyConfigDir(); err != nil {
@@ -477,11 +436,6 @@ func appendUnique(ss []string, v string) []string {
 
 // Status reports whether a platform currently looks installed.
 func Status(opts Options) (*Result, error) {
-	if opts.Platform == CodeBuddy {
-		if err := validateCodeBuddyConfigDir(); err != nil {
-			return nil, err
-		}
-	}
 	if opts.Platform == WorkBuddy {
 		if err := validateWorkBuddyConfigDir(); err != nil {
 			return nil, err
@@ -518,7 +472,7 @@ func Status(opts Options) (*Result, error) {
 				break
 			}
 		}
-	case CodeBuddy, WorkBuddy:
+	case WorkBuddy:
 		p := filepath.Join(opts.configRoot(), "settings.json")
 		if exists(p) {
 			rec, err := newestInstanceRecord(opts)

@@ -103,7 +103,7 @@ func (f *workBuddyResumeFixture) serve(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (f *workBuddyResumeFixture) run(call string, post bool) adapters.CodeBuddyOutput {
+func (f *workBuddyResumeFixture) run(call string, post bool) adapters.WorkBuddyOutput {
 	f.t.Helper()
 	input := strings.ReplaceAll(managedWorkBuddyInput, "host-call", call)
 	if post {

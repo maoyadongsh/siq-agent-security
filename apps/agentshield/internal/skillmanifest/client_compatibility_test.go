@@ -11,7 +11,7 @@ import (
 
 func TestClientCompatibilityContractAndTampering(t *testing.T) {
 	key, _ := signing.FromSeed(bytes.Repeat([]byte{7}, 32))
-	m, err := Build(Options{ClientCompatible: true, Version: "0.3.0", ContentHash: strings.Repeat("a", 64), Artifacts: []Artifact{{OS: "linux", Arch: "arm64", SHA256: strings.Repeat("b", 64), Bytes: 123, URL: "https://example.invalid/siq"}}, SignedBy: key.PublicBase64()})
+	m, err := Build(Options{Matrix: historicalMatrix(t, "skill-manifest.v2.sample.json"), ClientCompatible: true, Version: "0.3.0", ContentHash: strings.Repeat("a", 64), Artifacts: []Artifact{{OS: "linux", Arch: "arm64", SHA256: strings.Repeat("b", 64), Bytes: 123, URL: "https://example.invalid/siq"}}, SignedBy: key.PublicBase64()})
 	if err != nil {
 		t.Fatal(err)
 	}

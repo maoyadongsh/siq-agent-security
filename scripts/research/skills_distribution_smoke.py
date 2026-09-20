@@ -26,11 +26,10 @@ SKILL_PATH = "skills/siq-agent-security"
 AGENTS = {
     "openclaw": "skills",
     "hermes-agent": ".hermes/skills",
-    "codebuddy": ".codebuddy/skills",
     "trae": ".trae/skills",
 }
 AGENT_LABELS = {"openclaw": "OpenClaw", "hermes-agent": "Hermes Agent",
-                "codebuddy": "CodeBuddy", "trae": "Trae"}
+                "trae": "Trae"}
 MAX_DOWNLOAD = 32 * 1024 * 1024
 PRELOAD = """const os = require('node:os');
 const { syncBuiltinESMExports } = require('node:module');

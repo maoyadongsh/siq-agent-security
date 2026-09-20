@@ -217,8 +217,8 @@ func usage() {
   %[1]s sync --control-api URL [--identity ID] [--secret-file PATH] [--task-id ID]
                                   # optional Edge upload; skip (exit 0) without creds; never auto-runs from serve
   %[1]s policy-exec         # OpenClaw security.installPolicy exec: stdin request → {decision,reason}
-  %[1]s hook codebuddy|workbuddy [--state-dir DIR] [--managed-config FILE]
-                                  # WorkBuddy hook; CodeBuddy retained only for historical installed hooks
+  %[1]s hook workbuddy [--state-dir DIR] [--managed-config FILE]
+                                  # WorkBuddy desktop hook
   %[1]s adapter install|uninstall|status [platform]
                                   # new install: openclaw|hermes, plus workbuddy on macOS/Windows; legacy uninstall remains
   %[1]s grant <admission_id> --platform P --subject ID
@@ -414,8 +414,12 @@ func (h *httpDecider) Observe(r receipt.Request, result string) error {
 }
 
 func cmdHook(args []string) error {
-	if len(args) < 1 || (args[0] != "codebuddy" && args[0] != "workbuddy") {
-		return fmt.Errorf("hook: supported platforms: codebuddy, workbuddy")
+	if len(args) < 1 {
+		return fmt.Errorf("hook: supported platforms: workbuddy")
+	}
+	// Unsupported hooks must deny structurally: exit 1 can be non-blocking.
+	if args[0] != "workbuddy" {
+		return runUnavailableHostHook(args[0], os.Stdin, os.Stdout)
 	}
 	fs := flag.NewFlagSet("hook", flag.ContinueOnError)
 	selected := fs.String("state-dir", "", "explicit canonical initialized state directory (overrides environment)")
@@ -454,7 +458,7 @@ func cmdHook(args []string) error {
 	return runHostHook(args[0], os.Stdin, os.Stdout)
 }
 
-// A command-hook exit status of 1 is non-blocking in CodeBuddy and WorkBuddy.
+// A command-hook exit status of 1 is non-blocking in WorkBuddy.
 // Initialization failures must still reach the adapter's structured pre/post
 // failure mapping.
 func hostHookClient() (adapters.Decider, string, string) {
@@ -485,8 +489,7 @@ func runHostHook(platform string, in io.Reader, out io.Writer) error {
 	if platform == "workbuddy" {
 		return runWorkBuddySelectedHook("", false, in, out)
 	}
-	d, mode, dir := hostHookClient()
-	return writeHostHook(platform, in, out, d, mode, dir)
+	return runUnavailableHostHook(platform, in, out)
 }
 
 // runUnavailableHostHook preserves fail-closed behavior when the hook cannot
@@ -511,8 +514,8 @@ func writeHostHook(platform string, in io.Reader, out io.Writer, d adapters.Deci
 	return json.NewEncoder(out).Encode(result)
 }
 
-func runCodeBuddyHook(in io.Reader, out io.Writer) error {
-	return runHostHook("codebuddy", in, out)
+func runWorkBuddyHook(in io.Reader, out io.Writer) error {
+	return runHostHook("workbuddy", in, out)
 }
 
 func cmdServe(args []string) error {

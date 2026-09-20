@@ -173,8 +173,8 @@ func TestTransactionConflictPreservesForeignEditAndCanRecover(t *testing.T) {
 func TestTransactionAuditFailureAndEncryptedRecovery(t *testing.T) {
 	for _, when := range []string{"start", "completion"} {
 		t.Run(when, func(t *testing.T) {
-			o := testOpts(t, CodeBuddy)
-			path := filepath.Join(o.Home, ".codebuddy", "settings.json")
+			o := testOpts(t, WorkBuddy)
+			path := filepath.Join(o.Home, ".workbuddy", "settings.json")
 			secret := "private-fixture-do-not-leak"
 			putTestFile(t, path, []byte(`{"private":"`+secret+`"}`), 0600)
 			p := testPlan(t, o, "install")

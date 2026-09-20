@@ -57,7 +57,7 @@ func TestWorkBuddyCustomConfigThroughAdminAPI(t *testing.T) {
 		if platform["name"] == "workbuddy" {
 			found = platform["adapter"] == "installed"
 			note, _ := platform["note"].(string)
-			if !strings.Contains(note, "不能沿用 CodeBuddy") {
+			if !strings.Contains(note, "须在 WorkBuddy 桌面会话验证") {
 				t.Fatalf("workbuddy note lost independent verification: %v", platform)
 			}
 		}

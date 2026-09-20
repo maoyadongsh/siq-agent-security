@@ -1,7 +1,7 @@
 // Package adapters holds the host-side halves of platform adapters that run as
 // agentshield subcommands (dev-spec §4): OpenClaw's operator install policy
-// (`agentshield policy-exec`) and CodeBuddy/WorkBuddy PreToolUse hooks
-// (`agentshield hook codebuddy|workbuddy`). They translate platform I/O contracts to
+// (`agentshield policy-exec`) and WorkBuddy PreToolUse hooks
+// (`agentshield hook workbuddy`). They translate platform I/O contracts to
 // admission / decision calls and apply the fail-closed table; no policy lives here.
 package adapters
 
@@ -122,10 +122,10 @@ func quarantineSummary(a admission.Admission) string {
 	return strings.Join(parts, ", ")
 }
 
-// ---------------------------------------------------------------- CodeBuddy
+// ---------------------------------------------------------------- WorkBuddy
 
-// CodeBuddyInput is the PreToolUse / PostToolUse stdin document.
-type CodeBuddyInput struct {
+// WorkBuddyInput is the PreToolUse / PostToolUse stdin document.
+type WorkBuddyInput struct {
 	ToolUseID      string         `json:"tool_use_id"`
 	SessionID      string         `json:"session_id"`
 	Cwd            string         `json:"cwd"`
@@ -136,8 +136,8 @@ type CodeBuddyInput struct {
 	ToolResponse   any            `json:"tool_response"`
 }
 
-// CodeBuddyOutput is the hookSpecificOutput contract.
-type CodeBuddyOutput struct {
+// WorkBuddyOutput is the hookSpecificOutput contract.
+type WorkBuddyOutput struct {
 	HookSpecificOutput struct {
 		HookEventName            string `json:"hookEventName"`
 		PermissionDecision       string `json:"permissionDecision,omitempty"`
@@ -151,23 +151,21 @@ type Decider interface {
 	Observe(receipt.Request, string) error
 }
 
-// CodeBuddyHook maps one CodeBuddy hook event. WorkBuddy uses the same JSON
-// contract via HostToolHook with platform "workbuddy".
-func CodeBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (CodeBuddyOutput, error) {
-	return HostToolHook(in, d, agentID, mode, stateDir, "codebuddy")
+// WorkBuddyHook maps one WorkBuddy hook event.
+func WorkBuddyHook(in io.Reader, d Decider, agentID, mode, stateDir string) (WorkBuddyOutput, error) {
+	return HostToolHook(in, d, agentID, mode, stateDir, "workbuddy")
 }
 
-// HostToolHook maps one CodeBuddy or WorkBuddy hook event. mode is the
+// HostToolHook maps one WorkBuddy hook event. mode is the
 // enforcement mode used for the fail-closed table when the decider errors.
 // stateDir receives unsigned pending records on fail-closed (dev-spec §3.8.4);
-// empty skips the log. Receipts must carry the host platform; CodeBuddy CLI
-// must not be recorded as WorkBuddy.
-func HostToolHook(in io.Reader, d Decider, agentID, mode, stateDir, platform string) (CodeBuddyOutput, error) {
-	if platform != "codebuddy" && platform != "workbuddy" {
-		return failClosed(CodeBuddyOutput{}, "PreToolUse", mode, stateDir, platform, "", "", "unsupported hook platform")
+// empty skips the log. Receipts carry the host platform.
+func HostToolHook(in io.Reader, d Decider, agentID, mode, stateDir, platform string) (WorkBuddyOutput, error) {
+	if platform != "workbuddy" {
+		return failClosed(WorkBuddyOutput{}, "PreToolUse", "block", "", platform, "", "", "unsupported hook platform")
 	}
-	var out CodeBuddyOutput
-	var ev CodeBuddyInput
+	var out WorkBuddyOutput
+	var ev WorkBuddyInput
 	if err := json.NewDecoder(in).Decode(&ev); err != nil {
 		return failClosed(out, "PreToolUse", mode, stateDir, platform, "", "", "malformed hook input")
 	}
@@ -219,7 +217,7 @@ func HostToolHook(in io.Reader, d Decider, agentID, mode, stateDir, platform str
 	return out, errors.New("unsupported hook event " + ev.HookEventName)
 }
 
-func failClosed(out CodeBuddyOutput, event, mode, stateDir, platform, tool, session, reason string) (CodeBuddyOutput, error) {
+func failClosed(out WorkBuddyOutput, event, mode, stateDir, platform, tool, session, reason string) (WorkBuddyOutput, error) {
 	out.HookSpecificOutput.HookEventName = event
 	outcome := pending.OutcomeForMode(mode)
 	if mode == "block" {

@@ -291,7 +291,7 @@ func PrepareContext(ctx context.Context, opts Options, action string) (*Plan, er
 	if action == "uninstall" && prior == nil && opts.Platform != Trae {
 		return nil, errNoInstallRecord
 	}
-	if prior != nil && action == "install" && (opts.Platform == CodeBuddy || opts.Platform == WorkBuddy) {
+	if prior != nil && action == "install" && (opts.Platform == WorkBuddy) {
 		path := filepath.Join(opts.configRoot(), "settings.json")
 		paths := hostConfigPaths(*prior)
 		if len(paths) != 1 || paths[0] != path || prior.Modified[path] == "" && prior.Written[path] == "" && !slices.Contains(prior.Created, path) {
@@ -548,7 +548,7 @@ func (p *Plan) prepareInstall() error {
 			doc["security"] = sec
 		}
 		return p.write(path, encodePlanJSON(doc), 0o600, "登记本插件的加载路径与启用项；保留其他平台设置")
-	case CodeBuddy, WorkBuddy:
+	case WorkBuddy:
 		if o.Platform == WorkBuddy {
 			if err := p.prepareWorkBuddyManagedConfig(); err != nil {
 				return err
@@ -585,7 +585,7 @@ func (p *Plan) prepareInstall() error {
 		doc["hooks"] = hooks
 		purpose := "登记工具执行前和执行后的 SIQ 钩子；保留其他设置"
 		if o.Platform == WorkBuddy {
-			purpose = "登记 WorkBuddy 桌面工具钩子；保留 enabledPlugins 及其他设置，不沿用 CodeBuddy 安装"
+			purpose = "登记 WorkBuddy 桌面工具钩子；保留 enabledPlugins 及其他设置"
 		}
 		return p.write(path, encodePlanJSON(doc), 0o600, purpose)
 	}

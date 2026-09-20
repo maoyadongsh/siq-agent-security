@@ -1,6 +1,6 @@
 # WorkBuddy Windows 受管 command 接入增量 v1
 
-本规格继承 ADR-028/029、Windows Authority 与 N01 消费者屏障。范围为 Windows WorkBuddy 自身的 command hook，不用 CodeBuddy CLI 或源码阅读代替桌面实测。实现、组件验证、真实桌面验证分别记录；本文件不宣布 WorkBuddy 完成。
+本规格继承 ADR-028/029、Windows Authority 与 N01 消费者屏障。范围为 Windows WorkBuddy 自身的 command hook，须独立桌面实测，源码阅读不能代替。实现、组件验证、真实桌面验证分别记录；本文件不宣布 WorkBuddy 完成。
 
 ## 实例与版本
 

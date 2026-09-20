@@ -38,7 +38,7 @@ CodeBuddy 的命令钩子协议将退出码 2 用于阻断，其他非零退出�
 
 ## 3. 原生复验
 
-[validate-codebuddy-hook-failures.py](../scripts/validate-codebuddy-hook-failures.py) 通过真实安装器注册命令钩子，建立可信 Grant 和 Intent，再逐项注入临时配置或凭据故障。每个故障后恢复原始文件，测试不修改用户配置。
+[validate-codebuddy-hook-failures.py](https://github.com/maoyadongsh/siq-agent-security/blob/809b124171979bbbbf6dfa96583f73fd9b00d666/scripts/validate-codebuddy-hook-failures.py) 通过真实安装器注册命令钩子，建立可信 Grant 和 Intent，再逐项注入临时配置或凭据故障。每个故障后恢复原始文件，测试不修改用户配置。
 
 [修复后归档](evidence/intent-v2/native-codebuddy-bootstrap-fixed-20260907.json) 为 `passed=true`：
 

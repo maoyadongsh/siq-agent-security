@@ -37,10 +37,6 @@ func (s *Server) diagnoseAdapter(platform string) adapterinstall.Diagnosis {
 	if !adapterinstall.NewIntegrationSupportedOnOS(platform, runtime.GOOS) {
 		message := "Linux 不支持 WorkBuddy 新接入；历史配置可查看或卸载"
 		next := "如有旧接入，可在设置中卸载；Linux 当前仅验收 OpenClaw 和 Hermes。"
-		if platform == adapterinstall.CodeBuddy {
-			message = "CodeBuddy 已退出全平台产品范围；历史配置可查看或卸载"
-			next = "如有旧接入，可在设置中卸载；新权限请选当前支持的平台。"
-		}
 		return adapterinstall.Diagnosis{
 			Platform: platform, ConfigurationState: "unsupported", RuntimeState: "unverified",
 			Checks:    []adapterinstall.DiagnosticCheck{{Code: "product_scope", Status: "not_applicable", Message: message}},
@@ -56,7 +52,7 @@ func (s *Server) adapterDiagnostics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rows := []adapterinstall.Diagnosis{}
-	for _, platform := range []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.CodeBuddy, adapterinstall.WorkBuddy, adapterinstall.Trae} {
+	for _, platform := range []string{adapterinstall.OpenClaw, adapterinstall.Hermes, adapterinstall.WorkBuddy, adapterinstall.Trae} {
 		rows = append(rows, s.diagnoseAdapter(platform))
 	}
 	w.Header().Set("Cache-Control", "no-store")
@@ -96,11 +92,8 @@ func (s *Server) diagnoseInstance(opts adapterinstall.Options) adapterinstall.Di
 func (s *Server) backendReachability(opts adapterinstall.Options) adapterinstall.DiagnosticCheck {
 	configured, ok := adapterinstall.ConfiguredEndpoint(opts)
 	if !ok {
-		if opts.Platform == adapterinstall.CodeBuddy {
-			return adapterinstall.DiagnosticCheck{Code: "backend_reachability", Status: "unknown", Message: "CodeBuddy 的服务连接需在其目标进程内验证；此处不读取其运行配置"}
-		}
 		if opts.Platform == adapterinstall.WorkBuddy {
-			return adapterinstall.DiagnosticCheck{Code: "backend_reachability", Status: "unknown", Message: "WorkBuddy 的服务连接需在桌面会话内验证；此处不读取其运行配置，CodeBuddy CLI 不能代替"}
+			return adapterinstall.DiagnosticCheck{Code: "backend_reachability", Status: "unknown", Message: "WorkBuddy 的服务连接需在桌面会话内验证；此处不读取其运行配置"}
 		}
 		return adapterinstall.DiagnosticCheck{Code: "backend_reachability", Status: "unknown", Message: "无法读取适配器配置中的服务地址"}
 	}

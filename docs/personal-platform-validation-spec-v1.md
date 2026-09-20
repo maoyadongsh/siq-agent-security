@@ -16,13 +16,13 @@
 
 ## 2. 每行需要记录什么
 
-平台仅允许 openclaw、hermes、workbuddy；CodeBuddy 不能代替 WorkBuddy。每行独立记录 os/arch/mode、实际 OS 和宿主版本、实际受测 SIQ 二进制 SHA-256；WSL2 还需 guest_version，并将 os_version 保留为 Windows 主系统版本。没有运行的版本/二进制值为 null，不猜测。
+平台仅允许 openclaw、hermes、workbuddy；WorkBuddy 须独立验收。每行独立记录 os/arch/mode、实际 OS 和宿主版本、实际受测 SIQ 二进制 SHA-256；WSL2 还需 guest_version，并将 os_version 保留为 Windows 主系统版本。没有运行的版本/二进制值为 null，不猜测。
 
 八项能力是 UX-001 的接入探测，不替代 UX-015 的全旅程：discovery、normal_execution、pre_execution_denial、service_unavailable_denial、approval_resume、final_parameter_recheck、skill_attribution、install_interception。含义分别为发现、正常执行、执行前拒绝、决策服务失联拒绝、批准后恢复、最终参数复核、可信 Skill 版本归属和原生安装入口拦截。
 
 每项必须包含 status/method/reason/evidence。状态为 not_run、blocked、pass、fail；跳过不作为通过。方法区分 none、source_review、component_fixture、native_cli、native_desktop。pass/fail 必须有非空证据及实际版本/二进制身份；pass 的 reason 必须 null，fail 为 observed_failure；not_run 必须 none 方法和空证据。blocked 保留明确类别，不产生通过。
 
-native_cli / native_desktop 的 pass 只记为 native_checks_recorded；WorkBuddy 只有其本身 native_desktop 记录达到本探测的目标强度，CLI/CodeBuddy/网页夹具都不替代。八项全满足也仅输出 ready_for_review，support_claim 始终 not_assessed。未知归属、平台缺能力、缺系统环境均保留 needs_native_evidence；这不是 CI 代码失败，不阻止相互独立的后续实现。
+native_cli / native_desktop 的 pass 只记为 native_checks_recorded；WorkBuddy 只有其本身 native_desktop 记录达到本探测的目标强度，其他 CLI/网页夹具都不替代。八项全满足也仅输出 ready_for_review，support_claim 始终 not_assessed。未知归属、平台缺能力、缺系统环境均保留 needs_native_evidence；这不是 CI 代码失败，不阻止相互独立的后续实现。
 
 ## 3. 文件、安全与预算
 

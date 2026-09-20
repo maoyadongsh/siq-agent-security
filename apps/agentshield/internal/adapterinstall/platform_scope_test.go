@@ -12,9 +12,9 @@ func TestNewIntegrationScopePreservesProductPlatforms(t *testing.T) {
 		{WorkBuddy, "windows", true},
 		{OpenClaw, "linux", true},
 		{Hermes, "linux", true},
-		{CodeBuddy, "linux", false},
-		{CodeBuddy, "darwin", false},
-		{CodeBuddy, "windows", false},
+		{"codebuddy", "linux", false},
+		{"codebuddy", "darwin", false},
+		{"codebuddy", "windows", false},
 	} {
 		if got := NewIntegrationSupportedOnOS(tc.platform, tc.goos); got != tc.want {
 			t.Errorf("NewIntegrationSupportedOnOS(%q, %q) = %v, want %v", tc.platform, tc.goos, got, tc.want)

@@ -46,11 +46,6 @@ func Inspect(opts Options) Diagnosis {
 	if opts.Home == "" {
 		opts.Home, _ = os.UserHomeDir()
 	}
-	if opts.Platform == CodeBuddy && validateCodeBuddyConfigDir() != nil {
-		d.ConfigurationState = "incomplete"
-		d.check("configuration_root", "fail", "平台配置目录覆盖无效或包含符号链接")
-		return d
-	}
 	if opts.Platform == WorkBuddy && validateWorkBuddyConfigDir() != nil {
 		d.ConfigurationState = "incomplete"
 		d.check("configuration_root", "fail", "平台配置目录覆盖无效或包含符号链接")
@@ -66,7 +61,7 @@ func Inspect(opts Options) Diagnosis {
 	entry := filepath.Join(plugin, "index.ts")
 	if opts.Platform == Hermes {
 		entry = filepath.Join(plugin, "plugin.yaml")
-	} else if opts.Platform == CodeBuddy || opts.Platform == WorkBuddy {
+	} else if opts.Platform == WorkBuddy {
 		entry = filepath.Join(root, "settings.json")
 	}
 	if _, err := os.Lstat(entry); errors.Is(err, os.ErrNotExist) {
@@ -78,7 +73,7 @@ func Inspect(opts Options) Diagnosis {
 		// Partial installs and legacy roots need repair, not a false fresh state.
 		_, pluginErr := os.Lstat(plugin)
 		_, legacyErr := os.Lstat(filepath.Join(root, "plugins", product.LegacyName))
-		if !managedWorkBuddy && (opts.Platform == CodeBuddy || opts.Platform == WorkBuddy || errors.Is(pluginErr, os.ErrNotExist) && errors.Is(legacyErr, os.ErrNotExist)) {
+		if !managedWorkBuddy && (opts.Platform == WorkBuddy || errors.Is(pluginErr, os.ErrNotExist) && errors.Is(legacyErr, os.ErrNotExist)) {
 			d.check("adapter_files", "unknown", "尚未发现当前适配器文件")
 			d.NextSteps = append(d.NextSteps, "查看接入所需改动并安装适配器，随后验证宿主加载和工具调用。")
 			return d
@@ -121,7 +116,7 @@ func Inspect(opts Options) Diagnosis {
 				d.NextSteps = append(d.NextSteps, "在接入预览中选择目标 profile 并启用插件，再开启新会话验证正常和拒绝调用。")
 			}
 		}
-	case CodeBuddy, WorkBuddy:
+	case WorkBuddy:
 		if opts.Platform == WorkBuddy && inspectWorkBuddyManaged(&d, opts) {
 			break
 		}
@@ -131,10 +126,7 @@ func Inspect(opts Options) Diagnosis {
 		} else {
 			d.check("host_registration", "fail", "未确认前置及后置工具钩子，或命令与当前程序不一致")
 		}
-		message := "需在 CodeBuddy 实际进程中验证程序路径、状态目录及服务连接"
-		if opts.Platform == WorkBuddy {
-			message = "需在 WorkBuddy 桌面会话中验证程序路径、状态目录及服务连接；CodeBuddy CLI 不能代替"
-		}
+		message := "需在 WorkBuddy 桌面会话中验证程序路径、状态目录及服务连接"
 		d.check("service_configuration", "unknown", message)
 	}
 	for _, check := range d.Checks {
@@ -334,8 +326,4 @@ func hostHookRegisteredCommand(doc map[string]any, command string) bool {
 		}
 	}
 	return true
-}
-
-func codeBuddyRegistered(doc map[string]any, binary string) bool {
-	return hostHookRegistered(doc, binary, CodeBuddy, "")
 }

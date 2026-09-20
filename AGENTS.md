@@ -39,7 +39,7 @@ siq-agent-security 本地模式（`apps/agentshield/`）额外遵守：
 - Python ≥3.12：`uv sync --dev`、`uv run ruff check app`、`uv run pytest`；迁移必须 Alembic 且可在干净库回放；
 - Go ≥1.22：标准库优先；Connector 只经 `edge/agent/protocol` 共享包引用合同类型；`apps/agentshield` 仅 stdlib，第三方依赖需 ADR；
 - 规则包 `threat_rules.v1.json` 是 Python/Go **共享文件**（`apps/control-api/app/data/` 与 `apps/agentshield/internal/rulepack/data/` 两份由测试锁定一致）：模式必须 RE2 兼容且 CPython 语义等价，改动两侧测试都要跑；
-- 平台适配器（`adapters/runtime/*-agentshield/`）只做钩子 ↔ HTTP 映射，不含规则、判定或密钥；改写用户配置（如 CodeBuddy `settings.json`）必须先备份、可卸载；
+- 平台适配器（`adapters/runtime/*-agentshield/`）只做钩子 ↔ HTTP 映射，不含规则、判定或密钥；改写用户配置（如 WorkBuddy `settings.json`）必须先备份、可卸载；
 - Skill（`skills/siq-agent-security/`）遵守 agentskills.io 规范：`description` ≤60 字符一句话句号结尾；正文明确「裁决由二进制产出，模型不判断安全性」；
 - Web：`npm ci && npm run build`；token 永不落 localStorage；
 - 提交：`<scope>: <简洁主题>` 格式（如 `contracts:`、`control-api:`、`edge:`、`web:`、`agentshield:`、`adapters:`、`skills:`、`rulepack:`、`docs:`）；安全修复必须带负向测试证明旧行为被拒绝；

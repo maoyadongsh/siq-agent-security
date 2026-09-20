@@ -74,11 +74,11 @@ func byID(rep *Report) map[string]Candidate {
 
 func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	rep := runInv(t, fakeHome(t))
-	if strings.Join(rep.Platforms, ",") != "codebuddy,hermes,mcp,openclaw,trae,workbuddy" {
+	if strings.Join(rep.Platforms, ",") != "hermes,mcp,openclaw,trae,workbuddy" {
 		t.Fatalf("platforms %v", rep.Platforms)
 	}
 	c := byID(rep)
-	for _, want := range []string{"platform:hermes", "platform:openclaw", "platform:codebuddy", "platform:workbuddy"} {
+	for _, want := range []string{"platform:hermes", "platform:openclaw", "platform:workbuddy"} {
 		if _, ok := c[want]; !ok {
 			t.Fatalf("missing %s in %v", want, keys(c))
 		}
@@ -97,9 +97,6 @@ func TestDiscoversPlatformsAndSkills(t *testing.T) {
 	}
 	if c["platform:openclaw"].Attributes["agentshield_install_gate"] == "true" || c["platform:openclaw"].Attributes["agentshield_tool_hook"] != "true" {
 		t.Fatalf("openclaw adapters not detected: %v", c["platform:openclaw"].Attributes)
-	}
-	if c["platform:codebuddy"].Attributes["agentshield_tool_hook"] != "true" {
-		t.Fatal("codebuddy PreToolUse hook not detected")
 	}
 	if c["platform:workbuddy"].Attributes["agentshield_tool_hook"] != "true" {
 		t.Fatal("workbuddy PreToolUse hook not detected")
@@ -123,8 +120,8 @@ func TestDiscoversPlatformsAndSkills(t *testing.T) {
 			declaredTools++
 		}
 	}
-	if factsObs != 4 { // openclaw, codebuddy, workbuddy hooks, hermes plugin marker
-		t.Fatalf("expected 4 observed facts, got %d", factsObs)
+	if factsObs != 3 { // openclaw, workbuddy hooks, hermes plugin marker
+		t.Fatalf("expected 3 observed facts, got %d", factsObs)
 	}
 	if declaredTools < 1 {
 		t.Fatal("hermes platform_toolsets must produce declared tool facts")

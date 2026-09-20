@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure unchanged historical OpenClaw/CodeBuddy adapters against today's daemon.
+"""Measure unchanged historical OpenClaw adapters against today's daemon.
 
 Exit 1 and passed=false mean full observation compatibility is not achieved,
 even when authorization and rejection of ambiguous observations work correctly.
@@ -11,10 +11,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.util
-import io
 import json
 import subprocess
-import tarfile
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,9 +28,8 @@ def load(name, file):
     return module
 
 
-cb = load("legacy_cb_base", "validate-intent-v2-codebuddy.py")
 oc = load("legacy_oc_base", "validate-intent-v2-openclaw.py")
-require = cb.require
+require = oc.fixture.require
 
 
 def digest(path):
@@ -71,46 +68,6 @@ syncBuiltinESMExports();
         h.env["NODE_OPTIONS"] = "--require=" + str(preload)
         return {"index.ts": digest(target)}
 
-    # Build the whole historical stdlib module, not an imitation of old payloads.
-    archive = subprocess.check_output(
-        ["git", "archive", LEGACY, "apps/agentshield"], cwd=ROOT
-    )
-    checkout = h.root / "legacy-source"
-    with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
-        for member in bundle.getmembers():
-            path = Path(member.name)
-            require(not path.is_absolute() and ".." not in path.parts, "unsafe archive")
-            require(member.isdir() or member.isfile(), "unsupported archive member")
-            if member.isfile():
-                dest = checkout / path
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                dest.write_bytes(bundle.extractfile(member).read())
-    old_binary = h.root / "legacy-siq-agent-security"
-    h.command(
-        ["go", "build", "-trimpath", "-o", str(old_binary), "./cmd/agentshield"],
-        cwd=checkout / "apps/agentshield",
-        timeout=180,
-    )
-    h.command([str(h.binary), "adapter", "install", "codebuddy"])
-    settings = h.config_dir / "settings.json"
-    config = json.loads(settings.read_text())
-    changed = 0
-    for groups in config["hooks"].values():
-        for group in groups:
-            for hook in group["hooks"]:
-                command = hook.get("command", "")
-                if str(h.binary) in command:
-                    hook["command"] = command.replace(str(h.binary), str(old_binary))
-                    changed += 1
-    require(changed == 2, "expected only pre/post fixture commands")
-    settings.write_text(json.dumps(config))
-    return {
-        "archive_sha256": hashlib.sha256(archive).hexdigest(),
-        "binary_sha256": digest(old_binary),
-        "adapters.go": digest(
-            checkout / "apps/agentshield/internal/adapters/adapters.go"
-        ),
-    }
 
 
 def exercise(h, platform):
@@ -123,11 +80,8 @@ def exercise(h, platform):
     def call(label, session, action, binding, observations, company="company-a"):
         before = len(h.receipts())
         request = h.read(label, company)
-        if platform == "codebuddy":
-            output = h.native([request], session)[0]["result"]
-        else:
-            request["session_id"] = session
-            output = h.native([request])[0]["result"]
+        request["session_id"] = session
+        output = h.native([request])[0]["result"]
         records = h.receipts()[before:]
         decisions = [r for r in records if r.get("record_type") == "decision"]
         observed = [r for r in records if r.get("record_type") == "observation"]
@@ -174,7 +128,7 @@ def exercise(h, platform):
         0,
         "company-b",
     )
-    call("bound-denial", cb.SESSION, "deny", "bound", 0, "company-b")
+    call("bound-denial", oc.fixture.SESSION, "deny", "bound", 0, "company-b")
     h.stop(kill=True)
     h.config("required")
     h.start()
@@ -192,27 +146,9 @@ def exercise(h, platform):
             (ROOT / "adapters/runtime/openclaw-agentshield/index.ts").read_bytes()
         )
         upgraded_hash = digest(destination)
-    else:
-        settings = h.config_dir / "settings.json"
-        config = json.loads(settings.read_text())
-        changed = 0
-        for groups in config["hooks"].values():
-            for group in groups:
-                for hook in group["hooks"]:
-                    old = str(h.root / "legacy-siq-agent-security")
-                    if old in hook.get("command", ""):
-                        hook["command"] = hook["command"].replace(old, str(h.binary))
-                        changed += 1
-        require(changed == 2, "upgrade did not replace both legacy hooks")
-        require(
-            config["env"]["SIQ_FIXTURE_USER_SETTING"] == "preserve",
-            "upgrade lost user fixture setting",
-        )
-        settings.write_text(json.dumps(config))
-        upgraded_hash = digest(h.binary)
     call("upgraded-first", "legacy-optional", "allow", "unbound", 1)
     call("upgraded-repeat", "legacy-optional", "allow", "unbound", 1)
-    call("upgraded-bound-denial", cb.SESSION, "deny", "bound", 0, "company-b")
+    call("upgraded-bound-denial", oc.fixture.SESSION, "deny", "bound", 0, "company-b")
     h.stop(kill=True)
     h.start()
     call("upgraded-after-restart", "legacy-optional", "allow", "unbound", 1)
@@ -233,47 +169,26 @@ def exercise(h, platform):
         "legacy_case_count": legacy_cases,
         "cases": cases,
         "receipt_count": len(records),
-        "runtime": (
-            {
-                "version": json.loads(
-                    (h.args.codebuddy_root / "package.json").read_text()
-                )["version"],
-                "headless_sha256": digest(
-                    h.args.codebuddy_root / "dist/codebuddy-headless.js"
-                ),
-                "native_cli_invocations": h.native_count,
-                "model_requests": h.model.request_count,
-            }
-            if platform == "codebuddy"
-            else h.native_metadata
-        ),
+        "runtime": h.native_metadata,
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--platform", choices=["openclaw", "codebuddy"], required=True)
+    parser.add_argument("--platform", choices=["openclaw"], required=True)
     parser.add_argument("--runtime-root", type=Path, required=True)
     parser.add_argument("--node", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    args.codebuddy_root = args.openclaw_root = args.runtime_root.resolve(strict=True)
+    args.openclaw_root = args.runtime_root.resolve(strict=True)
     args.node = args.node.resolve(strict=True)
-    if args.platform == "codebuddy":
-        pkg = json.loads((args.codebuddy_root / "package.json").read_text())
-        require(
-            pkg["name"] == "@tencent-ai/codebuddy-code" and pkg["version"] == "2.146.0",
-            "unvalidated native runtime",
-        )
     with tempfile.TemporaryDirectory(prefix="siq-legacy-platform-") as tmp:
-        cls = cb.Harness if args.platform == "codebuddy" else oc.OpenClawHarness
+        cls = oc.OpenClawHarness
         h = cls(Path(tmp), args)
         try:
             report = exercise(h, args.platform)
         finally:
             h.stop()
-            if args.platform == "codebuddy":
-                h.model.close()
     report.update(
         {
             "schema": "intent-v2-legacy-platform-validation/v1",
@@ -287,16 +202,13 @@ def main():
                 for name in (
                     "scripts/validate-intent-v2-legacy-platforms.py",
                     "scripts/validate-intent-v2-hermes.py",
-                    "scripts/validate-intent-v2-codebuddy.py",
                     "scripts/validate-intent-v2-openclaw.py",
                     "scripts/openclaw-native-worker.mjs",
-                    "scripts/codebuddy-fixture-guard.mjs",
                 )
             },
             "limitations": [
                 "fixed historical source, not all released artifacts",
                 "OpenClaw uses native tool components and harness-driven after relay",
-                "CodeBuddy uses complete native CLI with synthetic loopback model",
                 "no user configuration, human approval or OS isolation validation",
                 "missing/ambiguous observations remain rejected; no matching by guess",
             ],

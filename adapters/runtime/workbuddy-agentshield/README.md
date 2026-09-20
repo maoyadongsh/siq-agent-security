@@ -1,10 +1,10 @@
 # workbuddy-agentshield（WorkBuddy 桌面 command 接入）
 
-WorkBuddy 使用 `settings.json` 的 `PreToolUse` / `PostToolUse` command hook。本适配器只做宿主协议与 SIQ HTTP 的映射，回执平台为 `workbuddy`。配置成功与真实桌面生效分别验收；CodeBuddy CLI 或阅读宿主源码不能代替桌面实测。
+WorkBuddy 使用 `settings.json` 的 `PreToolUse` / `PostToolUse` command hook。本适配器只做宿主协议与 SIQ HTTP 的映射，回执平台为 `workbuddy`。配置成功与真实桌面生效分别验收；阅读宿主源码不能代替桌面实测。
 
 ## 当前范围与证据
 
-Windows/macOS 属于当前产品范围，Linux 不新增接入，CodeBuddy 的历史 CLI 适配不等于 WorkBuddy。Windows 受管身份和下文的旧 macOS command 路径能力不同，不能合并为跨平台一致保证。范围依据见[平台决策](../../../docs/personal-platform-scope-decision-20260917.md)。
+Windows/macOS 属于当前产品范围，Linux 不新增接入。Windows 受管身份和下文的旧 macOS command 路径能力不同，不能合并为跨平台一致保证。范围依据见[平台决策](../../../docs/personal-platform-scope-decision-20260917.md)。
 
 [评测索引](../../../evaluations/README.md)已登记 Windows WorkBuddy 5.5.6 的两次原生桌面任务，含安装 Skill 读写；这不是完整验收率，早期超时仍保留，审批恢复与桌面升级需后续同候选验证。本模块关注宿主调用身份、持久关联、权限复验与唯一执行预留，具体实现与失败语义见下文。
 
@@ -17,7 +17,7 @@ Windows/macOS 属于当前产品范围，Linux 不新增接入，CodeBuddy 的�
 
 配置只引用 `state_dir/runtime-identity-secrets/<identity>.token`；不复制明文 token，不使用共享 token、默认 agent 或默认 session。安装先备份，保留 `enabledPlugins` 及其他设置，修复沿用已登记身份。受管配置缺失、损坏或残留时拒绝降级；诊断仅读取配置和公开身份引用，不读取凭据。
 
-`WORKBUDDY_CONFIG_DIR` 须为可核验的绝对目录；不使用 `CODEBUDDY_CONFIG_DIR`、`cwd`、日常数据库或登录态定位实例。本接入不读取 `workbuddy.db`、`config.yaml`、`claw` 凭据或 `transcript_path`。
+`WORKBUDDY_CONFIG_DIR` 须为可核验的绝对目录；不使用 其他平台环境变量、`cwd`、日常数据库或登录态定位实例。本接入不读取 `workbuddy.db`、`config.yaml`、`claw` 凭据或 `transcript_path`。
 
 ## 原生协议与 HTTP 链
 

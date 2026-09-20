@@ -138,21 +138,21 @@ func (f *fakeDecider) Observe(_ receipt.Request, s string) error {
 	return nil
 }
 
-func TestCodeBuddyHookMapping(t *testing.T) {
+func TestWorkBuddyHookMapping(t *testing.T) {
 	in := `{"session_id":"s","cwd":"/p","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"ls"}}`
 	for action, want := range map[string]string{receipt.ActionAllow: "allow", receipt.ActionDeny: "deny", receipt.ActionHold: "ask", receipt.ActionRedact: "ask"} {
 		fd := &fakeDecider{dec: &receipt.Decision{Action: action, Reason: "r", Receipt: receipt.Receipt{ReceiptID: "rcp-1"}}}
-		out, err := CodeBuddyHook(strings.NewReader(in), fd, "a", "block", t.TempDir())
+		out, err := WorkBuddyHook(strings.NewReader(in), fd, "a", "block", t.TempDir())
 		if err != nil || out.HookSpecificOutput.PermissionDecision != want || !strings.Contains(out.HookSpecificOutput.PermissionDecisionReason, "rcp-1") {
 			t.Fatalf("%s → %+v %v", action, out, err)
 		}
 	}
 }
 
-func TestCodeBuddyHookFailClosedTable(t *testing.T) {
+func TestWorkBuddyHookFailClosedTable(t *testing.T) {
 	in := `{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{}}`
 	state := t.TempDir()
-	out, _ := CodeBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "block", state)
+	out, _ := WorkBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "block", state)
 	if out.HookSpecificOutput.PermissionDecision != "deny" {
 		t.Fatal("block mode must deny when service is down")
 	}
@@ -161,15 +161,15 @@ func TestCodeBuddyHookFailClosedTable(t *testing.T) {
 	if err != nil || !strings.Contains(string(raw), `"signed":false`) || !strings.Contains(string(raw), "decision service unavailable") {
 		t.Fatalf("fail-closed must append unsigned pending record: %v %s", err, raw)
 	}
-	out, _ = CodeBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "audit_only", state)
+	out, _ = WorkBuddyHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "audit_only", state)
 	if out.HookSpecificOutput.PermissionDecision != "allow" {
 		t.Fatal("audit_only must allow when service is down")
 	}
-	out, _ = CodeBuddyHook(strings.NewReader(`{bad`), &fakeDecider{}, "a", "block", state)
+	out, _ = WorkBuddyHook(strings.NewReader(`{bad`), &fakeDecider{}, "a", "block", state)
 	if out.HookSpecificOutput.PermissionDecision != "deny" {
 		t.Fatal("malformed input must deny in block mode")
 	}
-	out, _ = CodeBuddyHook(strings.NewReader(in), &fakeDecider{dec: &receipt.Decision{Action: "maybe"}}, "a", "block", state)
+	out, _ = WorkBuddyHook(strings.NewReader(in), &fakeDecider{dec: &receipt.Decision{Action: "maybe"}}, "a", "block", state)
 	if out.HookSpecificOutput.PermissionDecision != "deny" {
 		t.Fatal("unknown action must deny")
 	}
@@ -183,15 +183,15 @@ func TestHostToolHookRecordsWorkBuddyPlatform(t *testing.T) {
 		t.Fatalf("%+v %v", out, err)
 	}
 	raw, err := os.ReadFile(filepath.Join(state, "pending", "decisions.jsonl"))
-	if err != nil || !strings.Contains(string(raw), `"platform":"workbuddy"`) || strings.Contains(string(raw), `"platform":"codebuddy"`) {
-		t.Fatalf("workbuddy pending must not reuse codebuddy: %v %s", err, raw)
+	if err != nil || !strings.Contains(string(raw), `"platform":"workbuddy"`) {
+		t.Fatalf("pending must record the native platform: %v %s", err, raw)
 	}
 }
 
-func TestCodeBuddyPostToolUseObservesAndNeverBlocks(t *testing.T) {
+func TestWorkBuddyPostToolUseObservesAndNeverBlocks(t *testing.T) {
 	fd := &fakeDecider{}
 	in := `{"hook_event_name":"PostToolUse","tool_name":"WebFetch","tool_response":"` + strings.Repeat("x", 70*1024) + `"}`
-	out, err := CodeBuddyHook(strings.NewReader(in), fd, "a", "block", t.TempDir())
+	out, err := WorkBuddyHook(strings.NewReader(in), fd, "a", "block", t.TempDir())
 	if err != nil || out.HookSpecificOutput.PermissionDecision != "" || len(fd.obs) != 1 || len(fd.obs[0]) != 64*1024 {
 		t.Fatalf("%+v %v %d", out, err, len(fd.obs))
 	}
@@ -207,5 +207,16 @@ func TestWorkBuddyHookStampsPlatformAndFailClosedDeny(t *testing.T) {
 	denied, _ := HostToolHook(strings.NewReader(in), &fakeDecider{err: errors.New("down")}, "a", "block", t.TempDir(), "workbuddy")
 	if denied.HookSpecificOutput.PermissionDecision != "deny" {
 		t.Fatal("workbuddy block mode must deny when service is down")
+	}
+}
+
+func TestUnsupportedHostHooksAlwaysDenyWithoutCallingService(t *testing.T) {
+	for _, platform := range []string{"codebuddy", "unknown"} {
+		for _, mode := range []string{"block", "warn", "audit_only"} {
+			out, err := HostToolHook(strings.NewReader(`{}`), nil, "a", mode, "", platform)
+			if err != nil || out.HookSpecificOutput.PermissionDecision != "deny" {
+				t.Fatalf("unsupported %s/%s: %+v %v", platform, mode, out, err)
+			}
+		}
 	}
 }

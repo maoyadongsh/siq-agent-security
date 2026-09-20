@@ -1,21 +1,62 @@
 {
   "generated_from": "site/diagrams/from_code.py",
   "note": "Static source extraction with fixed wiring templates; not complete control-flow analysis.",
-  "source_sha": "a2f95c6fad1a04c776d57c4d4b9fd89b85c69b33",
+  "source_sha": "809b124171979bbbbf6dfa96583f73fd9b00d666",
   "source_dirty": true,
   "cli": [
+    "state-migrate",
+    "state-enable-windows-resources",
+    "state-status",
     "version",
     "rulepack",
     "scan",
     "admit",
+    "import-skill",
     "pubkey",
     "verify",
     "serve",
+    "ui",
+    "teardown",
+    "setup",
+    "init",
+    "stop",
+    "stop-request",
+    "start",
+    "service-login",
+    "launch-agent-status",
+    "task-xml",
+    "task-unregister",
+    "task-stop",
+    "task-runtime",
+    "task-start",
+    "task-register",
+    "task-presence",
+    "task-query",
+    "task-prepare",
+    "launch-agent-load",
+    "launch-agent-start",
+    "launch-agent-stop",
+    "launch-agent-unregister",
+    "launch-agent-register",
+    "launch-agent-prepare",
+    "launch-agent-plist",
+    "service-unit",
+    "client-upgrade-check",
+    "service-rollback",
+    "service-upgrade",
+    "client-install",
+    "client-stage",
+    "service-unregister",
+    "service-register",
+    "service-prepare",
+    "status",
+    "pair",
     "inventory",
     "export",
     "sync",
     "policy-exec",
     "hook",
+    "skill-context",
     "adapter",
     "grant",
     "openshell",
@@ -24,6 +65,41 @@
     "incomplete"
   ],
   "http_routes": [
+    "/v1/raw-task-content/status",
+    "/v1/raw-task-content/activation",
+    "/v1/raw-task-content/grants",
+    "/v1/raw-task-content/grants/",
+    "/v1/raw-task-content/capture-permits",
+    "/v1/raw-task-content/captures",
+    "/v1/raw-task-content/native-captures",
+    "/v1/raw-task-content/records/search",
+    "/v1/raw-task-content/records/",
+    "/v1/raw-task-content/purge-expired",
+    "/v1/skill-installations/update-plans/",
+    "/v1/skill-installations/updates",
+    "/v1/skill-installations/updates/",
+    "/v1/skill-installations/plans",
+    "/v1/skill-installation-targets",
+    "/v1/skill-installations/plans/",
+    "/v1/skill-installations/apply",
+    "/v1/skill-installations/operations",
+    "/v1/skill-installations/operations/",
+    "/v1/skill-installations/grants/",
+    "/v1/skill-imports",
+    "/v1/skill-imports/remote",
+    "/v1/skill-imports/git",
+    "/v1/skill-imports/",
+    "/v1/runtime-identities",
+    "/v1/runtime-identities/",
+    "/v1/runtime-sessions",
+    "/v1/skill-contexts",
+    "/v1/skill-contexts/management",
+    "/v1/skill-contexts/",
+    "/v1/runtime-checks/preview",
+    "/v1/runtime-checks",
+    "/v1/runtime-checks/start",
+    "/v1/runtime-checks/attach",
+    "/v1/runtime-checks/",
     "/v1/tasks/",
     "/v1/network-observations",
     "/v1/file-observation-recoveries",
@@ -51,23 +127,49 @@
     "/v1/status",
     "/v1/decide",
     "/v1/observe",
+    "/v1/confirmations",
+    "/v1/confirmations/",
     "/v1/hold-status",
+    "/v1/hold-executions/reserve",
+    "/v1/hold-executions/status",
+    "/v1/hold-executions/reconcile",
     "/v1/hold/",
+    "/v1/task-activities/",
+    "/v1/task-activities/search",
+    "/v1/task-activities",
     "/v1/receipts",
     "/v1/admit",
     "/v1/admissions",
     "/v1/admissions/",
     "/v1/inventory",
+    "/v1/discovery",
+    "/v1/discovery/preview",
+    "/v1/discovery/scan",
+    "/v1/adapter/diagnostics",
+    "/v1/grant-scenarios",
     "/v1/grants",
+    "/v1/grants/instance-drafts",
     "/v1/grants/",
     "/v1/config",
     "/v1/adapter/status",
+    "/v1/adapter/instances",
+    "/v1/adapter/preview",
+    "/v1/adapter/recover",
     "/v1/adapter/install",
     "/v1/adapter/uninstall",
     "/v1/openshell/probe",
     "/v1/openshell/doctor",
     "/v1/openshell/apply",
     "/v1/openshell/drift-check",
+    "/v1/openshell/session-executions",
+    "/v1/openshell/session-executions/preview",
+    "/v1/openshell/session-executions/rollback",
+    "/v1/openshell/task-executions",
+    "/v1/openshell/task-executions/preview",
+    "/v1/openshell/task-executions/status",
+    "/v1/openshell/task-executions/stop",
+    "/v1/openshell/task-executions/reconcile",
+    "/v1/openshell/task-executions/read",
     "/v1/assets",
     "/v1/assets/",
     "/v1/permissions",
@@ -76,15 +178,24 @@
     "/v1/audit",
     "/v1/export",
     "/v1/pair",
+    "/healthz",
+    "/v1/service-control/challenge",
+    "/v1/service-control/stop",
+    "/healthz/instance",
+    "/v1/session/restore",
+    "/v1/session/logout",
+    "/v1/session/pairing",
     "/ui-config.json",
     "/",
     "/"
   ],
   "packages": [
+    "acltest",
     "adapterinstall",
     "adapters",
     "admission",
     "canon",
+    "clientrelease",
     "completion",
     "contractvectors",
     "controlsync",
@@ -93,38 +204,89 @@
     "export",
     "fileopen",
     "grant",
+    "hermeshome",
+    "importsource",
     "intent",
     "inventory",
     "ledger",
+    "localcontrol",
+    "notify",
     "openshell",
     "pending",
     "perfbaseline",
+    "privatefs",
     "product",
     "provenance",
+    "rawcontent",
     "receipt",
     "rulepack",
     "runtimeaction",
     "runtimeauthz",
+    "runtimecheck",
+    "runtimeidentity",
+    "runtimepath",
     "server",
     "signing",
+    "skillcontext",
+    "skillimport",
+    "skillinstall",
     "skillmanifest",
     "state",
+    "stateformat",
+    "statefs",
     "threat",
     "trustedcontext",
-    "ui"
+    "ui",
+    "workbuddycorrelation"
   ],
   "package_imports": [
+    {
+      "from": "adapterinstall",
+      "to": "adapters"
+    },
+    {
+      "from": "adapterinstall",
+      "to": "canon"
+    },
+    {
+      "from": "adapterinstall",
+      "to": "hermeshome"
+    },
+    {
+      "from": "adapterinstall",
+      "to": "privatefs"
+    },
     {
       "from": "adapterinstall",
       "to": "product"
     },
     {
       "from": "adapterinstall",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "adapterinstall",
+      "to": "runtimepath"
+    },
+    {
+      "from": "adapterinstall",
       "to": "state"
+    },
+    {
+      "from": "adapterinstall",
+      "to": "stateformat"
+    },
+    {
+      "from": "adapterinstall",
+      "to": "statefs"
     },
     {
       "from": "adapters",
       "to": "admission"
+    },
+    {
+      "from": "adapters",
+      "to": "hermeshome"
     },
     {
       "from": "adapters",
@@ -141,6 +303,10 @@
     {
       "from": "adapters",
       "to": "rulepack"
+    },
+    {
+      "from": "adapters",
+      "to": "runtimeidentity"
     },
     {
       "from": "adapters",
@@ -171,6 +337,22 @@
       "to": "threat"
     },
     {
+      "from": "clientrelease",
+      "to": "skillmanifest"
+    },
+    {
+      "from": "clientrelease",
+      "to": "state"
+    },
+    {
+      "from": "clientrelease",
+      "to": "stateformat"
+    },
+    {
+      "from": "clientrelease",
+      "to": "statefs"
+    },
+    {
       "from": "completion",
       "to": "effectevidence"
     },
@@ -212,7 +394,19 @@
     },
     {
       "from": "effectevidence",
+      "to": "runtimepath"
+    },
+    {
+      "from": "effectevidence",
       "to": "signing"
+    },
+    {
+      "from": "effectevidence",
+      "to": "stateformat"
+    },
+    {
+      "from": "effectevidence",
+      "to": "statefs"
     },
     {
       "from": "export",
@@ -220,7 +414,19 @@
     },
     {
       "from": "export",
+      "to": "completion"
+    },
+    {
+      "from": "export",
       "to": "display"
+    },
+    {
+      "from": "export",
+      "to": "effectevidence"
+    },
+    {
+      "from": "export",
+      "to": "intent"
     },
     {
       "from": "export",
@@ -239,6 +445,10 @@
       "to": "state"
     },
     {
+      "from": "fileopen",
+      "to": "statefs"
+    },
+    {
       "from": "grant",
       "to": "admission"
     },
@@ -248,7 +458,43 @@
     },
     {
       "from": "grant",
+      "to": "importsource"
+    },
+    {
+      "from": "grant",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "grant",
+      "to": "runtimepath"
+    },
+    {
+      "from": "grant",
       "to": "signing"
+    },
+    {
+      "from": "hermeshome",
+      "to": "stateformat"
+    },
+    {
+      "from": "hermeshome",
+      "to": "statefs"
+    },
+    {
+      "from": "importsource",
+      "to": "admission"
+    },
+    {
+      "from": "importsource",
+      "to": "canon"
+    },
+    {
+      "from": "importsource",
+      "to": "signing"
+    },
+    {
+      "from": "intent",
+      "to": "admission"
     },
     {
       "from": "intent",
@@ -257,6 +503,14 @@
     {
       "from": "intent",
       "to": "completion"
+    },
+    {
+      "from": "intent",
+      "to": "grant"
+    },
+    {
+      "from": "intent",
+      "to": "importsource"
     },
     {
       "from": "intent",
@@ -272,6 +526,14 @@
     },
     {
       "from": "intent",
+      "to": "stateformat"
+    },
+    {
+      "from": "intent",
+      "to": "statefs"
+    },
+    {
+      "from": "intent",
       "to": "trustedcontext"
     },
     {
@@ -284,11 +546,27 @@
     },
     {
       "from": "inventory",
+      "to": "hermeshome"
+    },
+    {
+      "from": "inventory",
       "to": "product"
     },
     {
       "from": "inventory",
+      "to": "runtimepath"
+    },
+    {
+      "from": "inventory",
       "to": "signing"
+    },
+    {
+      "from": "inventory",
+      "to": "stateformat"
+    },
+    {
+      "from": "inventory",
+      "to": "statefs"
     },
     {
       "from": "ledger",
@@ -319,6 +597,26 @@
       "to": "state"
     },
     {
+      "from": "localcontrol",
+      "to": "canon"
+    },
+    {
+      "from": "localcontrol",
+      "to": "signing"
+    },
+    {
+      "from": "openshell",
+      "to": "canon"
+    },
+    {
+      "from": "openshell",
+      "to": "statefs"
+    },
+    {
+      "from": "pending",
+      "to": "statefs"
+    },
+    {
       "from": "perfbaseline",
       "to": "export"
     },
@@ -339,6 +637,10 @@
       "to": "signing"
     },
     {
+      "from": "perfbaseline",
+      "to": "statefs"
+    },
+    {
       "from": "provenance",
       "to": "canon"
     },
@@ -351,6 +653,22 @@
       "to": "signing"
     },
     {
+      "from": "provenance",
+      "to": "statefs"
+    },
+    {
+      "from": "rawcontent",
+      "to": "fileopen"
+    },
+    {
+      "from": "rawcontent",
+      "to": "signing"
+    },
+    {
+      "from": "rawcontent",
+      "to": "statefs"
+    },
+    {
       "from": "receipt",
       "to": "canon"
     },
@@ -361,6 +679,10 @@
     {
       "from": "receipt",
       "to": "grant"
+    },
+    {
+      "from": "receipt",
+      "to": "importsource"
     },
     {
       "from": "receipt",
@@ -388,7 +710,15 @@
     },
     {
       "from": "receipt",
+      "to": "runtimepath"
+    },
+    {
+      "from": "receipt",
       "to": "signing"
+    },
+    {
+      "from": "receipt",
+      "to": "statefs"
     },
     {
       "from": "receipt",
@@ -403,12 +733,120 @@
       "to": "canon"
     },
     {
+      "from": "rulepack",
+      "to": "statefs"
+    },
+    {
       "from": "runtimeaction",
       "to": "canon"
     },
     {
+      "from": "runtimecheck",
+      "to": "adapterinstall"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "admission"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "canon"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "grant"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "intent"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "privatefs"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "product"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "receipt"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "rulepack"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "runtimepath"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "signing"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "state"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "stateformat"
+    },
+    {
+      "from": "runtimecheck",
+      "to": "statefs"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "canon"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "grant"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "intent"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "runtimepath"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "signing"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "stateformat"
+    },
+    {
+      "from": "runtimeidentity",
+      "to": "statefs"
+    },
+    {
+      "from": "runtimepath",
+      "to": "canon"
+    },
+    {
+      "from": "runtimepath",
+      "to": "runtimeaction"
+    },
+    {
       "from": "server",
       "to": "adapterinstall"
+    },
+    {
+      "from": "server",
+      "to": "adapters"
     },
     {
       "from": "server",
@@ -436,6 +874,14 @@
     },
     {
       "from": "server",
+      "to": "hermeshome"
+    },
+    {
+      "from": "server",
+      "to": "importsource"
+    },
+    {
+      "from": "server",
       "to": "intent"
     },
     {
@@ -445,6 +891,10 @@
     {
       "from": "server",
       "to": "ledger"
+    },
+    {
+      "from": "server",
+      "to": "localcontrol"
     },
     {
       "from": "server",
@@ -464,6 +914,10 @@
     },
     {
       "from": "server",
+      "to": "rawcontent"
+    },
+    {
+      "from": "server",
       "to": "receipt"
     },
     {
@@ -476,11 +930,39 @@
     },
     {
       "from": "server",
+      "to": "runtimecheck"
+    },
+    {
+      "from": "server",
+      "to": "runtimeidentity"
+    },
+    {
+      "from": "server",
+      "to": "runtimepath"
+    },
+    {
+      "from": "server",
       "to": "signing"
     },
     {
       "from": "server",
+      "to": "skillcontext"
+    },
+    {
+      "from": "server",
+      "to": "skillimport"
+    },
+    {
+      "from": "server",
+      "to": "skillinstall"
+    },
+    {
+      "from": "server",
       "to": "state"
+    },
+    {
+      "from": "server",
+      "to": "stateformat"
     },
     {
       "from": "server",
@@ -495,6 +977,130 @@
       "to": "product"
     },
     {
+      "from": "signing",
+      "to": "stateformat"
+    },
+    {
+      "from": "signing",
+      "to": "statefs"
+    },
+    {
+      "from": "skillcontext",
+      "to": "canon"
+    },
+    {
+      "from": "skillcontext",
+      "to": "grant"
+    },
+    {
+      "from": "skillcontext",
+      "to": "importsource"
+    },
+    {
+      "from": "skillcontext",
+      "to": "receipt"
+    },
+    {
+      "from": "skillcontext",
+      "to": "runtimeidentity"
+    },
+    {
+      "from": "skillcontext",
+      "to": "signing"
+    },
+    {
+      "from": "skillcontext",
+      "to": "skillinstall"
+    },
+    {
+      "from": "skillcontext",
+      "to": "statefs"
+    },
+    {
+      "from": "skillcontext",
+      "to": "trustedcontext"
+    },
+    {
+      "from": "skillimport",
+      "to": "admission"
+    },
+    {
+      "from": "skillimport",
+      "to": "canon"
+    },
+    {
+      "from": "skillimport",
+      "to": "fileopen"
+    },
+    {
+      "from": "skillimport",
+      "to": "importsource"
+    },
+    {
+      "from": "skillimport",
+      "to": "rulepack"
+    },
+    {
+      "from": "skillimport",
+      "to": "signing"
+    },
+    {
+      "from": "skillimport",
+      "to": "stateformat"
+    },
+    {
+      "from": "skillimport",
+      "to": "statefs"
+    },
+    {
+      "from": "skillinstall",
+      "to": "admission"
+    },
+    {
+      "from": "skillinstall",
+      "to": "canon"
+    },
+    {
+      "from": "skillinstall",
+      "to": "fileopen"
+    },
+    {
+      "from": "skillinstall",
+      "to": "grant"
+    },
+    {
+      "from": "skillinstall",
+      "to": "importsource"
+    },
+    {
+      "from": "skillinstall",
+      "to": "runtimeaction"
+    },
+    {
+      "from": "skillinstall",
+      "to": "runtimepath"
+    },
+    {
+      "from": "skillinstall",
+      "to": "signing"
+    },
+    {
+      "from": "skillinstall",
+      "to": "skillimport"
+    },
+    {
+      "from": "skillinstall",
+      "to": "state"
+    },
+    {
+      "from": "skillinstall",
+      "to": "stateformat"
+    },
+    {
+      "from": "skillinstall",
+      "to": "statefs"
+    },
+    {
       "from": "skillmanifest",
       "to": "admission"
     },
@@ -515,8 +1121,20 @@
       "to": "signing"
     },
     {
+      "from": "skillmanifest",
+      "to": "stateformat"
+    },
+    {
+      "from": "skillmanifest",
+      "to": "statefs"
+    },
+    {
       "from": "state",
       "to": "admission"
+    },
+    {
+      "from": "state",
+      "to": "canon"
     },
     {
       "from": "state",
@@ -524,7 +1142,19 @@
     },
     {
       "from": "state",
+      "to": "importsource"
+    },
+    {
+      "from": "state",
       "to": "intent"
+    },
+    {
+      "from": "state",
+      "to": "localcontrol"
+    },
+    {
+      "from": "state",
+      "to": "privatefs"
     },
     {
       "from": "state",
@@ -532,7 +1162,31 @@
     },
     {
       "from": "state",
+      "to": "receipt"
+    },
+    {
+      "from": "state",
       "to": "signing"
+    },
+    {
+      "from": "state",
+      "to": "stateformat"
+    },
+    {
+      "from": "state",
+      "to": "statefs"
+    },
+    {
+      "from": "stateformat",
+      "to": "privatefs"
+    },
+    {
+      "from": "statefs",
+      "to": "privatefs"
+    },
+    {
+      "from": "statefs",
+      "to": "stateformat"
     },
     {
       "from": "threat",
@@ -549,6 +1203,22 @@
     {
       "from": "trustedcontext",
       "to": "signing"
+    },
+    {
+      "from": "workbuddycorrelation",
+      "to": "adapters"
+    },
+    {
+      "from": "workbuddycorrelation",
+      "to": "receipt"
+    },
+    {
+      "from": "workbuddycorrelation",
+      "to": "runtimeidentity"
+    },
+    {
+      "from": "workbuddycorrelation",
+      "to": "statefs"
     }
   ],
   "grant_transitions": [
@@ -597,48 +1267,7 @@
       "to": "revoked"
     }
   ],
-  "decide_returns": [
-    {
-      "action": "deny",
-      "reason": "\"no deployed grant for agent (default deny)\""
-    },
-    {
-      "action": "deny",
-      "reason": "\"tool \" + req.Tool + \" not granted (default deny)\""
-    },
-    {
-      "action": "deny",
-      "reason": "\"tainted egress: session carries \" + strings.Join(sortedKeys(s.taints), \",\") ..."
-    },
-    {
-      "action": "deny",
-      "reason": "\"lethal trifecta: private data + untrusted input + egress in one session\""
-    },
-    {
-      "action": "deny",
-      "reason": "\"network egress to \" + h + \" not in grant \" + g.GrantID + \" (default deny)\""
-    },
-    {
-      "action": "deny",
-      "reason": "\"egress exec requires granted host\""
-    },
-    {
-      "action": "deny",
-      "reason": "\"credential path \" + p + \" denied (credential facts are never allow)\""
-    },
-    {
-      "action": "deny",
-      "reason": "\"write to \" + p + \" outside granted paths (default deny)\""
-    },
-    {
-      "action": "hold",
-      "reason": "\"tool \" + req.Tool + \" requires human approval per grant \" + g.GrantID"
-    },
-    {
-      "action": "allow",
-      "reason": "\"granted by \" + g.GrantID"
-    }
-  ],
+  "decide_returns": [],
   "enforcement_modes_in_decide": [],
   "policy_exec": [
     {
@@ -655,9 +1284,9 @@
     }
   ],
   "adapters": [
-    "codebuddy-agentshield",
     "hermes-agentshield",
-    "openclaw-agentshield"
+    "openclaw-agentshield",
+    "workbuddy-agentshield"
   ],
   "diagrams": [
     {

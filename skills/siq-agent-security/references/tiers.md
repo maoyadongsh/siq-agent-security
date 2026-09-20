@@ -8,7 +8,7 @@ higher tier.
 |---|---|---|
 | L0 | Inventory + admit. Cannot block a running tool call. | Any OS |
 | L1 | Pre-install gate. Quarantined skills are refused at install. | A platform install hook (OpenClaw `installPolicy`) or the Hermes wrapper `hermes-skills-install` |
-| L2 | Every tool call goes through `/v1/decide`; deny is a signed receipt. | OpenClaw `before_tool_call`, Hermes `pre_tool_call`, or CodeBuddy `PreToolUse` |
+| L2 | Every tool call goes through `/v1/decide`; deny is a signed receipt. | OpenClaw `before_tool_call`, Hermes `pre_tool_call`, or WorkBuddy `PreToolUse` |
 | L3 | OpenShell network `policy set` + read-back. Filesystem and process stay static. | A running OpenShell gateway that `status` verifies as OpenShell (Linux native, or Docker/WSL2). Optional: L0–L2 still work. siq-agent-security discovers the CLI on PATH or `SIQ_AS_OPENSHELL_ENV_SH`; it does not start the gateway. Without L3 the console must say tool-layer only. |
 
 ## Platform matrix (honest)
@@ -17,7 +17,7 @@ higher tier.
 |---|---|---|---|
 | OpenClaw | L0–L3 | L0–L2 (L3 needs Docker) | L0–L2 (L3 needs WSL2) |
 | Hermes | L0–L3 | L0–L2 | L0–L2 |
-| CodeBuddy / WorkBuddy | L0, L2 | L0, L2 | L0, L2 |
+| WorkBuddy | Outside current scope | L0, L2 (desktop validation required) | L0, L2 (desktop validation required) |
 | Trae / TraeWork | L0 only | L0 only | L0 only |
 
 Trae has no tool hook. Say "audit mode, cannot block" and use `siq-agent-security admit`

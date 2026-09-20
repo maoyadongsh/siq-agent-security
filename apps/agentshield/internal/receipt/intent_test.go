@@ -182,3 +182,20 @@ func TestV2TrustedStoreGrantIntersectionAndHints(t *testing.T) {
 		})
 	}
 }
+
+func TestRetiredPlatformCannotExecuteOrApproveHistoricalHold(t *testing.T) {
+	for _, mode := range []string{"block", "warn", "audit_only"} {
+		t.Run(mode, func(t *testing.T) {
+			g := deployedGrant(t, "hermes", false)
+			g.Platform = "codebuddy" // simulate an already signed historical grant
+			fx := newFixture(t, mode, g, false)
+			d, err := fx.eng.Decide(Request{Platform: "codebuddy", SessionID: "legacy-session", AgentID: "inst_1", Tool: "read_file", Params: map[string]any{"path": "/home/u/proj/a.txt"}})
+			if err != nil || d.Action != ActionDeny || d.Receipt.ReasonCode != "platform_out_of_scope" {
+				t.Fatalf("retired execution: %+v %v", d, err)
+			}
+			if _, err := fx.eng.ResolveHold(Receipt{Platform: "codebuddy", SessionID: "legacy-session", Action: ActionHold}, true, "admin"); err == nil {
+				t.Fatal("retired hold approved")
+			}
+		})
+	}
+}

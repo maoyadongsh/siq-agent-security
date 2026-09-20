@@ -71,7 +71,7 @@ func (r *run) workBuddyDiscovery(seen map[string]bool) bool {
 }
 
 func (r *run) annotateWorkBuddyConsumers() {
-	scopes, codeBuddy := map[string]string{}, map[string]bool{}
+	scopes := map[string]string{}
 	for _, relationship := range r.report.Relationships {
 		switch relationship.Basis {
 		case "workbuddy_user_directory":
@@ -81,20 +81,12 @@ func (r *run) annotateWorkBuddyConsumers() {
 		case "workbuddy_project_directory":
 			scopes[relationship.SkillID] = "project"
 		}
-		if relationship.SourceID == "platform:codebuddy" {
-			codeBuddy[relationship.SkillID] = true
-		}
 	}
 	for i := range r.report.Candidates {
 		candidate := &r.report.Candidates[i]
 		if scope := scopes[candidate.CandidateID]; scope != "" {
 			candidate.Attributes["workbuddy_scope"] = scope
 			candidate.Attributes["workbuddy_selection"] = "unverified"
-			if codeBuddy[candidate.CandidateID] {
-				candidate.Framework = "unknown"
-				candidate.Attributes["platform"] = "shared"
-				candidate.Attributes["consumer_platforms"] = "codebuddy,workbuddy"
-			}
 		}
 	}
 }

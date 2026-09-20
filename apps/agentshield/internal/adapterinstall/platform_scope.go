@@ -1,13 +1,14 @@
 package adapterinstall
 
 // NewIntegrationSupportedOnOS gates new adapter and Grant creation.
-// Historical configuration can still be inspected and surgically uninstalled.
+// Unknown and retired platforms never acquire execution authority.
 func NewIntegrationSupportedOnOS(platform, goos string) bool {
-	if platform == CodeBuddy {
+	switch platform {
+	case WorkBuddy:
+		return goos == "darwin" || goos == "windows"
+	case OpenClaw, Hermes, Trae, "claude_code", "codex", "other":
+		return true
+	default:
 		return false
 	}
-	if platform == WorkBuddy {
-		return goos == "darwin" || goos == "windows"
-	}
-	return true
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func TestRuntimeTargetRequiresExplicitReadyHermesInstance(t *testing.T) {
-	for _, platform := range []string{Hermes, OpenClaw, CodeBuddy} {
+	for _, platform := range []string{Hermes, OpenClaw, WorkBuddy} {
 		o := testOpts(t, platform)
 		if _, err := InspectRuntimeTarget(o); err == nil {
 			t.Fatal("implicit or unsupported target accepted")

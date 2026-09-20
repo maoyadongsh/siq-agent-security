@@ -190,10 +190,10 @@ func TestWindowsStatePathAliasHookFailsClosedWithoutFallback(t *testing.T) {
 			for _, event := range []string{"PreToolUse", "PostToolUse"} {
 				var out bytes.Buffer
 				input := `{"session_id":"state-alias-fixture","tool_use_id":"state-alias-call","hook_event_name":"` + event + `","tool_name":"Read","tool_input":{"file_path":"/fixture"}}`
-				if err := runCodeBuddyHook(strings.NewReader(input), &out); err != nil {
+				if err := runWorkBuddyHook(strings.NewReader(input), &out); err != nil {
 					t.Fatal("hook must emit structured output instead of a non-blocking exit error")
 				}
-				var response adapters.CodeBuddyOutput
+				var response adapters.WorkBuddyOutput
 				if err := json.Unmarshal(out.Bytes(), &response); err != nil {
 					t.Fatal("hook did not emit valid structured output")
 				}

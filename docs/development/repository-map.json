@@ -2099,21 +2099,6 @@
       "source_blob": "ecb49ced3b6e49ee7e5b2ab52857964743ace16a"
     },
     {
-      "path": "adapters/runtime/codebuddy-agentshield/README.md",
-      "action": "edit",
-      "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
-      "consumers": [
-        "module contributors",
-        "root and module README readers"
-      ],
-      "validation": [
-        "README link guard",
-        "source/command review",
-        "research metadata and frozen-evidence checks"
-      ],
-      "source_blob": "409f786172d6fd3190a80674653ff979c5e255e5"
-    },
-    {
       "path": "adapters/runtime/hermes-agentshield/README.md",
       "action": "edit",
       "reason": "Document current module responsibilities, usage, evidence and trust boundaries; preserve runtime and frozen artifacts",
@@ -2592,7 +2577,6 @@
     "SECURITY.md",
     "CODE_OF_CONDUCT.md",
     "HACKATHON.md",
-    "adapters/runtime/codebuddy-agentshield/README.md",
     "adapters/runtime/hermes-agentshield/README.md",
     "adapters/runtime/openclaw-agentshield/README.md",
     "adapters/runtime/workbuddy-agentshield/README.md",

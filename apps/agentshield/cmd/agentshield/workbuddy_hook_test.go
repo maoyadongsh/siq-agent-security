@@ -12,7 +12,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/adapters"
 )
 
-func TestCodeBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
+func TestWorkBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
 	for _, tc := range []struct{ name, config, token, want string }{
 		{"malformed", `{"enforcement_mode":"warn",invalid`, "short", "deny"},
 		{"invalid-port", `{"enforcement_mode":"audit_only","port":-1}`, "short", "deny"},
@@ -43,10 +43,10 @@ func TestCodeBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
 			}
 			var buf bytes.Buffer
 			input := `{"session_id":"fixture","tool_use_id":"fixture-call","hook_event_name":"PreToolUse","tool_name":"Read","tool_input":{"file_path":"/fixture"}}`
-			if err := runCodeBuddyHook(strings.NewReader(input), &buf); err != nil {
+			if err := runWorkBuddyHook(strings.NewReader(input), &buf); err != nil {
 				t.Fatalf("must not exit with a non-blocking error: %v", err)
 			}
-			var out adapters.CodeBuddyOutput
+			var out adapters.WorkBuddyOutput
 			if err := json.Unmarshal(buf.Bytes(), &out); err != nil {
 				t.Fatal(err)
 			}
@@ -69,10 +69,10 @@ func TestCodeBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
 				t.Fatal("pending outcome incorrect")
 			}
 			buf.Reset()
-			if err := runCodeBuddyHook(strings.NewReader(`{"hook_event_name":"PostToolUse","tool_name":"Read"}`), &buf); err != nil {
+			if err := runWorkBuddyHook(strings.NewReader(`{"hook_event_name":"PostToolUse","tool_name":"Read"}`), &buf); err != nil {
 				t.Fatal(err)
 			}
-			var post adapters.CodeBuddyOutput
+			var post adapters.WorkBuddyOutput
 			if err := json.Unmarshal(buf.Bytes(), &post); err != nil {
 				t.Fatal(err)
 			}
@@ -92,8 +92,10 @@ func TestCodeBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
 	}
 }
 
-func TestWorkBuddyHookInvalidArgumentsStillDeny(t *testing.T) {
+func TestHookUnsupportedPlatformAndInvalidArgumentsStillDeny(t *testing.T) {
 	for _, args := range [][]string{
+		{"codebuddy"},
+		{"unknown"},
 		{"workbuddy", "--state-dir", "relative"},
 		{"workbuddy", "--state-dir", t.TempDir(), "unexpected"},
 		{"workbuddy", "--unknown"},
@@ -125,7 +127,7 @@ func TestWorkBuddyHookInvalidArgumentsStillDeny(t *testing.T) {
 				t.Fatal(err)
 			}
 			_ = outR.Close()
-			var response adapters.CodeBuddyOutput
+			var response adapters.WorkBuddyOutput
 			if err := json.Unmarshal(bytes.TrimSpace(buf.Bytes()), &response); err != nil {
 				t.Fatal(err)
 			}
@@ -178,7 +180,7 @@ func TestWorkBuddyHookStateDirOverridesEnv(t *testing.T) {
 		t.Fatal(err)
 	}
 	_ = outR.Close()
-	var response adapters.CodeBuddyOutput
+	var response adapters.WorkBuddyOutput
 	if err := json.Unmarshal(bytes.TrimSpace(buf.Bytes()), &response); err != nil {
 		t.Fatal(err)
 	}
@@ -194,17 +196,17 @@ func TestWorkBuddyHookStateDirOverridesEnv(t *testing.T) {
 	}
 }
 
-func TestCodeBuddyUnavailableStateStillBlocks(t *testing.T) {
+func TestWorkBuddyUnavailableStateStillBlocks(t *testing.T) {
 	file := filepath.Join(t.TempDir(), "not-a-directory")
 	if err := os.WriteFile(file, []byte("fixture"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", file)
 	var out bytes.Buffer
-	if err := runCodeBuddyHook(strings.NewReader(`{"hook_event_name":"PreToolUse","tool_name":"Read"}`), &out); err != nil {
+	if err := runWorkBuddyHook(strings.NewReader(`{"hook_event_name":"PreToolUse","tool_name":"Read"}`), &out); err != nil {
 		t.Fatal(err)
 	}
-	var response adapters.CodeBuddyOutput
+	var response adapters.WorkBuddyOutput
 	if err := json.Unmarshal(out.Bytes(), &response); err != nil {
 		t.Fatal(err)
 	}

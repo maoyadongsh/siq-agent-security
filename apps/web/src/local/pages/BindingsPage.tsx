@@ -97,7 +97,7 @@ export default function BindingsPage() {
         if (p.name === 'openshell') {
           return <span className="muted-text">CLI 探针，无安装钩子</span>;
         }
-        if ((p.name === 'workbuddy' || p.name === 'codebuddy') && p.diagnosis?.configuration_state === 'unsupported') {
+        if (p.name === 'workbuddy' && p.diagnosis?.configuration_state === 'unsupported') {
           return p.adapter === 'installed'
             ? <button type="button" className="btn btn-sm btn-danger" disabled={!!busy} onClick={() => mutate(p.name, 'uninstall')}>卸载已有接入</button>
             : <span className="muted-text">当前范围不支持新接入</span>;
