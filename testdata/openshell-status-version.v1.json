@@ -1,0 +1,11 @@
+[
+  {"name":"live83","text":"Server Status\n  Gateway: siq-openshell-dev\n  Version: 0.0.83\n","version":"0.0.83"},
+  {"name":"legacy","text":"Server Status\nGateway: fixture\nGateway version: v0.0.104\n","version":"0.0.104"},
+  {"name":"local_generic","text":"Gateway Info\nGateway: fixture\nVersion: 0.0.104\n","version":""},
+  {"name":"cli_not_server","text":"Server Status\nGateway: fixture\nCLI Version: 0.0.104\n","version":""},
+  {"name":"ip_not_version","text":"Server Status\nGateway: fixture\nEndpoint: https://127.0.0.1:17671\n","version":""},
+  {"name":"conflicting","text":"Server Status\nGateway: fixture\nVersion: 0.0.83\nGateway version: 0.0.104\n","version":""},
+  {"name":"duplicate","text":"Server Status\nGateway: fixture\nVersion: 0.0.83\nVersion: 0.0.83\n","version":""},
+  {"name":"no_identity","text":"Server Status\nVersion: 0.0.83\n","version":""},
+  {"name":"invalid","text":"Server Status\nGateway: fixture\nVersion: unknown\n","version":""}
+]
