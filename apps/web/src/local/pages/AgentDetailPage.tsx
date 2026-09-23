@@ -156,9 +156,12 @@ export default function AgentDetailPage() {
     },
     { key: 'plat', header: '平台', render: (g) => platformLabel(g.platform) },
     { key: 'sub', header: '主体', render: (g) => g.subject?.id ?? '—' },
+    { key: 'permissions', header: '操作', render: (g) => g.subject?.id
+      ? <Link to={`/permissions?subject_id=${encodeURIComponent(g.subject.id)}`}>查看权限</Link> : '—' },
   ];
 
-  const permSubject = asset?.grants?.[0]?.subject?.id || asset?.name || '';
+  const permissionSubjects = [...new Set(asset?.grants?.map((grant) => grant.subject?.id).filter(Boolean) ?? [])];
+  const permSubject = permissionSubjects.length === 1 ? permissionSubjects[0] : '';
   const pendingGrant = asset?.grants?.find((g) => g.status === 'pending_approval');
 
   return (
@@ -177,7 +180,7 @@ export default function AgentDetailPage() {
           <>
             {' · '}
             <Link to={`/permissions?subject_id=${encodeURIComponent(permSubject)}`}>
-              查看该主体权限
+              查看关联授权的权限
             </Link>
           </>
         ) : null}

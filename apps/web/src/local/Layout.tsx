@@ -19,7 +19,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
     label: '监测',
     items: [
       { to: '/overview', label: '总览', icon: 'overview' },
-      { to: '/agents', label: '智能体资产', icon: 'agents' },
+      { to: '/agents', label: '智能体与 Skill', icon: 'agents' },
       { to: '/permissions', label: '权限视图', icon: 'permissions' },
       { to: '/findings', label: '风险中心', icon: 'findings' },
     ],
@@ -31,7 +31,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
       { to: '/skill-imports', label: '导入 Skill', icon: 'shield' },
       { to: '/installed-skills', label: '已安装 Skill', icon: 'shield' },
       { to: '/grants', label: '签发', icon: 'policies' },
-      { to: '/activities', label: '任务活动', icon: 'audit' },
+      { to: '/activities', label: '运行记录', icon: 'audit' },
       { to: '/receipts', label: '回执', icon: 'audit' },
       { to: '/bindings', label: '运行时绑定', icon: 'bindings' },
     ],
@@ -55,7 +55,7 @@ function readCollapsed(): boolean {
 }
 
 function currentTitle(pathname: string): string {
-  if (pathname.startsWith('/activities/')) return '活动详情';
+  if (pathname.startsWith('/activities/')) return '运行详情';
   if (pathname === '/skill-updates') return '更新 Skill';
   if (pathname.startsWith('/agents/')) return '智能体详情';
   const exact = NAV_ITEMS.find((item) => item.to === pathname);

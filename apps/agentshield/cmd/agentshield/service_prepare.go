@@ -28,6 +28,10 @@ func withPreparedUserService(args []string, apply func(string, state.UserService
 	if err != nil {
 		return err
 	}
+	initialKey, err := loadUserServicePreparationKey(dir)
+	if err != nil {
+		return err
+	}
 	controlLock, err := state.AcquireScopedWriter(dir, "service-control")
 	if err != nil {
 		return err
@@ -42,9 +46,12 @@ func withPreparedUserService(args []string, apply func(string, state.UserService
 	if err != nil {
 		return err
 	}
-	key, err := signing.Load(dir)
+	key, err := signing.LoadExisting(dir)
 	if err != nil {
 		return err
+	}
+	if key.PublicBase64() != initialKey.PublicBase64() {
+		return errors.New("service-prepare: signing identity changed during preparation")
 	}
 	record, err := s.PrepareUserService(w, key, unit.Bytes())
 	if err != nil {
@@ -55,4 +62,16 @@ func withPreparedUserService(args []string, apply func(string, state.UserService
 		return err
 	}
 	return apply(path, record)
+}
+
+// Our own lifecycle lock must not turn a pristine directory into apparent
+// history. Establish the identity under the primary writer, then reacquire the
+// normal lifecycle/primary pair and revalidate it before any signed publication.
+func loadUserServicePreparationKey(dir string) (key *signing.Key, resultErr error) {
+	writer, err := state.AcquireWriter(dir)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { resultErr = errors.Join(resultErr, writer.Release()) }()
+	return signing.Load(dir)
 }

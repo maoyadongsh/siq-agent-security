@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-model-inference-latest/v1"
+    },
+    "record": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "request_id",
+            "model_id",
+            "fingerprint",
+            "status",
+            "started_at",
+            "finished_at",
+            "expires_at",
+            "inference_verified",
+            "business_data_sent",
+            "service_session_only"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "local-model-inference-record/v1"
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^mt-[0-9a-f]{32}$"
+            },
+            "model_id": {
+              "type": "string",
+              "pattern": "^mc-[0-9a-f]{32}$"
+            },
+            "fingerprint": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "status": {
+              "enum": [
+                "running",
+                "passed",
+                "response_mismatch",
+                "auth_failed",
+                "rate_limited",
+                "unsupported_response",
+                "service_error",
+                "uncertain",
+                "configuration_changed"
+              ]
+            },
+            "started_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "finished_at": {
+              "type": "string"
+            },
+            "expires_at": {
+              "type": "string"
+            },
+            "inference_verified": {
+              "type": "boolean"
+            },
+            "business_data_sent": {
+              "const": false
+            },
+            "service_session_only": {
+              "const": true
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "const": "passed"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "inference_verified": {
+                    "const": true
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "inference_verified": {
+                    "const": false
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "const": "running"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "finished_at": {
+                    "const": ""
+                  },
+                  "expires_at": {
+                    "const": ""
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "finished_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -209,7 +209,7 @@ export interface AdapterInstance {
   diagnosis: AdapterDiagnosis;
 }
 export interface AdapterInstances {
-  schema_version: 'local-adapter-instances/v1' | 'local-adapter-instances/v2';
+  schema_version: 'local-adapter-instances/v1' | 'local-adapter-instances/v2' | 'local-adapter-instances/v3';
   managed_runtime_available?: boolean;
   platform_changes: false;
   native_available: boolean;

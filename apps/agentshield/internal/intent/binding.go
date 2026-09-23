@@ -154,6 +154,15 @@ func (s *Store) GetBinding(id string) (Binding, error) {
 	}
 	return b, nil
 }
+
+// HistoricalBinding verifies a stored association without reauthorizing it.
+// Expiry and revocation prevent execution, not reading retained history.
+func (s *Store) HistoricalBinding(platform, session, agent string) (Binding, error) {
+	if err := ValidateNativeSession(platform, session); err != nil {
+		return Binding{}, err
+	}
+	return s.GetBinding(bindingID(platform, session, agent))
+}
 func (s *Store) bindingPath(id string) (string, error) {
 	if !validID(id) {
 		return "", violation("intent_invalid_id")

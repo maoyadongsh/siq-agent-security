@@ -151,6 +151,10 @@ func (s *Server) runtimeCheckAttach(w http.ResponseWriter, r *http.Request) {
 }
 func (s *Server) runtimeCheckOne(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-store")
+	if strings.HasSuffix(r.URL.Path, "/activity") {
+		s.runtimeCheckActivity(w, r, runtimeCheckActivityID(r.URL.Path))
+		return
+	}
 	id := strings.TrimPrefix(r.URL.Path, "/v1/runtime-checks/")
 	var out runtimecheck.Result
 	var err error

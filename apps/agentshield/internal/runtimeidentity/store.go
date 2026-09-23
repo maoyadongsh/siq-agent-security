@@ -44,6 +44,7 @@ var ErrUnavailable = errors.New("runtime_identity_unavailable")
 
 // Record is private signed storage metadata, not an HTTP response DTO.
 type Record struct {
+	RequestScope      *RequestScope         `json:"request_scope,omitempty"`
 	FilesystemProfile string                `json:"filesystem_profile,omitempty"`
 	SchemaVersion     string                `json:"schema_version"`
 	IdentityID        string                `json:"identity_id"`
@@ -103,7 +104,7 @@ func Open(dir string, key *signing.Key, intents *intent.Store, resolve ResolveIn
 	if err := statefs.CheckPrivateDir(dir); err != nil {
 		return nil, ErrUnavailable
 	}
-	for _, name := range []string{"runtime-identities", "runtime-identity-secrets", "runtime-identity-revocations"} {
+	for _, name := range []string{"runtime-identities", "runtime-identity-secrets", "runtime-identity-revocations", "runtime-request-issuers", "runtime-request-attempts", "runtime-request-cancellations"} {
 		if err := privateDir(filepath.Join(dir, name)); err != nil {
 			return nil, ErrUnavailable
 		}
@@ -245,7 +246,7 @@ func (s *Store) Create(req CreateRequest) (Record, error) {
 		if e != nil {
 			return Record{}, e
 		}
-		if old.InstanceID == req.InstanceID && !revoked {
+		if old.RequestScope == nil && old.InstanceID == req.InstanceID && !revoked {
 			return Record{}, ErrConflict
 		}
 	}
@@ -306,7 +307,7 @@ func (s *Store) InspectByInstance(instance string) (Record, error) {
 		if err != nil {
 			return Record{}, err
 		}
-		if r.InstanceID != instance {
+		if r.RequestScope != nil || r.InstanceID != instance {
 			continue
 		}
 		revoked, err := s.revoked(r)
@@ -354,6 +355,23 @@ func (s *Store) authenticateWithGrant(token string) (Record, *grant.Grant, error
 // and profile only. Its caller must independently validate the current Grant
 // (or the selected Grant from its same-call ResolveBinding) before authorizing.
 func (s *Store) authenticateRecord(token string) (Record, error) {
+	r, err := s.credentialRecord(token)
+	if err != nil {
+		return Record{}, err
+	}
+	revoked, err := s.revoked(r)
+	if err != nil || revoked {
+		return Record{}, ErrUnavailable
+	}
+	if s.checkRecordProfile(r) != nil || s.checkRequestRecord(r) != nil {
+		return Record{}, ErrUnavailable
+	}
+	return r, nil
+}
+
+// credentialRecord proves possession only. It grants no execution authority;
+// cleanup may use it after the Grant or instance has become unavailable.
+func (s *Store) credentialRecord(token string) (Record, error) {
 	if len(token) != 100 || token[35] != '.' || !identityID.MatchString(token[:35]) || !hexDigest.MatchString(token[36:]) {
 		return Record{}, ErrInvalid
 	}
@@ -371,13 +389,6 @@ func (s *Store) authenticateRecord(token string) (Record, error) {
 	if subtle.ConstantTimeCompare([]byte(supplied), []byte(r.CredentialHash)) != 1 {
 		return Record{}, ErrUnavailable
 	}
-	revoked, err := s.revoked(r)
-	if err != nil || revoked {
-		return Record{}, ErrUnavailable
-	}
-	if s.checkRecordProfile(r) != nil {
-		return Record{}, ErrUnavailable
-	}
 	return r, nil
 }
 
@@ -393,6 +404,12 @@ func (s *Store) Revoke(id, actor string) (Revocation, error) {
 	if err != nil {
 		return Revocation{}, err
 	}
+	return s.revokeRecord(r, actor)
+}
+
+// Caller holds writeMu exclusively and has validated the signed record.
+func (s *Store) revokeRecord(r Record, actor string) (Revocation, error) {
+	id := r.IdentityID
 	revoked, err := s.revoked(r)
 	if err != nil {
 		return Revocation{}, err

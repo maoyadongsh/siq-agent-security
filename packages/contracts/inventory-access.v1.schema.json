@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "inventory-access.v1.schema.json",
+  "title": "InventoryAccess v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "can_confirm",
+    "can_discover",
+    "can_manage_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "inventory-access/v1"
+    },
+    "can_confirm": {
+      "type": "boolean"
+    },
+    "can_discover": {
+      "type": "boolean"
+    },
+    "can_manage_policy": {
+      "type": "boolean"
+    }
+  }
+}

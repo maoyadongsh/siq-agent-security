@@ -24,6 +24,12 @@ var networkCommand = regexp.MustCompile(`(?i)\b(curl|wget|nc|ncat|netcat|ssh|scp
 // Normalize maps adapter vocabulary to stable operation/effect vocabulary.
 // Unknown tools remain explicit unknown so an intent can fail closed.
 func normalizeEffects(tool string, params map[string]any) (operation string, effects []string) {
+	if businessReportShape(tool, params) {
+		if tool == ResearchPublishTool {
+			return "publish", []string{EffectFileRead, EffectFileWrite}
+		}
+		return "verify", []string{EffectFileRead}
+	}
 	t := strings.ToLower(strings.TrimSpace(tool))
 	switch t {
 	case "verify_report":

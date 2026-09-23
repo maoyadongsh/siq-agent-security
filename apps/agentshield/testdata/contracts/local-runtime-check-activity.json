@@ -1,0 +1,24 @@
+{
+  "schema_version": "local-runtime-check-activity/v1",
+  "check_id": "rc-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "instance_id": "hi-0123456789abcdef0123456789abcdef",
+  "snapshot": "49ddb8dbb1c7a4a4b6913a8d014cbf2efdc768f09864cfbe28cc822f0171d7fc",
+  "prefix_valid": true,
+  "history_integrity": "unknown",
+  "activity": {
+    "activity_id": "a8d65177761089ac8e231bdabf3673e9c38342708e5c127e1e0f2776e8ad3f8f",
+    "attribution": "bound",
+    "binding": {
+      "agent_id": "self-check-agent",
+      "chain_id": "local",
+      "intent_digest": "digest",
+      "intent_id": "intent",
+      "platform": "hermes",
+      "session_id": "native-session",
+      "task_id": "actual-task-not-derived-from-check-id"
+    },
+    "receipt_count": 2,
+    "first_seq": 501,
+    "last_seq": 502
+  }
+}

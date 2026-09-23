@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "deployment-submission-create.v1.schema.json",
+  "title": "deployment-submission-create/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_key",
+    "change_request_id",
+    "environment_id",
+    "binding_id",
+    "preview_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "deployment-submission-create/v1"
+    },
+    "request_key": {
+      "type": "string",
+      "pattern": "^[a-f0-9-]{36}$"
+    },
+    "change_request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "environment_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "binding_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "preview_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/siq-business-run-list.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "items",
+    "next_cursor"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-run-list/v1"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "session_id",
+          "run_id",
+          "saved_at",
+          "result"
+        ],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$",
+            "maxLength": 256
+          },
+          "run_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$",
+            "maxLength": 256
+          },
+          "saved_at": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "result": {
+            "$ref": "#/$defs/result"
+          }
+        }
+      }
+    },
+    "next_cursor": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "maxLength": 64
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "run_ref",
+        "session_ref",
+        "profile",
+        "status",
+        "runtime_terminal_confirmed",
+        "children_terminal_confirmed",
+        "write_quiesced",
+        "output",
+        "publication_status",
+        "snapshot"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "siq.business-run-result/v1"
+        },
+        "run_ref": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "session_ref": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "profile": {
+          "const": "siq_analysis"
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "completed",
+            "failed",
+            "cancelled",
+            "timed_out",
+            "protocol_eof",
+            "orphaned"
+          ]
+        },
+        "runtime_terminal_confirmed": {
+          "type": "boolean"
+        },
+        "children_terminal_confirmed": {
+          "type": "boolean"
+        },
+        "write_quiesced": {
+          "const": true
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "state",
+            "plaintext_sha256",
+            "plaintext_bytes"
+          ],
+          "properties": {
+            "kind": {
+              "const": "generated_reply"
+            },
+            "state": {
+              "enum": [
+                "pending",
+                "empty",
+                "too_large",
+                "ready"
+              ]
+            },
+            "plaintext_sha256": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "plaintext_bytes": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1048576
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "state": {
+                    "const": "ready"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "plaintext_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "plaintext_bytes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1048576
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "plaintext_sha256": {
+                    "type": "null"
+                  },
+                  "plaintext_bytes": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "publication_status": {
+          "const": "not_attested"
+        },
+        "snapshot": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "succeeded",
+                  "completed",
+                  "failed",
+                  "cancelled",
+                  "timed_out",
+                  "protocol_eof",
+                  "orphaned"
+                ]
+              },
+              "runtime_terminal_confirmed": {
+                "const": true
+              },
+              "children_terminal_confirmed": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "write_quiesced": {
+                "const": true
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "write_quiesced": {
+                "const": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "write_quiesced": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "output": {
+                "properties": {
+                  "state": {
+                    "const": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "output": {
+                "properties": {
+                  "state": {
+                    "enum": [
+                      "ready",
+                      "empty",
+                      "too_large"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

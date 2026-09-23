@@ -108,6 +108,11 @@ func describeWithNormalizer(tool string, params map[string]any, normalize func(s
 		}
 	}
 	walk(params, "")
+	if businessReportShape(tool, params) {
+		for key := range params {
+			d.HighImpactParameterPaths = append(d.HighImpactParameterPaths, "/"+key)
+		}
+	}
 	sort.Strings(d.HighImpactParameterPaths)
 	return d
 }

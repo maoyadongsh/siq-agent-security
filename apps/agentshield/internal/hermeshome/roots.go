@@ -18,7 +18,11 @@ import (
 
 const MaxProfiles = 64
 
-type Options struct{ Home, Override, LocalAppData, OS string }
+type Options struct {
+	Home, Override, LocalAppData, OS string
+	ProjectDirs                      []string
+	ProjectScopeUnavailable          bool
+}
 type Root struct {
 	ID, Name, Path, CandidateID, Source string
 	Default, Active, Detected           bool
@@ -78,9 +82,40 @@ func Scan(o Options) Result {
 			}
 		}
 	}
+	if o.ProjectScopeUnavailable {
+		result.Issues = append(result.Issues, "project_scope_unreadable")
+	}
+	projectRoots := map[string]bool{}
+	if len(o.ProjectDirs) > 16 {
+		result.Issues = append(result.Issues, "project_limit")
+	} else if !o.ProjectScopeUnavailable {
+		for _, project := range o.ProjectDirs {
+			if !filepath.IsAbs(project) || filepath.Clean(project) != project || len(project) > 4096 || strings.ContainsAny(project, "\x00\r\n") || strings.HasPrefix(project, "//") || strings.HasPrefix(project, `\\`) || safe(o.Home, project) != nil {
+				result.Issues = append(result.Issues, "unsafe_project_root")
+				continue
+			}
+			if st, err := os.Lstat(project); err != nil || !st.IsDir() {
+				result.Issues = append(result.Issues, "unavailable_project_root")
+				continue
+			}
+			for _, path := range []string{filepath.Join(project, ".hermes"), filepath.Join(project, "agents", "hermes")} {
+				if !contains(roots, path) {
+					roots = append(roots, path)
+					projectRoots[path] = true
+				}
+			}
+		}
+	}
+	projectCount := 0
 	seen := map[string]bool{}
 	add := func(path, name, source string, isDefault bool) {
 		path = filepath.Clean(path)
+		if source == "registered_project" && projectCount >= 128 {
+			if !contains(result.Issues, "project_profile_limit") {
+				result.Issues = append(result.Issues, "project_profile_limit")
+			}
+			return
+		}
 		if seen[Identifier(path)] {
 			return
 		}
@@ -93,6 +128,9 @@ func Scan(o Options) Result {
 		if err != nil && !os.IsNotExist(err) || err == nil && !info.IsDir() {
 			result.Issues = append(result.Issues, "unreadable_profile_root")
 			return
+		}
+		if source == "registered_project" {
+			projectCount++
 		}
 		id := Identifier(path)
 		candidate := "agent:hermes:root:" + strings.TrimPrefix(id, "hi-")
@@ -111,7 +149,18 @@ func Scan(o Options) Result {
 			source = "environment"
 			name = filepath.Base(root)
 		}
-		add(root, name, source, root == base)
+		if projectRoots[root] {
+			source = "registered_project"
+			if safe(o.Home, root) != nil {
+				result.Issues = append(result.Issues, "unsafe_project_profile")
+				continue
+			}
+			if recognizedProfile(root) {
+				add(root, name, source, false)
+			}
+		} else {
+			add(root, name, source, root == base)
+		}
 		profiles := filepath.Join(root, "profiles")
 		if err := safe(o.Home, profiles); err != nil {
 			result.Issues = append(result.Issues, "unsafe_profiles_directory")
@@ -145,13 +194,12 @@ func Scan(o Options) Result {
 				continue
 			}
 			path := filepath.Join(profiles, entry.Name())
-			recognized := false
-			for _, marker := range []string{"config.yaml", "SOUL.md"} {
-				info, err := os.Lstat(filepath.Join(path, marker))
-				recognized = recognized || err == nil && info.Mode().IsRegular()
-			}
-			if recognized {
-				add(path, entry.Name(), "named_profile", false)
+			if recognizedProfile(path) {
+				profileSource := "named_profile"
+				if projectRoots[root] {
+					profileSource = "registered_project"
+				}
+				add(path, entry.Name(), profileSource, false)
 			}
 		}
 	}
@@ -204,4 +252,14 @@ func safe(home, path string) error {
 			return nil
 		}
 	}
+}
+
+// Markers are inspected, never interpreted as commands or imported.
+func recognizedProfile(path string) bool {
+	for _, name := range []string{"config.yaml", "SOUL.md"} {
+		if st, err := os.Lstat(filepath.Join(path, name)); err == nil && st.Mode().IsRegular() {
+			return true
+		}
+	}
+	return false
 }

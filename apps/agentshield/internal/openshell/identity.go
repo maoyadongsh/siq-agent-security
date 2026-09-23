@@ -50,13 +50,18 @@ func looksLikeOpenShellStatus(text string) bool {
 }
 
 var gatewayVersionRe = regexp.MustCompile(`(?im)^\s*Gateway version:\s*v?(\d+\.\d+\.\d+)\s*$`)
+var statusVersionRe = regexp.MustCompile(`(?im)^\s*Version:\s*v?(\d+\.\d+\.\d+)\s*$`)
 
 // parseGatewayVersion reads a gateway version ONLY from live handshake output
 // (`status`). `gateway info` is a local config print and never proves the
 // gateway's version.
 func parseGatewayVersion(text string) string {
-	if m := gatewayVersionRe.FindStringSubmatch(text); m != nil {
-		return m[1]
+	matches := gatewayVersionRe.FindAllStringSubmatch(text, -1)
+	if looksLikeOpenShellStatus(text) {
+		matches = append(matches, statusVersionRe.FindAllStringSubmatch(text, -1)...)
+	}
+	if len(matches) == 1 {
+		return matches[0][1]
 	}
 	return ""
 }

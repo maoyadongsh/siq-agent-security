@@ -6,9 +6,11 @@
 
 ## 当前接入与研究边界
 
-Linux/macOS/Windows 的产品范围与实际证据见[平台矩阵](../../../platforms/support-matrix.md)。原生 Skill 安装策略、插件加载、会话授权和审批后检查点是四项独立能力。OpenClaw 2026.9.4 原版与带固定检查点补丁的受控副本分别记账；Linux 阶段 22/22 来自后者，不证明上游原版已补齐审批后最终检查。
+Linux/macOS/Windows 的产品范围与实际证据见[平台矩阵](../../../platforms/support-matrix.md)。原生 Skill 安装策略、插件加载、会话授权和审批后检查点是四项独立能力。当前实际 CLI 为 OpenClaw 2026.9.5；库存档与带固定检查点补丁的受控副本分别记账。OC-01 的 20/20 来自“库存失败关闭 + 私有受控副本”，不证明上游原版已补齐审批后最终检查。
 
 当前受控使用入口见[Linux 启动说明](../../../docs/openclaw-controlled-start-linux-20260919.md)和[补丁索引](../../../patches/openclaw/README.md)。旧 raw sessionKey 绑定、历史失败与后续修复在下文按日期保留，不能用旧会话例子签发新 epoch 权限。核心机制是把宿主真实会话、最终动作参数和唯一执行预留关联起来，防止批准被挪用于其他调用。
+
+2026.9.5 的权威支持档位见[兼容清单](../../../patches/openclaw/compatibility.v1.json)：库存档允许普通 allow/deny/redact，但 hold 因缺少检查点协议 v1 而失败关闭；只有库存源码、受控源码、补丁和本适配器四个摘要全部匹配的私有副本可进入受控 hold 档。受控启动器会复核清单，不能通过用户配置或版本字符串伪造能力。
 
 ## Skill 安装检查
 
@@ -55,6 +57,8 @@ siq-agent-security adapter install openclaw
 - 插件 TS：按 OpenClaw 2026-09 `before_tool_call` 合同编写（`block` 终止、`requireApproval` 首个生效、`params` 改写）。同一证据目录用插件会发出的 `/v1/decide` 请求体做了授前/授后 deny；该 2026-09-05 记录**未**把插件加载进网关进程；后续原生记录见下文，不回写早期范围。
 
 V2：pre/post 传递 tool_call_id、action_id/decision_receipt_id；缓存最多 2048 项、TTL 300 秒，重复 ID 冲突不绑定旧动作。hold 的 execution observation 必须绑定本地批准后生成的签名 reservation；平台自身弹窗不创建本地批准。`node scripts/test-openclaw-adapter.cjs` 提供隔离 hook 回归，原生宿主验收见本节后续记录。
+
+2026-09-21 OC-01 当前验收：实际 `OpenClaw 2026.9.5 (ec9c1a1)` 的库存业务 hold 安全拒绝；固定受控副本完成 20 个原生场景，覆盖普通审批、平台取消、本地失联、平台等待期间撤权、回调抛错/拒绝/非法返回/超时/取消、最终参数变化，以及与 Hermes BU-01 同名的报告发布工具。46 条回执链验签，四条允许路径各有唯一 reservation/observation，其余零执行。适配器原生场景 50 项和业务合同 harness 通过。该结果使用合成 operator 与本地效果，详见 [OC-01 证据](../../../docs/evidence/flagship-optimization-20260921/oc-01-openclaw-parity.json)。
 
 2026-09-07 21:11 的[原生失败证据](../../../docs/trusted-intent-v2-native-approval-gap-20260907-211105.md) 保留为历史基线。21:33 的[修复验收](../../../docs/trusted-intent-v2-approval-gate-validation-20260907-213332.md) 已通过六个原生场景：当前插件在进入平台审批前按完整动作身份和原参数确认本地批准，未批准或已拒绝时工具不执行。
 

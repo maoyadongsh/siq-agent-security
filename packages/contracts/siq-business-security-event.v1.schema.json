@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/siq-business-security-event.v1.json",
+  "title": "SIQ Business Security Event v1",
+  "description": "Credential-free, content-free security projection exported by the SIQ business API for local AgentShield discovery. Identity values are domain-separated SHA-256 references; business truth remains in the producing SIQ domain.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_type",
+    "occurred_at",
+    "producer",
+    "identity",
+    "authorization",
+    "execution",
+    "audit",
+    "lifecycle"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-security-event/v1"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^sev_[0-9a-f]{64}$"
+    },
+    "event_type": {
+      "enum": [
+        "agent_run.admitted",
+        "agent_run.terminal"
+      ]
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "const": "siq-research-api"
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_ref",
+        "subject_ref"
+      ],
+      "properties": {
+        "tenant_ref": {
+          "$ref": "#/definitions/hashReference"
+        },
+        "subject_ref": {
+          "$ref": "#/definitions/hashReference"
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_tenant_ref",
+        "data_scope_ref_sha256",
+        "authorization_snapshot_sha256",
+        "data_classification"
+      ],
+      "properties": {
+        "scope_tenant_ref": {
+          "$ref": "#/definitions/hashReference"
+        },
+        "data_scope_ref_sha256": {
+          "$ref": "#/definitions/sha256"
+        },
+        "authorization_snapshot_sha256": {
+          "$ref": "#/definitions/sha256"
+        },
+        "data_classification": {
+          "enum": [
+            "public_research",
+            "confidential_local"
+          ]
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_ref",
+        "session_ref",
+        "profile",
+        "runtime_target",
+        "sandbox_ref",
+        "model_route_sha256"
+      ],
+      "properties": {
+        "run_ref": {
+          "$ref": "#/definitions/hashReference"
+        },
+        "session_ref": {
+          "$ref": "#/definitions/hashReference"
+        },
+        "profile": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        "runtime_target": {
+          "const": "openshell"
+        },
+        "sandbox_ref": {
+          "$ref": "#/definitions/hashReference"
+        },
+        "model_route_sha256": {
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correlation_ref",
+        "audit_trace_ref"
+      ],
+      "properties": {
+        "correlation_ref": {
+          "$ref": "#/definitions/hashReference"
+        },
+        "audit_trace_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/hashReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "runtime_terminal_confirmed",
+        "children_terminal_confirmed",
+        "write_quiesced"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "admitted",
+            "succeeded",
+            "completed",
+            "failed",
+            "cancelled",
+            "timed_out",
+            "protocol_eof",
+            "orphaned"
+          ]
+        },
+        "runtime_terminal_confirmed": {
+          "type": "boolean"
+        },
+        "children_terminal_confirmed": {
+          "type": "boolean"
+        },
+        "write_quiesced": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "hashReference": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "agent_run.admitted"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "lifecycle": {
+            "properties": {
+              "status": {
+                "const": "admitted"
+              },
+              "runtime_terminal_confirmed": {
+                "const": false
+              },
+              "children_terminal_confirmed": {
+                "const": false
+              },
+              "write_quiesced": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "agent_run.terminal"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "lifecycle": {
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "admitted"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "schema_version": "siq.business-security-event/v1",
+      "event_id": "sev_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "event_type": "agent_run.admitted",
+      "occurred_at": "2026-09-21T12:00:00Z",
+      "producer": "siq-research-api",
+      "identity": {
+        "tenant_ref": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "subject_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "authorization": {
+        "scope_tenant_ref": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "data_scope_ref_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "authorization_snapshot_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "data_classification": "confidential_local"
+      },
+      "execution": {
+        "run_ref": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "session_ref": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "profile": "siq_analysis",
+        "runtime_target": "openshell",
+        "sandbox_ref": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "model_route_sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      "audit": {
+        "correlation_ref": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "audit_trace_ref": null
+      },
+      "lifecycle": {
+        "status": "admitted",
+        "runtime_terminal_confirmed": false,
+        "children_terminal_confirmed": false,
+        "write_quiesced": false
+      }
+    }
+  ]
+}

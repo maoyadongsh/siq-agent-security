@@ -30,7 +30,7 @@ func (s *Store) summarize(r Record) (Summary, error) {
 	status := "issued"
 	if revoked {
 		status = "revoked"
-	} else if _, err = s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID); err != nil {
+	} else if _, err = s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID); err != nil || s.checkRequestRecord(r) != nil {
 		status = "grant_unavailable"
 	}
 	return Summary{FilesystemProfile: r.FilesystemProfile, IdentityID: r.IdentityID, InstanceID: r.InstanceID, AgentID: r.AgentID, Platform: r.Platform, GrantRef: r.GrantRef, ActorID: r.ActorID, CreatedAt: r.CreatedAt, SessionTTLSeconds: r.SessionTTLSeconds, Status: status, RuntimeState: "unverified"}, nil

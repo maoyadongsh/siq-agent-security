@@ -4,13 +4,17 @@
  * - 禁止前端合成 effective；状态来自 API。
  */
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useConsoleContext } from '@/components/ConsoleContext';
+import ChangeReviewDialog from '@/components/ChangeReviewDialog';
+import ChangeExecutionDialog from '@/components/ChangeExecutionDialog';
+import DeploymentPreviewDialog from '@/components/DeploymentPreviewDialog';
+import type { DeploymentSelection } from '@/api/deploymentPreview';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { useApiList } from '@/hooks/useApiList';
-import { api, ApiError } from '@/api/client';
-import type { ChangeRequestRow, DeploymentRow, Environment, RuntimeBindingRow } from '@/api/types';
-import { classifyDeploymentVerification } from '@/ui/verification';
+import type { ChangeRequestRow, Environment, RuntimeBindingRow } from '@/api/types';
 
 const PLACEHOLDER: ChangeRequestRow[] = [];
 
@@ -40,84 +44,30 @@ function canDeploy(status: string): boolean {
 export default function ChangesPage() {
   const { rows, status, error, refresh, coverageText, hasMore, loadMore, loadingMore } =
     useApiList<ChangeRequestRow>('/change-requests', PLACEHOLDER);
-  const { rows: deployments } = useApiList<DeploymentRow>('/deployments', []);
-  const { rows: environments, status: envStatus } = useApiList<Environment>('/environments', []);
-  const { rows: bindings, status: bindingStatus } = useApiList<RuntimeBindingRow>('/runtime-bindings', []);
+  const { data: context } = useConsoleContext();
+  const [query, setQuery] = useSearchParams();
+  const selectedId = query.get('change');
+  const [unknownChanges, setUnknownChanges] = useState<Set<string>>(() => new Set(query.get('unconfirmed') === '1' && selectedId ? [selectedId] : []));
+  const [selectedBinding, setSelectedBinding] = useState<RuntimeBindingRow | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [environmentId, setEnvironmentId] = useState('');
-  const [bindingId, setBindingId] = useState('');
-  const [deployingId, setDeployingId] = useState<string | null>(null);
+  const [deploymentSelection, setDeploymentSelection] = useState<DeploymentSelection | null>(null);
+  const allowDeployment = context?.actions.manage_policy && context.access.environments;
+  const openReview = (id: string) => { const next = new URLSearchParams(query); next.set('change', id); next.delete('view'); next.delete('deployment'); next.delete('unconfirmed'); setQuery(next); };
+  const closeReview = () => { const next = new URLSearchParams(query); next.delete('change'); next.delete('view'); next.delete('deployment'); next.delete('unconfirmed'); setQuery(next); };
 
-  const activeBindings = useMemo(
-    () =>
-      bindings.filter(
-        (b) => b.status === 'active' && (!environmentId || b.environment_id === environmentId),
-      ),
-    [bindings, environmentId],
-  );
-
-  useEffect(() => {
-    // 环境切换后若当前绑定不属于该环境则清空（不自动顶替）
-    if (bindingId && environmentId) {
-      const ok = bindings.some(
-        (b) => b.id === bindingId && b.status === 'active' && b.environment_id === environmentId,
-      );
-      if (!ok) setBindingId('');
-    }
-  }, [environmentId, bindingId, bindings]);
-
-  const approve = async (id: string) => {
-    setActionError(null);
-    try {
-      await api.approveChangeRequest(id);
-      refresh();
-    } catch (err) {
-      setActionError(
-        err instanceof ApiError
-          ? `${err.message}（批准需 reviewer 角色且与提出者不同）`
-          : '操作失败',
-      );
-    }
+  const openExecution = (id: string, deploymentId?: string, uncertain = unknownChanges.has(id)) => {
+    const next = new URLSearchParams(query); next.set('change', id); next.set('view', 'execution');
+    if (deploymentId) next.set('deployment', deploymentId); else next.delete('deployment');
+    if (uncertain) next.set('unconfirmed', '1'); else next.delete('unconfirmed');
+    setQuery(next);
   };
 
-  const reject = async (id: string) => {
+  const deploy = (cr: ChangeRequestRow) => {
+    if (!allowDeployment) return;
+    if (unknownChanges.has(cr.id)) { openExecution(cr.id); return; }
     setActionError(null);
-    try {
-      await api.rejectChangeRequest(id);
-      refresh();
-    } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : '操作失败');
-    }
-  };
-
-  const deploy = async (cr: ChangeRequestRow) => {
-    setActionError(null);
-    if (!environmentId) {
-      setActionError('请先选择环境（禁止自动选首个）');
-      return;
-    }
-    if (!bindingId) {
-      setActionError('请先选择运行时绑定（禁止自动选首个）');
-      return;
-    }
-    const binding = bindings.find((b) => b.id === bindingId);
-    if (!binding || binding.status !== 'active') {
-      setActionError('所选绑定不可用或已吊销');
-      return;
-    }
-    if (binding.environment_id !== environmentId) {
-      setActionError('绑定与环境不匹配');
-      return;
-    }
-    setDeployingId(cr.id);
-    try {
-      await api.createDeployment(cr.id, environmentId, bindingId);
-      refresh();
-    } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : '部署失败');
-    } finally {
-      setDeployingId(null);
-    }
+    if (!selectedBinding) { setActionError('请先选择部署环境和运行时绑定。'); return; }
+    setDeploymentSelection({ change_request_id: cr.id, environment_id: selectedBinding.environment_id, binding_id: selectedBinding.id });
   };
 
   const columns: TableColumn<ChangeRequestRow>[] = [
@@ -139,55 +89,21 @@ export default function ChangesPage() {
     },
     { key: 'proposer_user_id', header: '提出者', render: (r) => r.proposer_user_id },
     { key: 'approver_user_id', header: '批准者', render: (r) => r.approver_user_id ?? '—' },
-    {
-      key: 'deployment',
-      header: '部署 / 验证',
-      render: (r) => {
-        const dep = deployments.find((d) => d.change_request_id === r.id);
-        if (!dep) return '—';
-        const view = classifyDeploymentVerification(dep.status, dep.verification);
-        const binding = dep.runtime_binding_id
-          ? `绑定 ${dep.runtime_binding_id}`
-          : '无绑定';
-        return (
-          <span className={`verification-cell tone-${view.tone}`} title={view.detail || undefined}>
-            <span className="mono">
-              {dep.status} @ {dep.target}
-            </span>
-            <span className={`verification-badge tone-${view.tone}`}>{view.label}</span>
-            <span className="verification-meta">
-              {binding}
-              {dep.to_revision ? ` · rev ${dep.to_revision}` : ''}
-              {view.detail ? ` · ${view.detail}` : ''}
-            </span>
-          </span>
-        );
-      },
-    },
     { key: 'created_at', header: '时间', render: (r) => r.created_at },
     {
       key: 'actions',
       header: '操作',
       render: (r) => (
         <div className="row-actions">
-          {r.status === 'proposed' && (
-            <>
-              <button type="button" className="btn-sm" onClick={() => approve(r.id)}>
-                批准
-              </button>
-              <button type="button" className="btn-sm btn-danger" onClick={() => reject(r.id)}>
-                驳回
-              </button>
-            </>
-          )}
-          {canDeploy(r.status) && (
+          <button type="button" className="btn-sm" onClick={() => openReview(r.id)}>{r.status === 'proposed' ? '查看并审查' : '查看处理结果'}</button>
+          <button type="button" className="btn-sm" onClick={() => openExecution(r.id)}>部署与审计</button>
+          {allowDeployment && canDeploy(r.status) && (
             <button
               type="button"
               className="btn-sm btn-primary"
               onClick={() => deploy(r)}
-              disabled={deployingId === r.id}
             >
-              {deployingId === r.id ? '部署中…' : '部署'}
+              {unknownChanges.has(r.id) ? '核对部署结果' : '部署'}
             </button>
           )}
         </div>
@@ -200,42 +116,18 @@ export default function ChangesPage() {
       <PageHeader
         icon="changes"
         title="变更中心"
-        description="提案 → 职责分离审批 → 显式选择环境与运行时绑定后部署；读回验证与业务生效分开展示。"
+        description="先查看适用对象、权限内容与影响，再审批。批准、部署和运行时生效分别核对。"
         connection={status}
         connectionError={error}
       />
-      <div className="form-row">
-        <label>
-          部署环境
-          <select
-            value={environmentId}
-            onChange={(e) => setEnvironmentId(e.target.value)}
-            disabled={envStatus !== 'connected'}
-          >
-            <option value="">请选择…</option>
-            {environments.map((env) => (
-              <option key={env.id} value={env.id}>
-                {env.name} ({env.id}) · {env.mode}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          运行时绑定
-          <select
-            value={bindingId}
-            onChange={(e) => setBindingId(e.target.value)}
-            disabled={bindingStatus !== 'connected' || !environmentId}
-          >
-            <option value="">{environmentId ? '请选择…' : '先选环境'}</option>
-            {activeBindings.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.backend}:{b.backend_target_id} ({b.id})
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      {allowDeployment ? <DeploymentTargets onSelect={setSelectedBinding} /> : <p className="list-coverage">当前账号可按权限查看或审批变更；部署需要策略管理及环境读取权限。</p>}
+      {deploymentSelection ? <DeploymentPreviewDialog key={`${deploymentSelection.change_request_id}:${deploymentSelection.binding_id}`} selection={deploymentSelection} onClose={() => setDeploymentSelection(null)}
+        onStarting={() => openExecution(deploymentSelection.change_request_id, undefined, true)}
+        onRejected={closeReview}
+        onViewResults={() => { const id = deploymentSelection.change_request_id; setDeploymentSelection(null); openExecution(id); }}
+        onSubmitted={deploymentId => { const id = deploymentSelection.change_request_id; setDeploymentSelection(null); refresh(); openExecution(id, deploymentId); }}
+        onUncertain={() => { const id = deploymentSelection.change_request_id; setUnknownChanges(ids => new Set([...ids, id])); setDeploymentSelection(null); setActionError('暂时无法确认部署结果，请先核对部署与审计记录，避免重复提交。'); openExecution(id, undefined, true); }} /> : null}
+      {selectedId && !deploymentSelection ? query.get('view') === 'execution' ? <ChangeExecutionDialog key={selectedId} id={selectedId} uncertain={query.get('unconfirmed') === '1' || unknownChanges.has(selectedId)} expectedDeploymentId={query.get('deployment') ?? undefined} onClose={closeReview} /> : <ChangeReviewDialog key={selectedId} id={selectedId} onClose={closeReview} onUpdated={refresh} /> : null}
       {actionError && <p className="sync-err">{actionError}</p>}
       {coverageText ? (
         <p className="list-coverage" role="status">
@@ -246,7 +138,8 @@ export default function ChangesPage() {
         <DisconnectedNotice error={error} onRetry={refresh} />
       ) : (
         <>
-          <SimpleTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+          <div className="change-desktop-table"><SimpleTable columns={columns} rows={rows} rowKey={(r) => r.id} /></div>
+          <div className="change-mobile-list">{rows.map(r => <article key={r.id}><h3>{STATUS_LABELS[r.status] ?? r.status}</h3><p>提出账号：{r.proposer_user_id}</p><p>变更：{r.id}</p><p>策略：{r.policy_id}</p><button type="button" className="btn" onClick={() => openReview(r.id)}>{r.status === 'proposed' ? '查看并审查' : '查看处理结果'}</button><button type="button" className="btn" onClick={() => openExecution(r.id)}>部署与审计</button>{allowDeployment && canDeploy(r.status) ? <button type="button" className="btn" onClick={() => void deploy(r)}>{unknownChanges.has(r.id) ? '核对部署结果' : '部署'}</button> : null}</article>)}</div>
           {hasMore ? (
             <div className="list-more">
               <button type="button" className="btn-sm" disabled={loadingMore} onClick={() => loadMore()}>
@@ -258,4 +151,19 @@ export default function ChangesPage() {
       )}
     </div>
   );
+}
+
+function DeploymentTargets({ onSelect }: { onSelect: (binding: RuntimeBindingRow | null) => void }) {
+  const { rows: environments, status: envStatus, refresh: reloadEnvs } = useApiList<Environment>('/environments', []);
+  const { rows: bindings, status: bindingStatus, refresh: reloadBindings } = useApiList<RuntimeBindingRow>('/runtime-bindings', []);
+  const [environmentId, setEnvironmentId] = useState('');
+  const [bindingId, setBindingId] = useState('');
+  const activeBindings = useMemo(() => bindings.filter(b => b.status === 'active' && b.environment_id === environmentId), [bindings, environmentId]);
+  useEffect(() => { onSelect(envStatus === 'connected' && bindingStatus === 'connected' ? activeBindings.find(b => b.id === bindingId) ?? null : null); }, [activeBindings, bindingId, envStatus, bindingStatus, onSelect]);
+  return <div className="form-row">
+    <label>部署环境<select aria-label="部署环境" value={environmentId} disabled={envStatus !== 'connected'} onChange={e => { setEnvironmentId(e.target.value); setBindingId(''); }}><option value="">请选择环境</option>{environments.filter(e => e.mode === 'enforce').map(e => <option key={e.id} value={e.id}>{e.name}</option>)}</select></label>
+    <label>运行时绑定<select aria-label="运行时绑定" value={bindingId} disabled={bindingStatus !== 'connected' || !environmentId} onChange={e => setBindingId(e.target.value)}><option value="">{environmentId ? '请选择绑定' : '先选择环境'}</option>{activeBindings.map(b => <option key={b.id} value={b.id}>{b.backend}：{b.backend_target_id}</option>)}</select></label>
+    {envStatus === 'disconnected' || bindingStatus === 'disconnected' ? <button type="button" className="btn-sm" onClick={() => { reloadEnvs(); reloadBindings(); }}>重新读取部署目标</button> : null}
+    <p className="text-muted">仅列出当前读取到的执行环境与有效绑定；缺少目标时请先完成环境和运行时接入。</p>
+  </div>;
 }

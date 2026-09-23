@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "observed_at",
+    "items",
+    "partial",
+    "network_requested"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-model-connections/v1"
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 2048,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "instance_id",
+          "platform",
+          "instance_name",
+          "role",
+          "model",
+          "provider",
+          "endpoint_display",
+          "credential",
+          "state",
+          "can_check",
+          "fingerprint"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^mc-[0-9a-f]{32}$"
+          },
+          "instance_id": {
+            "type": "string",
+            "pattern": "^hi-[0-9a-f]{32}$"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "hermes",
+              "openclaw"
+            ]
+          },
+          "instance_name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "configured",
+              "primary",
+              "fallback"
+            ]
+          },
+          "model": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "provider": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "endpoint_display": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "credential": {
+            "type": "string",
+            "enum": [
+              "present",
+              "missing",
+              "none",
+              "unsupported"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "configured",
+              "missing_model",
+              "missing_endpoint",
+              "unsupported_config",
+              "unsupported_protocol",
+              "credential_unavailable",
+              "unreadable_config"
+            ]
+          },
+          "can_check": {
+            "type": "boolean"
+          },
+          "fingerprint": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "partial": {
+      "type": "boolean"
+    },
+    "network_requested": {
+      "const": false
+    }
+  }
+}

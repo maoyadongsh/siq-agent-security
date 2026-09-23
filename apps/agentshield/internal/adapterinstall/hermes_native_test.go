@@ -2,12 +2,16 @@ package adapterinstall
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"siq-agent-security/apps/agentshield/internal/state"
 )
 
 func TestNativeYAMLGuardRefusesAliasesAndTags(t *testing.T) {
@@ -84,12 +88,57 @@ func TestHermesNativeCLIStagesEnableAndRestoresOnlyOwnedSettings(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	state, err := nativeRegistration(doc)
-	if err != nil || state.Enabled || !state.Disabled || state.Override != nil {
+	registration, err := nativeRegistration(doc)
+	if err != nil || registration.Enabled || !registration.Disabled || registration.Override != nil {
 		t.Fatal("native registration not restored")
 	}
 	if doc["added_after_install"] != "keep-me" || doc["custom_fixture"] == nil || doc["model"] != "fixture-model" {
 		t.Fatal("unrelated settings lost")
+	}
+	// Native YAML normalization and the user's intervening change differ from
+	// the immutable first snapshot. Proven uninstall permits safe reinstallation.
+	snapshotPath := cfg + originalSuffix
+	snapshot, err := os.ReadFile(snapshotPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Install(o); err != nil {
+		t.Fatal("native reinstall after surgical uninstall", err)
+	}
+	if after, err := os.ReadFile(snapshotPath); err != nil || !bytes.Equal(after, snapshot) {
+		t.Fatal("reinstall replaced original snapshot")
+	}
+	if _, err := Uninstall(o); err != nil {
+		t.Fatal("second native uninstall", err)
+	}
+	restored, _ = os.ReadFile(cfg)
+	doc, err = stage.document(restored)
+	if err != nil || doc["added_after_install"] != "keep-me" || doc["model"] != "fixture-model" {
+		t.Fatal("reinstall/uninstall lost current user configuration")
+	}
+	putTestFile(t, snapshotPath, []byte("untrusted_snapshot: true\n"), 0600)
+	if _, err := Prepare(o, "install"); err == nil {
+		t.Fatal("tampered first snapshot accepted")
+	}
+	if after, err := os.ReadFile(cfg); err != nil || !bytes.Equal(after, restored) {
+		t.Fatal("rejected reinstall changed current configuration")
+	}
+	putTestFile(t, snapshotPath, snapshot, 0600)
+	st := &state.Store{Dir: o.StateDir}
+	rev, rawClaim, err := st.LatestSeq("adapter-operations", operationKey(o))
+	if err != nil || rev < 0 {
+		t.Fatal(err)
+	}
+	claimPath := filepath.Join(o.StateDir, "adapter-operations", fmt.Sprintf("%s.%d.json", operationKey(o), rev))
+	var claim map[string]any
+	if err := json.Unmarshal(rawClaim, &claim); err != nil {
+		t.Fatal(err)
+	}
+	claim["digest"] = strings.Repeat("0", 64)
+	tampered, _ := json.Marshal(claim)
+	putTestFile(t, claimPath, tampered, 0600)
+	if _, err := Prepare(o, "install"); err == nil {
+		t.Fatal("unauthenticated uninstall accepted")
 	}
 	if exists(filepath.Join(o.Home, ".hermes", "plugins", "siq-agent-security")) {
 		t.Fatal("other profile modified")

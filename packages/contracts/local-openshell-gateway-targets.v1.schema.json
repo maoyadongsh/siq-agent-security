@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "gateway_id",
+    "configuration_fingerprint",
+    "catalog"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-openshell-gateway-targets/v1"
+    },
+    "gateway_id": {
+      "type": "string",
+      "pattern": "^og-[0-9a-f]{32}$"
+    },
+    "configuration_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "observed_at",
+        "state",
+        "cli_found",
+        "source",
+        "cli_version",
+        "gateway",
+        "endpoint_fingerprint",
+        "can_inspect",
+        "items",
+        "started_gateway"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-openshell-targets/v1"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "state": {
+          "enum": [
+            "unconfigured",
+            "unreachable",
+            "catalog_unavailable",
+            "available"
+          ]
+        },
+        "cli_found": {
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "none",
+            "invalid",
+            "path",
+            "env_sh",
+            "env_pair"
+          ]
+        },
+        "cli_version": {
+          "type": "string"
+        },
+        "gateway": {
+          "type": "string"
+        },
+        "endpoint_fingerprint": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "const": ""
+            }
+          ]
+        },
+        "can_inspect": {
+          "type": "boolean"
+        },
+        "items": {
+          "type": "array",
+          "maxItems": 999,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sandbox_id",
+              "name",
+              "phase",
+              "policy_version"
+            ],
+            "properties": {
+              "sandbox_id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,62}$"
+              },
+              "phase": {
+                "enum": [
+                  "Ready",
+                  "Pending",
+                  "Creating",
+                  "Running",
+                  "Stopping",
+                  "Stopped",
+                  "Error",
+                  "Terminated",
+                  "Unknown"
+                ]
+              },
+              "policy_version": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "started_gateway": {
+          "const": false
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/change-review.v1.schema.json",
+  "title": "change-review v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change_id",
+    "status",
+    "policy_name",
+    "policy_version",
+    "enforcement_mode",
+    "approval_policy",
+    "proposer_id",
+    "approver_id",
+    "review_digest",
+    "sections",
+    "can_approve",
+    "can_reject",
+    "approve_blockers",
+    "reject_blockers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "change-review/v1"
+    },
+    "change_id": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "status": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "policy_name": {
+      "type": "string",
+      "maxLength": 6000
+    },
+    "policy_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "enforcement_mode": {
+      "enum": [
+        "audit_only",
+        "warn",
+        "block"
+      ]
+    },
+    "approval_policy": {
+      "enum": [
+        "standard",
+        "high_risk",
+        "break_glass"
+      ]
+    },
+    "proposer_id": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "approver_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 256
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "review_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sections": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "content",
+          "redacted",
+          "truncated"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 6000
+          },
+          "redacted": {
+            "type": "boolean"
+          },
+          "truncated": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "can_approve": {
+      "type": "boolean"
+    },
+    "can_reject": {
+      "type": "boolean"
+    },
+    "approve_blockers": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "missing_permission",
+          "not_proposed",
+          "own_proposal",
+          "incomplete_content",
+          "policy_invalid",
+          "downgrade_requires_high_risk"
+        ]
+      },
+      "maxItems": 6
+    },
+    "reject_blockers": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "missing_permission",
+          "not_proposed"
+        ]
+      },
+      "maxItems": 2
+    }
+  }
+}

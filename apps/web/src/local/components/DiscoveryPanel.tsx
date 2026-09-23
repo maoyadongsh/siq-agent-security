@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { localApi } from '../api';
 import type { DiscoveryInput, DiscoveryPreview, DiscoveryStatus } from '../types';
+import { createDiscoveryStarter } from '../environmentDiscovery';
+import EnvironmentConnections from './EnvironmentConnections';
 
 const runLabel = {
   idle: '当前没有扫描任务', running: '正在发现智能体与 Skill…', succeeded: '扫描完成',
@@ -15,7 +17,7 @@ function issueText(issue: string): string {
   return `${labels[category] || '已跳过'}：${split >= 0 ? issue.slice(split + 1) : ''}`;
 }
 
-export default function DiscoveryPanel({ onCompleted }: { onCompleted: () => void }) {
+export default function DiscoveryPanel({ onCompleted, compact = false }: { onCompleted: () => void; compact?: boolean }) {
   const [status, setStatus] = useState<DiscoveryStatus | null>(null);
   const [path, setPath] = useState('');
   const [kind, setKind] = useState('project_dir');
@@ -23,6 +25,9 @@ export default function DiscoveryPanel({ onCompleted }: { onCompleted: () => voi
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pendingRun = useRef<string>();
+  const startDiscovery = useMemo(() => createDiscoveryStarter(localApi), []);
+  const completed = useRef(onCompleted);
+  useEffect(() => { completed.current = onCompleted; }, [onCompleted]);
   const running = status?.run.state === 'running';
 
   const acceptStatus = useCallback((next: DiscoveryStatus) => {
@@ -30,16 +35,16 @@ export default function DiscoveryPanel({ onCompleted }: { onCompleted: () => voi
     if (next.run.state === 'running') pendingRun.current = next.run.run_id;
     else if (pendingRun.current && pendingRun.current === next.run.run_id) {
       pendingRun.current = undefined;
-      onCompleted();
+      completed.current();
     }
-  }, [onCompleted]);
+  }, []);
 
   useEffect(() => {
     let active = true;
-    void localApi.discoveryStatus().then((next) => { if (active) acceptStatus(next); })
+    void startDiscovery().then((next) => { if (active) acceptStatus(next); })
       .catch(() => { if (active) setError('无法读取扫描状态，请重试。'); });
     return () => { active = false; };
-  }, [acceptStatus]);
+  }, [acceptStatus, startDiscovery]);
 
   useEffect(() => {
     if (!running) return;
@@ -69,10 +74,10 @@ export default function DiscoveryPanel({ onCompleted }: { onCompleted: () => voi
     catch (err) { setError(err instanceof Error ? err.message : '无法预览扫描范围'); }
     finally { setBusy(false); }
   };
-  const scan = async () => {
+  const scan = async (extra = false) => {
     setBusy(true); setError(null);
     try {
-      const next = await localApi.discoveryScan(input());
+      const next = await localApi.discoveryScan(extra ? input() : {});
       acceptStatus(next);
       setPreview(null); setPath('');
     } catch (err) { setError(err instanceof Error ? err.message : '无法开始扫描'); }
@@ -82,8 +87,21 @@ export default function DiscoveryPanel({ onCompleted }: { onCompleted: () => voi
   const count = roots.filter((root) => root.status === 'available').length;
 
   return <div className="card" aria-busy={busy || running}>
-    <h2>发现已有智能体与 Skill</h2>
-    <p className="page-desc">先查看发现结果，再选择需要保护的对象。扫描只读取平台配置与 Skill 文件，不启用钩子或执行 Skill。</p>
+    <h2>{compact ? '环境发现' : '接入当前环境'}</h2>
+    {!compact ? <p className="page-desc">自动发现本机已有的智能体与 Skill，默认无需填写目录。选择下方实例即可开始接入。</p> : null}
+    <div className="toolbar">
+      <button type="button" className="btn" disabled={busy || running || !status} onClick={() => { void scan(); }}>
+        {running ? '正在发现…' : '重新发现'}
+      </button>
+      {!status && !error ? <span role="status">正在发现本机环境…</span> : null}
+      {!status && error ? <button type="button" className="btn" disabled={busy} onClick={() => { void scan(); }}>重试发现</button> : null}
+    </div>
+    {compact ? <details className="block-gap"><summary>管理已发现实例的接入</summary>
+      <EnvironmentConnections refreshKey={status?.run.finished_at ?? ''} />
+    </details> : <EnvironmentConnections refreshKey={status?.run.finished_at ?? ''} />}
+    <details className="block-gap">
+      <summary>高级选项：补充目录与扫描范围</summary>
+      <p className="page-desc">登记项目后，会识别其中 .hermes、agents/hermes 下已有的 Hermes 角色及 Skill、模型配置；不会创建角色或自动接入。其他布局仍需通过框架的配置入口指定。</p>
     <div className="toolbar">
       <div className="field field-flush">
         <label htmlFor="discovery-kind">添加目录类型</label>
@@ -97,7 +115,7 @@ export default function DiscoveryPanel({ onCompleted }: { onCompleted: () => voi
           onChange={(event) => { setPath(event.target.value); setPreview(null); }} />
       </div>
       <button type="button" className="btn" disabled={busy || running} onClick={() => { void previewScope(); }}>预览扫描范围</button>
-      <button type="button" className="btn btn-primary" disabled={busy || running || Boolean(path.trim() && !preview)} onClick={() => { void scan(); }}>
+      <button type="button" className="btn btn-primary" disabled={busy || running || !path.trim() || !preview} onClick={() => { void scan(true); }}>
         {running ? '扫描中…' : path.trim() ? '添加目录并扫描' : '重新扫描'}
       </button>
     </div>
@@ -107,6 +125,7 @@ export default function DiscoveryPanel({ onCompleted }: { onCompleted: () => voi
       <ul className="discovery-paths">{roots.map((root) => <li key={`${root.kind}:${root.path}`}>
         <code>{root.path}</code> · {root.platform} · {rootLabel[root.status]}
       </li>)}</ul>
+    </details>
     </details>
     {status ? <p role="status" className="page-desc block-gap" data-scan-id={status.run.run_id} data-scan-state={status.run.state}>
       {runLabel[status.run.state]}

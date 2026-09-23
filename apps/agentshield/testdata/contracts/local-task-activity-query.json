@@ -1,0 +1,47 @@
+{
+  "schema_version": "local-task-activity-query/v1",
+  "snapshot": "4c7152d56466d1ebb7ea22df6dff5b6db0b9dfdd201b1852204c498142d722e7",
+  "view": "tasks",
+  "offset": 0,
+  "total": 1,
+  "next_offset": null,
+  "prefix_valid": true,
+  "history_integrity": "unknown",
+  "evidence_freshness": "unknown",
+  "filters": {
+    "platform": "",
+    "agent_id": "",
+    "session_id": "",
+    "task_id": "",
+    "q": "",
+    "from": "2026-09-23T02:00:00Z",
+    "to": "2026-09-23T02:00:01Z",
+    "action": "deny"
+  },
+  "items": [
+    {
+      "activity_id": "802359475cbd77023fec987dbdb6ee0627cbc109571584b34078ab6d3ba6aae6",
+      "attribution": "bound",
+      "binding": {
+        "agent_id": "agent",
+        "chain_id": "local",
+        "intent_digest": "digest",
+        "intent_id": "intent",
+        "platform": "hermes",
+        "session_id": "session",
+        "task_id": "task-00"
+      },
+      "receipt_count": 4,
+      "first_seq": 0,
+      "last_seq": 57,
+      "last_recorded_at": "2026-09-23T02:00:00Z",
+      "decisions": {
+        "allow": 1,
+        "deny": 1,
+        "hold": 0,
+        "other": 0,
+        "redact": 0
+      }
+    }
+  ]
+}

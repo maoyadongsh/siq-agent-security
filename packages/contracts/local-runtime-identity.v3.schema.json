@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Hermes request-scoped runtime identity v3 signed private record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "identity_id",
+    "instance_id",
+    "agent_id",
+    "platform",
+    "grant_ref",
+    "actor_id",
+    "created_at",
+    "session_ttl_seconds",
+    "credential_hash",
+    "signature",
+    "request_scope"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-identity/v3"
+    },
+    "identity_id": {
+      "type": "string",
+      "pattern": "^ri-[a-f0-9]{32}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^hri-[a-f0-9]{32}$"
+    },
+    "platform": {
+      "const": "hermes"
+    },
+    "grant_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "admission_id",
+        "permission_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "admission_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "permission_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "session_ttl_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 3600
+    },
+    "credential_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{128}$"
+    },
+    "request_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parent_identity_id",
+        "parent_sha256",
+        "issuer_sha256",
+        "scope_id",
+        "request_id",
+        "execution_sha256",
+        "session_namespace",
+        "expires_at"
+      ],
+      "properties": {
+        "parent_identity_id": {
+          "type": "string",
+          "pattern": "^ri-[a-f0-9]{32}$"
+        },
+        "parent_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "issuer_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{24}$"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^qwen-request-[a-f0-9]{16}$"
+        },
+        "execution_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "session_namespace": {
+          "type": "string",
+          "pattern": "^siq:openshell:pool:[a-f0-9]{24}:qwen-request-[a-f0-9]{16}:siq_analysis$"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+        }
+      }
+    }
+  }
+}

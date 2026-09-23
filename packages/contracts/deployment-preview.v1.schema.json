@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/deployment-preview.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change_id",
+    "policy_id",
+    "policy_name",
+    "policy_version",
+    "enforcement_mode",
+    "environment_id",
+    "environment_name",
+    "binding_id",
+    "target",
+    "backend",
+    "action",
+    "base_revision",
+    "preview_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "deployment-preview/v1"
+    },
+    "change_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "policy_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "policy_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "policy_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "enforcement_mode": {
+      "enum": [
+        "audit_only",
+        "warn",
+        "block"
+      ]
+    },
+    "environment_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "environment_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "binding_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "backend": {
+      "enum": [
+        "fake",
+        "openshell-cli"
+      ]
+    },
+    "action": {
+      "enum": [
+        "development_task",
+        "dynamic_update"
+      ]
+    },
+    "base_revision": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "preview_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

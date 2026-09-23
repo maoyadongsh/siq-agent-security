@@ -8,6 +8,8 @@ import type { PlatformInfo } from '../types';
 import { useLocalSession } from '../session';
 import { useLoadGuard } from '../staleGuard';
 import RuntimeCheckDialog from '../components/RuntimeCheckDialog';
+import OpenShellEnvironment from '../components/OpenShellEnvironment';
+import ModelConnections from '../components/ModelConnections';
 import AdapterChangeDialog, { type AdapterChangeRequest } from '../components/AdapterChangeDialog';
 import AdapterDiagnosisPanel from '../components/AdapterDiagnosisPanel';
 import {
@@ -18,13 +20,11 @@ import {
   platformTierText,
 } from '../format';
 
-type Probe = Awaited<ReturnType<typeof localApi.openshellProbe>>;
-
 export default function BindingsPage() {
   const { status, error, reload } = useLocalSession();
   const [platforms, setPlatforms] = useState<PlatformInfo[]>(status?.platforms ?? []);
-  const [probe, setProbe] = useState<Probe | null>(null);
-  const [probeErr, setProbeErr] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [discoveryKey, setDiscoveryKey] = useState(0);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<string | null>(null);
   const guard = useLoadGuard();
@@ -32,25 +32,17 @@ export default function BindingsPage() {
 
   const load = () => {
     setLoading(true);
-    guard(() =>
-      Promise.all([localApi.adapterStatus(), localApi.openshellProbe().catch((err: unknown) => err)]),
-    )
+    setLoadError(null);
+    setDiscoveryKey((n) => n + 1);
+    guard(() => localApi.adapterStatus())
       .then((data) => {
-        if (data === undefined) return; // superseded by a newer load
-        const [st, os] = data;
-        setPlatforms(st.platforms ?? []);
-        if (os instanceof Error) {
-          setProbe(null);
-          setProbeErr(os.message);
-        } else {
-          setProbe(os as Probe);
-          setProbeErr(null);
-        }
+        if (data === undefined) return;
+        setPlatforms(data.platforms ?? []);
         setLoading(false);
         reload();
       })
       .catch((err: unknown) => {
-        setProbeErr(err instanceof Error ? err.message : '加载失败');
+        setLoadError(err instanceof Error ? err.message : '加载失败');
         setLoading(false);
       });
   };
@@ -140,8 +132,8 @@ export default function BindingsPage() {
         icon="bindings"
         title="运行时绑定"
         description="适配器钩子与可选 OpenShell 探针。可在此安装/卸载；网络段下发仍在设置页。"
-        connection={loading ? 'loading' : error ? 'disconnected' : 'connected'}
-        connectionError={error}
+        connection={loading ? 'loading' : error || loadError ? 'disconnected' : 'connected'}
+        connectionError={loadError ?? error}
         actions={
           <button type="button" className="btn btn-sm" onClick={load}>
             <Icon name="refresh" size={14} /> 刷新
@@ -174,42 +166,8 @@ export default function BindingsPage() {
           <span className="mono">audit.jsonl</span>。
         </p>
       </div>
-      <div className="card">
-        <h2>
-          OpenShell{' '}
-          {probe ? (
-            <span className={probe.ok ? 'tag tag-ok' : 'tag tag-warn'}>
-              {probe.ok ? 'L3 可用' : '不可用'}
-            </span>
-          ) : null}
-        </h2>
-        {probeErr ? (
-          <div className="notice" role="status">
-            <p className="notice-title">探针不可达</p>
-            <p className="notice-detail">
-              {probeErr}。仍可使用静态检查与授权管理；工具调用是否已接入，请查看对应平台的诊断与验证状态。
-            </p>
-          </div>
-        ) : probe ? (
-          <dl className="kv-list">
-            <dt>probe</dt>
-            <dd>{probe.ok ? '成功' : '失败'}</dd>
-            <dt>档位</dt>
-            <dd>{probe.tier}</dd>
-            <dt>说明</dt>
-            <dd>{probe.note || '—'}</dd>
-            <dt>schema</dt>
-            <dd>{probe.schema_version || '—'}</dd>
-            <dt>下一步</dt>
-            <dd>{probe.doctor?.human_next || '—'}</dd>
-          </dl>
-        ) : (
-          <p className="page-desc">尚未取得探针结果。</p>
-        )}
-        <p className="page-desc block-gap">
-          工具层接入需单独验证，OpenShell 的状态不能代替智能体平台自检。
-        </p>
-      </div>
+      <div className="card"><OpenShellEnvironment refreshKey={String(discoveryKey)} /></div>
+      <div className="card"><ModelConnections /></div>
     </section>
   );
 }

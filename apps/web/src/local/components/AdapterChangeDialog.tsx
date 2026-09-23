@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
-import { localApi } from '../api';
+import { LocalApiError, localApi } from '../api';
 import { configurationLabel, platformLabel } from '../format';
 import AdapterDiagnosisPanel from './AdapterDiagnosisPanel';
 import type { AdapterPlan, AdapterInstances } from '../types';
@@ -8,7 +8,8 @@ import { useInstancePermissions } from './useInstancePermissions';
 import { useLocalSession } from '../session';
 
 export interface AdapterChangeRequest { platform: string; action: 'install' | 'uninstall'; instanceId?: string; grantId?: string }
-interface Props { request: AdapterChangeRequest; onClose: () => void; onApplied: (message: string) => void }
+export interface AdapterAppliedChange { platform: string; action: 'install' | 'uninstall'; instanceId?: string }
+interface Props { request: AdapterChangeRequest; onClose: () => void; onApplied: (message: string, change?: AdapterAppliedChange) => void }
 const actionLabel = { create: '新增', replace: '修改', remove: '移除' };
 
 export default function AdapterChangeDialog({ request, onClose, onApplied }: Props) {
@@ -30,6 +31,10 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
   const managedAvailable = request.platform !== 'workbuddy' || (catalog?.schema_version === 'local-adapter-instances/v2' && catalog.managed_runtime_available === true);
   const permissions = useInstancePermissions(managedPlatform ?? 'hermes', managedInstance && managedAvailable && action === 'install' && connectionMode === 'permissions' ? instanceId : '', busy, request.grantId);
   const working = busy || permissions.busy;
+  // Uninstall does not consume an identity. Clearing permission state must not
+  // submit a second, identical preview while the first owns the server slot.
+  const previewIdentityId = action === 'install' && connectionMode === 'permissions' ? permissions.identityId : undefined;
+  const previewNativeEnable = action === 'install' && nativeEnable;
   const close = useCallback(() => { if (!working) onClose(); }, [working, onClose]);
   useEffect(() => {
     if (!managedInstance) return;
@@ -47,17 +52,32 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
     return () => { active = false; };
   }, [request.platform, request.instanceId, catalogAttempt, managedInstance]);
   useEffect(() => {
-    if (managedInstance && (!instanceId || action === 'install' && connectionMode === 'permissions' && (!managedAvailable || !permissions.identityId))) {
+    if (managedInstance && (!instanceId || action === 'install' && connectionMode === 'permissions' && (!managedAvailable || !previewIdentityId))) {
       setPlan(null); setLoading(false); return;
     }
     let active = true;
+    const controller = new AbortController();
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+    let busyRetries = 0;
     setLoading(true); setError(''); setPlan(null);
-    localApi.adapterPreview(request.platform, action, instanceId || undefined, action === 'install' && nativeEnable, action === 'install' && connectionMode === 'permissions' ? permissions.identityId : undefined)
-      .then((view) => { if (active) setPlan(view); })
-      .catch((err: unknown) => { if (active) setError(err instanceof Error ? err.message : '预览失败'); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [request.platform, action, instanceId, nativeEnable, attempt, connectionMode, permissions.identityId, managedAvailable]);
+    const preview = () => {
+      localApi.adapterPreview(request.platform, action, instanceId || undefined, previewNativeEnable, previewIdentityId, controller.signal)
+        .then((view) => { if (active) { setPlan(view); setLoading(false); } })
+        .catch((err: unknown) => {
+          if (!active) return;
+          // Only the read-only preview may retry the server's explicit busy
+          // rejection. Installation/uninstallation never use this path.
+          if (err instanceof LocalApiError && err.code === 'adapter_busy' && busyRetries < 2) {
+            busyRetries += 1;
+            retryTimer = setTimeout(preview, 1000);
+            return;
+          }
+          setError(err instanceof Error ? err.message : '预览失败'); setLoading(false);
+        });
+    };
+    preview();
+    return () => { active = false; controller.abort(); clearTimeout(retryTimer); };
+  }, [request.platform, action, instanceId, previewNativeEnable, attempt, connectionMode, previewIdentityId, managedAvailable]);
 
   const apply = async () => {
     if (!plan || working || loading || plan.instance_id !== (instanceId || undefined) || plan.action !== action) return;
@@ -67,7 +87,8 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
       await localApi.adapterApply(plan, actorId);
       onApplied(action === 'install'
         ? `${platformLabel(request.platform)}${selected ? ` / ${selected.name}` : ''}：配置已应用，请查看诊断并验证实际调用。`
-        : `${platformLabel(request.platform)}${selected ? ` / ${selected.name}` : ''}：接入配置已移除，其他平台设置已保留。`);
+        : `${platformLabel(request.platform)}${selected ? ` / ${selected.name}` : ''}：接入配置已移除，其他平台设置已保留。`,
+      { platform: request.platform, action: plan.action, instanceId: plan.instance_id });
     } catch (err) {
       setError(err instanceof Error ? err.message : '操作失败，请检查状态后重试');
       setPlan(null);

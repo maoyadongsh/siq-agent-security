@@ -17,6 +17,10 @@ func resolveConnectorsDir(flagVal string) string {
 }
 
 func runLocalInventory(st *state.Store, key *signing.Key, cwd, connectorsDir string) (*inventory.Report, error) {
+	roots, _, err := st.LoadDiscoveryRoots()
+	if err != nil {
+		return nil, err
+	}
 	admissions, _ := st.ListAdmissions()
 	byHash := map[string]string{}
 	for _, a := range admissions {
@@ -24,6 +28,8 @@ func runLocalInventory(st *state.Store, key *signing.Key, cwd, connectorsDir str
 	}
 	return inventory.Run(inventory.Options{
 		Cwd:           cwd,
+		ProjectDirs:   roots.ProjectDirs,
+		SkillDirs:     roots.SkillDirs,
 		Version:       Version,
 		Key:           key,
 		ConnectorsDir: connectorsDir,

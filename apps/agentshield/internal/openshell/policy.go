@@ -509,7 +509,15 @@ func (c *Client) applyNetworkLocked(target string, rules []NetworkRule, expected
 		return DeploymentReceipt{}, err
 	}
 	merged := clonePolicy(current.Policy)
-	merged["network_policies"] = gw
+	if len(gw) == 0 {
+		// Full gateway readback omits the empty map. Match its write form
+		// on revocation; preserve an already-empty map as a no-op.
+		if existing, ok := merged["network_policies"].(map[string]any); !ok || len(existing) != 0 {
+			delete(merged, "network_policies")
+		}
+	} else {
+		merged["network_policies"] = gw
+	}
 	expectedDigest, err := policyDigest(merged)
 	if err != nil {
 		return DeploymentReceipt{}, err

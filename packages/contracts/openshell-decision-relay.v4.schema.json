@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/openshell-decision-relay.v4.schema.json",
+  "title": "Isolated candidate daemon OpenShell decision relay binding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binding",
+    "listener",
+    "upstream",
+    "allowed_routes",
+    "max_request_bytes",
+    "max_response_bytes",
+    "upstream_timeout_ms"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "openshell-decision-relay/v4"
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "runtime_identity_id",
+        "instance_id",
+        "agent_id",
+        "sandbox_namespace",
+        "sandbox_name",
+        "sandbox_id",
+        "sandbox_generation",
+        "profile",
+        "scope_id",
+        "run_id",
+        "session_namespace"
+      ],
+      "properties": {
+        "platform": {
+          "const": "hermes"
+        },
+        "runtime_identity_id": {
+          "type": "string",
+          "pattern": "^ri-[a-f0-9]{32}$"
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^hi-[a-f0-9]{32}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^hri-[a-f0-9]{32}$"
+        },
+        "sandbox_namespace": {
+          "const": "siq-openshell-scope-validation"
+        },
+        "sandbox_name": {
+          "type": "string",
+          "pattern": "^siq-qwen38-scoped-[a-f0-9]{16}$"
+        },
+        "sandbox_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+        },
+        "sandbox_generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "profile": {
+          "const": "siq_analysis"
+        },
+        "scope_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{24}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "session_namespace": {
+          "type": "string",
+          "pattern": "^siq:openshell:pool:[a-f0-9]{24}:[A-Za-z0-9][A-Za-z0-9._-]{0,127}:siq_analysis$",
+          "maxLength": 256
+        }
+      }
+    },
+    "listener": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "inherited_fd",
+        "transport",
+        "target_container_id",
+        "network_name",
+        "network_id",
+        "gateway_ip",
+        "host_alias"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^http://host\\.openshell\\.internal:(?:4761[1-9]|476[2-9][0-9]|4770[0-9]|47710)$"
+        },
+        "inherited_fd": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 1024
+        },
+        "transport": {
+          "const": "verified_docker_bridge_gateway/v1"
+        },
+        "target_container_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "network_name": {
+          "const": "siq-openshell-dev"
+        },
+        "network_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "gateway_ip": {
+          "type": "string",
+          "format": "ipv4"
+        },
+        "host_alias": {
+          "const": "host.openshell.internal"
+        }
+      }
+    },
+    "upstream": {
+      "const": "http://127.0.0.1:47811"
+    },
+    "allowed_routes": {
+      "const": [
+        "/v1/runtime-sessions",
+        "/v1/decide",
+        "/v1/observe",
+        "/v1/hold-status",
+        "/v1/hold-executions/reserve",
+        "/v1/provenance-reports",
+        "/v1/raw-task-content/native-captures"
+      ]
+    },
+    "max_request_bytes": {
+      "const": 1048576
+    },
+    "max_response_bytes": {
+      "const": 1048576
+    },
+    "upstream_timeout_ms": {
+      "type": "integer",
+      "minimum": 250,
+      "maximum": 20000
+    }
+  }
+}

@@ -53,6 +53,9 @@ func ValidWorkBuddyCallID(value string) bool {
 }
 
 func validateManagedSession(r Record, session string) error {
+	if r.RequestScope != nil && (!validRequestScope(r.RequestScope) || !validWorkBuddyDerivedID(session, r.RequestScope.SessionNamespace+":")) {
+		return ErrInvalid
+	}
 	if r.Platform == "workbuddy" && (!validRecordProfile(r) || r.SchemaVersion != "local-runtime-identity/v2" || !validWorkBuddyDerivedID(session, workBuddySessionPrefix)) {
 		return ErrInvalid
 	}

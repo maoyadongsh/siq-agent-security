@@ -1,0 +1,27 @@
+{
+  "activity_id": "54fe8089b976d08223b2af17af5980c20789f21354113e9da92508f9e2614e14",
+  "content": {
+    "contains_plaintext": true,
+    "fields": [
+      {
+        "path": "/result",
+        "value": "PRIVATE_OUTPUT \u003cscript\u003eunsafe()\u003c/script\u003e"
+      }
+    ],
+    "record": {
+      "created_at": "2026-09-23T07:19:14.376239652Z",
+      "expires_at": "2026-09-23T08:19:14.376239652Z",
+      "kind": "output",
+      "omitted_secret_count": 0,
+      "plaintext_bytes": 188,
+      "plaintext_sha256": "7c90c14e5e19c2f140408d023da0e3e70bebe27481e5ee1db9f9e36920751369",
+      "record_id": "raw-e0060b2a8781bada12d7b722cfb51a79",
+      "schema_version": "local-raw-task-content-record/v1",
+      "status": "active",
+      "task_ref": "sha256:5f5eff65ad122dcbaf714d877221792721cb5898d9c7c26d818bcdbe59f02b1b"
+    },
+    "schema_version": "local-raw-task-content-record-content/v1"
+  },
+  "schema_version": "local-task-output-content/v1",
+  "snapshot": "1d2832727f4b02f0e90e60c570fcc7fb109b0e872d22ff500601843f0ed45c77"
+}

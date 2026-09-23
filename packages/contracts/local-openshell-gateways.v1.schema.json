@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "observed_at",
+    "state",
+    "items",
+    "started_gateway",
+    "changed_native_selection"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-openshell-gateways/v1"
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "state": {
+      "enum": [
+        "unconfigured",
+        "unsupported",
+        "unavailable",
+        "available"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gateway_id",
+          "name",
+          "endpoint_display",
+          "native_active",
+          "configuration_fingerprint"
+        ],
+        "properties": {
+          "gateway_id": {
+            "type": "string",
+            "pattern": "^og-[0-9a-f]{32}$"
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,62}$"
+          },
+          "endpoint_display": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "native_active": {
+            "type": "boolean"
+          },
+          "configuration_fingerprint": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "started_gateway": {
+      "const": false
+    },
+    "changed_native_selection": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "enum": [
+              "unconfigured",
+              "unsupported",
+              "unavailable"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

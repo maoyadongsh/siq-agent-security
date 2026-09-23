@@ -6,6 +6,7 @@ import { useLocalSession } from '../session';
 import type { Admission, Grant, RuntimeIdentity } from '../types';
 import GrantResourceDialog from './GrantResourceDialog';
 import GrantScopeSummary from './GrantScopeSummary';
+import InstanceSkillCheck from './InstanceSkillCheck';
 import { skillInstallErrorText } from '../skillInstall';
 import type { SkillRuntimeReadiness } from '../types';
 import { filesystemProfileLabel, grantFilesystemProfile, identityFilesystemConfirmation, identityFilesystemProfile, identityFilesystemReviewKey, windowsFilesystemProfile } from '../filesystemProfile';
@@ -156,6 +157,11 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
     setWithdraw(false); setReviewed('');
   });
   const scope = (value: Grant | undefined, label: string) => <GrantScopeSummary grant={value} label={label} />;
+  const checkedSkill = (admission: Admission) => {
+    if (admission.verdict === 'quarantine') return;
+    setAdmissions((current) => [...current.filter((item) => item.admission_id !== admission.admission_id), admission]);
+    setAdmissionId(admission.admission_id); setBaselineReviewed('');
+  };
   const panel = <section className="instance-permission-panel" aria-label="实例权限设置" aria-busy={busy || loading}>
     <h3>实例权限</h3>
     <p>先核对权限，再确认接入。这里配置实例可用范围，实际调用的 Skill 归属仍待验证。</p>
@@ -165,6 +171,7 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
       <p>当前身份的文件路径解释：{filesystemProfileLabel(identityFilesystemProfile(identity))}</p>
       {!identityProfileMatches ? <p role="alert">身份与当前授权的路径解释无法核对，暂不能预览接入。请刷新并检查授权；不要改用旧解释继续。</p> : null}
       {scope(currentGrant, '当前实例权限')}
+      <p><Link to={`/activities?platform=${encodeURIComponent(identity.platform)}&agent_id=${encodeURIComponent(identity.agent_id)}`}>查看此实例运行记录</Link></p>
       {imported && !changing && importError ? <p role="alert">{importError}</p> : null}
       {currentGrant && !requiredGrantId ? <button type="button" className="btn" disabled={busy || !actor.trim()} onClick={() => forkDraft(currentGrant)}>调整当前权限</button> : null}
       {!requiredGrantId ? <button type="button" className="btn" disabled={busy} onClick={() => { setPreparing((value) => !value); setReviewed(''); }}>{changing ? '返回当前接入' : '选择其他授权'}</button> : null}
@@ -182,8 +189,9 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
           <select id="instance-admission" value={admissionId} disabled={busy} onChange={(event) => setAdmissionId(event.target.value)}>{admissions.map((item) => <option key={item.admission_id} value={item.admission_id}>{item.skill_name} · {item.content_hash.slice(0, 8)}</option>)}</select></div>
           <label><input type="checkbox" checked={!!baselineReviewKey && baselineReviewed === baselineReviewKey} disabled={busy || !baselineReviewKey}
             onChange={(event) => setBaselineReviewed(event.target.checked ? baselineReviewKey : '')} />我确认以此检查结果为参考起草所选实例的权限，不将它作为每次调用的 Skill 归属证明</label>
-          <button type="button" className="btn" disabled={busy || !baselineReviewKey || baselineReviewed !== baselineReviewKey} onClick={createDraft}>起草并编辑实例权限</button></>
-          : <p>还没有可用检查结果，请先在<Link to="/agents">资产管理</Link>中检查 Skill。</p>}
+          <button type="button" className="btn" disabled={busy || !baselineReviewKey || baselineReviewed !== baselineReviewKey} onClick={createDraft}>起草并编辑实例权限</button>
+          <details><summary>检查其他 Skill</summary><InstanceSkillCheck disabled={busy} onChecked={checkedSkill} /></details></>
+          : <><p>先选择已发现的 Skill 完成检查，无需离开当前步骤。</p><InstanceSkillCheck disabled={busy} onChecked={checkedSkill} /></>}
       </details> : null}
       {requiredGrantId && !selected ? <p role="alert">此次安装对应的授权不可用，请关闭并重新查询安装结果。</p> : null}
       {scope(selected, identity ? '准备替换的权限' : '待接入权限')}

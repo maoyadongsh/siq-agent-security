@@ -135,6 +135,13 @@ func extractResources(tool string, params map[string]any) ([]Resource, error) {
 }
 
 func extractResourcesWithNormalizer(tool string, params map[string]any, normalize func(string, string) (string, error)) ([]Resource, error) {
+	if businessReportShape(tool, params) {
+		root, err := normalize("filesystem", ResearchBusinessRoot)
+		if err != nil {
+			return nil, err
+		}
+		return []Resource{{Domain: "filesystem", Value: root}}, nil
+	}
 	_, effects := normalizeEffects(tool, params)
 	domain := ""
 	keys := []string{}

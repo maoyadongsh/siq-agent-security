@@ -1,0 +1,90 @@
+{
+  "schema_version": "local-task-security-view/v1",
+  "snapshot": "b713338a585d7d40896541241b197352ddacf6dbbf13001409c981441ef94260",
+  "evaluated_at": "2026-09-21T00:00:00Z",
+  "activity": {
+    "activity_id": "cd2c2adae69d5bbeea010b3faf284062cbf3e346723de7db847ca73698c9b33b",
+    "attribution": "bound",
+    "binding": {
+      "agent_id": "a-1",
+      "chain_id": "local",
+      "intent_digest": "fc3f19cc2229f1cd5e0b956759a563c8e6c50c59b5c94dc2a19bb4855fa5fdd5",
+      "intent_id": "int-api",
+      "platform": "hermes",
+      "session_id": "security-view-session",
+      "task_id": "task-1"
+    },
+    "receipt_count": 2,
+    "first_seq": 0,
+    "last_seq": 1
+  },
+  "business_object": {
+    "status": "verified",
+    "object_type": "task",
+    "task_id": "task-1",
+    "intent_id": "int-api",
+    "contract_status": "verified",
+    "display_label_status": "unavailable"
+  },
+  "run_mode": {
+    "platform": "hermes",
+    "enforcement_modes": [
+      "block"
+    ],
+    "mode_status": "consistent",
+    "model_keys": [
+      "nemotron-local-governed"
+    ],
+    "model_status": "consistent",
+    "execution_context": "sandbox_bound",
+    "sandbox_bound_receipts": 2
+  },
+  "data_destinations": {
+    "status": "partial",
+    "destinations": [
+      {
+        "domain": "network",
+        "resource_ref": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "effects": [
+          "network.request"
+        ],
+        "receipt_count": 1
+      }
+    ],
+    "unresolved_receipt_count": 1,
+    "plaintext_exposed": false
+  },
+  "authorization": {
+    "status": "mixed",
+    "intent_binding": "bound",
+    "decisions": {
+      "authorized": 1,
+      "denied": 1,
+      "pending": 0,
+      "unknown": 0
+    },
+    "matched_grant_count": 1
+  },
+  "actual_result": {
+    "status": "unknown",
+    "evaluation_status": "evaluated",
+    "reason_code": "not_required",
+    "result": {
+      "schema_version": "completion-status/v1",
+      "task_id": "task-1",
+      "status": "unknown",
+      "reason_code": "not_required",
+      "requirements": [],
+      "incident_ids": []
+    }
+  },
+  "release_assurance": {
+    "status": "not_evaluated",
+    "reason_code": "native_candidate_evidence_not_connected"
+  },
+  "evidence_integrity": {
+    "prefix_valid": true,
+    "history_integrity": "unknown",
+    "evidence_freshness": "unknown"
+  }
+}

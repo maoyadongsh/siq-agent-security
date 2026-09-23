@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "local-task-outputs.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "activity_id",
+    "snapshot",
+    "status",
+    "task_ref",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-task-outputs/v1"
+    },
+    "activity_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "snapshot": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "disabled",
+        "unattributed"
+      ]
+    },
+    "task_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "status",
+          "record_id",
+          "task_ref",
+          "kind",
+          "created_at",
+          "expires_at",
+          "plaintext_sha256",
+          "plaintext_bytes",
+          "omitted_secret_count"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "local-raw-task-content-record/v1"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "expired"
+            ]
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^raw-[a-f0-9]{32}$"
+          },
+          "task_ref": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "kind": {
+            "const": "output"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plaintext_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "plaintext_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1048576
+          },
+          "omitted_secret_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1024
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "disabled",
+              "unattributed"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

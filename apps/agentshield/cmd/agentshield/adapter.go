@@ -67,7 +67,8 @@ func cmdAdapter(args []string) error {
 	if err != nil {
 		return err
 	}
-	roots := hermeshome.Options{Home: home, Override: os.Getenv("HERMES_HOME"), LocalAppData: os.Getenv("LOCALAPPDATA")}
+	scope, _, scopeErr := st.LoadDiscoveryRoots()
+	roots := hermeshome.Options{Home: home, Override: os.Getenv("HERMES_HOME"), LocalAppData: os.Getenv("LOCALAPPDATA"), ProjectDirs: scope.ProjectDirs, ProjectScopeUnavailable: scopeErr != nil}
 	if action == "instances" {
 		if len(rest) != 1 || rest[0] != "hermes" {
 			return fmt.Errorf("adapter: instances requires hermes")

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
 import { LocalApiError, localApi } from '../api';
+import { permissionToolLabel, permissionToolNames, readOnlyDraft, readOnlyTools, type PermissionDraft } from '../permissionTools';
 import { useLocalSession } from '../session';
 import type { Grant, GrantResourceEdit } from '../types';
 import { filesystemProfileLabel, grantFilesystemProfile, resourceFilesystemConfirmation, supportsWindowsGrantResources, windowsFilesystemProfile, windowsPathLines, type DisplayFilesystemProfile } from '../filesystemProfile';
 
-interface Draft { tools: string; readOnly: string; readWrite: string; networkAllow: string; networkDeny: string; models: string }
+type Draft = PermissionDraft;
 const empty: Draft = { tools: '', readOnly: '', readWrite: '', networkAllow: '', networkDeny: '', models: '' };
 function fromGrant(grant: Grant): Draft {
   const facts = grant.facts ?? [];
@@ -18,7 +19,7 @@ function fromGrant(grant: Grant): Draft {
     readWrite: values('filesystem', 'allow', 'fs.write'), networkAllow: values('network'),
     networkDeny: values('network', 'deny'), models: values('model') };
 }
-const lines = (text: string) => text.split(/\r?\n/).map((v) => v.trim()).filter(Boolean);
+const lines = permissionToolNames;
 
 export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   grantId: string; onClose: () => void; onSaved: (grant: Grant) => void;
@@ -27,6 +28,7 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   const [editorActor, setEditorActor] = useState(actorId);
   const [grant, setGrant] = useState<Grant | null>(null);
   const [draft, setDraft] = useState<Draft>(empty);
+  const [undoReadOnly, setUndoReadOnly] = useState<Draft | null>(null);
   const [filesystem, setFilesystem] = useState<DisplayFilesystemProfile>('posix/v1');
   const [confirmedFilesystem, setConfirmedFilesystem] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -37,7 +39,7 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   const close = useCallback(() => { if (!busy) onClose(); }, [busy, onClose]);
   useEffect(() => {
     let active = true;
-    setLoading(true); setLoadFailed(false); setError(''); setConfirmedFilesystem(false);
+    setLoading(true); setLoadFailed(false); setError(''); setConfirmedFilesystem(false); setUndoReadOnly(null);
     localApi.grant(grantId).then(({ grant: current }) => {
       if (active) { setGrant(current); setDraft(fromGrant(current)); setFilesystem(grantFilesystemProfile(current)); setLoading(false); }
     }).catch(() => { if (active) { setLoadFailed(true); setError('无法读取当前权限，请检查连接后重试。'); setLoading(false); } });
@@ -49,7 +51,13 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
   const windows = filesystem === windowsFilesystemProfile;
   const filesystemConfirmation = grant ? resourceFilesystemConfirmation(grant, filesystem, confirmedFilesystem) : null;
   const pathLines = windows ? windowsPathLines : lines;
-  const update = (key: keyof Draft, value: string) => setDraft((current) => ({ ...current, [key]: value }));
+  const update = (key: keyof Draft, value: string) => { setUndoReadOnly(null); setDraft((current) => ({ ...current, [key]: value })); };
+  const selectedTools = lines(draft.tools);
+  const availableTools = Array.from(new Set([...lines(grant ? fromGrant(grant).tools : ''), ...selectedTools]));
+  const proposeReadOnly = () => {
+    setUndoReadOnly(draft);
+    setDraft(readOnlyDraft(draft, pathLines));
+  };
   const save = async () => {
     if (!editable || !grant || grant.state_revision === undefined || !editorActor.trim() || !filesystemConfirmation) return;
     setError('');
@@ -97,9 +105,11 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
     <div className="modal-body adapter-change-body" aria-busy={loading || busy}>
       {loading ? <p role="status">正在读取当前授权…</p> : null}
       {grant ? <>
-        <p>平台：{grant.platform} · 主体：{grant.subject.id}</p>
-        <p>来源准入：{grant.admission_id}</p>
-        <p>当前文件路径解释：{filesystemProfileLabel(currentProfile)}</p>
+        <details><summary>查看授权来源与路径规则</summary>
+          <p>平台：{grant.platform} · 主体：{grant.subject.id}</p>
+          <p>来源检查：{grant.admission_id}</p>
+          <p>当前文件路径解释：{filesystemProfileLabel(currentProfile)}</p>
+        </details>
         {currentProfile === 'unsupported' ? <p role="alert">当前授权的版本或路径解释无法识别，暂不能编辑。请检查服务版本并重新读取。</p> : null}
         <p className="page-desc">此授权尚未证明每次调用的 Skill 归属。目录限制是工具层检查，不代表操作系统隔离。</p>
         {grant.status !== 'pending_approval' ? <p role="status">此授权已离开待批准状态。需要修改时，请重新起草并批准。</p> : null}
@@ -117,20 +127,40 @@ export default function GrantResourceDialog({ grantId, onClose, onSaved }: {
           {currentProfile === windowsFilesystemProfile ? <p className="page-desc">此授权已绑定 Windows 路径解释，不能改回旧解释。</p> : null}
         </> : null}
         <div className="toolbar">
-          <button type="button" className="btn btn-sm" disabled={!editable} onClick={() => setDraft((current) => ({
+          <button type="button" className="btn btn-sm" disabled={!editable} onClick={() => { setUndoReadOnly(null); setDraft((current) => ({
             ...current, readOnly: Array.from(new Set([...pathLines(current.readOnly), ...pathLines(current.readWrite)])).join('\n'), readWrite: '',
-          }))}>目录全部改为只读</button>
-          <button type="button" className="btn btn-sm" disabled={!editable} onClick={() => setDraft((current) => ({ ...empty, networkDeny: current.networkDeny }))}>清空允许范围</button>
+          })); }}>目录全部改为只读</button>
+          <button type="button" className="btn btn-sm" disabled={!editable} onClick={() => { setUndoReadOnly(null); setDraft((current) => ({ ...empty, networkDeny: current.networkDeny })); }}>清空允许范围</button>
         </div>
         <p className="page-desc">每行一项，留空表示清空对应允许列表。{windows ? '路径原文完整提交，前后空格不会自动删除；非法路径由服务拒绝。' : '路径内部的空格和逗号会保留。'}</p>
-        {field('tools', '允许的工具', '仅填写平台实际工具名称；允许工具不等于允许任意资源。')}
+        <fieldset className="permission-tool-choices" disabled={!editable}>
+          <legend>选择要允许的工具</legend>
+          <p className="page-desc">来自当前权限声明；勾选不表示原平台已安装或正在使用。目录和服务范围仍需在下方限定。</p>
+          {availableTools.length ? availableTools.map((tool) => <label key={tool} className="permission-tool-choice">
+            <input type="checkbox" checked={selectedTools.includes(tool)} onChange={(event) => update('tools',
+              (event.target.checked ? [...selectedTools, tool] : selectedTools.filter((name) => name !== tool)).join('\n'))} />
+            <span>{permissionToolLabel(tool)}</span>
+          </label>) : <p>当前没有工具声明，可在高级选项中填写原平台的工具名称。</p>}
+        </fieldset>
+        <div className="notice block-gap">
+          <button type="button" className="btn" disabled={!editable || readOnlyTools(selectedTools).length === 0} onClick={proposeReadOnly}>采用只读资料方案</button>
+          <p>仅保留已选的文件读取工具，将读写目录改为只读，并清空本页网络和模型允许项。不会新增工具或目录；其他权限与批准条件保留，保存后还需批准。</p>
+          {!readOnlyTools(selectedTools).length ? <p>当前未选择可保留的文件读取工具。</p> : null}
+          {undoReadOnly ? <><p role="status">只读方案已填入，尚未保存。请核对下方范围。</p>
+            <button type="button" className="btn btn-sm" disabled={!editable} onClick={() => { setDraft(undoReadOnly); setUndoReadOnly(null); }}>撤回只读方案</button></> : null}
+        </div>
+        <details className="block-gap"><summary>高级：输入工具名称</summary>
+          {field('tools', '允许的工具', '仅填写平台实际工具名称；未知名称不会被自动改写或扩展。')}
+        </details>
         {field('readOnly', '只读目录', windows ? '填写现存本地盘符目录。UNC、设备路径、重解析点、尾点或尾空格等路径会被拒绝。' : '填写绝对 POSIX 路径，例如 /home/me/reports。')}
         {field('readWrite', '读写目录', '允许读取、修改和删除范围内的文件；不会授予凭据读取权限。')}
         {field('networkAllow', '允许的网络端点', '例如 api.example.com:443；子域可写 *.example.com:443。')}
         {field('networkDeny', '拒绝的网络端点', '拒绝优先于允许。端口必须明确，不支持在此填写 URL 路径。')}
         {field('models', '允许的模型声明', '声明是否由宿主执行需另行验证；保存不能证明模型路由已受控。')}
-        <details><summary>保留的限制与批准条件（{preserved.length} 项）</summary>
-          <ul>{preserved.map((f) => <li key={f.fact_id}>{f.domain} · {f.resource.value}{f.conditions?.require_approval ? ' · 保留该工具时仍需人工确认' : ' · 保留限制'}</li>)}</ul>
+        <p role="status" className="notice" aria-live="polite">待保存：{selectedTools.length} 个工具、{pathLines(draft.readOnly).length} 个只读目录、{pathLines(draft.readWrite).length} 个读写目录、{lines(draft.networkAllow).length} 个允许端点。保存不会自动批准或接入。</p>
+        <details><summary>保留的其他权限与批准条件（{preserved.length} 项）</summary>
+          <p className="page-desc">凭据、进程及其他资源事实由后端保留；“清空允许范围”和只读方案只调整本页可编辑项，不代表撤销所有权限。</p>
+          <ul>{preserved.map((f) => <li key={f.fact_id}>{f.domain} · {f.resource.value}{f.conditions?.require_approval ? ' · 保留该工具时仍需人工确认' : f.effect === 'deny' ? ' · 保留拒绝' : ' · 保留允许'}</li>)}</ul>
           {grant.openclaw_tool_policy?.deny?.length ? <p>平台策略中的工具拒绝：{grant.openclaw_tool_policy.deny.join('、')}</p> : null}
           {grant.openclaw_tool_policy?.require_approval?.length ? <p>平台策略中的人工确认条件：{grant.openclaw_tool_policy.require_approval.join('、')}；保留这些工具时继续生效。</p> : null}
         </details>

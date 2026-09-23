@@ -74,6 +74,10 @@ type Deps struct {
 
 // Server is the HTTP handler set.
 type Server struct {
+	modelTestMu        sync.Mutex
+	modelTests         map[string]modelInferenceRecord
+	modelTestLatest    map[string]string
+	modelTestRunning   bool
 	serviceControl     *localcontrol.Control
 	stateDirectoryID   string
 	skillInstallations *skillinstall.Store
@@ -224,6 +228,11 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/runtime-identities", s.auth(s.runtimeIdentityCollection, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-identities/", s.auth(s.runtimeIdentityOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-sessions", s.runtimeSessionEnroll)
+	s.mux.HandleFunc("/v1/runtime-identity/self", s.runtimeIdentitySelf)
+	s.mux.HandleFunc("/v1/runtime-identity/self/revoke", s.runtimeIdentitySelf)
+	s.mux.HandleFunc("/v1/runtime-request-issuers", s.auth(s.runtimeRequestIssuer, capAdmin))
+	s.mux.HandleFunc("/v1/runtime-identity/self/requests", s.runtimeRequestIdentity)
+	s.mux.HandleFunc("/v1/runtime-identity/self/requests/cancel", s.runtimeRequestIdentity)
 	s.mux.HandleFunc("/v1/skill-contexts", s.auth(s.skillContextCollection, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/management", s.auth(s.skillContextManagement, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/", s.auth(s.skillContextOne, capAdmin))
@@ -268,6 +277,7 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/hold/", s.auth(s.hold))
 	s.mux.HandleFunc("/v1/task-activities/", s.auth(s.taskActivityDetail))
 	s.mux.HandleFunc("/v1/task-activities/search", s.auth(s.taskActivitySearch))
+	s.mux.HandleFunc("/v1/task-activities/query", s.auth(s.taskActivityQuery))
 	s.mux.HandleFunc("/v1/task-activities", s.auth(s.taskActivities))
 	s.mux.HandleFunc("/v1/receipts", s.auth(s.receipts))
 	s.mux.HandleFunc("/v1/admit", s.auth(s.admit))
@@ -290,6 +300,14 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/adapter/install", s.auth(s.adapterInstall))
 	s.mux.HandleFunc("/v1/adapter/uninstall", s.auth(s.adapterUninstall))
 	s.mux.HandleFunc("/v1/openshell/probe", s.auth(s.openshellProbe))
+	s.mux.HandleFunc("/v1/openshell/targets", s.auth(s.openshellTargets, capAdmin))
+	s.mux.HandleFunc("/v1/openshell/gateways", s.auth(s.openshellGateways, capAdmin))
+	s.mux.HandleFunc("/v1/openshell/gateways/targets", s.auth(s.openshellSelectedGateway, capAdmin))
+	s.mux.HandleFunc("/v1/openshell/gateways/inspect", s.auth(s.openshellSelectedGateway, capAdmin))
+	s.mux.HandleFunc("/v1/model-connections", s.auth(s.modelConnections, capAdmin))
+	s.mux.HandleFunc("/v1/model-connections/check", s.auth(s.modelConnectionCheck, capAdmin))
+	s.mux.HandleFunc("/v1/model-inference-tests", s.auth(s.modelInferenceTests, capAdmin))
+	s.mux.HandleFunc("/v1/openshell/targets/inspect", s.auth(s.openshellTargetInspect, capAdmin))
 	s.mux.HandleFunc("/v1/openshell/doctor", s.auth(s.openshellDoctor))
 	s.mux.HandleFunc("/v1/openshell/apply", s.auth(s.openshellApply))
 	s.mux.HandleFunc("/v1/openshell/drift-check", s.auth(s.openshellDriftCheck))

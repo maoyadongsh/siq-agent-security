@@ -117,3 +117,40 @@ func TestTargetDiagnosisIsReadOnlyAndBoundToExplicitEndpoint(t *testing.T) {
 		t.Fatal("doctor attempted mutation")
 	}
 }
+
+func TestLiveStatusVersionSharedVectors(t *testing.T) {
+	raw, err := os.ReadFile("../../../../testdata/openshell-status-version.v1.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var cases []struct{ Name, Text, Version string }
+	if err := json.Unmarshal(raw, &cases); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range cases {
+		t.Run(tc.Name, func(t *testing.T) {
+			if got := parseGatewayVersion(tc.Text); got != tc.Version {
+				t.Fatalf("version %q, want %q", got, tc.Version)
+			}
+		})
+	}
+}
+
+func TestProjectContextAlwaysBindsExplicitGatewayFingerprint(t *testing.T) {
+	for _, key := range []string{"HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "XDG_CONFIG_HOME", "XDG_STATE_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_RUNTIME_DIR"} {
+		t.Run(key, func(t *testing.T) {
+			values := map[string]string{envCLIBin: "/fixture/openshell", envEndpoint: "https://127.0.0.1:17671", key: "/fixture/project-a"}
+			c := New(Options{LookupEnv: func(k string) (string, bool) { v, ok := values[k]; return v, ok }})
+			before := c.InvocationFingerprint()
+			values[key] = "/fixture/project-b"
+			if before == c.InvocationFingerprint() {
+				t.Fatal("TLS/config context change reused old fingerprint")
+			}
+			stable := c.InvocationFingerprint()
+			values["OPENAI_API_KEY"] = "fixture-only-never-forward"
+			if stable != c.InvocationFingerprint() {
+				t.Fatal("unrelated provider secret entered scope")
+			}
+		})
+	}
+}
