@@ -11,9 +11,10 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import UTC, datetime, timedelta
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from pydantic import ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -680,6 +681,23 @@ def sync_openshell_permissions(
     return result
 
 
+class InventoryAccess(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    schema_version: Literal["inventory-access/v1"] = "inventory-access/v1"
+    can_confirm: bool
+    can_discover: bool
+    can_manage_policy: bool
+
+
+@router.get("/api/v1/inventory/access", response_model=InventoryAccess)
+def inventory_access(identity: Identity = Depends(require_permission("agent:read"))):
+    return InventoryAccess(
+        can_confirm=identity.has_permission("agent:confirm"),
+        can_discover=identity.has_permission("env:read"),
+        can_manage_policy=identity.has_permission("policy:manage"),
+    )
+
+
 @router.get("/api/v1/candidates", response_model=list[AgentAssetOut])
 def list_candidates(
     response: Response,
@@ -744,9 +762,10 @@ def confirm_candidate(
     asset_id: str,
     body: CandidateConfirm,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("agent:confirm")),
+    identity: Identity = Depends(get_identity),
 ):
     asset = _asset_or_404(session, identity.tenant_id, asset_id)
+    ensure_permission(identity, "agent:confirm")
     if asset.status not in ("candidate", "needs_review"):
         raise HTTPException(status_code=409, detail="invalid_state")
     # P1-7：body 里的外键引用必须解析到本租户对象。system_id 是请求体引用而非路径定位，
@@ -819,10 +838,11 @@ def dismiss_candidate(
     asset_id: str,
     body: CandidateDismiss,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("agent:confirm")),
+    identity: Identity = Depends(get_identity),
 ):
     asset = _asset_or_404(session, identity.tenant_id, asset_id)
-    if asset.status in ("managed", "retired"):
+    ensure_permission(identity, "agent:confirm")
+    if asset.status not in ("candidate", "needs_review"):
         raise HTTPException(status_code=409, detail="invalid_state")
     asset.status = "dismissed"
     asset.dismissed_reason = body.reason

@@ -1,6 +1,6 @@
 # Connectors：有范围、可解释的资产发现
 
-本目录有 11 个独立 Go 模块，经 [Edge Agent](../edge/agent/README.md)子进程协议采集候选与证据。Connector 是发现入口；工具调用的执行前检查由 [runtime adapters](../adapters/runtime/README.md)承担。发现到某种宿主不等于支持其运行时拦截。
+本目录有 12 个独立 Go 模块，经 [Edge Agent](../edge/agent/README.md)子进程协议采集候选与证据。Connector 是发现入口；工具调用的执行前检查由 [runtime adapters](../adapters/runtime/README.md)承担。发现到某种宿主不等于支持其运行时拦截。
 
 ## 已有模块
 
@@ -10,6 +10,7 @@
 | [openclaw](openclaw/) | OpenClaw agent 配置、模型与 workspace 声明 | 配置可发现不等于插件加载；不读取 auth-profiles 密钥正文 |
 | [directory](directory/) | 显式目录内的 Skill/配置线索 | 必须给受控范围；目录发现不执行其中代码 |
 | [dify](dify/) | Dify 应用配置线索 | 依具体配置证据生成候选，不跨产品查数据库 |
+| [siq](siq/) | SIQ 业务智能体身份、授权摘要与 run 生命周期事件 | 只读 API 产生的 owner-only v1 安全投影；无凭据、无网络、无跨库访问、无提示词或结果正文 |
 | [piagent](piagent/) | Pi Agent 配置线索 | 配置身份与运行保护分别确认 |
 | [workbuddy](workbuddy/) | WorkBuddy 配置线索 | 不赋予已退出范围的 Linux 新接入能力 |
 | [mcp](mcp/) | MCP 客户端配置与服务器声明 | 不证明远端工具内容可信或调用已获授权 |

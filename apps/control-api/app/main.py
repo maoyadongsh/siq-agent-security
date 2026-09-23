@@ -19,8 +19,21 @@ from app.db import Base, get_session, init_db, session_scope
 from app.list_meta import EXPOSE_HEADERS as LIST_EXPOSE_HEADERS
 from app.models import Tenant
 from app.routers import audit as audit_router
-from app.routers import bindings, environments, export, findings, inventory, policies, threat
-from app.security import Identity, get_identity
+from app.routers import (
+    bindings,
+    change_execution,
+    change_review,
+    console,
+    deployment_preview,
+    deployment_submission,
+    environments,
+    export,
+    findings,
+    inventory,
+    policies,
+    threat,
+)
+from app.security import Identity, ensure_permission, get_identity
 
 logger = logging.getLogger("siq-agent-security")
 
@@ -93,9 +106,15 @@ def overview(
     identity: Identity = Depends(get_identity),
 ):
     """控制台总览统计（§20.1）。只读、租户隔离。"""
+    from datetime import timedelta
+
     from sqlalchemy import func
 
-    from app.models import AgentAsset, EdgeAgent, Environment, Finding
+    from app.models import AgentAsset, DesiredPolicy, EdgeAgent, Environment, Finding, utcnow
+
+    for permission in ("agent:read", "env:read", "policy:read"):
+        ensure_permission(identity, permission)
+    now = utcnow()
 
     def _count(model, *where):
         return session.scalar(select(func.count(model.id)).where(model.tenant_id == identity.tenant_id, *where)) or 0
@@ -111,18 +130,23 @@ def overview(
         # EdgeAgent 无 tenant_id（经 environment 归属租户），走子查询
         "edges_online": session.scalar(
             select(func.count(EdgeAgent.id)).where(
-                EdgeAgent.environment_id.in_(
-                    select(Environment.id).where(Environment.tenant_id == identity.tenant_id)
-                ),
+                EdgeAgent.environment_id.in_(select(Environment.id).where(Environment.tenant_id == identity.tenant_id)),
                 EdgeAgent.revoked_at.is_(None),
+                EdgeAgent.last_seen_at >= now - timedelta(seconds=settings.heartbeat_stale_seconds),
+                EdgeAgent.last_seen_at <= now,
             )
         )
         or 0,
-        "policies": 0,  # Phase 3 Adapter 联调后接 DesiredPolicy 计数
+        "policies": _count(DesiredPolicy),
     }
 
 
 for router in (
+    change_execution.router,
+    deployment_preview.router,
+    deployment_submission.router,
+    change_review.router,
+    console.router,
     environments.router,
     inventory.router,
     findings.router,

@@ -24,10 +24,27 @@ go -C edge/agent build -o "$PWD/.tmp/bin/edge-agent" .
 
 | 命令 | 行为 | 前提 |
 | --- | --- | --- |
-| `register --control-plane URL --enrollment-code CODE` | 注册设备并保存服务端凭据与本地签名身份 | 有效注册许可，目标 URL 明确；不把真实 code 写入共享脚本 |
+| `register --control-plane URL --enrollment-code-stdin` | 注册设备并保存服务端凭据与本地签名身份 | 有效注册许可，目标 URL 明确；从标准输入读取，不把真实 code 写入命令参数 |
 | `heartbeat` | 30 秒心跳，失败退避 | 已注册状态；持续进程 |
 | `tasks` | 获取待处理任务、执行扫描并提交回执 | 已注册且凭据有效；先补交本地 pending receipts |
 | `run-once --connector NAME --scope JSON --connector-bin PATH` | 一次本地采集并输出 NDJSON | 可信 Connector 二进制与受控范围；不自动纳管或上传 |
+
+企业控制台的“环境与设备”提供创建环境、生成一次性码、命令选择与真实状态读回。已有本地 `state.json` 时注册会拒绝，请使用原身份启动心跳和领取任务；不要通过删除状态重试，以免失去原设备身份。旧 `--enrollment-code` 参数仍兼容，与标准输入模式互斥。
+
+Bash 示例（不把注册码写进历史或进程参数）：
+
+```bash
+read -r -s -p '注册码：' siq_enrollment
+printf '\n'
+printf '%s\n' "$siq_enrollment" | ./edge-agent register \
+  --control-plane https://security.example.com --enrollment-code-stdin
+unset siq_enrollment
+./edge-agent heartbeat
+# 另开终端，在同一用户下运行：
+./edge-agent tasks
+```
+
+注册、心跳和扫描回执是不同事实。页面只有读到扫描完成回执才展示完成；候选发现不自动纳管，也不代表运行时策略生效。批次签名先转换为实际 wire JSON，再规范化签名，支持 Connector 产生的结构化候选/证据数组。E143 的真实 Edge + Hermes Connector + Control API 验收见 [记录](../../docs/development/ux-enterprise-onboarding-e143-validation-20260923.md)。
 
 实际可选模块见 [Connector 列表](../../connectors/README.md)，范围字段以 [protocol](protocol/)和各模块的验证器为准。不要对未知目录或整机根目录运行试探扫描。
 
@@ -40,4 +57,4 @@ go -C edge/agent vet ./...
 go -C edge/agent test ./...
 ```
 
-当前 `run-once` 可选择 11 种 Connector；注册请求的 capabilities 仍只声明 hermes、docker、directory、openclaw 四种。模块可构建不能证明所有 Connector 已通过远程任务调度或客户环境验收，部署者须核对实际能力声明。采集到配置/进程只证明对应证据存在，不证明宿主已经受运行时保护。
+当前 `run-once` 可选择 12 种 Connector（新增 `siq` 本地业务安全事件投影）；注册请求的 capabilities 仍只声明 hermes、docker、directory、openclaw 四种。模块可构建不能证明所有 Connector 已通过远程任务调度或客户环境验收，部署者须核对实际能力声明。采集到配置/进程只证明对应证据存在，不证明宿主已经受运行时保护。

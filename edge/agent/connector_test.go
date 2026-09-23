@@ -104,7 +104,7 @@ func TestOfficialConnectorAllowlist(t *testing.T) {
 	official := []string{
 		"hermes", "openclaw", "docker", "directory",
 		"systemd", "kubernetes", "process", "mcp",
-		"piagent", "workbuddy", "dify",
+		"piagent", "workbuddy", "dify", "siq",
 	}
 	for _, name := range official {
 		_, err := ResolveConnectorBin(name, "")

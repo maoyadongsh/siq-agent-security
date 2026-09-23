@@ -7,6 +7,7 @@ Phase 3 之前：策略发布只生成 EdgeTask 占位，真实编译由 OpenShe
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Response
@@ -21,6 +22,7 @@ from app.models import (
     AgentInstance,
     ChangeRequest,
     Deployment,
+    DeploymentSubmission,
     DesiredPolicy,
     EdgeTask,
     Environment,
@@ -288,13 +290,20 @@ def create_change_request(
 def approve_change_request(
     cr_id: str,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("change:approve")),
+    identity: Identity = Depends(get_identity),
 ):
     cr = session.scalar(
         select(ChangeRequest).where(ChangeRequest.id == cr_id, ChangeRequest.tenant_id == identity.tenant_id)
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "change:approve")
+    return _approve_change_request(cr, session, identity)
+
+
+def _approve_change_request(
+    cr: ChangeRequest, session: Session, identity: Identity, *, review_digest: str | None = None
+):
     # 职责分离：提出者不能是唯一批准者（设计文档 §19.3）；break_glass 不豁免，仅允许跨人紧急批准
     if cr.proposer_user_id == identity.actor_id:
         raise HTTPException(status_code=409, detail="segregation_of_duties")
@@ -350,7 +359,7 @@ def approve_change_request(
         "change.approve",
         "change_request",
         resource_id=cr.id,
-        summary={"approval_policy": cr.approval_policy},
+        summary={"approval_policy": cr.approval_policy, **({"review_digest": review_digest} if review_digest else {})},
     )
     emit_event(
         session,
@@ -368,13 +377,20 @@ def approve_change_request(
 def reject_change_request(
     cr_id: str,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("change:approve")),
+    identity: Identity = Depends(get_identity),
 ):
     cr = session.scalar(
         select(ChangeRequest).where(ChangeRequest.id == cr_id, ChangeRequest.tenant_id == identity.tenant_id)
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "change:approve")
+    return _reject_change_request(cr, session, identity)
+
+
+def _reject_change_request(
+    cr: ChangeRequest, session: Session, identity: Identity, *, review_digest: str | None = None
+):
     if cr.status != "proposed":
         raise HTTPException(status_code=409, detail="invalid_state")
     cr.status = "rejected"
@@ -387,34 +403,50 @@ def reject_change_request(
         "change.reject",
         "change_request",
         resource_id=cr.id,
+        summary={"review_digest": review_digest} if review_digest else None,
     )
     session.commit()
     session.refresh(cr)
     return cr
 
 
+@dataclass
+class PreparedDeployment:
+    change: ChangeRequest
+    environment: Environment
+    policy: DesiredPolicy
+    binding: RuntimeBinding
+    backend: str
+    task_payload: dict
+    openshell_preflight: tuple | None
+    backend_scope: dict
+
+
 @router.post("/api/v1/deployments", response_model=DeploymentOut, status_code=201)
 def create_deployment(
     body: DeploymentCreate,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("policy:manage")),
+    identity: Identity = Depends(get_identity),
 ):
+    return execute_deployment(prepare_deployment(body, session, identity), session, identity)
+
+
+def prepare_deployment(
+    body: DeploymentCreate, session: Session, identity: Identity, *, extra_permissions: tuple[str, ...] = (),
+    allowed_submission_id: str | None = None,
+) -> PreparedDeployment:
     cr = session.scalar(
         select(ChangeRequest).where(
             ChangeRequest.id == body.change_request_id, ChangeRequest.tenant_id == identity.tenant_id
-        )
+        ).with_for_update().execution_options(populate_existing=True)
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")
-    if cr.status not in ("approved", "emergency_applied"):
-        raise HTTPException(status_code=409, detail="change_not_approved")
     env = session.scalar(
         select(Environment).where(Environment.id == body.environment_id, Environment.tenant_id == identity.tenant_id)
     )
     if env is None:
         raise HTTPException(status_code=404, detail="not_found")
-    if env.mode != "enforce":
-        raise HTTPException(status_code=409, detail="environment_not_in_enforce_mode")
     policy = _policy_or_404(session, identity.tenant_id, cr.policy_id)
 
     # P0-1：部署目标只允许来自登记的 active RuntimeBinding（selector 与运行时强绑定），
@@ -426,6 +458,19 @@ def create_deployment(
     )
     if binding is None:
         raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "policy:manage")
+    for permission in extra_permissions:
+        ensure_permission(identity, permission)
+    existing_submission = session.scalar(select(DeploymentSubmission.id).where(
+        DeploymentSubmission.tenant_id == identity.tenant_id,
+        DeploymentSubmission.change_request_id == cr.id,
+    ))
+    if existing_submission is not None and existing_submission != allowed_submission_id:
+        raise HTTPException(409, "deployment_submission_exists")
+    if cr.status not in ("approved", "emergency_applied"):
+        raise HTTPException(status_code=409, detail="change_not_approved")
+    if env.mode != "enforce":
+        raise HTTPException(status_code=409, detail="environment_not_in_enforce_mode")
     if binding.status != "active":
         raise HTTPException(status_code=409, detail="binding_revoked")
     if binding.environment_id != body.environment_id:
@@ -454,6 +499,8 @@ def create_deployment(
 
         if not load_settings().dev_mode:
             raise HTTPException(status_code=400, detail="fake_enforcement_backend_is_dev_only")
+    if backend in ("fake", "openshell-cli") and binding.backend != backend:
+        raise HTTPException(status_code=409, detail="binding_backend_mismatch")
     if backend == "openshell-cli" and policy.enforcement_mode != "block":
         # P1-11：openshell-cli 能力文档中仅 enforcement_mode.block=supported/enforce，
         # warn/audit_only 为 unsupported（无实测执行语义）；拒绝码引用能力文档结论
@@ -470,6 +517,7 @@ def create_deployment(
         "enforcement_mode": policy.enforcement_mode,
     }
     openshell_preflight = None
+    backend_scope = {}
     if backend == "openshell-cli":
         # plan_change 必须对照 live policy；compiler 的 needs_generation 只表示
         # 制品携带静态意图，不能以字段存在替代真实差异。
@@ -478,6 +526,13 @@ def create_deployment(
         try:
             adapter = OpenShellCliBackend()
             caps = adapter.probe()
+            backend_scope = {
+                "endpoint_fingerprint": caps.endpoint_fingerprint,
+                "gateway": caps.handshake_gateway,
+                "gateway_version": caps.gateway_version,
+                "schema_version": caps.schema_version,
+                "handshake_verified": caps.handshake_verified,
+            }
             compiled = adapter.compile(_desired_from_policy(policy), caps)
             validation = adapter.validate(compiled)
             if not validation.valid:
@@ -504,7 +559,20 @@ def create_deployment(
         # 非 CLI 后端保持原编译接线。CLI 已在上面用真实快照完成编译和计划。
         _compile_for_enforcement(policy, task_payload)
 
-    deployment = Deployment(
+    return PreparedDeployment(cr, env, policy, binding, backend, task_payload, openshell_preflight, backend_scope)
+
+
+def execute_deployment(
+    prepared: PreparedDeployment, session: Session, identity: Identity, *, preview_digest: str | None = None,
+    reserved_deployment: Deployment | None = None,
+):
+    from app.adapters.openshell.contracts import AdapterError, RevisionConflict
+
+    cr, env, policy, binding = prepared.change, prepared.environment, prepared.policy, prepared.binding
+    backend, task_payload, openshell_preflight = prepared.backend, prepared.task_payload, prepared.openshell_preflight
+    target = binding.backend_target_id
+    preview_audit = {"preview_digest": preview_digest} if preview_digest else {}
+    deployment = reserved_deployment or Deployment(
         tenant_id=identity.tenant_id,
         environment_id=env.id,
         change_request_id=cr.id,
@@ -568,6 +636,7 @@ def create_deployment(
                     "backend_revision": receipt.backend_revision,
                     "method": "policy_readback",
                     "verification_level": report.level,
+                    **preview_audit,
                 },
             )
             emit_event(
@@ -601,7 +670,7 @@ def create_deployment(
                 "deployment.fail",
                 "deployment",
                 resource_id=deployment.id,
-                summary=error,
+                summary={**error, **preview_audit},
             )
             emit_event(
                 session,
@@ -641,7 +710,8 @@ def create_deployment(
         identity.actor_id,
         "deployment.create",
         "deployment",
-        summary={"policy_id": policy.id, "environment_id": env.id},
+        resource_id=deployment.id,
+        summary={"policy_id": policy.id, "environment_id": env.id, **preview_audit},
     )
     emit_event(
         session,

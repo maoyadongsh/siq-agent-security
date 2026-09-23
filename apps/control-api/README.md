@@ -27,6 +27,14 @@
 
 租户来自验证身份，不能由请求体覆盖。Secret 不以明文写入业务库、日志或 outbox；Edge 凭据吊销逐请求检查。高风险写操作若无法记录审计即失败。队列租约与重试属于至少一次处理，不宣称 exactly-once。
 
+## 企业首次接入状态
+
+`GET /api/v1/environments/access` 返回当前验证身份的接入操作权限；`GET /api/v1/environments/{id}/onboarding` 返回租户内设备心跳、扫描回执和证据计数，只读且有上限/截断标志。新建环境重名返回 409，复用现有唯一约束并回滚同事务审计。企业页按这些真实结果继续接入，不从注册码签发推断设备已在线。版本化合同和验收见 [E143](../../docs/development/ux-enterprise-onboarding-e143-validation-20260923.md)。
+
+`GET /api/v1/inventory/access` 返回当前身份的候选处理、环境入口和策略创建权限。确认/驳回先定位租户对象再检查权限，驳回仅接受待处理候选；前端写后独立读回，未知结果先核对。详见 [E144 验收](../../docs/development/ux-enterprise-candidate-review-e144-validation-20260923.md)。
+
+`GET /api/v1/console-context` 返回当前验证身份的组织、中文角色及有限访问/操作布尔值，未同步的组织名返回 null，GET 不创建记录。企业工作台与导航消费此合同。`/overview` 同时要求资产、环境和策略读取权限，在线设备仅按有效新鲜心跳计算。详见 [E145 验收](../../docs/development/ux-enterprise-workspace-e145-validation-20260923.md)。
+
 ## 本地开发
 
 从仓库根进入模块；下列仅用于本机开发，API 监听 loopback：
@@ -50,3 +58,38 @@ uv run pytest
 ```
 
 修改 schema 或共享规则时，须同步 Go 消费方和固定向量检查。真实 PostgreSQL + RS256/JWKS 的阶段记录见[测评目录](../../evaluations/README.md)，它不等同客户 IdP、HA、灾备或生产运维验收。OpenShell 的 fake backend、隔离网关验证和实际部署分别记录；不得用模拟读回宣称真实隔离已生效。
+
+### 复用项目 OpenShell 的配置与证书目录
+
+显式连接已有项目网关时，`SIQ_AS_OPENSHELL_CLI_BIN` 和
+`SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT` 确定执行器与地址；同时继承该项目的
+`XDG_CONFIG_HOME`、`XDG_STATE_HOME`、`XDG_DATA_HOME`、`XDG_CACHE_HOME`。
+只传 config 目录可能找到网关登记，却找不到 state 目录内的客户端证书。
+先核对目录上下文，不通过关闭 TLS、复制私钥或重建网关解决此类错误。
+配置目录及用户目录变化会使旧连接指纹和部署预览失效，需要重新检查。
+
+真实只读预览的复验脚本为
+[`openshell-preview-live-check.py`](../../scripts/enterprise-experience/openshell-preview-live-check.py)：
+使用 API 虚拟环境 Python，显式提供 `--cli`、HTTPS loopback `--endpoint`、
+`--xdg-root`、已有 `--target` 和不存在的 `--out-dir`。脚本使用隔离开发数据库，
+只允许运行网关信息/状态/版本和指定目标策略读取命令，拒绝任何 CLI 写操作。
+不修改用户环境或沙箱；预览成功不代表部署或行为验证完成。
+
+### 部署请求恢复（0017）
+
+部署新入口为 `POST /api/v1/deployment-submissions`，使用
+`deployment-submission-create/v1`（请求键 + 变更/环境/绑定 + 预览摘要）。
+同键同内容只返回原记录，同键不同内容拒绝；每份变更仅保留一个部署请求。
+`GET /api/v1/change-requests/{id}/deployment-submission` 可在刷新或进程重启后读取
+准确的部署标识与状态。pending 表示正在处理或结果待核对，不允许自动超时重发。
+
+上线前须执行 Alembic `upgrade head` 至 **0017**。表中有记录时，降级迁移会拒绝
+删除它。如果要回退到不理解持久请求的旧代码，必须先禁用部署写入口
+（`SIQ_AS_ENFORCEMENT_BACKEND=none`）、保留 0017 表与审计并核对未决请求；不能
+通过删除请求、改请求键或重启服务来重新执行。实际新一次操作需要重新审批变更。
+
+隔离 PostgreSQL 复验：API 虚拟环境 Python 运行
+[`deployment-postgres-check.py`](../../scripts/enterprise-experience/deployment-postgres-check.py)
+并传入新输出目录。脚本只使用本机已有 `postgres:17-alpine` 镜像，在随机 loopback
+端口启动自有临时容器，使用临时数据库和签名文件，最终删除自有容器。它验证数据库
+事务和锁，不代替生产 IdP 或真实 OpenShell 行为验收。

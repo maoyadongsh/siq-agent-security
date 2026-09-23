@@ -17,6 +17,43 @@ from jsonschema import Draft7Validator
 CONTRACTS = Path(__file__).parents[4] / "packages" / "contracts"
 
 
+def test_siq_business_security_event_contract_rejects_raw_identity_and_content() -> None:
+    schema = json.loads(
+        (CONTRACTS / "siq-business-security-event.v1.schema.json").read_text(encoding="utf-8")
+    )
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    sample = schema["examples"][0]
+    validator.validate(sample)
+
+    for field in schema["required"]:
+        assert list(validator.iter_errors({key: value for key, value in sample.items() if key != field}))
+    for forbidden in (
+        {"tenant_id": "raw-tenant"},
+        {"user_id": "raw-user"},
+        {"prompt": "raw prompt"},
+        {"response": "raw response"},
+        {"authorization": "Bearer raw-token"},
+    ):
+        assert list(validator.iter_errors({**sample, **forbidden}))
+    assert list(
+        validator.iter_errors(
+            {
+                **sample,
+                "lifecycle": {**sample["lifecycle"], "write_quiesced": True},
+            }
+        )
+    )
+    assert list(
+        validator.iter_errors(
+            {
+                **sample,
+                "execution": {**sample["execution"], "run_ref": "raw-run-id"},
+            }
+        )
+    )
+
+
 @pytest.mark.parametrize(
     "kind",
     [
@@ -29,6 +66,15 @@ CONTRACTS = Path(__file__).parents[4] / "packages" / "contracts"
         "local-runtime-session-enrolled",
         "local-runtime-identity-revoke",
         "local-runtime-identity-revoked",
+        "local-runtime-identity-self",
+        "local-runtime-identity-self-revoke",
+        "local-runtime-request-issuer-create",
+        "local-runtime-request-issuer",
+        "local-runtime-request-identity-create",
+        "local-runtime-request-identity-issued",
+        "local-runtime-request-identity-cancel",
+        "local-runtime-request-identity-cancelled",
+
     ],
 )
 def test_runtime_identity_go_samples(kind: str) -> None:
@@ -62,6 +108,81 @@ def test_runtime_identity_go_samples(kind: str) -> None:
     if "session_id" in data:
         validator.validate({**data, "session_id": "会" * 256})
         assert list(validator.iter_errors({**data, "session_id": "会" * 257}))
+
+
+@pytest.mark.parametrize("version, sample", [
+    ("v2", "openshell-decision-relay"),
+    ("v3", "openshell-decision-relay-candidate"),
+    ("v4", "openshell-decision-relay-isolated"),
+])
+def test_openshell_decision_relay_contract_and_negative_boundaries(version, sample) -> None:
+    schema = json.loads(
+        (CONTRACTS / f"openshell-decision-relay.{version}.schema.json").read_text(encoding="utf-8")
+    )
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    fixture = (
+        CONTRACTS.parents[1]
+        / f"apps/agentshield/testdata/contracts/{sample}.json"
+    )
+    data = json.loads(fixture.read_text(encoding="utf-8"))
+    validator.validate(data)
+    other_namespace = (
+        "siq-openshell-scope-validation" if version == "v2" else "siq-openshell-dev"
+    )
+    for patch in (
+        {"sandbox_namespace": other_namespace},
+        {"sandbox_name": "siq-qwen38-scoped-INVALID"},
+    ):
+        assert list(validator.iter_errors({**data, "binding": {**data["binding"], **patch}}))
+    validator.validate(
+        {
+            **data,
+            "listener": {
+                **data["listener"],
+                "url": "http://host.openshell.internal:47710",
+            },
+        }
+    )
+
+    assert list(validator.iter_errors({**data, "admin_token": "must-never-exist"}))
+    assert list(
+        validator.iter_errors(
+            {**data, "allowed_routes": [*data["allowed_routes"], "/v1/runtime-identities"]}
+        )
+    )
+    assert list(
+        validator.iter_errors(
+            {**data, "upstream": "http://host.openshell.internal:47611"}
+        )
+    )
+    for url in (
+        "http://host.openshell.internal:47610",
+        "http://host.openshell.internal:47711",
+        "http://127.0.0.1:47612",
+        "http://host.openshell.internal:47612/path",
+    ):
+        assert list(
+            validator.iter_errors(
+                {**data, "listener": {**data["listener"], "url": url}}
+            )
+        )
+    assert list(
+        validator.iter_errors(
+            {
+                **data,
+                "binding": {**data["binding"], "session_namespace": "unscoped-session"},
+            }
+        )
+    )
+    assert list(
+        validator.iter_errors(
+            {
+                **data,
+                "listener": {**data["listener"], "target_container_id": "short"},
+            }
+        )
+    )
 
 
 @pytest.mark.parametrize("kind", ["intent-grant-bind", "intent-grant-binding"])
@@ -2603,6 +2724,105 @@ def test_activity_sources_go_sample() -> None:
         assert list(validator.iter_errors({**data, "items": [{**item, "status": status}]}))
 
 
+def test_model_connections_go_samples() -> None:
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    for name in ["local-model-connections", "local-model-connection-check", "local-model-connection-result"]:
+        schema = json.loads((CONTRACTS / f"{name}.v1.schema.json").read_text(encoding="utf-8"))
+        Draft7Validator.check_schema(schema)
+        validator = Draft7Validator(schema)
+        data = json.loads((root / f"{name}.json").read_text(encoding="utf-8"))
+        validator.validate(data)
+        for field in schema["required"]:
+            assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+        assert list(validator.iter_errors({**data, "api_key": "PRIVATE"}))
+    assert list(validator.iter_errors({**data, "inference_verified": True}))
+
+
+def test_openshell_discovery_go_samples() -> None:
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    for name in ["local-openshell-targets", "local-openshell-target-inspection"]:
+        schema = json.loads((CONTRACTS / f"{name}.v1.schema.json").read_text(encoding="utf-8"))
+        Draft7Validator.check_schema(schema)
+        validator = Draft7Validator(schema)
+        data = json.loads((root / f"{name}.json").read_text(encoding="utf-8"))
+        validator.validate(data)
+        for field in schema["required"]:
+            assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+        assert list(validator.iter_errors({**data, "private_key": "PRIVATE"}))
+    assert list(validator.iter_errors({**data, "enforcement_verified": True}))
+    request_path = CONTRACTS / "local-openshell-target-inspect.v1.schema.json"
+    request_schema = json.loads(request_path.read_text(encoding="utf-8"))
+    Draft7Validator.check_schema(request_schema)
+    request_validator = Draft7Validator(request_schema)
+    request = {key: data[key] for key in ["name", "sandbox_id", "endpoint_fingerprint"]}
+    request["schema_version"] = "local-openshell-target-inspect/v1"
+    request_validator.validate(request)
+    for patch in [{"name": "--help"}, {"sandbox_id": "guessed"}, {"endpoint_fingerprint": ""}, {"command": "exec"}]:
+        assert list(request_validator.iter_errors({**request, **patch}))
+
+
+def test_activity_query_go_sample() -> None:
+    schema = json.loads((CONTRACTS / "local-task-activity-query.v1.schema.json").read_text(encoding="utf-8"))
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    data = json.loads((root / "local-task-activity-query.json").read_text(encoding="utf-8"))
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    item = data["items"][0]
+    for patch in [{"decisions": {}}, {"last_recorded_at": 42}, {"params": "PRIVATE"}]:
+        assert list(validator.iter_errors({**data, "items": [{**item, **patch}]}))
+    assert list(validator.iter_errors({**data, "filters": {**data["filters"], "action": "completed"}}))
+
+
+def test_registered_openshell_gateway_go_samples() -> None:
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    for name in ["local-openshell-gateways", "local-openshell-gateway-select", "local-openshell-gateway-targets",
+                 "local-openshell-gateway-inspect", "local-openshell-gateway-inspection"]:
+        schema = json.loads((CONTRACTS / f"{name}.v1.schema.json").read_text())
+        Draft7Validator.check_schema(schema)
+        validator = Draft7Validator(schema, format_checker=Draft7Validator.FORMAT_CHECKER)
+        data = json.loads((root / f"{name}.json").read_text())
+        validator.validate(data)
+        for field in schema["required"]:
+            assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+        assert list(validator.iter_errors({**data, "private_key": "SYNTHETIC"}))
+        if name.endswith("gateways"):
+            assert list(validator.iter_errors({**data, "state": "unavailable"}))
+            validator.validate({**data, "state": "unavailable", "items": []})
+        elif name.endswith("inspection"):
+            forged = {**data["inspection"], "enforcement_verified": True}
+            assert list(validator.iter_errors({**data, "inspection": forged}))
+
+
+def test_model_inference_go_samples() -> None:
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    for name in ["local-model-inference-create", "local-model-inference-record", "local-model-inference-latest"]:
+        schema = json.loads((CONTRACTS / f"{name}.v1.schema.json").read_text())
+        Draft7Validator.check_schema(schema)
+        validator = Draft7Validator(schema, format_checker=Draft7Validator.FORMAT_CHECKER)
+        data = json.loads((root / f"{name}.json").read_text())
+        validator.validate(data)
+        for field in schema["required"]:
+            assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+        assert list(validator.iter_errors({**data, "api_key": "SYNTHETIC_PRIVATE"}))
+        if name.endswith("create"):
+            assert list(validator.iter_errors({**data, "confirm_test": False}))
+            assert list(validator.iter_errors({**data, "prompt": "private"}))
+        elif name.endswith("record"):
+            for patch in [
+                {"status": "uncertain"}, {"business_data_sent": True}, {"service_session_only": False},
+                {"finished_at": ""}, {"expires_at": "not-a-time"}, {"status": "running"},
+            ]:
+                assert list(validator.iter_errors({**data, **patch}))
+            validator.validate({**data, "status": "running", "inference_verified": False,
+                                "finished_at": "", "expires_at": ""})
+        else:
+            validator.validate({**data, "record": None})
+            assert list(validator.iter_errors({**data, "record": {**data["record"], "business_data_sent": True}}))
+
+
 def test_activity_search_go_sample() -> None:
     schema = json.loads((CONTRACTS / "local-task-activity-search.v1.schema.json").read_text(encoding="utf-8"))
     Draft7Validator.check_schema(schema)
@@ -2615,6 +2835,24 @@ def test_activity_search_go_sample() -> None:
     for patch in [{"q": "x" * 257}, {"params": "secret"}]:
         assert list(validator.iter_errors({**data, "filters": {**data["filters"], **patch}}))
     assert list(validator.iter_errors({**data, "prefix_valid": False}))
+
+
+def test_runtime_check_activity_go_sample() -> None:
+    schema = json.loads((CONTRACTS / "local-runtime-check-activity.v1.schema.json").read_text(encoding="utf-8"))
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    data = json.loads((root / "local-runtime-check-activity.json").read_text(encoding="utf-8"))
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    for patch in [{"prefix_valid": False}, {"history_integrity": "failed"}, {"token": "PRIVATE"}]:
+        assert list(validator.iter_errors({**data, **patch}))
+    activity = data["activity"]
+    for patch in [{"attribution": "unknown"}, {"binding": None}, {"receipt_count": 0}]:
+        assert list(validator.iter_errors({**data, "activity": {**activity, **patch}}))
+    wrong_binding = {**activity["binding"], "platform": "openclaw"}
+    assert list(validator.iter_errors({**data, "activity": {**activity, "binding": wrong_binding}}))
 
 
 def test_task_trace_export_go_sample() -> None:
@@ -2714,6 +2952,82 @@ def test_raw_task_content_envelope_go_sample() -> None:
         {"nonce_base64": "short"},
     ]:
         assert list(validator.iter_errors(data | patch))
+
+
+def test_runtime_content_envelope_go_sample_authenticates_source() -> None:
+    import base64
+
+    from cryptography.exceptions import InvalidTag
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+    schema = json.loads((CONTRACTS / "local-raw-task-content-envelope.v2.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    data = json.loads((root / "local-raw-task-content-envelope-v2.json").read_text())
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    for source in [None, {}, data["source"] | {"session_id": "private"}, data["source"] | {"binding_ref": "private"}]:
+        assert list(validator.iter_errors(data | {"source": source}))
+    nonce = base64.b64decode(data["nonce_base64"])
+    ciphertext = base64.b64decode(data["ciphertext_base64"])
+    # Go struct field order is preserved by the generated JSON fixture.
+    aad = data | {"nonce_base64": "", "ciphertext_base64": ""}
+    def encode(value: dict) -> bytes:
+        return json.dumps(value, separators=(",", ":")).encode()
+
+    aes = AESGCM(bytes([7]) * 32)
+    payload = json.loads(aes.decrypt(nonce, ciphertext, encode(aad)))
+    assert payload["fields"] == [{"path": "/result", "value": "fixture runtime output"}]
+    for key in data["source"]:
+        with pytest.raises(InvalidTag):
+            aes.decrypt(nonce, ciphertext, encode(aad | {"source": data["source"] | {key: "sha256:" + "a" * 64}}))
+
+
+@pytest.mark.parametrize("name", ["local-task-outputs", "local-task-output-read", "local-task-output-content"])
+def test_runtime_output_api_go_samples(name: str) -> None:
+    schema = json.loads((CONTRACTS / (name + ".v1.schema.json")).read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    data = json.loads((root / (name + ".json")).read_text())
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+    assert list(validator.iter_errors(data | {"session_id": "caller-must-not-select-source"}))
+    if name == "local-task-output-read":
+        assert list(validator.iter_errors(data | {"confirm_display": False}))
+    if name == "local-task-outputs":
+        assert list(validator.iter_errors(data | {"status": "disabled"}))
+        assert list(validator.iter_errors(data | {"items": [data["items"][0] | {"kind": "input"}]}))
+
+
+@pytest.mark.parametrize("kind", ["result", "read", "content", "list"])
+def test_business_result_api_producer_samples(kind: str) -> None:
+    schema = json.loads((CONTRACTS / f"siq-business-run-{kind}.v1.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    data = json.loads((CONTRACTS / "fixtures" / f"siq-business-run-{kind}.json").read_text())
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({key: value for key, value in data.items() if key != field}))
+    assert list(validator.iter_errors(data | {"tenant_id": "caller-cannot-override"}))
+    if kind == "result":
+        for patch in [{"publication_status": "published"}, {"write_quiesced": False},
+                      {"children_terminal_confirmed": False}, {"status": "running"},
+                      {"output": data["output"] | {"plaintext_sha256": None}}]:
+            assert list(validator.iter_errors(data | patch))
+    if kind == "read":
+        for value in [False, 1, "true"]:
+            assert list(validator.iter_errors(data | {"confirm_display": value}))
+    if kind == "content":
+        assert list(validator.iter_errors(data | {"kind": "published_report"}))
+    if kind == "list":
+        for patch in [{"items": data["items"] * 21}, {"next_cursor": "invalid"},
+                      {"items": [data["items"][0] | {"content": "forbidden"}]},
+                      {"items": [data["items"][0] | {"saved_at": 0}]}]:
+            assert list(validator.iter_errors(data | patch))
 
 
 @pytest.mark.parametrize("kind", ["activation", "grant", "revocation", "capture-permit"])
@@ -3607,3 +3921,69 @@ def test_skill_context_management_http_sample_and_boundaries() -> None:
         dict(data, sessions=data["sessions"] * 65),
     ]:
         assert list(validator.iter_errors(changed))
+
+
+@pytest.mark.parametrize("kind", [
+    "local-runtime-request-issuer-create", "local-runtime-request-issuer",
+    "local-runtime-request-identity-create", "local-runtime-request-identity-issued",
+    "local-runtime-request-identity-cancel", "local-runtime-request-identity-cancelled",
+])
+def test_runtime_request_identity_boundaries(kind: str) -> None:
+    schema = json.loads((CONTRACTS / f"{kind}.v1.schema.json").read_text())
+    validator = Draft7Validator(schema)
+    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / f"{kind}.json"
+    data = json.loads(fixture.read_text())
+    if "max_identity_seconds" in data:
+        for value in [60, 3600]:
+            validator.validate({**data, "max_identity_seconds": value})
+        for value in [59, 3601, True, "60", 60.5]:
+            assert list(validator.iter_errors({**data, "max_identity_seconds": value}))
+    if "expires_at" in data:
+        for value in ["2026-09-23T12:00:00+00:00", "2026-09-23T12:00:00.1Z", "tomorrow"]:
+            assert list(validator.iter_errors({**data, "expires_at": value}))
+    for field in ["request_id", "execution_sha256", "parent_identity_id", "scope_id"]:
+        if field in data:
+            assert list(validator.iter_errors({**data, field: "../other"}))
+    if "request" in data:
+        for field in schema["properties"]["request"]["required"]:
+            assert list(validator.iter_errors({**data, "request": {**data["request"], field: None}}))
+        for patch in [{"session_namespace": "native"}, {"request_id": "other"}, {"token": "forbidden"}]:
+            assert list(validator.iter_errors({**data, "request": {**data["request"], **patch}}))
+        for patch in [{"signature": "a" * 128}, {"session_ttl_seconds": 3601}, {"platform": "openclaw"}]:
+            assert list(validator.iter_errors({**data, "identity": {**data["identity"], **patch}}))
+
+
+def test_runtime_request_private_v3_contract() -> None:
+    schema = json.loads((CONTRACTS / "local-runtime-identity.v3.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    fixture = (
+        CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / "local-runtime-identity-v3.json"
+    )
+    data = json.loads(fixture.read_text())
+    validator.validate(data)
+    for field in schema["required"]:
+        assert list(validator.iter_errors({k: v for k, v in data.items() if k != field}))
+        assert list(validator.iter_errors({**data, field: None}))
+    for patch in [
+        {"schema_version": "local-runtime-identity/v1"},
+        {"platform": "openclaw"},
+        {"filesystem_profile": "windows-local-drive/v1"},
+        {"session_ttl_seconds": 3601},
+    ]:
+        assert list(validator.iter_errors({**data, **patch}))
+
+
+def test_registered_project_instances_v3_go_sample() -> None:
+    schema = json.loads((CONTRACTS / "local-adapter-instances.v3.schema.json").read_text())
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    root = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts"
+    data = json.loads((root / "adapter-instances.v3.json").read_text())
+    validator.validate(data)
+    assert any(row["source"] == "registered_project" for row in data["instances"])
+    assert list(validator.iter_errors({**data, "platform_changes": True}))
+    assert list(validator.iter_errors({**data, "schema_version": "local-adapter-instances/v1"}))
+    row = next(row for row in data["instances"] if row["source"] == "registered_project")
+    forged = {**row, "diagnosis": {**row["diagnosis"], "runtime_state": "verified"}}
+    assert list(validator.iter_errors({**data, "instances": [forged]}))
