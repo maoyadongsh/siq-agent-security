@@ -6,6 +6,7 @@ import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { api, ApiError, describeApiError } from '@/api/client';
 import { assetStatusLabel, inventoryAccess, type InventoryAccess } from '@/api/inventoryReview';
 import type { AgentAsset, Evidence } from '@/api/types';
+import BusinessRunLinks from '@/components/BusinessRunLinks';
 
 type LoadStatus = 'loading' | 'connected' | 'disconnected';
 
@@ -154,6 +155,7 @@ export default function AgentDetailPage() {
               emptyText={evidenceError ? '当前证据不可用' : '暂无关联证据'}
             />
           </div>
+          {agent.source_type === 'siq_hub' && <BusinessRunLinks key={agent.id} assetId={agent.id} evidence={evidence} />}
           <PermissionGovernance key={agent.id} assetId={id ?? ""} assetName={agent.name} />
         </>
       ) : null}

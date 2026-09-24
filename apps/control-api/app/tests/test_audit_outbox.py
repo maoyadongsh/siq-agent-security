@@ -32,7 +32,7 @@ def _make_candidate(client, headers, name="audit-agent"):
         ),
         headers=eh,
     )
-    return client.get("/api/v1/candidates", headers=headers).json()[0]
+    return next(item for item in client.get("/api/v1/candidates", headers=headers).json() if item["name"] == name)
 
 
 def test_confirm_writes_audit_and_outbox_same_transaction(client, tenant_a):
@@ -56,6 +56,7 @@ def test_confirm_writes_audit_and_outbox_same_transaction(client, tenant_a):
             .filter(
                 OutboxEvent.event_type == "agent.asset.confirmed.v1",
                 OutboxEvent.tenant_id == "tnt-A",
+                OutboxEvent.payload["payload"]["agent_asset_id"].as_string() == candidate["id"],
             )
             .all()
         )
@@ -84,6 +85,7 @@ def test_outbox_payload_is_redacted_envelope(client, tenant_a):
             .filter(
                 OutboxEvent.event_type == "agent.asset.confirmed.v1",
                 OutboxEvent.tenant_id == "tnt-A",
+                OutboxEvent.payload["payload"]["agent_asset_id"].as_string() == candidate["id"],
             )
             .order_by(OutboxEvent.id.desc())
             .first()

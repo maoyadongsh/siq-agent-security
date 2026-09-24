@@ -94,27 +94,40 @@ try {
     logger: { info() {}, warn() {}, error() {}, debug() {} },
   });
   assert.ok(registry.plugins.some((plugin) => plugin.id === "siq-agent-security" && plugin.status === "loaded"), "SIQ native plugin not loaded");
+  const mutations = spec.cases.filter((entry) => entry.final_params !== undefined);
+  if (mutations.length > 0) {
+    const registrations = registry.typedHooks.filter((hook) => hook.pluginId === "siq-agent-security" && hook.hookName === "before_tool_call");
+    assert.equal(registrations.length, 1, "missing unique SIQ native before hook");
+    const registration = registrations[0];
+    const originalHandler = registration.handler;
+    registration.handler = async (event, ctx) => {
+      const result = await originalHandler(event, ctx);
+      const entry = mutations.find((candidate) => candidate.id === event.toolCallId);
+      if (entry) result.params = structuredClone(entry.final_params);
+      return result;
+    };
+  }
   stage = "wrapper";
   const wrap = await nativeFunction(["pi-tools.before-tool-call-", "agent-tools.before-tool-call-"], "wrapToolWithBeforeToolCallHook");
   const after = await nativeFunction(["native-hook-relay-", "hook-helpers-"], "runAgentHarnessAfterToolCallHook");
   const context = { config, cwd: spec.workspace, agentId: spec.agent_id,
-    sessionKey: spec.session_id, sessionId: spec.session_id,
+    sessionKey: spec.session_id, sessionId: spec.session_epoch,
     runId: "native-approval-fixture", loopDetection: { enabled: false } };
   const outputs = [];
   for (const entry of spec.cases) {
     stage = entry.id;
     const marker = path.join(spec.control_dir, `${entry.id}.executed.json`);
-    const tool = wrap({ name: "exec", label: "Synthetic execution marker", description: "Fixture only",
-      parameters: { type: "object", properties: { command: { type: "string" } } },
+    const tool = wrap({ name: spec.tool_name, label: "Synthetic execution marker", description: "Fixture only",
+      parameters: { type: "object", additionalProperties: true },
       async execute(callId, params) {
         assert.equal(callId, entry.id);
-        assert.deepEqual(params, { command: "printf fixture" });
+        assert.deepEqual(params, entry.final_params ?? spec.tool_params);
         write(`${entry.id}.executed.json`, { executed_at: Date.now() });
         return { content: [{ type: "text", text: "synthetic fixture result" }], details: {} };
       },
     }, context);
     const cancellation = new AbortController();
-    const execution = tool.execute(entry.id, { command: "printf fixture" }, cancellation.signal);
+    const execution = tool.execute(entry.id, structuredClone(spec.tool_params), cancellation.signal);
     let settled = false;
     execution.then(() => { settled = true; }, () => { settled = true; });
     // Register rejection immediately while waiting for the real gateway event.
@@ -153,9 +166,9 @@ try {
       assert.ok(!executed, "cancelled execution ran");
       await operator.request("plugin.approval.resolve", { id: requests.get(entry.id), decision: "deny" });
     }
-    if (executed) await after({ ...context, toolName: "exec", toolCallId: entry.id,
-      startArgs: { command: "printf fixture" }, result });
-    const output = { id: entry.id, executed, platform_decision: choice.decision, platform_requested: requests.has(entry.id),
+    if (executed) await after({ ...context, toolName: spec.tool_name, toolCallId: entry.id,
+      startArgs: entry.final_params ?? spec.tool_params, result });
+    const output = { id: entry.id, tool: spec.tool_name, executed, platform_decision: choice.decision, platform_requested: requests.has(entry.id),
       cancelled_request_cleanup: choice.decision === "cancel",
       blocked: result?.details?.status === "blocked" };
     outputs.push(output);

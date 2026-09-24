@@ -46,6 +46,107 @@ records reachable model, SIQ, Agent, Web and fixture services. Actual inference
 is separately proven by the [model task](../../docs/hackathon/evidence/ornith-agent-20260908.json).
 Preflight intentionally does not upgrade `deployment_verified` based on health alone.
 
+## Flagship runtime lock and doctor
+
+The Hermes + OpenShell flagship candidate has a separate immutable input lock:
+
+```text
+deploy/dgx-spark/runtime-lock.v1.json
+```
+
+It binds the three OpenShell binaries, Hermes commit and integration patch,
+candidate image/config digests, local model identity, company-scoped pool
+binding, policy/mount identity, and the reviewed upgrade evidence. Run the
+doctor from the security repository root:
+
+```bash
+SIQ_RESEARCH_ROOT=/home/maoyd/siq-research-engine \
+SIQ_HERMES_ROOT=/home/maoyd/siq/hermes-agent \
+  ./deploy/dgx-spark/doctor.sh \
+  --out .tmp/flagship/dgx-spark-doctor.json
+```
+
+To use it as a cumulative gate, select the highest required level:
+
+```bash
+./deploy/dgx-spark/doctor.sh \
+  --out .tmp/flagship/dgx-spark-doctor.json \
+  --require-level business_completed
+```
+
+The report keeps six independent levels: configuration correctness, service
+reachability, identity matching, security behavior, inference, and business
+completion. A later level cannot hide an earlier failure. In particular, a
+healthy running image can retain its recorded inference/business evidence while
+the current source profile has drifted; cumulative gating then exits nonzero.
+
+The doctor never sets `deployment_verified=true`. The current lifecycle remains
+`NOT_PRODUCTION_CANARY`, and production approval is outside this command. It
+does not read API keys, tokens, private keys, or raw report content. `--offline`
+checks locked files and evidence while leaving live process, endpoint, and
+container checks explicitly `unverified`.
+
+The confidential Hermes 0.21 candidate has a second lock because it was
+validated on an isolated gateway and has not replaced the active company pool:
+
+```bash
+./deploy/dgx-spark/candidate_doctor.sh \
+  --out .tmp/flagship/confidential-candidate-doctor.json \
+  --require-level promotion_boundary
+```
+
+`candidate_package_ready` covers the pinned candidate image, profile manifest,
+classified policy/data controls, governed model proof, outage proof, and the
+explicit no-promotion boundary. `current_environment_ready` additionally probes
+the isolated gateway and the model currently served on ports 8006. This keeps a
+reproducible candidate package valid when the operator intentionally serves a
+different model, while reporting the live model mismatch instead of silently
+claiming the candidate can run immediately. Use `--require-level
+live_environment` only when the locked model must also be online now.
+
+## Native candidate CI gate
+
+The manual `dgx-spark-native-candidate` workflow is the hard gate for the
+confidential candidate. It runs only on a self-hosted runner carrying all five
+labels `self-hosted`, `Linux`, `ARM64`, `dgx-spark`, and `siq-openshell`.
+Configure the absolute repository paths as the repository variables
+`SIQ_RESEARCH_ROOT` and `SIQ_HERMES_ROOT`; both checkouts must already contain
+their locked dependencies and be clean.
+
+The gate policy is
+`deploy/dgx-spark/native-candidate-gate.v1.json`. A single workflow batch must
+provide all of the following before the final report can say `passed`:
+
+- DGX Spark product identity, `aarch64`/`arm64`, an NVIDIA GB10 GPU, all runner
+  labels, the checked-out GitHub SHA, and clean repository bindings;
+- a freshly generated candidate doctor report with every level through
+  `live_environment` equal to `pass`;
+- verified primary gateway process identity and health plus a fresh resource
+  audit with `operational_ready=true`, `gateway_status=healthy`, and proof that
+  the SQLite payload column was not read;
+- receipts for the security candidate contracts, Hermes AgentShield adapter,
+  research OpenShell contracts, and Hermes native regression suites.
+
+The security repository uses a locked baseline-ancestor binding because a Git
+commit cannot contain its own commit hash. The workflow still requires its
+actual clean HEAD to equal `github.sha`, and all locked artifacts retain exact
+digests. Research Engine and Hermes use exact locked HEAD bindings. Evidence is
+freshness-, candidate-, batch-, policy-, command-, and repository-bound.
+
+Raw suite output remains in an owner-only runner temporary directory. The
+workflow uploads only sanitized JSON receipts and reports. Missing reports,
+missing suites, dirty trees, stale evidence, an unhealthy gateway, a model
+mismatch, or a resource recovery hold all fail the job. Passing this gate means
+the isolated candidate was verified; `production_eligible` and
+`deployment_verified` remain `false`.
+
+The current local worktrees intentionally do not pass this gate: they contain
+the in-progress flagship changes, the live gateway still has the SP-02 recovery
+hold, and the locked model is not online. The Hermes source also contains the
+aiohttp `RequestKey` compatibility repair found by the CI-01 regression suite;
+the candidate image and exact Hermes lock must be rebuilt/refreshed around that
+repair before a native candidate run can pass.
+
 For isolated real-tool execution and evidence export, follow the
 [Secure Agent commands](../../apps/secure-agent/README.md). Every run uses a new
 SIQ state directory and controlled message sink. Existing personal profiles are

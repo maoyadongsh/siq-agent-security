@@ -29,6 +29,7 @@ native = importlib.util.module_from_spec(loader)
 loader.loader.exec_module(native)
 fixture = native.fixture
 require = fixture.require
+SESSION_EPOCH = "11111111-1111-4111-8111-111111111111"
 
 
 class ApprovalHarness(native.OpenClawHarness):
@@ -170,6 +171,9 @@ class ApprovalHarness(native.OpenClawHarness):
                     "workspace": str(self.workspace),
                     "agent_id": fixture.AGENT,
                     "session_id": fixture.SESSION,
+                    # Preserve the routing key while supplying the native
+                    # OpenClaw UUID epoch consumed by the SIQ identity binder.
+                    "session_epoch": SESSION_EPOCH,
                     "cases": cases,
                 }
             )

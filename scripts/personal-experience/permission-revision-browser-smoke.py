@@ -59,12 +59,12 @@ def main():
                 def open_instance():
                     page.get_by_role("button", name="管理实例", exact=True).click()
                     dialog = page.get_by_role("dialog")
-                    expect(dialog.get_by_label("Hermes 实例 / profile", exact=True)).to_be_enabled()
+                    expect(dialog.get_by_label("Hermes 实例", exact=True)).to_be_enabled()
                     expect(dialog.get_by_label("接入方式", exact=True)).to_have_value("permissions")
                     return dialog
 
                 dialog = open_instance()
-                expect(dialog.get_by_role("button", name="起草并编辑实例权限", exact=True)).to_be_enabled()
+                expect(dialog.get_by_role("button", name="起草并编辑实例权限", exact=True)).to_be_disabled()
                 expect(dialog.get_by_role("button", name="确认应用", exact=True)).to_be_disabled()
                 dialog.get_by_role("button", name="取消", exact=True).click()
                 fixture.require(
@@ -73,10 +73,12 @@ def main():
                 checks["open_and_cancel_do_not_create_authority_or_host_files"] = True
                 dialog = open_instance()
                 dialog.get_by_label("本次操作者", exact=True).fill("synthetic-browser-operator")
+                dialog.get_by_role("checkbox", name=re.compile("我确认以此检查结果为参考")).check()
                 dialog.get_by_role("button", name="起草并编辑实例权限", exact=True).click()
                 editor = page.get_by_role("dialog", name="编辑权限范围", exact=True)
                 expect(page.get_by_role("dialog")).to_have_count(1)
                 expect(editor.get_by_label("只读目录", exact=True)).to_be_enabled()
+                editor.get_by_text("高级：输入工具名称", exact=True).click()
                 editor.get_by_label("允许的工具", exact=True).fill("read_file\nwrite_file")
                 editor.get_by_label("只读目录", exact=True).fill(str(h.workspace))
                 editor.get_by_label("读写目录", exact=True).fill("")
@@ -149,7 +151,7 @@ def main():
                 held = []
                 page.route("**/v1/adapter/install", lambda route: held.append(route))
                 apply_button.click()
-                expect(dialog.get_by_label("Hermes 实例 / profile", exact=True)).to_be_disabled()
+                expect(dialog.get_by_label("Hermes 实例", exact=True)).to_be_disabled()
                 expect(dialog.get_by_label("接入方式", exact=True)).to_be_disabled()
                 expect(dialog.get_by_label("确认停用，后续工具调用将被阻止", exact=True)).to_be_disabled()
                 expect(dialog.get_by_role("button", name="刷新权限状态", exact=True)).to_be_disabled()
@@ -289,11 +291,31 @@ def main():
                     "UI revocation missing",
                 )
                 checks["explicit_withdrawal_revokes_identity_and_invalidates_install_preview"] = True
-                dialog.get_by_label("操作", exact=True).select_option("uninstall")
+                busy_replies = []
+                def transient_busy(route):
+                    if route.request.post_data_json.get("action") == "uninstall" and len(busy_replies) < 2:
+                        busy_replies.append(True)
+                        route.fulfill(status=429, content_type="application/json", headers={"Retry-After": "1"}, body='{"error":"adapter_busy"}')
+                    else:
+                        route.continue_()
+                page.route("**/v1/adapter/preview", transient_busy)
+                uninstall_requests = []
+                page.on("request", lambda req: uninstall_requests.append(req.post_data_json) if req.method == "POST" and req.url.endswith("/v1/adapter/preview") and req.post_data_json.get("action") == "uninstall" else None)
+                with page.expect_response(lambda res: res.url.endswith("/v1/adapter/preview")) as uninstall_preview:
+                    dialog.get_by_label("操作", exact=True).select_option("uninstall")
+                preview_body = uninstall_preview.value.json()
+                if uninstall_preview.value.status != 200:
+                    (args.out_dir / "uninstall-failure.sanitized.json").write_text(json.dumps({
+                        "status": uninstall_preview.value.status,
+                        "error": preview_body.get("error", "unspecified"),
+                        "reason_code": preview_body.get("reason_code", "unspecified"),
+                    }))
                 expect(dialog.get_by_role("button", name="确认应用", exact=True)).to_be_enabled(timeout=30000)
                 dialog.get_by_role("button", name="确认应用", exact=True).click()
                 expect(dialog).to_have_count(0)
                 fixture.require(not config_path.exists(), "uninstall retained managed adapter config")
+                fixture.require(len(busy_replies) == 2 and len(uninstall_requests) == 3, "uninstall preview retry count incorrect")
+                checks["uninstall_preview_recovers_with_bounded_read_only_retry"] = True
 
                 def native_get(key):
                     return json.loads(h.command([str(args.hermes_cli), "config", "get", key, "--json"]))

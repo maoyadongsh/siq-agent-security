@@ -18,8 +18,14 @@ async function importFile(file) {
 // OpenClaw ships hashed internal chunks. Select the actual exported runtime
 // function, refusing versions that do not expose the expected implementation.
 async function nativeFunction(prefix, name) {
-  const files = fs.readdirSync(dist).filter((file) => file.startsWith(prefix) && file.endsWith(".js"));
-  const matches = files.filter((file) => fs.readFileSync(path.join(dist, file), "utf8").includes(`function ${name}(`));
+  const prefixes = Array.isArray(prefix) ? prefix : [prefix];
+  let matches = [];
+  for (const candidate of prefixes) {
+    matches = fs.readdirSync(dist).filter((file) => file.startsWith(candidate) &&
+      (file.endsWith(".js") || file.endsWith(".mjs")) &&
+      fs.readFileSync(path.join(dist, file), "utf8").includes(`function ${name}(`));
+    if (matches.length) break;
+  }
   assert.equal(matches.length, 1, `unsupported native runtime export: ${name}`);
   const file = path.join(dist, matches[0]);
   const source = fs.readFileSync(file, "utf8");
@@ -38,15 +44,19 @@ const registry = loadOpenClawPlugins({
   logger: { info() {}, warn() {}, error() {}, debug() {} },
 });
 assert.ok(registry.plugins.some((p) => p.id === "siq-agent-security" && p.status === "loaded"), "SIQ native plugin was not loaded");
-const wrap = await nativeFunction("pi-tools.before-tool-call-", "wrapToolWithBeforeToolCallHook");
-const after = await nativeFunction("native-hook-relay-", "runAgentHarnessAfterToolCallHook");
-const coding = await importFile(path.join(spec.openclaw_root, "node_modules/@earendil-works/pi-coding-agent/dist/index.js"));
+const wrap = await nativeFunction(["pi-tools.before-tool-call-", "agent-tools.before-tool-call-"], "wrapToolWithBeforeToolCallHook");
+const after = await nativeFunction(["native-hook-relay-", "hook-helpers-"], "runAgentHarnessAfterToolCallHook");
+const codingPath = path.join(spec.openclaw_root, "node_modules/@earendil-works/pi-coding-agent/dist/index.js");
+const coding = fs.existsSync(codingPath) ? await importFile(codingPath) : {
+  createReadTool: await nativeFunction("resource-loader-", "createReadTool"),
+  createWriteTool: await nativeFunction("resource-loader-", "createWriteTool"),
+};
 const tools = { read: coding.createReadTool(spec.workspace), write: coding.createWriteTool(spec.workspace) };
 const outputs = [];
 for (const call of spec.calls) {
   assert.ok(tools[call.tool], "only fixture file tools may execute");
   const context = { config, cwd: spec.workspace, agentId: spec.agent_id,
-    sessionKey: call.session_id ?? spec.session_id, sessionId: call.session_id ?? spec.session_id,
+    sessionKey: call.session_id ?? spec.session_id, sessionId: call.session_epoch ?? spec.session_epoch ?? call.session_id ?? spec.session_id,
     runId: "native-fixture-run", loopDetection: { enabled: false } };
   const tool = wrap(tools[call.tool], context);
   const result = await tool.execute(call.id, call.params);

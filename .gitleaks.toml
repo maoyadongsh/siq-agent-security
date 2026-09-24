@@ -41,6 +41,135 @@
     regexTarget = "line"
     regexes = ['''^\s*"session_key_sha256": "b4f6a7cf296ab0fd7f3dc39c1fe6b0520d93d21b740a61692ba991a9bf28ad47",?\s*$''']
 
+  # Reviewed flagship evidence: exact source/credential digests and one systemd
+  # invocation ID. These values cannot authenticate; new values remain scanned.
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/business-database-delivery-e167\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"migrations/021_add_openshell_data_grant_request_key\.sql": "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",?\s*$''',
+      '''^\s*"migrations/015_add_user_artifact_owner_key\.sql": "61cb9ff1025af48942afa2abeb6cdb54cc15423b9b9deeb5bc19692f0ad7eee8",?\s*$''',
+      '''^\s*"migrations/001_create_auth_tables\.sql": "4d97bb176840cba3fa4c16ec96495ecef64ee8e5bb1a4cdc7baaee4f50814863",?\s*$''',
+      '''^\s*"migrations/009_add_user_token_version\.sql": "4a12763e3e72b22e44b13fb4772dc35d7a849b23c594b5e0a5c37458ab9b6c1e",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/dt-01-enterprise-data-scope\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"api_scope_source_sha256": "676979c4d2b38cdea2585d799dcc6679314bf509f3be7eb5e847e2c5f718a924",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-live-business-scope-grant\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"auth_regression_tests": "49d249377aaa72ab6ecfbaa184ffa860ef27f14dc0ebddfe0ed2d383e327cd11",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-local-grant-administration\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"api_registration": "a0a9a9481f36824f672e1ef8206daad0b3f6b99d705245869a5b21ba40d96f3f",?\s*$''',
+      '''^\s*"grant_api_tests": "583889243a81b367e35942a14a5eea88afdf29f56d5287a48b4419e5f9623f38",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-postgresql-grant-migration-e76\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"021_add_openshell_data_grant_request_key\.sql": "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-client-e107\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "4b143a9b7374b292449bac527952219d4511cc9962a4bac8b9e9068197059608",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-assets-e99\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "ae31f3c09c3f1c5abc06d473e2f7a68c6b258bd91fda051843610bf312ba4d95",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-bootstrap-e98\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "9f1c0ca4b6d9ead8885f7834a05a3f98d7cbbeb5e471607aabde40448a55c7cc",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-endpoint-e106\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "34ab51d616bd6c5df8f7c26d13b3732ffd1a5ce9402de1dabf133b92b884739f",?\s*$''',
+      '''^\s*"key_sha256": "10947adcea29895da303c9e4328561d30e47e2fd277881084d34b36d8f3f801d",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-queue-e114\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "9f1f30a83bd4ba5e6f31f053c61909022e2f06147a2d395809b57b41d4562769",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-startup-e115\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "0cda0b7f0148c24117bb6de11ed4dd2f9088425a1f75d63203a5dd279e428318",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-request-builder-live-e122\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "cec8cbfdfb3641706ad2aee75e15c40d7b056a9a5fbbf649b4f13d9c51350be2",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-request-recovery-origin-e124\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "f46886a29667b36d99acaea1e8e4badd919927399a630badcf26a9e45178e60e",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/project-attachment-access-20260924\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"api_invocation": "8e80e725060d4cafa55eda5bf784eefb",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-request-issuance-e118\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "464ce1d8c1d3f328503e7d44c5223f86fc4df9368748502ebdd67fd895da698c",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-gateway-e105\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "1b2f078867c47a46914bdb4fb3ea00d5f078b1e12a92536aead23633394f2ccc",?\s*$''',
+      '''^\s*"key_sha256": "aae327bb51f6fdff7d1837da36ad1693f31d4faa6c4cd00a01ecbbf34534de36",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/evidence/flagship-optimization-20260921/ml-02-qwen38-request-heartbeat-e108\.json$''']
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"key_sha256": "b5ff843db779bc6e10a95a291bcf9b7bdd110fcbde897c0a7df1631457958f24",?\s*$''',
+      '''^\s*"key_sha256": "94014eb8e888bc6d597aaa1afada3f8438182434e816ebd1763f8b4f15e85faa",?\s*$''',
+    ]
+
 [[rules]]
   id = "aws-access-token"
   [[rules.allowlists]]

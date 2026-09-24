@@ -29,6 +29,16 @@ native = importlib.util.module_from_spec(loader)
 loader.loader.exec_module(native)
 fixture = native.fixture
 require = fixture.require
+SESSION_EPOCH = "11111111-1111-4111-8111-111111111111"
+
+
+def native_session_id(session_key: str, session_epoch: str) -> str:
+    digest = hashlib.sha256()
+    digest.update(b"openclaw-native-session/v1\0")
+    digest.update(session_key.encode("utf-8"))
+    digest.update(b"\0")
+    digest.update(session_epoch.encode("utf-8"))
+    return "openclaw-session/v1:" + digest.hexdigest()
 
 
 class ApprovalHarness(native.OpenClawHarness):
@@ -156,6 +166,11 @@ class ApprovalHarness(native.OpenClawHarness):
                     "workspace": str(self.workspace),
                     "agent_id": fixture.AGENT,
                     "session_id": fixture.SESSION,
+                    # OpenClaw exposes a stable routing key and a native UUID
+                    # epoch. The SIQ identity deliberately binds both.
+                    "session_epoch": SESSION_EPOCH,
+                    "tool_name": "exec",
+                    "tool_params": {"command": "printf fixture"},
                     "cases": cases,
                 }
             )
@@ -229,7 +244,7 @@ class ApprovalHarness(native.OpenClawHarness):
                                 "/v1/hold-status",
                                 {
                                     "platform": "openclaw",
-                                    "session_id": fixture.SESSION,
+                                    "session_id": native_session_id(fixture.SESSION, SESSION_EPOCH),
                                     "agent_id": fixture.AGENT,
                                     "tool": "exec",
                                     "tool_call_id": call_id,

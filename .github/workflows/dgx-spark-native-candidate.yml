@@ -1,0 +1,199 @@
+name: dgx-spark-native-candidate
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_dispatch:
+
+env:
+  SIQ_RESEARCH_ROOT: ${{ vars.SIQ_RESEARCH_ROOT }}
+  SIQ_HERMES_ROOT: ${{ vars.SIQ_HERMES_ROOT }}
+  NATIVE_GATE_BATCH_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+  NATIVE_GATE_GITHUB_SHA: ${{ github.sha }}
+
+jobs:
+  native-candidate:
+    runs-on: [self-hosted, Linux, ARM64, dgx-spark, siq-openshell]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86  # v5
+
+      - name: Read current job runner labels from GitHub
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/dgx_spark_runner_labels.py >> "${GITHUB_ENV}"
+
+      - name: Establish private and public evidence directories
+        run: |
+          set -euo pipefail
+          umask 077
+          test -n "${SIQ_RESEARCH_ROOT}"
+          test -n "${SIQ_HERMES_ROOT}"
+          case "${SIQ_RESEARCH_ROOT}" in /*) ;; *) exit 2 ;; esac
+          case "${SIQ_HERMES_ROOT}" in /*) ;; *) exit 2 ;; esac
+          test -d "${SIQ_RESEARCH_ROOT}"
+          test ! -L "${SIQ_RESEARCH_ROOT}"
+          test -d "${SIQ_HERMES_ROOT}"
+          test ! -L "${SIQ_HERMES_ROOT}"
+          NATIVE_PUBLIC_DIR="${RUNNER_TEMP}/siq-native-candidate/public"
+          NATIVE_PRIVATE_DIR="${RUNNER_TEMP}/siq-native-candidate/private"
+          rm -rf -- "${RUNNER_TEMP}/siq-native-candidate"
+          install -d -m 700 -- "${NATIVE_PUBLIC_DIR}" "${NATIVE_PRIVATE_DIR}"
+          printf 'NATIVE_PUBLIC_DIR=%s\n' "${NATIVE_PUBLIC_DIR}" >> "${GITHUB_ENV}"
+          printf 'NATIVE_PRIVATE_DIR=%s\n' "${NATIVE_PRIVATE_DIR}" >> "${GITHUB_ENV}"
+
+      - name: Install locked security test dependencies
+        working-directory: apps/control-api
+        run: uv sync --dev --locked
+
+      - name: Capture mandatory DGX Spark platform evidence
+        run: |
+          set -euo pipefail
+          python3 deploy/dgx-spark/native_candidate_gate.py capture-platform \
+            --policy deploy/dgx-spark/native-candidate-gate.v1.json \
+            --batch-id "${NATIVE_GATE_BATCH_ID}" \
+            --github-sha "${NATIVE_GATE_GITHUB_SHA}" \
+            --runner-labels-json "${NATIVE_GATE_RUNNER_LABELS}" \
+            --security-root "${GITHUB_WORKSPACE}" \
+            --research-root "${SIQ_RESEARCH_ROOT}" \
+            --hermes-root "${SIQ_HERMES_ROOT}" \
+            --output "${NATIVE_PUBLIC_DIR}/platform.json" \
+            --require-ready
+
+      - name: Generate fresh live candidate doctor evidence
+        run: |
+          set -euo pipefail
+          python3 deploy/dgx-spark/candidate_doctor.py \
+            --lock deploy/dgx-spark/runtime-lock.confidential-candidate.v1.json \
+            --security-root "${GITHUB_WORKSPACE}" \
+            --research-root "${SIQ_RESEARCH_ROOT}" \
+            --hermes-root "${SIQ_HERMES_ROOT}" \
+            --out "${NATIVE_PUBLIC_DIR}/candidate-doctor.json" \
+            --require-level live_environment
+
+      - name: Verify gateway runtime identity and health
+        run: |
+          set -euo pipefail
+          python3 "${SIQ_RESEARCH_ROOT}/scripts/openshell/gateway_runtime_identity.py" \
+            --project-root "${SIQ_RESEARCH_ROOT}" verify >/dev/null
+          curl --fail --silent --show-error --max-time 2 \
+            http://127.0.0.1:17672/healthz >/dev/null
+
+      - name: Generate and bind fresh resource governance evidence
+        run: |
+          set -euo pipefail
+          attestation="${SIQ_RESEARCH_ROOT}/var/openshell/resource-governance/legacy-attestations.json"
+          audit_args=(
+            --project-root "${SIQ_RESEARCH_ROOT}"
+            audit
+            --database "${SIQ_RESEARCH_ROOT}/var/openshell/gateway/siq-openshell-dev/openshell.db"
+            --gateway-status healthy
+            --output "${NATIVE_PUBLIC_DIR}/resource-governance.json"
+          )
+          if test -e "${attestation}"; then
+            test -f "${attestation}"
+            test ! -L "${attestation}"
+            test "$(stat -c '%a' -- "${attestation}")" = 600
+            audit_args+=(--attestations "${attestation}")
+          fi
+          python3 "${SIQ_RESEARCH_ROOT}/scripts/openshell/sandbox_resource_governance.py" \
+            "${audit_args[@]}"
+          python3 deploy/dgx-spark/native_candidate_gate.py bind-resource-audit \
+            --policy deploy/dgx-spark/native-candidate-gate.v1.json \
+            --batch-id "${NATIVE_GATE_BATCH_ID}" \
+            --github-sha "${NATIVE_GATE_GITHUB_SHA}" \
+            --resource-report "${NATIVE_PUBLIC_DIR}/resource-governance.json" \
+            --output "${NATIVE_PUBLIC_DIR}/resource-binding.json"
+
+      - name: Run security candidate contract suite
+        run: |
+          set -euo pipefail
+          python3 deploy/dgx-spark/native_candidate_gate.py run-suite \
+            --policy deploy/dgx-spark/native-candidate-gate.v1.json \
+            --batch-id "${NATIVE_GATE_BATCH_ID}" \
+            --github-sha "${NATIVE_GATE_GITHUB_SHA}" \
+            --suite security_candidate_contracts \
+            --platform-report "${NATIVE_PUBLIC_DIR}/platform.json" \
+            --security-root "${GITHUB_WORKSPACE}" \
+            --research-root "${SIQ_RESEARCH_ROOT}" \
+            --hermes-root "${SIQ_HERMES_ROOT}" \
+            --log "${NATIVE_PRIVATE_DIR}/security-candidate-contracts.log" \
+            --output "${NATIVE_PUBLIC_DIR}/suite-security-candidate-contracts.json"
+
+      - name: Run Hermes AgentShield adapter suite
+        run: |
+          set -euo pipefail
+          python3 deploy/dgx-spark/native_candidate_gate.py run-suite \
+            --policy deploy/dgx-spark/native-candidate-gate.v1.json \
+            --batch-id "${NATIVE_GATE_BATCH_ID}" \
+            --github-sha "${NATIVE_GATE_GITHUB_SHA}" \
+            --suite security_hermes_adapter \
+            --platform-report "${NATIVE_PUBLIC_DIR}/platform.json" \
+            --security-root "${GITHUB_WORKSPACE}" \
+            --research-root "${SIQ_RESEARCH_ROOT}" \
+            --hermes-root "${SIQ_HERMES_ROOT}" \
+            --log "${NATIVE_PRIVATE_DIR}/security-hermes-adapter.log" \
+            --output "${NATIVE_PUBLIC_DIR}/suite-security-hermes-adapter.json"
+
+      - name: Run research OpenShell contract suite
+        run: |
+          set -euo pipefail
+          python3 deploy/dgx-spark/native_candidate_gate.py run-suite \
+            --policy deploy/dgx-spark/native-candidate-gate.v1.json \
+            --batch-id "${NATIVE_GATE_BATCH_ID}" \
+            --github-sha "${NATIVE_GATE_GITHUB_SHA}" \
+            --suite research_openshell_contracts \
+            --platform-report "${NATIVE_PUBLIC_DIR}/platform.json" \
+            --security-root "${GITHUB_WORKSPACE}" \
+            --research-root "${SIQ_RESEARCH_ROOT}" \
+            --hermes-root "${SIQ_HERMES_ROOT}" \
+            --log "${NATIVE_PRIVATE_DIR}/research-openshell-contracts.log" \
+            --output "${NATIVE_PUBLIC_DIR}/suite-research-openshell-contracts.json"
+
+      - name: Run Hermes native regression suite
+        run: |
+          set -euo pipefail
+          python3 deploy/dgx-spark/native_candidate_gate.py run-suite \
+            --policy deploy/dgx-spark/native-candidate-gate.v1.json \
+            --batch-id "${NATIVE_GATE_BATCH_ID}" \
+            --github-sha "${NATIVE_GATE_GITHUB_SHA}" \
+            --suite hermes_native_regression \
+            --platform-report "${NATIVE_PUBLIC_DIR}/platform.json" \
+            --security-root "${GITHUB_WORKSPACE}" \
+            --research-root "${SIQ_RESEARCH_ROOT}" \
+            --hermes-root "${SIQ_HERMES_ROOT}" \
+            --log "${NATIVE_PRIVATE_DIR}/hermes-native-regression.log" \
+            --output "${NATIVE_PUBLIC_DIR}/suite-hermes-native-regression.json"
+
+      - name: Verify complete native candidate evidence batch
+        run: |
+          set -euo pipefail
+          python3 deploy/dgx-spark/native_candidate_gate.py verify \
+            --policy deploy/dgx-spark/native-candidate-gate.v1.json \
+            --batch-id "${NATIVE_GATE_BATCH_ID}" \
+            --github-sha "${NATIVE_GATE_GITHUB_SHA}" \
+            --platform-report "${NATIVE_PUBLIC_DIR}/platform.json" \
+            --doctor-report "${NATIVE_PUBLIC_DIR}/candidate-doctor.json" \
+            --resource-report "${NATIVE_PUBLIC_DIR}/resource-governance.json" \
+            --resource-binding "${NATIVE_PUBLIC_DIR}/resource-binding.json" \
+            --suite-receipt "${NATIVE_PUBLIC_DIR}/suite-security-candidate-contracts.json" \
+            --suite-receipt "${NATIVE_PUBLIC_DIR}/suite-security-hermes-adapter.json" \
+            --suite-receipt "${NATIVE_PUBLIC_DIR}/suite-research-openshell-contracts.json" \
+            --suite-receipt "${NATIVE_PUBLIC_DIR}/suite-hermes-native-regression.json" \
+            --output "${NATIVE_PUBLIC_DIR}/native-candidate-gate.json"
+
+      - name: Upload sanitized native candidate evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        with:
+          name: dgx-spark-native-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.NATIVE_PUBLIC_DIR }}/*.json
+          if-no-files-found: error
+          retention-days: 14

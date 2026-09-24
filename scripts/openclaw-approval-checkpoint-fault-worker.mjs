@@ -54,7 +54,6 @@ try {
     throw new assert.AssertionError({ message: `unsupported runtime source: ${symbol}` });
   };
   for (const [prefixes, symbol] of [
-    [["hook-runner-global-"], "createHookRunner"],
     [["server.impl-", "server-"], "startGatewayServer"],
     [["plugin-approval-"], "createPluginApprovalHandlers"],
     [["approval-shared-"], "handlePendingApprovalRequest"],
@@ -148,7 +147,7 @@ try {
   const wrap = await nativeFunction(["pi-tools.before-tool-call-", "agent-tools.before-tool-call-"], "wrapToolWithBeforeToolCallHook");
   const after = await nativeFunction(["native-hook-relay-", "hook-helpers-"], "runAgentHarnessAfterToolCallHook");
   const context = { config, cwd: spec.workspace, agentId: spec.agent_id,
-    sessionKey: spec.session_id, sessionId: spec.session_id,
+    sessionKey: spec.session_id, sessionId: spec.session_epoch,
     runId: "native-approval-fixture", loopDetection: { enabled: false } };
   const outputs = [];
   for (const entry of spec.cases) {

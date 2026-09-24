@@ -993,6 +993,24 @@ def get_agent_evidence(
     )
 
 
+@router.get("/api/v1/agents/{asset_id}/business-navigation")
+def get_business_navigation(
+    asset_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    from fastapi.responses import JSONResponse
+
+    from app.business_navigation import navigation
+
+    try:
+        evidence = get_agent_evidence(asset_id, session, identity)
+        return JSONResponse(navigation(identity.tenant_id, evidence), headers={"Cache-Control": "no-store"})
+    except HTTPException as error:
+        error.headers = {**(error.headers or {}), "Cache-Control": "no-store"}
+        raise
+
+
 @router.get("/api/v1/assets/{asset_id}/instances", response_model=list[AgentInstanceOut])
 @router.get("/api/v1/agents/{asset_id}/instances", response_model=list[AgentInstanceOut])
 def list_asset_instances(

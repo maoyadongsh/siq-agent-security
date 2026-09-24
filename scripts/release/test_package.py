@@ -141,6 +141,70 @@ class ReleasePackageTest(unittest.TestCase):
         self.assertIn("Bootstrap intentionally refuses", text)
         self.assertIn("not signed installation", text)
 
+    def test_reviewed_source_rejects_old_changed_missing_extra_and_mode_drift(self):
+        source = self.root / "source"
+        source.mkdir()
+        file = source / "report.go"
+        file.write_text("reviewed report tool\n")
+        file.chmod(0o644)
+        expected = self.root / "expected.json"
+        expected.write_text(json.dumps({"schema_version": "siq-release-source-inventory/v1",
+                                        "files": package.inventory(source)}))
+        package.verify_source_inventory(source, expected)
+        for change in ("old", "missing", "extra", "executable", "symlink"):
+            with self.subTest(change=change):
+                if change == "old":
+                    file.write_text("previous report tool\n")
+                elif change == "missing":
+                    file.unlink()
+                elif change == "extra":
+                    (source / "unexpected").write_text("extra")
+                elif change == "executable":
+                    file.chmod(0o755)
+                else:
+                    file.unlink()
+                    file.symlink_to(expected)
+                with self.assertRaises(ValueError):
+                    package.verify_source_inventory(source, expected)
+                file.unlink(missing_ok=True)
+                (source / "unexpected").unlink(missing_ok=True)
+                file.write_text("reviewed report tool\n")
+                file.chmod(0o644)
+
+    def test_reviewed_source_requires_nonempty_versioned_inventory(self):
+        expected = self.root / "expected.json"
+        for value in ([], {}, {"schema_version": "unknown", "files": {}},
+                      {"schema_version": "siq-release-source-inventory/v1", "files": {}}):
+            with self.subTest(value=value):
+                expected.write_text(json.dumps(value))
+                with self.assertRaisesRegex(ValueError, "invalid expected"):
+                    package.verify_source_inventory(self.root, expected)
+
+    def test_source_mismatch_stops_before_npm_go_signing_or_output(self):
+        expected = self.root / "expected.json"
+        expected.write_text(json.dumps({"schema_version": "siq-release-source-inventory/v1",
+                                        "files": {"report.go": {"sha256": "a" * 64}}}))
+        args = Namespace(source_sha="a" * 40, version="0.4.0-rc.2", source_root=self.root,
+                         out_dir=self.root / ".tmp" / "candidate", sign=False,
+                         expected_source_inventory=expected)
+
+        def git_only(command, **kwargs):
+            self.assertEqual(command[0], "git")
+            if command[1] == "rev-parse":
+                return (args.source_sha + "\n").encode()
+            self.assertEqual(command[1], "archive")
+            with tarfile.open(command[command.index("--output") + 1], "w") as bundle:
+                info = tarfile.TarInfo("report.go")
+                info.size = 3
+                bundle.addfile(info, io.BytesIO(b"old"))
+            return b""
+
+        with patch.object(package, "run", side_effect=git_only) as run:
+            with self.assertRaisesRegex(ValueError, "exported commit differs"):
+                package.build(args)
+            self.assertEqual(run.call_count, 2)
+        self.assertFalse(args.out_dir.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

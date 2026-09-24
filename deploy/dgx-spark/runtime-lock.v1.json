@@ -1,0 +1,167 @@
+{
+  "schema_version": "siq.dgx-spark.runtime-lock.v1",
+  "candidate_id": "dgx-spark-hermes-v0210-openshell-v0083-20260921",
+  "recorded_at": "2026-09-21T04:23:37Z",
+  "roots": {
+    "security": ".",
+    "research": "SIQ_RESEARCH_ROOT",
+    "hermes": "SIQ_HERMES_ROOT"
+  },
+  "hardware": {
+    "product_names": [
+      "NVIDIA_DGX_Spark",
+      "NVIDIA DGX Spark"
+    ],
+    "architectures": [
+      "aarch64",
+      "arm64"
+    ]
+  },
+  "repositories": {
+    "security": {
+      "head": "af275efb1732d9bc1fcb9ea624e55a2ced58032c"
+    },
+    "research": {
+      "head": "47c0eda39119662a8f230c7a3b3bea97216abab6"
+    },
+    "hermes": {
+      "head": "42f0c8179e30cf6ba4cba0a8f2852e609f717773"
+    }
+  },
+  "artifacts": [
+    {
+      "id": "hermes_adapter",
+      "root": "security",
+      "path": "adapters/runtime/hermes-agentshield/__init__.py",
+      "sha256": "0cb1ffe19b47a33963d16a37d56ef56e21bb160d257e84a2659914fd56d2b994",
+      "drift_sensitive": true
+    },
+    {
+      "id": "openshell_cli",
+      "root": "research",
+      "path": "var/openshell/toolchains/v0.0.83/bin/openshell",
+      "sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+      "drift_sensitive": true
+    },
+    {
+      "id": "openshell_gateway",
+      "root": "research",
+      "path": "var/openshell/toolchains/v0.0.83/bin/openshell-gateway",
+      "sha256": "3a8e7f502b28467e56df8467726fbeff9f60f2cdec8ef003b17893f0b3b93b99",
+      "drift_sensitive": true
+    },
+    {
+      "id": "hermes_integration_patch",
+      "root": "research",
+      "path": "infra/openshell/patches/hermes-0.21.0/0001-runtime-auth-file-override.patch",
+      "sha256": "4d1b3cffdee9ea107f221845f270e5b4f394aa996bc4d424b31266bb183b2e2a",
+      "drift_sensitive": true
+    },
+    {
+      "id": "profile_source_config",
+      "root": "research",
+      "path": "data/hermes/home/profiles/siq_analysis/config.yaml",
+      "sha256": "796e1e70266dffd91de016e95f092bc8d354e55b5c830035d8c6417bbd477266",
+      "drift_sensitive": true
+    },
+    {
+      "id": "candidate_image_state",
+      "root": "research",
+      "path": "var/openshell/siq-analysis-v0210/current-image.json",
+      "sha256": "cae85f5a19b7facac79d8ddb2a70ac9c9d8b2a5934976a929f740dbfe3615794",
+      "drift_sensitive": true
+    },
+    {
+      "id": "candidate_smoke_state",
+      "root": "research",
+      "path": "var/openshell/siq-analysis-v0210/current-image.smoke.json",
+      "sha256": "58a0f3e7a0f2bedb26fca8d646b037d483942a94a6c0a92e23b5d394ab09af97",
+      "drift_sensitive": true
+    }
+  ],
+  "openshell": {
+    "version": "0.0.83",
+    "cli": {
+      "path": "var/openshell/toolchains/v0.0.83/bin/openshell",
+      "version_output": "openshell 0.0.83"
+    },
+    "gateway": {
+      "path": "var/openshell/toolchains/v0.0.83/bin/openshell-gateway",
+      "version_output": "openshell-gateway 0.0.83"
+    },
+    "supervisor": {
+      "container_path": "/opt/openshell/bin/openshell-sandbox",
+      "sha256": "d88f7a288e82ce8243216883ba8389524f31ff501a22d8b3555962a67b68cc57"
+    }
+  },
+  "hermes": {
+    "version": "0.21.0",
+    "commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "base_tree": "cf604f51744b15f3fb7d2d73907b123ba2db4756",
+    "patched_tree_sha256": "3e5db0dbb0996a43890da8738e763920b1ce68108e7890191e286c1f038a74b9",
+    "integration_patch_sha256": "4d1b3cffdee9ea107f221845f270e5b4f394aa996bc4d424b31266bb183b2e2a",
+    "image_ref": "siq/hermes-openshell-siq-analysis:34c4142c82fcfcaa11eeb93c",
+    "image_id": "sha256:52c265e9329151e64e418f62e816d474940b2cd92b0ee0ba89d773c7111e3991",
+    "context_sha256": "34c4142c82fcfcaa11eeb93c56ebb54f30b0afd0d77713b11189542a63ddc38e",
+    "runtime_config_sha256": "ec8f0acbf266ec8b289ff35a5724a30f0f4d525655e00a40ebf6f2d5bb31f3b9"
+  },
+  "model": {
+    "provider": "custom:nemotron-3.5-lightning-local",
+    "model_id": "NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4",
+    "bridge_unit": "siq-openshell-model-bridge-8006.service",
+    "endpoints": [
+      {
+        "id": "model_loopback",
+        "url": "http://127.0.0.1:8006/v1/models"
+      },
+      {
+        "id": "model_openshell_bridge",
+        "url": "http://172.23.0.1:8006/v1/models"
+      }
+    ]
+  },
+  "runtime": {
+    "market": "cn",
+    "company": "600519-贵州茅台",
+    "pool_slot_id": "7025f3f8b5186fe8a87f8a12",
+    "run_id": "canary-0921c0ffee21",
+    "sandbox_name": "siq-analysis-canary-0921c0ffee21",
+    "mode": "NOT_PRODUCTION_CANARY",
+    "readiness_effect": "none",
+    "route_base": "http://127.0.0.1:28653/v1/runs",
+    "local_port": 28653,
+    "target_port": 28651,
+    "policy_sha256": "6aabafd9cfa0f7e0218bdf5dd7d92266895d02aac8ded67cf250108be5a3a962",
+    "mount_plan_sha256": "a393adc2f1af735299069ef50030494686ff5f09a874a0873be7665826c7744d",
+    "active_path": "var/openshell/canary/siq-analysis/pool/slots/7025f3f8b5186fe8a87f8a12/active.json",
+    "manifest_path": "var/openshell/canary/siq-analysis/pool/slots/7025f3f8b5186fe8a87f8a12/runs/canary-0921c0ffee21/canary.json",
+    "health_endpoints": [
+      {
+        "id": "host_hermes",
+        "url": "http://127.0.0.1:18651/health",
+        "version": "0.21.0"
+      },
+      {
+        "id": "v021_pool",
+        "url": "http://127.0.0.1:28653/health",
+        "version": "0.21.0"
+      },
+      {
+        "id": "v013_control_canary",
+        "url": "http://127.0.0.1:28652/health"
+      }
+    ]
+  },
+  "evidence": {
+    "upgrade_manifest": {
+      "root": "research",
+      "path": "artifacts/openshell/hermes-v0210-upgrade-20260921/manifest.json",
+      "sha256": "8215619598a47c50edcf182bd405ed21607a16778f465a1527f62a2fb330ebab"
+    },
+    "routing_validation": {
+      "root": "research",
+      "path": "artifacts/openshell/hermes-v0210-upgrade-20260921/routing-validation.json",
+      "sha256": "7f4344954bab7a42e87af4d70fbe868d3c949ad614885f8bd6108fe14cb5e322"
+    }
+  }
+}

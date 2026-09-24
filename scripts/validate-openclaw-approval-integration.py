@@ -24,6 +24,7 @@ PATCH_DIR = ROOT / "patches/openclaw"
 PATCH_PROFILES = {
     "2026.5.12": "2026.5.12-approval-execution-recheck-v2",
     "2026.9.4": "2026.9.4-approval-execution-recheck-v1",
+    "2026.9.5": "2026.9.5-approval-execution-recheck-v1",
 }
 
 
@@ -97,6 +98,92 @@ def main():
             )
             return result
 
+    class BusinessHarness(ordinary.ApprovalHarness):
+        tool_name = "mcp__siq_business__research_publish_report"
+        tool_params = {
+            "task_id": "task-oc01-business-fixture",
+            "request_sha256": "a" * 64,
+            "approval_sha256": "c" * 64,
+        }
+
+        def setup_grant(self):
+            path = ROOT / "apps/agentshield/internal/admission/testdata/skills/benign/official-like"
+            admitted = self.api("/v1/admit", {"path": str(path)})["admission"]
+            result = self.api(
+                "/v1/grants",
+                {
+                    "admission_id": admitted["admission_id"],
+                    "platform": "openclaw",
+                    "subject_id": ordinary.fixture.AGENT,
+                },
+            )
+            route = "/v1/grants/" + result["grant"]["grant_id"]
+
+            def action(name, **body):
+                nonlocal result
+                result = self.api(
+                    route + "/" + name,
+                    {
+                        "expected_revision": result["state_revision"],
+                        "actor_id": "synthetic-fixture-operator",
+                        **body,
+                    },
+                )
+                return result
+
+            action("patch-desired", tools=[self.tool_name], models=["fixture-model"])
+            action(
+                "require-approval",
+                schema_version="grant-tool-approval/v1",
+                tools=[self.tool_name],
+            )
+            challenge = action("challenge")["challenge"]
+            action("approve", challenge_id=challenge["challenge_id"], nonce=challenge["nonce"])
+            action("deploy")
+            ordinary.require(
+                any(
+                    fact.get("domain") == "tool"
+                    and fact.get("resource", {}).get("value") == self.tool_name
+                    and fact.get("effect") == "allow"
+                    and fact.get("conditions", {}).get("require_approval") is True
+                    for fact in result["grant"]["facts"]
+                ),
+                "business tool hold gate missing",
+            )
+
+        def run(self, cases=None):
+            return super().run(
+                cases=cases
+                or [
+                    {"id": "business-publish-approved", "platform": "allow-once", "local": True},
+                    {
+                        "id": "business-publish-digest-changed",
+                        "platform": "allow-once",
+                        "local": True,
+                        "final_params": {
+                            **self.tool_params,
+                            "request_sha256": "b" * 64,
+                        },
+                    },
+                ]
+            )
+
+    class StockBusinessHarness(BusinessHarness):
+        def run(self):
+            result = super().run(
+                cases=[{"id": "unsupported-business-host", "platform": "allow-once", "local": None}]
+            )
+            case = result["cases"][0]
+            require(
+                case["blocked"] and not case["platform_requested"],
+                "stock host entered business tool approval",
+            )
+            require(
+                not case["executed"] and case["observation_count"] == 0,
+                "stock host executed business tool hold",
+            )
+            return result
+
     with tempfile.TemporaryDirectory(prefix="siq-openclaw-checkpoint-integration-") as tmp:
         root = Path(tmp)
         results = {}
@@ -120,7 +207,7 @@ def main():
             finally:
                 harness.stop()
 
-        run_group("stock_unsupported", StockHarness, runtime)
+        run_group("stock_unsupported", StockBusinessHarness, runtime)
         copy = root / "openclaw"
         shutil.copytree(runtime, copy, symlinks=True)
         copied_source = copy / metadata["target"]
@@ -133,6 +220,7 @@ def main():
             ("ordinary", ordinary.ApprovalHarness),
             ("revocation", revocation.ApprovalHarness),
             ("faults", faults.ApprovalHarness),
+            ("business_tool", BusinessHarness),
         ]:
             run_group(name, cls, copy)
         binary_sha256 = results["ordinary"]["siq_binary_sha256"]
@@ -164,6 +252,7 @@ def main():
                 "denial_missing_approval_and_offline_paths_fail_closed",
                 "revoked_authority_blocks_after_platform_approval",
                 "checkpoint_faults_and_parameter_changes_fail_closed",
+                "controlled_business_tool_exact_params_match_hermes_fixture",
                 "reservation_response_loss_stays_uncertain",
                 "all_receipt_chains_verified",
                 "installed_runtime_remains_unchanged",
