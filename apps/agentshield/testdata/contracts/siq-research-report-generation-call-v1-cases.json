@@ -1,0 +1,146 @@
+[
+  {
+    "name": "scoped",
+    "valid": true,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 2025
+      }
+    }
+  },
+  {
+    "name": "path_escape",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/../600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 2025
+      }
+    }
+  },
+  {
+    "name": "newline",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example\n",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 2025
+      }
+    }
+  },
+  {
+    "name": "other_root",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/etc/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 2025
+      }
+    }
+  },
+  {
+    "name": "foreign_run_shape",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-a",
+        "year": 2025
+      }
+    }
+  },
+  {
+    "name": "fraction",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 2025.5
+      }
+    }
+  },
+  {
+    "name": "too_old",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 1999
+      }
+    }
+  },
+  {
+    "name": "bool_year",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": true
+      }
+    }
+  },
+  {
+    "name": "year_as_text",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": "2025"
+      }
+    }
+  },
+  {
+    "name": "command",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "mcp__siq_business__research_generate_report",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 2025,
+        "command": "touch unsafe"
+      }
+    }
+  },
+  {
+    "name": "terminal",
+    "valid": false,
+    "call": {
+      "schema_version": "siq-research-report-generation-call/v1",
+      "tool": "terminal",
+      "params": {
+        "company_path": "/project/data/wiki/companies/600418-example",
+        "run_id": "qwen-request-0123456789abcdef",
+        "year": 2025
+      }
+    }
+  }
+]

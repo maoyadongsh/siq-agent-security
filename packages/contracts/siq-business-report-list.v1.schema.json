@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Business report directory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "items",
+    "next_cursor"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-report-list/v1"
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "Business report current access entry v1",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "report",
+          "can_publish"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "siq.business-report-entry/v1"
+          },
+          "report": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "draft_id",
+              "report_key",
+              "bundle_sha256",
+              "company_id",
+              "report_id",
+              "report_year",
+              "warnings",
+              "state",
+              "version",
+              "current_version",
+              "artifacts"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "siq.business-report/v1"
+              },
+              "draft_id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "report_key": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bundle_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "company_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "report_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+              },
+              "report_year": {
+                "type": "integer",
+                "minimum": 2000,
+                "maximum": 2200
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "state": {
+                "enum": [
+                  "awaiting_review",
+                  "published"
+                ]
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              },
+              "current_version": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "artifacts": {
+                "type": "array",
+                "minItems": 8,
+                "maxItems": 8,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "role",
+                    "media_type",
+                    "sha256",
+                    "size"
+                  ],
+                  "properties": {
+                    "role": {
+                      "enum": [
+                        "input_preflight",
+                        "input_metric_snapshot",
+                        "input_evidence_package",
+                        "report_markdown",
+                        "report_json",
+                        "report_html",
+                        "quality_receipt",
+                        "factcheck_receipt"
+                      ]
+                    },
+                    "media_type": {
+                      "enum": [
+                        "application/json",
+                        "text/markdown",
+                        "text/html"
+                      ]
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "size": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 16777216
+                    }
+                  }
+                },
+                "allOf": [
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "input_preflight"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "input_metric_snapshot"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "input_evidence_package"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "report_markdown"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "report_json"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "report_html"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "quality_receipt"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  },
+                  {
+                    "contains": {
+                      "properties": {
+                        "role": {
+                          "const": "factcheck_receipt"
+                        }
+                      },
+                      "required": [
+                        "role"
+                      ]
+                    },
+                    "minContains": 1,
+                    "maxContains": 1
+                  }
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "state": {
+                      "const": "awaiting_review"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "version": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "can_publish": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "next_cursor": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      ]
+    }
+  }
+}

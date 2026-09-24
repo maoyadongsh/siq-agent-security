@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "draft_id",
+    "bundle_sha256",
+    "role",
+    "content"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-report-content/v1"
+    },
+    "draft_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "bundle_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "role": {
+      "enum": [
+        "input_preflight",
+        "input_metric_snapshot",
+        "input_evidence_package",
+        "report_markdown",
+        "report_json",
+        "report_html",
+        "quality_receipt",
+        "factcheck_receipt"
+      ]
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 16777216
+    },
+    "report_key": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "dependentRequired": {
+    "report_key": [
+      "version"
+    ],
+    "version": [
+      "report_key"
+    ]
+  }
+}

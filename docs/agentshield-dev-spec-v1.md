@@ -1,5 +1,7 @@
 # siq-agent-security 开发规格 v1（Development Specification）
 
+2026-09-24 请求级固定报告生成增量见 [执行合同](development/research-report-generation-contract-20260924.md)：新增严格结构化工具，按公司只读/本次运行可写分别裁决；不放宽 terminal 的 unknown 副作用拒绝。工具实现、镜像身份和真实端到端验收缺一不可，不自动启用或升级冻结发行版本。
+
 - 日期：2026-09-04
 - 状态：**生效**；实现必须以本文为准，偏离先改本文再改代码
 - 上游文档：ADR-011（决策）→ `agentshield-design-v1.md`（方案）→ **本文（规格）** → `packages/contracts/`（合同事实源）

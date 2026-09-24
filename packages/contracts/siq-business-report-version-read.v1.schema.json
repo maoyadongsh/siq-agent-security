@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-report-version-read/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "report_key": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Report Key",
+      "type": "string"
+    },
+    "version": {
+      "maximum": 1000000,
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "expected_bundle_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Bundle Sha256",
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "report_markdown",
+        "report_json",
+        "report_html"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "confirm_display": {
+      "const": true,
+      "title": "Confirm Display",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "report_key",
+    "version",
+    "expected_bundle_sha256",
+    "role",
+    "confirm_display"
+  ],
+  "title": "ReadVersion",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

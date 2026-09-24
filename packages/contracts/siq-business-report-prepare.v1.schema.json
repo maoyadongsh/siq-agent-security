@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-report-prepare/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "session_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "run_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "session_id",
+    "run_id"
+  ],
+  "title": "Prepare",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
