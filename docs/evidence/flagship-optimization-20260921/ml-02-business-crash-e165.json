@@ -1,0 +1,101 @@
+{
+  "schema_version": "siq.flagship.evidence.business-api-crash.v1",
+  "captured_at_utc": "2026-09-23T14:16:01.926496+00:00",
+  "production_eligible": false,
+  "candidate_ready": false,
+  "secrets_included": false,
+  "scope": "actual_API_SIGKILL_after_local_model_output_and_same_database_restart_cleanup",
+  "validation": {
+    "scope": "owned_API_crash_proof_and_adjacent_recovery_regression",
+    "passed": 141,
+    "warnings": 275,
+    "duration_seconds": 85.53,
+    "includes_initial_29_tests": true,
+    "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest apps/api/tests/test_qwen38_request_recovery.py apps/api/tests/test_qwen38_request_finalizer.py apps/api/tests/test_qwen38_request_origin.py apps/api/tests/test_qwen38_finalizer_proof.py apps/api/tests/test_runtime_coordination.py scripts/openshell/tests/test_prove_qwen38_business_api.py scripts/openshell/tests/test_prove_qwen38_streaming_api.py scripts/openshell/tests/test_prove_qwen38_cancel_api.py scripts/openshell/tests/test_prove_qwen38_crash_api.py -q --disable-warnings",
+    "ruff_changed_files_passed": true,
+    "source_sha256": {
+      "scripts/openshell/prove_qwen38_candidate_api.py": "e07d9f47c6f1be163ec8bb9b0e5d945b04713dc5bc68eba05d0eb35e99f7e8b5",
+      "scripts/openshell/prove_qwen38_crash_api.py": "f0936c15093b3a06db31087374b915530c8c60986ecc68da02946a3009cbfea7",
+      "scripts/openshell/tests/test_prove_qwen38_crash_api.py": "901777aa462b71a481ea8d9ac5af81fd749214769731fa9784241e28c1dd92bb"
+    }
+  },
+  "live_proof": {
+    "source": {
+      "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v1.sanitized.json",
+      "sha256": "4ba8cdcdccc04d0fb088d37a61356af8185473442525c960fcb2bcac4e348659",
+      "bytes": 1735
+    },
+    "result": {
+      "schema": "siq.qwen38.candidate-api-proof.v1",
+      "passed": true,
+      "scope": "actual_API_SIGKILL_after_model_output_and_same_database_restart_cleanup",
+      "production_ready": false,
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SIGKILL_after_real_model_delta": true,
+        "execution_still_running_after_API_death": true,
+        "same_database_API_restarted": true,
+        "original_lease_expired_without_manual_update": true,
+        "restarted_API_recovery_ready": true,
+        "model_delta_observed_before_crash": true,
+        "crashed_execution_authority_lost": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_stream_started_200": true,
+        "sandbox_supervisor_and_forward_absent": true,
+        "child_identity_revoked_before_root_cleanup": true,
+        "old_child_credential_401": true,
+        "root_identity_still_active_before_diagnostic_cleanup": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "business_HTTP_attempted": true,
+      "business_HTTP_status": 200,
+      "recovery_wait_seconds": 113.912,
+      "request_run_sha256": "b8b3c26d7d4acd3ebaed5e78fb0e9b057a2dd993546b38f19aa4b98dcecfc5ef",
+      "bridge_stream_start_statuses": [
+        200
+      ],
+      "bridge_terminal_statuses": [
+        502
+      ],
+      "remaining_running_execution_count": 0
+    }
+  },
+  "launcher": {
+    "schema_version": "siq.e165.live-launch.v1",
+    "passed": true,
+    "production_eligible": false,
+    "proof_exit_code": 0,
+    "proof_passed": true,
+    "proof_sha256": "4ba8cdcdccc04d0fb088d37a61356af8185473442525c960fcb2bcac4e348659",
+    "isolated_daemon_exit_code": 0,
+    "isolated_daemon_port_closed": true
+  },
+  "post_cleanup": {
+    "candidate_sandbox_count": 0,
+    "candidate_gateway_owner_idle": true,
+    "API_18083_closed": true,
+    "isolated_daemon_47811_closed": true
+  },
+  "not_proven": [
+    "business_grant_revocation_during_actual_HTTP_run",
+    "unknown_pre_endpoint_startup_windows",
+    "terminal_result_commit_interruption",
+    "injected_ExecStopPost_failure_automatic_retry",
+    "production_IAM_business_approval_events",
+    "remaining_host_retrieval_boundaries",
+    "native_CI",
+    "signed_install_upgrade_and_rollout"
+  ]
+}

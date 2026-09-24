@@ -1,0 +1,316 @@
+{
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-qwen38-gateway-business-e84.sanitized.json": "df1f3daaa52ab426e5e0e75c7e613e3e182bc87f159370e8b27a79dbcc0d9f1b",
+    "artifacts/openshell/flagship/ml02-qwen38-gateway-business-first-rejection.sanitized.json": "d25a17c9d0dd4074d6f2a643b35725508b4abada8d15f23b529e3b68ad1a7f4d",
+    "artifacts/openshell/flagship/ml02-qwen38-gateway-business-pre-consent-fix.sanitized.json": "97d0c506894d829b4e8114dac3c79240aa52710f4ff3967e53b13e23a3967266",
+    "artifacts/openshell/flagship/ml02-qwen38-gateway-business-sandbox-e84.sanitized.json": "d59a35786f6228cf2d039ffe382c7fbd40cb0dad3f0608864a2552bd9e9788be"
+  },
+  "binary_sha256": {
+    "agentshield": "73106a3eeb9c9db67f7ca6c832cb19155c371fdf3e162c0c4d0dbc455e7e72d2",
+    "decision-relay": "58222dbec75246fdd92d4693bab7cbbd5c8abab89e8ac7abb2b83df3d01bde80"
+  },
+  "business_proof": {
+    "authority_cleanup_completed": true,
+    "business_receipts": {
+      "exact_argument_digests_matched": true,
+      "exact_runtime_grant_matched": true,
+      "gateway_runs_correlated": true,
+      "model_mcp_allow_observations_present": true,
+      "signed_chain_verified": true
+    },
+    "business_run": {
+      "approval_once_exact_request": true,
+      "approved_run_completed": true,
+      "denied_run_completed": true,
+      "denied_without_effect": true,
+      "deny_approval_count": 1,
+      "deny_last_status": "completed",
+      "deny_run_sha256": "9e5ebf283b897a16b5a2c25772664476cabb2c16766cfb1e1d1d0749b49220ae",
+      "independent_readback_verified": true,
+      "once_approval_count": 1,
+      "once_last_status": "completed",
+      "once_run_sha256": "ad29fd887e0f848f69de9ca24d08a2a11b1ebe5de2008887b148c86330daba20",
+      "passed": true,
+      "production_eligible": false,
+      "publication_digest": "0dbdc677fe0a6ad75d4d7bd8ab8f8caae90a27802eae0002a44ef6c754ea78f6"
+    },
+    "native_receipts": {
+      "allowed_read_observation_present": true,
+      "exact_runtime_grant_matched": true,
+      "native_allow_and_deny_correlated": true,
+      "signed_chain_verified": true
+    },
+    "passed": true,
+    "production_eligible": false,
+    "sandbox_proof_passed": true,
+    "secrets_included": false
+  },
+  "candidate": {
+    "agentshield_adapter_sha256": "025d794d8313b692b445aef5520038965591c1cce74ecd17a34e5caae56b6e4b",
+    "base_image_id": "sha256:4b3f10593ea02f47b57fb57b1bce975291766e658e3ec17509ca0efd16175bb2",
+    "business_mcp_lock_sha256": "895bbd34c45ef51552b7e5a4bb48a78122589fe79f932372ce01f2a6b081a27e",
+    "candidate_input_sha256": "d20ff5998d724c4a6f8f9195c4db41f9c6170ca689835275c41d808422fb946a",
+    "cloud_fallback": "forbidden",
+    "data_classification": "confidential_local",
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "image_id": "sha256:5a45f0d98c0c86d57d601dc1a7d2bcd99d36e2b9e9c05cb6d94527cebe5548ac",
+    "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:d20ff5998d724c4a6f8f9195",
+    "model_inference_verified": false,
+    "offline_adapter_digest_verified": true,
+    "offline_business_mcp_discovery_verified": true,
+    "offline_dispatcher_fail_closed": true,
+    "offline_gateway_bootstrap": true,
+    "offline_pg_query_smoke": true,
+    "offline_provider_resolver": true,
+    "offline_smoke": true,
+    "openshell_sandbox_verified": false,
+    "pg_query_sha256": "464f52df29ad68e568917e0bd6844c59a373dd500709ef12fb692dacb8e4821c",
+    "production_eligible": false,
+    "runtime_config_sha256": "e6fd0397d7b7035c6132bc7567fccd792293c31d794cbcba4d5fa267f971324e",
+    "schema_version": "siq.openshell.qwen38_candidate_image.v1",
+    "snapshot_manifest_sha256": "f1d749fcbd806d5df36987078ad23ea6206ab79af12d797bd9a67a9950153b23",
+    "status": "offline_gateway_smoke_passed"
+  },
+  "candidate_ready": false,
+  "captured_at_utc": "2026-09-22T09:13:37.025973+00:00",
+  "findings_fixed": [
+    "fixed_business_mcp_effects_were_unknown",
+    "http_run_mcp_consent_ignored_registered_api_callback"
+  ],
+  "historical_e82_e83_artifacts_preserved": true,
+  "not_proven": [
+    "production_IAM_and_business_grants",
+    "production_publisher_approval_authority",
+    "resident_supervisor_and_formal_business_start_stop_recover",
+    "synchronous_API_revocation",
+    "reviewable_three_repository_candidate_and_native_CI"
+  ],
+  "production_eligible": false,
+  "sandbox_proof": {
+    "broker_identity_ttl_seconds": 600,
+    "business_helper_after_renewal": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "business_helper_after_revoke": {
+      "error_code": "broker_admission_denied",
+      "exit_code": 2,
+      "ok": false
+    },
+    "business_helper_after_second_renewal": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "business_helper_before_revoke": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "business_mcp_image_enabled": true,
+    "candidate_admission_revoked_after": true,
+    "candidate_admission_revoked_before_sandbox_stop": true,
+    "candidate_broker_listener_stopped": true,
+    "candidate_gateway_empty_after": true,
+    "candidate_lease_initial_generation": 1,
+    "candidate_lease_reconstructed_before_second_renewal": true,
+    "candidate_lease_revoked_before_sandbox_stop": true,
+    "captured_at_unix": 1790068041,
+    "dev_gateway_identity_denied_status": 403,
+    "filesystem_probe": {
+      "analysis_write_roundtrip": true,
+      "authorized_read": true,
+      "company_root_write_denied": true,
+      "cross_company_read_denied": true
+    },
+    "gateway_health": {
+      "api_key_synthetic": true,
+      "empty_store_valid": true,
+      "http_healthy": true,
+      "runtime_route_valid": true
+    },
+    "gateway_owner_activated": true,
+    "gateway_owner_released_after_stop": true,
+    "gateway_owner_reserved_before_create": true,
+    "hermes_native_data_identity_verified": false,
+    "hermes_run": {
+      "api_model_alias_matches": true,
+      "create_status": 202,
+      "marker_absent": false,
+      "terminal_status": "completed"
+    },
+    "hermes_run_diagnostic": {
+      "error_present": false,
+      "error_signals": [],
+      "failure_class": "none"
+    },
+    "host_identity_source_removed": true,
+    "identity_renewal_generation": 3,
+    "identity_value_absent_from_create_args": true,
+    "image_id": "sha256:5a45f0d98c0c86d57d601dc1a7d2bcd99d36e2b9e9c05cb6d94527cebe5548ac",
+    "model_bridge_receipt_statuses": [
+      200
+    ],
+    "model_bridge_status": 200,
+    "model_trace_correlated": true,
+    "mount_plan_sha256": "b0c05e55c254129aab15fab22c5b6e907c87d2c810bf364244989e2e2cb322c1",
+    "mount_summary_sha256": "475b4992397a5de37ab0ab6d7851cf6d97de4636b41a2bdfe59e2442d08d1556",
+    "native_tool_after_revocation": {
+      "revoked_read_blocked": true
+    },
+    "native_tool_diagnostic": {
+      "adapter_agent_env_matches": true,
+      "adapter_config_error": false,
+      "adapter_endpoint_valid": true,
+      "adapter_identity_env_matches": true,
+      "adapter_module_count": 1,
+      "adapter_sha256": "025d794d8313b692b445aef5520038965591c1cce74ecd17a34e5caae56b6e4b",
+      "adapter_token_available": true,
+      "enroll_error": "runtime_identity_required",
+      "enroll_status": 401,
+      "read_error_category": "instance session could not be verified",
+      "runtime_env_present": true,
+      "token_private": true
+    },
+    "native_tool_security": {
+      "denied_write_effect_absent": true,
+      "native_read_completed": true,
+      "native_write_blocked": true
+    },
+    "old_token_denied_after_generation_2": true,
+    "old_token_denied_after_generation_3": true,
+    "online_broker_after_renewal": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "online_broker_after_revoke": {
+      "error_code": "broker_admission_denied",
+      "ok": false,
+      "secret_file_private": true,
+      "status": 403
+    },
+    "online_broker_after_second_renewal": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "online_broker_before_revoke": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "passed": true,
+    "policy_sha256": "4ffe6f9856b17791e2410eab2c7619968ed9b2e064873eb218a1c0d30fbd861a",
+    "positive_model_inference_verified": true,
+    "post_stop_provider_positive": true,
+    "production_eligible": false,
+    "proof_state_removed": true,
+    "provider_reprovisioned_after_model_cut": true,
+    "real_business_data_used": false,
+    "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+    "resource_profile": "hermes_minimal_poc",
+    "run_identity_preserved_across_renewals": true,
+    "sandbox_name_sha256": "733152bb635cf2d45dd95ac4adb29bb4bdbbd62b57b5ccb6b7c4a4eb82afad62",
+    "sandbox_removed": true,
+    "schema_version": "siq.model.qwen38-supervised-lifecycle-proof.v1",
+    "scope": "real_openshell_synthetic_enterprise_mount_and_qwen_policy",
+    "scope_ref_sha256": "a6f915b64d9b9d1776d8b62bdbeb3f46f06c0cbd8653616c25531ff9f114b572",
+    "secrets_included": false,
+    "stale_generation_republish_denied": true,
+    "startup_identity_probe": {
+      "digest_file_private": true,
+      "exec_identity_environment_absent": true,
+      "startup_shell_verified_identity_file": true
+    },
+    "synthetic_backend_call_count": 6,
+    "synthetic_broker_audit_count": 6,
+    "synthetic_reauthorization_checks_count": 2,
+    "synthetic_sources_removed": true,
+    "tool_security_binding": {
+      "contract": "openshell-decision-relay/v4",
+      "relay_binary_sha256": "58222dbec75246fdd92d4693bab7cbbd5c8abab89e8ac7abb2b83df3d01bde80",
+      "runtime_identity_sha256": "2bf857d0f7dcefde67119e1a576c33065e933cb6811eefc8e8b796908fc7f9bd"
+    },
+    "tool_security_cleanup": {
+      "relay_process_stopped": true,
+      "runtime_identity_revoked": true
+    }
+  },
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-gateway-business.v1",
+  "scope": "real_qwen_hermes_http_run_report_mcp_consent_and_independent_readback_with_synthetic_authority",
+  "secrets_included": false,
+  "source_sha256": {
+    "research": {
+      "infra/openshell/patches/hermes-0.21.0/0007-api-run-mcp-consent.patch": "d377b2943aafae5deefd89d484522499318fa7439224079f4dbe7a10fe01ca34",
+      "infra/openshell/sandbox/qwen38_candidate/Dockerfile": "c7de8dac6113d3a3b0fbc8759439fb0bedb9167f60e3546c21278e51403723ff",
+      "infra/openshell/sandbox/qwen38_candidate/business-mcp.lock.json": "895bbd34c45ef51552b7e5a4bb48a78122589fe79f932372ce01f2a6b081a27e",
+      "infra/openshell/sandbox/qwen38_candidate/smoke_mcp_consent.py": "1d805cafa176f84ee2e120d67ac7431fc99dff1f4526cc1405965647cf6257e6",
+      "scripts/openshell/build_agentshield_decision_relay_config.py": "45d2e489a860c481ac4f2b9b41cf3cdf3cdfc170ef9a853e4983f8ad335eea9b",
+      "scripts/openshell/build_qwen38_candidate_image.py": "fec835c32edf85412f094672fefa697230800d6473629928bc480973ee9d279b",
+      "scripts/openshell/launch_agentshield_decision_relay.py": "578e29005c95807fdd7ae82fdba08fb436494d857f4c646a8e2b2bf2e5754f0f",
+      "scripts/openshell/prove_qwen38_gateway_business.py": "5edeb5d64e6aaadc132669ea1eb8fff9e7edeb788fb544fc70c1fcad17a756d0",
+      "scripts/openshell/prove_qwen38_native_tool_security.py": "1bfef619b315006569ebb8689d39895702e07ce2e5f1d2fd61081dc905ae8f27",
+      "scripts/openshell/prove_qwen38_scoped_sandbox.py": "1bef15f90884e5c73fe5c04335a61786b2f930a42c686f07ee33f4edf4ab54dc",
+      "scripts/openshell/qwen38_candidate_tool_security.py": "a7a5ba24fd2276a45f7bcbdd32f5c798620cbfebadc24302788804630f8ff19e",
+      "scripts/openshell/tests/test_build_agentshield_decision_relay_config.py": "b84a43b6c6130b5f0985e6a063b7dcb3afd3de3e85f9c041eb8581b4890e0f34",
+      "scripts/openshell/tests/test_build_qwen38_candidate_image.py": "63da3f31d2a6c59217781aa248bd424a1dcb88c21e9219fa472f24a28f2d4b84",
+      "scripts/openshell/tests/test_qwen38_gateway_business.py": "865890dd69bbd21a7f27ff6f9d5da26954fa5b957e22f18a7829c420643adaa9"
+    },
+    "security": {
+      "apps/agentshield/internal/decisionrelay/config.go": "f16d7c3892a3d36b32694cc879704304383b7ef79f44fbb151f7a933e08bf86f",
+      "apps/agentshield/internal/decisionrelay/relay_test.go": "fe860655da56001b8cab99f60d0ebed6aea0fef9530456db8c8ebccb2d8ff330",
+      "apps/agentshield/internal/intent/business_report_test.go": "6c16056da4ad30cb93519f263448a5c1a42d4e282769365f5541e4efdc4836ea",
+      "apps/agentshield/internal/receipt/business_report_test.go": "bd146aac0dd1da268962092873c55b8c18a2bc53a6eaec9c8356d096eb965dd3",
+      "apps/agentshield/internal/runtimeaction/business_report.go": "f0116c8239f8c4181fde09700a7e31f03be80e78b44efba5841b1bbd5b90b2fe",
+      "apps/agentshield/internal/runtimeaction/business_report_test.go": "4c4760900cf03942760e10f995a09190bbf9200eba2eec203eeefa7da3558577",
+      "apps/agentshield/internal/runtimeaction/describe.go": "1cd604419b21498417e2e671e6977ee064d827f5af6339ab2889ed4e8b4ab482",
+      "apps/agentshield/internal/runtimeaction/normalize.go": "a910ad13a17074b698cdbff9dc16054779cf99495b82bb537134d938c5a3a93c",
+      "apps/agentshield/internal/runtimeaction/resources.go": "1e116185a386ab66ecd6f7861c7e9f3afb5492cbe6d885f7bc0acf7f1f97ba00",
+      "apps/agentshield/internal/server/decision_relay_integration_test.go": "49f5c967714c2dd84fc42c4d6df112eeca192ecc2580f05c0197bb51e12bfdbf",
+      "apps/agentshield/testdata/contracts/openshell-decision-relay-isolated.json": "28ffc949107cde0e51ba66ce958a800fa422b34486a4d383f3c026be2965b5c7",
+      "apps/agentshield/testdata/contracts/siq-research-business-call-v1-cases.json": "1fcc32ff714d989f5c0c1382652ffd22d7f8cd93bc20dc583298176747f95994",
+      "apps/control-api/app/tests/test_business_report_contract.py": "ed7ec431805679b611cc59725a0d5379bdbac005d16f7479dc96f62de8a4efb1",
+      "apps/control-api/app/tests/test_schema_contracts.py": "5bfa639d17706bf62e0ddaae51d93d49153600a1c87e3a38c384e285023b2823",
+      "packages/contracts/openshell-decision-relay.v4.schema.json": "af52d5ec2594ac23e9d688dc70cfc504234043b5d84e6445fa944f98ec7713b4",
+      "packages/contracts/siq-research-business-call.v1.schema.json": "d108de7b4ebf6f691308b630ce4f07e6ba8cd5b061473d4741e36eb2460ba107"
+    }
+  },
+  "verification": {
+    "active_agentshield_unchanged": true,
+    "changed_go_gofmt_passed": true,
+    "cross_compile_binaries": [
+      "agentshield",
+      "agentshield-decision-relay"
+    ],
+    "cross_compile_targets": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "diff_check_passed": true,
+    "go_test_all_passed": true,
+    "go_vet_all_passed": true,
+    "isolated_daemon_stopped": true,
+    "model_and_bridge_active": true,
+    "model_and_bridge_nrestarts": 0,
+    "new_image_actual_consent_queue_passed": true,
+    "old_image_consent_regression_failed": true,
+    "relay_session_revocation_integration_versions": [
+      "v2",
+      "v3",
+      "v4"
+    ],
+    "research_focused_passed": 100,
+    "research_focused_skipped": 1,
+    "ruff_passed": true,
+    "schema_tests_passed": 4,
+    "skip_reason": "API venv lacks optional MCP; actual SDK2 discovery and invocation passed in image and real sandbox",
+    "temporary_listeners_remaining": 0
+  }
+}

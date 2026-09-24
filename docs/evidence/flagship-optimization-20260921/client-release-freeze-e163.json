@@ -1,0 +1,95 @@
+{
+  "schema_version": "client-release-freeze/v1",
+  "candidate": "ux-e163",
+  "source_commit": "fd02384d6de5f96a849f9d04bbfbfaff38cf6148",
+  "source_preparation_passed": true,
+  "signed_release_ready": false,
+  "production_eligible": false,
+  "deployed": false,
+  "commit_record": {
+    "path": "var/flagship/ux-e163/local-candidate-final.json",
+    "sha256": "74abbabe4c0b8a96227147db0072d87365000df9dbaea6274855b32c12c5a6d6",
+    "bytes": 536
+  },
+  "changed_paths": {
+    "path": "var/flagship/ux-e163/final-commit-paths.txt",
+    "sha256": "8fcbced9d87b35f5715f7816fe5cb6fe298759e37b2d012e03e69029cae25119",
+    "bytes": 16107
+  },
+  "source_identity": {
+    "path": "var/flagship/ux-e163/final-unsigned-release/SOURCE-INFO.json",
+    "sha256": "5573c29879dcbed8113bf257b5b8e6eb9e82ce0b42b13e6b86dfacae3b765017",
+    "bytes": 25368
+  },
+  "final_verification": {
+    "path": "var/flagship/ux-e163/final-verification.json",
+    "sha256": "e57a95ac55fef28d8c18d895e46b899ded0d5962f706ba2f6984668f4cdc892c",
+    "bytes": 274
+  },
+  "verification": [
+    {
+      "path": "var/flagship/ux-e163/fixed-source-go-tests-final.log",
+      "sha256": "25ba631c1ec654a6bcbe1e7904a4c92670079de3acc39ad64f3b8835353343fa",
+      "bytes": 3686
+    },
+    {
+      "path": "var/flagship/ux-e163/final-packaging-exit.json",
+      "sha256": "26fda33162d11698cea48830cc4ad79ab554fe051b45a8243dd5028f5f4c9c2e",
+      "bytes": 125
+    },
+    {
+      "path": "var/flagship/ux-e163/release-tools-tests.log",
+      "sha256": "0e422d835ff20a0ae3b3605e49020ad6067db63a1110c85d9bc3e5c9bc355a78",
+      "bytes": 2458
+    },
+    {
+      "path": "var/flagship/ux-e163/native-source-smoke.json",
+      "sha256": "df460601dd2c5ff10569c85a7643ddf85e6b481f61275ce55123b6599db4b3b8",
+      "bytes": 777
+    },
+    {
+      "path": "var/flagship/ux-e163/native-setup.log",
+      "sha256": "691190a6bc15c61de5a730074cd6d5c855886eb7ae6f384c4bb458f20b1d7635",
+      "bytes": 64
+    }
+  ],
+  "signing_prerequisite": {
+    "path": "var/flagship/ux-e163/signing-prerequisite.json",
+    "sha256": "2a696600542fc6afe1da6e1de9bbd80334485c40365dd1cfc2424edab9095e15",
+    "bytes": 141
+  },
+  "unsigned_archive": {
+    "path": "var/flagship/ux-e163/final-unsigned-release/siq-agent-security-0.4.0-rc.1-unsigned-candidate.zip",
+    "sha256": "f93550a6688f6f74a27d63624c06f060904640e8b303df0d32d73966bdc731b7",
+    "bytes": 47349337
+  },
+  "binary_assets": [
+    {
+      "path": "var/flagship/ux-e163/final-unsigned-release/siq-agent-security-darwin-arm64",
+      "sha256": "f353a99a81731dcf103144235c1649b7cadeadba40aad3bad0cae1c5c67d2354",
+      "bytes": 19367762
+    },
+    {
+      "path": "var/flagship/ux-e163/final-unsigned-release/siq-agent-security-linux-amd64",
+      "sha256": "976c5133a5ae3c3801c63c5fc44c2871b9f0d052bcc88939cbff738fc22b14bb",
+      "bytes": 20365474
+    },
+    {
+      "path": "var/flagship/ux-e163/final-unsigned-release/siq-agent-security-linux-arm64",
+      "sha256": "dc26e3311360b56e16839853268c7d41719a6dda66d015bf47b86923c368c5ef",
+      "bytes": 19136674
+    },
+    {
+      "path": "var/flagship/ux-e163/final-unsigned-release/siq-agent-security-windows-amd64.exe",
+      "sha256": "cb5ea18bed3dbc323d02df76c2539d94d14e24531c0eef107677e6dbe484c39c",
+      "bytes": 20947456
+    }
+  ],
+  "limitations": [
+    "Publisher signing environment entry pending user input",
+    "Signed installation and upgrade not verified",
+    "No push, merge or external release",
+    "Not production business/IAM/native CI acceptance"
+  ],
+  "preservation": "Original worktree HEAD unchanged; pre-existing changes retained; one trailing whitespace removed without semantic change"
+}

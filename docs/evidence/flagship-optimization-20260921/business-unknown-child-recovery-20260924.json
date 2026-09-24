@@ -1,0 +1,104 @@
+{
+  "schema_version": "siq.flagship.unknown-child-recovery-evidence.v1",
+  "production_eligible": false,
+  "source_repository": "siq-research-engine",
+  "sources": [
+    {
+      "path": "scripts/openshell/prove_qwen38_unknown_child_crash.py",
+      "sha256": "e020709a4bab284454a5e0df20007bfdf4319ee16ca5f5f672f439424eaff19a",
+      "bytes": 7032
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_qwen38_unknown_child_crash.py",
+      "sha256": "e1aef669b42d8e550f6436b04d97b9f84270fe7f172f6acb7cfc39179d36f1b3",
+      "bytes": 4717
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_create_ack_crash.py",
+      "sha256": "723ae80b04d188980484137f020a756c10c7ccf2b364309c7e1c3a010216f2ea",
+      "bytes": 6753
+    },
+    {
+      "path": "apps/api/services/agent_chat_runtime_impl.py",
+      "sha256": "b99529f1879ce3a402d6760f8fe49ee4b745427222352415c1a99e1379e9003d",
+      "bytes": 364357
+    }
+  ],
+  "proof": {
+    "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v5.sanitized.json",
+    "sha256": "84b3da40a2a8f3c35012832d0deff8192fa9c79412ab50a254cc57e59f4ab582",
+    "bytes": 1946
+  },
+  "result": {
+    "schema": "siq.qwen38.candidate-api-proof.v1",
+    "passed": true,
+    "scope": "actual_API_SIGKILL_with_unrecorded_live_Hermes_child",
+    "production_ready": false,
+    "checks": {
+      "fresh_database_migrations": true,
+      "request_recovery_ready": true,
+      "legacy_recovery_disabled": true,
+      "original_HTTP_interrupted": true,
+      "Hermes_live_status_observed_after_create_ack": true,
+      "API_killed_before_Hermes_run_id_persistence": true,
+      "original_lease_expired_naturally": true,
+      "same_database_API_restart": true,
+      "original_provisional_execution_authority_lost": true,
+      "recovery_ready_after_containment": true,
+      "terminal_parent_and_live_child_model_output_confirmed": true,
+      "database_retains_parent_only_without_child_rebinding": true,
+      "no_completed_result_published_during_child": true,
+      "sandbox_supervisor_and_forward_absent": true,
+      "child_identity_revoked_before_root_cleanup": true,
+      "old_child_credential_401": true,
+      "root_identity_still_active_before_diagnostic_cleanup": true,
+      "API_finalizer_released_before_diagnostic_cleanup": true,
+      "no_replayed_or_rebound_execution": true,
+      "model_bridge_correlated_200": true,
+      "anonymous_analysis_denied": true,
+      "real_http_login": true,
+      "analyst_cannot_issue_grant": true,
+      "grant_retry_same_identity": true,
+      "analyst_cannot_revoke_grant": true,
+      "admin_http_revoke": true,
+      "business_settled_before_api_stop": true,
+      "candidate_listener_closed": true,
+      "business_runtime_cleanup_confirmed": true,
+      "temporary_database_removed": true,
+      "existing_service_identity_unchanged": true
+    },
+    "business_HTTP_attempted": true,
+    "hermes_run_sha256": "952fb60c8f04019d3fcca65f91f764e9960b04b78d77193879dd38c252d570d6",
+    "recovery_wait_seconds": 123.911,
+    "diagnostic_forced_repair": true,
+    "model_completion_acceptance": false,
+    "bridge_statuses": [
+      200
+    ],
+    "remaining_running_execution_count": 0
+  },
+  "launcher": {
+    "passed": true,
+    "production_eligible": false,
+    "proof_passed": true,
+    "proof_file": "artifacts/openshell/flagship/ml02-business-crash-e165-v5.sanitized.json",
+    "proof_sha256": "84b3da40a2a8f3c35012832d0deff8192fa9c79412ab50a254cc57e59f4ab582",
+    "preview_services_unchanged": true,
+    "isolated_identity_starts": 1,
+    "isolated_ports_closed": true
+  },
+  "tests": [
+    {
+      "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest scripts/openshell/tests/test_prove_qwen38_unknown_child_crash.py scripts/openshell/tests/test_prove_qwen38_create_ack_crash.py scripts/openshell/tests/test_prove_qwen38_crash_api.py -q --disable-warnings --tb=short",
+      "passed": 28,
+      "seconds": 0.63
+    },
+    {
+      "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest apps/api/tests/test_agent_chat_runtime_loops.py -k single_financial_repair_creates_exactly_one_run -q --disable-warnings --tb=short",
+      "passed": 1,
+      "deselected": 118,
+      "seconds": 0.53
+    }
+  ],
+  "ruff": "passed for two added diagnostic files"
+}

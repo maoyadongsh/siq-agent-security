@@ -1,0 +1,102 @@
+{
+  "artifacts": {
+    "business_manifest_sha256": "2bf981d5e4d717d1e69317d492d7bc7665f31ab734f82f7dd2ca7e43e024e267",
+    "business_probe_sha256": "6817a82e08a9450e6cbe562beadccf721d96854377f1377e80f352124f18a7d9",
+    "business_stop_sha256": "5b87795c64023a9e2bdc0984364786a39d93a881853a13b1107813d52c0475cd",
+    "contract_schema_sha256": "f65ac47ef599e42a85c5f851526d3a2de69374a78fcdaa06f9d2511f1180a5a2",
+    "isolated_proof_sha256": "1582ba33a5e5e76b3004302c4eaf8dc16797291972bf4038df1f0a7a7c734698",
+    "launcher_source_sha256": "43bbbbff498c07ae16d5a188c3047f066010ebd1b60582de2230e0415a5b12c2",
+    "policy_sha256": "5bff06aa25526f5918d00ae6f5a3dc51d070d98a4ae8a77fdabecb07f0be6675",
+    "relay_config_sha256": "4801f1db6a927d5579ce56266fee37687afc27b83b5e5e30ef67c67bc37cd179",
+    "relay_source_sha256": "698298a592c6b5c0f664127ad30296aac380ac87732494604d2800152ff40bc4"
+  },
+  "binding": {
+    "agent_id": "hri-3678e758f4597229605e818ec5fb71ba",
+    "binding_sha256": "a53e80c65109b10eedb3654c627d1799ae355506560f0b74be176bd526569426",
+    "company_scope": "600418",
+    "grant_revision": 3,
+    "market": "cn",
+    "platform": "hermes",
+    "profile": "siq_analysis",
+    "relay_generation": 1,
+    "run_id": "canary-a501c0de0008",
+    "runtime_identity_id": "ri-bbcd92e7f7f043d64528c0f1a5770ec9",
+    "scope_id": "006f548a8d57d420df22d186"
+  },
+  "business_canary": {
+    "cross_company_write_denied": true,
+    "decision_boundary": "allow_scoped_deny_unscoped_management_hidden",
+    "filesystem_boundary": "passed",
+    "host_runtime_unchanged": true,
+    "immutable_company_assets_read_only": true,
+    "pool_binding_removed": true,
+    "production_eligible": false,
+    "readiness_effect": "none",
+    "relay_listener_removed": true,
+    "runtime_session_enrollment": "passed",
+    "sandbox_removed": true,
+    "start": "passed",
+    "status_health": "passed",
+    "stop": "passed"
+  },
+  "candidate": {
+    "allowed_route_count": 7,
+    "authority_endpoint": "http://127.0.0.1:47611",
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "hermes_version": "0.21.0",
+    "image_id": "sha256:20698cb2b63abad1d1db782e00c97d855e0fac08248de809e6d993706f8e1731",
+    "image_ref": "siq/hermes-openshell-siq-analysis:70552c6e6dceb3ff51f9aa2e",
+    "openshell_version": "0.0.83",
+    "sandbox_endpoint": "http://host.openshell.internal:47611",
+    "transport": "verified_docker_bridge_gateway/v1"
+  },
+  "isolated_authority_proof": {
+    "allow_action": "allow",
+    "allow_status": 200,
+    "cross_session_status": 401,
+    "deny_action": "deny",
+    "deny_status": 200,
+    "enroll_status": 200,
+    "management_route_reached_daemon": false,
+    "management_route_status": 404,
+    "passed": true,
+    "relay_capabilities_zero": true,
+    "relay_no_new_privileges": true,
+    "relay_uid_gid_1000": true,
+    "revoked_identity_status": 401
+  },
+  "limitations": [
+    "The successful company run is a stopped NOT_PRODUCTION_CANARY and does not grant production approval.",
+    "The isolated revocation proof used the earlier namespace-local relay transport; the current bridge transport was validated by the real OpenShell business canary.",
+    "The Runtime Identity remains active for later staged validation; no bearer credential is included."
+  ],
+  "observed_at": "2026-09-21T07:10:03.634900Z",
+  "sanitization": {
+    "contains_credentials": false,
+    "contains_local_absolute_paths": false,
+    "contains_pairing_code": false,
+    "contains_prompt_or_output": false,
+    "contains_runtime_identity_bearer": false
+  },
+  "schema_version": "siq.flagship.as01-decision-relay-evidence.v1",
+  "validation": {
+    "go_packages": [
+      "internal/decisionrelay",
+      "internal/server",
+      "cmd/agentshield-decision-relay"
+    ],
+    "go_status": "passed",
+    "research_compatibility_tests": {
+      "count": 111,
+      "status": "passed"
+    },
+    "research_focused_tests": {
+      "count": 143,
+      "status": "passed"
+    },
+    "research_manifest_registry_tests": {
+      "count": 65,
+      "status": "passed"
+    }
+  }
+}

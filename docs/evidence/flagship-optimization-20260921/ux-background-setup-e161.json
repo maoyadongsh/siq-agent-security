@@ -1,0 +1,173 @@
+{
+  "schema_version": "background-setup-acceptance/v1",
+  "candidate": "ux-e161",
+  "passed": true,
+  "production_eligible": false,
+  "official_signed_release": false,
+  "binary": {
+    "path": "var/flagship/ux-e161/siq-agent-security",
+    "sha256": "c8503564f5082d4ffd8984c51fc4810a9d386b7638b32e4ad6875843aefefbe3",
+    "bytes": 23933263
+  },
+  "journeys": [
+    {
+      "result": {
+        "path": "var/flagship/ux-e161/onboarding-verified/summary.sanitized.json",
+        "sha256": "2c60c480225f413ef28f6ac389dd9330528a16b48da24959784a3301e1cec8fe",
+        "bytes": 4636
+      },
+      "passed": true,
+      "checks": 53,
+      "service_checks": 7
+    },
+    {
+      "result": {
+        "path": "var/flagship/ux-e161/hermes-complete/result.json",
+        "sha256": "2ce52f40b94edb952949dba679bc924a6d01129bc33ed5305b1776000e5f5830",
+        "bytes": 3551
+      },
+      "passed": true,
+      "checks": 12,
+      "service_checks": 8
+    },
+    {
+      "result": {
+        "path": "var/flagship/ux-e161/openclaw-complete/result.json",
+        "sha256": "bd16e18333f7133e050257ab75b90233362b81c874ac2d7aabce63ed053d3edb",
+        "bytes": 4115
+      },
+      "passed": true,
+      "checks": 12,
+      "service_checks": 8
+    }
+  ],
+  "go_packages_passed": 44,
+  "verification": [
+    {
+      "path": "var/flagship/ux-e161/go-full-final.log",
+      "sha256": "a97f8618cf0e0c0cb592657375230c5d849009292b9457bbff81b266d5b944c2",
+      "bytes": 3685
+    },
+    {
+      "path": "var/flagship/ux-e161/go-vet-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e161/race-final.log",
+      "sha256": "f9c14968c9a741c9159ea1488c9855e6d04a0e87ad5553d2ae4711bce134dc56",
+      "bytes": 136
+    },
+    {
+      "path": "var/flagship/ux-e161/native-reinstall-v3.log",
+      "sha256": "42067ac59434378f8e3563c6be91d1c5ef3d51c604589f2dbcb1573526924102",
+      "bytes": 72
+    },
+    {
+      "path": "var/flagship/ux-e161/native-setup-final.log",
+      "sha256": "58da2eee70a359b322e6e338b4d4e346bc245bf798920e434ef9b3f71e1867d4",
+      "bytes": 64
+    },
+    {
+      "path": "var/flagship/ux-e161/cross-builds-final.json",
+      "sha256": "1e1d2244fa98bb4c63df2c3442414070d496ab3d8555068b79fdc39c3bd88cff",
+      "bytes": 177
+    },
+    {
+      "path": "var/flagship/ux-e161/bootstrap-before-after.json",
+      "sha256": "8542a3a37ec27b257462dccdbf20c8f79878abb4af9df3f9e5e3efd529309fc6",
+      "bytes": 421
+    },
+    {
+      "path": "var/flagship/ux-e161/package-verification-final.json",
+      "sha256": "62a05774f0aa2c65f01df341a33ecf004b6a2ef47bf011fd35988cf5a428a1e4",
+      "bytes": 219
+    },
+    {
+      "path": "var/flagship/ux-e161/extracted-package-start-stop-final.json",
+      "sha256": "d5be65099228363709dd8032fb6274eaec1433964494b115482186373a115c26",
+      "bytes": 777
+    }
+  ],
+  "source_manifest": {
+    "path": "var/flagship/ux-e161/source-manifest.json",
+    "sha256": "f10e0d4d4d8da7994cb942331bdaf99d39635d40fc46af64adcfcd80157ce347",
+    "bytes": 233739
+  },
+  "preview_package": {
+    "path": "var/flagship/ux-e161/preview-package.json",
+    "sha256": "f70976d10ac17f09eb8caa7fd60a2114ef4917514b6fc710d636a501d04c6eca",
+    "bytes": 362
+  },
+  "screenshots": [
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/desktop.png",
+      "sha256": "f7d8676e58b6e9c8da847d700332a4d9e6c0cc447ce0f2d5b134de2a82184dcc",
+      "bytes": 165320
+    },
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/hermes-activity-detail.png",
+      "sha256": "500b6175715f83a7988ed38c7d234ff01a2c68be262fb9203435dc21c03ccf5f",
+      "bytes": 182697
+    },
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/hermes-permission-approved.png",
+      "sha256": "20165992d3b40a3eae4c5abaf3e75ec774746023b74429310d8dd16f94e0796c",
+      "bytes": 198812
+    },
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/openclaw-activity-detail.png",
+      "sha256": "419be5413dc53a99d3218db9b8b3220072b68c3d3529137829e6d7652e52e4ee",
+      "bytes": 186361
+    },
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/openclaw-permission-approved.png",
+      "sha256": "30b2dae40c6c55e66dac3bce09078a76fee39af0b43f332a125b37c3db437d01",
+      "bytes": 199581
+    },
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/skills.png",
+      "sha256": "c8432f1b6e55c00cf4390cbf875acbd7376c02be6dfc382b396f159f3bac474c",
+      "bytes": 167715
+    },
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/viewport-375.png",
+      "sha256": "4590ac27b19ea6ebe4fd5c178743dc84bbac0c73514805a68462c08def5533fa",
+      "bytes": 76768
+    },
+    {
+      "path": "var/flagship/ux-e161/onboarding-verified/viewport-768.png",
+      "sha256": "fe9a75752dd4c9fc5448d5c2c3bd547433ae33f8185f8ef460f0b09b64edb9a9",
+      "bytes": 152842
+    },
+    {
+      "path": "var/flagship/ux-e161/hermes-complete/native-output-desktop.png",
+      "sha256": "e105fa6f75bd5533a916800ea7bf205a30eb4e0302ffa06e430b27ebfa152ace",
+      "bytes": 201763
+    },
+    {
+      "path": "var/flagship/ux-e161/hermes-complete/native-output-mobile.png",
+      "sha256": "821b3e93976a0b8b07b1d5df72fd788fa7614bfb882d4602dad39c7f3c794784",
+      "bytes": 65294
+    },
+    {
+      "path": "var/flagship/ux-e161/openclaw-complete/native-output-desktop.png",
+      "sha256": "356ff597307550b95b599a51416f2882dd517b3ace3b8154115b6fa924bf7b9b",
+      "bytes": 205404
+    },
+    {
+      "path": "var/flagship/ux-e161/openclaw-complete/native-output-mobile.png",
+      "sha256": "62bbb6fe9d6f77052ac370e5e63f21f8970ccc863c7e6faa0239c378200590ca",
+      "bytes": 65427
+    }
+  ],
+  "limitations": [
+    "No signed release or installed version upgrade",
+    "No model-driven complete session in this batch",
+    "OpenClaw after relay invoked by harness",
+    "No production business database or IAM acceptance",
+    "No native macOS/Windows execution",
+    "Research E160 business API/Web not deployed"
+  ],
+  "cleanup": "All three journeys verified owned runtime unit unregistered before fixture deletion; shared manager environment unchanged"
+}

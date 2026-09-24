@@ -1,0 +1,92 @@
+{
+  "Go_sources_changed_this_increment": false,
+  "Go_tests_rerun": false,
+  "candidate_ready": false,
+  "production_eligible": false,
+  "research_evidence": {
+    "actual_API_process_crashed": false,
+    "candidate_ready": false,
+    "captured_at_utc": "2026-09-22T17:36:15.657594+00:00",
+    "database": "isolated_SQLite",
+    "formal_API_selector_enabled": false,
+    "formal_HTTP_business_request_sent": false,
+    "history": {
+      "failure_cause": "test_fixture_missing_existing_private_admission_lock",
+      "fixture_fixed_without_weakening_production_checks": true,
+      "initial_provider_focused_failed": 2,
+      "initial_provider_focused_passed": 34
+    },
+    "implementation_validation_passed": true,
+    "live_model_invoked": false,
+    "live_service_mutations_performed": false,
+    "not_proven": [
+      "live_finalizer_with_real_OpenShell_and_Provider",
+      "disk_rehydration_of_cleanup_only_handles_and_API_restart_scanner",
+      "formal_request_preparation_queue_and_identity_issuance",
+      "request_financial_receipts_and_security_event_export",
+      "production_IAM_and_business_approval",
+      "native_CI",
+      "historical_model_timeout_root_cause_and_latency_stability"
+    ],
+    "process_failure_probe": "actual_fork_child_exit_47_after_owner_unlink_and_directory_fsync",
+    "production_eligible": false,
+    "proven_in_isolated_tests": [
+      "prepared_provider_restored_released_private_durable_journal",
+      "no_gateway_owner_lock_held_while_waiting_for_ExecStopPost",
+      "exact_service_invocation_unit_and_execution_binding",
+      "resource_handoff_precedes_original_DB_terminal_commit",
+      "expired_execution_can_be_cleaned_without_live_authority",
+      "unknown_create_completed_as_failed_only_after_verified_handoff",
+      "changed_owner_generation_principal_or_run_not_overwritten",
+      "real_child_process_exit_after_owner_unlink_and_safe_retry_with_new_owner",
+      "old_released_retry_performs_no_global_runtime_or_provider_operations",
+      "continuous_owner_directory_fsync_failure_does_not_publish_released",
+      "provider_failure_or_uncertain_execution_retains_owner",
+      "cancellation_joins_cleanup_and_retry_commits_DB",
+      "concurrent_finalization_rejected_by_request_lock",
+      "business_output_and_private_recovery_files_preserved",
+      "reviewed_provider_protocol_with_private_file_secret_and_no_secret_argv"
+    ],
+    "provider_restoration_claim": "configuration_application_and_inventory_readback_only",
+    "runtime_and_provider_CLI": "deterministic_test_doubles",
+    "schema_version": "siq.qwen38.request-finalization-evidence.v1",
+    "scope": "durable_terminal_handoff_and_actual_API_terminal_branches_with_isolated_execution_doubles",
+    "secrets_included": false,
+    "source_sha256": {
+      "apps/api/services/agent_chat_runtime_impl.py": "59197e4f35d2de824343e8abb640b05783b3ada5e2378a52398722e15d8d076c",
+      "apps/api/services/qwen38_request_api.py": "59f4118d324430d18dd2976a6b4a0fbc2cc676f710736e0d7c9efec96d36ef28",
+      "apps/api/services/qwen38_request_finalizer.py": "1d9c5766185c708babd988b175ad6cd3bd06cfb44458166e00ce9354a6f2a329",
+      "apps/api/tests/test_qwen38_request_api.py": "ef034c08c6c844ee6639d9d583a150e55b816e5ea6959d7b42d2d85a641db123",
+      "apps/api/tests/test_qwen38_request_finalizer.py": "eb37dd1f8495ff07546e8da9e5a6100918b438f80072d8512e9c0bd9ac5a7e11",
+      "docs/architecture/qwen38-request-runtime-v1.md": "aaf5afca1280397bebae2f497e5e99bc750bf49ad66b90e0e15b255dff13d6d5",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "ae06f10e8df2171134e5bf708b858aeb316cf7d5fb7beb7d247c9899f6ac75f5",
+      "scripts/openshell/qwen38_provider_lifecycle.py": "71ec76633e8fec912450164b3b05d42ca6977c08cc62faafbbb95da7ef4e7fec",
+      "scripts/openshell/tests/test_qwen38_provider_lifecycle.py": "ec663030a0eb23f906b0939c05223212fbacb1670c89ca5d68d77c4cd9473eb2"
+    },
+    "validation": {
+      "combined_before_final_hardening": {
+        "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest -q apps/api/tests/test_qwen38_request_finalizer.py apps/api/tests/test_qwen38_request_api.py apps/api/tests/test_qwen38_request_heartbeat.py apps/api/tests/test_qwen38_request_http.py apps/api/tests/test_qwen38_runtime_lease.py apps/api/tests/test_runtime_startup_guard.py apps/api/tests/test_openshell_pool_recovery.py apps/api/tests/test_openshell_pool_reauthorization.py apps/api/tests/test_openshell_recovery_authorization.py apps/api/tests/test_hermes_client.py apps/api/tests/test_hermes_canary_routing.py apps/api/tests/test_agent_runtime_active_runs.py apps/api/tests/test_agent_runtime_chat_preflight.py scripts/openshell/tests/test_qwen38_provider_lifecycle.py scripts/openshell/tests/test_provision_siq_providers.py scripts/openshell/tests/test_qwen38_candidate_gateway_owner.py scripts/openshell/tests/test_qwen38_supervisor_service.py",
+        "passed": 450,
+        "seconds": 108.18,
+        "warnings": 670
+      },
+      "counts_overlap_do_not_sum": true,
+      "final_focused": {
+        "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest -q apps/api/tests/test_qwen38_request_finalizer.py apps/api/tests/test_qwen38_request_api.py scripts/openshell/tests/test_qwen38_provider_lifecycle.py",
+        "passed": 68,
+        "seconds": 58.41,
+        "warnings": 191
+      },
+      "final_hardening": [
+        "original_plan_execution_binding_digest",
+        "run_ids_tuple_required",
+        "retry_owner_directory_fsync_before_terminal_journal"
+      ],
+      "git_diff_check_passed": true,
+      "py_compile_passed": true,
+      "ruff_passed": true
+    }
+  },
+  "research_evidence_sha256": "fec14477cb4d48b8531c7679a0c7567a40fe5ad8b06bdde535093517cb03484f",
+  "schema_version": "siq.flagship.request-finalization-export.v1"
+}

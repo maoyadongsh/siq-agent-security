@@ -1,0 +1,92 @@
+{
+  "absolute_paths_included": false,
+  "acceptance": {
+    "execution_domain_separation": {
+      "hermes_business_run": {
+        "execution_kind": "hermes_business_run",
+        "lifecycle_authority": "hermes_v1_runs",
+        "remote_stop_confirmation": "quiesced_terminal_receipt",
+        "writer_release_allowed": true
+      },
+      "openshell_command": {
+        "execution_kind": "real_sandbox_command",
+        "lifecycle_authority": "openshell_cli_local_observation",
+        "remote_stop_confirmation": "unsupported",
+        "unknown_result": "uncertain",
+        "writer_release_allowed": false
+      },
+      "status": "passed"
+    },
+    "restart_recovery": {
+      "complete_execution_receipt_required": true,
+      "first_observation_already_terminal": "orphan_writer",
+      "nonterminal_observation_required_before_release": true,
+      "status": "passed",
+      "unknown_or_404_identity": "orphan_writer"
+    },
+    "stop_and_write_quiescence": {
+      "quiet_window_seconds": 0.8,
+      "status": "passed",
+      "status_sequence": [
+        "running:quiesced=false",
+        "stopping:quiesced=false",
+        "cancelled:quiesced=true"
+      ],
+      "stop_ack_is_terminal": false,
+      "write_continued_after_stop_ack": true,
+      "write_stable_after_quiescence": true
+    },
+    "writer_release": {
+      "children_terminal_required": true,
+      "main_run_quiesced_required": true,
+      "release_without_terminal_confirmation": "orphan_writer",
+      "status": "passed"
+    }
+  },
+  "candidate": {
+    "active_pool_changed": false,
+    "architecture": "arm64",
+    "data_classification": "confidential_local",
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "hermes_version": "0.21.0",
+    "image_id": "sha256:b5e1b79c822c83951084ff7eeb59974c9045d4ca7e32648a959541c347b612d0",
+    "image_ref": "siq/hermes-openshell-siq-analysis:bcbd504e65cc472e63cfb466",
+    "model_invoked": false,
+    "smoke": "passed"
+  },
+  "evidence": {
+    "command_exec_contract_sha256": "e3a50dcbc728224122929d506a87791659b9512a0c4d030a97909f380fdd2d81",
+    "proof_sha256": "faa25bcc69f1ba0a6be65e801cadaf93de6c0d5b2ba08cab0c7a391e493a6c6d",
+    "proof_schema": "siq.os01.run-lifecycle-proof.v1",
+    "research_artifact": "artifacts/openshell/flagship/os01-run-lifecycle.sanitized.json"
+  },
+  "hermes_patch": {
+    "integration_patch_sha256": "0f8b0de44f60c3a1a44b3e6d273fba69df8243a3f849e1f6d8602d9b71e48887",
+    "quiescence_patch_sha256": "bc33043baec2941fc45159375fc53316631ca9439031a68715ce4638deeb32ea"
+  },
+  "limitations": [
+    "The write-quiescence probe uses the real patched Hermes HTTP run handlers in the confidential candidate image with a deterministic model-independent worker; it does not route production traffic.",
+    "OpenShell 0.0.83 command exec still has no per-command remote stop receipt, so local stop remains uncertain and cannot release a business writer.",
+    "The active company pool was not migrated to the new image generation.",
+    "The locked Nemotron candidate package remains valid, but the live 8006 loopback and bridge model endpoints were unavailable at final OS-01 observation time."
+  ],
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "schema_version": "siq.flagship.os01-run-lifecycle-evidence.v1",
+  "scope": "isolated_confidential_candidate_and_control_plane_regression",
+  "secrets_included": false,
+  "status": "passed",
+  "test_results": {
+    "agentshield_go": [
+      "internal/openshell passed",
+      "internal/server passed"
+    ],
+    "candidate_doctor": "candidate_package_ready=true; live_environment=fail_model_endpoints_unavailable",
+    "confidential_image_smoke": "passed",
+    "hermes_native": "154 passed",
+    "python_compile": "passed",
+    "research_api_lifecycle": "125 passed",
+    "research_openshell_lifecycle": "35 passed",
+    "ruff": "passed"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "schema_version": "siq.flagship.supervisor-exit-result.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source_repository": "siq-research-engine",
+  "proofs": [
+    {
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-supervisor-exit-v1.sanitized.json",
+        "sha256": "9a057e6d191e3c4bf13c9e7d58e5c7eb16aecdb0b7035ffb198a4465f4159b6a",
+        "bytes": 662
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": false,
+        "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "business_settled_before_api_stop": false,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": false,
+          "temporary_database_removed": false,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "failure": "SupervisorError",
+        "remaining_running_execution_count": 1
+      }
+    },
+    {
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-supervisor-exit-v2.sanitized.json",
+        "sha256": "db5376c36aaee407c4412701f9a7b576b2dfa0a4c4e5c8b7f9e353b6ae8f4b00",
+        "bytes": 1686
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": false,
+        "scope": "actual_business_HTTP_supervisor_SIGKILL_with_live_API_after_model_output",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "pinned_API_supervisor_SIGKILL_after_model_delta": true,
+          "supervisor_exit_stream_has_no_success_done": true,
+          "supervisor_exit_stream_has_error": true,
+          "supervisor_exit_single_original_run": true,
+          "original_API_remains_alive_without_restart": true,
+          "model_delta_observed_before_supervisor_exit": true,
+          "supervisor_exit_business_failed_without_success": false,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_stream_started_200": true,
+          "sandbox_supervisor_and_forward_absent": true,
+          "child_identity_revoked_before_root_cleanup": true,
+          "old_child_credential_401": true,
+          "root_identity_still_active_before_diagnostic_cleanup": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "SSE_event_counts": {
+          "delta": 2,
+          "error": 1,
+          "progress": 32,
+          "run": 1
+        },
+        "request_run_sha256": "424fb1fb3a458c608585a3a56adfd86eb71cc8d03de6c85b98e6e4281e77b556",
+        "bridge_stream_start_statuses": [
+          200
+        ],
+        "bridge_terminal_statuses": [
+          502
+        ],
+        "failure": "candidate_business_result_unconfirmed",
+        "remaining_running_execution_count": 0
+      }
+    }
+  ],
+  "launcher": {
+    "artifact": {
+      "path": "var/ops/flagship-supervisor-exit-20260924-v2/live.sanitized.json",
+      "sha256": "1b6d4553172c78fc66949af41337b1f99932b87f5648bb30a02dbf149033be16",
+      "bytes": 365
+    },
+    "result": {
+      "passed": false,
+      "production_eligible": false,
+      "proof_passed": false,
+      "proof_file": "artifacts/openshell/flagship/ml02-business-supervisor-exit-v2.sanitized.json",
+      "proof_sha256": "db5376c36aaee407c4412701f9a7b576b2dfa0a4c4e5c8b7f9e353b6ae8f4b00",
+      "preview_services_unchanged": true,
+      "isolated_identity_starts": 1,
+      "isolated_ports_closed": true
+    }
+  },
+  "compensating_cleanup_v1": {
+    "artifact": {
+      "path": "var/ops/flagship-supervisor-exit-20260924-recovery-v1/recovery.sanitized.json",
+      "sha256": "b1bbc32b9bc1fd7b0fe52b66659716a4f5728caca6ac322bf5d92da42612be14",
+      "bytes": 449
+    },
+    "result": {
+      "passed": true,
+      "production_eligible": false,
+      "diagnostic_compensating_cleanup": true,
+      "recovery_counts": {
+        "examined": 1,
+        "deferred": 0,
+        "released": 1,
+        "failed": 0,
+        "replaced": 0,
+        "foreign": 0,
+        "next_after_id": 0
+      },
+      "original_execution_authority_lost": true,
+      "contained": true,
+      "root_revoked": true,
+      "temporary_database_removed": true,
+      "services_unchanged": true,
+      "isolated_ports_closed": true
+    }
+  },
+  "sources": [
+    {
+      "path": "scripts/openshell/prove_qwen38_candidate_api.py",
+      "sha256": "40ae265e4fea89ba3a29d6a8590d9d5a682fbc6620a7ec07532bb92fd44a66f7",
+      "bytes": 14369
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_supervisor_exit.py",
+      "sha256": "b3524ee55160af636cbec09fc55ecf9e31ce1bb8445bf0d3cc22fa043ffd9d5a",
+      "bytes": 7371
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_qwen38_supervisor_exit.py",
+      "sha256": "69d947ddf9bfa3cd36447b8310b194c0ad7dec87cf611df4639aea587bf23a0b",
+      "bytes": 3947
+    }
+  ],
+  "limitation": "Actual database terminal value is not recorded by this proof; failed expectation remains unresolved. No new test batch started in this handoff."
+}

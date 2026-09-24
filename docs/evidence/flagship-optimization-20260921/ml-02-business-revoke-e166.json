@@ -1,0 +1,176 @@
+{
+  "schema_version": "siq.flagship.evidence.business-revoke.v1",
+  "captured_at_utc": "2026-09-23T14:32:09.085629+00:00",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "validation": {
+    "passed": 262,
+    "warnings": 402,
+    "duration_seconds": 71.57,
+    "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest apps/api/tests/test_agent_runtime_read_access.py apps/api/tests/test_governed_analysis_entry.py apps/api/tests/test_agent_runtime_active_runs.py apps/api/tests/test_confidential_auxiliary_models.py apps/api/tests/test_agent_runtime_streaming.py apps/api/tests/test_agent_chat_runtime_loops.py scripts/openshell/tests/test_prove_qwen38_business_api.py scripts/openshell/tests/test_prove_qwen38_streaming_api.py scripts/openshell/tests/test_prove_qwen38_cancel_api.py scripts/openshell/tests/test_prove_qwen38_crash_api.py scripts/openshell/tests/test_prove_qwen38_revoke_api.py -q --disable-warnings",
+    "ruff_changed_files_passed": true,
+    "pre_fix_negative_test": {
+      "test": "test_initial_stream_rechecks_grant_before_each_output",
+      "observed": "old stream returned later delta and done after database grant revocation",
+      "failed": 1,
+      "source": "tool output; original stdout not archived"
+    },
+    "source_sha256": {
+      "apps/api/services/agent_chat_runtime_impl.py": "ad519c538270c825c23b7e2fb92cd86c06db2ba81b43ac026f24afe2c43df78a",
+      "apps/api/services/agent_runtime_read_access.py": "64a24421f129a48d2c5d55dcb55d3089e5fb2965095cda7cd440c704cda203c4",
+      "apps/api/tests/test_agent_runtime_read_access.py": "5247136d75969c35bb4e48c37a765465ebf4572a9a65392f6b32da7d590591fd",
+      "apps/api/tests/test_confidential_auxiliary_models.py": "978dcf7a3d8dc2a2a14f06776193e61f88ef5e40f41277f5979a105f95f7fc51",
+      "scripts/openshell/prove_qwen38_candidate_api.py": "50fdbff51ef4272b9a68c25a59a6d8d69d5dfd0a186336a615b66c75775a1404",
+      "scripts/openshell/prove_qwen38_revoke_api.py": "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",
+      "scripts/openshell/tests/test_prove_qwen38_revoke_api.py": "b70c033bbb8c0514c3f6033f16d3d1fb1311f9cec27007d40a983917c554d675"
+    }
+  },
+  "live_proofs": [
+    {
+      "source": {
+        "path": "artifacts/openshell/flagship/ml02-business-revoke-e166-v1.sanitized.json",
+        "sha256": "ed40558ac9e0c6b2816e8b8234bdd5f9da01abaeb7c829327b96e0d692beacbf",
+        "bytes": 1811
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_HTTP_business_grant_revocation_after_local_model_output",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "business_grant_revoked_after_model_output": true,
+          "independent_active_read_denied_403": true,
+          "revoked_stream_has_no_success_done": true,
+          "original_stream_reports_read_authorization_lost": true,
+          "model_delta_observed_before_revoke": true,
+          "revoked_execution_failed_without_success": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_stream_started_200": true,
+          "sandbox_supervisor_and_forward_absent": true,
+          "child_identity_revoked_before_root_cleanup": true,
+          "old_child_credential_401": true,
+          "root_identity_still_active_before_diagnostic_cleanup": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "SSE_event_counts": {
+          "delta": 1,
+          "error": 1,
+          "progress": 33,
+          "run": 1
+        },
+        "request_run_sha256": "8173070003f827943426d792f99cfab8ed4f9ec5b8c190a8d5edddfa394268bc",
+        "bridge_stream_start_statuses": [
+          200
+        ],
+        "bridge_terminal_statuses": [
+          502
+        ],
+        "revocation_to_terminal_seconds": 18.735,
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "schema_version": "siq.e166.live-launch.v1",
+        "passed": true,
+        "production_eligible": false,
+        "proof_exit_code": 0,
+        "proof_passed": true,
+        "proof_sha256": "ed40558ac9e0c6b2816e8b8234bdd5f9da01abaeb7c829327b96e0d692beacbf",
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      }
+    },
+    {
+      "source": {
+        "path": "artifacts/openshell/flagship/ml02-business-stream-e127-v2.sanitized.json",
+        "sha256": "763b27a7d55131fa0395ddc9e4098494fbc0dfcd494ac8ee683bf52449b6438c",
+        "bytes": 1411
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_streaming_business_HTTP_with_synthetic_authority",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "SSE_single_run_and_done": true,
+          "SSE_no_error": true,
+          "SSE_run_precedes_done": true,
+          "SSE_terminal_succeeded": true,
+          "business_model_marker_returned": true,
+          "business_execution_completed": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_correlated_200": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "SSE_event_counts": {
+          "delta": 4,
+          "done": 1,
+          "progress": 3,
+          "reasoning": 1,
+          "run": 1
+        },
+        "request_run_sha256": "a0c0cd5c13b16542380c2b0ec971b1e46b0981d97e66ce1b92c3ba1050c86f86",
+        "bridge_statuses": [
+          200
+        ],
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "schema_version": "siq.e166.positive-live-launch.v1",
+        "passed": true,
+        "production_eligible": false,
+        "proof_exit_code": 0,
+        "proof_passed": true,
+        "proof_sha256": "763b27a7d55131fa0395ddc9e4098494fbc0dfcd494ac8ee683bf52449b6438c",
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      }
+    }
+  ],
+  "post_cleanup": {
+    "candidate_sandbox_count": 0,
+    "candidate_owner_idle": true,
+    "API_18083_closed": true,
+    "isolated_daemon_47811_closed": true
+  },
+  "not_proven": [
+    "pre_endpoint_unknown_windows",
+    "terminal_result_commit_interruption",
+    "injected_ExecStopPost_failure_automatic_retry",
+    "remaining_host_retrieval_boundaries",
+    "production_IAM_approval_events",
+    "native_CI",
+    "signed_install_upgrade",
+    "online_API_deployment"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "candidate_ready": false,
+  "gateway": "siq-openshell-scope-validation",
+  "image_id": "sha256:b5e1b79c822c83951084ff7eeb59974c9045d4ca7e32648a959541c347b612d0",
+  "limitations": [
+    "The 293 ms value is one observed first-request result, not a latency service-level guarantee.",
+    "This scoped proof does not integrate token-first revocation into the future business sandbox lifecycle.",
+    "The legacy SGLang LAN publication and command-line credential remain unchanged pending a controlled cutover."
+  ],
+  "model_inference_tested": false,
+  "observed": {
+    "candidate_gateway_sandbox_count_after": 0,
+    "client_file_mode": "0600",
+    "first_request_after_rotation_bridge_signature": true,
+    "first_request_after_rotation_status": 401,
+    "first_request_elapsed_ms": 293,
+    "fresh_generation_invalid_bearer_status": 401,
+    "fresh_generation_sandbox_removed": true,
+    "fresh_generation_upstream_offline_status": 502,
+    "old_generation_first_request_denied": true,
+    "pre_rotation_bridge_status": 502,
+    "provider_reprovisioned": true,
+    "sandbox_removed_before_provider_update": true
+  },
+  "policy_sha256": "42bd25afd0e8b69759dc56cb3162142b3d577c66e153acde51cb65b5e5a320f8",
+  "production_eligible": false,
+  "provider": "siq-qwen38-bridge",
+  "provider_resource_version_after": 2,
+  "recorded_at": "2026-09-22T01:08:07+00:00",
+  "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+  "sandbox_name_sha256": "be2bbde7d174fba0e026685c05e3417354f697fe344e9d0445641b339f1e6ebc",
+  "schema_version": "siq.flagship.ml02-qwen38-token-revocation-mitigation/v1",
+  "scope": "isolated_qwen38_generation_token_revocation_runtime",
+  "secrets_included": false,
+  "source_sha256": {
+    "bridge_script": "948cc7c5d8ea00ef9d5b7e5182fca61bc6e4b6a326d9c63ed335aa090e4fbbd8",
+    "negative_tests": "f301521308cfa932453563b72c20c17c85629c60ea712bfe4b9a5fec9e8ef0d8",
+    "proof_script": "32f72cc481f578146633d537412c34433fb8b9db1170cb9cb5d18dddb09f4f3a"
+  },
+  "status": "passed_scoped_mitigation",
+  "validation": {
+    "focused_pytest_passed": 32,
+    "ruff": "passed",
+    "source_artifact_sha256": "92e80f4f814679fcc269ca45a644cd238e0beb646c72455bc8a4be227ae166ce"
+  }
+}

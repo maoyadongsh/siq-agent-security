@@ -1,0 +1,104 @@
+{
+  "batch": "enterprise-runtime-delivery-20260924",
+  "recorded_at": "2026-09-24T00:47:44.353036+00:00",
+  "enterprise_candidate_deployed": true,
+  "formal_client_release": false,
+  "production_iam_business_acceptance": false,
+  "gateway_url": "http://192.168.2.121:10082/agent-security/",
+  "artifacts": [
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/source-manifest.json",
+      "sha256": "ad5dd63d8cf6d2fc1d4b3c61882b305d06a690e4866299e6995fa6b7d5db6f3e",
+      "bytes": 121472
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/api-image.id",
+      "sha256": "1e9b26cce0c2b634631275e160322644566be2f270b69bd1ba60cfb8c9997f7d",
+      "bytes": 71
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/web-image.id",
+      "sha256": "a60ffa3ed323d0be918b4d63313b46a5e5c45922c6553a8547dc6e88f71706be",
+      "bytes": 71
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/backup.sanitized.json",
+      "sha256": "a6fdc89b9495c5fcc8605cd94bd0c48b48e58c9ffd8f2638a3f944b53bcd1e60",
+      "bytes": 199
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/rehearsal.sanitized.json",
+      "sha256": "0c2754cbb51fb3310d82002b1eaaf327c46388556158f1875fe29ce5b223b342",
+      "bytes": 423
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/deployment.sanitized.json",
+      "sha256": "843e7220701fa1d7cbf6f479351172f63a0de6abeadd4a1b5198f03d90e19c95",
+      "bytes": 557
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/resume.sanitized.json",
+      "sha256": "97fff4c205f056ef8aae20cd4362b6a8241193dd2053586ff66c6a3f8901e069",
+      "bytes": 3359
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/browser.sanitized.json",
+      "sha256": "766a2bd0cddfff99d8cc01fd88e1535bc96f142272c15362e8c2495016bb24f7",
+      "bytes": 243
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/deployed-content.sanitized.json",
+      "sha256": "4ec81bdf3dd08db834d08c9d5343ed3dd385d5177551e8d860c100c61762e642",
+      "bytes": 181
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/enterprise-login-desktop.png",
+      "sha256": "704ed8ea4557a0e6abc55a1c6410a66b668976abb1bd035a60208eedc184e9e0",
+      "bytes": 39674
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/enterprise-login-mobile.png",
+      "sha256": "e44507a45ed1d225afa2fbe34e2cd7b3d1813d64949bd4cf71c1f45725f12977",
+      "bytes": 29097
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/rehearse.py",
+      "sha256": "c983efb297fe918f4e166b98cb64abc470b20363b16b5153b2e2926fa104e718",
+      "bytes": 6454
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/deploy.py",
+      "sha256": "970de0bcabbcd1828ebcbd52509d95571b060cd6cc579cebd7457f2049ae4eeb",
+      "bytes": 8189
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/resume.py",
+      "sha256": "71a7416ecd12f5f92364435c1055e192931c8e24685ce6c7d9ef0f030532afcf",
+      "bytes": 4126
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/browser.py",
+      "sha256": "33f96e4836dae67fe4179f9dd42a7848b3b7aa09f83997618ea1529ff3d53a63",
+      "bytes": 1446
+    },
+    {
+      "path": "var/flagship/enterprise-runtime-delivery-20260924/browser-v2.py",
+      "sha256": "762dbe3842fbef3deab2e3b02fcc15fa042f3a2394f599a6d846c9ab50a58d93",
+      "bytes": 1642
+    }
+  ],
+  "private_artifacts_not_published": [
+    "before-enterprise-deploy.private.dump",
+    "before-live-migration.private.dump",
+    "compose-new.private.json",
+    "compose-rollback.private.json",
+    "migration.private.env"
+  ],
+  "limitations": [
+    "business_origin_not_configured",
+    "no_real_user_login_or_cross_site_business_acceptance",
+    "preexisting_flow_worker_restart_loop_not_fixed",
+    "original_platform_launcher_not_modified"
+  ],
+  "source_scope": "E164 commit plus hash-verified navigation/report contract overlay; 697 files"
+}

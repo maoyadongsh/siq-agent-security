@@ -1,0 +1,254 @@
+{
+  "schema_version": "siq.flagship.supervisor-exit-acceptance.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source_repository": "siq-research-engine",
+  "supervisor_exit_acceptance_passed": true,
+  "proofs": [
+    {
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-supervisor-exit-v3.sanitized.json",
+        "sha256": "9aad05e0fa6532f161d339cfbad471271b6debabf7c48146f1835492c3150eda",
+        "bytes": 1295
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": false,
+        "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "pinned_API_supervisor_SIGKILL_after_model_delta": true,
+          "supervisor_exit_stream_has_no_success_done": true,
+          "supervisor_exit_stream_has_error": true,
+          "supervisor_exit_single_original_run": true,
+          "original_API_remains_alive_without_restart": true,
+          "execution_lease_not_renewed_after_supervisor_exit": false,
+          "supervisor_exit_terminal_matches_runtime_contract": true,
+          "recovery_terminal_only_after_natural_lease_expiry": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "SSE_event_counts": {
+          "delta": 2,
+          "error": 1,
+          "progress": 14,
+          "run": 1
+        },
+        "observed_execution_terminal_status": "authority_lost",
+        "failure": "candidate_supervisor_terminal_unconfirmed",
+        "remaining_running_execution_count": 0
+      }
+    },
+    {
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-supervisor-exit-v4.sanitized.json",
+        "sha256": "f46534a18b9cc5e9385936f26e0377d200d99a369f9e71a5e93809c1bc06edf9",
+        "bytes": 2135
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_business_HTTP_supervisor_SIGKILL_with_live_API_after_model_output",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "pinned_API_supervisor_SIGKILL_after_model_delta": true,
+          "supervisor_exit_stream_has_no_success_done": true,
+          "supervisor_exit_stream_has_error": true,
+          "supervisor_exit_single_original_run": true,
+          "original_API_remains_alive_without_restart": true,
+          "running_lease_unchanged_in_all_observations": true,
+          "terminal_close_time_not_future": true,
+          "supervisor_exit_terminal_matches_runtime_contract": true,
+          "recovery_terminal_only_after_natural_lease_expiry": true,
+          "model_delta_observed_before_supervisor_exit": true,
+          "supervisor_exit_execution_closed_without_success": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_stream_started_200": true,
+          "sandbox_supervisor_and_forward_absent": true,
+          "child_identity_revoked_before_root_cleanup": true,
+          "old_child_credential_401": true,
+          "root_identity_still_active_before_diagnostic_cleanup": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "SSE_event_counts": {
+          "delta": 2,
+          "error": 1,
+          "progress": 35,
+          "run": 1
+        },
+        "observed_execution_terminal_status": "authority_lost",
+        "request_run_sha256": "c8d55a6e8f85c5f783b0c09dd328a3d7fc40b8b24c9ac23edeaff84ba704da27",
+        "bridge_stream_start_statuses": [
+          200
+        ],
+        "bridge_terminal_statuses": [
+          502
+        ],
+        "remaining_running_execution_count": 0
+      }
+    }
+  ],
+  "launchers": [
+    {
+      "artifact": {
+        "path": "var/ops/flagship-supervisor-exit-20260924-v3/live.sanitized.json",
+        "sha256": "97af10abf955926025e1e9f98684b084eb8f6d82834c4d442b63223bab5095a4",
+        "bytes": 365
+      },
+      "result": {
+        "passed": false,
+        "production_eligible": false,
+        "proof_passed": false,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-supervisor-exit-v3.sanitized.json",
+        "proof_sha256": "9aad05e0fa6532f161d339cfbad471271b6debabf7c48146f1835492c3150eda",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-supervisor-exit-20260924-v4/live.sanitized.json",
+        "sha256": "3ababd49885dc3559fe094d833f3d2ffd06d23ce2b5722164292075eee270e94",
+        "bytes": 363
+      },
+      "result": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-supervisor-exit-v4.sanitized.json",
+        "proof_sha256": "f46534a18b9cc5e9385936f26e0377d200d99a369f9e71a5e93809c1bc06edf9",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    }
+  ],
+  "v3_read_only_observation": {
+    "artifact": {
+      "path": "var/ops/flagship-supervisor-exit-20260924-v3/terminal-observation.sanitized.json",
+      "sha256": "435a2b9ad372fb661b7b6f6feda1803da8b58b3370f684dde8e8cf5ed128bb30",
+      "bytes": 743
+    },
+    "result": {
+      "schema_version": "siq.supervisor-terminal-observation.v1",
+      "passed": true,
+      "read_only": true,
+      "production_eligible": false,
+      "request_run_sha256": "a75a4990367412b52272279388b2775149e11578d45960f48a2589b717916b64",
+      "initial_lease_until": "2026-09-23T18:55:36.412864",
+      "observed_status": "authority_lost",
+      "terminal_lease_until": "2026-09-23T18:55:40.250221",
+      "terminal_updated_at": "2026-09-23T18:55:40.250246",
+      "observed_at": "2026-09-23T18:55:40.289052",
+      "observations": 395,
+      "checks": {
+        "same_original_execution": true,
+        "running_lease_unchanged_in_all_observations": true,
+        "terminal_close_time_not_future": true,
+        "allowed_terminal": true,
+        "authority_lost_only_after_original_expiry": true
+      }
+    }
+  },
+  "v3_diagnostic_source_manifest": {
+    "artifact": {
+      "path": "var/ops/flagship-supervisor-exit-20260924-v3/source-at-launch/manifest.json",
+      "sha256": "d4e3718cbcbb2ccf804f25398d4a4b59ab4f6d8ee4bd0bad8e713067e4e17c02",
+      "bytes": 361
+    },
+    "result": [
+      {
+        "path": "scripts/openshell/prove_qwen38_supervisor_exit.py",
+        "sha256": "5538bdced07992758465c22b3f145d17b4679f76cded535f6e002932d9d7684b",
+        "bytes": 8665
+      },
+      {
+        "path": "scripts/openshell/tests/test_prove_qwen38_supervisor_exit.py",
+        "sha256": "70c70447ca08b4b711baebf03edd6723916b9888bff5c928961562b56317d21b",
+        "bytes": 5526
+      }
+    ]
+  },
+  "previous_evidence": {
+    "path": "docs/evidence/flagship-optimization-20260921/business-supervisor-exit-result-20260924.json",
+    "sha256": "95c9f09a48f97e1b3b2e95494372520797d29bc3973c7e0990292f92bb3639de",
+    "bytes": 5632
+  },
+  "sources": [
+    {
+      "path": "scripts/openshell/prove_qwen38_supervisor_exit.py",
+      "sha256": "fd6f5d37c0165324b4d7076172e340153bab0fd320450c8409555b9b0c6e1b6e",
+      "bytes": 9152
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_qwen38_supervisor_exit.py",
+      "sha256": "1713f6edfca4dec71ebcb6798ef330ccfcc583516fea69be827ff8e5dc0b1062",
+      "bytes": 6244
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_candidate_api.py",
+      "sha256": "40ae265e4fea89ba3a29d6a8590d9d5a682fbc6620a7ec07532bb92fd44a66f7",
+      "bytes": 14369
+    },
+    {
+      "path": "apps/api/services/qwen38_recovery_manager.py",
+      "sha256": "a2dbbf56cc1aa3b992bf3f4d5fb16c0017f44661101e8c92e4074bebcedb10cb",
+      "bytes": 9064
+    },
+    {
+      "path": "apps/api/services/runtime_coordination.py",
+      "sha256": "4c675810c32475dc1cc297d0dd6b4ebc821c1a1171a63399ace68b93d5369664",
+      "bytes": 19528
+    },
+    {
+      "path": "docs/architecture/qwen38-request-runtime-v1.md",
+      "sha256": "e232e16357d6822905cc45e4bd53b14ffe4d2146248af25f983558bc9fdc5165",
+      "bytes": 80922
+    }
+  ],
+  "tests": {
+    "diagnostic_module": {
+      "passed": 20,
+      "seconds": 0.27
+    },
+    "recovery_contract_nodes": {
+      "passed": 2,
+      "warnings": 6,
+      "seconds": 2.81
+    },
+    "ruff": "passed",
+    "targeted_diff_check": "passed"
+  },
+  "production_code_changed": false,
+  "remaining_scope": [
+    "formal_report_publication_and_authorized_readback",
+    "production_identity_approval_event_integration",
+    "fixed_model_quality_and_performance",
+    "native_platform_acceptance",
+    "release_signing_install_upgrade_rollback"
+  ]
+}

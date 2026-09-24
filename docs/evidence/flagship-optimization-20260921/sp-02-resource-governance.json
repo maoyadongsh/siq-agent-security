@@ -1,0 +1,171 @@
+{
+  "absolute_paths_included": false,
+  "control_package": {
+    "installed_version": "0.4.0",
+    "name": "siq-openshell-control",
+    "source_version": "0.4.0",
+    "version_gate": "passed"
+  },
+  "decision_relay": {
+    "assignment": "deterministic_per_slot",
+    "legacy_single_relay_port": 47611,
+    "plaintext_token_environment_absent": true,
+    "policy_environment_and_config_aligned": true,
+    "pool_port_range": "28652..28750",
+    "relay_port_range": "47612..47710",
+    "relay_process_identity_verified": true,
+    "schema_version": "openshell-decision-relay/v2",
+    "scope_authority_binding_verified": true,
+    "transport": "verified_docker_bridge_gateway/v1",
+    "unique_active_relay_ports": true,
+    "upstream": "http://127.0.0.1:47611"
+  },
+  "hermes_candidate": {
+    "active_bindings_match_candidate": true,
+    "context_sha256": "4064bc316e136b7ec0ce4a801beee5e2110c7a50664a6999691b1b273fefe0d7",
+    "data_classification": "public_research",
+    "hermes_version_exact": true,
+    "image_id": "sha256:7a191ae46683e7fb910c2142a5c0016db6bcc71c56a7f7927eef3bdb3983ded2",
+    "runtime_config_sha256": "3d1784033489c09716aa87159a8d67daaa91675ae3f2566df5c16e69ade635dc",
+    "smoke_status": "passed",
+    "version": "0.21.0"
+  },
+  "implementation": {
+    "control_contract_sha256": "96b19b2dc0ea29e722fff3000f45bed072fc12aefddee9d349afae9c157dc883",
+    "control_package_manifest_sha256": "58f64d205fa39da003d687400078b80baf44d5d67992cf98427b4f6f951e4879",
+    "environment_gate_sha256": "f4221d97c7ef6e2354a403b4354ff836876729619112f0e25bf8d2127ace0d76",
+    "go_relay_config_sha256": "25c4def2ab98c5c1d1782ba894b8bba1c33e3f0aec4f8cbab7c44fee295f6572",
+    "go_relay_main_sha256": "92eccfe3c479fe620149011f1fbf73c64b8ce1397d9e530aff03f72d445d6dae",
+    "governance_tool_sha256": "0ed580b985094de7b5f764dcbb7f77a7f6558600636ac3d415b2f8a1daa3f90b",
+    "policy_compiler_sha256": "1350788b105d2b1ad479e93f6b03386aaa2e137b5885aee02d4e42147890eeb6",
+    "pool_registry_sha256": "8fe4435bc7e7ecea8ce1f86c32cc0c8643de54f02c4c655b2840646638bba1ac",
+    "relay_config_builder_sha256": "bdec3fa538415edcaf5682447fbd7019d733f9816788fc9c4924635abfd940f2",
+    "relay_launcher_sha256": "ee49f2d713b05be5ec5b0d2d0791ab62d3575e83dbf7284f71c5da39a0ecba61",
+    "relay_v2_schema_sha256": "e49b21aade5ff7f3df632048e32a2ac3ef5c5ebbdddce3888bf4e3af987b70c5",
+    "resource_runbook_sha256": "512a5f74aedc4a5376afaeb5d13246449fafa0a508b1f102bd6f35614792bb28",
+    "wide_pilot_sha256": "d080974f0c70c60a3f77928d0bf8e23907a5375aec76a1a5f04c0da8f56a9544"
+  },
+  "legacy_migration": {
+    "business_names_included": false,
+    "fail_closed_discoveries": [
+      "failed_start_lease_residue",
+      "runtime_config_provenance",
+      "openshell_label_length",
+      "manifest_resource_contract",
+      "installed_control_package_drift",
+      "fixed_relay_listener_collision",
+      "relay_v1_dynamic_listener_rejection"
+    ],
+    "failed_attempts_count": 7,
+    "identity_verified_and_drained_count": 2,
+    "legacy_remaining_count": 0,
+    "pre_migration_count": 2,
+    "private_plan_mode": "0600",
+    "procedure": "verified_drain_gateway_activate_then_recreate",
+    "raw_run_ids_included": false,
+    "raw_sandbox_ids_included": false,
+    "raw_sandbox_names_included": false,
+    "replacement_generation_count": 2,
+    "stop_recreate_exercised": true
+  },
+  "limitations": [
+    "OpenShell 0.0.83 has no per-sandbox disk quota or PID-limit CLI flag; this evidence does not claim those controls.",
+    "The two active bindings remain non-production canaries with readiness_effect=none.",
+    "SP-02 closes the gateway and resource-governance hold only; model availability, clean repository state, refreshed exact candidate locks, and CI-01 native runner verification remain separate gates."
+  ],
+  "live_audit": {
+    "artifact": "artifacts/openshell/flagship/sp02-resource-governance.sanitized.json",
+    "artifact_sha256": "ae4d231081ad8d1aff3fa1b1d66d78465bc19fd2b8bac66f6c9f0b7e2ddab852",
+    "compliant": 2,
+    "gateway_status": "healthy",
+    "legacy_attested": 0,
+    "operational_ready": true,
+    "payload_column_read": false,
+    "private_live_validation_mode": "0600",
+    "private_live_validation_sha256": "b2dfdb94f5ca4e88c1ab1c4fcab9c718645b5809b0b018ac1e8bf1fd55323d54",
+    "requires_action": 0,
+    "resource_governance_passed": true,
+    "total": 2
+  },
+  "openshell": {
+    "creation_paths": [
+      "formal_siq_analysis",
+      "security_probe",
+      "wide_pilot",
+      "canary_and_pool",
+      "hermes_minimal_poc",
+      "siq_analysis_observe_poc"
+    ],
+    "formal_transaction_binds_private_lease_digest": true,
+    "gateway": {
+      "activation_record_verified": true,
+      "bind_contract": "scoped_mount_patch_activated",
+      "rendered_configuration_verified": true,
+      "runtime_identity": "verified",
+      "status": "healthy",
+      "target_patch_sha256": "9786e926ba5fd0419e384e39645f2fb473a50bf4155bec4e65642474d07e3e1d"
+    },
+    "identity_verified_cleanup_remains_available_after_expiry": true,
+    "new_lease_expiry_degrades_operational_status": true,
+    "required_labels": [
+      "ai.siq.resource-profile",
+      "ai.siq.resource-contract-sha256",
+      "ai.siq.owner-ref",
+      "ai.siq.purpose",
+      "ai.siq.expires-at"
+    ],
+    "resource_contract": {
+      "all_profiles_cpu_limited": true,
+      "all_profiles_gpu_count_explicit": true,
+      "all_profiles_memory_limited": true,
+      "canonical_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+      "disk_quota_cli_supported": false,
+      "file_sha256": "c3cc5b2ed85002ce14a1db3f8186d49ee71884a64a2a0d26fcc5b0b4789154e6",
+      "label_digest_encoding": "sha256_base64url_unpadded_43_chars",
+      "path": "infra/openshell/resource-governance/profiles.v1.json",
+      "private_lease_digest_encoding": "sha256_hex_64_chars",
+      "profile_count": 6
+    },
+    "version": "0.0.83"
+  },
+  "pool": {
+    "all_manifests_bind_resource_profile_contract_and_expiry": true,
+    "all_manifests_running": true,
+    "binding_count": 2,
+    "candidate_identity_match_count": 2,
+    "container_running_count": 2,
+    "probe_passed_count": 2,
+    "readiness_effect": "none",
+    "status_passed_count": 2,
+    "unique_local_ports": true
+  },
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "recorded_at": "2026-09-21T18:16:00Z",
+  "schema_version": "siq.flagship.sp02-resource-governance/v2",
+  "scope": "openshell_resource_limits_gateway_migration_hermes_v0210_pool_and_relay_v2",
+  "secrets_included": false,
+  "status": "passed_live_migration",
+  "test_results": {
+    "agentshield_go_test_all": "passed",
+    "agentshield_go_vet_all": "passed",
+    "control_api_relay_schema": "1 passed",
+    "diff_check_both_repositories": "passed",
+    "live_probe": "2/2 passed",
+    "live_status": "2/2 passed",
+    "python_compile": "passed",
+    "relay_and_policy": "60 passed",
+    "relay_cross_compile": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "research_focused_batch_a": "127 passed",
+    "research_focused_batch_b": "94 passed",
+    "resource_environment_pool": "42 passed",
+    "ruff": "passed",
+    "runtime_and_lifecycle": "135 passed",
+    "shell_syntax": "passed"
+  }
+}

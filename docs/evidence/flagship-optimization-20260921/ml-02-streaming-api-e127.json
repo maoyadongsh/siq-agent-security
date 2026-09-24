@@ -1,0 +1,103 @@
+{
+  "schema_version": "siq.flagship.evidence.streaming-api.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.streaming-api-evidence.v1",
+    "captured_at_utc": "2026-09-22T21:44:33.490113+00:00",
+    "scope": "actual_streaming_business_HTTP_Hermes_Qwen_and_independent_API_finalization",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "adjacent_tests_passed": 62,
+      "adjacent_warnings": 151,
+      "additional_nonoverlapping_proof_tests_passed": 7,
+      "ruff_passed": true,
+      "compile_passed": true,
+      "diff_check_passed": true
+    },
+    "live_proof": {
+      "schema": "siq.qwen38.candidate-api-proof.v1",
+      "passed": true,
+      "scope": "actual_streaming_business_HTTP_with_synthetic_authority",
+      "production_ready": false,
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run_and_done": true,
+        "SSE_no_error": true,
+        "SSE_run_precedes_done": true,
+        "SSE_terminal_succeeded": true,
+        "business_model_marker_returned": true,
+        "business_execution_completed": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "business_HTTP_attempted": true,
+      "business_HTTP_status": 200,
+      "SSE_event_counts": {
+        "delta": 5,
+        "done": 1,
+        "progress": 3,
+        "reasoning": 1,
+        "run": 1
+      },
+      "request_run_sha256": "37c650680453973111de51025e322fc3d49bc2ba789a2491dae9de1c701b4cc1",
+      "bridge_statuses": [
+        200
+      ],
+      "remaining_running_execution_count": 0
+    },
+    "live_proof_sha256": "1a9544d4c72cdac303cbe7c89df2ab3ec62a2018fafefe6c6eae8556ebb63a57",
+    "launcher": {
+      "API_model_bridge_unchanged": true,
+      "isolated_daemon_exit_code": 0,
+      "isolated_daemon_port_closed": true,
+      "passed": true,
+      "production_eligible": false,
+      "runs": [
+        {
+          "exit_code": 0,
+          "graceful": true,
+          "passed": true,
+          "suffix": "v1"
+        }
+      ],
+      "schema_version": "siq.e127.live-launch.v1"
+    },
+    "launcher_sha256": "2d44bca71796b2a1d20b4d4b43fc678127c29a33612b7a69fbfdd5db4c895bba",
+    "not_proven": [
+      "API_crash_restart_inflight_cancellation_and_revocation",
+      "other_host_retrieval_paths_and_independent_history_active_authorization",
+      "real_IAM_business_approval_and_event_projection",
+      "native_CI_production_readiness"
+    ],
+    "source_sha256": {
+      "scripts/openshell/prove_qwen38_candidate_api.py": "974b80574525ef8ee92bad49d0cf357f27dc16595406392822848e8d1600197a",
+      "scripts/openshell/prove_qwen38_business_api.py": "8c9979c5d7799115aa0cf752f60794d5711bbec53ca2b412b9569890e7582ba4",
+      "scripts/openshell/prove_qwen38_streaming_api.py": "344b8095a242e9a634aea18cf19991867ee292c394bce74f52935b150a439acc",
+      "scripts/openshell/tests/test_prove_qwen38_streaming_api.py": "bfbd30473be3d9b598ed591dd54b948bbe7f76faa58698f60373416cd58bf89c",
+      "apps/api/services/agent_runtime_streaming.py": "784b172b97630d4fc8e4fac85f2b6c47fe91025d7ddb0bfbdc1be01b4ffdc532",
+      "apps/api/services/agent_chat_runtime_impl.py": "fb9a0613b5b5ce7431c2a5c58b58c9384ba8d7771feff9a751eaf50cc171a082",
+      "apps/api/routers/agent_user_router.py": "1ab01480964695eb8e121b3b07418ee6d14f75d7649522909ead50adc41b507e",
+      "apps/api/README.md": "ee30b84f91c6739536916ed85a741f959c38647305bfeac0ae2aacdc74a6737b",
+      "docs/architecture/qwen38-request-runtime-v1.md": "835f253c1e3cef03c917e36d16d86e204fcb8bd1962e2cc0fbfc3be642e8ee1c",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "16bcd308df4c9e694775cad9ac3ce1fee51a13a2fa023c600b70ac23780285d8"
+    }
+  },
+  "research_evidence_sha256": "348d88c981091e3354722665143a17101f869d1819d0e0f80e3106b04a07bb16",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

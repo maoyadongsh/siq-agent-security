@@ -1,0 +1,64 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-postgresql-revocation.v1",
+  "captured_at_utc": "2026-09-22T07:21:04Z",
+  "scope": "isolated_postgresql_business_grant_revocation_containing_real_hermes_openshell_sandbox",
+  "secrets_included": false,
+  "source_sha256": {
+    "prove_qwen38_scoped_sandbox.py": "c985953ad7bcebeb5a5cae09ecf268b1098068ad8a9f53a5af486ce604192cbc",
+    "prove_qwen38_postgresql_guard.py": "5f036934520013ffb8946888d9d219066bbaf0d771d60ca70f2fb22112c2c3c9"
+  },
+  "runtime_evidence": {
+    "sandbox_relative_path": "artifacts/openshell/flagship/ml02-qwen38-postgresql-guard.sanitized.json",
+    "sandbox_sha256": "9e985e157695bf36da273bd6e1220abb9d67a6a1e1714859fa112b020ecd3be3",
+    "database_relative_path": "artifacts/openshell/flagship/ml02-qwen38-postgresql-guard-db.sanitized.json",
+    "database_sha256": "7a6d4ed4a0ed9f763ce745bd2993b2a7bbc3b20bdc814ea41c805e8202b3c23f",
+    "secrets_included": false,
+    "real_business_data_used": false,
+    "production_eligible": false
+  },
+  "isolated_database": {
+    "schema_source": "live_siq_app_schema_only_dump",
+    "production_rows_copied": false,
+    "synthetic_accounts_created": 2,
+    "synthetic_grants_created": 1,
+    "synthetic_grants_revoked": 1,
+    "grant_and_revoke_audit_count": 2,
+    "temporary_database_removed": true,
+    "live_grants_after": 0
+  },
+  "real_runtime": {
+    "business_snapshot_bound_to_company_scope": true,
+    "candidate_gateway_owner_reserved_before_create": true,
+    "hermes_0210_run_completed": true,
+    "model_bridge_status": 200,
+    "model_request_correlated_to_bridge_receipt": true,
+    "broker_identity_generation_after_renewals": 3,
+    "old_generations_denied": true,
+    "postgresql_authorization_tick_allowed_while_grant_active": true,
+    "postgresql_grant_revoked_before_next_tick": true,
+    "next_tick_revoked_broker_rotated_model_and_removed_real_sandbox": true,
+    "provider_reprovisioned_and_new_generation_positive": true,
+    "candidate_gateway_and_owner_empty_after": true,
+    "model_and_bridge_services_active": true,
+    "model_and_bridge_automatic_restart_counts": 0
+  },
+  "verification": {
+    "real_postgresql_guard_proof": "passed",
+    "focused_and_adjacent_pytest": "54 passed",
+    "ruff": "passed",
+    "python_compile": "passed",
+    "git_diff_check": "passed"
+  },
+  "boundary": {
+    "candidate_ready": false,
+    "production_eligible": false,
+    "production_user_or_grant_used": false,
+    "siq_iam_integrated": false,
+    "business_broker_backend": "synthetic_postgresql_adapter",
+    "api_revocation_synchronously_notifies_guard": false,
+    "standalone_formal_start_stop_recover_command": false,
+    "persistent_supervisor_process": false,
+    "agentshield_native_business_tool_positive_tested": false,
+    "three_repository_native_ci_accepted": false
+  }
+}

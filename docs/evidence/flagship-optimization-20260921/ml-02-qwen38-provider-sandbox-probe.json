@@ -1,0 +1,42 @@
+{
+  "candidate_ready": false,
+  "gateway": "siq-openshell-scope-validation",
+  "image_id": "sha256:b5e1b79c822c83951084ff7eeb59974c9045d4ca7e32648a959541c347b612d0",
+  "limitations": [
+    "The 502 result is an expected negative result while the SGLang upstream is not on host loopback; no Qwen inference was attempted.",
+    "This probe uses an existing Hermes 0.21 image for Python protocol testing; it does not bind a Qwen candidate image, business scope, or Hermes inference.",
+    "The live legacy SGLang service still publishes on the LAN and retains the pre-migration credential transport."
+  ],
+  "observed": {
+    "bridge_service_active": true,
+    "candidate_gateway_sandbox_count_after": 0,
+    "invalid_bearer_status": 401,
+    "legacy_sglang_changed": false,
+    "legacy_sglang_service_active": true,
+    "placeholder_shape_valid": true,
+    "sandbox_auto_removed": true,
+    "valid_placeholder_upstream_offline_status": 502
+  },
+  "policy_sha256": "42bd25afd0e8b69759dc56cb3162142b3d577c66e153acde51cb65b5e5a320f8",
+  "production_eligible": false,
+  "prompt_or_response_saved": false,
+  "provider": "siq-qwen38-bridge",
+  "recorded_at": "2026-09-22T01:08:10+00:00",
+  "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+  "resource_profile": "siq_analysis_security_probe",
+  "sandbox_name_sha256": "09d0f61e90b30b235af6d575bd206799fa923a8dcbfedac1f3a27466c6271034",
+  "schema_version": "siq.flagship.ml02-qwen38-provider-sandbox-probe/v1",
+  "scope": "isolated_qwen38_provider_placeholder_and_bridge_negative_runtime",
+  "secrets_included": false,
+  "source_sha256": {
+    "negative_tests": "cea4aeba1b695d90c5916d48e7e6877d615cb7da765d05b75c1b2321ff2bc027",
+    "policy": "42bd25afd0e8b69759dc56cb3162142b3d577c66e153acde51cb65b5e5a320f8",
+    "probe_script": "d1f4b718e7cd12259ad0306c49be9139e6efb05a3c34c27c1cdef7a578ec7e34"
+  },
+  "status": "passed_negative_probe",
+  "validation": {
+    "focused_pytest_passed": 9,
+    "ruff": "passed",
+    "source_artifact_sha256": "ea3d6c6bd23c7e40aa1073348b4a2e74cb7627af117d0230103f37962700fdab"
+  }
+}

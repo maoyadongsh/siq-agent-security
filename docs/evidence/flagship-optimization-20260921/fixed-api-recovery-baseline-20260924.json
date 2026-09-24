@@ -1,0 +1,98 @@
+{
+  "schema_version": "siq.flagship.fixed-api-recovery.v1",
+  "generated_at": "2026-09-23T23:46:34.020247+00:00",
+  "passed": true,
+  "goal_complete": false,
+  "main_api_cutover": false,
+  "formal_release": false,
+  "v4": {
+    "passed": true,
+    "live_api_changed": false,
+    "production_database_modified": false,
+    "production_ready": false,
+    "checks": {
+      "restored_database_ledger_matches": true,
+      "fixed_source_first_start": true,
+      "delivery_routes_loaded": true,
+      "anonymous_read_write_denied": true,
+      "fixed_source_cold_restart": true,
+      "original_services_unchanged": true
+    },
+    "source_file_count": 1637,
+    "base_image_id": "sha256:4f8d1afed6d58037c680221ca6dd9fb4737b7ecfa7d4809ca809fdc0c7d9b786",
+    "container_removed": true,
+    "temporary_database_removed": true
+  },
+  "previous_attempts_preserved": 3,
+  "all_four_temporary_databases_absent": true,
+  "temporary_container_absent": true,
+  "source_manifest_rechecked": true,
+  "dependency_scope": "same_host_python_and_venv_readonly_mounts_not_portable_full_dependency_image",
+  "research_artifacts": [
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/frozen-source-manifest-v3.json",
+      "sha256": "72eb9865e6564bb7e7b11fdce0668a9cfefcb47fd5e58ae3142659b1fd3e8101",
+      "bytes": 210345
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/prove_frozen_api.py",
+      "sha256": "24462f7dd2acb7c13f0d23a2ac71ad7e40f0e1a43522fb5d19593c19bcc66594",
+      "bytes": 8406
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/prove_frozen_api_v2.py",
+      "sha256": "a13a3feeace8e5abe844cb12ab0739e1573c6ab25201e92a6c0ab4644e138625",
+      "bytes": 8523
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/prove_frozen_api_v3.py",
+      "sha256": "964b2e11adeb1f23274f13b5fcffc00afc02d5343564fbaae519427538d75ae8",
+      "bytes": 8526
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/prove_frozen_api_v4.py",
+      "sha256": "f1096426f9814e19694a559137ccf234b39257ff220ae06538786b4706645770",
+      "bytes": 8620
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/launch_frozen_preview.py",
+      "sha256": "ab1db286424c970fec852231ad882eff037fc1762d0eb7fdd790d8fa30021303",
+      "bytes": 768
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/launch_frozen_preview_v2.py",
+      "sha256": "9e4c508ccae08570d2ee32a68cbc4784389f4bc1f23b05eb7a10358bbba09eed",
+      "bytes": 781
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/launch_frozen_preview_v3.py",
+      "sha256": "b585d2af81076d79203e38219638e883d9dd8761cb6bce978222df24fd206b35",
+      "bytes": 781
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/launch_frozen_preview_v4.py",
+      "sha256": "ab2a109fd0d0066d702be8cdd54d7d3f100228e4d8a1c1a801d6033a5d7dd3ad",
+      "bytes": 781
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/frozen-api.sanitized.json",
+      "sha256": "7033cb4ef6e36313e88a0b7dee3acc722be4a9262715b683c45cd48867454eef",
+      "bytes": 286
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/coldstart-v2/frozen-api.sanitized.json",
+      "sha256": "7033cb4ef6e36313e88a0b7dee3acc722be4a9262715b683c45cd48867454eef",
+      "bytes": 286
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/coldstart-v3/frozen-api.sanitized.json",
+      "sha256": "7033cb4ef6e36313e88a0b7dee3acc722be4a9262715b683c45cd48867454eef",
+      "bytes": 286
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/coldstart-v4/frozen-api.sanitized.json",
+      "sha256": "c9499ab0bcd4856ec501eb1b7e0c8fb22751f8dcd95c1a16700633895a95120f",
+      "bytes": 569
+    }
+  ]
+}

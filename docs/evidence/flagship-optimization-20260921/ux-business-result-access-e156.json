@@ -1,0 +1,60 @@
+{
+  "schema_version": "siq.flagship-business-result-validation/v1",
+  "batch": "E156",
+  "recorded_on": "2026-09-23",
+  "goal_status": "active",
+  "scope": "business-source independent result read API and cross-repository contracts; first stage, not formal report access",
+  "report": {
+    "path": "docs/development/ux-business-result-access-e156-validation-20260923.md",
+    "sha256": "fcfedb1943eb398dc9967b5a20deb0fb9a3b966fc87dab647b2a7e06ace595c8",
+    "bytes": 4959
+  },
+  "specification": {
+    "path": "docs/development/business-result-access-e156-spec.md",
+    "sha256": "477540a65aa14ccfc46cf62297432360859dde11009399e5f3103b334d76607a",
+    "bytes": 1834
+  },
+  "sources": {
+    "path": "var/flagship/ux-e156/source-manifest.json",
+    "sha256": "9e1c6d7e01e2e3024a523d2b6e6e9fda4300b88fd6f8c8ea59f86473eb7c5042",
+    "bytes": 4905
+  },
+  "validation": {
+    "research_api_tests": 108,
+    "new_result_api_tests": 24,
+    "security_contract_tests": 275,
+    "research_transport": "in-process FastAPI HTTP with temporary SQLite account and exact scope grants; fixture authenticated principal and real anonymous rejection",
+    "logs": [
+      {
+        "path": "var/flagship/ux-e156/api-complete.log",
+        "sha256": "e898ec45d03b25b51e7723f1a88e55af97b64ea4b3d3d9e959ab53769f12490d",
+        "bytes": 1524
+      },
+      {
+        "path": "var/flagship/ux-e156/security-contracts-complete.log",
+        "sha256": "26ddcaead1e63f5c5ff00fdfcc4ed7ce51a18fdb5feffc8d93e183ed7a6097e4",
+        "bytes": 860
+      },
+      {
+        "path": "var/flagship/ux-e156/ruff-final.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "bytes": 19
+      }
+    ],
+    "both_repository_diff_check": true
+  },
+  "candidate_path": "var/flagship/ux-e156/candidate.json",
+  "prior_ui_candidate_reference": {
+    "path": "var/flagship/ux-e155/candidate.json",
+    "sha256": "3613c27f43a349ea1ba7164f9ac4ce295a2949feef3f1265717f12309bef6cc2",
+    "bytes": 1661
+  },
+  "limitations": [
+    "No security-console connection to these routes yet",
+    "Current business run buffer only; no durable result history yet",
+    "Generated reply only; publication not attested",
+    "No new report navigation or download",
+    "No real model, sandbox or production IAM proof this batch",
+    "No online API deployment, installed binary replacement or release"
+  ]
+}

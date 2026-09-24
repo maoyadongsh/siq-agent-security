@@ -1,0 +1,29 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-native-dispatcher-offline-denial/v1",
+  "recorded_at": "2026-09-22T04:14:37Z",
+  "scope": "isolated_qwen_image_native_hermes_dispatcher_without_decision_service",
+  "status": "passed_offline_fail_closed_only",
+  "candidate_image_id": "sha256:8270c90285c2100670c11db4bec84f40f574407363ede1ffdda476be1b292edb",
+  "candidate_image_state_sha256": "8eba50c6dba40447bad3a347034e91daabefbc66e3e26f08580eaf35873149a0",
+  "image_builder_sha256": "5ff144b050b757d3523d5240aae844de24dafddfa6fe0c015f5ca6aa59c1de28",
+  "checks": {
+    "real_hermes_handle_function_call": true,
+    "tool": "terminal",
+    "decision_service_available": false,
+    "fail_closed_error_observed": true,
+    "side_effect_file_absent": true,
+    "docker_network_disabled": true,
+    "candidate_image_state_offline_dispatcher_fail_closed": true,
+    "focused_tests_passed": 36,
+    "focused_and_adjacent_tests_passed": 139,
+    "ruff_passed": true,
+    "python_compile_passed": true,
+    "production_eligible": false
+  },
+  "limitations": [
+    "This directly invoked the native Hermes dispatcher in a short-lived offline container, not through a Hermes gateway run.",
+    "No authorized positive AgentShield decision, business helper execution through the dispatcher, Qwen model inference, or real enterprise database was exercised.",
+    "The previously proven sandbox helper allow and revoke path remains a separate E61 proof."
+  ],
+  "secrets_included": false
+}

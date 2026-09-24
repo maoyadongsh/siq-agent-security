@@ -1,0 +1,40 @@
+{
+  "schema_version": "siq.flagship.ml02-local-grant-administration/v1",
+  "recorded_at": "2026-09-22T05:20:21Z",
+  "scope": "research_engine_nonproduction_local_confidential_grant_issue_revoke_and_retry",
+  "status": "passed_isolated_business_api_and_database_contract",
+  "source_sha256": {
+    "data_scope_service": "fc6da85ef0ebacc1fb22f02a10c8dfb4fedbcc8702136a620bf9428e6449a53c",
+    "local_grant_router": "79768ddc670c5cce6217b8cabe54ca6e820809d3fde7c666212a3b2ea99dc60a",
+    "api_registration": "a0a9a9481f36824f672e1ef8206daad0b3f6b99d705245869a5b21ba40d96f3f",
+    "database_schema": "408f44a9c1e9494f8de1e318e0b9cde829dcb38e0eebe3cce55950afcb1fc715",
+    "migration_017": "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",
+    "grant_api_tests": "583889243a81b367e35942a14a5eea88afdf29f56d5287a48b4419e5f9623f38",
+    "migration_governance_tests": "5a99753baff8e16ac1e5a21eb6c567c47b6c9cf88b1f1260c63952fbfb94bbf2"
+  },
+  "checks": {
+    "candidate_mode_explicit_opt_in": true,
+    "production_mode_denied": true,
+    "unauthenticated_denied": true,
+    "super_admin_and_distinct_target_required": true,
+    "tenant_server_derived_and_classification_fixed": true,
+    "grant_and_sanitized_audit_atomic": true,
+    "lost_response_retry_returns_same_grant": true,
+    "changed_payload_same_request_key_denied": true,
+    "database_unique_constraint_rejects_duplicate_key": true,
+    "revoke_idempotent_and_live_check_denied_after": true,
+    "migration_governance": "pass_15_to_17_append_only",
+    "api_route_registered": true,
+    "expanded_tests_passed": 138,
+    "optional_postgresql_test_skipped": 1,
+    "ruff_and_diff_check": "pass",
+    "production_eligible": false
+  },
+  "limitations": [
+    "The API was exercised against an isolated local SQLite database with a local account; no production PostgreSQL migration or real enterprise IAM service was changed.",
+    "The local grant admin API is disabled by default and always disabled in production mode. SIQ integrated deployments must use SIQ Org IAM as the identity and organization authority.",
+    "Revocation blocks the next live business check but is not yet wired to immediate broker admission withdrawal for an already running Qwen sandbox.",
+    "Formal Qwen start/stop, periodic authoritative reauthorization, Hermes gateway tool dispatch, and positive local model inference remain unverified."
+  ],
+  "secrets_included": false
+}

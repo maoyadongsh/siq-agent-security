@@ -1,0 +1,72 @@
+{
+  "schema_version": "siq.flagship.project-attachment-access.v1",
+  "date": "2026-09-24",
+  "source_repository": "siq-research-engine",
+  "sources": [
+    {
+      "path": "apps/api/services/project_attachment_access.py",
+      "sha256": "611b25c0b66d1a60a74fadf09b5f6f67936a2e03f92bb22faa07e77f712d395f",
+      "bytes": 3264
+    },
+    {
+      "path": "apps/api/services/chat_attachment_access.py",
+      "sha256": "bf18d9da8a6849666d8eaa0a78e7c99e105142b93cbd3bc2fd385ebefd56b06d",
+      "bytes": 3891
+    },
+    {
+      "path": "apps/api/services/agent_runtime_attachments.py",
+      "sha256": "48c72753f81af117bc39be720cddbac1fc0b900bd38a8e3f60b485c9bc9de977",
+      "bytes": 30944
+    },
+    {
+      "path": "apps/api/routers/primary_market_meeting.py",
+      "sha256": "415f951aeb67c900352d4695559067c83c7befb5408cdfb13e61e825f7480fed",
+      "bytes": 107053
+    },
+    {
+      "path": "apps/api/tests/test_project_attachment_access.py",
+      "sha256": "e99ce94383d7048c8f8d5fd513d46bd2e1900a4e6f5b8515b3332eccaab5f040",
+      "bytes": 11926
+    },
+    {
+      "path": "apps/api/tests/test_primary_market_meeting_router.py",
+      "sha256": "cb6b505af8ef9a9d2f341834e02d69a83695ae60dec3f0687cc4a43c58351eea",
+      "bytes": 49822
+    },
+    {
+      "path": "docs/architecture/project-attachment-access-v1.md",
+      "sha256": "caa3702ae2fa3b54565bef9f53f81c654a3498dbc2f5259acc59c9d2c8a34800",
+      "bytes": 1477
+    },
+    {
+      "path": "docs/reports/project-attachment-access-20260924.md",
+      "sha256": "d0fd6482970477196ae2d94f6abf0209ed93e9f3a190a3865fe3d141102183c1",
+      "bytes": 2804
+    }
+  ],
+  "validation": {
+    "pytest": {
+      "passed": 127,
+      "warnings": 162,
+      "seconds": 54.51,
+      "scope": "nine modules listed in the report",
+      "live_model": false
+    },
+    "ruff_services_and_new_tests": "passed",
+    "ruff_router_and_existing_tests": "passed with existing B008 excluded",
+    "scoped_diff_check": "passed"
+  },
+  "deployed": false,
+  "production_eligible": false,
+  "preview_unchanged": {
+    "api_port": 18086,
+    "api_invocation": "8e80e725060d4cafa55eda5bf784eefb",
+    "web_invocation": "7d1e3feefdda4c0f9a0649baafe8f09b"
+  },
+  "limitations": [
+    "Synthetic local test data and mocked model/session dependencies",
+    "Formal report publication authorization remains unfinished",
+    "Same-UID filesystem replacement races not fully eliminated",
+    "Existing preview startup manifest must not be reused for changed source"
+  ]
+}

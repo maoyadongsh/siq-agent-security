@@ -1,0 +1,46 @@
+{
+  "candidate_ready": false,
+  "current_candidate_evidence": "ml-02-qwen38-hermes-bridge-trace.json",
+  "existing_nemotron_image_pointer_preserved": true,
+  "historical_candidate": true,
+  "limitations": [
+    "No Qwen-specific Hermes image has been built or bound to this snapshot.",
+    "The existing image builder still targets the shared Hermes candidate state and MiniMax auth template; using it unchanged would overwrite the Nemotron candidate pointer.",
+    "The live SGLang service has not been cut over to the host loopback."
+  ],
+  "production_eligible": false,
+  "recorded_at": "2026-09-22T01:15:15.450325+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-fresh-runtime-snapshot/v1",
+  "scope": "qwen38_fresh_confidential_hermes_runtime_without_image_build",
+  "secrets_included": false,
+  "snapshot": {
+    "cloud_fallback": "forbidden",
+    "compiled_config_sha256": "8693f18a38acee7a6b2033693acd0dfdf3b736cb8b8521061e1b4526b52267ba",
+    "credentials_copied": false,
+    "data_classification": "confidential_local",
+    "directory_mode": "0700",
+    "fallback_provider_count": 0,
+    "file_count": 2,
+    "host_runtime_records_copied": false,
+    "manifest_sha256": "520dbe7931538a86b6044f81b26142f2eddfdf44c153652938522877af080943",
+    "mode": "fresh",
+    "model_alias": "siq.local.qwen3.8-27b.nvfp4.v1",
+    "model_id": "Qwen3.8-27B-NVFP4",
+    "name": "qwen38-v0210-20260922a",
+    "provider_key_reference": "SIQ_QWEN38_BRIDGE_TOKEN",
+    "required_security_plugin": true,
+    "sqlite_database_count": 0,
+    "symlink_count": 0
+  },
+  "source_sha256": {
+    "qwen_route": "dbb924240081b9c8a9ae5edd8d0417fd9937c94e04eaf3a1f1ea99e806be39f9",
+    "runtime_config_compiler": "ef0d66da75e4baf0d05628e2c6c13ca30c0521b67de8d132b28103d3dcfbe9ba",
+    "snapshot_script": "9f5cab038bacd884bfb2baaf0401d9b87b41c6702465db48404ab2541e2cc8bf"
+  },
+  "status": "passed_snapshot_only",
+  "validation": {
+    "focused_pytest_passed": 34,
+    "mount_safety": "passed",
+    "snapshot_tree_audit": "passed"
+  }
+}

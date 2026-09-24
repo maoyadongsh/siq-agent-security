@@ -1,0 +1,35 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-candidate-data-lease/v1",
+  "recorded_at": "2026-09-22T04:43:40Z",
+  "scope": "real_qwen_candidate_sandbox_durable_data_lease_synthetic_broker",
+  "status": "passed_isolated_lease_controller_canary",
+  "source_sha256": {
+    "candidate_lease_controller": "e21142a8b20b2a860123abb35186c691f4dfd59c4d64dc918883d059c2e68439",
+    "candidate_lease_tests": "e59fbf3d77f70147067e634ffeeffe884904dc06542168dc2ccc13e75e88a7ee",
+    "sandbox_proof": "dcf495338c2548925338db7dcf700f54a22730457994b56286a6b99418df4cf2"
+  },
+  "private_proof_sha256": "ac79433abe3b185304c6172668b6ca5488bd904d90a5553911bedb91e770b3fc",
+  "checks": {
+    "initial_generation": 1,
+    "renewal_generations": [2, 3],
+    "controller_reconstructed_before_second_renewal": true,
+    "previous_token_denied_after_each_renewal": true,
+    "lease_revoked_before_sandbox_stop": true,
+    "business_helper_denied_after_final_revoke": true,
+    "corrupt_lease_recovery_revokes_admission_tested": true,
+    "out_of_band_generation_drift_revokes_admission_tested": true,
+    "initial_state_write_failure_revokes_admission_tested": true,
+    "synthetic_backend_calls": 6,
+    "synthetic_audit_events": 6,
+    "candidate_gateway_empty_after": true,
+    "candidate_broker_listener_stopped": true,
+    "focused_and_adjacent_tests_passed": 148,
+    "production_eligible": false
+  },
+  "limitations": [
+    "The lease controller was called by a temporary synthetic scope proof; it is not wired into the formal Qwen business start/stop lifecycle or a renewal scheduler.",
+    "Reconstructing the controller object tested private state persistence; it was not a real supervisor crash or process-restart recovery drill.",
+    "Real enterprise IAM/database authorization, Hermes gateway tool dispatch, positive Qwen inference, and writer quiescence remain unverified."
+  ],
+  "secrets_included": false
+}

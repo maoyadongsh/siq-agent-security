@@ -1,0 +1,46 @@
+{
+  "broker_identity_ttl_seconds": 600,
+  "checks": {
+    "candidate_gateway_empty_after": true,
+    "canonical_scoped_audit_records": 5,
+    "canonical_scoped_audit_sha256": "dc418d6e6b14debae36f9667f7b4268fb90d86567d49058f473f4b91df25bbd1",
+    "cross_market_denied_status": 403,
+    "cross_project_denied_status": 403,
+    "filesystem_scope_probe_passed": true,
+    "focused_and_adjacent_tests_passed": 136,
+    "missing_identity_denied_status": 401,
+    "same_market_public_postgres_probe_status": 200,
+    "scope_bound_to_policy_digest": true,
+    "strict_signed_identity_required": true,
+    "synthetic_sources_removed": true,
+    "unsafe_scoped_get_denied_status": 403,
+    "unscoped_private_denied_status": 403
+  },
+  "diagnostic_failure_sha256": {
+    "direct_socket_failure": "7af70d05f29d9d2c3a019229e80575761745fb793646f5209bb44a575b01f589",
+    "missing_object_scope_failure": "f64d13680e5bf0198cf8540c8462edfa8487f0efa0d8b9db4eca3dae3b2d5162",
+    "proxy_boundary_failure": "de9daac63b216d4e04083e2675471322bcaa0bb8136fca0bc276eeda46940211"
+  },
+  "gateway": "siq-openshell-scope-validation",
+  "limitations": [
+    "The requests used a synthetic signed scope and SELECT 1; no real enterprise authorization or confidential business data was read.",
+    "The broker verifies signed claims but does not check the candidate sandbox generation against an online registry for each request.",
+    "The v3 token gateway claim is fixed to siq-openshell-dev even when the request originates from the separate candidate gateway.",
+    "The short-lived synthetic bearer tokens were passed through sandbox creation arguments and were not persisted in evidence.",
+    "Qwen positive inference, AgentShield tool decisions, and formal business writer revocation remain unverified."
+  ],
+  "private_proof_sha256": "9236d67485f0fb697a452773b6f925fb1d60165f32c82fd9f694ff43f1277972",
+  "production_eligible": false,
+  "proof_command": "python3 scripts/openshell/prove_qwen38_scoped_sandbox.py",
+  "recorded_at": "2026-09-22T03:11:55.840500+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-scoped-broker/v1",
+  "scope": "real_candidate_sandbox_synthetic_scope_to_strict_data_broker",
+  "secrets_included": false,
+  "source_sha256": {
+    "broker": "b55c7e41155453e4fb798f47c0714cde10fcf13878e468b47150e9ec508119bd",
+    "identity": "1d9be51a7050c695cde6df7a437eed03d5a6b8e917bf7fb25834668a989918fa",
+    "sandbox_proof": "8cc4f9ebbd483153514af341c550da9ae2368994c87d5b37162c2a6991b4a80a",
+    "sandbox_proof_tests": "73f4e3eb1d5bbf7fd30220fe2cebd759adcaacd0f31b639adcf8b394d462bab7"
+  },
+  "status": "passed_synthetic_broker_boundary"
+}

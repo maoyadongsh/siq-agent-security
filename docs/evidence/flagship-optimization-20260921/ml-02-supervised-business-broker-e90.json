@@ -1,0 +1,84 @@
+{
+  "schema_version": "siq.flagship.evidence.supervised-business-broker.v1",
+  "captured_at_utc": "2026-09-22T10:50:51.941178+00:00",
+  "scope": "real_host_HTTP_data_broker_and_reader_role_with_schema_only_isolated_PostgreSQL_business_authority;supervisor_lifecycle_regression_with_side_effect_doubles",
+  "behavior": {
+    "real_broker_mode_explicit": true,
+    "fixed_candidate_gateway_bridge_port": 18794,
+    "private_dedicated_reader_credentials_only": true,
+    "per_request_exact_run_session_sandbox_nonce_scope_binding": true,
+    "original_authority_rechecked_before_query_and_response": true,
+    "revocation_wakes_supervisor": true,
+    "post_query_token_expiry_denied": true,
+    "broker_fault_still_contains_in_supervisor_regressions": true,
+    "live_mode_readiness_requires_broker_and_first_tick": true
+  },
+  "live_results": {
+    "authorized_query_status": 200,
+    "database_role": "siq_openshell_reader",
+    "transaction_read_only": true,
+    "cross_market_denied": true,
+    "grant_revoked_while_data_token_still_admitted": true,
+    "next_request_after_revocation_status": 403,
+    "supervisor_stop_event_set": true,
+    "audit_decisions": [
+      "allow",
+      "deny",
+      "deny"
+    ],
+    "audit_error_codes": [
+      "",
+      "enterprise_market_scope_denied",
+      "broker_business_authority_denied"
+    ],
+    "temporary_database_state_and_listener_cleaned": true,
+    "API_model_bridge_same_PID_and_invocation_as_E89": true
+  },
+  "failure_preserved": {
+    "first_proof_passed": false,
+    "revocation_denied_with_status": 503,
+    "cause": "new_denial_audit_scope_used_a_forbidden_serialized_term",
+    "fixed": "use_business.request_authority_and_add_real_audit_sink_regression",
+    "first_artifact": "ml02-qwen38-business-broker-e90.sanitized.json"
+  },
+  "validation": {
+    "passed": 152,
+    "ruff_passed": true,
+    "test_files": [
+      "test_qwen38_business_broker.py",
+      "test_qwen38_candidate_supervisor.py",
+      "test_read_only_data_broker.py",
+      "test_qwen38_supervisor_service.py",
+      "test_broker_admission_registry.py",
+      "test_qwen38_candidate_run_guard.py"
+    ]
+  },
+  "source_sha256": {
+    "scripts/openshell/qwen38_business_broker.py": "345a26a7f128aaa0f2cf526451c2c83f456db10e676c7aad434645c087db8378",
+    "scripts/openshell/qwen38_candidate_supervisor.py": "288140e1b5a16877658167f7f65cbc4dba3bbc2233196427f2fe4fd1338c9798",
+    "scripts/openshell/read_only_data_broker.py": "4603bbfa4b3b532a20440ded69ef42a83c539c293f355acac16bf90b28237963",
+    "scripts/openshell/prove_qwen38_business_broker.py": "3b9e3efcd6247abae03ca10c1d4190ae8fef41a194f4c7dae7241a1f4a357097",
+    "scripts/openshell/tests/test_qwen38_business_broker.py": "8e7adcfc210ae1ccd64c14411eca2421baf9a9345d316bf99ad2dc854c9ed53a",
+    "scripts/openshell/tests/test_qwen38_candidate_supervisor.py": "0c482df78bdba0267a01990bb5d69d34c09c2fcdbbfa236a53e7783950f1ec65",
+    "docs/architecture/qwen38-supervised-business-broker-v1.md": "dc86f607ba20c57a002b71f81f7690bd6cb7bf5bd7ca01e41d41e4c5f3e1bea7",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "903bfe59544ea175aa898c1966b63c0434c05ac87de3883883928be96fd930ef"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-qwen38-business-broker-e90.sanitized.json": "baabc97fd233d9b216c0fd2a8a330dca6c681f6408f10d41eb603aef668a5313",
+    "artifacts/openshell/flagship/ml02-qwen38-business-broker-e90-v2.sanitized.json": "eca50faea21bc0ca3caaa3ca8874b0e581785d9205d379103d57598bed960114",
+    "artifacts/openshell/flagship/ml02-qwen38-business-broker-e90-v3.sanitized.json": "9449fa5de0044360cce35cec8372ed197a629772dce44aab5ef4d71be4874c88",
+    "artifacts/openshell/flagship/ml02-business-broker-audit-e90.sanitized.json": "5788ec4022b6f07bd5a37405be3de675a08bf660304d7a17e8ceccc99344825e",
+    "artifacts/openshell/flagship/ml02-business-broker-runtime-e90.sanitized.json": "873d5bf0521f61c8af5ef47823470336eff5e4955706eb8bdd7ad9e74dc3e471"
+  },
+  "not_proven": [
+    "real_broker_mode_through_sandbox_Hermes_tools",
+    "real_broker_mode_systemd_crash_and_recovery",
+    "formal_Qwen_pool_API_lifecycle_integration",
+    "production_SIQ_IAM_and_business_approval",
+    "atomic_retraction_of_already_sent_query_bytes",
+    "three_repository_reviewable_candidate_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

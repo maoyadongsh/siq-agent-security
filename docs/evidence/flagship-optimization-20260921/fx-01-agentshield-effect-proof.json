@@ -1,0 +1,68 @@
+{
+  "schema_version": "siq.fx01.agentshield-effect-proof/v1",
+  "ok": true,
+  "scope": "non_production_test_fixture",
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "agentshield": {
+    "binary_sha256": "d92b0d3b289cb6d6bc36b1cf010cdcaa0bb04f0d8dbc597722f77d9718d59362",
+    "mode": "warn",
+    "dedicated_ephemeral_instance": true,
+    "intent_schema": "intent/v3",
+    "effect_schema": "effect-evidence/v1",
+    "completion_schema": "completion-status/v1"
+  },
+  "real_publication": {
+    "publisher_ok": true,
+    "version": 3,
+    "publication_digest": "46a16f6918aee0b7b9c0508149a07322833f630adf920017dadccc9e5720582c",
+    "decision": "allow",
+    "action_projection": "419858744735886fb770c7fd",
+    "effect_projection": "e19b91cd5641ff450f422193",
+    "effect_result": "expected",
+    "completion": {
+      "schema_version": "completion-status/v1",
+      "task_id": "fx01-publish-real",
+      "status": "verified",
+      "reason_code": "effects_verified",
+      "requirements": [
+        {
+          "requirement_id": "published-report",
+          "status": "verified",
+          "reason_code": "effect_verified",
+          "evidence_ids": [
+            "fx01-real-output"
+          ]
+        }
+      ],
+      "incident_ids": []
+    }
+  },
+  "fake_success": {
+    "tool_claim_submitted": true,
+    "file_created": false,
+    "decision": "allow",
+    "action_projection": "d6e4f23a7f86d2cfa5ab104d",
+    "independent_effect_result": "unexpected",
+    "completion": {
+      "schema_version": "completion-status/v1",
+      "task_id": "fx01-publish-fake",
+      "status": "conflicting",
+      "reason_code": "effect_evidence_conflicting",
+      "requirements": [
+        {
+          "requirement_id": "published-report",
+          "status": "conflicting",
+          "reason_code": "effect_evidence_conflicting",
+          "evidence_ids": [
+            "fx01-fake-output",
+            "fx01-tool-claimed-success"
+          ]
+        }
+      ],
+      "incident_ids": []
+    }
+  },
+  "secrets_included": false,
+  "absolute_paths_included": false
+}

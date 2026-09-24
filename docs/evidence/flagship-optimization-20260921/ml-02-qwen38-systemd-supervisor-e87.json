@@ -1,0 +1,216 @@
+{
+  "candidate": {
+    "evidence_artifact_sha256": {
+      "artifacts/openshell/flagship/ml02-qwen38-supervisor-e87-source-lock.json": "e4c6ea296578ed874e88fac3d42c62fe7d85e49ae15052c9f147468d9e8cba24",
+      "artifacts/openshell/flagship/ml02-qwen38-systemd-service-e87.sanitized.json": "9c731fabfeaa0c7dc86e8ffa72c925008c7b641209bd4832057e434a8154fc77",
+      "artifacts/openshell/flagship/ml02-qwen38-systemd-supervisor-e87.sanitized.json": "9af8485ec12ce045a5e455bd5ee4373b70fe3209d6cd8eb31a1dbeeb212c7dc3",
+      "artifacts/openshell/flagship/ml02-qwen38-systemd-supervisor-sandbox-e87.sanitized.json": "9657c6f7e37a4f0c5f0ef892d0a000bdf476172cb9ee0d62cc4548811e22d381"
+    },
+    "image_id": "sha256:5a45f0d98c0c86d57d601dc1a7d2bcd99d36e2b9e9c05cb6d94527cebe5548ac",
+    "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:d20ff5998d724c4a6f8f9195",
+    "source_sha256": {
+      "docs/architecture/qwen38-candidate-supervisor-v1.md": "527873b438ded2be443e9d81ba7620d2d06d72606640fe65657375641d4c5bb6",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "aad32204124812c190de28b6ad03bcef7d77eeeb1ff65a06d833656b0d241db5",
+      "infra/systemd-user/siq-qwen38-supervisor@.service": "08bfbaf18de71a75f5864d82ea3e93c69629665afbb19a9b5f8751480f66b56d",
+      "scripts/openshell/prove_qwen38_postgresql_guard.py": "af6c2bc499bb1970650011a49186e1f919ee15a1d57d79ab45d964a3d1573046",
+      "scripts/openshell/prove_qwen38_scoped_sandbox.py": "f65c29ab98355bdef8b1ad635779debd3c027ca5c272aa9391043ec57fd21cec",
+      "scripts/openshell/qwen38_candidate_gateway_owner.py": "91d7b844aef77d8f6de645a4fa120243df42c70e2b289bbfca5420b14296315f",
+      "scripts/openshell/qwen38_candidate_host_guard.py": "b06ac869a56411ff0bf65bcfa4cd12328731f54ef8b4a527e5e11de71cc9d91d",
+      "scripts/openshell/qwen38_candidate_supervisor.py": "71902051fb7da0c77c1074e15e2fa0007bf288d1b8907a78ea4b29f3bfdbf962",
+      "scripts/openshell/qwen38_supervisor_service.py": "5b52c8bd285b2c244a73af1fbe9bd621526c9bd5e42ca08506594068805627f9",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py": "a5d8d11e3410ab21b00d25ef1f4c6effc034e624e99dcb182ff945dbb311b1f4"
+    }
+  },
+  "candidate_ready": false,
+  "captured_at_utc": "2026-09-22T10:07:57.235436+00:00",
+  "database_proof": {
+    "candidate_gateway_empty_after": true,
+    "captured_at_unix": 1790071223,
+    "gateway_owner_empty_after": true,
+    "grant_bound_to_real_scope": true,
+    "grant_revoked": true,
+    "isolated_grant_audits_count": 2,
+    "isolated_grants_count": 1,
+    "isolated_revoked_grants_count": 1,
+    "live_grants_count_after": 0,
+    "live_guard_tick_allowed": true,
+    "passed": true,
+    "production_eligible": false,
+    "real_business_data_used": false,
+    "real_supervised_sandbox_passed": true,
+    "resident_supervisor_exited_after_crash": true,
+    "resident_supervisor_first_tick_allowed": true,
+    "resident_supervisor_stopped_and_recovered": true,
+    "revocation_contained_real_sandbox": false,
+    "schema_version": "siq.model.qwen38-systemd-supervisor-db-proof.v1",
+    "secrets_included": false,
+    "systemd_crash_contained_real_sandbox": true,
+    "temporary_database_created": true,
+    "temporary_database_removed": true
+  },
+  "deployment": {
+    "boot_autostart_enabled": false,
+    "candidate_sandbox_retained": false,
+    "crashed_instance_failed_state_reset_after_verification": true,
+    "user_service_template_installed": true
+  },
+  "historical_e84_e86_artifacts_preserved": true,
+  "not_proven": [
+    "formal_API_pool_business_start_stop_recover_integration",
+    "production_SIQ_IAM_business_grants_and_publish_approval",
+    "synchronous_API_revocation",
+    "three_repository_reviewable_candidate_and_native_CI"
+  ],
+  "production_eligible": false,
+  "real_business_data_used": false,
+  "regression": {
+    "diff_check_passed": true,
+    "passed": 134,
+    "ruff_passed": true,
+    "skipped": 0
+  },
+  "sandbox_proof": {
+    "broker_identity_ttl_seconds": 600,
+    "business_authorization_snapshot_bound": true,
+    "business_helper_after_supervised_renewal": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "business_helper_before_revoke": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "business_mcp_image_enabled": true,
+    "business_postgresql_grant_revoked": true,
+    "business_postgresql_guard_tick_allowed": true,
+    "candidate_admission_revoked_after": true,
+    "candidate_broker_listener_stopped": true,
+    "candidate_gateway_empty_after": true,
+    "candidate_lease_initial_generation": 1,
+    "captured_at_unix": 1790071225,
+    "dev_gateway_identity_denied_status": 403,
+    "filesystem_probe": {
+      "analysis_write_roundtrip": true,
+      "authorized_read": true,
+      "company_root_write_denied": true,
+      "cross_company_read_denied": true
+    },
+    "gateway_health": {
+      "api_key_synthetic": true,
+      "empty_store_valid": true,
+      "http_healthy": true,
+      "runtime_route_valid": true
+    },
+    "gateway_owner_activated": true,
+    "gateway_owner_released_after_stop": true,
+    "gateway_owner_reserved_before_create": true,
+    "grant_remained_valid_during_crash_recovery": true,
+    "hermes_native_data_identity_verified": false,
+    "hermes_run": {
+      "api_model_alias_matches": true,
+      "create_status": 202,
+      "marker_absent": false,
+      "terminal_status": "completed"
+    },
+    "hermes_run_diagnostic": {
+      "error_present": false,
+      "error_signals": [],
+      "failure_class": "none"
+    },
+    "host_identity_source_removed": true,
+    "identity_renewal_generation": 2,
+    "identity_value_absent_from_create_args": true,
+    "image_id": "sha256:5a45f0d98c0c86d57d601dc1a7d2bcd99d36e2b9e9c05cb6d94527cebe5548ac",
+    "model_bridge_receipt_statuses": [
+      200
+    ],
+    "model_bridge_status": 200,
+    "model_trace_correlated": true,
+    "mount_plan_sha256": "385b3d37c80311e20a26f8ac98467532f2b79b28599831b14240a8ef2e070d31",
+    "mount_summary_sha256": "2bd76af78eebaf5fb80e35d930faa5ce3084f986f82c3d04c844bd6cd6df527f",
+    "old_token_denied_after_automatic_renewal": true,
+    "online_broker_after_supervised_renewal": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "online_broker_before_revoke": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "passed": true,
+    "policy_sha256": "627a45dcff75d04449361357bb6b5659c608bf310ef89852e841a92c4d0e29f8",
+    "positive_model_inference_verified": true,
+    "post_stop_provider_positive": true,
+    "production_eligible": false,
+    "proof_state_removed": true,
+    "provider_reprovisioned_after_model_cut": true,
+    "real_business_data_used": false,
+    "resident_renewal_default_window_seconds": 300,
+    "resident_renewal_issued_delta_seconds": 308,
+    "resident_renewal_real_elapsed_seconds": 293.614,
+    "resident_supervisor_exited_after_crash": true,
+    "resident_supervisor_first_tick_allowed": true,
+    "resident_supervisor_stopped_and_recovered": true,
+    "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+    "resource_profile": "hermes_minimal_poc",
+    "run_identity_preserved_across_renewals": true,
+    "sandbox_name_sha256": "37e8c1315aa0deb5539bc6fbf40949f473fc83cb9e7554bf48698bacfdf70736",
+    "sandbox_removed": true,
+    "schema_version": "siq.model.qwen38-postgresql-guard-proof.v1",
+    "scope": "real_openshell_synthetic_enterprise_mount_and_qwen_policy",
+    "scope_ref_sha256": "a8dd9c5c53eae700832a63082169591726bde14989e9c9362afc1287804942d7",
+    "secrets_included": false,
+    "startup_identity_probe": {
+      "digest_file_private": true,
+      "exec_identity_environment_absent": true,
+      "startup_shell_verified_identity_file": true
+    },
+    "supervisor_ready_before_model_run": true,
+    "synthetic_backend_call_count": 4,
+    "synthetic_broker_audit_count": 4,
+    "synthetic_reauthorization_checks_count": 0,
+    "synthetic_sources_removed": true,
+    "systemd_crash_contained_real_sandbox": true,
+    "systemd_crash_result": {
+      "ActiveState": "failed",
+      "ExecMainCode": "2",
+      "ExecMainStatus": "9",
+      "Result": "signal",
+      "SubState": "failed"
+    },
+    "systemd_exec_stop_post_contained": true
+  },
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-systemd-supervisor.v1",
+  "scope": "real_systemd_service_before_candidate_model_run_wall_clock_renewal_and_SIGKILL_ExecStopPost_containment",
+  "secrets_included": false,
+  "service_proof": {
+    "control_pid_zero": true,
+    "dropins_absent": true,
+    "effective_template_matches": true,
+    "exec_stop_post_exit_zero": true,
+    "installed_environment_sha256": "9a3440c207a4555d32c7adbf6b0f82fb78ac27586cc22ab0580e25105dd2bba8",
+    "installed_template_sha256": "08bfbaf18de71a75f5864d82ea3e93c69629665afbb19a9b5f8751480f66b56d",
+    "invocation_sha256": "3703b96618f070a01d67484cb90e4e2e696efae07225bbcb02c075e369f73647",
+    "main_pid_zero": true,
+    "specific_failed_instance_reset_after_verified_cleanup": true,
+    "unit_sha256": "5b0f9a766c76131235b3f6e3da424db64c636d3889d6a4376c69eaee6c602b9b"
+  },
+  "service_state_after": {
+    "qwen38-27b-nvfp4-dflash2-sglang.service": {
+      "ActiveState": "active",
+      "NRestarts": "0",
+      "SubState": "running"
+    },
+    "siq-openshell-model-bridge-8005.service": {
+      "ActiveState": "active",
+      "NRestarts": "0",
+      "SubState": "running"
+    }
+  }
+}

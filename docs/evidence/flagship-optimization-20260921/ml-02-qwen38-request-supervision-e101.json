@@ -1,0 +1,123 @@
+{
+  "schema_version": "siq.flagship.evidence.qwen38-request-supervision.v1",
+  "captured_at_utc": "2026-09-22T13:49:21.480408+00:00",
+  "scope": "API_owned_pre_Hermes_v2_systemd_real_broker_and_natural_execution_lease_expiry",
+  "implementation": {
+    "exact_created_state_and_original_authority_required": true,
+    "private_signed_identity_upload_and_atomic_install": true,
+    "data_token_absent_from_CLI_and_environment": true,
+    "initial_registry_revocable_before_upload": true,
+    "existing_registry_never_reset_and_conflict_contains": true,
+    "API_execution_binding_and_actual_engine_database_target": true,
+    "v2_first_tick_broker_and_InvocationID_readiness": true,
+    "failure_contains_or_retains_unknown_owner": true,
+    "stop_preserves_owner_output_and_recovery_material": true,
+    "diagnostic_unknown_cleanup_retains_temporary_authority_database": true
+  },
+  "validation": {
+    "supervision_specific_tests_passed": 8,
+    "combined_tests_passed": 172,
+    "test_warnings": 186,
+    "warning_cause": "existing Pydantic datetime.utcnow default factories on Python 3.13",
+    "test_command": "apps/api/.venv/bin/python -m pytest -q apps/api/tests/test_qwen38_request_supervision.py apps/api/tests/test_qwen38_request_sandbox.py apps/api/tests/test_qwen38_request_assets.py apps/api/tests/test_qwen38_request_runtime.py scripts/openshell/tests/test_broker_admission_registry.py scripts/openshell/tests/test_qwen38_supervisor_service.py scripts/openshell/tests/test_qwen38_candidate_supervisor.py scripts/openshell/tests/test_qwen38_candidate_lease.py",
+    "test_files": [
+      "apps/api/tests/test_qwen38_request_supervision.py",
+      "apps/api/tests/test_qwen38_request_sandbox.py",
+      "apps/api/tests/test_qwen38_request_assets.py",
+      "apps/api/tests/test_qwen38_request_runtime.py",
+      "scripts/openshell/tests/test_broker_admission_registry.py",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py",
+      "scripts/openshell/tests/test_qwen38_candidate_supervisor.py",
+      "scripts/openshell/tests/test_qwen38_candidate_lease.py"
+    ],
+    "ruff_passed": true,
+    "compile_passed": true,
+    "git_diff_check_passed": true,
+    "failure_injection_tests_use_transport_and_service_doubles": true
+  },
+  "live": {
+    "schema_version": "siq.qwen38.request-supervision-proof.v1",
+    "passed": true,
+    "scope": "API_component_v2_systemd_real_broker_natural_execution_lease_expiry",
+    "actual_API_request_sent": false,
+    "sandbox_or_model_started": true,
+    "production_eligible": false,
+    "secrets_included": false,
+    "read_only_prepare": true,
+    "private_credential_valid": true,
+    "credential_absent_from_plan_and_receipt": true,
+    "company_content_preserved": true,
+    "private_file_modes": true,
+    "actual_API_process_killed": false,
+    "Hermes_gateway_started": false,
+    "model_inference_started": false,
+    "business_ready": false,
+    "execution_lease_seconds": 120,
+    "v2_service_with_broker_ready": true,
+    "invocation_sha256": "0f4f8284816f9caf91aeadc98f9a06168ea0072ad4d37f61522b453a90951c15",
+    "real_read_only_broker_probe": {
+      "error_code": "",
+      "ok": true,
+      "real_read_only_query": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "seconds_waited_after_probe": 122.005,
+    "terminal_service": {
+      "ActiveState": "failed",
+      "SubState": "failed",
+      "ExecMainCode": "1",
+      "ExecMainStatus": "1",
+      "Result": "exit-code"
+    },
+    "original_execution_row_unchanged": true,
+    "natural_execution_lease_expired": true,
+    "business_grant_still_valid_at_containment": true,
+    "final_credential_denial_also_has_expired_execution_lease": true,
+    "data_lease_revoked": true,
+    "model_client_credential_rotated": true,
+    "sandbox_removed_owner_retained": true,
+    "provider_restored_positive_probe": true,
+    "service_broker_and_sandbox_stopped": true,
+    "supervision_fixtures_removed": true,
+    "revoked_grant_denies_credential_read": true,
+    "private_files_fixture_and_owner_removed": true,
+    "temporary_database_removed": true
+  },
+  "final_state": {
+    "candidate_inventory_owner_and_private_run_directories_empty": true,
+    "broker_18794_and_relay_47710_not_listening": true,
+    "API_model_bridge_same_PID_and_invocation": true,
+    "frozen_Hermes_head_and_candidate_image_unchanged": true,
+    "candidate_gateway_validated": true
+  },
+  "source_sha256": {
+    "apps/api/services/qwen38_request_supervision.py": "8078683b958b2ca1e5d5855bfcfc1a4c6d6babdbb40b10db83393a8d6a175eb2",
+    "apps/api/services/qwen38_request_sandbox.py": "b1b08f925ecd0e341571132e29983e53dec4f823f1926cc08ed80b48f9d90983",
+    "apps/api/tests/test_qwen38_request_supervision.py": "e48750a5b35fd8002f1bb4725e245cd20cc9e2286f3b3a099cbcb09da286f176",
+    "scripts/openshell/broker_admission_registry.py": "ab72f432e813ddc362bd616ff39e0ae86b587fb1e40af7b99abe9a0abefc2a6a",
+    "scripts/openshell/tests/test_broker_admission_registry.py": "592de703b1de57858e2c76d25fbafb55331f5a2d43b534115158b858459a654d",
+    "scripts/openshell/prove_qwen38_request_supervision.py": "8058046b5ad2ea58ba796df55bafc38e6aae836df7103e6d4f8b277d45c27200",
+    "scripts/openshell/prove_qwen38_request_preparation.py": "66fc09debcb4d362db014c918133f055558e85dd4a12df7bf3f5d09ce32eab38",
+    "docs/architecture/qwen38-request-runtime-v1.md": "d30193f7fb283136db587df6fcdf62854ff79d27c635a71644ce2c8bac51ece2",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "9ed12e1c1576dfe30792a22ac957e18ba071f7d8f0f1b143ff6c10e200f8c5db"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-request-supervision-e101.sanitized.json": "cac1be42b331bf194de7db49a1ef86d363529b04abb59a0057e547c7feb18cec",
+    "artifacts/openshell/flagship/ml02-request-supervision-e101-v2.sanitized.json": "db13155895d69f6b779999fcf7c2b7f05a5a1c6122a2a3fbc9950325c03b45f2",
+    "artifacts/openshell/flagship/ml02-request-supervision-provider-e101.sanitized.json": "d0a4b7511fb135323fc2272030345fd98f284fae90f0df9e37ca5f8f3b2ba871",
+    "artifacts/openshell/flagship/ml02-request-supervision-provider-e101-v2.sanitized.json": "9079019ff3d655b9bbe4275f224444aeeb23ae3b884fc11a80c44bcf0914d7db"
+  },
+  "not_proven": [
+    "formal_API_HTTP_route_and_Hermes_business_endpoint",
+    "pre_Hermes_AgentShield_identity_and_relay_handoff",
+    "actual_API_process_exit_with_running_business_writer",
+    "v2_supervisor_SIGKILL_during_formal_API_request",
+    "model_selected_data_tool_and_complete_request_lifecycle",
+    "production_IAM_approval_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "research_evidence_sha256": "a169220d924e0d6aab6bfb954cb103be059ca3201e28945ff2f0816e5ec45757"
+}

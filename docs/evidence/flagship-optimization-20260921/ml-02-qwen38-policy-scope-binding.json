@@ -1,0 +1,42 @@
+{
+  "checks": {
+    "adjacent_tests_passed": 55,
+    "authorization_snapshot_digest_carried_into_policy_summary": true,
+    "compileall_passed": true,
+    "cross_company_write_target_rejected": true,
+    "diff_check_passed": true,
+    "enterprise_scope_file_owner_mode_and_link_count_checked": true,
+    "focus_tests_passed": 115,
+    "model_ports": [
+      8005
+    ],
+    "mount_and_policy_scope_digest_checked_by_lifecycle": true,
+    "policy_write_path_requires_exact_scoped_company_analysis_directory": true,
+    "private_proof_file_permission_octal": "0600",
+    "public_egress_route_present": false,
+    "replayable_proof_passed": true,
+    "ruff_passed": true,
+    "synthetic_scoped_qwen_policy_compiled_on_dgx_spark": true
+  },
+  "limitations": [
+    "The scope and company path were synthetic; no enterprise data was mounted or queried.",
+    "The scoped policy was compiled and inspected, not applied to a live Qwen business sandbox.",
+    "Qwen bridge upstream remains offline at loopback until the model service cutover; positive Hermes inference is unverified.",
+    "This does not establish authorization-snapshot validity by itself; the business identity and data broker remain separate controls."
+  ],
+  "private_proof_sha256": "af268a95b98a757c44629d1811dbc5b84aa4b64dc67c43fd62837f46482974ee",
+  "production_eligible": false,
+  "proof_command": "python3 scripts/openshell/prove_qwen38_policy_scope_binding.py",
+  "recorded_at": "2026-09-22T02:43:19.653876+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-policy-scope-binding/v1",
+  "scope": "candidate_policy_compilation_and_enterprise_scope_binding",
+  "secrets_included": false,
+  "source_sha256": {
+    "lifecycle": "07fa56f3000ef29d578eb00c0b4f442699d406fbdf5fc908e3fbb665c2356d48",
+    "policy_compiler": "23afedb3944245db655e5150a2aba4af5e188f3471619d8bb1e09df585a2a290",
+    "policy_tests": "b2c2136804881617c07fe7828054a66113059230bf27550940726373ba2d43b3",
+    "proof_script": "cb50fd01a5bf68fd7741973c4439b39c29d932eb59478f860677d5edce31b4ec"
+  },
+  "status": "passed_compiler_boundary",
+  "synthetic_policy_sha256": "78dc70b2c7daa0714df76618d4e79eb2a3c09e43ce7dca5b924a4e40b6efda74"
+}

@@ -1,0 +1,425 @@
+{
+  "schema_version": "siq.ux-enterprise-candidate-review-e144/v1",
+  "recorded_at": "2026-09-23T04:13:43.539054+00:00",
+  "goal_status": "active",
+  "batch_status": "candidate_validated",
+  "production_eligible": false,
+  "head": "af275efb1732d9bc1fcb9ea624e55a2ced58032c",
+  "scope": "Incremental on existing dirty worktree; no commit/push/release, real device config or installed app update",
+  "native_host": "Linux aarch64",
+  "browser_proofs": {
+    "hermes": {
+      "path": "var/flagship/ux-e144/hermes-v2/result.sanitized.json",
+      "sha256": "c2f15367861eadbe216467922ff4732376b583ca152391e085a2a93379e6d937",
+      "proof": {
+        "schema_version": "siq.enterprise-candidate-review-browser/v1",
+        "passed": true,
+        "checks": {
+          "browser_create_environment_persisted_discovery": true,
+          "code_only_in_memory_not_commands_url_storage": true,
+          "copy_button_writes_exact_code_to_clipboard": true,
+          "terminal_selector_switches_secret_free_commands": true,
+          "native_stdin_registration_and_repeat_preserves_state": true,
+          "registered_not_confused_with_heartbeat": true,
+          "native_heartbeat_independent_readback": true,
+          "browser_scan_pending_no_premature_success": true,
+          "native_connector_signed_upload_receipt_readback": true,
+          "refresh_restores_environment_progress_without_code": true,
+          "duplicate_name_clear_409_no_extra_environment": true,
+          "failed_status_removes_old_success_and_recovers": true,
+          "actual_asset_list_link": true,
+          "review_dialog_fits_375": true,
+          "cancel_review_leaves_candidate_unchanged": true,
+          "lost_response_preserves_input_and_blocks_blind_retry": true,
+          "double_submit_performs_one_real_write": true,
+          "reconcile_reads_confirmed_state_without_second_post": true,
+          "unauthorized_policy_create_hidden_in_detail": true,
+          "confirmed_role_detail_persist_after_reload": true,
+          "evidence_read_error_not_empty_and_explicit_retry_recovers": true,
+          "detail_returns_to_candidate_context": true,
+          "viewer_ui_hidden_and_backend_refuses_confirmation": true,
+          "dismiss_readback_and_confirmed_asset_stale_dismiss_refused": true,
+          "dismissal_persists_after_reload": true,
+          "mobile_cards_keep_fields_readable_without_overflow": true,
+          "setup_no_horizontal_overflow_375": true,
+          "no_browser_errors": true
+        },
+        "edge_sha256": "d801fa0d9689aef5428e262db54563e139cadda13143907664801a099a20f320",
+        "framework": "hermes",
+        "connector_sha256": "5650bf91d81761f6e2d56a03ebf2ee392f0ab7e134c668fb03d2e25299600a3f",
+        "harness_sha256": "72992ca7d620184c84990e6842c56026c5d103c63c2ef6809f294cba7de30b4b",
+        "scope": "Real isolated SQLite/dev-auth API, DEV fixture UI, native Edge and selected framework connector; synthetic profile. No production IAM, native model or enforcement.",
+        "write_credentials_in_evidence": false
+      }
+    },
+    "openclaw": {
+      "path": "var/flagship/ux-e144/openclaw-v2/result.sanitized.json",
+      "sha256": "8a67ad3cf0b619286832e5c3e0a4c72f2ba421df05c516f2b7985d977cbb088e",
+      "proof": {
+        "schema_version": "siq.enterprise-candidate-review-browser/v1",
+        "passed": true,
+        "checks": {
+          "browser_create_environment_persisted_discovery": true,
+          "code_only_in_memory_not_commands_url_storage": true,
+          "copy_button_writes_exact_code_to_clipboard": true,
+          "terminal_selector_switches_secret_free_commands": true,
+          "native_stdin_registration_and_repeat_preserves_state": true,
+          "registered_not_confused_with_heartbeat": true,
+          "native_heartbeat_independent_readback": true,
+          "browser_scan_pending_no_premature_success": true,
+          "native_connector_signed_upload_receipt_readback": true,
+          "refresh_restores_environment_progress_without_code": true,
+          "duplicate_name_clear_409_no_extra_environment": true,
+          "failed_status_removes_old_success_and_recovers": true,
+          "actual_asset_list_link": true,
+          "review_dialog_fits_375": true,
+          "cancel_review_leaves_candidate_unchanged": true,
+          "lost_response_preserves_input_and_blocks_blind_retry": true,
+          "double_submit_performs_one_real_write": true,
+          "reconcile_reads_confirmed_state_without_second_post": true,
+          "unauthorized_policy_create_hidden_in_detail": true,
+          "confirmed_role_detail_persist_after_reload": true,
+          "evidence_read_error_not_empty_and_explicit_retry_recovers": true,
+          "detail_returns_to_candidate_context": true,
+          "viewer_ui_hidden_and_backend_refuses_confirmation": true,
+          "dismiss_readback_and_confirmed_asset_stale_dismiss_refused": true,
+          "dismissal_persists_after_reload": true,
+          "mobile_cards_keep_fields_readable_without_overflow": true,
+          "setup_no_horizontal_overflow_375": true,
+          "no_browser_errors": true
+        },
+        "edge_sha256": "d801fa0d9689aef5428e262db54563e139cadda13143907664801a099a20f320",
+        "framework": "openclaw",
+        "connector_sha256": "37428995a230132322565401c1fa363a14c117de06d73597f727260992e86f19",
+        "harness_sha256": "72992ca7d620184c84990e6842c56026c5d103c63c2ef6809f294cba7de30b4b",
+        "scope": "Real isolated SQLite/dev-auth API, DEV fixture UI, native Edge and selected framework connector; synthetic profile. No production IAM, native model or enforcement.",
+        "write_credentials_in_evidence": false
+      }
+    },
+    "local_results": {
+      "path": "var/flagship/ux-e144/local-results/result.sanitized.json",
+      "sha256": "c3a7f2a17ac8b44d4b1f094af2444bb00a5b6b785a2fb62be786b1b7fdd7bb4b",
+      "proof": {
+        "schema_version": "siq.result-evidence-browser/v1",
+        "passed": true,
+        "checks": {
+          "backend_missing_independent_readback": true,
+          "backend_failed_independent_readback": true,
+          "backend_conflicting_independent_readback": true,
+          "backend_verified_independent_readback": true,
+          "decision_credential_cannot_read_result_evidence": true,
+          "missing_clear_result_without_invented_report": true,
+          "missing_persisted_after_reload": true,
+          "failed_clear_result_without_invented_report": true,
+          "failed_keyboard_reaches_technical_details": true,
+          "failed_same_task_evidence_escape_focus": true,
+          "failed_persisted_after_reload": true,
+          "conflicting_clear_result_without_invented_report": true,
+          "conflicting_keyboard_reaches_technical_details": true,
+          "conflicting_same_task_evidence_escape_focus": true,
+          "conflicting_persisted_after_reload": true,
+          "verified_clear_result_without_invented_report": true,
+          "verified_keyboard_reaches_technical_details": true,
+          "verified_same_task_evidence_escape_focus": true,
+          "verified_persisted_after_reload": true,
+          "allowed_call_without_requirements_does_not_claim_success": true,
+          "refresh_failure_removes_old_success": true,
+          "explicit_read_retry_recovers_real_record": true,
+          "other_task_response_rejected": true,
+          "evidence_dialog_fits_375": true,
+          "stale_snapshot_removes_prior_results": true,
+          "detail_refresh_recovers_current_snapshot": true,
+          "reading_results_has_no_domain_writes": true,
+          "no_browser_errors": true,
+          "missing_signed_result_survives_server_restart": true,
+          "failed_signed_result_survives_server_restart": true,
+          "conflicting_signed_result_survives_server_restart": true,
+          "verified_signed_result_survives_server_restart": true
+        },
+        "binary_sha256": "6858b2be8e652d7a8e76e94031012ea08f9e71a71b354043fc33ab005962e6ed",
+        "harness_sha256": "ea652b6fbf30e65d7ff62933eea9bcddb3dddc48a3852bbbaf81ad31854a009d",
+        "scope": "Real isolated daemon, signed intents and decisions, real host file observations; synthetic writes, no native model or business output. Only errors and other-task response injected.",
+        "completion_states": {
+          "missing": {
+            "status": "incomplete",
+            "reason_code": "effect_evidence_missing"
+          },
+          "failed": {
+            "status": "incomplete",
+            "reason_code": "effect_failed"
+          },
+          "conflicting": {
+            "status": "conflicting",
+            "reason_code": "effect_evidence_conflicting"
+          },
+          "verified": {
+            "status": "verified",
+            "reason_code": "effects_verified"
+          }
+        }
+      }
+    }
+  },
+  "local_binary": {
+    "path": "var/flagship/ux-e144/siq-agent-security-v2",
+    "sha256": "6858b2be8e652d7a8e76e94031012ea08f9e71a71b354043fc33ab005962e6ed"
+  },
+  "reused_e143_binaries": [
+    {
+      "path": "var/flagship/ux-e143/edge-agent-final",
+      "sha256": "d801fa0d9689aef5428e262db54563e139cadda13143907664801a099a20f320"
+    },
+    {
+      "path": "var/flagship/ux-e143/hermes-connector",
+      "sha256": "5650bf91d81761f6e2d56a03ebf2ee392f0ab7e134c668fb03d2e25299600a3f"
+    },
+    {
+      "path": "var/flagship/ux-e143/openclaw-connector",
+      "sha256": "37428995a230132322565401c1fa363a14c117de06d73597f727260992e86f19"
+    }
+  ],
+  "cross_builds": [
+    {
+      "path": "var/flagship/ux-e144/local-v2-linux-amd64",
+      "sha256": "ad8528439b5cd76d83e5c91de72649909e5c7d04e349955e5503323c91887b4a"
+    },
+    {
+      "path": "var/flagship/ux-e144/local-v2-linux-arm64",
+      "sha256": "6858b2be8e652d7a8e76e94031012ea08f9e71a71b354043fc33ab005962e6ed"
+    },
+    {
+      "path": "var/flagship/ux-e144/local-v2-darwin-arm64",
+      "sha256": "2a9f30d9f61896bf1c2875fa4003bdc611375a36110cbb15da7e095c67d368e0"
+    },
+    {
+      "path": "var/flagship/ux-e144/local-v2-windows-amd64",
+      "sha256": "c999f683c4c46800c6be9dde30acd3e8d0182fc98712bf321dee4fbde804f839"
+    }
+  ],
+  "contract": {
+    "path": "packages/contracts/inventory-access.v1.schema.json",
+    "sha256": "ce98f9143b10b642ba2a999eb6fdbf4c2c1724d803a17180f18e0d5a637c7761"
+  },
+  "sources": [
+    {
+      "path": "apps/control-api/app/routers/inventory.py",
+      "sha256": "1d98e417c859ce3f867a23d8cf8c651a4261784ea471fc46e27d3515ea80a376"
+    },
+    {
+      "path": "apps/control-api/app/tests/test_inventory_review_access.py",
+      "sha256": "a732c5ac06fca0df73655e29878bea2fb2ff8c34f93325756e8a3bc6818c850d"
+    },
+    {
+      "path": "apps/web/src/api/inventoryReview.ts",
+      "sha256": "9bb86e18a80393e44b385515043cab0fe284e9bbc2a6a349f29d5b03d29da197"
+    },
+    {
+      "path": "apps/web/src/api/inventoryReview.test.ts",
+      "sha256": "77bd13d50fb611a71ce983b7cbc26f562783dfc6fad0081001438c5b0ad959a0"
+    },
+    {
+      "path": "apps/web/src/components/inventory/CandidateReview.tsx",
+      "sha256": "d28114a0325ee71c1e45bf1aeeba9c5decffd90e3c1bcf195fe89b0ff74897a4"
+    },
+    {
+      "path": "apps/web/src/pages/AgentsPage.tsx",
+      "sha256": "364ac78e70b471a9c41468462c380d2c73a42e931cdd453233c7c5050c1f3e6d"
+    },
+    {
+      "path": "apps/web/src/pages/AgentDetailPage.tsx",
+      "sha256": "c8a35f0d30739a9c6f120ee556effa81a1baa6527da1a5cdef8933e3428d8c8e"
+    },
+    {
+      "path": "apps/web/src/components/onboarding/EnvironmentSetup.tsx",
+      "sha256": "39308e32f3e1d8f8b23b626a56294032142567263970d5aeb28d7191c7487e81"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "sha256": "57f6682f4dc54f7f231f1decb13a13e5bd456d2ec689d08f955f9259721e527b"
+    },
+    {
+      "path": "scripts/enterprise-experience/candidate-review-browser-smoke.py",
+      "sha256": "72992ca7d620184c84990e6842c56026c5d103c63c2ef6809f294cba7de30b4b"
+    }
+  ],
+  "resource_trees": [
+    {
+      "directory": "apps/web/dist",
+      "file_count": 410,
+      "tree_sha256": "e4cfffac9566c6992eb842ac30ead0f55f72a88a2d10c6b24de336bb13e5816d",
+      "algorithm": "sha256(utf8(json(sorted relative path and file sha256 pairs), ensure_ascii=false, separators=comma-colon))"
+    },
+    {
+      "directory": "var/flagship/ux-e144/dev-web",
+      "file_count": 410,
+      "tree_sha256": "800d9fd8410c0c497c6d5877e04f7d405b1ecd0fe9957b903c668e7181d3bac9",
+      "algorithm": "sha256(utf8(json(sorted relative path and file sha256 pairs), ensure_ascii=false, separators=comma-colon))"
+    },
+    {
+      "directory": "apps/agentshield/internal/ui/embedded",
+      "file_count": 214,
+      "tree_sha256": "60b9b41661776ad3c6c9172b33101fb5be2e6b30a66c75e4076387d84d62d665",
+      "algorithm": "sha256(utf8(json(sorted relative path and file sha256 pairs), ensure_ascii=false, separators=comma-colon))"
+    }
+  ],
+  "test_summary": {
+    "python_api_passed": 985,
+    "new_api_cases": 9,
+    "web_files": 45,
+    "web_tests_passed": 269,
+    "local_go_test_packages": 44,
+    "local_go_vet": "passed",
+    "gofmt": "empty",
+    "api_app_ruff": "passed",
+    "harness_ruff": "passed",
+    "git_diff_check": "empty",
+    "migration": "isolated SQLite 0001 to 0016; no model changes"
+  },
+  "logs": [
+    {
+      "path": "var/flagship/ux-e144/api-complete.log",
+      "sha256": "61a2b969c17e7db8d04314957726c583e39db3d3e743c3e7f45ec9bf61fb6837"
+    },
+    {
+      "path": "var/flagship/ux-e144/api-ruff-complete.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "var/flagship/ux-e144/web-tests-final.log",
+      "sha256": "fd5318590040a84a7fbf45acc9853767fc278a2c580234990b8764c1867e8b1c"
+    },
+    {
+      "path": "var/flagship/ux-e144/web-build-final.log",
+      "sha256": "93857c2ebd2a245407260b2d1d882343ca03b4432b2d5cff5ca021f9f352901a"
+    },
+    {
+      "path": "var/flagship/ux-e144/web-fixture-final.log",
+      "sha256": "f6fca1e3c956902abc4debf8e116eb19ad06d8c5c7f6d79c241d9d2c3c944ad7"
+    },
+    {
+      "path": "var/flagship/ux-e144/local-build-final.log",
+      "sha256": "e23b7da1a195064663abb21fdefd65f5f78ed86956aa3a3a8bef1c3b3f0c7acb"
+    },
+    {
+      "path": "var/flagship/ux-e144/local-tests-final.log",
+      "sha256": "7ace041deae34b68d0004c95426e301f91cd5c148979139d7bdf5d74a0979ca9"
+    },
+    {
+      "path": "var/flagship/ux-e144/local-vet-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-v2.log",
+      "sha256": "2fe38f2366faaa140411a4a8c9165e66e58f05e49338de1dc5a3c7d406ffe04d"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2.log",
+      "sha256": "2fe38f2366faaa140411a4a8c9165e66e58f05e49338de1dc5a3c7d406ffe04d"
+    },
+    {
+      "path": "var/flagship/ux-e144/local-results.log",
+      "sha256": "8d35403e5adc7097d7f6c189bf5d63011d7b0cf3113d06366f461b3a846486e3"
+    },
+    {
+      "path": "var/flagship/ux-e144/migrations.log",
+      "sha256": "f00d35046c6ec4db319174c53e8179112ab98befeaeb33b11c51b302011c1643"
+    },
+    {
+      "path": "var/flagship/ux-e144/harness-ruff-final.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "var/flagship/ux-e144/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "var/flagship/ux-e144/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "var/flagship/ux-e144/hermes-v2/onboarding-desktop-results.png",
+      "sha256": "34f6e18458574f62e53612775422f802225e53d821c4f57f0e4150deb0f05f08"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-v2/onboarding-desktop.png",
+      "sha256": "a4596a4e80587602aa996bbf2c5dcf49dec6612d6259d750e9b53dcae92b482f"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-v2/onboarding-mobile-results.png",
+      "sha256": "730b0f5af5fc4bba56eb35c478b00066e6015b9b851d2f5c50403cc728ae03ae"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-v2/onboarding-mobile.png",
+      "sha256": "62ec3a9a5f319b2de365419219e9584b7d0159ae1ee41c86f4f9205eb7fca7e4"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-v2/review-desktop.png",
+      "sha256": "dc964bb71010e437f8e5924b60f929100b3ad19a74acfb936f00b0ef8cf24a8b"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-v2/review-dialog-mobile.png",
+      "sha256": "6dc3e5c7c3c4b0c9f9647b68cd0c5719c3d786aa9e1801af51afe2b55faaab6c"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-v2/review-mobile.png",
+      "sha256": "220899e38e6524fb9e6eb224e756c625abd14ad1e9dfeb3ec21e0d5e9f3f0d7e"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2/onboarding-desktop-results.png",
+      "sha256": "76d12ef305db8f0470357428858d56f2c4238632f2f9cf5142ed4579397920c9"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2/onboarding-desktop.png",
+      "sha256": "a4596a4e80587602aa996bbf2c5dcf49dec6612d6259d750e9b53dcae92b482f"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2/onboarding-mobile-results.png",
+      "sha256": "766968ce7f9bf85baeb3c214a0dc536d2fada7f537f5016f771ff1b32683675d"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2/onboarding-mobile.png",
+      "sha256": "62ec3a9a5f319b2de365419219e9584b7d0159ae1ee41c86f4f9205eb7fca7e4"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2/review-desktop.png",
+      "sha256": "ad5d73a0f489b3878f7bc69476f8beea92f910754fb4b491bf7ae8c45be8f1b6"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2/review-dialog-mobile.png",
+      "sha256": "715e04bbdaaf275476105aff2e50bfff509fe3a1e61afc7507be798e07285389"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-v2/review-mobile.png",
+      "sha256": "e4884734344bbc635f8d236f6045a5cc0bd33f401294e3696d4cc51facc50f4d"
+    }
+  ],
+  "retained_failures": [
+    {
+      "path": "var/flagship/ux-e144/api-focused.log",
+      "sha256": "3c1caf3cb7b141c030e5ca56ea92cf86b8ebd6d46b616e82d813ce0998db52c4"
+    },
+    {
+      "path": "var/flagship/ux-e144/api-full.log",
+      "sha256": "740d3210bcd4b791a1f6a65ecec544af64e5ea7a2f1f67b801b02f9ad63b5641"
+    },
+    {
+      "path": "var/flagship/ux-e144/hermes-complete.log",
+      "sha256": "6fb53b41dd661fe82d3eec60143668d5130ecaec0a2a32e50aaa93e65e1ca539"
+    },
+    {
+      "path": "var/flagship/ux-e144/openclaw-complete.log",
+      "sha256": "6fb53b41dd661fe82d3eec60143668d5130ecaec0a2a32e50aaa93e65e1ca539"
+    }
+  ],
+  "limitations": [
+    "ENT-UX-02 partial: production identity, organization context, role workbenches and owner directory not completed",
+    "Real API with isolated SQLite/dev identity and synthetic profile; native Connector collection, no native model execution",
+    "POST response loss and evidence 503 are browser fault injection; normal operations and viewer backend authorization are real",
+    "Duplicate-click protection is per mounted UI operation; no global idempotency or new database locking claim",
+    "Existing policy editing/approval/deployment workflow not fully reworked; access gating only",
+    "Cross builds do not prove native Windows/macOS UX; no installed release updated",
+    "SEC-F01 through SEC-F10 remain later tasks per user priority"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "kind": "security-review-arbitration",
+  "recorded_at": "2026-09-23T01:40:57.306228+00:00",
+  "head": "af275efb1732d9bc1fcb9ea624e55a2ced58032c",
+  "review_scope": "Current dirty working tree; file digests below. Not a release certification.",
+  "product_implementation_changed_by_review": false,
+  "findings_fixed_by_review": false,
+  "python": {
+    "command": ".venv/bin/python -m pytest",
+    "cwd": "apps/control-api",
+    "exit_code": 0,
+    "passed": 969,
+    "warnings": 1,
+    "seconds": 16.56,
+    "test_backends": [
+      "SQLite",
+      "development identity",
+      "fake enforcement"
+    ],
+    "log": "var/flagship/security-review-20260923/control-api-pytest.log"
+  },
+  "ruff": {
+    "executable": "/home/maoyd/siq-research-engine/apps/api/.venv/bin/ruff",
+    "version": "ruff 0.14.10",
+    "results": {
+      "app": {
+        "exit_code": 1,
+        "reported_errors": 2,
+        "log": "var/flagship/security-review-20260923/ruff-app.log"
+      },
+      ".": {
+        "exit_code": 1,
+        "reported_errors": 7,
+        "log": "var/flagship/security-review-20260923/ruff-all.log"
+      }
+    }
+  },
+  "go": {
+    "command": "go test ./internal/pending ./internal/receipt",
+    "cwd": "apps/agentshield",
+    "exit_code": 0,
+    "packages": 2,
+    "cached": true,
+    "whole_module_build_vet_test_reexecuted": false,
+    "log": "var/flagship/security-review-20260923/go-receipt-pending.log"
+  },
+  "synthetic_base64_reproduction": {
+    "input_description": "base64 encoding of SYNTHETIC-ONLY-NOT-A-REAL-SECRET- repeated 12 times",
+    "filename": "fixture.txt",
+    "rule_id": "threat-obf-base64-blob",
+    "matched": true,
+    "excerpt_length": 40,
+    "excerpt_equals_encoded_input_prefix": true,
+    "excerpt_equals_decoded_payload_prefix": false,
+    "production_database_written": false
+  },
+  "source_sha256": {
+    "apps/agentshield/internal/receipt/chain.go": "6057521c242d903f96e310c8869b75299cb04da05893c35386f70eb3bee081ab",
+    "apps/agentshield/internal/receipt/checkpoint.go": "b7d9f386886190be3478f19cbbbdabc46e91ebbfd4ca2efc32ed12cb8b3844be",
+    "apps/agentshield/internal/receipt/read_limited.go": "280bf9535623fe2bab243eb55dc965959940c3e7101ddfdf2056da84d67ba3dd",
+    "apps/agentshield/internal/receipt/resource_scope.go": "88ff23d13f09eb1daf246bea9a79dd2de644955a209efe9bc34220d9175d5ab8",
+    "apps/agentshield/internal/pending/promote.go": "a5d38b6b166cd798982a2f2c525d626f2d5520f9efec1aa09e2dbb77ed9e9c3e",
+    "apps/agentshield/internal/server/server.go": "bb2b82e3c552ff44b750ae0daa5ba2f517ce9fb414b2704d1fa9f0566745e11c",
+    "apps/agentshield/internal/server/openshell_session_exec.go": "95bec6ab8d12e0de69bd7e86b56f581d9f549083a5c62bb3439652ad4ee280ff",
+    "apps/control-api/app/routers/threat.py": "17892f0ecd1c580206d2f08f4b28e7f4b90443a9e8904eea331e346f398debbf",
+    "apps/control-api/app/routers/environments.py": "1b5c2859b10ce0a2dfa9526bbe126205ae30a47425a4ae295cf905fbfe3a22d7",
+    "apps/control-api/app/routers/inventory.py": "cffeb05dde0739e1bbc258ad3f7b9af880dfca37feba030e6f06cd8d7bf4ba70",
+    "apps/control-api/app/threat_analysis.py": "63b22eaa011a538556e43a427c8ff81db9f2291bd84a1645d192273d72c502ec",
+    "apps/control-api/app/data/threat_rules.v1.json": "ed1378d4ab35307729cf171854111f3a9b84b65598fb4681b6256d9284f38051",
+    "apps/control-api/app/security.py": "66cc362744278901997ee885f0ff33f25efd3652b99e62f393e2811bc5118d86",
+    "apps/control-api/app/rules.py": "b53f8b330ce92030fe57e744bc7fd98e2c23b6189b56d41d34f42a1c9746fdc2",
+    "apps/control-api/app/worker.py": "5d0a97075d30b9f0928921df79d35f4df966708d301bead2c10b0da667196727",
+    "apps/control-api/app/rate_limit.py": "e3be25837a1b9902bdc60aaf22035680b2d76703dbb996fc976040836ca69ad7",
+    "apps/control-api/app/schemas.py": "40d88f387127e590611ed000350ebda0410f8dbd0ba0ffe79d2f57b3280041eb",
+    "apps/control-api/app/tests/test_enrollment_flow.py": "7bd787bedd6b5e475b6584113a2aa1f39ae8899733de909b16f411745067060d",
+    "apps/control-api/app/tests/test_threat_analysis.py": "10bc10ba3b6323dba88e1fdbd35c355fc715f1201e30093bffc3ff3aee704343",
+    "edge/agent/client.go": "fcf1c58f8470d0e37ea1afd4f4c3fa0ba37a9f5b32d80304162aef6ef99553bb"
+  },
+  "log_sha256": {
+    "var/flagship/security-review-20260923/control-api-pytest.log": "5802be0bfa7dd9bbee6784b47b0d775f3a680907837c5b2a6584725adb7ebabf",
+    "var/flagship/security-review-20260923/go-receipt-pending.log": "a861061acbc325d4ab7c6cd985a05b0a681b6dd8b8e2605b092c388228947183",
+    "var/flagship/security-review-20260923/ruff-all.log": "e081bd17e2b4426364a4264cd2fef5a9d46dad62ed4001e3e0cff9d85a4bddfd",
+    "var/flagship/security-review-20260923/ruff-app.log": "51f3f866d79213a42341f2930363d815808f7a95e4eebd9f73169f6d4d282777"
+  },
+  "report": "docs/development/security-review-arbitration-20260923.md"
+}

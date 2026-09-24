@@ -1,0 +1,236 @@
+{
+  "schema_version": "siq.flagship.business-report-publication.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source_repository": "siq-research-engine",
+  "sources": [
+    {
+      "path": "apps/api/services/business_report_materials.py",
+      "sha256": "dfd3e7b4b8b85802dc9398fc5991d05dffabd0af1f03373209eddb3046b1491a",
+      "bytes": 7908
+    },
+    {
+      "path": "apps/api/services/business_report_model.py",
+      "sha256": "b6402abb76f4a1894a2a2c5bf859ed85d0b14a205fb485bf7470242d60d436cf",
+      "bytes": 1638
+    },
+    {
+      "path": "apps/api/services/business_report_publication.py",
+      "sha256": "902e450d6a2b03a4fab177ac3da0c5f79ccf78c53be8b056cb353cef7afbdab1",
+      "bytes": 14092
+    },
+    {
+      "path": "apps/api/services/business_report_source.py",
+      "sha256": "a91d909f90edfa8411b2555a61b637f90491ca81152e18eaf2337da5ad1a5762",
+      "bytes": 6429
+    },
+    {
+      "path": "apps/api/services/business_run_result_store.py",
+      "sha256": "bfac2de7f21e56bb915e93a375cffcc9a694a0d61e6b3ca3b6564cd394baec7e",
+      "bytes": 10153
+    },
+    {
+      "path": "apps/api/routers/agent_business_reports.py",
+      "sha256": "20575cc0d6305cbc3b7d420ce21200474c874aac319a0c326d2a6684eb23b552",
+      "bytes": 4856
+    },
+    {
+      "path": "apps/api/routers/agent_user_router.py",
+      "sha256": "c448c5073038d6bfa746ce3fc75beada4b784452a348775a16f2f4f7474fb43e",
+      "bytes": 50972
+    },
+    {
+      "path": "apps/api/tests/test_business_report_publication.py",
+      "sha256": "191a2cef55aa0c38340919bdd3461a242cb15ab96e494d920faec103ea7c6459",
+      "bytes": 18951
+    },
+    {
+      "path": "apps/api/tests/test_migration_governance.py",
+      "sha256": "bc270174cd7f00aec3300dd44573256488d714227eeb2b4e74e6791f845e3e5a",
+      "bytes": 21398
+    },
+    {
+      "path": "apps/api/tests/test_migration_prerequisites.py",
+      "sha256": "6896a900c65f94de5dfd6c9d65aaca270135613366c5ca511b8447ee68e2ea08",
+      "bytes": 11613
+    },
+    {
+      "path": "apps/api/migrations/024_create_business_report_publications.sql",
+      "sha256": "2b69ea8634c987e9334254b48f6999a20fd820d551dc450fb521e16f73b3f4c6",
+      "bytes": 1247
+    },
+    {
+      "path": "apps/api/migrations/checksums.json",
+      "sha256": "7cc37dac36e42e6a284e01adf72b3625a082b11ae7e176761584731fff6ef8b5",
+      "bytes": 3995
+    },
+    {
+      "path": "apps/api/migrations/README.md",
+      "sha256": "d90131062165b9dfdd0970ffcc2667b6189ae635d6f008be2b5b0aca6da9189b",
+      "bytes": 7240
+    },
+    {
+      "path": "docs/architecture/business-report-publication-v1.md",
+      "sha256": "d958b0e5c21dbdabb440c19581ca18efdc3a66f4e94c9e0cb738d74591580999",
+      "bytes": 4710
+    }
+  ],
+  "contracts": [
+    {
+      "path": "packages/contracts/siq-business-report-content.v1.schema.json",
+      "sha256": "fe18729d4d35cc34970ce1bfbb0ad7898eae62d041ebee8cc39fff1c3ed0bd03",
+      "bytes": 1106
+    },
+    {
+      "path": "packages/contracts/siq-business-report-prepare.v1.schema.json",
+      "sha256": "8788991822334a60c9ab1a33cd0e5978a7b47d429614db9c6767b7c57a87b668",
+      "bytes": 713
+    },
+    {
+      "path": "packages/contracts/siq-business-report-publish.v1.schema.json",
+      "sha256": "f489445d125ec9d8e5bb42bf462b4186421ec077b3bd71e71ab7f83c8b73cc27",
+      "bytes": 1143
+    },
+    {
+      "path": "packages/contracts/siq-business-report-read.v1.schema.json",
+      "sha256": "0159828896c1fc52565d3ae34664c5b42a15e25b275f38bd375d099f8b3ed60f",
+      "bytes": 1179
+    },
+    {
+      "path": "packages/contracts/siq-business-report-version-read.v1.schema.json",
+      "sha256": "97c07dae3a81dcba71ed912a01617d0604f5a182403df5cebb39771b8ae8c3c6",
+      "bytes": 1185
+    },
+    {
+      "path": "packages/contracts/siq-business-report.v1.schema.json",
+      "sha256": "d4bf499c2c6cb676b202a3e1e20ec5bdc679a6692c2d4dc61fa4fe01c7b59e9b",
+      "bytes": 5287
+    }
+  ],
+  "validation": [
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-publication-final-20260924/regression.sanitized.json",
+        "sha256": "780a8e3a93185dbc6172754c563c593a9f501155bdcd752ad3cdfee225e90002",
+        "bytes": 607
+      },
+      "result": {
+        "passed": false,
+        "files": [
+          "apps/api/tests/test_business_report_publication.py",
+          "apps/api/tests/test_business_report_source.py",
+          "apps/api/tests/test_business_run_result_store.py",
+          "apps/api/tests/test_business_run_history.py",
+          "apps/api/tests/test_business_run_results.py",
+          "apps/api/tests/test_migration_governance.py",
+          "apps/api/tests/test_migration_prerequisites.py",
+          "scripts/openshell/tests/test_publish_verified_report.py"
+        ],
+        "test_exit_code": 1,
+        "summary": "2 failed, 170 passed, 564 warnings in 68.03s (0:01:08)",
+        "isolated_database_removed": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-publication-final-20260924-supplement/regression.sanitized.json",
+        "sha256": "b65f1b062d02d5b1424c865893b83908508f467eb2c90d495bcc5ea72ddf1045",
+        "bytes": 372
+      },
+      "result": {
+        "passed": true,
+        "files": [
+          "apps/api/tests/test_migration_prerequisites.py::test_postgres_concurrent_empty_install_model_match_and_readonly_audit",
+          "apps/api/tests/test_migration_prerequisites.py::test_postgres_failed_prerequisite_rolls_back_then_can_retry"
+        ],
+        "test_exit_code": 0,
+        "summary": "2 passed in 4.02s",
+        "isolated_database_removed": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-publication-final-20260924-supplement/contracts.sanitized.json",
+        "sha256": "5e87c82efce4e846f6d3382674d6690f5f45fc8693bef091198bf914a6d0d412",
+        "bytes": 2599
+      },
+      "result": {
+        "passed": true,
+        "checks": [
+          {
+            "fixture": "var/ops/flagship-report-publication-20260924/contracts/prepare.json",
+            "fixture_sha256": "9bebf107dc76c097b9af98a94e6b49e4c65be1f2ac6595b209528219b6629d96",
+            "schema": "siq-business-report-prepare.v1.schema.json",
+            "schema_sha256": "8788991822334a60c9ab1a33cd0e5978a7b47d429614db9c6767b7c57a87b668",
+            "passed": true
+          },
+          {
+            "fixture": "var/ops/flagship-report-publication-20260924/contracts/read.json",
+            "fixture_sha256": "dcb931c34ac4bb6dade26aa71d5badf38f87601f38ae865920103700e5ac1225",
+            "schema": "siq-business-report-read.v1.schema.json",
+            "schema_sha256": "0159828896c1fc52565d3ae34664c5b42a15e25b275f38bd375d099f8b3ed60f",
+            "passed": true
+          },
+          {
+            "fixture": "var/ops/flagship-report-publication-20260924/contracts/publish.json",
+            "fixture_sha256": "443a9fa22f1b61ffb12dae5811a4e642415ed2acb3c1c80edd4b2a0e943107f5",
+            "schema": "siq-business-report-publish.v1.schema.json",
+            "schema_sha256": "f489445d125ec9d8e5bb42bf462b4186421ec077b3bd71e71ab7f83c8b73cc27",
+            "passed": true
+          },
+          {
+            "fixture": "var/ops/flagship-report-publication-20260924/contracts/version-read.json",
+            "fixture_sha256": "7d364ce5b556c9b0d8914806c8949a55dcf950f9ecc6a6ac67c37ee11043d49f",
+            "schema": "siq-business-report-version-read.v1.schema.json",
+            "schema_sha256": "97c07dae3a81dcba71ed912a01617d0604f5a182403df5cebb39771b8ae8c3c6",
+            "passed": true
+          },
+          {
+            "fixture": "var/ops/flagship-report-publication-20260924/contracts/metadata.json",
+            "fixture_sha256": "2ed2ca691b054c49c6ea7e9f9c75ebc482875b5d9ff879153f9e969c42b9723f",
+            "schema": "siq-business-report.v1.schema.json",
+            "schema_sha256": "d4bf499c2c6cb676b202a3e1e20ec5bdc679a6692c2d4dc61fa4fe01c7b59e9b",
+            "passed": true
+          },
+          {
+            "fixture": "var/ops/flagship-report-publication-20260924/contracts/published.json",
+            "fixture_sha256": "b55c176615b9ce7d5daaca4fde75a1c93ebe61ec75aa83baf76ac03c07afbee7",
+            "schema": "siq-business-report.v1.schema.json",
+            "schema_sha256": "d4bf499c2c6cb676b202a3e1e20ec5bdc679a6692c2d4dc61fa4fe01c7b59e9b",
+            "passed": true
+          },
+          {
+            "fixture": "var/ops/flagship-report-publication-20260924/contracts/content.json",
+            "fixture_sha256": "b93369af06ad229edc17fdd55a631027fc476ff7e5ad64c5a732e332f43f21de",
+            "schema": "siq-business-report-content.v1.schema.json",
+            "schema_sha256": "fe18729d4d35cc34970ce1bfbb0ad7898eae62d041ebee8cc39fff1c3ed0bd03",
+            "passed": true
+          }
+        ]
+      }
+    }
+  ],
+  "distinct_selected_tests_passed": 172,
+  "initial_failures": 2,
+  "supplement_passed": 2,
+  "lint": {
+    "new_report_modules_and_selected_tests": "passed",
+    "aggregate_router_imports": "passed",
+    "aggregate_router_default_remaining_B008": 21,
+    "global_lint_claimed": false
+  },
+  "diff_check": "both_repositories_passed",
+  "deployment": {
+    "performed": false,
+    "migration_024_applied_to_business_database": false,
+    "preview_changed": false
+  },
+  "limitations": [
+    "natural_hermes_manifest_producer_not_connected",
+    "report_directory_review_version_ui_not_connected",
+    "security_console_navigation_not_connected",
+    "production_iam_approval_events_not_validated",
+    "no_new_live_model_quality_test",
+    "not_signed_release"
+  ]
+}

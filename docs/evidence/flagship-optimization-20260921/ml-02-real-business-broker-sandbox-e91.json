@@ -1,0 +1,71 @@
+{
+  "schema_version": "siq.flagship.evidence.real-business-broker-sandbox.v1",
+  "captured_at_utc": "2026-09-22T11:02:00.285756+00:00",
+  "scope": "real_Qwen_Hermes_OpenShell_sandbox_with_independent_supervisor_real_read_only_broker_and_schema_only_PostgreSQL_authority_fixture",
+  "live_results": {
+    "supervisor_and_real_broker_ready_before_model_run": true,
+    "positive_model_run_correlated_with_bridge_200": true,
+    "sandbox_query_observed_dedicated_reader_and_read_only_transaction": true,
+    "sandbox_existing_pg_query_helper_succeeded": true,
+    "real_query_audits_bound_to_supervisor_run": 2,
+    "grant_revocation_observed_by_independent_supervisor": true,
+    "supervisor_contained_and_exited": true,
+    "broker_listener_closed": true,
+    "sandbox_private_state_and_temporary_database_removed": true,
+    "provider_restored_and_new_positive_probe_passed": true,
+    "gateway_owner_released": true,
+    "API_model_bridge_not_restarted": true
+  },
+  "scope_limits": {
+    "business_authorization": "synthetic_users_and_grant_in_schema_only_temporary_PostgreSQL_database",
+    "data_queries": "constants_role_and_transaction_mode_only",
+    "data_tool_invocation": "sandbox_exec_and_existing_pg_query_helper_not_model_selected_tool",
+    "revocation_trigger": "periodic_independent_supervisor_recheck_not_request_triggered_in_this_proof",
+    "supervision": "owned_child_process_not_new_systemd_business_broker_mode"
+  },
+  "source_locked_before_final_live_proof": true,
+  "validation": {
+    "passed": 104,
+    "ruff_passed": true,
+    "test_files": [
+      "test_prove_qwen38_scoped_sandbox.py",
+      "test_qwen38_candidate_supervisor.py",
+      "test_qwen38_business_broker.py",
+      "test_qwen38_supervisor_service.py",
+      "test_qwen38_candidate_run_guard.py",
+      "test_qwen38_candidate_gateway_owner.py"
+    ]
+  },
+  "source_sha256": {
+    "scripts/openshell/prove_qwen38_scoped_sandbox.py": "9ef73c61f3df4d6c6478c6f0667893fbbed9afc5a1cc7ac15b475ff4ee5e9605",
+    "scripts/openshell/prove_qwen38_postgresql_guard.py": "d8e31ccfa588e1da1d6adc67046fdf016c8e2251007ebd480ac81d219fc0cc9b",
+    "scripts/openshell/qwen38_candidate_supervisor.py": "286e099dae77d60f942ead9ec8a42eb63234b9e6247e87bb159134744f616a35",
+    "scripts/openshell/qwen38_business_broker.py": "345a26a7f128aaa0f2cf526451c2c83f456db10e676c7aad434645c087db8378",
+    "scripts/openshell/read_only_data_broker.py": "4603bbfa4b3b532a20440ded69ef42a83c539c293f355acac16bf90b28237963",
+    "scripts/openshell/tests/test_prove_qwen38_scoped_sandbox.py": "bc77b991e21e253728806ac5d3db488c389095fddb418dc6d75ba68dc98eef8a",
+    "scripts/openshell/tests/test_qwen38_candidate_supervisor.py": "9bf687d067e3a974777f2c7e5d3c997e0a12867c33c1febe36f58df2a688bb4d",
+    "docs/architecture/qwen38-supervised-business-broker-v1.md": "5bbc2bb60cac6e6d5164157341bd5b9d1b558bfd0c5810068e3cb6a039dae9ab",
+    "docs/architecture/qwen38-request-runtime-v1.md": "1831b47cddcb5ebd94186b1902a51b8ddf8b87ee03c869e7e62ce78991979a04",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "2e148b48468993ebf6bc6cd8b523ca6384f2e0fb7bec8588289033fd79b847f7"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-qwen38-real-business-sandbox-e91.sanitized.json": "28c34ce09563045f52d87bf565eec7e67605e816c79427cbbea39fba56e87122",
+    "artifacts/openshell/flagship/ml02-qwen38-real-business-sandbox-detail-e91.sanitized.json": "393f82a828408aa2278f9bbffa65e9678ec91f3455bf103a33c64b96dda5078d",
+    "artifacts/openshell/flagship/ml02-qwen38-real-business-sandbox-e91-v2.sanitized.json": "f98c47d1026e5809cca5c1cb5eddef9e3eddd3c6f10e36908d5fc94d1dea3891",
+    "artifacts/openshell/flagship/ml02-qwen38-real-business-sandbox-detail-e91-v2.sanitized.json": "ba0a213784e4dc3818edd13bb68e60aac051c0ac01282000493df2a163a7a239",
+    "artifacts/openshell/flagship/ml02-real-business-sandbox-e91-source-lock.json": "0a578eee7f1d0ae127c0d180b7d824c043858818a84feaebab491da056d35b5a",
+    "artifacts/openshell/flagship/ml02-real-business-sandbox-e91-runtime.sanitized.json": "4ec1250ffced2c4f7558744548e2841a665192df06b8586233beff0ad9f3dca4",
+    "artifacts/openshell/flagship/ml02-real-business-sandbox-e91-audit.sanitized.json": "be0345822d5124732264fecb803cb8dab82a988afc0e0ffbb17c0f4e54c91fb2"
+  },
+  "next_implementation_contract": "docs/architecture/qwen38-request-runtime-v1.md",
+  "not_proven": [
+    "formal_API_Qwen_request_runtime_start_stop_heartbeat_recovery",
+    "model_selected_real_data_tool",
+    "systemd_business_broker_mode_crash_recovery",
+    "production_SIQ_IAM_and_business_approval",
+    "three_repository_reviewable_candidate_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

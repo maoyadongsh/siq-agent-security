@@ -1,0 +1,99 @@
+{
+  "schema_version": "siq.flagship.evidence.request-gateway-cutover.v1",
+  "captured_at_utc": "2026-09-22T12:15:41.433459+00:00",
+  "scope": "isolated_OpenShell_request_output_gateway_build_cutover_recovery_and_synthetic_filesystem",
+  "build": {
+    "passed": true,
+    "network": "none",
+    "architecture": "aarch64",
+    "upstream_commit": "e3d26dd3ae0dee247bbc5db368545832757ac493",
+    "base_patch_sha256": "9786e926ba5fd0419e384e39645f2fb473a50bf4155bec4e65642474d07e3e1d",
+    "request_patch_sha256": "6e9baaacb4d557e543f62382b067fe2c3391834d072c6e83eeb0f6be696f3304",
+    "builder_image_id": "sha256:04efecd67da7a57162a9cd00f0c3a64fbf0de86a8b56665bc8a111376b16ba09",
+    "old_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "new_binary_sha256": "c89aa39af0f9a9a6534d7325605d153956f3cbc21fbfafb1bd970be4a0601f27",
+    "dynamic_host_z3_dependency": false,
+    "source_and_lock_pins_verified": true
+  },
+  "validation": {
+    "combined_tests_passed": 140,
+    "combined_test_files": [
+      "test_switch_request_gateway_candidate.py",
+      "test_request_gateway_candidate.py",
+      "test_gateway_bind_contract.py",
+      "test_patched_gateway_assets.py",
+      "test_gateway_runtime_identity.py",
+      "test_siq_analysis_lifecycle.py",
+      "test_ml01_confidential_sandbox_proof.py"
+    ],
+    "ruff_passed": true,
+    "real_pidfd_child_process_test": true,
+    "cross_process_maintenance_lock_test": true
+  },
+  "live": {
+    "initial_empty_gateway_and_owner_preflight": true,
+    "request_cutover": true,
+    "legacy_rollback_runtime_validated": true,
+    "request_reapply": true,
+    "injected_readiness_failure_automatic_rollback": true,
+    "crash_after_old_stopped": {
+      "actual_exit_code": 77,
+      "explicit_recovery_passed": true
+    },
+    "crash_after_new_started_before_pid_file": {
+      "actual_exit_code": 78,
+      "explicit_recovery_passed": true
+    },
+    "private_transactions_committed": 3,
+    "private_transactions_rolled_back": 3,
+    "filesystem_proof_runs_passed": 2,
+    "filesystem_checks": {
+      "analysis_root_write_denied": true,
+      "company_read": true,
+      "company_root_write_denied": true,
+      "cross_company_read_denied": true,
+      "own_run_write_readback": true,
+      "runs_root_write_denied": true,
+      "sibling_run_write_denied": true
+    },
+    "final_runtime": "request_0002_plus_0003",
+    "final_inventory_empty": true,
+    "final_owner_absent": true,
+    "synthetic_fixture_cleanup_verified": true,
+    "primary_gateway_selector_unchanged": true,
+    "API_model_bridge_same_process_and_invocation": true,
+    "model_or_Hermes_business_run_started": false,
+    "business_authority_or_data_used": false
+  },
+  "failures_retained": {
+    "initial_build": "Z3 archive root directory validation rejected; corrected before successful compilation",
+    "initial_tests": "58 passed, 1 failed: deployed Python omits os.pidfd_open; glibc pidfd used without numeric-PID fallback; 59 targeted then 140 combined passed",
+    "historical_E94_gateway_rejections": "preserved; new v4/v5 proof artifacts do not overwrite original failures"
+  },
+  "source_sha256": {
+    "scripts/openshell/request_gateway_candidate.py": "6bd9bdae0d41dc3fc2bb5c56d4d54fb1409383d5a8afcf0d90e2cb433206c266",
+    "scripts/openshell/build_request_gateway_candidate.py": "af4444ec66a856c24e05bc2fdafc79bc627f0e7ec322dbe22ed378f65313abe8",
+    "scripts/openshell/validate_gateway_candidate.py": "0a61968afe6a1fba3b12ebe1982d24493077fc97eda3e98297b4982ef4ab9ced",
+    "scripts/openshell/switch_request_gateway_candidate.py": "91341dab1ddb52693ad0d38e812c77074c7b91a720c85cf72c556e89372f53b6",
+    "scripts/openshell/tests/test_request_gateway_candidate.py": "e058856c945fa33534eea91093fd6a10ac139ddbfa62e75876f0aee8d68b0a63",
+    "scripts/openshell/tests/test_switch_request_gateway_candidate.py": "16f1912b39de1eef32cc32e40f4bf6bf901d7ed67a3e194247d820e4b774fb11",
+    "scripts/openshell/prove_qwen38_request_workspace.py": "16ad78f620702ca937dc85b87443ce9a25825ffee8e9bdf02d894943746982d1",
+    "infra/openshell/patches/v0.0.83/0003-siq-request-output-mount.patch": "6e9baaacb4d557e543f62382b067fe2c3391834d072c6e83eeb0f6be696f3304",
+    "infra/openshell/patches/v0.0.83/README.md": "83ac122cd9faae39aa4af6f86b84aff7f30e6d7551504395f5fc1b64f573d74e",
+    "docs/architecture/qwen38-request-runtime-v1.md": "f1c18136b5fb9e358bb792f2cdbc9b35087b7d23ffccf4bee5f5c6023fba4b2b"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-qwen38-request-workspace-e94-v4.sanitized.json": "d1d02d1b9439fa44a393ca9be6f27f7f20f0986f6bbf8206a030c3668e129a3b",
+    "artifacts/openshell/flagship/ml02-qwen38-request-workspace-e94-v5.sanitized.json": "665f03c5ad612cf41d2172c46689687a61122165191a0336ac955bb8a990c805"
+  },
+  "not_proven": [
+    "formal_Qwen_request_lifecycle_API_integration",
+    "formal_API_exit_execution_lease_expiry_real_sandbox",
+    "model_selected_real_business_data_tool",
+    "production_IAM_approval_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "research_evidence_sha256": "6e8b8260d5f6f76564ca735d2704d94fdcadae2d14079f78b2b46c4b18740b1b"
+}

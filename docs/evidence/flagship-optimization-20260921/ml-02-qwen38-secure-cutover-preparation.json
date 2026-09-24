@@ -1,0 +1,55 @@
+{
+  "absolute_paths_included": false,
+  "candidate_ready": false,
+  "installed_service": {
+    "active_tcp_connections_at_sample": 0,
+    "chat_requests_seen_in_prior_2h": 13,
+    "cutover_performed": false,
+    "legacy_argv_secret": true,
+    "legacy_lan_publish": true,
+    "legacy_service_running": true,
+    "new_unit_installed": false,
+    "recent_requests_observed": true
+  },
+  "limitations": [
+    "Current LAN service has recent real requests; replacing its single model process causes a service interruption.",
+    "The prepared secure unit has not replaced the running systemd service.",
+    "OpenShell candidate still lacks sandbox provider attach, Hermes model inference, and route revocation proof."
+  ],
+  "preflight": {
+    "existing_service_model_listing": "passed",
+    "existing_service_synthetic_inference": "passed",
+    "full_model_and_draft_artifact_hashes": "passed",
+    "image_import_with_file_secret_and_redaction": "passed",
+    "locked_launch_parameters": "passed",
+    "pinned_image_id_and_repo_digest": "passed",
+    "private_artifact_mode": "0600",
+    "private_upstream_secret_file": "passed"
+  },
+  "prepared_unit": {
+    "environment_file_removed": true,
+    "host_port": 8005,
+    "model_runtime_parameters_equal_locked_candidate": true,
+    "publish_host": "127.0.0.1",
+    "systemd_verify": "passed",
+    "upstream_secret_transport": "owner_only_json_bind_mount"
+  },
+  "production_eligible": false,
+  "recorded_at": "2026-09-22T00:36:23.956741+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-secure-cutover-preparation/v1",
+  "scope": "dgx_spark_qwen38_secure_cutover_preparation_without_service_change",
+  "secrets_included": false,
+  "source_sha256": {
+    "locked_preflight": "97cd4f9a56aaf828c996c50b6b6c2e1d4dbbb6c4c927dfeee7d70558f8066466",
+    "secure_launcher": "71e5d8158bed0a26f504a4150280da82dd01b333abc411af991153f5a72b8f51",
+    "secure_unit": "1bb2117d48d3e04e9ec6f7c122933c1d3f179c750c5fcdd13a3bb3ad514a2e30"
+  },
+  "validation": {
+    "bash_syntax": "passed",
+    "focused_pytest_passed": 24,
+    "global_launcher_sha256": "blocked_by_unrelated_dirty_mineru_source",
+    "python_compile": "passed",
+    "qwen_scoped_sha256": "passed",
+    "ruff": "passed"
+  }
+}

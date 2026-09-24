@@ -1,0 +1,72 @@
+{
+  "behavior": {
+    "classification_change_triggers_containment": true,
+    "cleanup_terminal_status": "authority_lost",
+    "database_schema_changed": false,
+    "first_terminal_unknown_child_remains_orphaned": true,
+    "independent_exact_run_quiescence_required_for_release": true,
+    "legacy_unscoped_public_compatibility_preserved": true,
+    "principal_metadata_does_not_restore_authority": true,
+    "scoped_or_nonpublic_recovery_requests_stop_without_pool_heartbeat": true,
+    "stop_response_is_not_quiescence_evidence": true
+  },
+  "candidate_ready": false,
+  "captured_at_utc": "2026-09-22T10:18:27.706526+00:00",
+  "finding_fixed": "restart_recovery_direct_pool_heartbeat_bypassed_original_authorization_recheck",
+  "not_proven": [
+    "online_API_deployment_and_real_restart_exercise",
+    "Qwen_supervised_runtime_formal_pool_lifecycle_integration",
+    "sandbox_level_recovery_for_unknown_remote_repair_children",
+    "production_SIQ_IAM_business_grants_and_approval",
+    "synchronous_broker_revocation",
+    "three_repository_reviewable_candidate_and_native_CI"
+  ],
+  "online_API_probe": {
+    "API_started_or_restarted": false,
+    "health_available": false,
+    "port": 18081,
+    "system_status_available": false
+  },
+  "production_eligible": false,
+  "schema_version": "siq.flagship.evidence.api-recovery-authorization.v1",
+  "scope": "actual_API_restart_recovery_code_with_isolated_SQLite_and_real_pool_registry_Hermes_transport_doubles",
+  "secrets_included": false,
+  "source_sha256": {
+    "apps/api/README.md": "4f8eff7756df704e2c3ca0eb82ba947fca6be24d4a01e7194f1861d76e34e05c",
+    "apps/api/services/openshell_pool_recovery.py": "9dc4d9c8ab0c4632c3e5f457ad0b8bf751535160b95c4c5dac88a0c4883e695a",
+    "apps/api/tests/test_openshell_pool_recovery.py": "aea07e9099a85d59f99966f6ac4ee7051de1c25de8a53e7f90c1843364a1ce0a",
+    "apps/api/tests/test_openshell_recovery_authorization.py": "21f151f757ab2d7037696405fc5b21b156bcf5c30cc227987c31b2cc7c79b0e0",
+    "docs/architecture/openshell-api-recovery-authorization-v1.md": "7dcfa558f880f5956dbbf442ae99d56180c5391cb027eb744d7d789455a8cc47",
+    "docs/runbooks/openshell/local-confidential-data-grants.md": "3c92d02d8708d93644774c0246d08913067d3e01039040b4ec17ca23ada735d8"
+  },
+  "validation": {
+    "compile_passed": true,
+    "diff_check_passed": true,
+    "negative_cases": [
+      "missing_original_authority",
+      "stop_success_without_quiescence",
+      "stop_error_redacted",
+      "stop_timeout",
+      "get_timeout",
+      "response_run_mismatch",
+      "first_terminal_unknown_child",
+      "shutdown_during_stop",
+      "pool_heartbeat_denied_for_cleanup_owner"
+    ],
+    "passed": 193,
+    "ruff_passed": true,
+    "skipped": 0,
+    "test_files": [
+      "test_openshell_recovery_authorization.py",
+      "test_openshell_pool_reauthorization.py",
+      "test_hermes_canary_routing.py",
+      "test_agent_runtime_active_runs.py",
+      "test_openshell_pool_recovery.py",
+      "test_siq_security_export.py",
+      "test_openshell_data_scope.py",
+      "test_openshell_data_grant_api.py",
+      "test_openshell_candidate_reauthorization.py",
+      "test_hermes_client.py"
+    ]
+  }
+}

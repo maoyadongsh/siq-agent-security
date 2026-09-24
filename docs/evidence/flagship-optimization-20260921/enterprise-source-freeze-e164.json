@@ -1,0 +1,87 @@
+{
+  "schema_version": "enterprise-source-freeze/v1",
+  "source_commit": "4a4bcd0b3695dfa56e73c24d8f42a547fe94be31",
+  "source_verification_passed": true,
+  "production_eligible": false,
+  "deployed": false,
+  "api_tests_passed": 1071,
+  "postgres_checks_passed": 11,
+  "commit": {
+    "path": "var/flagship/enterprise-freeze-e164/commit.json",
+    "sha256": "407e6a3b09a5427adc58fd5ea22514dfdd738bcf404f27315e50063102c1c78d",
+    "bytes": 378
+  },
+  "sources": {
+    "path": "var/flagship/enterprise-freeze-e164/final-source-manifest.json",
+    "sha256": "a6464b751461875f62247477e4c42e68de2ea49239a1d0455a45e5f69fdcd09b",
+    "bytes": 42574
+  },
+  "validation": [
+    {
+      "path": "var/flagship/enterprise-freeze-e164/api-checks.json",
+      "sha256": "ddf89a20390516677243d4517b27f2ed8a070e72edbeb033e6a1543150b5b7cd",
+      "bytes": 152
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/pytest.log",
+      "sha256": "5b7f104cd24b6751a234c8c46d2e76aa67c2a7a433733868d9b5c9d47a33a423",
+      "bytes": 1769
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/edge-tests.log",
+      "sha256": "8cff1b0749447e084d3e90ef3b0cde2fd76e304df855510e5416e9c7ab7e331c",
+      "bytes": 150
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/connector-tests.log",
+      "sha256": "b79c13fb0432d316f52aade8c6e85430cb25cbd1c0caa1ee71b9b89c1ff35ce3",
+      "bytes": 46
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/go-build-checks.json",
+      "sha256": "95cbea05c0155264f3e7c32dc13c8454134bba003a522d4922922d8e41c9a6a9",
+      "bytes": 861
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/postgres-final/result.json",
+      "sha256": "3ec9e68048bf46a505da110e213717ccb533fe1b936d051bee2f199c1762a875",
+      "bytes": 1016
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/acceptance-root-ruff-final.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/flagship/enterprise-freeze-e164/web-build-checks.json",
+      "sha256": "ffd823375b6f0bba3361f8f4d60225ee751ca857490b73907e425d6cf49792b7",
+      "bytes": 127
+    }
+  ],
+  "web_assets": {
+    "path": "var/flagship/enterprise-freeze-e164/enterprise-web-assets.json",
+    "sha256": "6feda0311e483233e40e2111a6fb68b27f4069ecf0408a55aff0a1f2c99eec94",
+    "bytes": 106967
+  },
+  "script_cleanup": {
+    "path": "var/flagship/enterprise-freeze-e164/acceptance-cleanup.json",
+    "sha256": "5b77339d74799ab5c7d4f98c5b4e18dffae9854ced36692e56cbd18743e71efa",
+    "bytes": 381
+  },
+  "limitations": [
+    "Synthetic/dev identities; no production IAM",
+    "PostgreSQL execution adapter fixtures; not new OpenShell live proof",
+    "No enterprise browser rerun this batch",
+    "No online deployment, schema migration on user database, merge, push or release"
+  ],
+  "prior_client_candidate": {
+    "path": "var/flagship/ux-e163/candidate.json",
+    "sha256": "9de6fd6e249c157ca15eb627aac52f06855d38bc057d5c1c29f91982bb3a75f2",
+    "bytes": 1103
+  }
+}

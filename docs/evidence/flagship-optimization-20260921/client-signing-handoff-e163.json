@@ -1,0 +1,41 @@
+{
+  "schema_version": "client-signing-handoff/v1",
+  "source_commit": "fd02384d6de5f96a849f9d04bbfbfaff38cf6148",
+  "preparation_passed": true,
+  "publisher_signing": "pending_controlled_environment_entry",
+  "signed_install_upgrade": "not_run",
+  "production_eligible": false,
+  "web_test_files": 53,
+  "web_tests_passed": 290,
+  "web_checks": {
+    "path": "var/flagship/ux-e163/fixed-web-checks.json",
+    "sha256": "625b5df3bd3eb0a40f5cb8f1a6daa71b6704f9bd3e2902a0d878a1c3447c4066",
+    "bytes": 122
+  },
+  "web_tests": {
+    "path": "var/flagship/ux-e163/fixed-web-tests.log",
+    "sha256": "63fe34c8890383dece0effddc049c4472855c443cc25b43e12b71d71ed0fc8eb",
+    "bytes": 309
+  },
+  "upgrade_baseline_verification": {
+    "path": "var/flagship/ux-e163/upgrade-baseline-verification.json",
+    "sha256": "e91f9b9c03f9bb1ad303226e29c41d16b2963a67c77651e3ef8a6b352facee73",
+    "bytes": 1994
+  },
+  "upgrade_baseline_assets": {
+    "path": "var/flagship/ux-e163/upgrade-baseline-assets.json",
+    "sha256": "b56e0da4b3bdd95b51b9e7aaee50413fc6552f8f24365139f32f75d6570f9930",
+    "bytes": 1400
+  },
+  "handoff": {
+    "path": "docs/development/client-signing-handoff-e163.md",
+    "sha256": "2b340f767c3cf7f767e4e6ba023f8627bec01551eb20101eb5e8f126fe383e28",
+    "bytes": 3355
+  },
+  "candidate_worktree_clean": true,
+  "prior_candidate": {
+    "path": "var/flagship/ux-e163/candidate.json",
+    "sha256": "9de6fd6e249c157ca15eb627aac52f06855d38bc057d5c1c29f91982bb3a75f2",
+    "bytes": 1103
+  }
+}

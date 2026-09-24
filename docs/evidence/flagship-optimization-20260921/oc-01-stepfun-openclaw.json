@@ -1,0 +1,84 @@
+{
+  "absolute_paths_included": false,
+  "configuration": {
+    "fallback_position": 0,
+    "file_permission_octal": "0600",
+    "model_policy_allowed": true,
+    "primary_model_unchanged": true,
+    "reference_kind": "file",
+    "schema_valid": true,
+    "secret_ref_resolvable": true,
+    "stepfun_secret_plaintext_in_openclaw_config": false
+  },
+  "current_revalidation": {
+    "checked_at": "2026-09-22T01:58:23.824372+00:00",
+    "config_valid": true,
+    "explicit_model_probe": {
+      "exit_code": 0,
+      "expected_marker_present": true,
+      "kind": "openclaw_agent_exec",
+      "model": "stepfun-step-plan/step-5-preview",
+      "model_reported": true,
+      "raw_response_saved": false,
+      "synthetic_public_prompt": true,
+      "valid_json": true
+    },
+    "file_permission_octal": "0600",
+    "first_fallback": "stepfun-step-plan/step-5-preview",
+    "openclaw_version": "2026.9.5 (ec9c1a1)",
+    "primary_model": "minimax/MiniMax-M3",
+    "reference_kind": "file",
+    "secrets_included": false
+  },
+  "limitations": [
+    "The probe used a synthetic public prompt and did not authorize confidential data for cloud processing.",
+    "The existing primary model was preserved; Step 5 Preview is the first fallback and can also be selected explicitly.",
+    "Credential rotation remains required because the credential was previously exposed in conversation text."
+  ],
+  "model": {
+    "active_context_cap": 200000,
+    "alias": "Step 5 Preview",
+    "api": "openai-completions",
+    "base_url": "https://api.stepfun.com/step_plan/v1",
+    "context_window": 1000000,
+    "id": "step-5-preview",
+    "max_output_size": 32768,
+    "provider": "stepfun-step-plan"
+  },
+  "openclaw": {
+    "build": "ec9c1a1",
+    "version": "2026.9.5"
+  },
+  "probe": {
+    "expected_marker_present": true,
+    "kind": "openclaw_agent_exec",
+    "model": "step-5-preview",
+    "ok": true,
+    "provider": "stepfun-step-plan",
+    "secret_absent_from_stdout_and_stderr": true,
+    "stdout_sha256": "68f5c5297f905e44f40be1a8ec12bc7e1e2787e04ff8dbcd2356d9734e73b0eb",
+    "synthetic_public_prompt": true
+  },
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "recorded_at": "2026-09-21T14:24:35.360860+00:00",
+  "revalidation": {
+    "checked_at": "2026-09-21T23:34:32.056246+00:00",
+    "configuration_valid": true,
+    "exit_code": 0,
+    "expected_marker_present": true,
+    "explicit_model_reported": true,
+    "file_permission_octal": "0600",
+    "first_fallback_unchanged": true,
+    "json_envelope": true,
+    "kind": "openclaw_agent_exec",
+    "model": "stepfun-step-plan/step-5-preview",
+    "primary_model_unchanged": true,
+    "secrets_included": false,
+    "synthetic_public_prompt": true
+  },
+  "schema_version": "siq.flagship.oc01-stepfun-openclaw/v1",
+  "scope": "local_openclaw_cloud_model_configuration",
+  "secrets_included": false,
+  "status": "passed"
+}

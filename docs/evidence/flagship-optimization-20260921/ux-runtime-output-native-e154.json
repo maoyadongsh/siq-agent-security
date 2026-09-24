@@ -1,0 +1,139 @@
+{
+  "schema_version": "siq.flagship-native-output-validation/v1",
+  "batch": "E154",
+  "recorded_on": "2026-09-23",
+  "goal_status": "active",
+  "hermes_version": "0.21.0",
+  "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+  "scope": "real Hermes loader/dispatcher and installed hooks to paired output UI; synthetic files, no LLM or direct native-capture POST",
+  "report": {
+    "path": "docs/development/ux-runtime-output-native-e154-validation-20260923.md",
+    "sha256": "ce7a6aa8658e3db4ef5985e68c0ea53abeea18a48191fe3a4dc92fbe0cfb97cb",
+    "bytes": 4791
+  },
+  "specification": {
+    "path": "docs/development/runtime-output-native-e154-spec.md",
+    "sha256": "47b1896072c93aef6428698c0f1a2e6b167dc19cd0f5ba856d7eb4a9f1f25b9e",
+    "bytes": 1860
+  },
+  "sources": {
+    "path": "var/flagship/ux-e154/source-manifest.json",
+    "sha256": "49b5f6f5e662fbb73dc3cab01b3d2e6b960870b64064a486eec8f5402a0ffff9",
+    "bytes": 393120
+  },
+  "resources": {
+    "path": "var/flagship/ux-e154/embedded-web-manifest.json",
+    "sha256": "d6119877b4912db1e0d0e71483cfd5b63a3f43bea1c0a5c64537b1cb42520011",
+    "bytes": 47625
+  },
+  "binaries": [
+    {
+      "path": "var/flagship/ux-e154/siq-agent-security",
+      "sha256": "48077300793f663c3714a3b647596ca3709ccb6431ddbeddfb921ef6c795988d",
+      "bytes": 23931351
+    },
+    {
+      "path": "var/flagship/ux-e154/siq-agent-security-darwin-arm64",
+      "sha256": "76f8c67d08371f0338da7515df7907185e13355853bab28755b1e257ca45bb08",
+      "bytes": 24320898
+    },
+    {
+      "path": "var/flagship/ux-e154/siq-agent-security-linux-amd64",
+      "sha256": "c32349fb4e5b73a23f0a3c906c90dfe6a5844d0d9f057335b0a30ab877d3785e",
+      "bytes": 25371947
+    },
+    {
+      "path": "var/flagship/ux-e154/siq-agent-security-linux-arm64",
+      "sha256": "c7f44459024d46c7d3a3ea2ebba61bb063853ff356e5d6b707116a3fedb3bedb",
+      "bytes": 23843237
+    },
+    {
+      "path": "var/flagship/ux-e154/siq-agent-security-windows-amd64.exe",
+      "sha256": "86d4bd867430504fa080ceab7a5e1ad074c283d80a0eccd505855e4b07105458",
+      "bytes": 26000896
+    }
+  ],
+  "browser": [
+    {
+      "path": "var/flagship/ux-e154/browser-readable/result.json",
+      "sha256": "de4f312b95afcce01cf0a3c78656afeb091c2c35ffbff9156539243c54708dd5",
+      "bytes": 2504
+    },
+    {
+      "path": "var/flagship/ux-e154/output-regression/result.json",
+      "sha256": "583900c82c4f59798b7fc5390a648241c16b56aa50e766d16f41183244ae07e7",
+      "bytes": 690
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "var/flagship/ux-e154/browser-readable/native-output-desktop.png",
+      "sha256": "14d7350e8004a78a5ac819b0af1ab8a35f0662997aebcdfea9479af80e6141b0",
+      "bytes": 202776
+    },
+    {
+      "path": "var/flagship/ux-e154/browser-readable/native-output-mobile.png",
+      "sha256": "7b85cc522173bd5489345663136ee9979069c6ccb631c3f653169813f1af3057",
+      "bytes": 60636
+    }
+  ],
+  "validation": {
+    "web_files": 53,
+    "web_tests": 287,
+    "native_checks": 12,
+    "output_regression_checks": 11,
+    "go_command": "go test ./internal/ui ./internal/server -run 'ActivityOutputs|RuntimeOutput'",
+    "go_ui_filter": "no tests to run",
+    "cross_builds": [
+      "linux/arm64",
+      "linux/amd64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "logs": [
+      {
+        "path": "var/flagship/ux-e154/web-tests.log",
+        "sha256": "46575da82c73fd2b716995da0b9ce3c8c2b5acb0a3b8f13aeb37cb89760e9e05",
+        "bytes": 286
+      },
+      {
+        "path": "var/flagship/ux-e154/build-local-final.log",
+        "sha256": "a73d25c138e0371747d3122efc6b81927239ecfb29157bc99732ccd17e474e02",
+        "bytes": 23135
+      },
+      {
+        "path": "var/flagship/ux-e154/build-enterprise.log",
+        "sha256": "a96ed6dc2b8b6e317b305fc28e53d38d3996c5926af0a0d7bef37e0b97d54621",
+        "bytes": 30534
+      },
+      {
+        "path": "var/flagship/ux-e154/go-focused.log",
+        "sha256": "955e0b62b36ee04f848bb6f8667f7db316cdcba6c183c37c7be77b1571829714",
+        "bytes": 142
+      },
+      {
+        "path": "var/flagship/ux-e154/ruff.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "bytes": 19
+      },
+      {
+        "path": "var/flagship/ux-e154/version.log",
+        "sha256": "9983e395d4c6f5c7ce7e743b7006acb5118ba7c2f8675a0b1b36ce71a89769c2",
+        "bytes": 43
+      }
+    ]
+  },
+  "prior_candidate_reference": {
+    "path": "var/flagship/ux-e153/candidate.json",
+    "sha256": "d2fb9526182f49400eca6817e350c56ffa29949f45d713e778dd3bc957e389de",
+    "bytes": 1913
+  },
+  "limitations": [
+    "No complete model-driven Hermes conversation",
+    "No OpenClaw native-output UI proof this batch",
+    "No OpenShell sandbox execution this batch",
+    "No formal business report publication",
+    "No full Go/API rerun this batch",
+    "No installed binary replacement or release"
+  ]
+}

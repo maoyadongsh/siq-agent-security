@@ -1,0 +1,78 @@
+{
+  "schema_version": "siq.flagship.business-report-input-producer-evidence.v1",
+  "repository": "siq-research-engine",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source": [
+    {
+      "path": "agents/hermes/profiles/siq_analysis/scripts/report_publication_inputs.py",
+      "sha256": "679c72c1b475ef9432bdcfbcdae730cb19440df1c92c557f98fa317695b92cdc",
+      "bytes": 4863
+    },
+    {
+      "path": "agents/hermes/profiles/siq_analysis/scripts/run_analysis_report.py",
+      "sha256": "52de0ac949092ae77acc58a110de4c6d978d5e36c11f69552f31eeac17205e98",
+      "bytes": 58930
+    },
+    {
+      "path": "agents/hermes/profiles/siq_analysis/scripts/validate_report_quality.py",
+      "sha256": "18fdbdd7b2874e0a647c2ccc24b9093121db32f8a1a3f534c9a1264af3478e85",
+      "bytes": 42494
+    },
+    {
+      "path": "agents/hermes/profiles/siq_analysis/tests/test_report_quality_factcheck_gate.py",
+      "sha256": "0852479fec20d23f434a96b2e6abfa6711bdead71bbfe876948b4d87fe23e84a",
+      "bytes": 4945
+    },
+    {
+      "path": "agents/hermes/profiles/siq_factchecker/scripts/factcheck_cli.py",
+      "sha256": "928f6c4039cd884ca31dd7ca0274dd98bd4c5be14e32f2e4237733d7ea113262",
+      "bytes": 73520
+    },
+    {
+      "path": "agents/hermes/profiles/siq_factchecker/tests/test_report_selection.py",
+      "sha256": "1e63455b1263609b07ad3e06d0c940b8d7fb4b12f3af6b9129d8601468523d36",
+      "bytes": 6707
+    },
+    {
+      "path": "apps/api/tests/test_report_input_producer.py",
+      "sha256": "0cef5f9518813cb7ab05037cbc2699a0f10c31b96fa653a2cdd64eb1a24f29b8",
+      "bytes": 6691
+    },
+    {
+      "path": "scripts/openshell/prepare_siq_analysis_context.sh",
+      "sha256": "192b3bd6215f96daaebb0e0edffe85be9ca1063ea5cb371d56e5daf075dfdde3",
+      "bytes": 23219
+    },
+    {
+      "path": "agents/hermes/profiles/siq_analysis/SOUL.md",
+      "sha256": "d311c4d72fb5e985c9329d6cd47d11db0b60a8bb0493a22f6312d70a75d27758",
+      "bytes": 16354
+    },
+    {
+      "path": "docs/architecture/business-report-publication-v1.md",
+      "sha256": "8486e84046b115e4a13cfd3a7db2dd3fa2c068effedb1d1de902336d35a073f4",
+      "bytes": 7263
+    }
+  ],
+  "verification": {
+    "pytest": "72 passed in 0.98s",
+    "earlier_focused_pytest": "46 passed in 0.94s; included in the 72, not additional",
+    "ruff": "passed for seven changed Python source/test files",
+    "shell_syntax": "passed",
+    "research_diff_check": "passed",
+    "fixtures": "synthetic materials; finalizer subprocess and broker network mocked; real material producer and consumer executed"
+  },
+  "deployment": {
+    "performed": false,
+    "new_image_built": false,
+    "database_migrated": false,
+    "existing_services_restarted": false
+  },
+  "remaining": [
+    "updated_sandbox_natural_report_end_to_end",
+    "security_console_trusted_navigation",
+    "production_identity_approval_events_and_rollout_rollback",
+    "fixed_model_native_platform_and_official_release_acceptance"
+  ]
+}

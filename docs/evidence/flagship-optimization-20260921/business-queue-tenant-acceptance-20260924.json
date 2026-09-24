@@ -1,0 +1,404 @@
+{
+  "schema_version": "siq.flagship.queue-tenant-acceptance.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source_repository": "siq-research-engine",
+  "sources": [
+    {
+      "path": "apps/api/main.py",
+      "sha256": "654315e86c12ad4fe0f0583fc484685e88e562ef01695f3c2bcbdb76680abddb",
+      "bytes": 12629
+    },
+    {
+      "path": "apps/api/services/agent_chat_runtime_impl.py",
+      "sha256": "d36acfb249e411b5ee11b4525285b0f3a592ffbf2612f9455dc7a11506dc405d",
+      "bytes": 364742
+    },
+    {
+      "path": "apps/api/services/qwen38_http_errors.py",
+      "sha256": "a4d5959ce47c63c95f0604dfad6642202960ebcb3e8cb68397207439c0659c54",
+      "bytes": 930
+    },
+    {
+      "path": "apps/api/tests/test_qwen38_http_errors.py",
+      "sha256": "7adb1058e40545ffccb0049d9fc9158b177860722de5f4aec579c8ae443d1f38",
+      "bytes": 3805
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_candidate_api.py",
+      "sha256": "d379ae3916e78de9a888ed857d5c309305edbceb5ec93f241c764a799618a34e",
+      "bytes": 14341
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_queue_expiry.py",
+      "sha256": "27eeeda60c95174f3f8c5383f6aaddb4f3e84ab3d3c0fddebca56d523e506408",
+      "bytes": 6891
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_tenant_boundary.py",
+      "sha256": "a05030c750c32f287d814bb6a613f5a57b844b12a0fa3c161188008ef9e1292e",
+      "bytes": 4701
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_qwen38_queue_expiry.py",
+      "sha256": "8a5307b7ab7ed7f5c160325b5d7bfe5ebe2280f438cd0dfdec0e431dbb6a291f",
+      "bytes": 3344
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_qwen38_tenant_boundary.py",
+      "sha256": "27c2d6a6ca882a442d7704608d1f2cca14eccced66f0079e8a344eba9fa4b64c",
+      "bytes": 3252
+    },
+    {
+      "path": "docs/architecture/qwen38-request-runtime-v1.md",
+      "sha256": "5defc26a9654919bbc1a92264cdf81daab4eaa4accb827f1e4e343c1d7022353",
+      "bytes": 79933
+    }
+  ],
+  "proofs": [
+    {
+      "case": "queue-expiry",
+      "version": "v1",
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-queue-expiry-v1.sanitized.json",
+        "sha256": "ad16d199b1d6098f7e8b8e9c16d2efb20f91f44c90ee33607999a1832648cc60",
+        "bytes": 1437
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "real_API_natural_grant_expiry_while_queued_behind_synthetic_reservation",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "live_authorized_request_observed_pending": true,
+          "grant_expired_naturally_during_queue": true,
+          "original_pending_closed_without_Hermes_run": true,
+          "other_gateway_reservation_unchanged": true,
+          "no_request_directory_or_sandbox_created": true,
+          "grant_deadline_unchanged_and_not_revoked": true,
+          "no_replay_or_new_execution_row": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "owned_synthetic_reservation_released": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 500,
+        "queue_wait_seconds": 59.368,
+        "request_run_sha256": "8ca062de2bc723c3c255376f8678adeb5a3f80232125fbda18af7b67e6b7695f",
+        "model_execution_acceptance": false,
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-queue-expiry-v1.sanitized.json",
+        "proof_sha256": "ad16d199b1d6098f7e8b8e9c16d2efb20f91f44c90ee33607999a1832648cc60",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    },
+    {
+      "case": "queue-expiry",
+      "version": "v2",
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-queue-expiry-v2.sanitized.json",
+        "sha256": "6a80e4e5c389ada6c8acd8e30a1dc19c57999aa7a2c52abdd54274d7a8bc2616",
+        "bytes": 1486
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "real_API_natural_grant_expiry_while_queued_behind_synthetic_reservation",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "live_authorized_request_observed_pending": true,
+          "grant_expired_naturally_during_queue": true,
+          "controlled_error_no_automatic_retry": true,
+          "original_pending_closed_without_Hermes_run": true,
+          "other_gateway_reservation_unchanged": true,
+          "no_request_directory_or_sandbox_created": true,
+          "grant_deadline_unchanged_and_not_revoked": true,
+          "no_replay_or_new_execution_row": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "owned_synthetic_reservation_released": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 503,
+        "queue_wait_seconds": 59.589,
+        "request_run_sha256": "887be002478f6299adf19e8023b493498785998231e3aeff85a7b15d6c184dad",
+        "model_execution_acceptance": false,
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-queue-expiry-v2.sanitized.json",
+        "proof_sha256": "6a80e4e5c389ada6c8acd8e30a1dc19c57999aa7a2c52abdd54274d7a8bc2616",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    },
+    {
+      "case": "tenant-boundary",
+      "version": "v1",
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-tenant-boundary-v1.sanitized.json",
+        "sha256": "67cc9061604c4299fefb6df3153be7eb2b0bb0e4f3459821e3785ca6473fcde0",
+        "bytes": 1084
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": false,
+        "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "business_model_marker_returned": true,
+          "business_execution_completed": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_correlated_200": true,
+          "original_candidate_tenant_restored": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "request_run_sha256": "852adebd6e31d408d68f68fa6fd65a3216c3a3d040f17984a36dd30afd4dbda5",
+        "bridge_statuses": [
+          200
+        ],
+        "second_tenant_HTTP_status": 500,
+        "failure": "candidate_tenant_cross_grant_not_denied",
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "passed": false,
+        "production_eligible": false,
+        "proof_passed": false,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-tenant-boundary-v1.sanitized.json",
+        "proof_sha256": "67cc9061604c4299fefb6df3153be7eb2b0bb0e4f3459821e3785ca6473fcde0",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    },
+    {
+      "case": "tenant-boundary",
+      "version": "v2",
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-tenant-boundary-v2.sanitized.json",
+        "sha256": "ecc0b5ca4f48204621e3b6e47dfe101fd6e081c78b5839fae9ae2c28d66fca21",
+        "bytes": 1682
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "sequential_real_HTTP_server_tenant_boundary_same_user_id_live_grant",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "business_model_marker_returned": true,
+          "business_execution_completed": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_correlated_200": true,
+          "first_tenant_real_model_request_succeeded": true,
+          "same_authenticated_user_id_in_both_server_tenants": true,
+          "second_server_tenant_rejects_live_first_tenant_grant": true,
+          "first_tenant_grant_unchanged_and_still_live": true,
+          "second_tenant_no_new_or_changed_execution": true,
+          "second_tenant_no_sandbox_created": true,
+          "original_candidate_tenant_restored": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "request_run_sha256": "bca02c1c8c6c8801986c7a2f8cedb52bbcaf61d989017c03993174e9576f2cec",
+        "bridge_statuses": [
+          200
+        ],
+        "second_tenant_HTTP_status": 403,
+        "production_IAM_acceptance": false,
+        "concurrent_tenant_acceptance": false,
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-tenant-boundary-v2.sanitized.json",
+        "proof_sha256": "ecc0b5ca4f48204621e3b6e47dfe101fd6e081c78b5839fae9ae2c28d66fca21",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    }
+  ],
+  "validation": {
+    "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest apps/api/tests/test_qwen38_http_errors.py apps/api/tests/test_qwen38_request_selector.py apps/api/tests/test_qwen38_request_queue.py apps/api/tests/test_qwen38_request_api.py apps/api/tests/test_qwen38_request_finalizer.py apps/api/tests/test_runtime_startup_guard.py apps/api/tests/test_governed_analysis_entry.py apps/api/tests/test_business_run_result_store.py scripts/openshell/tests/test_prove_qwen38_queue_expiry.py scripts/openshell/tests/test_prove_qwen38_tenant_boundary.py scripts/openshell/tests/test_prove_qwen38_business_api.py -q --disable-warnings --tb=short",
+    "observed_console_summary": "225 passed, 1 skipped, 547 warnings in 91.90s",
+    "postgres_rerun_artifact": {
+      "path": "var/ops/flagship-tenant-boundary-20260924-v2/regression.sanitized.json",
+      "sha256": "2b9a38d1293c4b81803e9611122397e302d20644799e464f738ea4cec86e8d90",
+      "bytes": 263
+    },
+    "postgres_rerun": {
+      "passed": true,
+      "files": [
+        "apps/api/tests/test_business_run_result_store.py::test_postgres_migration_concurrent_insert_and_reauthorization"
+      ],
+      "test_exit_code": 0,
+      "summary": "1 passed, 5 warnings in 1.39s",
+      "isolated_database_removed": true
+    },
+    "distinct_selected_tests_passed_after_pg_rerun": 226,
+    "red_tests_observed_before_fix": 3,
+    "red_tests_separate_log_saved": false,
+    "ruff": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "preview_delivery": {
+    "schema_version": "siq.flagship.preview-refresh.v1",
+    "passed": true,
+    "checks": {
+      "new_api_healthy_recovery_gate_preserved": true,
+      "preview_switched_to_updated_api": true,
+      "web_rollback_to_previous_api_verified": true,
+      "updated_preview_restored_after_rollback": true,
+      "unauthenticated_result_reads_denied_no_store": true,
+      "unauthenticated_project_attachment_and_history_denied": true,
+      "main_and_previous_api_identities_unchanged": true
+    },
+    "production_cutover": false,
+    "actual_account_acceptance": false,
+    "task_execution_acceptance": false,
+    "preview_url": "http://127.0.0.1:15173",
+    "preview_api_port": 18088,
+    "after": {
+      "qwen38-27b-nvfp4-dflash2-sglang.service": {
+        "MainPID": "494413",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "309643346d074db6866045b32ba0d6e9"
+      },
+      "siq-openshell-model-bridge-8005.service": {
+        "MainPID": "2911493",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "2ac166f702494bc6b357c9390cf98430"
+      },
+      "siq-research-api-candidate.service": {
+        "MainPID": "2301727",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "324c01b504e64141bead36cd1ec43bb8"
+      },
+      "siq-research-api-preview-20260924.service": {
+        "MainPID": "1726190",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "73ffe1c941514aeeaf1175177e4ac33d"
+      },
+      "siq-research-api-preview-attachment-20260924.service": {
+        "MainPID": "2200486",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "c876d6724f204f3d8d0649148ca38401"
+      },
+      "siq-research-api-preview-e168.service": {
+        "MainPID": "966940",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "7de20786ec61462dbb90a2495016e595"
+      },
+      "siq-research-api-preview-result-20260924.service": {
+        "MainPID": "2049646",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "8e80e725060d4cafa55eda5bf784eefb"
+      },
+      "siq-research-web-preview-attachment-20260924.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "InvocationID": ""
+      },
+      "siq-research-api-preview-errors-20260924.service": {
+        "MainPID": "2330015",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "4ea91698d53a44e889d5350fe41e9736"
+      },
+      "siq-research-web-preview-errors-20260924.service": {
+        "MainPID": "2330539",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "455ec8fa80264fb1a8c7e19c4668686b"
+      }
+    },
+    "artifacts_sha256": {
+      "source-manifest.json": "92e641b0225411e3b0fbda9f4a242dde9433fdcdba238b7032fa750631036cb2",
+      "web-manifest.json": "c17471f5a8d54b8a3a994cb160025f8c35ea54dd6d18cfd362d8d908bad77ea5",
+      "launch_api.py": "5fc43e96e1f4ce5d4b584731b34a49d6ceeee03ae5793eb104049d1cc3e62571",
+      "prepare.py": "60afed060676a044640db9908c9958bbba95aab3baf335df38c010c474797c59",
+      "verify_switch.py": "51c5ed2fdbfec66c87f7ca2e1313f496bc299e2bf0f8162be565d674531e4381"
+    }
+  },
+  "preview_delivery_artifact": {
+    "path": "var/ops/flagship-preview-errors-20260924/delivery.sanitized.json",
+    "sha256": "5ea2e5334a475cbcfa827d912f1a388ed89dcb8f038983ab389efd4770f9d0df",
+    "bytes": 3127
+  },
+  "limitations": [
+    "Synthetic local grant authority; no production IAM",
+    "Sequential server-configured tenant requests; not concurrent tenancy",
+    "Queue blocker is an owned reservation, not another running model",
+    "Existing preview recovery execution gate remains required and not ready",
+    "Main API not cut over"
+  ]
+}

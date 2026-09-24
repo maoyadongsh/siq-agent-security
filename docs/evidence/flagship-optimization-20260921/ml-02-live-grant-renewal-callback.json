@@ -1,0 +1,32 @@
+{
+  "schema_version": "siq.flagship.ml02-live-grant-renewal-callback/v1",
+  "recorded_at": "2026-09-22T05:28:32Z",
+  "scope": "isolated_qwen_candidate_lease_with_live_local_business_grant_reauthorization",
+  "status": "passed_isolated_registry_and_business_database_contract",
+  "source_sha256": {
+    "business_authorization_and_callback": "58d2e6f314155781b70458900c042c0bb99ab91db5c1eac5f2374ecd9afa579e",
+    "qwen_renewal_tick": "ba837831710ba4049a2f424c5d0bcb314be46aa58679a730b2bc8c1b7b995ff0",
+    "integration_test": "3c58caeb74ba5d983612c2b9bdd77d98a98eab64e0ff65897abc196f2dd95dc3"
+  },
+  "checks": {
+    "fresh_business_database_session_per_tick": true,
+    "exact_original_scope_digest_required": true,
+    "authorization_snapshot_expiry_denied": true,
+    "live_grant_allows_generation_1_to_2_renewal": true,
+    "old_generation_token_denied_after_renewal": true,
+    "grant_revoke_denies_next_tick": true,
+    "denied_tick_revokes_broker_admission": true,
+    "revoked_generation_token_denied": true,
+    "combined_api_route_renewal_and_migration_tests_passed": 149,
+    "optional_postgresql_test_skipped": 1,
+    "ruff_migration_governance_and_diff_check": "pass",
+    "production_eligible": false
+  },
+  "limitations": [
+    "The business authorization database was isolated SQLite and the OpenShell CLI upload/install operations were deterministic test doubles; no live Qwen sandbox was used in this proof.",
+    "The callback factory is callable but is not installed in a formal periodic supervisor or wired to business start/stop and recovery.",
+    "Revocation is observed at the next tick; this test does not prove immediate broker withdrawal at the moment the grant is revoked.",
+    "SIQ Org IAM integration, production PostgreSQL migration, positive Qwen model inference, and Hermes gateway business-tool dispatch remain unverified."
+  ],
+  "secrets_included": false
+}

@@ -1,0 +1,56 @@
+{
+  "absolute_paths_included": false,
+  "candidate_ready": false,
+  "endpoint": {
+    "host_alias": "host.openshell.internal",
+    "listener": "172.23.0.1:8005",
+    "network": "siq-openshell-dev",
+    "upstream": "127.0.0.1:8005"
+  },
+  "limitations": [
+    "The locked Qwen SGLang service remains on a LAN address and still carries the old argv credential.",
+    "Correct bridge credentials currently fail closed because the pinned loopback upstream has not been migrated.",
+    "No OpenShell sandbox provider attach, Hermes inference, enterprise scope, or route revocation has been proven."
+  ],
+  "network_probe": {
+    "correct_bearer_upstream_offline_body_bytes": 0,
+    "correct_bearer_upstream_offline_status": 502,
+    "host_origin_rejected": true,
+    "no_bearer_status": 401,
+    "source": "ephemeral_read_only_python_container_on_project_docker_bridge",
+    "token_not_in_cli_argv": true,
+    "token_not_in_probe_output": true,
+    "wrong_bearer_status": 401
+  },
+  "primary_model_service": {
+    "legacy_lan_listener": "192.168.2.121:8005",
+    "restarted": false,
+    "still_running": true
+  },
+  "production_eligible": false,
+  "recorded_at": "2026-09-22T00:22:50.238428+00:00",
+  "repair": {
+    "cause": "user_systemd_mount_namespace_maps_host_root_to_overflow_uid",
+    "docker_owner_check": "accept_overflow_uid_only_with_exact_single_user_uid_map",
+    "rapid_service_restart": "allow_reuse_address_without_reuse_port"
+  },
+  "schema_version": "siq.flagship.ml02-qwen38-live-bridge-negative/v1",
+  "scope": "dgx_spark_qwen38_bridge_runtime_negative_proof",
+  "secrets_included": false,
+  "source_sha256": {
+    "bridge": "948cc7c5d8ea00ef9d5b7e5182fca61bc6e4b6a326d9c63ed335aa090e4fbbd8",
+    "endpoint_discovery": "f328628328eb6cdc1b5c71d3c4e55aadfc413a871567dd569a122432a62879cd",
+    "systemd_unit": "79bacbac7ec8e30248a44620b11e2251d66ba2d7b649dba2c48ef67b54e76a65"
+  },
+  "unit": {
+    "active": true,
+    "enabled_at_boot": false,
+    "installed": true,
+    "source_sha256": "79bacbac7ec8e30248a44620b11e2251d66ba2d7b649dba2c48ef67b54e76a65"
+  },
+  "validation": {
+    "bridge_endpoint_and_provider_focused_pytest_passed": 75,
+    "ruff": "passed",
+    "service_restart": "passed"
+  }
+}

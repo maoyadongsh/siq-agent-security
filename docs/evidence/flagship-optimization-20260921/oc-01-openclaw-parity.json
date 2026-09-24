@@ -1,0 +1,155 @@
+{
+  "absolute_paths_included": false,
+  "business_action_parity": {
+    "adapter_contract": {
+      "approved_observation_uses_reservation": true,
+      "arbitrary_command_parameter_supported": false,
+      "arbitrary_path_parameter_supported": false,
+      "changed_digest_reserved": false,
+      "exact_final_params_reserved": true,
+      "status": "passed"
+    },
+    "hermes_business_proof": {
+      "artifact": "artifacts/openshell/flagship/bu01-controlled-business-tool.sanitized.json",
+      "real_publisher_readback_and_idempotency_passed": true,
+      "repository": "siq-research-engine",
+      "sha256": "68c21742342983f3643a4ca10334884e92931cbd4c3e8665c429b9d0b0e12d7e"
+    },
+    "openclaw_native_gate": {
+      "approved_execution_has_reservation_and_observation": true,
+      "changed_request_digest_executed": false,
+      "controlled_exact_params_executed_once": true,
+      "upstream_stock_executed": false
+    },
+    "parameter_names": [
+      "approval_sha256",
+      "request_sha256",
+      "task_id"
+    ],
+    "tool": "mcp__siq_business__research_publish_report"
+  },
+  "compatibility_manifest": {
+    "exact_digest_binding_passed": true,
+    "path": "patches/openclaw/compatibility.v1.json",
+    "sha256": "a3a7df897a2eedfb5313a5ad0683c91e1b63af5e57df66848f2913eec8aa38a8",
+    "stock_and_controlled_tiers_present": true,
+    "tampered_manifest_rejected": true
+  },
+  "controlled_start": {
+    "inspect_digest_passed": true,
+    "observed_version": "OpenClaw 2026.9.5 (ec9c1a1)",
+    "prepare_private_copy_passed": true,
+    "public_version_entrypoint_passed": true,
+    "script_sha256": "28d255880273dbe11bb4e32f7bc42274875757d902b54f90dfeec338dd51ea38"
+  },
+  "limitations": [
+    "The controlled host is an isolated patched copy, not an upstream OpenClaw capability or an installed production upgrade.",
+    "The native OpenClaw business-tool executor records a synthetic local effect; Hermes BU-01 separately proves the real Publisher, readback, and idempotency path.",
+    "The operator and prompts are synthetic; no human approval, confidential cloud payload, or production business system was used.",
+    "Context capability metadata is trusted same-process host state and is not a cryptographic boundary against a malicious plugin in the same process.",
+    "Reservation response loss remains uncertain and requires explicit reconciliation; production external-effect atomicity is not established."
+  ],
+  "native_validation": {
+    "case_count": 20,
+    "executed_case_count": 4,
+    "groups": {
+      "checkpoint_faults": {
+        "cases": 9,
+        "executed": 1,
+        "passed": true
+      },
+      "controlled_business_tool": {
+        "cases": 2,
+        "executed": 1,
+        "passed": true
+      },
+      "ordinary_approval": {
+        "cases": 6,
+        "executed": 1,
+        "passed": true
+      },
+      "revocation_cases": {
+        "cases": 2,
+        "executed": 1,
+        "passed": true
+      },
+      "upstream_stock_business_hold": {
+        "cases": 1,
+        "executed": 0,
+        "passed": true
+      }
+    },
+    "negative_paths": [
+      "stock_host_missing_checkpoint",
+      "platform_denial",
+      "local_approval_missing",
+      "local_rejection",
+      "platform_cancellation",
+      "local_service_offline",
+      "grant_revoked_during_platform_wait",
+      "checkpoint_throw",
+      "checkpoint_rejection",
+      "checkpoint_undefined",
+      "checkpoint_non_boolean_truthy",
+      "checkpoint_timeout",
+      "checkpoint_cancellation",
+      "final_params_changed",
+      "checkpoint_service_offline",
+      "business_request_digest_changed"
+    ],
+    "observation_count": 4,
+    "passed": true,
+    "private_raw_report_sha256": "a0a96489a246c02e60a4535734745ea499db31d9610c14547abc42ee8f000041",
+    "receipt_chains_verified": true,
+    "receipt_count": 46,
+    "reservation_count": 4,
+    "runner_sha256": "82473af447483bbd2850e287e0bc42942c2d6bb9c331bd56e2e120ca6a14471e",
+    "schema": "openclaw-approval-integration-validation/v2"
+  },
+  "openclaw": {
+    "build": "ec9c1a1",
+    "node_version": "v24.21.0",
+    "package": "openclaw",
+    "siq_controlled": {
+      "adapter_sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91",
+      "checkpoint_protocol_version": 1,
+      "controlled_report_publish_hold_eligible": true,
+      "patch": "patches/openclaw/2026.9.5-approval-execution-recheck-v1.patch",
+      "patch_sha256": "1fd2285c326d21c0162c0488f5ded294ea191248f0b6a92931100dbe58f3b1f6",
+      "post_approval_final_params_recheck": true,
+      "release_scope": "isolated_non_production_candidate",
+      "source_sha256": "6622ed7166a870ddbf68e31f9467f0c1ecbcfb6febd0e90f5bc78c010fa5ee34"
+    },
+    "upstream_stock": {
+      "controlled_report_publish_hold_eligible": false,
+      "installed_runtime_unchanged": true,
+      "post_approval_final_params_recheck": false,
+      "siq_hold_behavior": "fail_closed_before_platform_approval",
+      "source_sha256": "39e6ae403ad478b147c9af6306dec376b026ab95aa0a7580fcba027db896270c",
+      "source_target": "dist/agent-tools.before-tool-call-ya9NNSXc.mjs"
+    },
+    "version": "2026.9.5"
+  },
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "recorded_at": "2026-09-21T15:00:00Z",
+  "schema_version": "siq.flagship.oc01-openclaw-parity/v1",
+  "scope": "isolated_local_openclaw_compatibility_and_business_action_canary",
+  "secrets_included": false,
+  "status": "passed",
+  "supporting_evidence": {
+    "stepfun_cloud_model_configuration": {
+      "path": "docs/evidence/flagship-optimization-20260921/oc-01-stepfun-openclaw.json",
+      "sha256": "387712f466add65e4a39a75d93ce8921c1fa344588567898f61bff5b3701dee1",
+      "status": "passed"
+    }
+  },
+  "test_results": {
+    "controlled_start_manifest_tamper": "rejected",
+    "openclaw_adapter_contract_harness": "passed",
+    "openclaw_adapter_native_scenarios": "50 passed",
+    "openclaw_native_integration": "20 passed",
+    "python_and_node_syntax": "passed",
+    "research_business_tool_focused": "37 passed"
+  }
+}

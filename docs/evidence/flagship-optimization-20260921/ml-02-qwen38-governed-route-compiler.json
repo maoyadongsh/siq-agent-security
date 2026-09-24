@@ -1,0 +1,48 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-governed-route-compiler.v1",
+  "recorded_at": "2026-09-22",
+  "scope": "isolated_qwen38_confidential_candidate_compile",
+  "status": "offline_compilers_and_host_policy_dry_run_passed",
+  "source_sha256": {
+    "qwen_candidate_manifest": "eafdf3c322bc277aac7295c0c6d641ac4a1a5b0efd342d626e5765720e9e6a1a",
+    "qwen_governed_route": "dbb924240081b9c8a9ae5edd8d0417fd9937c94e04eaf3a1f1ea99e806be39f9",
+    "qwen_governed_route_schema": "455b565a0176039cabd87d437c5433382b1bdf9233c3cd7579e8c93e1f874564",
+    "route_parser": "ab2bca6dfc1ba210f7798bbfdb51f1dea04bee4f8ee00acf55ed250f0845990e",
+    "hermes_config_compiler": "ef0d66da75e4baf0d05628e2c6c13ca30c0521b67de8d132b28103d3dcfbe9ba",
+    "snapshot_builder": "9f5cab038bacd884bfb2baaf0401d9b87b41c6702465db48404ab2541e2cc8bf",
+    "policy_compiler": "0b8202dab59f48fd8b2ee43ab0342285a45b042f1aa715b43b16e6e22d968f07",
+    "nemotron_v1_manifest": "5e349bc53572961024ac999bcacd9f483c2483c8484c0eca5f2857b505ba72e3"
+  },
+  "checks": {
+    "route_schema_valid": true,
+    "route_binds_exact_candidate_bytes": true,
+    "qwen_context_and_model_identity_bound": true,
+    "explicit_selection_required": true,
+    "hermes_model_and_auxiliary_route_single": true,
+    "hermes_cloud_fallback_count": 0,
+    "terminal_client_token_passthrough": false,
+    "fresh_snapshot_required": true,
+    "agentshield_required_gate_enforced": true,
+    "qwen_policy_model_ports": [8005],
+    "qwen_policy_public_egress_present": false,
+    "qwen_policy_output_isolated": true,
+    "old_candidate_image_attestation_reuse_rejected": true,
+    "nemotron_v1_default_branch_unchanged": true
+  },
+  "verification": {
+    "focused_tests_passed": 78,
+    "combined_route_and_bridge_tests_passed": 102,
+    "ruff": "passed",
+    "python_compile": "passed",
+    "dgx_spark_policy_dry_run": "passed_without_writing_policy"
+  },
+  "runtime": {
+    "qwen_policy_applied_to_sandbox": false,
+    "generation_scoped_client_token_injected": false,
+    "authenticated_bridge_live": false,
+    "hermes_sandbox_inference_verified": false,
+    "route_revocation_verified": false,
+    "candidate_ready": false
+  },
+  "secrets_included": false
+}

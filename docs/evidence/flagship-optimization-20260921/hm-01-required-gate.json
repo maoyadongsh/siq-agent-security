@@ -1,0 +1,77 @@
+{
+  "active_runtime": {
+    "candidate_not_activated": true,
+    "image_id": "sha256:52c265e9329151e64e418f62e816d474940b2cd92b0ee0ba89d773c7111e3991",
+    "image_ref": "siq/hermes-openshell-siq-analysis:34c4142c82fcfcaa11eeb93c",
+    "mode": "NOT_PRODUCTION_CANARY",
+    "run_id": "canary-0921c0ffee21"
+  },
+  "adapter": {
+    "bundle_sha256": "42209b0db5152c457d805d510b381414bf478441b5f81cec3bf3c6d2e3ed35eb",
+    "manifest_sha256": "0f6a898c187c592f2a48270fc8d7fe3c1d77c896e36169028c7e0491004707bc",
+    "python_sha256": "0cb1ffe19b47a33963d16a37d56ef56e21bb160d257e84a2659914fd56d2b994"
+  },
+  "candidate": {
+    "context_sha256": "70552c6e6dceb3ff51f9aa2e9e8f7963a5627900696f06937f8c07f7fbc040af",
+    "image_id": "sha256:20698cb2b63abad1d1db782e00c97d855e0fac08248de809e6d993706f8e1731",
+    "image_ref": "siq/hermes-openshell-siq-analysis:70552c6e6dceb3ff51f9aa2e",
+    "runtime_config_sha256": "31355b338408664055be9c9183d802fd4dd1a1b51eb34b5c941c63995a514788"
+  },
+  "hermes": {
+    "commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "integration_patch_bundle_sha256": "6e5afca68cfc1d6a66ff3e2bbf6046506c41417132f264d023d76451b7c15b2d",
+    "required_gate_patch_sha256": "4f5fc6167de11a8cb58b9d2b7221017b4dbad8a7b8ea2800e9127a277ac73560",
+    "version": "0.21.0"
+  },
+  "limits": {
+    "business_canary_activated_then_stopped": true,
+    "decision_relay_connected": true,
+    "production_eligible": false,
+    "readiness_effect": "none"
+  },
+  "observed_at": "2026-09-21T07:12:31.934740Z",
+  "sanitization": {
+    "contains_credentials": false,
+    "contains_local_absolute_paths": false,
+    "contains_prompt_or_output": false,
+    "contains_token_paths": false
+  },
+  "schema_version": "siq.flagship.hm01-required-gate-evidence.v1",
+  "validation": {
+    "business_canary": {
+      "company_scope": "600418",
+      "host_runtime_unchanged_after_stop": true,
+      "management_route_hidden": true,
+      "run_id": "canary-a501c0de0008",
+      "runtime_session_enrolled": true,
+      "scoped_allow": true,
+      "status": "passed_then_stopped",
+      "unscoped_deny": true
+    },
+    "hermes_plugin_regression": {
+      "count": 86,
+      "status": "passed"
+    },
+    "image_smoke": {
+      "adapter_loaded": true,
+      "missing_identity_blocked": true,
+      "native_dispatcher_used": true,
+      "side_effect_observed": false,
+      "status": "passed"
+    },
+    "negative_cases": [
+      "plugin_missing",
+      "plugin_unhealthy",
+      "callback_missing",
+      "callback_exception",
+      "callback_base_exception",
+      "callback_timeout",
+      "malformed_response",
+      "dispatcher_exception"
+    ],
+    "normal_cases": [
+      "allow",
+      "block"
+    ]
+  }
+}

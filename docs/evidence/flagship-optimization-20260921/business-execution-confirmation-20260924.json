@@ -1,0 +1,136 @@
+{
+  "schema_version": "siq.flagship.execution-confirmation-delivery.v1",
+  "date": "2026-09-24",
+  "candidate_scope": "isolated_business_execution_confirmation_and_report_publication",
+  "passed": true,
+  "production_ready": false,
+  "source_manifest": {
+    "path": "var/ops/execution-confirmation-20260924/source-manifest-v6.json",
+    "sha256": "27ee86bd1dd5b4b95394cbf025c264333a196d94b8f7e3a5da14b9ff96993afc"
+  },
+  "report": {
+    "path": "docs/reports/business-execution-confirmation-20260924.md",
+    "sha256": "772786587217c4133734bcb782ab1e16a79a5542f40f09f4d784447d8ca71532"
+  },
+  "image": {
+    "path": "var/ops/execution-confirmation-20260924/image-v4/candidate-image.json",
+    "sha256": "c7d9fa3528622b71fb89a4e7dfe14369dffcc89b365531114dca4e38308f591f"
+  },
+  "image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+  "security_binary": {
+    "path": "var/flagship/report-generation-20260924/agentshield-linux-arm64",
+    "sha256": "334367d16defb46cfc7f6bebe233048f87574c9e55ecd81e2f17dfbcbb6eafea"
+  },
+  "validation": {
+    "confirmation_api_tests": 24,
+    "owned_http_tests": 32,
+    "report_mcp_image_tests": {
+      "passed": 61,
+      "skipped": 1,
+      "skip_reason": "API venv lacks MCP SDK; real SDK container checks separate"
+    },
+    "scenario_tests": 5,
+    "frontend_behavior_tests": 9,
+    "browser_checks": 6,
+    "frontend_build": true,
+    "frontend_strict_types": true,
+    "scoped_lint": true,
+    "shell_syntax": true
+  },
+  "model": {
+    "path": "artifacts/openshell/flagship/ml02-business-report-model-v8.sanitized.json",
+    "sha256": "9e9107692db14e40a6b280b46c57870c85f8d25f9f4c6b734302899f9108295d"
+  },
+  "browser": {
+    "path": "var/ops/execution-confirmation-20260924/browser-v1/report.sanitized.json",
+    "sha256": "b5b0858767a56cb8ad4387a34cdadbe66ce045ead13ee0caa9ca9c4bdaf63150"
+  },
+  "signed_receipts": {
+    "path": "var/ops/execution-confirmation-20260924/receipt-verification.sanitized.json",
+    "sha256": "7a3d0745277fce9a96864d2814d0acfa1e9267898c20b5c42cdb9130bcd32baa"
+  },
+  "historical_attempts": [
+    {
+      "proof": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v3.sanitized.json",
+        "sha256": "f45647242d752a994e9de9a32c8a6da0b415892fe0cabc2c108662dd498f8d74"
+      },
+      "lifecycle": {
+        "path": "var/ops/flagship-report-model-20260924-v3/live.sanitized.json",
+        "sha256": "8bf95418621c0685cfdc766ddd4c2d07d8ca538b8a661ad6238b6ee5205e1ab4"
+      }
+    },
+    {
+      "proof": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v4.sanitized.json",
+        "sha256": "f45647242d752a994e9de9a32c8a6da0b415892fe0cabc2c108662dd498f8d74"
+      },
+      "lifecycle": {
+        "path": "var/ops/flagship-report-model-20260924-v4/live.sanitized.json",
+        "sha256": "8690c3b531df9f0ee26e20edc2278308a8e943239659f7d4fbcfab52f8ddf888"
+      }
+    },
+    {
+      "proof": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v5.sanitized.json",
+        "sha256": "ebbd3d50ff99e4c0d6c22d5506d5c4db0a4b3db8e4c67b10f1d6a16650656f89"
+      },
+      "lifecycle": {
+        "path": "var/ops/flagship-report-model-20260924-v5/live.sanitized.json",
+        "sha256": "e675a4b453cfa916b5a7ca14ab04df1fb303a67bb42ebe26f697a790fc322c6a"
+      }
+    },
+    {
+      "proof": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v6.sanitized.json",
+        "sha256": "f1f5cfa20704b174615b9af501d1e90b3b7ed35a5d0d25242328f964dbb122f7"
+      },
+      "lifecycle": {
+        "path": "var/ops/flagship-report-model-20260924-v6/live.sanitized.json",
+        "sha256": "7dd7604fc50959682a6a41904303f4d8d203f7e695ce80fc72e68fcfcf18149f"
+      }
+    },
+    {
+      "proof": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v7.sanitized.json",
+        "sha256": "7b771be96f03e2763b5e5491baa4f273f5bb477681916cb720bd1afe145b1e3b"
+      },
+      "lifecycle": {
+        "path": "var/ops/flagship-report-model-20260924-v7/live.sanitized.json",
+        "sha256": "b72a0101b14ea7b432d53b199a461dcdbf90e9c26f16e6d8159e263f52c8c829"
+      }
+    },
+    {
+      "proof": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v8.sanitized.json",
+        "sha256": "9e9107692db14e40a6b280b46c57870c85f8d25f9f4c6b734302899f9108295d"
+      },
+      "lifecycle": {
+        "path": "var/ops/flagship-report-model-20260924-v8/live.sanitized.json",
+        "sha256": "18db5a18eb56382e56c651f4a227d207f637389d1d6f420769318c14f31d8571"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "var/ops/execution-confirmation-20260924/browser-v1/confirmation-desktop.png",
+      "sha256": "5e5708f01c2c42734dbe758552a119e73a9b7cc17b4ab3bb8ed12f5fbf2d4af9"
+    },
+    {
+      "path": "var/ops/execution-confirmation-20260924/browser-v1/confirmation-mobile.png",
+      "sha256": "2cabc36170aef4be5f553c036cfbf58095716021dd8dc60f5f33266124784e72"
+    }
+  ],
+  "current_image_and_existing_services_unchanged": true,
+  "temporary_databases_and_owned_processes_cleaned": true,
+  "production_iam_verified": false,
+  "new_binary_in_original_frozen_client": false,
+  "remaining": [
+    "trusted_security_console_business_navigation",
+    "main_deployment_and_rollback",
+    "production_business_identity_integration",
+    "original_fixed_model_quality_performance",
+    "native_platform_installation",
+    "updated_release_candidate_and_original_identity_signing"
+  ]
+}

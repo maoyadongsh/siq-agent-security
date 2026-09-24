@@ -1,0 +1,123 @@
+{
+  "artifacts": {
+    "broker_identity_source_sha256": "1d9be51a7050c695cde6df7a437eed03d5a6b8e917bf7fb25834668a989918fa",
+    "classification_profiles_sha256": "f7f2a5d524a440fa62ee4cc1e5c6152e39586188b5b032eb0eac7df902fff4d2",
+    "egress_decision_source_sha256": "ca53c17bd95b3783473acc66f6d0f5d555f19bbec9dd257d8ad6e33b54e7e344",
+    "egress_guard_source_sha256": "138f25cf74c6d2b1d45f0ec329266d28f822578d8e704f3cee1856dfe2acb5bf",
+    "policy_compiler_source_sha256": "cd9827d5fa1ade7ab8217e734b0d275b2f9866efa5d53afa241ac2c7ed4b6b12",
+    "proof_runner_source_sha256": "c0b3e93f7a5e4393330f6e2fe79d9ffb918ef3f2a2c1e90ead88e56f3a328937",
+    "public_compatibility_proof_sha256": "7f0e154dba4024d900a2202c1cee760146ce094e53ac8a50651db85bbd0ccb7b",
+    "research_sanitized_proof_sha256": "406e45f7049361a34a30614ac77615168b78b7c4ab2a00072d5807c9a3112969"
+  },
+  "contracts": {
+    "classification_profiles_schema": "siq.openshell.egress-data-classification-profiles.v1",
+    "confidential_mode": "confidential_local",
+    "proof_schema": "siq.openshell.data-classification-egress-proof.v1",
+    "public_mode": "public_research",
+    "request_identity_schema": "siq.openshell.broker-request-identity.v3"
+  },
+  "enforcement": {
+    "confidential_local": {
+      "allowed_public_categories": [],
+      "broker_defense_in_depth": "signed_identity_fail_closed",
+      "local_model_route_present": true,
+      "public_egress_route_present": false
+    },
+    "public_research": {
+      "public_egress_route_present": true,
+      "unknown_get": "allow",
+      "unknown_small_json_post": "audit_only"
+    }
+  },
+  "limitations": [
+    "This is a non-production host-broker and compiled-policy proof; it does not approve production traffic.",
+    "The confidential OpenShell policy was compiled for the Hermes 0.21 candidate and was not assigned to an active company pool.",
+    "Local model availability and governed alias binding are completed separately under ML-01."
+  ],
+  "observed_at": "2026-09-21T07:55:25.980714Z",
+  "runtime_proof": {
+    "audit_records_count": 10,
+    "audit_records_sha256": "559eaca3aec9fd91c3a5e2d9a60edbfbf3411e35e04edf318b291d7a3d95ee4b",
+    "broker_endpoint": "host.openshell.internal:18792",
+    "captured_at_unix": 1789977131,
+    "cases": [
+      {
+        "case_id": "public_get",
+        "decision": "allow",
+        "outer_http_status": 200,
+        "rule_id": "unknown_safe_read"
+      },
+      {
+        "case_id": "confidential_query",
+        "decision": "deny",
+        "outer_http_status": 403,
+        "rule_id": "confidential_unknown_read_denied"
+      },
+      {
+        "case_id": "confidential_json",
+        "decision": "deny",
+        "outer_http_status": 403,
+        "rule_id": "confidential_unknown_json_denied"
+      },
+      {
+        "case_id": "confidential_cloud_llm",
+        "decision": "deny",
+        "outer_http_status": 403,
+        "rule_id": "confidential_approved_destination_denied"
+      },
+      {
+        "case_id": "confidential_auxiliary_model",
+        "decision": "deny",
+        "outer_http_status": 403,
+        "rule_id": "confidential_approved_destination_denied"
+      }
+    ],
+    "checks": {
+      "confidential_auxiliary_model_denied": true,
+      "confidential_cloud_llm_denied": true,
+      "confidential_json_denied": true,
+      "confidential_local_model_route_present": true,
+      "confidential_public_egress_route_absent": true,
+      "confidential_query_denied": true,
+      "credential_material_stored": false,
+      "public_research_compatible": true,
+      "request_payload_stored": false
+    },
+    "classification_profiles_normalized_sha256": "c3bbd64f39ba5ac17bb9c459ecc231eaf00d1e8c3905fe5a05210043dca368c5",
+    "confidential_policy_sha256": "0cfd12a80c6bcde1a1493c4f3f351aeb87000cc14f5a07560c1f4c26ecfbd43d",
+    "confidential_policy_summary_sha256": "c4d2880a6b1e17c6f1144b076155dc5ec6508c3cd2d4e981c26e50e1b02e44fa",
+    "confidential_run_id_sha256": "2af224a1e56af562b92676c86188a371707d8bdefa85d25703ba4e3e7711b252",
+    "gateway": "siq-openshell-dev",
+    "passed": true,
+    "public_run_id_sha256": "077ebc339f56f6e879b572d9ca5af471da0e87e186c58636cc3db7deb5260884",
+    "runtime_source_bundle_sha256": "6c62f63603c1d29e1aed2d4a3a666fcc45b06b957052700682095790ce53c9b9"
+  },
+  "sanitization": {
+    "contains_credentials": false,
+    "contains_identity_token": false,
+    "contains_local_absolute_paths": false,
+    "contains_prompt_or_response_body": false,
+    "contains_request_url": false
+  },
+  "schema_version": "siq.flagship.nw01-data-classification-egress-evidence.v1",
+  "scope": {
+    "gateway": "siq-openshell-dev",
+    "hermes_version": "0.21.0",
+    "openshell_version": "0.0.83",
+    "platform": "hermes",
+    "production_eligible": false,
+    "profile": "siq_analysis",
+    "readiness_effect": "none"
+  },
+  "status": "completed",
+  "validation": {
+    "focused_tests": {
+      "count": 165,
+      "status": "passed"
+    },
+    "public_boundary_proof": "GO",
+    "python_compile": "passed",
+    "real_broker_case_count": 5,
+    "ruff": "passed"
+  }
+}

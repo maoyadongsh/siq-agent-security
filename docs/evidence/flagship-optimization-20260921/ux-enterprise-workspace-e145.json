@@ -1,0 +1,421 @@
+{
+  "schema_version": "siq.ux-enterprise-workspace-e145/v1",
+  "recorded_at": "2026-09-23T04:33:52.544835+00:00",
+  "goal_status": "active",
+  "batch_status": "candidate_validated",
+  "production_eligible": false,
+  "head": "af275efb1732d9bc1fcb9ea624e55a2ced58032c",
+  "scope": "Incremental on existing dirty worktree; no commit/push/release, real user config or installed update",
+  "native_host": "Linux aarch64",
+  "browser_proofs": {
+    "workspace": {
+      "path": "var/flagship/ux-e145/workspace-final/result.sanitized.json",
+      "sha256": "f3f8b6e98a4ef09c5d1dbd4536195e06e81b84b66c4962ca457bca747cb3478d",
+      "proof": {
+        "schema_version": "siq.enterprise-workspace-browser/v1",
+        "passed": true,
+        "checks": {
+          "default_workspace_verified_organization_and_dev_label": true,
+          "actual_role_navigation_viewer": true,
+          "actual_role_navigation_platform_operator": true,
+          "actual_role_navigation_agent_owner": true,
+          "actual_role_navigation_auditor": true,
+          "actual_role_navigation_reviewer": true,
+          "reviewer_missing_read_access_explained_without_grant": true,
+          "actual_role_navigation_security_admin": true,
+          "deep_link_refusal_without_domain_request_backend_403": true,
+          "workspace_action_reaches_real_candidates_route": true,
+          "context_failure_removes_old_identity_and_recovers": true,
+          "signed_fixture_jwt_custom_role_service_and_tenant_switch": true,
+          "identity_and_tokens_not_in_browser_storage": true,
+          "workspace_no_horizontal_overflow_375": true,
+          "mobile_role_navigation_opens_and_closes": true,
+          "no_browser_errors": true
+        },
+        "harness_sha256": "46ed5caae91394fb512ffd187ce0009661b965a29ee2239cce96153fb0a6f278",
+        "scope": "Real isolated API/SQLite; dev header roles and a signed fixture HS256 JWT; not production IAM login/refresh or external IdP verification."
+      }
+    },
+    "hermes": {
+      "path": "var/flagship/ux-e145/hermes-regression/result.sanitized.json",
+      "sha256": "c2f15367861eadbe216467922ff4732376b583ca152391e085a2a93379e6d937",
+      "proof": {
+        "schema_version": "siq.enterprise-candidate-review-browser/v1",
+        "passed": true,
+        "checks": {
+          "browser_create_environment_persisted_discovery": true,
+          "code_only_in_memory_not_commands_url_storage": true,
+          "copy_button_writes_exact_code_to_clipboard": true,
+          "terminal_selector_switches_secret_free_commands": true,
+          "native_stdin_registration_and_repeat_preserves_state": true,
+          "registered_not_confused_with_heartbeat": true,
+          "native_heartbeat_independent_readback": true,
+          "browser_scan_pending_no_premature_success": true,
+          "native_connector_signed_upload_receipt_readback": true,
+          "refresh_restores_environment_progress_without_code": true,
+          "duplicate_name_clear_409_no_extra_environment": true,
+          "failed_status_removes_old_success_and_recovers": true,
+          "actual_asset_list_link": true,
+          "review_dialog_fits_375": true,
+          "cancel_review_leaves_candidate_unchanged": true,
+          "lost_response_preserves_input_and_blocks_blind_retry": true,
+          "double_submit_performs_one_real_write": true,
+          "reconcile_reads_confirmed_state_without_second_post": true,
+          "unauthorized_policy_create_hidden_in_detail": true,
+          "confirmed_role_detail_persist_after_reload": true,
+          "evidence_read_error_not_empty_and_explicit_retry_recovers": true,
+          "detail_returns_to_candidate_context": true,
+          "viewer_ui_hidden_and_backend_refuses_confirmation": true,
+          "dismiss_readback_and_confirmed_asset_stale_dismiss_refused": true,
+          "dismissal_persists_after_reload": true,
+          "mobile_cards_keep_fields_readable_without_overflow": true,
+          "setup_no_horizontal_overflow_375": true,
+          "no_browser_errors": true
+        },
+        "edge_sha256": "d801fa0d9689aef5428e262db54563e139cadda13143907664801a099a20f320",
+        "framework": "hermes",
+        "connector_sha256": "5650bf91d81761f6e2d56a03ebf2ee392f0ab7e134c668fb03d2e25299600a3f",
+        "harness_sha256": "72992ca7d620184c84990e6842c56026c5d103c63c2ef6809f294cba7de30b4b",
+        "scope": "Real isolated SQLite/dev-auth API, DEV fixture UI, native Edge and selected framework connector; synthetic profile. No production IAM, native model or enforcement.",
+        "write_credentials_in_evidence": false
+      }
+    },
+    "openclaw": {
+      "path": "var/flagship/ux-e145/openclaw-regression/result.sanitized.json",
+      "sha256": "8a67ad3cf0b619286832e5c3e0a4c72f2ba421df05c516f2b7985d977cbb088e",
+      "proof": {
+        "schema_version": "siq.enterprise-candidate-review-browser/v1",
+        "passed": true,
+        "checks": {
+          "browser_create_environment_persisted_discovery": true,
+          "code_only_in_memory_not_commands_url_storage": true,
+          "copy_button_writes_exact_code_to_clipboard": true,
+          "terminal_selector_switches_secret_free_commands": true,
+          "native_stdin_registration_and_repeat_preserves_state": true,
+          "registered_not_confused_with_heartbeat": true,
+          "native_heartbeat_independent_readback": true,
+          "browser_scan_pending_no_premature_success": true,
+          "native_connector_signed_upload_receipt_readback": true,
+          "refresh_restores_environment_progress_without_code": true,
+          "duplicate_name_clear_409_no_extra_environment": true,
+          "failed_status_removes_old_success_and_recovers": true,
+          "actual_asset_list_link": true,
+          "review_dialog_fits_375": true,
+          "cancel_review_leaves_candidate_unchanged": true,
+          "lost_response_preserves_input_and_blocks_blind_retry": true,
+          "double_submit_performs_one_real_write": true,
+          "reconcile_reads_confirmed_state_without_second_post": true,
+          "unauthorized_policy_create_hidden_in_detail": true,
+          "confirmed_role_detail_persist_after_reload": true,
+          "evidence_read_error_not_empty_and_explicit_retry_recovers": true,
+          "detail_returns_to_candidate_context": true,
+          "viewer_ui_hidden_and_backend_refuses_confirmation": true,
+          "dismiss_readback_and_confirmed_asset_stale_dismiss_refused": true,
+          "dismissal_persists_after_reload": true,
+          "mobile_cards_keep_fields_readable_without_overflow": true,
+          "setup_no_horizontal_overflow_375": true,
+          "no_browser_errors": true
+        },
+        "edge_sha256": "d801fa0d9689aef5428e262db54563e139cadda13143907664801a099a20f320",
+        "framework": "openclaw",
+        "connector_sha256": "37428995a230132322565401c1fa363a14c117de06d73597f727260992e86f19",
+        "harness_sha256": "72992ca7d620184c84990e6842c56026c5d103c63c2ef6809f294cba7de30b4b",
+        "scope": "Real isolated SQLite/dev-auth API, DEV fixture UI, native Edge and selected framework connector; synthetic profile. No production IAM, native model or enforcement.",
+        "write_credentials_in_evidence": false
+      }
+    },
+    "local_results": {
+      "path": "var/flagship/ux-e145/local-results/result.sanitized.json",
+      "sha256": "9b721c0f3aa8e7ebb159073b27c42f82da503c0d24e1d1e9ba6d3641c04a5e2b",
+      "proof": {
+        "schema_version": "siq.result-evidence-browser/v1",
+        "passed": true,
+        "checks": {
+          "backend_missing_independent_readback": true,
+          "backend_failed_independent_readback": true,
+          "backend_conflicting_independent_readback": true,
+          "backend_verified_independent_readback": true,
+          "decision_credential_cannot_read_result_evidence": true,
+          "missing_clear_result_without_invented_report": true,
+          "missing_persisted_after_reload": true,
+          "failed_clear_result_without_invented_report": true,
+          "failed_keyboard_reaches_technical_details": true,
+          "failed_same_task_evidence_escape_focus": true,
+          "failed_persisted_after_reload": true,
+          "conflicting_clear_result_without_invented_report": true,
+          "conflicting_keyboard_reaches_technical_details": true,
+          "conflicting_same_task_evidence_escape_focus": true,
+          "conflicting_persisted_after_reload": true,
+          "verified_clear_result_without_invented_report": true,
+          "verified_keyboard_reaches_technical_details": true,
+          "verified_same_task_evidence_escape_focus": true,
+          "verified_persisted_after_reload": true,
+          "allowed_call_without_requirements_does_not_claim_success": true,
+          "refresh_failure_removes_old_success": true,
+          "explicit_read_retry_recovers_real_record": true,
+          "other_task_response_rejected": true,
+          "evidence_dialog_fits_375": true,
+          "stale_snapshot_removes_prior_results": true,
+          "detail_refresh_recovers_current_snapshot": true,
+          "reading_results_has_no_domain_writes": true,
+          "no_browser_errors": true,
+          "missing_signed_result_survives_server_restart": true,
+          "failed_signed_result_survives_server_restart": true,
+          "conflicting_signed_result_survives_server_restart": true,
+          "verified_signed_result_survives_server_restart": true
+        },
+        "binary_sha256": "f498a1b638a509b0446411c9bfbf3ab052e8a1efe048b62f84cc1625669984ed",
+        "harness_sha256": "ea652b6fbf30e65d7ff62933eea9bcddb3dddc48a3852bbbaf81ad31854a009d",
+        "scope": "Real isolated daemon, signed intents and decisions, real host file observations; synthetic writes, no native model or business output. Only errors and other-task response injected.",
+        "completion_states": {
+          "missing": {
+            "status": "incomplete",
+            "reason_code": "effect_evidence_missing"
+          },
+          "failed": {
+            "status": "incomplete",
+            "reason_code": "effect_failed"
+          },
+          "conflicting": {
+            "status": "conflicting",
+            "reason_code": "effect_evidence_conflicting"
+          },
+          "verified": {
+            "status": "verified",
+            "reason_code": "effects_verified"
+          }
+        }
+      }
+    }
+  },
+  "local_binary": {
+    "path": "var/flagship/ux-e145/siq-agent-security",
+    "sha256": "f498a1b638a509b0446411c9bfbf3ab052e8a1efe048b62f84cc1625669984ed"
+  },
+  "reused_e143_binaries": [
+    {
+      "path": "var/flagship/ux-e143/edge-agent-final",
+      "sha256": "d801fa0d9689aef5428e262db54563e139cadda13143907664801a099a20f320"
+    },
+    {
+      "path": "var/flagship/ux-e143/hermes-connector",
+      "sha256": "5650bf91d81761f6e2d56a03ebf2ee392f0ab7e134c668fb03d2e25299600a3f"
+    },
+    {
+      "path": "var/flagship/ux-e143/openclaw-connector",
+      "sha256": "37428995a230132322565401c1fa363a14c117de06d73597f727260992e86f19"
+    }
+  ],
+  "cross_builds": [
+    {
+      "path": "var/flagship/ux-e145/local-linux-amd64",
+      "sha256": "22c03af36b15019e10d03790dc89dc1e30cdb5478a7df4887046dcbaedcf8fbb"
+    },
+    {
+      "path": "var/flagship/ux-e145/local-linux-arm64",
+      "sha256": "f498a1b638a509b0446411c9bfbf3ab052e8a1efe048b62f84cc1625669984ed"
+    },
+    {
+      "path": "var/flagship/ux-e145/local-darwin-arm64",
+      "sha256": "76ef7b27db77291b531dec5b752a83f5774eadac79b89782f91f8580c2c25800"
+    },
+    {
+      "path": "var/flagship/ux-e145/local-windows-amd64",
+      "sha256": "e7caca9c30839b98aaaabb029c42ea9825c525fa2134285c33647249daea1744"
+    }
+  ],
+  "contract": {
+    "path": "packages/contracts/console-context.v1.schema.json",
+    "sha256": "3dff02f78e104a5953fd0da51382cf6a446164cc8ba35db73e7198f7a23d7183"
+  },
+  "sources": [
+    {
+      "path": "apps/control-api/app/main.py",
+      "sha256": "873d174ca06f86d55c9acc62106c66260ef18da8a315118c08ea2bfb3c018886"
+    },
+    {
+      "path": "apps/control-api/app/routers/console.py",
+      "sha256": "13545850255f8c7a05b823833d0694da3a000ee4a96f486d2a94a9241f3890dc"
+    },
+    {
+      "path": "apps/control-api/app/tests/test_console_context.py",
+      "sha256": "be7825da94ffd1c1f4fe11914544ce4f5e2877aace1c3355e17671248676d20c"
+    },
+    {
+      "path": "apps/web/src/App.tsx",
+      "sha256": "d5d8dff14cd6904a9d3bb7d5f228acf6888738788fcb2573d8a9df4eb8df0079"
+    },
+    {
+      "path": "apps/web/src/api/consoleContext.ts",
+      "sha256": "e52ae4b8040195bc7fe89e603cea1044e36ad261ee98d651610cb15aa87c9979"
+    },
+    {
+      "path": "apps/web/src/api/consoleContext.test.ts",
+      "sha256": "1bebd8e246bdfb8afb36af185074a7b7eb48b8b7fdf4a508d18dcbb87f0102cf"
+    },
+    {
+      "path": "apps/web/src/components/ConsoleContext.tsx",
+      "sha256": "213b65d70abd7fb7d1892d3a710dc4137c44fc32c165b802d80a2af4430e9ea7"
+    },
+    {
+      "path": "apps/web/src/components/Layout.tsx",
+      "sha256": "67be5bcab4568f8fdbc17b7964e635cb8106d9e3b140959e23d4e15ba4468049"
+    },
+    {
+      "path": "apps/web/src/pages/WorkspacePage.tsx",
+      "sha256": "067838edd2bd5b7234279a3cf75a62cc49e56615dd63cad97696704b9061f1e0"
+    },
+    {
+      "path": "apps/web/src/pages/OverviewPage.tsx",
+      "sha256": "6d23902b49ab46cd5082c10c9f712555f85057f8a439a48a8dd844a97fde4309"
+    },
+    {
+      "path": "apps/web/src/pages/SettingsPage.tsx",
+      "sha256": "26af1242b8d622353a84ce949e884109e24dd8af6cbbbcea77eadbaab27315ce"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "sha256": "0d64d97055e0737c083ffd09a260666a3cafee33b5315a8cdee581157a39dbf1"
+    },
+    {
+      "path": "scripts/enterprise-experience/workspace-browser-smoke.py",
+      "sha256": "46ed5caae91394fb512ffd187ce0009661b965a29ee2239cce96153fb0a6f278"
+    }
+  ],
+  "identity_dependency_snapshots": [
+    {
+      "path": "apps/control-api/app/security.py",
+      "sha256": "66cc362744278901997ee885f0ff33f25efd3652b99e62f393e2811bc5118d86"
+    },
+    {
+      "path": "apps/web/src/components/AuthGate.tsx",
+      "sha256": "25164a560222a739e9ab96b4e37835e5a2c670ac332e7dce341b7ca1643c7553"
+    },
+    {
+      "path": "apps/web/src/api/session.ts",
+      "sha256": "88e88f62456047d27e0ec58da8fb69c8599ad572d1bcd4660ca64c368fae7b2f"
+    }
+  ],
+  "resource_trees": [
+    {
+      "directory": "apps/web/dist",
+      "file_count": 410,
+      "tree_sha256": "3c1ded9fa28969eb6b84c77546f89ad646db9797e26fa30ea2e67fa3dd4fae34",
+      "algorithm": "sha256(utf8(json(sorted relative path and file sha256 pairs), ensure_ascii=false, separators=comma-colon))"
+    },
+    {
+      "directory": "var/flagship/ux-e145/dev-web",
+      "file_count": 410,
+      "tree_sha256": "480387b2cef1f4bd5101c1c38598976e2a659027588965b400f80eb3833dc17d",
+      "algorithm": "sha256(utf8(json(sorted relative path and file sha256 pairs), ensure_ascii=false, separators=comma-colon))"
+    },
+    {
+      "directory": "apps/agentshield/internal/ui/embedded",
+      "file_count": 214,
+      "tree_sha256": "95bdb34b5aed2c2a1b164569618f98431b643938b399812f7f2d9d4dd16058f5",
+      "algorithm": "sha256(utf8(json(sorted relative path and file sha256 pairs), ensure_ascii=false, separators=comma-colon))"
+    }
+  ],
+  "test_summary": {
+    "python_api_passed": 994,
+    "new_api_cases": 9,
+    "web_files": 46,
+    "web_tests_passed": 271,
+    "local_go_test_packages": 44,
+    "local_vet": "passed",
+    "gofmt": "empty",
+    "api_app_ruff": "passed",
+    "harness_ruff": "passed",
+    "git_diff_check": "empty",
+    "migration": "isolated SQLite 0001 to 0016; no DB model changes"
+  },
+  "logs": [
+    {
+      "path": "var/flagship/ux-e145/api-full.log",
+      "sha256": "bb77512c57f255ef92bd59c8241cee4f6bd5afdcbd025df34fa08df6ecbdcd4d"
+    },
+    {
+      "path": "var/flagship/ux-e145/api-ruff-final.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "var/flagship/ux-e145/web-tests-final.log",
+      "sha256": "889de402a5480dacfc7944d9c696e88d24b8f70e3c37d3a33206abfc67069644"
+    },
+    {
+      "path": "var/flagship/ux-e145/web-build-final.log",
+      "sha256": "4795e1bb34a3f4b3f77c82407d691b3a4597d4b74587955e1d920b3ac1d455ad"
+    },
+    {
+      "path": "var/flagship/ux-e145/web-fixture-final.log",
+      "sha256": "f81718270cfa6d9e186bd57eea74c3fb95e28dc77ed25152d73d7cff44143c76"
+    },
+    {
+      "path": "var/flagship/ux-e145/local-build-final.log",
+      "sha256": "f2ad95544db495423fb18b114493378de329c54e279d8f4d081d9c35e4ca2c3c"
+    },
+    {
+      "path": "var/flagship/ux-e145/local-tests.log",
+      "sha256": "f0828285ef008a4d0e455e5b6c762ceaafe30818f2623571937cf8b795362f9c"
+    },
+    {
+      "path": "var/flagship/ux-e145/local-vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "var/flagship/ux-e145/workspace-final.log",
+      "sha256": "47492fa52852c75a2d27a3d58347082b737295031347eeddfa81512df33772dc"
+    },
+    {
+      "path": "var/flagship/ux-e145/hermes-regression.log",
+      "sha256": "2fe38f2366faaa140411a4a8c9165e66e58f05e49338de1dc5a3c7d406ffe04d"
+    },
+    {
+      "path": "var/flagship/ux-e145/openclaw-regression.log",
+      "sha256": "2fe38f2366faaa140411a4a8c9165e66e58f05e49338de1dc5a3c7d406ffe04d"
+    },
+    {
+      "path": "var/flagship/ux-e145/local-results.log",
+      "sha256": "8d35403e5adc7097d7f6c189bf5d63011d7b0cf3113d06366f461b3a846486e3"
+    },
+    {
+      "path": "var/flagship/ux-e145/migrations.log",
+      "sha256": "f00d35046c6ec4db319174c53e8179112ab98befeaeb33b11c51b302011c1643"
+    },
+    {
+      "path": "var/flagship/ux-e145/harness-ruff-final.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "var/flagship/ux-e145/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "var/flagship/ux-e145/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "var/flagship/ux-e145/workspace-final/workspace-default-desktop.png",
+      "sha256": "1fc68536852d48ef600fbda1fb80e5eca8dffa6242c61955b5533682b514203d"
+    },
+    {
+      "path": "var/flagship/ux-e145/workspace-final/workspace-desktop.png",
+      "sha256": "1b566f244a04f3eebb4abc805612e4df10ff53d0521084c55e2c25a990714f13"
+    },
+    {
+      "path": "var/flagship/ux-e145/workspace-final/workspace-mobile.png",
+      "sha256": "6ab1ef418b1abe51df4eecf8539744413174aa446de476e9a134b80d7e9d180a"
+    }
+  ],
+  "limitations": [
+    "ENT-UX-02 partial; production IdP/JWKS/login/refresh chain, role assignment and owner directory remain",
+    "Context browser uses real isolated API/SQLite with dev headers and a fixture-signed HS256 JWT; no production identity claim",
+    "Context 503 is fault injection; permission denial and signed token verification use real backend",
+    "Navigation visibility is a snapshot, not proof of instant revocation; APIs still authorize every call",
+    "Other enterprise page write controls and full approval/deployment workbench not completed",
+    "Native Connector collection regression is not native model execution or OpenShell isolation validation",
+    "No global idempotency, production eligibility, release, installed app update or role permission expansion"
+  ]
+}

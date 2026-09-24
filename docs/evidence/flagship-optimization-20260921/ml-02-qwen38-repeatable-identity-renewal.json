@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-repeatable-identity-renewal/v1",
+  "recorded_at": "2026-09-22T04:36:38Z",
+  "scope": "real_qwen_candidate_sandbox_repeatable_file_identity_renewal_synthetic_broker",
+  "status": "passed_two_renewals_and_final_revoke_in_real_sandbox",
+  "source_sha256": {
+    "candidate_identity_controller": "9fdca0de75cccfaa58e25802cf421214869d4d9c35d0591abd0afefb9fb8a6f6",
+    "broker_admission_registry": "d8927f9b211293cd6a10d8cd086ba997107ba165ea6e196bbbafc9e0f8833e34",
+    "sandbox_proof": "4bd1ea3c0920fdc87e6efae87bc89bf9de2d612d7fd4e3c55b2c6f12d2302fe9",
+    "candidate_identity_tests": "47621da173ffcf71b5401058bb4dcb9fdc4468f5768aa06de78d9c400cdbefb0",
+    "sandbox_proof_tests": "5ff57ee393d87afd5a06ee630bb679ea8f46358d847e61f492fa35f74cbbdc36"
+  },
+  "private_proof_sha256": "646509b39dcd2da30c21b51ed308120525960a92d6bc59e58158c00d4b0aa7ef",
+  "checks": {
+    "identity_staged_under_private_directory": true,
+    "identity_value_absent_from_cli_arguments": true,
+    "generation_floor_read_before_renewal": true,
+    "renewal_generation_2_accepted": true,
+    "renewal_generation_3_accepted": true,
+    "previous_token_denied_after_each_renewal": true,
+    "business_helper_success_after_each_renewal": true,
+    "business_helper_denied_after_final_revoke": true,
+    "synthetic_backend_calls": 6,
+    "synthetic_audit_events": 6,
+    "failed_upload_revokes_prior_admission_tested": true,
+    "failed_install_revokes_old_and_new_admission_tested": true,
+    "candidate_gateway_empty_after": true,
+    "candidate_broker_listener_stopped": true,
+    "focused_and_adjacent_tests_passed": 144,
+    "production_eligible": false
+  },
+  "limitations": [
+    "The reusable controller was invoked by an isolated proof, not yet by the formal Qwen business lifecycle or scheduled renewal service. Formal integration must serialize renewers per sandbox and bind its CLI runner to the candidate gateway.",
+    "The broker and audit backends were synthetic; real IAM and enterprise database scope are not proven.",
+    "Hermes gateway business-tool dispatch, AgentShield positive decisions, model inference, recovery across a process restart, and writer quiescence remain unverified."
+  ],
+  "secrets_included": false
+}

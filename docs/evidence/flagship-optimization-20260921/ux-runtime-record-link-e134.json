@@ -1,0 +1,130 @@
+{
+  "schema_version": "siq.flagship.ux-runtime-record-link-evidence.v1",
+  "captured_at_utc": "2026-09-23T00:11:48.455348+00:00",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "installed_release_changed": false,
+  "existing_services_restarted": false,
+  "secrets_included": false,
+  "candidate": {
+    "path": "var/flagship/ux-e134/siq-agent-security-v1",
+    "sha256": "3c5877e501c8e944c15f65d9b32ae6088db21dc6c5fa589ec2df8d2423739a90"
+  },
+  "native_browser": {
+    "schema_version": "product-runtime-check-browser-smoke/v1",
+    "recorded_at": "2026-09-23T00:09:22.034373+00:00",
+    "passed": true,
+    "binary_sha256": "3c5877e501c8e944c15f65d9b32ae6088db21dc6c5fa589ec2df8d2423739a90",
+    "harness_sha256": "75ea9218623f26446a43cd69b076eb26e90b0e653b8e88a29f60a5cde11ccb32",
+    "hermes_cli_sha256": "84db22df87dc3ec9a32afb91ba94beb3f8ef093060e3aae44ec7922523526d5b",
+    "failure": null,
+    "checks": {
+      "browser_installs_native_connection_without_authority": true,
+      "installation_preserves_user_setting": true,
+      "other_profile_preserved": true,
+      "active_instance_selected_without_authority": true,
+      "confirmed_native_check_survives_closed_view": true,
+      "cleanup_and_five_receipts_visible": true,
+      "all_probe_evidence_visible": true,
+      "reopening_does_not_duplicate_launch": true,
+      "reload_restores_same_check_without_repairing": true,
+      "native_check_preserves_installed_configuration": true,
+      "mobile_dialog_content_fits": true,
+      "mobile_confirmation_reachable": true,
+      "keyboard_focus_stays_in_dialog": true,
+      "activity_lookup_failure_stays_in_dialog": true,
+      "activity_shortcut_matches_all_actual_check_receipts": true,
+      "self_check_not_presented_as_verified_business_result": true,
+      "activity_detail_refresh_back_and_filter_reload": true,
+      "configuration_drift_invalidates_display": true,
+      "invalidated_check_keeps_historical_activity_without_reviving_status": true,
+      "unreconciled_configuration_blocks_launch": true,
+      "cancel_revokes_and_cleans": true,
+      "uninstall_does_not_offer_install_continuation": true,
+      "uninstall_removes_owned_plugin": true,
+      "no_page_errors": true,
+      "no_credentials_in_web_storage": true
+    },
+    "scope": "Linux Chromium, product UI/API, real public Hermes CLI, isolated profile and synthetic operator"
+  },
+  "validation": {
+    "browser_checks_passed": 25,
+    "web_test_files": 36,
+    "web_tests_passed": 246,
+    "go_test_all": "passed",
+    "go_packages_passed": 43,
+    "go_vet": "passed",
+    "gofmt_product_sources": "passed",
+    "gofmt_recursive_existing_scratch_finding": ".tmp/fx01/refcalc.go (unchanged, ignored scratch file)",
+    "schema_tests_passed": 9,
+    "ruff": "passed",
+    "local_build": "passed",
+    "enterprise_build": "passed",
+    "cross_builds": [
+      {
+        "os": "linux",
+        "arch": "amd64",
+        "passed": true
+      },
+      {
+        "os": "linux",
+        "arch": "arm64",
+        "passed": true
+      },
+      {
+        "os": "darwin",
+        "arch": "arm64",
+        "passed": true
+      },
+      {
+        "os": "windows",
+        "arch": "amd64",
+        "passed": true
+      }
+    ]
+  },
+  "source_sha256": {
+    "apps/agentshield/internal/server/runtime_check.go": "5228b39c252e943c4b692e2b2f1e323e6ba08daaad555dd1fb253ac4b5b215d4",
+    "apps/agentshield/internal/server/runtime_check_activity.go": "8e82e184e3fe3ea746395dd10a7c36a72d0acd7b2d597831188b20e5e0326fa4",
+    "apps/agentshield/internal/server/runtime_check_activity_test.go": "3211e11a7510edbceed2f2b27e299cf552ad6b4410d7141e63ef3cab57c1502f",
+    "apps/agentshield/testdata/contracts/local-runtime-check-activity.json": "6ba85f89b6be942e22cbc82e7e31406e9e1ab1d6b2f6dd8dbc6a562b475c034a",
+    "packages/contracts/local-runtime-check-activity.v1.schema.json": "e295ac46706e8207106cabd7a38e679e495acb62024cc6d988890df17d12862c",
+    "apps/control-api/app/tests/test_schema_contracts.py": "2c5960a81693f43f02cd757ca1f6e0d2f56f66e32f8338c7169f75ba3489fdea",
+    "apps/web/src/local/api.ts": "5624926626da645bc1b65ddd1b4794105101aebe9961481a210ba59a6722d084",
+    "apps/web/src/local/runtimeCheckActivity.ts": "c4cc14d71ff47ba77a9b0d49704a5653b40e6995fc217b4ea3aa98d74e827dac",
+    "apps/web/src/local/runtimeCheckActivity.test.ts": "096f07dc00f146d8b15cc3b5a4df3583e39364f8b1f116587724637b434f52a3",
+    "apps/web/src/local/components/RuntimeCheckDialog.tsx": "8e7d80965391b99f6282a69109accf55405db515074d71c85a29dcd2a3cb2882",
+    "scripts/personal-experience/runtime-check-browser-smoke.py": "75ea9218623f26446a43cd69b076eb26e90b0e653b8e88a29f60a5cde11ccb32",
+    "docs/agentshield-dev-spec-v1.md": "d37948d35f3f613c8abf2ba2e7bc4c62aed50886ae7f3029e7ab7c314fd2c055"
+  },
+  "artifact_sha256": {
+    "var/flagship/ux-e134/browser-v1/result.json": "ed4e01dbcb5d8316c5ca936b58ad8e36c739cb065f3a2c38e9ddc042a2e78a05",
+    "var/flagship/ux-e134/browser-v1/runtime-check-filtered-activity.png": "089bd9ebaebd4574ec9abed7a759a94c9290412bbccd827b62f0780bc6213f05",
+    "var/flagship/ux-e134/browser-v1/runtime-check-mobile-actions.png": "73d11168360db890a11012fef0e96778f51bf42b34b32c2a3057588f29047df9",
+    "var/flagship/ux-e134/browser-v1/runtime-check-mobile.png": "a025142081b2f747077e9ce6eba35274b485e297bf11400454f4c8d165fffd13",
+    "var/flagship/ux-e134/browser-v1/runtime-check-passed.png": "e86737be4ccea0b53f91ec377cc2a2cf218f7f0ae948b0e747c13b2d883cfc4a",
+    "var/flagship/ux-e134/browser-v2/result.json": "8d99742cbe97fd012c751befb53742e456d08cac41bc89fecf378b3e6e711ff6",
+    "var/flagship/ux-e134/browser-v2/runtime-check-filtered-activity.png": "a9a3da538776734a9f2a9c527df742f6843b0283be0a60f1d812550b400fa97b",
+    "var/flagship/ux-e134/browser-v2/runtime-check-mobile-actions.png": "243ece94e6bf79292521b18d6805d519067aaaedca7bbdb754936d1fc7dc89d5",
+    "var/flagship/ux-e134/browser-v2/runtime-check-mobile.png": "77dd6a1b811c146f5e8af9e74d2b283e8513270cee9e7ba185351f4f50beb22a",
+    "var/flagship/ux-e134/browser-v2/runtime-check-passed.png": "397098cd166bf78f36f570dead8f6a1d5bae405ca078de211ee6227afa876c2e",
+    "var/flagship/ux-e134/cross-builds.json": "ab3514a7a4598e135bf329d5dc1925c38132d36b394399085a05fa2ad18160b8",
+    "var/flagship/ux-e134/go-tests.log": "8609b114afba60096ee28840c7dce509e16b952e1322ce586950369683b99f2d",
+    "var/flagship/ux-e134/go-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "var/flagship/ux-e134/gofmt-source.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "var/flagship/ux-e134/gofmt.log": "3941a3d0e7bfeb74368debe575cb972adeb239b74d81f066c89eb0318787bdfd",
+    "var/flagship/ux-e134/schema-tests.log": "6ccda573c108265006d46fb97716b404caa0d3e8021b39fb14c3af503d728d5c",
+    "var/flagship/ux-e134/web-build.log": "ef8a64671d3e6dfabf54ea99949d1dfabbf93d905321921cf3e00153d3d35de9",
+    "var/flagship/ux-e134/web-enterprise-build.log": "2fc7379946cb0a2070b4baa119d62fd833dda1c84ccdb2b0605706ac98835496",
+    "var/flagship/ux-e134/web-tests.log": "0508000f369419e7ad53f71e6553908482c26c55db1ea14838209be15004010c"
+  },
+  "not_proven": [
+    "full_business_model_session_from_UI",
+    "business_result_artifact_verification",
+    "plain_language_activity_list_and_time_status_filters",
+    "model_and_OpenShell_unified_discovery",
+    "enterprise_onboarding",
+    "installed_release_upgrade",
+    "usability_study"
+  ]
+}

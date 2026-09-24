@@ -1,0 +1,397 @@
+{
+  "schema_version": "siq.flagship.evidence.request-gateway.v1",
+  "captured_at_utc": "2026-09-22T15:37:17.392759+00:00",
+  "scope": "versioned_research_E105_supervised_Hermes_bootstrap_evidence",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.request-gateway-evidence.v1",
+    "captured_at_utc": "2026-09-22T15:36:09.505433+00:00",
+    "scope": "API_component_supervised_Hermes_bootstrap_native_dispatcher_SIGKILL_and_graceful_stop",
+    "live_SIGKILL": {
+      "schema_version": "siq.qwen38.request-gateway-proof.v1",
+      "passed": true,
+      "scope": "API_component_supervised_Hermes_bootstrap_native_tools_and_SIGKILL_recovery",
+      "actual_API_request_sent": false,
+      "sandbox_or_model_started": true,
+      "production_eligible": false,
+      "secrets_included": false,
+      "read_only_prepare": true,
+      "private_credential_valid": true,
+      "credential_absent_from_plan_and_receipt": true,
+      "company_content_preserved": true,
+      "private_file_modes": true,
+      "actual_API_process_killed": false,
+      "Hermes_gateway_started": true,
+      "model_inference_started": false,
+      "business_ready": false,
+      "execution_lease_seconds": 120,
+      "new_synthetic_request_identity_issued": true,
+      "independent_private_identity_copy": true,
+      "identity_sha256": "285b119d170231810ecd00d561064d58cec39c934b159e240a8ae8bb61eb0afe",
+      "v2_service_with_broker_ready": true,
+      "v3_service_with_identity_ready": true,
+      "v4_service_with_relay_ready": true,
+      "relay_is_exact_supervisor_child_in_same_cgroup": true,
+      "relay_host_enrollment_and_cross_session_denial": true,
+      "relay_self_revoke_route_hidden": true,
+      "Hermes_bootstrap_attempted": true,
+      "bootstrap_receipt": {
+        "business_ready": false,
+        "child_pid": 102,
+        "invalid_key_status": 401,
+        "key_absent_from_child_argv": true,
+        "key_sha256": "1b2f078867c47a46914bdb4fb3ea00d5f078b1e12a92536aead23633394f2ccc",
+        "phase": "authenticated",
+        "run_sha256": "4951c14f376944b2c70d50f668c67cab28b305e9da3435b0fdf3963d16aa9efd",
+        "schema_version": "siq.qwen38.request-bootstrap.v2",
+        "tool_identity_installed": true,
+        "tool_packet_sha256": "21073ff2b1d6cf57e8ccef99323eb21bcc558d6c63eddda5dcb43a8fafe4fea9",
+        "tool_token_absent_from_child_argv": true,
+        "transport_authenticated": true,
+        "uploaded_key_removed": true,
+        "uploaded_tool_packet_removed": true
+      },
+      "native_tool_probe": {
+        "denied_write_effect_absent": true,
+        "native_read_completed": true,
+        "native_write_blocked": true
+      },
+      "signed_native_receipts": {
+        "signed_chain_verified": true,
+        "native_allow_and_deny_correlated": true,
+        "allowed_read_observation_present": true,
+        "exact_runtime_grant_matched": true
+      },
+      "native_dispatcher_separate_process_from_HTTP_gateway": true,
+      "invocation_sha256": "6d824c12188bac9145db7b623db536fe41e4d773c0443cb3996fbe062d86dca4",
+      "real_read_only_broker_probe": {
+        "error_code": "",
+        "ok": true,
+        "real_read_only_query": true,
+        "secret_file_private": true,
+        "status": 200
+      },
+      "seconds_waited_after_probe": 2.137,
+      "terminal_service": {
+        "ActiveState": "failed",
+        "SubState": "failed",
+        "ExecMainCode": "2",
+        "ExecMainStatus": "9",
+        "Result": "signal"
+      },
+      "original_execution_row_unchanged": true,
+      "natural_execution_lease_expired": false,
+      "business_grant_still_valid_at_containment": true,
+      "final_credential_denial_also_has_expired_execution_lease": false,
+      "supervisor_main_sigkill_confirmed": true,
+      "execution_lease_still_current_at_containment": true,
+      "data_lease_revoked": true,
+      "model_client_credential_rotated": true,
+      "identity_revoked_before_diagnostic_admin_cleanup": true,
+      "old_identity_inspection_and_enrollment_401": true,
+      "agentshield_grant_and_profile_unchanged_at_containment": true,
+      "relay_child_and_listener_gone_after_sigkill": true,
+      "sandbox_removed_owner_retained": true,
+      "provider_restored_positive_probe": true,
+      "service_broker_and_sandbox_stopped": true,
+      "synthetic_identity_fixture_and_private_copy_removed": true,
+      "supervision_fixtures_removed": true,
+      "AgentShield_relay_started": true,
+      "production_IAM_integrated": false,
+      "revoked_grant_denies_credential_read": true,
+      "private_files_fixture_and_owner_removed": true,
+      "temporary_database_removed": true
+    },
+    "live_graceful": {
+      "schema_version": "siq.qwen38.request-gateway-proof.v1",
+      "passed": true,
+      "scope": "API_component_supervised_Hermes_bootstrap_native_tools_and_graceful_recovery",
+      "actual_API_request_sent": false,
+      "sandbox_or_model_started": true,
+      "production_eligible": false,
+      "secrets_included": false,
+      "read_only_prepare": true,
+      "private_credential_valid": true,
+      "credential_absent_from_plan_and_receipt": true,
+      "company_content_preserved": true,
+      "private_file_modes": true,
+      "actual_API_process_killed": false,
+      "Hermes_gateway_started": true,
+      "model_inference_started": false,
+      "business_ready": false,
+      "execution_lease_seconds": 120,
+      "new_synthetic_request_identity_issued": true,
+      "independent_private_identity_copy": true,
+      "identity_sha256": "56b79b766ee61493921e0cdfa0db2549b35f2036e26a7cadaec4a3a2ccced31e",
+      "v2_service_with_broker_ready": true,
+      "v3_service_with_identity_ready": true,
+      "v4_service_with_relay_ready": true,
+      "relay_is_exact_supervisor_child_in_same_cgroup": true,
+      "relay_host_enrollment_and_cross_session_denial": true,
+      "relay_self_revoke_route_hidden": true,
+      "Hermes_bootstrap_attempted": true,
+      "bootstrap_receipt": {
+        "business_ready": false,
+        "child_pid": 102,
+        "invalid_key_status": 401,
+        "key_absent_from_child_argv": true,
+        "key_sha256": "aae327bb51f6fdff7d1837da36ad1693f31d4faa6c4cd00a01ecbbf34534de36",
+        "phase": "authenticated",
+        "run_sha256": "2ebea4384559cf24aadfa4a573ba9c2c9c06b77d459ea2ef579dd9b587e9256b",
+        "schema_version": "siq.qwen38.request-bootstrap.v2",
+        "tool_identity_installed": true,
+        "tool_packet_sha256": "a62eb0c1b5062460e9aa9524cd372cfefad2e035878a284b6cb52c183440c1cc",
+        "tool_token_absent_from_child_argv": true,
+        "transport_authenticated": true,
+        "uploaded_key_removed": true,
+        "uploaded_tool_packet_removed": true
+      },
+      "native_tool_probe": {
+        "denied_write_effect_absent": true,
+        "native_read_completed": true,
+        "native_write_blocked": true
+      },
+      "signed_native_receipts": {
+        "signed_chain_verified": true,
+        "native_allow_and_deny_correlated": true,
+        "allowed_read_observation_present": true,
+        "exact_runtime_grant_matched": true
+      },
+      "native_dispatcher_separate_process_from_HTTP_gateway": true,
+      "invocation_sha256": "c625ba5b3a5822ce5bb967f6f0965b9fdf05fc28334fa93a96ac1e61487067c9",
+      "real_read_only_broker_probe": {
+        "error_code": "",
+        "ok": true,
+        "real_read_only_query": true,
+        "secret_file_private": true,
+        "status": 200
+      },
+      "seconds_waited_after_probe": 2.379,
+      "terminal_service": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "ExecMainCode": "0",
+        "ExecMainStatus": "0",
+        "Result": "success"
+      },
+      "original_execution_row_unchanged": true,
+      "natural_execution_lease_expired": false,
+      "business_grant_still_valid_at_containment": true,
+      "final_credential_denial_also_has_expired_execution_lease": false,
+      "supervisor_graceful_stop_confirmed": true,
+      "execution_lease_still_current_at_containment": true,
+      "cleared_invocation_accepted_with_matching_recovery_digest": true,
+      "data_lease_revoked": true,
+      "model_client_credential_rotated": true,
+      "identity_revoked_before_diagnostic_admin_cleanup": true,
+      "old_identity_inspection_and_enrollment_401": true,
+      "agentshield_grant_and_profile_unchanged_at_containment": true,
+      "relay_child_and_listener_gone_after_stop": true,
+      "sandbox_removed_owner_retained": true,
+      "provider_restored_positive_probe": true,
+      "service_broker_and_sandbox_stopped": true,
+      "synthetic_identity_fixture_and_private_copy_removed": true,
+      "supervision_fixtures_removed": true,
+      "AgentShield_relay_started": true,
+      "production_IAM_integrated": false,
+      "revoked_grant_denies_credential_read": true,
+      "private_files_fixture_and_owner_removed": true,
+      "temporary_database_removed": true
+    },
+    "provider_positive_passed": [
+      true,
+      true
+    ],
+    "validation": {
+      "combined_tests_passed": 329,
+      "combined_test_files": 18,
+      "warnings": 297,
+      "warning_source": "existing_Pydantic_datetime_utcnow_deprecation",
+      "earlier_overlapping_regression_passed": 343,
+      "focused_service_and_launcher_passed": 88,
+      "real_socket_old_code_rebind_failed": true,
+      "real_socket_fixed_rebind_and_live_listener_denial_passed": true,
+      "missing_recovery_CLI_preflight_passed": true,
+      "ruff_passed": true,
+      "python_compile_passed": true,
+      "git_diff_check_passed": true
+    },
+    "source_sha256": {
+      "apps/api/services/qwen38_request_gateway.py": "2d48b9ee88e87be70f362e79bbc40a2999a7cdea8f6289a4703ab26b39971e4f",
+      "apps/api/tests/test_qwen38_request_gateway.py": "49a42bd0122305858536a1760f99fd44ff58b8d207e727693f4a8fa9d9a0240b",
+      "scripts/openshell/qwen38_request_bootstrap.py": "180729b1e7b3adb262e20f3b399a3e89a7ecc6151b4680a327e94d05fd743077",
+      "infra/openshell/sandbox/qwen38_candidate/request_bootstrap.py": "dcc9018b28459e779ae572df7c4b846f759f7a64be2bad0c2a4bf3b9c236da93",
+      "scripts/openshell/qwen38_candidate_supervisor.py": "0e6fe9f333bef515e6832eb2af2b159a2ec092b8b3ac245e0862fa91504f0b57",
+      "scripts/openshell/qwen38_supervisor_service.py": "479ee0f99b0b45123caf42540d1afb0a17423831d87b6d78dc5711fab6cbf16a",
+      "scripts/openshell/launch_agentshield_decision_relay.py": "c8f4e5d0ebe5f22f2e659bc8b45b0fc28a5aef4d128aeb3c16410f79176383d0",
+      "scripts/openshell/prove_qwen38_request_identity_supervision.py": "db37a470dd339e723837e6fd62b786c63402d0f4517985144cab4f59e30fe089",
+      "scripts/openshell/prove_qwen38_request_supervision.py": "4241e6b7d77722d13df491c72f114caab067531f2f3384fe943017f0a43b99e7",
+      "scripts/openshell/prove_qwen38_request_bootstrap.py": "ef5846dfc8f58a2257dabde2e83bbfe7a65c24199a067fc20d0efb4977836e66",
+      "scripts/openshell/tests/test_qwen38_request_bootstrap.py": "c731141dd775ab8fbd71d1385e085ba5e8c967f17b1ada5188dcc8bafb140ad3",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py": "c5e08a382a8e288e44a5ad73ac946a79be5eb08662198ee4b120302daf1b6d44",
+      "scripts/openshell/tests/test_prove_qwen38_request_bootstrap.py": "30004816a430315204628490537b47f8406fc6550514f43dbe2de0c698f3a0f4",
+      "scripts/openshell/tests/test_launch_agentshield_decision_relay.py": "4f3e27488a14c187da5ea5b279cdc1a0e07e5b34fdba1c2e12d6e707f6f6ca90",
+      "docs/architecture/qwen38-request-runtime-v1.md": "fd2c11f5d4930e043670c09d9c8a90b750cbb0aee1f6c420ca77ff317bdc2086",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "6e9f2cec5f773707d806bde5921f9d55bc389abe9c6eda36b0ae7e7976ee5d80"
+    },
+    "artifact_sha256": {
+      "artifacts/openshell/flagship/ml02-request-gateway-e105-v2.sanitized.json": "b6f33b1205b8a4b0e5c8394d1149c2d6f9dfc2dd1df9ea55ed4ba10596bd63f2",
+      "artifacts/openshell/flagship/ml02-request-gateway-e105-v3.sanitized.json": "b89b00b9b6f7bea9b71f2bbd8c652ff7956a0f728ff8776557eb6e383e926ef8",
+      "artifacts/openshell/flagship/ml02-request-gateway-e105-v4.sanitized.json": "c371188352d957540c8a0036918c4738c38de709318b02010948052e4f661dab",
+      "artifacts/openshell/flagship/ml02-request-gateway-e105-v5.sanitized.json": "d939b0e6ed759306e5982effd42f52b2bad1aeb6c1b9079fe0a54c4fc1ca43ee",
+      "artifacts/openshell/flagship/ml02-request-gateway-e105-v6.sanitized.json": "8d5ef01896a3b2b08cabcb84333c061b0f810903de81720ab97f90866fe84715",
+      "artifacts/openshell/flagship/ml02-request-gateway-e105-v7.sanitized.json": "97c3f254ea375ba7ba86d24c58e600a9d1c3322401afa86ba3e6195be9e409eb",
+      "artifacts/openshell/flagship/ml02-request-gateway-e105.sanitized.json": "82edd9db94dff9f68abc3eecfcb7ec3875060118a199fab0fa553c5f58311910",
+      "artifacts/openshell/flagship/ml02-request-gateway-provider-e105-v2.sanitized.json": "4d302bd69dd9b927c9a005dcd178a55ed64a0109f9be097df423527194323038",
+      "artifacts/openshell/flagship/ml02-request-gateway-provider-e105-v3.sanitized.json": "34720a0a327f8e2debefd11c219ebe0bfcb9e5ce587b4570cd233567bd831b2a",
+      "artifacts/openshell/flagship/ml02-request-gateway-provider-e105-v4.sanitized.json": "1c4880787a53e108d26d78e99168f256bbe25d88555d9f022f62da7dee63a0a6",
+      "artifacts/openshell/flagship/ml02-request-gateway-provider-e105-v5.sanitized.json": "cc0bd58a734b8c03c3529d9048972eda0794d708e46309f5eaf869fe808f844a",
+      "artifacts/openshell/flagship/ml02-request-gateway-provider-e105-v6.sanitized.json": "c7e6d23239b6632771c1b64677e3eb09074d29cf2c4bf06f57bf361a67b6d37d",
+      "artifacts/openshell/flagship/ml02-request-gateway-provider-e105-v7.sanitized.json": "4de65225e8ee6dfe896d174e9db2221815b664d0597e2d03f7e7da3ecfa0d3c6",
+      "artifacts/openshell/flagship/ml02-request-gateway-recovery-e105-v2.sanitized.json": "6336392015678b9b9591b79c30db73738780d28882a1eaddc78af9e3ed6a990b",
+      "artifacts/openshell/flagship/ml02-request-gateway-recovery-e105-v5.sanitized.json": "9c0c3c195fe79d2b16cc436941446c0610c9a34c9ef86a60092ea0e3842acc4f",
+      "artifacts/openshell/flagship/ml02-request-gateway-recovery-e105.sanitized.json": "b78cc007aa369353e8cae2d47302153b60c0bd79c316e797565b0fd33d91ecdd",
+      "artifacts/openshell/flagship/ml02-request-gateway-recovery-provider-e105.sanitized.json": "33ed3334acc295502b4d97f70c4f89b3e11a2d15770c622f4ab5f3e2a37d1f63"
+    },
+    "historical_failures": {
+      "first_native_probe_failed_before_signed_receipts": true,
+      "first_original_exception_not_proven": true,
+      "v2_native_and_SIGKILL_passed_but_watchdog_socket_cleanup_failed": true,
+      "v3_full_SIGKILL_passed": true,
+      "v4_supervisor_start_failed_before_Hermes_and_cleanup_passed": true,
+      "v4_original_low_level_cause_not_proven": true,
+      "TIME_WAIT_rebind_bug_independently_reproduced_and_fixed": true,
+      "v5_diagnostic_wrapper_wrong_recovery_path_before_identity_issuance": true,
+      "v5_recovery_completed": true,
+      "private_recovery_archives_ignored": true,
+      "original_artifacts_preserved": true
+    },
+    "final_state": {
+      "gateway_empty": true,
+      "owner_empty": true,
+      "port_47811_closed": true,
+      "port_47710_closed": true,
+      "port_18794_closed": true,
+      "API_model_bridge_active_same_invocations": true
+    },
+    "not_proven": [
+      "host_HTTP_endpoint_for_formal_API",
+      "formal_HTTP_business_lifecycle_and_API_process_crash",
+      "model_selected_native_tools_in_this_HTTP_gateway",
+      "trusted_per_request_identity_issuance_from_business_IAM",
+      "model_selected_data_tools",
+      "production_IAM_approval_and_native_CI"
+    ],
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false
+  },
+  "research_evidence_sha256": "78ed08e24d8e11ba6b28858c2e218b8e03f03012b3cae809db2ecf716e15e9ae",
+  "isolated_daemon_launches": {
+    "e105-live": {
+      "result": {
+        "schema_version": "siq.e105.live-launch.v1",
+        "production_eligible": false,
+        "passed": false,
+        "proof_exit_code": 1,
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      },
+      "sha256": "c04ea51cdfa311f8dca1687a573a799042b1b753336ad1452bb5d3d0b2058e5f"
+    },
+    "e105-live-v2": {
+      "result": {
+        "schema_version": "siq.e105.live-launch.v1",
+        "production_eligible": false,
+        "passed": false,
+        "proof_exit_code": 1,
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      },
+      "sha256": "c04ea51cdfa311f8dca1687a573a799042b1b753336ad1452bb5d3d0b2058e5f"
+    },
+    "e105-live-v3-v4": {
+      "result": {
+        "schema_version": "siq.e105.live-launch.v1",
+        "production_eligible": false,
+        "passed": false,
+        "runs": [
+          {
+            "suffix": "v3",
+            "graceful": false,
+            "exit_code": 0
+          },
+          {
+            "suffix": "v4",
+            "graceful": true,
+            "exit_code": 1
+          }
+        ],
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      },
+      "sha256": "86f0e3a78ee15afe894a0700b87ff710f3cbdb7377b3d43dc78dda0832060600"
+    },
+    "e105-live-v5-v6": {
+      "result": {
+        "schema_version": "siq.e105.live-launch.v1",
+        "production_eligible": false,
+        "passed": false,
+        "runs": [
+          {
+            "suffix": "v5",
+            "graceful": false,
+            "exit_code": 1
+          }
+        ],
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      },
+      "sha256": "9688a5d0807f97418166c36f6fcb545a928329b6656271ade6a2709165503b09"
+    },
+    "e105-live-v6-v7": {
+      "result": {
+        "schema_version": "siq.e105.live-launch.v1",
+        "production_eligible": false,
+        "passed": true,
+        "runs": [
+          {
+            "suffix": "v6",
+            "graceful": false,
+            "exit_code": 0
+          },
+          {
+            "suffix": "v7",
+            "graceful": true,
+            "exit_code": 0
+          }
+        ],
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      },
+      "sha256": "60a632052861d9c45fb1d70a81ba82c06e58417ecb3c6d51d652abafb620cdb4"
+    }
+  },
+  "reused_E102_binary_sha256": {
+    "agentshield-linux-arm64": "a7fef8a9e0828a3b089933cce755cda4dec57e072a3a53ccaf75f06b5bb5c18e",
+    "agentshield-decision-relay-linux-arm64": "04e0b9493b58b8b61d76ff13b60ebf4aff51bffa4183c36ecc58ed270cb70295"
+  },
+  "unchanged_security_source_sha256": {
+    "apps/agentshield/internal/runtimeidentity/store.go": "4d2514b957b24f61dbaeb8b37ffcca434a02f59f6d942bcb5dc7786a9b78bfaf",
+    "apps/agentshield/internal/runtimeidentity/self.go": "c45fd9308e55a650d59e60c10da0284e0ebd6a48d7bf8222b214f18840d96fb8",
+    "apps/agentshield/internal/runtimeidentity/self_test.go": "69581458d572e51fba06f12553bd9b3cde0ab7f202c97ddd151fcce018ae4842",
+    "apps/agentshield/internal/server/server.go": "42074956e75121c22c52a99db455c60654212bbfe6c50e656990262527d8dd73",
+    "apps/agentshield/internal/server/runtime_identity_self.go": "6ca25b03d06d9aef89e237b445f62dea527d524e464eeb2f70682ce5e77b2b39",
+    "apps/agentshield/internal/server/runtime_identity_self_test.go": "09804a567e60e6468176ac5f27c9ac49605aa297442f9cc7f4941b8b0de0ee0c",
+    "packages/contracts/local-runtime-identity-self.v1.schema.json": "3e15b64e92c43146f55b481e10731013450f4c9dafe57da2f8fa34b86a2c503b",
+    "packages/contracts/local-runtime-identity-self-revoke.v1.schema.json": "e39f3da96a3a838762125709297ac4beba77c200351e1101bdd48bb903a3f86a",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-self.json": "0643f5312716572884c544a065fd82f36e6922f155e6c2af468436173a03ba65",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-self-revoke.json": "515ced8ac4da6ed22c33495327785627526ce4d1901e927b58b353fde5fb69fe"
+  },
+  "security_code_and_contracts_changed_this_increment": false,
+  "Go_tests_rerun_this_increment": false,
+  "main_AgentShield_same_listener_PID": true,
+  "private_daemon_state_and_logs_git_ignored": true,
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

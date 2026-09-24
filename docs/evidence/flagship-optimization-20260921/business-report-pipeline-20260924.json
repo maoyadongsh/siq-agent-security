@@ -1,0 +1,213 @@
+{
+  "schema_version": "siq.flagship.business-report-pipeline-evidence.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source": [
+    {
+      "path": "agents/hermes/profiles/siq_analysis/scripts/resolve_company.py",
+      "sha256": "ddf506dbc42b315fe998f1e6e436479cdb9693b04724ab24c36d28ebb5e4bb2b",
+      "bytes": 8685
+    },
+    {
+      "path": "agents/hermes/profiles/siq_analysis/scripts/wiki_data_accessor.py",
+      "sha256": "4bcbce7781cf215b7f54fe78c1f0600bd0635195d09b4afc69787ab0a44a762b",
+      "bytes": 18347
+    },
+    {
+      "path": "agents/hermes/profiles/siq_analysis/scripts/peer_metrics_builder.py",
+      "sha256": "3ad48744723b5f71287f6909d3ddb309d7e8b5517a9f5047ee67d31ff90b4963",
+      "bytes": 20837
+    },
+    {
+      "path": "agents/hermes/profiles/siq_factchecker/scripts/wiki_data_accessor.py",
+      "sha256": "506df19b354c690da5513182b851a7ecc9f480d2169cde5c87f6c27ddf991fa3",
+      "bytes": 15857
+    },
+    {
+      "path": "agents/hermes/profiles/siq_analysis/tests/test_materialized_wiki_paths.py",
+      "sha256": "4b8f02ac0fd4c922fac2ff51aca6edd0a76dd6b3d33409ff19449de8cacd7f10",
+      "bytes": 3433
+    },
+    {
+      "path": "scripts/openshell/build_qwen38_candidate_image.py",
+      "sha256": "caedef2b78b0e369cd7500dd50f54a49716909a99cfbf8b4cafe98a40b8a1ea8",
+      "bytes": 34800
+    },
+    {
+      "path": "infra/openshell/sandbox/qwen38_candidate/report-assets.lock.json",
+      "sha256": "260b0ca5ce6d8a11f1bb96e526bcab89c114fa7f7a8fabe7d4fb9284d305b843",
+      "bytes": 1318
+    },
+    {
+      "path": "scripts/openshell/README.md",
+      "sha256": "fb9f82e609ea807f29145adcb756b6534386c8ba0c61a7484c786123d859c80d",
+      "bytes": 32067
+    }
+  ],
+  "records": [
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-pipeline-20260924/result.sanitized.json",
+        "sha256": "f00ff4ccc939b292b13f56311ba6b9da7381219373add73fb509809685e7b230",
+        "bytes": 189
+      },
+      "result": {
+        "exit_code": 2,
+        "stage": "resolve_failed",
+        "ok": false,
+        "output_files": 0,
+        "network": "none",
+        "model_called": false,
+        "business_identity": false,
+        "container_absent": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-pipeline-20260924/image-v2/build-result.sanitized.json",
+        "sha256": "a3a3585767dda778356caf60a638ec6525b7742f18516d6e8cff53f424bdb1c7",
+        "bytes": 261
+      },
+      "result": {
+        "passed": true,
+        "image_id": "sha256:2eb0b83b636428d8f6c6b72a3293279b965cd9822af8dc9040ccf2b23192932b",
+        "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:6091609065dd186aa61f994b",
+        "elapsed_seconds": 20.56,
+        "current_candidate_unchanged": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-pipeline-20260924/run-v2/result.sanitized.json",
+        "sha256": "d15a1bc58256576e8dddd172a49584501b1c4b19e6da662ca77ca0347d3c1ae5",
+        "bytes": 782
+      },
+      "result": {
+        "phases": [
+          {
+            "phase": "prepare",
+            "exit_code": 0,
+            "stage": "prepared",
+            "ok": true,
+            "steps": {
+              "resolve": 0,
+              "peer_metrics": 2,
+              "qualitative_snapshot": 0,
+              "market_snapshot": 0,
+              "industry_research": 0
+            },
+            "manifest_exists": false
+          },
+          {
+            "phase": "complete",
+            "exit_code": 0,
+            "stage": "ready_for_review",
+            "ok": true,
+            "steps": {
+              "resolve": 0,
+              "generate_section_drafts": 0,
+              "recover_render_repair_validate": 0,
+              "factcheck_exact_report": 0,
+              "validate_exact_receipt": 0
+            },
+            "manifest_exists": true
+          }
+        ],
+        "container_absent": true,
+        "network": "none",
+        "model_called": false,
+        "business_identity": false
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-pipeline-20260924/run-v2/materials.sanitized.json",
+        "sha256": "4566fa9544c9979c204ac706876ab11f4d2d5ad14302e4fe337b3be795fda207",
+        "bytes": 1554
+      },
+      "result": {
+        "artifact_count": 8,
+        "total_bytes": 811395,
+        "all_hashes_match": true,
+        "quality": {
+          "ok": true,
+          "contract_pass": true,
+          "publish_ready": false,
+          "pass_with_review": true,
+          "publication_status": "pass_with_review",
+          "warnings": [
+            "critical_review_queue_items:利息费用,市值数据,同业样本未聚合"
+          ]
+        },
+        "factcheck": {
+          "verdict": "approve",
+          "summary": {
+            "critical": 0,
+            "warning": 0,
+            "suggestion": 4,
+            "database_status": "unavailable",
+            "database_connection": "unavailable",
+            "company_evidence_status": "local_wiki_available",
+            "database_error": "factcheck_scoped_broker_required",
+            "evidence_rows": 0,
+            "local_evidence_rows": 24,
+            "report_selection": "explicit:600104-上汽集团-2025-analysis.md",
+            "report_json_file": "600104-上汽集团-2025-analysis.json",
+            "calculation_audit_items": 11,
+            "metric_evidence_items": 120
+          },
+          "checks": {
+            "data_consistency": {
+              "status": "pass",
+              "issue_count": 1
+            },
+            "calculation_consistency": {
+              "status": "pass",
+              "issue_count": 2
+            },
+            "traceability": {
+              "status": "pass",
+              "issue_count": 0
+            },
+            "logic_support": {
+              "status": "pass",
+              "issue_count": 0
+            },
+            "a_share_risk_completeness": {
+              "status": "pass",
+              "issue_count": 0
+            },
+            "template_compliance": {
+              "status": "pass",
+              "issue_count": 1
+            }
+          }
+        },
+        "manifest_mode": "0o600"
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-pipeline-20260924/run-v2/output-permissions.sanitized.json",
+        "sha256": "35393c82d024ac8f5ab6658cfb0e49ea594a1068763dbcf508277147eb96b183",
+        "bytes": 233
+      },
+      "result": {
+        "all_output_directories_0700": true,
+        "all_output_files_0600": true,
+        "file_count": 21,
+        "note": "Direct CLI probe did not use normal gateway entrypoint umask; secured only newly created probe outputs after container exit."
+      }
+    }
+  ],
+  "verification": {
+    "pytest": "96 passed in 1.06s",
+    "ruff": "passed",
+    "research_diff_check": "passed",
+    "model_called": false,
+    "business_identity": false,
+    "native_openshell_gateway_used": false,
+    "publication_created": false
+  },
+  "next": "model_selected_pipeline_via_business_HTTP_then_authenticated_review"
+}

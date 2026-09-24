@@ -1,0 +1,141 @@
+{
+  "schema_version": "siq.flagship.main-api-cutover.v1",
+  "generated_at": "2026-09-24T00:12:53.273974+00:00",
+  "passed": true,
+  "goal_complete": false,
+  "formal_release": false,
+  "request_backend": "legacy",
+  "new_report_permission_applied": false,
+  "main_cutover": {
+    "passed": true,
+    "report_permission_changed": false,
+    "request_backend": "legacy",
+    "formal_release": false,
+    "checks": {
+      "emergency_handoff_verified_before_stop": true,
+      "new_host_main_ready_with_both_recovery_managers": true,
+      "main_delivery_routes_and_anonymous_denial": true,
+      "actual_main_port_execution_closed_handoff": true,
+      "new_main_cold_restart_after_handoff": true,
+      "original_execution_permissions_preserved": true,
+      "preview_and_web_unchanged": true
+    },
+    "backup_sha256": "27a22be39d081882e2d271ac305e06a111d9da3ac6524f2575fce7351e9a1e67",
+    "main_after": {
+      "MainPID": "453532",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "InvocationID": "a07d36a021eb4eb1a313fdbff5673fc9"
+    }
+  },
+  "web_switch": {
+    "passed": true,
+    "frontend_changed": false,
+    "backend_port": 18081,
+    "checks": {
+      "existing_web_bundle_now_targets_main": true,
+      "web_to_main_anonymous_requests_denied": true,
+      "main_not_restarted_by_web_switch": true
+    },
+    "web_after": {
+      "MainPID": "464005",
+      "LoadState": "loaded",
+      "ActiveState": "active",
+      "InvocationID": "e7e382f2d094424b9e3d9b5574042b9c"
+    }
+  },
+  "post_cutover_health": {
+    "18081": {
+      "status": "ok",
+      "openshell_recovery": {
+        "enabled": true,
+        "required": true,
+        "ready": true
+      },
+      "qwen_request_recovery": {
+        "enabled": true,
+        "ready": true,
+        "last_scan": {
+          "examined": 0,
+          "deferred": 0,
+          "released": 0,
+          "failed": 0,
+          "replaced": 0,
+          "foreign": 0
+        }
+      }
+    },
+    "18089": {
+      "status": "ok",
+      "openshell_recovery": {
+        "enabled": false,
+        "required": true,
+        "ready": false
+      },
+      "qwen_request_recovery": {
+        "enabled": false,
+        "ready": false,
+        "last_scan": null
+      }
+    },
+    "15173": {
+      "status": "ok",
+      "openshell_recovery": {
+        "enabled": true,
+        "required": true,
+        "ready": true
+      },
+      "qwen_request_recovery": {
+        "enabled": true,
+        "ready": true,
+        "last_scan": {
+          "examined": 0,
+          "deferred": 0,
+          "released": 0,
+          "failed": 0,
+          "replaced": 0,
+          "foreign": 0
+        }
+      }
+    }
+  },
+  "all_1637_host_source_hashes_rechecked": true,
+  "recovery_boundary": "Emergency main-port handoff to the existing 18089 API keeps execution closed; not restoration of the historical old-main code or execution capacity.",
+  "research_artifacts": [
+    {
+      "path": "var/ops/main-api-cutover-20260924/fallback.go",
+      "sha256": "12814c4ed6d0d7b7bb84552de7669ec576ec20d7ab3678839da0b8fec8c9d3b9",
+      "bytes": 1138
+    },
+    {
+      "path": "var/ops/main-api-cutover-20260924/fallback-proxy",
+      "sha256": "004f0a0d05d94c2787fd53bec4b91e6374a1725432b921581e2bdb38b14307c6",
+      "bytes": 8554665
+    },
+    {
+      "path": "var/ops/main-api-cutover-20260924/launch_main.py",
+      "sha256": "0c563d306a34d924852593919d2e9cc2112aeac51c70ae84eb65184eee1e914e",
+      "bytes": 1562
+    },
+    {
+      "path": "var/ops/main-api-cutover-20260924/cutover.py",
+      "sha256": "d02deb2246df2f90b74cdc40ebac1e54b060ccf3156e33deb69bc6a7ec9a499e",
+      "bytes": 8759
+    },
+    {
+      "path": "var/ops/main-api-cutover-20260924/switch_web.py",
+      "sha256": "e25751975576ffcc2dc8b743f70217ada36aa8b23a4518222fa1dea05498fe4b",
+      "bytes": 4317
+    },
+    {
+      "path": "var/ops/main-api-cutover-20260924/cutover.sanitized.json",
+      "sha256": "4bfc61941d9ead3754ed57107fda99b84373afb2b8e46f003367c0f56303e27d",
+      "bytes": 746
+    },
+    {
+      "path": "var/ops/main-api-cutover-20260924/web-switch.sanitized.json",
+      "sha256": "00d945b8539365ae6f2b1aae22a3d83e7f741b3b420ef4922956730b77434101",
+      "bytes": 398
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": "siq.flagship.evidence.qwen38-request-workspace.v1",
+  "captured_at_utc": "2026-09-22T11:49:47.714218+00:00",
+  "scope": "request_mount_policy_compilers_and_additive_OpenShell_driver_patch_preparation",
+  "implementation": {
+    "request_output_leaf_only": true,
+    "original_company_and_market_metadata_read_only": true,
+    "fresh_runtime_snapshot_bound_to_same_run_ID": true,
+    "mount_summary_schema": "siq.openshell.siq_analysis_mount_plan.v4",
+    "legacy_contract_preserved": true,
+    "original_0002_patch_unchanged": true,
+    "new_0003_patch_applies_after_exact_0002": true
+  },
+  "validation": {
+    "python_combined_tests_passed": 102,
+    "native_ARM64_docker_driver_tests_passed": 113,
+    "native_test_command": "cargo test --locked --target aarch64-unknown-linux-gnu -p openshell-driver-docker",
+    "native_build_network": "none",
+    "native_source_commit": "e3d26dd3ae0dee247bbc5db368545832757ac493",
+    "native_test_sources_equal_generated_patch": true,
+    "ruff_passed": true,
+    "diff_check_passed": true
+  },
+  "live_results": {
+    "request_mount_positive_proof_passed": false,
+    "active_0002_gateway_rejected_request_leaf": true,
+    "gateway_error_code": "SIQ bind source is outside the fixed mount contract",
+    "sandbox_created": false,
+    "model_or_Hermes_started": false,
+    "business_authority_or_data_used": false,
+    "candidate_gateway_empty_after": true,
+    "gateway_owner_released": true,
+    "synthetic_fixture_cleanup_verified": true,
+    "API_model_bridge_not_restarted": true
+  },
+  "failures_retained": {
+    "initial_compile_regression": "request_run_id_parameter_was_initially_added_to_wrong_function; corrected_and_regression_passed",
+    "first_live_proof": "policy_output_location_and_cleanup_method_errors; corrected_and_exact_generated_fixture_recovered",
+    "second_and_third_live_proof": "active_gateway_0002_mount_contract_rejects_request_leaf; automatic_cleanup_passed"
+  },
+  "source_sha256": {
+    "scripts/openshell/build_policy.py": "bfae17eb6cd3e075a310498e5e9d01c0c4d463b0456dac0be906a886f87a1789",
+    "scripts/openshell/build_siq_analysis_mount_plan.py": "8c7fbe30ddbd009ab9ec9c663c32900d7e399b31a9a36b79c6b699afeb7623bd",
+    "scripts/openshell/qwen38_request_contract.py": "9abb538e40bc18dd084abf0fd278aa2afc7dea74d2698805a56e19c49c8bf1a2",
+    "scripts/openshell/prove_qwen38_request_workspace.py": "16ad78f620702ca937dc85b87443ce9a25825ffee8e9bdf02d894943746982d1",
+    "scripts/openshell/tests/test_build_siq_analysis_mount_plan.py": "9dbdc772c3adf7704fe07c980cb1df40ab1c931a26c63aae215f36c0107d13a0",
+    "scripts/openshell/tests/test_build_policy.py": "b1355c7ab5b037249098ef1886feb2760526506f946cd018cb6a9929a9c486d6",
+    "infra/openshell/patches/v0.0.83/0003-siq-request-output-mount.patch": "6e9baaacb4d557e543f62382b067fe2c3391834d072c6e83eeb0f6be696f3304",
+    "infra/openshell/patches/v0.0.83/README.md": "39f4b3a52e2ccfe5a0f601d6b6bbd66b54891fe10d9ee8fdd9ed8eda039f1182",
+    "docs/architecture/qwen38-request-runtime-v1.md": "f0df0c0f31775869e4e2d280cc73964e3d59abd6f5cf74ccfa67e9355efd7953",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "91282a06f3f5f3c36de2d427c4cb0dc372feb75fc7f66089c7c7bbd39a519a0a"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-qwen38-request-workspace-e94.sanitized.json": "1cfb557011a12571763589d20034cd6eb8256dd2215e1f358771cd591cff50e5",
+    "artifacts/openshell/flagship/ml02-qwen38-request-workspace-e94-initial-cleanup.sanitized.json": "92525c2335e1ad337cba53bd4bb1e3d68ca7b291a9e00db3eeab05f77f204d95",
+    "artifacts/openshell/flagship/ml02-qwen38-request-workspace-e94-v2.sanitized.json": "b86c25aa27e3a9942180625ba24f4377eddebb09912b6ab6547eebc70fa4daa1",
+    "artifacts/openshell/flagship/ml02-qwen38-request-workspace-e94-v3.sanitized.json": "538770670f95b8925ebd1ec19bf939f3c3a08453155e27ab36981cefcb070955"
+  },
+  "not_proven": [
+    "0003_gateway_executable_build_and_candidate_provenance",
+    "isolated_gateway_upgrade_and_rollback",
+    "real_sandbox_request_leaf_write_readback_and_parent_sibling_denial",
+    "formal_Qwen_request_lifecycle_API_integration",
+    "production_IAM_approval_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

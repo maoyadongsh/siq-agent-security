@@ -1,0 +1,100 @@
+{
+  "schema_version": "siq.flagship.evidence.qwen38-request-bootstrap.v1",
+  "captured_at_utc": "2026-09-22T13:01:06.723571+00:00",
+  "scope": "private_request_credential_transport_and_real_Hermes_authentication_without_business_run",
+  "implementation": {
+    "key_file_upload_only": true,
+    "fixed_entrypoint_child_environment": true,
+    "private_file_owner_mode_nlink_digest_checked": true,
+    "one_attempt_marker_and_exclusive_lock": true,
+    "authenticated_health_matches_child_pid": true,
+    "public_health_not_used_as_authentication_proof": true,
+    "replay_rejected": true,
+    "unknown_results_require_stop_recovery": true
+  },
+  "validation": {
+    "combined_tests_passed": 77,
+    "test_warnings": 63,
+    "warning_cause": "existing Pydantic datetime.utcnow defaults on Python 3.13",
+    "ruff_passed": true,
+    "git_diff_check_passed": true,
+    "test_files": [
+      "scripts/openshell/tests/test_qwen38_request_bootstrap.py",
+      "scripts/openshell/tests/test_prove_qwen38_request_bootstrap.py",
+      "apps/api/tests/test_qwen38_request_runtime.py",
+      "apps/api/tests/test_qwen38_runtime_lease.py",
+      "apps/api/tests/test_openshell_data_scope.py",
+      "scripts/openshell/tests/test_qwen38_candidate_gateway_owner.py"
+    ]
+  },
+  "live": {
+    "schema_version": "siq.qwen38.request-bootstrap-proof.v1",
+    "passed": true,
+    "scope": "isolated_PostgreSQL_request_staging_and_real_OpenShell_Hermes_authentication",
+    "actual_API_request_sent": false,
+    "sandbox_or_model_started": true,
+    "production_eligible": false,
+    "secrets_included": false,
+    "read_only_prepare": true,
+    "private_credential_valid": true,
+    "credential_absent_from_plan_and_receipt": true,
+    "company_content_preserved": true,
+    "private_file_modes": true,
+    "model_inference_started": false,
+    "Hermes_gateway_started": true,
+    "business_ready": false,
+    "bootstrap_source_sha256": "a6f3a00d33966fa87bd1e97eb2822dd8718349c7a2521779cda72665fd85645f",
+    "bootstrap_receipt": {
+      "business_ready": false,
+      "child_pid": 61,
+      "invalid_key_status": 401,
+      "key_absent_from_child_argv": true,
+      "key_sha256": "9f1c0ca4b6d9ead8885f7834a05a3f98d7cbbeb5e471607aabde40448a55c7cc",
+      "phase": "authenticated",
+      "run_sha256": "fd57d55f3000ab3a6b8d8b4470799fca55775e612a72f9c2c74a2dfd22307157",
+      "schema_version": "siq.qwen38.request-bootstrap.v1",
+      "transport_authenticated": true,
+      "uploaded_key_removed": true
+    },
+    "replay_rejected": true,
+    "key_absent_from_cli_arguments_and_output": true,
+    "request_mount_sha256": "e15636c9bc4ffcafb7c368606339936ce204da4162072192e286e099ba489c50",
+    "request_policy_sha256": "934e9cedf286e813c5164cbc39e15ec47477dc13b6e494e4001deaafe76220b7",
+    "sandbox_removed": true,
+    "bootstrap_fixtures_removed": true,
+    "revoked_grant_denies_credential_read": true,
+    "private_files_fixture_and_owner_removed": true,
+    "temporary_database_removed": true
+  },
+  "cleanup": {
+    "gateway_and_owner_empty": true,
+    "known_socket_failure_retained": true,
+    "first_attempt_explicit_cleanup_verified": true,
+    "API_model_bridge_same_PID_and_invocation": true
+  },
+  "source_sha256": {
+    "infra/openshell/sandbox/qwen38_candidate/request_bootstrap.py": "a6f3a00d33966fa87bd1e97eb2822dd8718349c7a2521779cda72665fd85645f",
+    "scripts/openshell/qwen38_request_bootstrap.py": "7e873b7f63bde497decce322882cc6cdc750793ff4fd0a129d680d4314ed232d",
+    "scripts/openshell/prove_qwen38_request_bootstrap.py": "fe274baacabd256483ed7bef7a6f0c05664fdc3ac2193fab527072185729ea75",
+    "scripts/openshell/prove_qwen38_request_preparation.py": "686519a3ba513f01f0533f18b76946d6a11230427de76ae8f2ce332f4683a267",
+    "scripts/openshell/tests/test_qwen38_request_bootstrap.py": "343b3812f0b4f7884f8561d03a5325c7374d559d533918443d88a631e1562bde",
+    "scripts/openshell/tests/test_prove_qwen38_request_bootstrap.py": "7e88c5bda09a38e0ff8a6b87fba78f0ba4b81035143aef2ab1437d54e68af5bf",
+    "docs/architecture/qwen38-request-runtime-v1.md": "7141e32fc6f88aa4b7b2a30e596932fa6a71e3b142c455ad6c0795714c191602",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "3e161da6771b50042810b6055f6589be90afa36f0c9876c4c0bf08794aaa6d51"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-request-bootstrap-e98.sanitized.json": "b7406aa8fd1e40444e68f44dba55db64031ccc71829b0938c008f7ad07093666",
+    "artifacts/openshell/flagship/ml02-request-bootstrap-e98-cleanup.sanitized.json": "ad7f5057bc225cf2c90d88edbe49bf11b5132c03e3d7e0049936e29518f2b3ff",
+    "artifacts/openshell/flagship/ml02-request-bootstrap-e98-v2.sanitized.json": "519e30c01b7d03a89a148bcb169b171bd160511c19afc2605f619a951644bd64"
+  },
+  "not_proven": [
+    "formal_API_request_creator_start_stop_recover_status",
+    "live_v2_supervisor_and_API_execution_lease_expiry",
+    "authenticated_host_endpoint_forwarding",
+    "production_IAM_approval_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "research_evidence_sha256": "45436b357adbca9beb180bbf60d96a84bf721c128424781b863e9cce67a89121"
+}

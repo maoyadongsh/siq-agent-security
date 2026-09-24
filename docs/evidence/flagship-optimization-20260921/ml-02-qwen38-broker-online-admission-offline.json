@@ -1,0 +1,36 @@
+{
+  "checks": {
+    "active_broker_restarted": false,
+    "candidate_gateway_claim_signed_and_explicitly_verified": true,
+    "candidate_token_requires_online_registry": true,
+    "corrupt_registry_fails_closed_status": 503,
+    "focused_and_adjacent_tests_passed": 124,
+    "python_compile_passed": true,
+    "real_candidate_sandbox_online_revocation_verified": false,
+    "registered_candidate_request_allowed_status": 200,
+    "revoke_waits_for_admitted_inflight_request": true,
+    "revoked_candidate_request_denied_status": 403,
+    "ruff_passed": true
+  },
+  "limitations": [
+    "The registry is not yet published and revoked by the real Qwen lifecycle; the active broker process was not restarted.",
+    "The tests use a local HTTP broker and synthetic identities, not a real candidate OpenShell sandbox.",
+    "A signed gateway claim and bearer registry do not independently prove the network source of a request.",
+    "The existing dev-gateway tokens retain their previous behavior until a controlled migration is completed.",
+    "Qwen positive inference, real IAM authorization, AgentShield tool decisions, writer quiescence, and business release remain unverified."
+  ],
+  "production_eligible": false,
+  "recorded_at": "2026-09-22T03:29:10.376496+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-broker-online-admission-offline/v1",
+  "scope": "host_side_candidate_broker_admission_contract_and_local_http_tests",
+  "secrets_included": false,
+  "source_sha256": {
+    "admission_registry": "a5cd262aa2d6876c7cf85663369e2edf6713c7ae42de2a8185b12d08f5fc8d35",
+    "admission_tests": "bfeedca7a07467ddfc45c6c6826229afe6558d5420bbbedf780a90e0819ac44e",
+    "broker_tests": "db73d6d0a5ee86bddfc85e9a0652efe30d06b9c1680dc5e8e4c011db10eb9c60",
+    "data_broker": "9519ec38d87c19de191607262c5bb6d2e4098e2d6050accbe7175f8d784a4a04",
+    "identity_tests": "68d525ae63094d8499675dfba63f513fc80d97cc3f560f9e3d55ae27a9e040dc",
+    "signed_identity": "1fd5192f85d0da9d6ed52cb53b4df21e96818793382b55aff42eb07cd3a68acf"
+  },
+  "status": "offline_contract_passed_not_runtime_active"
+}

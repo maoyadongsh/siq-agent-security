@@ -1,0 +1,51 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-business-run-guard.v1",
+  "captured_at_utc": "2026-09-22T06:37:10Z",
+  "scope": "qwen_candidate_run_guard_contract_and_real_credential_rotation_regression",
+  "secrets_included": false,
+  "source_sha256": {
+    "qwen38_candidate_run_guard.py": "8dcb8f849178c1e01bf3de9e394a779e0e2f98c058fd96fa1f3de6ee93b32a24",
+    "qwen38_candidate_host_guard.py": "322f7fc2fe05f54aa23e301283058d0da3a31e39a4f7ea4c45d65e6999c2379a",
+    "qwen38_model_credential.py": "c0ffd7c6d37ce883f4e093c5c92c913ff7cde0a7851c4ae2811fddd87368ae53",
+    "prove_qwen38_token_revocation.py": "a801ba6b895c5556bf3bcbe6fd66c39e48971ef5f954ea84bb4527a098668db9"
+  },
+  "contract": {
+    "lease_tick_reauthorizes_each_time": true,
+    "candidate_gateway_must_contain_exactly_owned_sandbox": true,
+    "containment_order": ["revoke_broker_admission", "rotate_model_bridge_token", "verify_sandbox_removal", "verify_candidate_gateway_empty"],
+    "failed_cut_still_attempts_later_cuts": true,
+    "uncertain_inventory_or_incomplete_cleanup_never_reports_success": true,
+    "model_token_scope": "candidate_gateway_wide",
+    "ordinary_monitor_interval_default_seconds": 30
+  },
+  "verification": {
+    "guard_tests": "9 passed",
+    "api_authorization_and_scope_tests": "10 passed",
+    "rotation_bridge_and_guard_tests": "40 passed",
+    "api_grant_router_suite_this_turn": "collection_blocked_by_local_editable_openshell_control_distribution",
+    "ruff": "passed",
+    "python_compile": "passed",
+    "git_diff_check": "passed",
+    "local_business_grant_withdrawal_causes_next_guard_tick_to_revoke_data_and_invoke_model_and_sandbox_callbacks": true,
+    "broker_inflight_operation_blocks_stop_until_complete": true,
+    "corrupt_lease_recovery_revokes_registry_and_attempts_model_and_sandbox_containment": true,
+    "real_hermes_generation_proof_after_credential_refactor_passed": true,
+    "real_old_generation_bridge_status": 401,
+    "real_old_hermes_terminal": "failed",
+    "real_new_generation_bridge_status": 200,
+    "candidate_gateway_sandboxes_after": 0,
+    "model_and_bridge_services_active": true,
+    "model_and_bridge_automatic_restart_counts": 0
+  },
+  "boundary": {
+    "candidate_ready": false,
+    "production_eligible": false,
+    "guard_attached_to_real_business_sandbox": false,
+    "formal_business_start_stop_recover_entrypoint": false,
+    "persistent_supervisor_process": false,
+    "api_revocation_synchronously_notifies_guard": false,
+    "real_model_rotation_executed_by_business_grant_test": false,
+    "siq_iam_and_production_postgresql_tested": false,
+    "agentshield_native_business_tool_positive_tested": false
+  }
+}

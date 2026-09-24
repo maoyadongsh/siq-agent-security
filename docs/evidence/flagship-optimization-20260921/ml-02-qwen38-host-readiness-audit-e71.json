@@ -1,0 +1,23 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-host-readiness-audit/v1",
+  "recorded_at": "2026-09-22T05:40:42Z",
+  "scope": "read_only_active_qwen38_host_candidate_audit",
+  "status": "blocked_before_confidential_promotion",
+  "audit_sha256": "27a0731740fea6f80afc43d2e61ceca6a61627fa98d6492277900dfdb90a3087",
+  "checks": {
+    "image_model_artifacts_runtime_parameters_and_served_model_exact": true,
+    "synthetic_host_inference_exact": true,
+    "host_bind_private": false,
+    "private_file_transport_active": false,
+    "runtime_secret_not_in_argv": false,
+    "authenticated_bridge_positive_inference_verified": false,
+    "hermes_confidential_sandbox_positive_inference_verified": false,
+    "candidate_ready": false
+  },
+  "limitations": [
+    "The active Qwen SGLang service was observed read-only. It was not restarted, switched or promoted by this audit.",
+    "This host synthetic probe does not prove governed Hermes sandbox inference, source identity, confidential policy or model-route revocation.",
+    "The secure loopback and file-credential launch is prepared but requires a controlled cutover of the active model service."
+  ],
+  "secrets_included": false
+}

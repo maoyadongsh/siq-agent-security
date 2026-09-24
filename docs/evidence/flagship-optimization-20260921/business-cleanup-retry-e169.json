@@ -1,0 +1,104 @@
+{
+  "schema_version": "siq.flagship.cleanup-retry-e169.v1",
+  "passed": true,
+  "goal_complete": false,
+  "validation": {
+    "command": [
+      "apps/api/.venv/bin/python",
+      "-m",
+      "pytest",
+      "apps/api/tests/test_qwen38_cleanup_retry.py",
+      "apps/api/tests/test_qwen38_request_recovery.py",
+      "apps/api/tests/test_qwen38_request_finalizer.py",
+      "apps/api/tests/test_qwen38_request_startup.py",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py",
+      "-q"
+    ],
+    "exit_code": 0,
+    "source_sha256": {
+      "scripts/openshell/qwen38_supervisor_service.py": "f4fe073a6d57a530567694d623719f34048cc8e16e010ce08abc7f7cacd373d2",
+      "scripts/openshell/prove_qwen38_request_supervision.py": "6342743f7a492e98b897ea6fb93baeeda36f797e53f511778ce17f03599d0e5a",
+      "apps/api/tests/test_qwen38_cleanup_retry.py": "ca5a77738d88fea5b20f3000483ad8135e96159b1fba2fb3fba7ee94b0e1fd65",
+      "docs/architecture/qwen38-request-runtime-v1.md": "077c544038a2712ec0269ed1bb2066f4a44eba76fc916cdaa743c9978093f31f",
+      "scripts/openshell/prove_qwen38_cleanup_retry.py": "099f6f4e72062ff64bb936fbcb8e349d26a342de10f66972854c878be301c348",
+      "scripts/openshell/tests/test_prove_qwen38_cleanup_retry.py": "e29d76133191ad286f6ffd03b9f87daa47b1a8680c86b5b653ba531f9376d466",
+      "scripts/openshell/prove_qwen38_candidate_api.py": "6144ea807f90278ddd5bb4e339f61120e6f484b8b550595865c3e8f698d0132f"
+    },
+    "test_log_sha256": "c436633aaafce90a1bdb7cceeb96fb28bb634d89035f8f85fb3e5725fae54de8",
+    "diagnostic_tests": {
+      "command": [
+        "apps/api/.venv/bin/python",
+        "-m",
+        "pytest",
+        "scripts/openshell/tests/test_prove_qwen38_cleanup_retry.py",
+        "scripts/openshell/tests/test_prove_qwen38_crash_api.py",
+        "-q"
+      ],
+      "passed": 16,
+      "exit_code": 0
+    },
+    "ruff": "passed"
+  },
+  "live": {
+    "passed": true,
+    "production_eligible": false,
+    "proof_passed": true,
+    "proof_file": "artifacts/openshell/flagship/ml02-business-cleanup-retry-e169-v1.sanitized.json",
+    "proof_sha256": "710fcd10048f5b16b24db20b5c190f34398d083f22a28ac7c96c8f3f67e515f5",
+    "isolated_identity_starts": 2,
+    "isolated_ports_closed": true
+  },
+  "proof": {
+    "schema": "siq.qwen38.candidate-api-proof.v1",
+    "passed": true,
+    "scope": "actual_failed_ExecStopPost_and_API_autonomous_cleanup_retry",
+    "production_ready": false,
+    "checks": {
+      "fresh_database_migrations": true,
+      "request_recovery_ready": true,
+      "legacy_recovery_disabled": true,
+      "owned_identity_service_stopped_after_API_death": true,
+      "SIGKILL_after_real_model_delta": true,
+      "execution_still_running_after_API_death": true,
+      "real_ExecStopPost_nonzero_and_API_scan_failed": true,
+      "failed_cleanup_kept_original_execution_running": true,
+      "no_success_receipt_while_identity_unavailable": true,
+      "same_identity_state_restored_without_manual_finalization": true,
+      "same_database_API_restarted": true,
+      "original_lease_expired_without_manual_update": true,
+      "restarted_API_recovery_ready": true,
+      "model_delta_observed_before_crash": true,
+      "crashed_execution_authority_lost": true,
+      "API_finalizer_released_before_diagnostic_cleanup": true,
+      "model_bridge_stream_started_200": true,
+      "sandbox_supervisor_and_forward_absent": true,
+      "child_identity_revoked_before_root_cleanup": true,
+      "old_child_credential_401": true,
+      "root_identity_still_active_before_diagnostic_cleanup": true,
+      "autonomous_retry_receipt_verified_from_disk": true,
+      "original_ExecStopPost_failure_preserved": true,
+      "anonymous_analysis_denied": true,
+      "real_http_login": true,
+      "analyst_cannot_issue_grant": true,
+      "grant_retry_same_identity": true,
+      "analyst_cannot_revoke_grant": true,
+      "admin_http_revoke": true,
+      "business_settled_before_api_stop": true,
+      "candidate_listener_closed": true,
+      "business_runtime_cleanup_confirmed": true,
+      "temporary_database_removed": true,
+      "existing_service_identity_unchanged": true
+    },
+    "business_HTTP_attempted": true,
+    "business_HTTP_status": 200,
+    "recovery_wait_seconds": 6.555,
+    "request_run_sha256": "5007bbabfac9dd223fd377b4341f16c571d76eac35cfc830b9a2eca250b83d9d",
+    "bridge_stream_start_statuses": [
+      200
+    ],
+    "bridge_terminal_statuses": [
+      502
+    ],
+    "remaining_running_execution_count": 0
+  }
+}

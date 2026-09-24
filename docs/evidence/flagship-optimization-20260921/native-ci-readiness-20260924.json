@@ -1,0 +1,25 @@
+{
+  "schema_version": "siq.native-ci-readiness.v1",
+  "native_ci_passed": false,
+  "workflow_fix_tests_passed": true,
+  "test_count": 40,
+  "github_readiness": {
+    "runners": {
+      "available": true,
+      "registered_count": 0,
+      "matching_count": 0,
+      "matching_online_count": 0
+    },
+    "workflows": {
+      "available": true,
+      "native_workflow_present": false,
+      "states": []
+    }
+  },
+  "source_sha256": {
+    ".github/workflows/dgx-spark-native-candidate.yml": "021f6ba2da1f30154ab220e33c877f339ccc27c9d91185304d11766fe996ee56",
+    "scripts/dgx_spark_runner_labels.py": "45c0023100c09f22dad723fde80e374cae1502d3c75b41068b1fe8974e41ba96",
+    "scripts/check_dgx_spark_native_candidate_workflow.py": "aa97d96193ad373088fb1ffa6d8eea19f69f981fa2caf90de45bc84e2caf9719",
+    "deploy/dgx-spark/tests/test_runner_labels.py": "239631d9d16d6053e07e7d077bfea9ae6f2a9defd1bf4c13df2d71e23fb90ad0"
+  }
+}

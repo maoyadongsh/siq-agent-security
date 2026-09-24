@@ -1,0 +1,145 @@
+{
+  "schema_version": "siq.flagship.host-daemon-upgrade.v1",
+  "generated_at": "2026-09-23T23:26:25.139994+00:00",
+  "passed": true,
+  "formal_release": false,
+  "product_source_changed": false,
+  "main_api_changed": false,
+  "host_upgrade": {
+    "passed": true,
+    "scope": "existing_local_host_candidate",
+    "formal_release": false,
+    "main_api_changed": false,
+    "checks": {
+      "same_state_directory_identity": true,
+      "existing_bindings_authenticated": true,
+      "anonymous_and_invalid_credentials_denied": true,
+      "all_original_records_preserved": true,
+      "original_receipt_chain_verified": true
+    },
+    "new_pid": 171047,
+    "new_binary_sha256": "334367d16defb46cfc7f6bebe233048f87574c9e55ecd81e2f17dfbcbb6eafea",
+    "identity_bindings": [
+      {
+        "status": 200,
+        "binding_matches": true
+      },
+      {
+        "status": 200,
+        "binding_matches": true
+      },
+      {
+        "status": 200,
+        "binding_matches": true
+      }
+    ],
+    "receipt_chain": {
+      "chain": "local",
+      "head_hash": "f8b537eb5711dd9e91da13fdbb2732bdb4c3c9b0112d58d3568bef5fc4da8771",
+      "head_seq": 30,
+      "receipts": 31,
+      "verified": true
+    }
+  },
+  "consumer_validation": {
+    "passed": true,
+    "checks": [
+      {
+        "binding_loaded": true,
+        "strict_self_validation_passed": true,
+        "status": "active",
+        "runtime_state": "unverified"
+      },
+      {
+        "binding_loaded": true,
+        "strict_self_validation_passed": true,
+        "status": "active",
+        "runtime_state": "unverified"
+      },
+      {
+        "binding_loaded": true,
+        "strict_self_validation_passed": true,
+        "status": "active",
+        "runtime_state": "unverified"
+      }
+    ],
+    "execution_started": false,
+    "authority_modified": false
+  },
+  "post_upgrade_health": [
+    {
+      "port": 47611,
+      "status": 200
+    },
+    {
+      "port": 18081,
+      "status": 200
+    },
+    {
+      "port": 18088,
+      "status": 200
+    },
+    {
+      "port": 18089,
+      "status": 200
+    },
+    {
+      "port": 15173,
+      "status": 200
+    }
+  ],
+  "known_limits": [
+    "main_api_and_current_sandbox_image_not_switched",
+    "enterprise_production_identity_not_validated",
+    "formal_signing_and_native_install_pending",
+    "original_model_gate_pending",
+    "host_process_manual_no_autostart"
+  ],
+  "artifacts": [
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/rehearsal.sanitized.json",
+      "sha256": "958a6adfe52c628f9503373eb5562c1b9a705107691beb819cd8b660868f670a",
+      "bytes": 289
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/path-preserved-verify.sanitized.json",
+      "sha256": "970016c23787cb28c2d23e9b2656b90647e90aa954a65f034c5f7c99fd01d5cf",
+      "bytes": 316
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/container-rehearsal.sanitized.json",
+      "sha256": "fa25d40f1ec6f20140b254ef96699b51a22342a209db5cae7a831ba8c6c2fd49",
+      "bytes": 174
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/container-rehearsal-v2.sanitized.json",
+      "sha256": "a5ec120c8255f49010754dbc248708ce9f27b5560b927a55e854fb09debe3820",
+      "bytes": 333
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/container-rehearsal-v3.sanitized.json",
+      "sha256": "07b6b0f77a78617844cea9fecee36b6dba5df301f0ab2244b1926c3edc117530",
+      "bytes": 329
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/rollback-verify.sanitized.json",
+      "sha256": "beb18ae3b50883155e7c7b86ec893eadf37b19189a8594a13beef3f12e03379e",
+      "bytes": 393
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/host-upgrade.sanitized.json",
+      "sha256": "a9815879a66555fb22d4e7f0fb530f65c288004163b049723ff8f042454b8949",
+      "bytes": 174
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/host-upgrade-v2.sanitized.json",
+      "sha256": "08b370ea12477a4217fea048e3f030b8705a5050507bb94de0addea4a91b0672",
+      "bytes": 897
+    },
+    {
+      "path": "var/flagship/host-daemon-upgrade-20260924/consumer-check.sanitized.json",
+      "sha256": "804c189fc1726c9b5f38d85ea9a1eb002e103d1f8000604c627364bf130af85a",
+      "bytes": 550
+    }
+  ]
+}

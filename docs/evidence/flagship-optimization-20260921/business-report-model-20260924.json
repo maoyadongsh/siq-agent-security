@@ -1,0 +1,172 @@
+{
+  "schema_version": "siq.flagship.business-report-model-evidence.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "real_model_report_passed": false,
+  "source_repository": "siq-research-engine",
+  "source": [
+    {
+      "path": "apps/api/services/qwen38_request_deployment.py",
+      "sha256": "726785b6d14fd15a9512f1b680a4694bfac464f03f51ca44bd624f31491372e8",
+      "bytes": 2268
+    },
+    {
+      "path": "apps/api/services/qwen38_request_runtime.py",
+      "sha256": "d96057e5bedc80256d01165b75db59dcc03be2d5e66e8a9456ee0de10e9986a9",
+      "bytes": 11582
+    },
+    {
+      "path": "apps/api/tests/test_qwen38_request_deployment.py",
+      "sha256": "c65a245932e40e26c794ecff912661cc83c8cb6412fb368135f3129e5635d487",
+      "bytes": 3779
+    },
+    {
+      "path": "scripts/openshell/build_qwen38_candidate_image.py",
+      "sha256": "b8eefd7f5f70a51ee931d2d53f421674befa8e35b4716b1cbd1fc9f9e36bddd9",
+      "bytes": 34878
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_business_api.py",
+      "sha256": "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",
+      "bytes": 9852
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_candidate_api.py",
+      "sha256": "f8a95b23ae04718c48205f64ae6277423199329e57f13e4c81e9a5f56793bfbd",
+      "bytes": 14774
+    },
+    {
+      "path": "scripts/openshell/prove_business_report_model.py",
+      "sha256": "2c146a6b0b8886dd465ed70923ce87e56ce40d81a3170d40e36ca01d18685745",
+      "bytes": 8058
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_business_report_model.py",
+      "sha256": "039cf6675ed455cc30abe881c5e16a07bdb25486df8072b8d9ffb004a9a40476",
+      "bytes": 1022
+    },
+    {
+      "path": "infra/env/local.example",
+      "sha256": "8884f840497b9e3d547533ff1a7bd62056e9c633580009ab13779de1ae21e39d",
+      "bytes": 17443
+    }
+  ],
+  "records": [
+    {
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v1.sanitized.json",
+        "sha256": "636e238b68c82ae7de34710c279757b80a8b1bed45556347747d50d4cedc4827",
+        "bytes": 597
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": false,
+        "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "failure": "AuthorityProofError",
+        "remaining_running_execution_count": 0
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-model-20260924-v1/live.sanitized.json",
+        "sha256": "1528a96fb2633f5c6429c9bf333c3fe4daf0e864a15eb1e9eed896ad751a6f6e",
+        "bytes": 362
+      },
+      "result": {
+        "passed": false,
+        "production_eligible": false,
+        "proof_passed": false,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-report-model-v1.sanitized.json",
+        "proof_sha256": "636e238b68c82ae7de34710c279757b80a8b1bed45556347747d50d4cedc4827",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-report-model-v2.sanitized.json",
+        "sha256": "fd887f46ac41ddfca30625691a9845b8d0cfd1b03ddb2addd47b434000874ff4",
+        "bytes": 1133
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": false,
+        "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "business_model_marker_returned": true,
+          "business_execution_completed": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_correlated_200": true,
+          "original_business_run_source_saved": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "request_run_sha256": "8ec2e9edb1c1902a42c89ead72287aa5c408fa41a973c4f74b4744e3fdf79c1e",
+        "bridge_statuses": [
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200,
+          200
+        ],
+        "prepare_http_status": 409,
+        "failure": "candidate_report_prepare_failed",
+        "remaining_running_execution_count": 0
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-model-20260924-v2/live.sanitized.json",
+        "sha256": "7fa29aafdb084e6ce1a7414d67bb8b18e1a12996a5645515bf52285aa14d4819",
+        "bytes": 362
+      },
+      "result": {
+        "passed": false,
+        "production_eligible": false,
+        "proof_passed": false,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-report-model-v2.sanitized.json",
+        "proof_sha256": "fd887f46ac41ddfca30625691a9845b8d0cfd1b03ddb2addd47b434000874ff4",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    }
+  ],
+  "failure_reason": "terminal_runtime_effect_unknown_no_report_artifacts",
+  "current_source_after_live_test": "Marker matching changed after v2; two focused tests passed, no repeat live run. v2 marker true is not report success.",
+  "tests": {
+    "combination_passed": 52,
+    "post_live_focused_passed": 2,
+    "counts_overlap": true,
+    "ruff_passed": true
+  },
+  "report": {
+    "path": "docs/reports/business-report-model-20260924.md",
+    "sha256": "224d89551d4f3bca596f280e49a8ae88cc56e1fef8bed26e9c8137dde0772920",
+    "bytes": 3772
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "candidate_image_state_sha256": "b761d8baded124f0a5bdc95fe2e80027d579dcde640f463721e80240a44d0c29",
+  "checks": {
+    "active_broker_restarted": false,
+    "candidate_broker_port": 18794,
+    "candidate_gateway_empty_after": true,
+    "candidate_listener_stopped": true,
+    "focused_and_adjacent_tests_passed": 139,
+    "helper_after_revoke_error_code": "broker_admission_denied",
+    "helper_after_revoke_exit_code": 2,
+    "helper_registered_exit_code": 0,
+    "helper_registered_ok": true,
+    "identity_value_absent_from_create_args": true,
+    "image_offline_pg_query_smoke": true,
+    "image_pg_query_sha256": "464f52df29ad68e568917e0bd6844c59a373dd500709ef12fb692dacb8e4821c",
+    "private_uploaded_identity": true,
+    "python_compile_passed": true,
+    "qwen_candidate_image_id": "sha256:8270c90285c2100670c11db4bec84f40f574407363ede1ffdda476be1b292edb",
+    "raw_broker_registered_status": 200,
+    "raw_broker_revoked_status": 403,
+    "ruff_passed": true,
+    "sanitized_artifact_scan_passed": true,
+    "synthetic_audit_events": 2,
+    "synthetic_backend_calls": 2
+  },
+  "failed_stale_image_probe_sha256": "8b4c8b76e08601d38b38594e51d14ff85d8d32dc6b7aa68c3e92cf8e2c8f4cd8",
+  "limitations": [
+    "The helper ran inside a real Qwen OpenShell sandbox, but this did not invoke it through the Hermes gateway tool dispatcher.",
+    "The PostgreSQL and audit backends were synthetic; real enterprise IAM and database access remain unverified.",
+    "Candidate broker admission is not yet integrated into a durable formal Qwen business lifecycle.",
+    "Positive Qwen model inference, AgentShield business-tool decisions, writer quiescence, and native release CI remain unverified."
+  ],
+  "private_proof_sha256": "cd7bea80a7c6a80b625549cf540c47d7ea7cc823f15f31331803bf4714b7cf43",
+  "production_eligible": false,
+  "recorded_at": "2026-09-22T04:08:12.574981+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-business-helper-candidate-broker/v1",
+  "scope": "isolated_qwen_hermes_image_and_scoped_sandbox_synthetic_broker",
+  "secrets_included": false,
+  "source_sha256": {
+    "admission_registry": "74f34702dc1a0f16f0990ed61854bfaa4c7ea640063bedbc4e8ebaec73b63786",
+    "data_broker": "568a383e88daa9992ad35dc6948040c1353ea148ba4a5e6b992a24edebf39c1f",
+    "pg_query_helper": "464f52df29ad68e568917e0bd6844c59a373dd500709ef12fb692dacb8e4821c",
+    "pg_query_tests": "d3b867a09cb32191a3cdb0664d04b0530a9f074f4dd598c07e5d69336517e9f3",
+    "policy_compiler": "c7510ac66c447c717402f9f152482a80e61083166ae788e87e78cc1caf2b5e3b",
+    "qwen_image_builder": "fcc54d327aea15c2a6ad68a9a2ea4753c6807e190c7d73181219ef321270d08c",
+    "qwen_image_builder_tests": "9581d393f4eb957b136e3d1e1bc44531c1861dc37fb0f05830bffc9dd967551a",
+    "qwen_image_dockerfile": "e322d441f0fb7bff186f2e53dd6b2481ff8c53e875ffb9e28c7fef971640e45a",
+    "sandbox_proof": "b5abcc1e3b7665a8fdcb2c79b4cbf389bbbeac7c2286e2a96182721bfc5ffcfc",
+    "sandbox_proof_tests": "a1671bcb1c598ea0cdb1346ae2963a8831c8a8c2989429abdbfc3e240289cc48"
+  },
+  "status": "passed_real_sandbox_candidate_business_helper_synthetic_data"
+}

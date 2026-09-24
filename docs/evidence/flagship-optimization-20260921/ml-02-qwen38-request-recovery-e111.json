@@ -1,0 +1,88 @@
+{
+  "Go_sources_changed_this_increment": false,
+  "Go_tests_rerun": false,
+  "candidate_ready": false,
+  "production_eligible": false,
+  "research_evidence": {
+    "actual_API_process_crashed": false,
+    "candidate_ready": false,
+    "captured_at_utc": "2026-09-22T17:56:54.136594+00:00",
+    "database": "isolated_SQLite",
+    "formal_API_selector_enabled": false,
+    "formal_HTTP_business_request_sent": false,
+    "implementation_validation_passed": true,
+    "live_model_invoked": false,
+    "live_service_mutations_performed": false,
+    "not_proven": [
+      "live_finalizer_with_real_OpenShell_and_Provider",
+      "real_API_process_restart_and_crash_recovery",
+      "partial_startup_recovery_before_endpoint_descriptor",
+      "formal_request_preparation_queue_and_identity_issuance",
+      "request_financial_receipts_and_security_event_export",
+      "production_IAM_and_business_approval",
+      "native_CI",
+      "historical_model_timeout_root_cause_and_latency_stability"
+    ],
+    "process_failure_probe": "actual_fork_child_exit_47_then_fresh_disk_load_with_new_owner",
+    "production_eligible": false,
+    "proven_in_isolated_tests": [
+      "private_closed_recovery_descriptor_cross_checked_against_original_records",
+      "cleanup_handle_cannot_start_renew_or_send_business_HTTP",
+      "credential_files_not_read_by_rehydration",
+      "original_service_invocation_and_effective_unit_checked_before_stop",
+      "ExecStopPost_success_and_no_remaining_process_required",
+      "valid_original_execution_lease_deferred_without_renewal",
+      "expired_execution_cleaned_then_original_DB_terminal_committed",
+      "missing_DB_row_does_not_create_execution_authority",
+      "replacement_owner_generation_principal_or_run_not_overwritten",
+      "old_record_retry_does_not_touch_new_gateway_owner",
+      "missing_partial_startup_description_retains_owner_and_unready",
+      "keyset_pagination_does_not_skip_after_terminal_rows_leave_running_set",
+      "readiness_requires_full_cycle_without_earlier_page_failure",
+      "database_errors_expose_only_fixed_counts",
+      "actual_API_lifespan_starts_and_stops_recovery_manager",
+      "startup_cancellation_joins_thread_and_stops_previously_started_manager",
+      "disabled_recovery_does_not_start_request_scanner"
+    ],
+    "runtime_and_provider_CLI": "deterministic_test_doubles",
+    "schema_version": "siq.qwen38.request-recovery-evidence.v1",
+    "scope": "cleanup_only_disk_recovery_and_actual_API_lifespan_with_isolated_runtime_doubles",
+    "secrets_included": false,
+    "source_sha256": {
+      "apps/api/main.py": "2ef9cb808217081df1529031641e9211c1aeac53b43807df2a524b1abcb842f2",
+      "apps/api/services/qwen38_recovery_manager.py": "1bc9f319d5b05141a4d56a35075a607be8eb27dd9f5e60cd2697fe4ef61d91fe",
+      "apps/api/services/qwen38_request_endpoint.py": "1d80e1ad56b8f547ae47c705c5f38c3b7d8993fd721ae1171f044a3bf24afa93",
+      "apps/api/services/qwen38_request_finalizer.py": "a868171f1b0f6875d976bb433eea8d1c6e416849e8adb9798c71f85f15a1a034",
+      "apps/api/services/qwen38_request_recovery.py": "a50d69903a7f071aef207e66f90e76317b8f9618e06399a9111dfe3f350dde2d",
+      "apps/api/tests/test_qwen38_request_recovery.py": "7e5d23913af3c8951360a7b4a6d69a194c7bc73d7296d9431d3ad4a01ea44dba",
+      "docs/architecture/qwen38-request-runtime-v1.md": "233820cc2c63c7e629c178f7eab1ea58997b92e3b53f5f3c2eefe2b969826a6d",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "4a80a9baa8bba3c572263c953b6662e56bb3c11c5cabe0ebaeda8c977b03400b",
+      "scripts/openshell/prove_qwen38_request_supervision.py": "39f5fbdd1ec74910628570fa19c334d8c32b064b22a0abd476116b46e1a57861",
+      "scripts/openshell/qwen38_supervisor_service.py": "068acf65d4a25c973b8b24e8b94dd210a703c74aae7481800818ecaa198e01e6"
+    },
+    "validation": {
+      "combined": {
+        "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest -q apps/api/tests/test_qwen38_request_recovery.py apps/api/tests/test_qwen38_request_endpoint.py apps/api/tests/test_qwen38_request_finalizer.py apps/api/tests/test_qwen38_request_api.py apps/api/tests/test_qwen38_request_heartbeat.py apps/api/tests/test_qwen38_request_http.py apps/api/tests/test_qwen38_runtime_lease.py apps/api/tests/test_runtime_startup_guard.py apps/api/tests/test_openshell_pool_recovery.py apps/api/tests/test_openshell_pool_reauthorization.py apps/api/tests/test_openshell_recovery_authorization.py apps/api/tests/test_hermes_client.py apps/api/tests/test_hermes_canary_routing.py apps/api/tests/test_agent_runtime_active_runs.py apps/api/tests/test_agent_runtime_chat_preflight.py apps/api/tests/test_observability.py scripts/openshell/tests/test_qwen38_provider_lifecycle.py scripts/openshell/tests/test_provision_siq_providers.py scripts/openshell/tests/test_qwen38_candidate_gateway_owner.py scripts/openshell/tests/test_qwen38_supervisor_service.py",
+        "passed": 524,
+        "seconds": 141.02,
+        "warnings": 809
+      },
+      "counts_overlap_do_not_sum": true,
+      "git_diff_check_passed": true,
+      "initial_before_additional_hardening": {
+        "passed": 145,
+        "seconds": 46.33,
+        "warnings": 173
+      },
+      "intermediate_recovery_and_observability": {
+        "passed": 43,
+        "seconds": 15.77,
+        "warnings": 70
+      },
+      "py_compile_passed": true,
+      "ruff_passed": true
+    }
+  },
+  "research_evidence_sha256": "b0eb012d7f618f74864b2ebb0bcfa93c52f653a7545663a2e287ac9a20609a2d",
+  "schema_version": "siq.flagship.request-recovery-export.v1"
+}

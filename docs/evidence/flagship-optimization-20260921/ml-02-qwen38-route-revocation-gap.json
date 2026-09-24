@@ -1,0 +1,59 @@
+{
+  "candidate_ready": false,
+  "gateway": "siq-openshell-scope-validation",
+  "image_id": "sha256:b5e1b79c822c83951084ff7eeb59974c9045d4ca7e32648a959541c347b612d0",
+  "initial_policy_sha256": "42bd25afd0e8b69759dc56cb3162142b3d577c66e153acde51cb65b5e5a320f8",
+  "limitations": [
+    "Removing the base 8005 route alone leaves the Provider-composed endpoint active.",
+    "After detaching the Provider, the effective policy showed zero model endpoints while requests still reached the bridge briefly; policy and provider removal alone are not an immediate revocation guarantee.",
+    "The bridge upstream remained offline and no model inference was attempted."
+  ],
+  "model_inference_tested": false,
+  "observed": {
+    "base_and_provider_removed_effective_model_endpoints": 0,
+    "base_route_removed_bridge_status": 502,
+    "base_route_removed_effective_model_endpoints": 1,
+    "baseline_restored": true,
+    "candidate_gateway_sandbox_count_after": 0,
+    "initial_bridge_status": 502,
+    "policy_revoke_eventual": true,
+    "policy_revoke_immediate": false,
+    "post_detach_bridge_signature_sequence": [
+      true,
+      true,
+      false
+    ],
+    "post_detach_status_sequence": [
+      502,
+      502,
+      403
+    ],
+    "post_detach_wait_intervals_seconds": [
+      0,
+      2,
+      8
+    ],
+    "sandbox_removed": true
+  },
+  "production_eligible": false,
+  "provider": "siq-qwen38-bridge",
+  "recorded_at": "2026-09-22T01:05:01+00:00",
+  "resource_profile": "siq_analysis_security_probe",
+  "revoked_policy_sha256": "b23ec4a1b421fae4e3ba8a1771972eb644063e4f2da158607ce022a10d14e6c0",
+  "sandbox_name_sha256": "66d4b835de5abbc9300dd18c9e71f8b8749cd04c4dfa536533ccca324de0d668",
+  "schema_version": "siq.flagship.ml02-qwen38-route-revocation-gap/v1",
+  "scope": "isolated_qwen38_provider_policy_revocation_runtime",
+  "secrets_included": false,
+  "source_sha256": {
+    "negative_tests": "88579885fc88179c000997667b8ecb6aa052626f79dfe94e8fd84188e34f0024",
+    "policy": "42bd25afd0e8b69759dc56cb3162142b3d577c66e153acde51cb65b5e5a320f8",
+    "probe_script": "ff345ea99907183969887645c650a1f47ca46c80812778a1fe9ba22a06f4b260",
+    "revoked_policy": "b23ec4a1b421fae4e3ba8a1771972eb644063e4f2da158607ce022a10d14e6c0"
+  },
+  "status": "failed_gate",
+  "validation": {
+    "focused_pytest_passed": 13,
+    "ruff": "passed",
+    "source_artifact_sha256": "5f5bc99c2400dd17bc6236da99a322dd18e320bb7847ed65fa7587034eea03ca"
+  }
+}

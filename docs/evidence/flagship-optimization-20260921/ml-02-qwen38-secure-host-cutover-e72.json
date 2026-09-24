@@ -1,0 +1,42 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-secure-host-cutover/v1",
+  "recorded_at": "2026-09-22T06:06:29Z",
+  "scope": "dgx_spark_active_qwen38_sglang_host_cutover",
+  "status": "host_candidate_ready_not_confidential_promotion",
+  "source_sha256": {
+    "secure_launcher": "bfb6f7b723c2e3e5a9f1571554060118e361599a73b71078b13f36f051dd96be",
+    "locked_launch_script": "71e5d8158bed0a26f504a4150280da82dd01b333abc411af991153f5a72b8f51",
+    "installed_and_source_systemd_unit": "1bb2117d48d3e04e9ec6f7c122933c1d3f179c750c5fcdd13a3bb3ad514a2e30",
+    "post_cutover_sanitized_host_audit": "559d60b60078e3b587734db8c0251551a7958bc392d48c6ff3cce393e4ba9ffd"
+  },
+  "checks": {
+    "full_model_and_draft_artifact_preflight": true,
+    "pinned_image_and_launch_parameters_preflight": true,
+    "old_unit_backed_up_owner_only": true,
+    "secure_unit_installed_and_running": true,
+    "model_cold_start_completed": true,
+    "served_model_exact": true,
+    "host_synthetic_inference_exact": true,
+    "loopback_only_host_port": true,
+    "private_file_secret_transport_active": true,
+    "runtime_secret_absent_from_argv_and_environment": true,
+    "all_container_process_cmdline_and_environment_secret_absent": true,
+    "post_repair_systemd_journal_secret_absent": true,
+    "post_cutover_host_audit_ready": true,
+    "candidate_ready": false
+  },
+  "failure_and_repair": {
+    "initial_secure_start_failure": "SGLang resolved ServerArgs is read-only and rejected post-resolution api_key assignment",
+    "containment": "Stopped systemd restart loop before adapting the launcher; the old credential-bearing argv service was not restored",
+    "repair": "Load the private-file key into the parsed namespace before ServerArgs.from_cli_args materializes the read-only configuration",
+    "fixed_image_parser_smoke": "passed",
+    "focused_tests_passed": 27,
+    "post_repair_service_restarts": 0
+  },
+  "limitations": [
+    "The active model is now reachable on host loopback only. Clients that depended on the former LAN publication must migrate to an explicitly reviewed route.",
+    "The secure unit remains manually started and disabled at boot; model capacity and startup ordering need an operator-owned service policy.",
+    "The host audit retains external candidate gates for governed sandbox inference, confidential policy and route revocation; host readiness alone is not production eligibility."
+  ],
+  "secrets_included": false
+}

@@ -1,0 +1,109 @@
+{
+  "schema_version": "siq.flagship.preview-result-update-evidence.v1",
+  "production_eligible": false,
+  "delivery": {
+    "schema_version": "siq.flagship.preview-refresh.v1",
+    "passed": true,
+    "checks": {
+      "new_api_healthy_recovery_gate_preserved": true,
+      "preview_switched_to_updated_api": true,
+      "web_rollback_to_previous_api_verified": true,
+      "updated_preview_restored_after_rollback": true,
+      "unauthenticated_result_reads_denied_no_store": true,
+      "main_and_previous_api_identities_unchanged": true
+    },
+    "production_cutover": false,
+    "actual_account_acceptance": false,
+    "task_execution_acceptance": false,
+    "preview_url": "http://127.0.0.1:15173",
+    "preview_api_port": 18086,
+    "after": {
+      "siq-research-api-candidate.service": {
+        "MainPID": "2301727",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "324c01b504e64141bead36cd1ec43bb8"
+      },
+      "siq-research-api-preview-20260924.service": {
+        "MainPID": "1726190",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "73ffe1c941514aeeaf1175177e4ac33d"
+      },
+      "siq-research-api-preview-e168.service": {
+        "MainPID": "966940",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "7de20786ec61462dbb90a2495016e595"
+      },
+      "siq-research-web-preview-20260924.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "InvocationID": ""
+      },
+      "siq-research-api-preview-result-20260924.service": {
+        "MainPID": "2049646",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "8e80e725060d4cafa55eda5bf784eefb"
+      },
+      "siq-research-web-preview-result-20260924.service": {
+        "MainPID": "2050065",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "7d1e3feefdda4c0f9a0649baafe8f09b"
+      }
+    },
+    "artifacts_sha256": {
+      "source-manifest.json": "f9a3b7a5b23cf05e4e853f1dff09af4fd90cc3cf99e0cbb3e5107d3c4fe27397",
+      "web-manifest.json": "c17471f5a8d54b8a3a994cb160025f8c35ea54dd6d18cfd362d8d908bad77ea5",
+      "launch_api.py": "68df12f6deda132c21aba968bd72da6e9fec084a9e9798e0be9262c95f167e01",
+      "prepare.py": "a692f4ea17562c5169cf18b804df9ce1c7a84d7a4371c1e56bf52b6aefe86b28",
+      "verify_switch.py": "107cc15e93424a9c0af50deab893b4bcbe8f5e1ce2d78ae05c34dcb6332261c9"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "var/ops/flagship-preview-result-20260924/source-manifest.json",
+      "sha256": "f9a3b7a5b23cf05e4e853f1dff09af4fd90cc3cf99e0cbb3e5107d3c4fe27397",
+      "bytes": 116548
+    },
+    {
+      "path": "var/ops/flagship-preview-result-20260924/web-manifest.json",
+      "sha256": "c17471f5a8d54b8a3a994cb160025f8c35ea54dd6d18cfd362d8d908bad77ea5",
+      "bytes": 32224
+    },
+    {
+      "path": "var/ops/flagship-preview-result-20260924/prepare.py",
+      "sha256": "a692f4ea17562c5169cf18b804df9ce1c7a84d7a4371c1e56bf52b6aefe86b28",
+      "bytes": 2657
+    },
+    {
+      "path": "var/ops/flagship-preview-result-20260924/launch_api.py",
+      "sha256": "68df12f6deda132c21aba968bd72da6e9fec084a9e9798e0be9262c95f167e01",
+      "bytes": 750
+    },
+    {
+      "path": "var/ops/flagship-preview-result-20260924/verify_switch.py",
+      "sha256": "107cc15e93424a9c0af50deab893b4bcbe8f5e1ce2d78ae05c34dcb6332261c9",
+      "bytes": 5923
+    },
+    {
+      "path": "var/ops/flagship-preview-result-20260924/before.sanitized.json",
+      "sha256": "2ebd877114fd21cab4b41455c83f6940aae2e98a8bed22b096a30b4bc8098238",
+      "bytes": 734
+    },
+    {
+      "path": "var/ops/flagship-preview-result-20260924/delivery.sanitized.json",
+      "sha256": "2527b39609a23cff07cae6ef7655bfa3e87736140b77d9bbf3d2ec02b2aeb58b",
+      "bytes": 2244
+    }
+  ],
+  "runtime_source": {
+    "path": "apps/api/services/agent_chat_runtime_impl.py",
+    "sha256": "b99529f1879ce3a402d6760f8fe49ee4b745427222352415c1a99e1379e9003d",
+    "bytes": 364357
+  },
+  "scope": "local_preview_only_current_source_no_production_execution"
+}

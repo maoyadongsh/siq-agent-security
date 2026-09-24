@@ -1,0 +1,164 @@
+{
+  "schema_version": "siq.flagship.evidence.runtime-request-identity-issuer.v1",
+  "captured_at_utc": "2026-09-22T19:37:17.092201+00:00",
+  "scope": "security_producer_component_with_synthetic_Grant_and_temporary_private_state",
+  "component_verified": true,
+  "secrets_included": false,
+  "candidate_ready": false,
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "live_daemon_started": false,
+  "live_model_invoked": false,
+  "sandbox_started": false,
+  "business_API_selector_enabled": false,
+  "validation": {
+    "go_test_all_passed": true,
+    "go_vet_all_passed": true,
+    "focused_identity_HTTP_and_relay_race_passed": true,
+    "python_schema_tests_passed": 261,
+    "python_schema_warnings": 1,
+    "warning": "existing Starlette httpx TestClient deprecation",
+    "changed_go_files_gofmt_passed": true,
+    "whole_tree_gofmt_clean": false,
+    "preexisting_format_finding": ".tmp/fx01/refcalc.go",
+    "git_diff_check_passed": true,
+    "cross_platform_builds": [
+      {
+        "target": "linux/amd64",
+        "binary": "agentshield",
+        "sha256": "42775b9500a03576574c1d4ef8a668ddaf4c0d3a5cff5470bf6af26d45de24a4",
+        "passed": true
+      },
+      {
+        "target": "linux/amd64",
+        "binary": "agentshield-decision-relay",
+        "sha256": "f10b59337b7b263491ce7b97a90ff36730a1c6f4e23fab9ed5d74de3d3ea3da6",
+        "passed": true
+      },
+      {
+        "target": "linux/arm64",
+        "binary": "agentshield",
+        "sha256": "1a095765b3d4c362dc969de84c38b320b2eb28c7d8b71627e4d49c224bf2c59d",
+        "passed": true
+      },
+      {
+        "target": "linux/arm64",
+        "binary": "agentshield-decision-relay",
+        "sha256": "3032a2cfa0095f837e93b4906c032f558d0ad585eaa495f3b2cefa3a0c44ba7c",
+        "passed": true
+      },
+      {
+        "target": "darwin/arm64",
+        "binary": "agentshield",
+        "sha256": "8d4692724b0372f3b7cb2372bb54fb0a69b3516a7b0f516332fbe44e4bcb7262",
+        "passed": true
+      },
+      {
+        "target": "darwin/arm64",
+        "binary": "agentshield-decision-relay",
+        "sha256": "a2247b6807f2c87f2a839012268571c1a870f0896a65ca21cbacd30b4c5955a4",
+        "passed": true
+      },
+      {
+        "target": "windows/amd64",
+        "binary": "agentshield",
+        "sha256": "c5f33463c8c2a5fbd30147aa1f50629696a0bee4b04daae5470647dabc5cf2b3",
+        "passed": true
+      },
+      {
+        "target": "windows/amd64",
+        "binary": "agentshield-decision-relay",
+        "sha256": "dc4e0d15c35571fa4138aa39bff0c9fc395842b485b5c57266d742b0b8ab1de2",
+        "passed": true
+      }
+    ],
+    "cross_platform_execution_claimed": false,
+    "python_ruff_passed": true
+  },
+  "commands": [
+    "cd apps/agentshield && gofmt -l .",
+    "cd apps/agentshield && go vet ./...",
+    "cd apps/agentshield && go test ./...",
+    "cd apps/agentshield && go test -race ./internal/runtimeidentity ./internal/server -run 'Request|RuntimeIdentitySelf' -count=1",
+    "apps/control-api/.venv/bin/python -m pytest apps/control-api/app/tests/test_schema_contracts.py -o addopts='' -q",
+    "CGO_ENABLED=0 GOOS=<linux|darwin|windows> GOARCH=<amd64|arm64> go build -trimpath -o <isolated_output> ./cmd/<agentshield|agentshield-decision-relay>",
+    "git diff --check",
+    "cd apps/control-api && .venv/bin/ruff check app/tests/test_schema_contracts.py"
+  ],
+  "proven_in_tests": [
+    "explicit_management_capability_required_ordinary_root_cannot_delegate",
+    "Grant_instance_agent_inherited_and_child_cannot_delegate",
+    "root_selection_and_one_root_per_instance_preserved",
+    "fixed_request_execution_and_deadline_same_attempt_retry_and_reopened_store",
+    "concurrent_identical_issuance_returns_same_signed_record",
+    "independent_requests_and_exact_namespace_session_boundaries",
+    "root_session_takeover_denied_and_envelope_deadline_clamped",
+    "parent_revocation_blocks_auth_enrollment_decision_binding_and_observer",
+    "lost_Grant_or_instance_blocks_execution_but_self_cleanup_survives",
+    "cancellation_before_issuance_permanently_blocks_late_issuance",
+    "cancel_issue_race_and_cancel_after_parent_revocation_preserve_audit",
+    "cancellation_tombstone_survives_failed_ordinary_revocation",
+    "orphan_secret_does_not_authenticate_original_attempt_resumes",
+    "corrupt_record_attempt_issuer_cancellation_fail_closed",
+    "issued_missing_wrong_or_unsafe_secret_not_recreated_or_reported_ready",
+    "canonical_UTC_seconds_and_request_Grant_issuer_lifetime_bounds",
+    "capacity_exact_limit_retry_at_limit_and_over_limit_rejection",
+    "signed_malformed_private_v3_record_rejected",
+    "Python_canonical_Ed25519_private_v3_fixture_verified_by_Go",
+    "host_HTTP_admin_runtime_credential_and_strict_shape_boundaries",
+    "cancelled_HTTP_response_before_mutation_and_unknown_cancel_not_success",
+    "no_secret_hash_or_private_signature_in_public_issuance",
+    "all_sandbox_relay_versions_hide_issuer_create_cancel_routes"
+  ],
+  "development_failures_resolved": [
+    "permissionEnvelope_initial_edit_returned_error_for_single_value_function_compile_fixed",
+    "Grant_test_initially_referenced_nonexistent_exported_sign_helper_replaced_with_existing_test_signer",
+    "two_new_Python_test_lines_exceeded_120_columns_wrapped_and_ruff_plus_261_schema_tests_passed"
+  ],
+  "not_proven": [
+    "independent_daemon_real_HTTP_with_new_binary",
+    "research_host_client_and_request_identity_staging_cleanup_handoff",
+    "formal_API_builder_selector_and_full_business_request",
+    "unknown_early_startup_windows_and_actual_API_crash_recovery",
+    "request_receipt_and_security_event_export",
+    "production_IAM_and_business_approval",
+    "historical_identity_archival_and_sustained_capacity",
+    "native_CI_and_full_flagship_acceptance"
+  ],
+  "source_sha256": {
+    "docs/agentshield-dev-spec-v1.md": "1ca698c1e133590f18ab75b5d75ed27ea6fd90207fba97f10dc4d0adbab925a2",
+    "docs/hermes-request-identity-issuer-runbook.md": "106d8b599f700bafffe0f0b2f5d45bdb0d84b766ebae3c0de05ccff07fbc56bd",
+    "packages/contracts/README.md": "4501c65d675339f2077afb3dcca6492cbe814dfb9a3c0db2fdd797de41dfcd95",
+    "apps/agentshield/internal/runtimeidentity/requests.go": "a2ff01e624efa0b28738c9503b3d04ecd31043c21c1f83fb41fa1262a7683a26",
+    "apps/agentshield/internal/runtimeidentity/requests_test.go": "fdfe2f6a58b7320a0701c06ffa8f9ea2793e561395fa8ee6396c5ca2dfe710e7",
+    "apps/agentshield/internal/runtimeidentity/store.go": "f439f8e09b0eec1128c32e9a5885b3b88e036862c50ce9a4af7694326cac12fc",
+    "apps/agentshield/internal/runtimeidentity/filesystem_profile.go": "d2ad924ae53e5af2d13f9f778a61e1faa2cec4ec0d7c211e4c821554120caf7e",
+    "apps/agentshield/internal/runtimeidentity/session.go": "4eed2716dbb8c80da6370188927b4720cd40336d470b956ed4b90b09d6ecab28",
+    "apps/agentshield/internal/runtimeidentity/summary.go": "a8a0e727875d545bfc647d7cdd852f70fb43309679a2157accafbdec73b258ef",
+    "apps/agentshield/internal/runtimeidentity/workbuddy.go": "3fcaddbc1e5a335efe3025181c5624e13d2c0ebcc442fa4d5f77bc51bef1c9f7",
+    "apps/agentshield/internal/server/server.go": "20d1c2bd399b0df57e5b1bae004e777d91b9ed4cd54df0d4d6d25ce712a4023c",
+    "apps/agentshield/internal/server/runtime_identity_requests.go": "01d156f80ba359d318ba1595e5591caeddbec13af3366990c14fd63bd0e92001",
+    "apps/agentshield/internal/server/runtime_identity_requests_test.go": "a8222971152187c2d0e6be561eb18772f3e7a8fba17ccdca0c303bbfae8ab99d",
+    "apps/agentshield/internal/server/runtime_identity_self_test.go": "f8975753e334638eb2a6a38ccde6842631988cf8d37d3ce173b65edcd5bdfad9",
+    "apps/control-api/app/tests/test_schema_contracts.py": "f7a8ea101a22bf30044abd031c93c3ee02d2c74dca7007ea1e9cf0ea915291aa",
+    "packages/contracts/local-runtime-identity.v3.schema.json": "9db6b947b2fdf6118b0900d42885241898ca25c57e5313bbb5e6e667a793aa2f",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-v3.json": "e2b0b5cdc8b45ca903c9be2f84378a59aa72607f21ac602d221913d4280a4553",
+    "packages/contracts/local-runtime-request-identity-cancel.v1.schema.json": "abb774335c5c33bda05c1a189ee9f339220d0301c79cd546ce640ae310e22314",
+    "packages/contracts/local-runtime-request-identity-cancelled.v1.schema.json": "9e245a791eb8e42782afd593eca349fb0f9762cce289d4e2dc34f42cc0677942",
+    "packages/contracts/local-runtime-request-identity-create.v1.schema.json": "03d50e8f00adc1f7fa93aafbad0b14788cb59a9fc6155acf10d48211abd4bda6",
+    "packages/contracts/local-runtime-request-identity-issued.v1.schema.json": "89f4a69ad13f8f18465c3b7f488e1ea2a918aab0d9e469727ac4d7d2feee97f0",
+    "packages/contracts/local-runtime-request-issuer-create.v1.schema.json": "408ab2fd6930e35a6093443b9abfa3465f9aab8494a43e58905f9fa29e6fd6c4",
+    "packages/contracts/local-runtime-request-issuer.v1.schema.json": "a1f4ba23a0b28024ee67caf6ab6f7f1e675d0802081b33308324d5c2989196b4",
+    "apps/agentshield/testdata/contracts/local-runtime-request-identity-cancel.json": "488d1a0040217c218ce8b701a1442fced7262cbf595d792181b479dbce691d23",
+    "apps/agentshield/testdata/contracts/local-runtime-request-identity-cancelled.json": "54ebd3026b6bafebcc6f7cea69a40452fa0140bb900dad9c58e63c1a17dbc240",
+    "apps/agentshield/testdata/contracts/local-runtime-request-identity-create.json": "e3a094a8dbdf320929f8688448873b69e7086905f30c4b2b08945019d7b9b81f",
+    "apps/agentshield/testdata/contracts/local-runtime-request-identity-issued.json": "ed164bc4bba83163e2cf71ed8e9b543e62be7b1499230afe9147af9ed4496ea0",
+    "apps/agentshield/testdata/contracts/local-runtime-request-issuer-create.json": "5b9388da35d09a9d3b0a49428b0a4b5df9500b87d7bb4fbf185d5ea5a315a010",
+    "apps/agentshield/testdata/contracts/local-runtime-request-issuer.json": "7dce3f7566a71526d4f7b209b6166e0aeb64527f0c1279224fef181b9fd290c0"
+  },
+  "previous_evidence": {
+    "path": "docs/evidence/flagship-optimization-20260921/ml-02-runtime-request-identity-issuer-e116.json",
+    "sha256": "38a3b3fb05f587bd8794ab46b12dd1e9be6c73b2d1ca0be4b3096c597a1926ab",
+    "reason": "final_Python_lint_line_wrap_fix_and_schema_retest"
+  }
+}

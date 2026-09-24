@@ -1,0 +1,98 @@
+{
+  "active_runtime": {
+    "company": "600519-贵州茅台",
+    "image_id": "sha256:52c265e9329151e64e418f62e816d474940b2cd92b0ee0ba89d773c7111e3991",
+    "image_ref": "siq/hermes-openshell-siq-analysis:34c4142c82fcfcaa11eeb93c",
+    "manifest_path": "var/openshell/canary/siq-analysis/pool/slots/7025f3f8b5186fe8a87f8a12/runs/canary-0921c0ffee21/canary.json",
+    "manifest_sha256": "bee38f928e808b7823f3bdcca81277efe73fd6a68eb2d86618fedd7cd08caa9e",
+    "market": "cn",
+    "mode": "NOT_PRODUCTION_CANARY",
+    "mount_plan_sha256": "a393adc2f1af735299069ef50030494686ff5f09a874a0873be7665826c7744d",
+    "phase": "running",
+    "policy_sha256": "6aabafd9cfa0f7e0218bdf5dd7d92266895d02aac8ded67cf250108be5a3a962",
+    "readiness_effect": "none",
+    "registry_generation": 56,
+    "registry_path": "var/openshell/canary/siq-analysis/pool/registry.json",
+    "registry_sha256": "bb542adf476f0db2798b05642455e6bd5797b4fb2a398f683b15872c3234b5eb",
+    "run_id": "canary-0921c0ffee21",
+    "sandbox_name": "siq-analysis-canary-0921c0ffee21",
+    "scope_id": "7025f3f8b5186fe8a87f8a12"
+  },
+  "candidate_build_consistent": true,
+  "comparisons": {
+    "active_runtime_equals_candidate_image": false,
+    "image_runtime_config_equals_baseline": true,
+    "materialized_config_equals_image_build_input": false,
+    "source_config_equals_image_build_input": true,
+    "source_config_equals_materialized_config": false,
+    "source_equals_materialized_projection": false
+  },
+  "image": {
+    "architecture": "arm64",
+    "baseline_path": "var/openshell/siq-analysis-v0210/contexts/3d82b38a8022141b9513f3fbca91965927a35847c9d3853b916d8f8227f61d9e/SOURCE_BASELINE.json",
+    "context_path": "var/openshell/siq-analysis-v0210/contexts/3d82b38a8022141b9513f3fbca91965927a35847c9d3853b916d8f8227f61d9e",
+    "context_sha256": "3d82b38a8022141b9513f3fbca91965927a35847c9d3853b916d8f8227f61d9e",
+    "credential_free": true,
+    "data_classification": "confidential_local",
+    "hermes_baseline": "v0210",
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "hermes_version": "0.21.0",
+    "image_id": "sha256:6914a40ecfa3264b2e88d37fdb4d67cfdfcef757021c3f96615e3168ec95e48a",
+    "image_ref": "siq/hermes-openshell-siq-analysis:3d82b38a8022141b9513f3fb",
+    "profile_tree_sha256": "61f724adf22b06a4ef0a4dc24baee12dd7febf072065890b638c752598b9b96a",
+    "runtime_config_sha256": "73cf7fca3ab395299927029666d38da42c493c46f874cb04e780920c13ba4f26",
+    "runtime_source_config_sha256": "1b2ca819ff1155f6b54c18aadb2e72610db81c3433408fb50f8baba01efe1568",
+    "runtime_state_free": true,
+    "state_path": "var/openshell/siq-analysis-v0210/confidential_local/current-image.json",
+    "wiki_data_free": true
+  },
+  "materialized": {
+    "changed_source_paths": [
+      "config.yaml"
+    ],
+    "config_sha256": "cd0d6d8409ed82ddfddd8ff2975ca94e94a8e94a4069fc5b4efc2424dfd9c1e1",
+    "excluded_runtime_names": [
+      ".env",
+      "auth.json",
+      "auth.lock",
+      "cache",
+      "checkpoints",
+      "cron",
+      "gateway-starts.log",
+      "gateway.lock",
+      "gateway.pid",
+      "gateway_state.json",
+      "logs",
+      "memories",
+      "models_dev_cache.json",
+      "response_store.db*",
+      "runs_idempotency.db",
+      "sessions",
+      "state.db*",
+      "workspace"
+    ],
+    "missing_source_paths": [],
+    "observed_file_count": 65,
+    "projection_sha256": "85e048ccec7b9b32fd563748b9c8f66e95585c728f1b58e9077d21116d9169f1",
+    "root": "data/hermes/home/profiles/siq_analysis"
+  },
+  "observed_at": "2026-09-21T10:15:21.913450Z",
+  "production_eligible": false,
+  "profile": "siq_analysis",
+  "release_consistent": false,
+  "sanitization": {
+    "contains_config_values": false,
+    "contains_credentials": false,
+    "contains_environment_values": false,
+    "contains_prompt_or_output": false,
+    "materialized_runtime_state_read": false
+  },
+  "schema_version": "siq.hermes.profile-manifest.v1",
+  "source": {
+    "config_sha256": "1b2ca819ff1155f6b54c18aadb2e72610db81c3433408fb50f8baba01efe1568",
+    "file_count": 65,
+    "profile_sha256": "8bb6cceb5fac9d9972346e58b4b5ddf79219b4d88cefc7cd477277e08c468ae2",
+    "projection_sha256": "cc229555e668f00b041a1bf209cf4341f28f5ab5f5545c8ae7cca601a71ba78a",
+    "root": "agents/hermes/profiles/siq_analysis"
+  }
+}

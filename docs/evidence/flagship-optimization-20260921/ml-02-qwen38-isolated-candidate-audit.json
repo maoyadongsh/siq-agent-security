@@ -1,0 +1,46 @@
+{
+  "auditor_sha256": "8e1495ed2f834c96c6255fd03cb7942b395fa24737040c40b2184479a4f6dd2a",
+  "blockers": [
+    "authenticated_openshell_model_bridge_verified",
+    "governed_route_and_confidential_policy_bound",
+    "hermes_sandbox_inference_verified",
+    "host_bind_private",
+    "model_route_revocation_fail_closed_verified",
+    "private_file_transport_active",
+    "runtime_secret_not_in_argv"
+  ],
+  "candidate_ready": false,
+  "captured_at_unix": 1790033311,
+  "checks": {
+    "container_image_exact": true,
+    "docker_bridge_identity": true,
+    "draft_artifacts_exact": true,
+    "host_bind_private": false,
+    "image_exact": true,
+    "model_artifacts_exact": true,
+    "private_file_transport_active": false,
+    "runtime_parameters_exact": true,
+    "runtime_secret_not_in_argv": false,
+    "runtime_secret_not_in_environment": true,
+    "served_model_exact": true,
+    "synthetic_inference_exact": true
+  },
+  "confidential_route_promoted": false,
+  "external_promotion_gates_pending": [
+    "governed_route_and_confidential_policy_bound",
+    "authenticated_openshell_model_bridge_verified",
+    "hermes_sandbox_inference_verified",
+    "model_route_revocation_fail_closed_verified"
+  ],
+  "host_blockers": [
+    "host_bind_private",
+    "private_file_transport_active",
+    "runtime_secret_not_in_argv"
+  ],
+  "host_candidate_ready": false,
+  "manifest_file_sha256": "eafdf3c322bc277aac7295c0c6d641ac4a1a5b0efd342d626e5765720e9e6a1a",
+  "manifest_sha256": "2760acd76cf0d2794b3a1cfc84f05bbbfdecc566ca320afe309e627760e34c13",
+  "model_id": "Qwen3.8-27B-NVFP4",
+  "nemotron_route_changed_by_audit": false,
+  "schema_version": "siq.model.qwen38-isolated-candidate-audit.v1"
+}

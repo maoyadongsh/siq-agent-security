@@ -1,0 +1,93 @@
+{
+  "schema_version": "siq.flagship.api-host-runtime-readiness.v1",
+  "generated_at": "2026-09-23T23:59:34.873587+00:00",
+  "diagnostic_passed": true,
+  "main_cutover_performed": false,
+  "production_ready": false,
+  "host_dependencies": {
+    "passed": true,
+    "mutation_attempted": false,
+    "checks": {
+      "docker_executable": true,
+      "systemctl_executable": true,
+      "systemd-run_executable": true,
+      "ssh_executable": true,
+      "openshell_executable": true,
+      "host_docker_connected": true,
+      "host_user_manager_same_main_api": true,
+      "openshell_actual_inventory_empty": true,
+      "actual_runtime_identity_strict_readback": true,
+      "all_fixed_source_mounts_match": true
+    },
+    "apparmor_profile": "unconfined",
+    "scope": "read_only_diagnostic_not_service_deployment"
+  },
+  "recovery_probe": {
+    "passed": true,
+    "actual_main_recovery_replaced": false,
+    "checks": {
+      "second_legacy_owner_denied_by_real_lock": true,
+      "request_recovery_initial_scan_ready": true,
+      "no_request_adopted_or_released": true,
+      "request_recovery_stopped_cleanly": true,
+      "gateway_owner_remains_empty": true
+    },
+    "scan_counts": {
+      "examined": 0,
+      "deferred": 0,
+      "released": 0,
+      "failed": 0,
+      "replaced": 0,
+      "foreign": 0
+    },
+    "backup_sha256": "a072906cffc36cf353f6e29eeb85c4c7b2d747a7d81df46e9d334394f7e208ce",
+    "apparmor_profile": "unconfined",
+    "scope": "isolated_database_scan_not_main_deployment",
+    "temporary_database_removed": true
+  },
+  "original_main_still_same_process": true,
+  "original_recovery_health": {
+    "enabled": true,
+    "required": true,
+    "ready": true
+  },
+  "temporary_database_absent": true,
+  "critical_limit": "Service-manager access passed only with a diagnostic container AppArmor unconfined override; default docker-default remains denied. No production policy change.",
+  "research_artifacts": [
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/probe_host_dependencies.py",
+      "sha256": "c0b24db3dd862cb742d59881fdfb0768e1b0ebbf6cb51ec2b0b2bade1e68b619",
+      "bytes": 2724
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/probe_recovery_readiness.py",
+      "sha256": "f5afa7bd3133f21677845e0c0a2403e10df3d9774ebd9168f105babc9fb3d4aa",
+      "bytes": 2602
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/host-dependencies.sanitized.json",
+      "sha256": "3b708889b375e5b5012ab105dcd695a6ff940f100f2ebc5550dee727cbb8bf21",
+      "bytes": 208
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/host-dependencies-v2.sanitized.json",
+      "sha256": "7858c29c55b8e125986f37c24caadf81ec89281f73bd8dcb4f2dbb3b9bf7b055",
+      "bytes": 305
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/host-dependencies-v3.sanitized.json",
+      "sha256": "2b5f672c20210f032ec85018f94b03a5f1c01610ab4e1ccc66052404ee1fe495",
+      "bytes": 549
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/recovery-probe.sanitized.json",
+      "sha256": "8b2bf2f2cd13e1eaadc3b1ce3c2cbc2ab5f94a0cddd03fc1acd365ed358e1ec5",
+      "bytes": 666
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/frozen-source-manifest-v3.json",
+      "sha256": "72eb9865e6564bb7e7b11fdce0668a9cfefcb47fd5e58ae3142659b1fd3e8101",
+      "bytes": 210345
+    }
+  ]
+}

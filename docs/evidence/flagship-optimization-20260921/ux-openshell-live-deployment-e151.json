@@ -1,0 +1,237 @@
+{
+  "schema_version": "flagship-ux-openshell-live-deployment-e151/v1",
+  "date": "2026-09-23",
+  "goal_status": "active",
+  "task": "ENT-UX-04 partial: disposable real sandbox deployment and behavior acceptance",
+  "production_eligible": false,
+  "candidate_descriptor_path": "var/flagship/ux-e151/candidate.json",
+  "source_manifest": {
+    "path": "var/flagship/ux-e151/source-manifest.json",
+    "sha256": "87172f111eca39b6691cc6736dde6bec8e6df15e6277f13fcfa4c21846361a7b",
+    "bytes": 243059
+  },
+  "resource_manifests": [
+    {
+      "path": "var/flagship/ux-e151/dev-web-manifest.json",
+      "sha256": "945717418acaed97785514172c0b10ffc2711809077bd5474a4c99e90ea9d495",
+      "bytes": 87613
+    },
+    {
+      "path": "var/flagship/ux-e151/embedded-web-manifest.json",
+      "sha256": "942de9491c47189974ee4d9549564a5a91c6dbe3bd12ea6517f7c3a8e9c1f147",
+      "bytes": 47625
+    }
+  ],
+  "checks": {
+    "browser_and_runtime": {
+      "count": 12,
+      "result": {
+        "path": "var/flagship/ux-e151/browser-final/result.json",
+        "sha256": "6cc1775b03f2b94d5e25d8786a36b953e851f6bc1115723de8715bac6dde4078",
+        "bytes": 58207
+      }
+    }
+  },
+  "test_counts": {
+    "api": 1063,
+    "focused_api": 45,
+    "go_packages": 44,
+    "go_cross_builds": 4
+  },
+  "artifacts": [
+    {
+      "path": "var/flagship/ux-e151/browser-final/allow-browser/preview-desktop.png",
+      "sha256": "73d6bed51afacf65e07a6390a19aeae13bdc0976d7b7d22a71d7c387de8014a5",
+      "bytes": 149850
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/allow-browser/preview-mobile.png",
+      "sha256": "128e177635646ab0dabddde8b7d34f92ec8a09a0c032bd0693608e7d81dac4c1",
+      "bytes": 68097
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/allow-browser/result-desktop.png",
+      "sha256": "faa3c5df7504df751089210f7c02fc4ac592be0195b7d6e75c5f3c10e611c774",
+      "bytes": 154704
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/allow-browser/result-mobile.png",
+      "sha256": "50d00c56fa931b065a07513320e4340eef02c2823238b442bcd26e863fbb8739",
+      "bytes": 69726
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/allow-browser/result.json",
+      "sha256": "d7106a1096c7ce1c8ece44fe8158bafa3898490fa2fe969ea6057cc3cf1e7c6f",
+      "bytes": 1037
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/allow-browser.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/deny-browser/preview-desktop.png",
+      "sha256": "7479f0108431c9c5cf0f76ef06fede03780c25451fd29a8fe5ba0a3d25716624",
+      "bytes": 156015
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/deny-browser/preview-mobile.png",
+      "sha256": "e8e3acf3113ece69fc5fe9cb8aba725ff1fb11719d46bc7d42edceccc1c286ae",
+      "bytes": 70035
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/deny-browser/result-desktop.png",
+      "sha256": "f8e25052ca80181155a1e6fba182d0679aa9d63593a88c04af96cfddefa93052",
+      "bytes": 160340
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/deny-browser/result-mobile.png",
+      "sha256": "48a523647f03aab32f783bcc573d3e2031fef5aea7100025399356bb30ea35a6",
+      "bytes": 71077
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/deny-browser/result.json",
+      "sha256": "51131b01602b2d95d20261c2cb0138256a933bce506146f05d57b200f327c7f1",
+      "bytes": 1037
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/deny-browser.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final/result.json",
+      "sha256": "6cc1775b03f2b94d5e25d8786a36b953e851f6bc1115723de8715bac6dde4078",
+      "bytes": 58207
+    },
+    {
+      "path": "var/flagship/ux-e151/browser-final.log",
+      "sha256": "a12f9a9b74e1ea1381888765764ae25a6ba0998c133e6aa52a823bafa23d6a0a",
+      "bytes": 399
+    },
+    {
+      "path": "var/flagship/ux-e151/go-focused-final.log",
+      "sha256": "9c2567e207e0ac7ff85448bcd18f5424f9ae092f7a4df1c503720c8d6739a118",
+      "bytes": 67
+    },
+    {
+      "path": "var/flagship/ux-e151/go-format-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e151/go-full-final.log",
+      "sha256": "e1e7d55d094ebc89be37abda7b261106fe2c6fc0e4e12dcbc90e1ce160db2608",
+      "bytes": 3685
+    },
+    {
+      "path": "var/flagship/ux-e151/go-green-final.log",
+      "sha256": "d7abb663272dc388177567516d32d0a316eee03968dec33a3a0e99b84c048b33",
+      "bytes": 67
+    },
+    {
+      "path": "var/flagship/ux-e151/go-race-final.log",
+      "sha256": "df87d3a3d3b085b27893ae376c94b7cc1030861cee12c432078b09c5147ce3e3",
+      "bytes": 67
+    },
+    {
+      "path": "var/flagship/ux-e151/go-vet-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e151/native-version-final.log",
+      "sha256": "9983e395d4c6f5c7ce7e743b7006acb5118ba7c2f8675a0b1b36ce71a89769c2",
+      "bytes": 43
+    },
+    {
+      "path": "var/flagship/ux-e151/python-focused-final.log",
+      "sha256": "554e63e5778e0d0b258dbdfcfa7cd9faf4c011bb75daaa58147ce4d3215b3f01",
+      "bytes": 619
+    },
+    {
+      "path": "var/flagship/ux-e151/python-full-final.log",
+      "sha256": "3b32b1e92bd4841c31ad2e95a23ea8cf44fb8762dcc986fb988373af26bcf4ab",
+      "bytes": 1742
+    },
+    {
+      "path": "var/flagship/ux-e151/ruff-final.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/flagship/ux-e151/go-checks.json",
+      "sha256": "566c32aa4d09ed450dd5764c5e60ffdc5ea345507554a601c64bf9116cb5b6f3",
+      "bytes": 126
+    },
+    {
+      "path": "var/flagship/ux-e151/build-darwin-arm64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e151/build-linux-amd64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e151/build-linux-arm64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e151/build-windows-amd64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "native_candidates": [
+    {
+      "path": "var/flagship/ux-e151/siq-agent-security-darwin-arm64",
+      "sha256": "001d8512c9c5f21f1957f9f15313305d3b8ae8194207bd736bed0322a1ab757c",
+      "bytes": 24319442
+    },
+    {
+      "path": "var/flagship/ux-e151/siq-agent-security-linux-amd64",
+      "sha256": "76a1be4501a59fe364846c6f659a718a6d2ce9def94b9af2cb54c60de46037de",
+      "bytes": 25363993
+    },
+    {
+      "path": "var/flagship/ux-e151/siq-agent-security-linux-arm64",
+      "sha256": "4945636ec6f8e0822416be423ef089c62c9e043b50487f8d2c569e3e53cd0156",
+      "bytes": 23844483
+    },
+    {
+      "path": "var/flagship/ux-e151/siq-agent-security-windows-amd64.exe",
+      "sha256": "600e79161eb9598b6f77d122aa652a02cc45185941b3e5b50de9f7896481563f",
+      "bytes": 25989632
+    }
+  ],
+  "behavior": {
+    "allow": "HTTP 200 / curl 0",
+    "revocation": "explicit HTTP 403 / curl 22 / http_code 000",
+    "rollback": "HTTP 200 / curl 0",
+    "denial_log_matching_lines": 0
+  },
+  "boundaries": [
+    "Actual browser to isolated dev control API to real OpenShell CLI; no response mocks.",
+    "Different dev actors propose and approve; production identity not tested.",
+    "Only disposable base-image sandbox/public curl probe; not a Hermes business task acceptance.",
+    "API remains config_readback; behavior evidence is scoped externally to this sandbox, binary and endpoint.",
+    "Rollback via real API, not a browser rollback control.",
+    "No matching gateway denial event found; no audit event stream claim.",
+    "Existing E150 Web reused with file hashes; no new Web unit suite or PostgreSQL rerun claimed.",
+    "Final owned sandbox removed, validation catalog restored, original gateway metadata unchanged.",
+    "No business directories, model keys, GPU, installed replacement, commit, push or release.",
+    "Darwin and Windows cross-compiled only; Linux arm64 version command executed."
+  ],
+  "early_failures_not_counted": [
+    "initial-live",
+    "create-diagnostic",
+    "live-v2",
+    "live-diagnostic",
+    "python-full.log",
+    "go-green.log",
+    "native-version.log"
+  ]
+}

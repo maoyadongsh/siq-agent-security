@@ -1,0 +1,74 @@
+{
+  "schema_version": "siq.flagship-business-result-retention-validation/v1",
+  "batch": "E157",
+  "recorded_on": "2026-09-23",
+  "goal_status": "active",
+  "scope": "persisted generated replies and current business authorization; not report publication",
+  "report": {
+    "path": "docs/development/ux-business-result-retention-e157-validation-20260923.md",
+    "sha256": "a928f166d32a5f3419fa57a3400a715a43cfe666d851b8886c573e27fb6c28ec",
+    "bytes": 5630
+  },
+  "specification": {
+    "path": "docs/development/business-result-retention-e157-spec.md",
+    "sha256": "b55081b8bfb5d24835b993faff21c48dd1a1492e46564d12a05cf4ce0e6e4034",
+    "bytes": 2219
+  },
+  "sources": {
+    "path": "var/flagship/ux-e157/source-manifest.json",
+    "sha256": "303349ee40676cb9bd973d826646b9af67bfe3ca04a15d7baafdfe870369c684",
+    "bytes": 6169
+  },
+  "validation": {
+    "final_api_passed": 260,
+    "final_api_deselected_known_failure": 1,
+    "new_retention_tests": 35,
+    "security_contract_passed": 275,
+    "initial_full_api_passed": 257,
+    "initial_full_api_failed": 1,
+    "known_failure": "historical migration 015 requires user_artifacts absent from migrations 001-014; full empty-database replay not passed",
+    "postgres": "isolated pgvector/pgvector:pg16 container; migration 022 repeated, 8 concurrent inserts, exact read, conflict, revocation, atomic audit rollback",
+    "process_restart_scope": "fresh Python process reads previously committed SQLite result without runtime objects; no online API restart",
+    "logs": [
+      {
+        "path": "var/flagship/ux-e157/api-initial-full.log",
+        "sha256": "d43d21e7b63b467f6f30e2dd5dff76b068df0b71d1e7ce4dd56c7074541ef9bc",
+        "bytes": 7527
+      },
+      {
+        "path": "var/flagship/ux-e157/api-scoped-final.log",
+        "sha256": "3a205187686141ef4dd972f9ce3a19680ceafd6e5c88a795aab8baf70a062b47",
+        "bytes": 3873
+      },
+      {
+        "path": "var/flagship/ux-e157/security-contracts-final.log",
+        "sha256": "f6c1799a72b66d3ba981726379580a58f238c93195ba6bf942b06ed7c6b4f3fe",
+        "bytes": 860
+      },
+      {
+        "path": "var/flagship/ux-e157/ruff-final.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "bytes": 19
+      },
+      {
+        "path": "var/flagship/ux-e157/checks.json",
+        "sha256": "3e8fe22c5e9aa674fd4fa581192bc7b0d71851f18342cce3bf9cb795361cb3fd",
+        "bytes": 151
+      }
+    ]
+  },
+  "candidate_path": "var/flagship/ux-e157/candidate.json",
+  "prior_ui_candidate_reference": {
+    "path": "var/flagship/ux-e155/candidate.json",
+    "sha256": "3613c27f43a349ea1ba7164f9ac4ce295a2949feef3f1265717f12309bef6cc2",
+    "bytes": 1661
+  },
+  "limitations": [
+    "Initial database bootstrap/full migration chain remains failing at historical 015",
+    "No recovery promise for terminal-to-commit crash window",
+    "No formal publication attestation or report artifact ledger",
+    "No security-console business connection this batch",
+    "Runtime transport in cleanup test is substituted; no new real model/sandbox test",
+    "No production IAM, API deployment, installed binary replacement or release"
+  ]
+}

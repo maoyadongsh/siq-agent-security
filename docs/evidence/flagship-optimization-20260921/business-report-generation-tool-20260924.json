@@ -1,0 +1,286 @@
+{
+  "schema_version": "siq.flagship.report-generation-tool-evidence.v1",
+  "goal_complete": false,
+  "production_eligible": false,
+  "model_to_review_verified": false,
+  "source": [
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/research_report_generation.py",
+      "sha256": "eb4efe608a74e03fa3e7851c24623f4acce40ecef62162d45913682a3e3b10bd",
+      "bytes": 9385
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/research_business_tools_mcp.py",
+      "sha256": "b0b4fd11a6cf6cf77db77013b6e185f016102edc10ff5fabf6de55ee468280ee",
+      "bytes": 11769
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/build_qwen38_candidate_image.py",
+      "sha256": "c27b5ad763deb093047c94f3fbe4dd98f6a6adaf82bdf1b73aaab612ec98135d",
+      "bytes": 35170
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/prepare_siq_analysis_context.sh",
+      "sha256": "b5cebe04aa32a309d8777397f40146d66fb3feb08141614ba71a35550807faa6",
+      "bytes": 23658
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/tests/test_research_report_generation.py",
+      "sha256": "3b06953c9a409022547041b9e458863db7fda1a567a7b8e816c8d1e0e30bf643",
+      "bytes": 5886
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/tests/test_research_business_tools_mcp.py",
+      "sha256": "fc15d5e360d34b6bd944dc66a1ed2d6ab6106eeaee96c4158273e63ce8cf2463",
+      "bytes": 11571
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/tests/test_build_qwen38_candidate_image.py",
+      "sha256": "e8160eeb3e566ac25b851426562e8452e1b1ab29451963b2415bcf31f469664c",
+      "bytes": 5413
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "scripts/openshell/tests/test_qwen38_business_mcp.py",
+      "sha256": "d9c4e62d0e56b4b00544d26e7c8785b4e03188a46be1e1c79c556014865c42a9",
+      "bytes": 5165
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "infra/openshell/sandbox/qwen38_candidate/Dockerfile",
+      "sha256": "d8c201cd5e470fb168699c94f0b69bc9f272dc6246bec6d70d1bcf284a7854fd",
+      "bytes": 4728
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "infra/openshell/sandbox/qwen38_candidate/validate_runtime.py",
+      "sha256": "52c57b0e91cfe67c410732ed42211dea1a957ed764471108f1dbc19f56c341ef",
+      "bytes": 7646
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "infra/openshell/sandbox/qwen38_candidate/business-mcp.lock.json",
+      "sha256": "ebf867143470b3d5bb2ee0355ececde1fca71020a0f99e46f20c1a068ef92f61",
+      "bytes": 4605
+    },
+    {
+      "repository": "siq-research-engine",
+      "path": "infra/openshell/hermes/siq-business-tools-mcp.v1.yaml",
+      "sha256": "107fe164626b4a5aff03016670f3c8e63561be19f7b75f8b24d9693835f7a053",
+      "bytes": 565
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/agentshield/internal/runtimeaction/report_generation.go",
+      "sha256": "c7554f3f44898bf37a94cf4f22d6e866e2000a910d7fa36cb4053f760b1c6c8e",
+      "bytes": 2418
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/agentshield/internal/runtimeaction/report_generation_test.go",
+      "sha256": "e10a5a47fe758d9ebe124a3a5a07af11f6abfb7104d0d1f869412e2938b6a17c",
+      "bytes": 1650
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/agentshield/internal/runtimeaction/describe.go",
+      "sha256": "233403099507eb7ead2237406d532278ce6e0f6b466a7f46afea38d3d671f132",
+      "bytes": 4714
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/agentshield/internal/runtimeaction/resources.go",
+      "sha256": "22ed91869a1d05d9d449cdfeeec3e53d385e20acb482ecb41f8a7fa3fdcb6fcb",
+      "bytes": 5480
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/agentshield/internal/receipt/engine.go",
+      "sha256": "c0e6ed673166a30ee4d200cc8433010de8861039b2d0faaaea18cc7e36c93d3a",
+      "bytes": 57486
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/agentshield/internal/receipt/report_generation_test.go",
+      "sha256": "81dc6a0b8da7ec5723ff91366f65235148543dbcc2971cdea972401c2328c67c",
+      "bytes": 2484
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/agentshield/testdata/contracts/siq-research-report-generation-call-v1-cases.json",
+      "sha256": "64aef4cc77d6a9fcc4bc0d3e4fa38cd505a6c085f6dd6d401372cec02eb1eeb0",
+      "bytes": 4045
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "apps/control-api/app/tests/test_business_report_contract.py",
+      "sha256": "cbad304174bb61f9c375c4d2d4982b68e6c02564b2d412c1c8be7dcde8120779",
+      "bytes": 784
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "packages/contracts/siq-research-report-generation-call.v1.schema.json",
+      "sha256": "19a9e8c43651ca5bb062e4cf9f7e8b52f10f52f7396553b09a8be40dfe233e99",
+      "bytes": 1435
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "docs/development/research-report-generation-contract-20260924.md",
+      "sha256": "d30799cf4e4c1cec8ae6353410a08c6fe1aa365d622880338ee82b5c09e2669d",
+      "bytes": 2426
+    },
+    {
+      "repository": "siq-agent-security",
+      "path": "docs/agentshield-dev-spec-v1.md",
+      "sha256": "d8b7f3ce90203660bc0a2efc3e3e544f2583f31f1f0badd627429c21f5775160",
+      "bytes": 383225
+    }
+  ],
+  "records": [
+    {
+      "artifact": {
+        "repository": "siq-research-engine",
+        "path": "var/ops/flagship-report-generation-20260924/snapshot.sanitized.json",
+        "sha256": "903633db6117bdd1251a6f80186805d92149655b8187c65cabbf9e461e0114e1",
+        "bytes": 161
+      },
+      "result": {
+        "schema_version": "siq.openshell.siq_analysis_runtime_snapshot.v3",
+        "snapshot_name": "qwen38-report-generation-20260924",
+        "host_records_copied": false
+      }
+    },
+    {
+      "artifact": {
+        "repository": "siq-research-engine",
+        "path": "var/ops/flagship-report-generation-20260924/build.sanitized.json",
+        "sha256": "9a05817e05a92ea076c5343d0817718b1212913f10a89951f81623ab0866e1f2",
+        "bytes": 175
+      },
+      "result": {
+        "passed": true,
+        "image_id": "sha256:a04a6863a74293508e00944ec61437c94c63b921f6ea2b8bb5fea29439cd0c44",
+        "elapsed_seconds": 20.92,
+        "current_pointer_unchanged": true
+      }
+    },
+    {
+      "artifact": {
+        "repository": "siq-research-engine",
+        "path": "var/ops/flagship-report-generation-20260924/image-v2/build.sanitized.json",
+        "sha256": "80d5a4aee939188ec7908a847f461bb66e592f28409af10e39b74ca83b2830ef",
+        "bytes": 175
+      },
+      "result": {
+        "passed": true,
+        "image_id": "sha256:a13530d4b2aee4fb6ffb04c41e972a2cfa548a1fd0b1d9e2ee05c4df8e64fdd5",
+        "elapsed_seconds": 20.41,
+        "current_pointer_unchanged": true
+      }
+    },
+    {
+      "artifact": {
+        "repository": "siq-research-engine",
+        "path": "var/ops/flagship-report-generation-20260924/image-v3/build.sanitized.json",
+        "sha256": "6d4ab4ba60359a5e84fc85219236b49cd5dfa7a4084e02b71fa038588ec732c9",
+        "bytes": 175
+      },
+      "result": {
+        "passed": true,
+        "image_id": "sha256:1d4b77d85ee8c24e63746c5043679a9eaa49b82b1806bd3b709e238463a301a4",
+        "elapsed_seconds": 20.47,
+        "current_pointer_unchanged": true
+      }
+    },
+    {
+      "artifact": {
+        "repository": "siq-research-engine",
+        "path": "var/ops/flagship-report-generation-20260924/producer.sanitized.json",
+        "sha256": "2e99987e0b0b07a6be20283e92149f4de2a036f5ed93d1e30584549df2a125ab",
+        "bytes": 173
+      },
+      "result": {
+        "passed": false,
+        "exit_code": 125,
+        "network": "none",
+        "model_called": false,
+        "business_identity": false,
+        "elapsed_seconds": 0.02,
+        "container_absent": true
+      }
+    },
+    {
+      "artifact": {
+        "repository": "siq-research-engine",
+        "path": "var/ops/flagship-report-generation-20260924/producer-v2.sanitized.json",
+        "sha256": "8205456458030ee8e8d8f6703848d5cb171fef2f83b4d3ce1352c68feb0ebc92",
+        "bytes": 523
+      },
+      "result": {
+        "passed": true,
+        "exit_code": 0,
+        "network": "none",
+        "model_called": false,
+        "business_identity": false,
+        "elapsed_seconds": 2.97,
+        "container_absent": true,
+        "producer": {
+          "schema_version": "siq.research-report-generation-result/v1",
+          "ok": true,
+          "stage": "ready_for_review",
+          "manifest_sha256": "b5b8f4a32ebce3fa29640b034d8946e01d9f72facb21d190535aabd5096b9479",
+          "artifact_count": 8,
+          "published": false
+        },
+        "artifact_count": 8,
+        "all_hashes_match": true,
+        "outputs_private": true
+      }
+    }
+  ],
+  "report": {
+    "repository": "siq-research-engine",
+    "path": "docs/reports/business-report-generation-tool-20260924.md",
+    "sha256": "5349afd731d0397b4ad9999fc375ac2bd4a59dfa10639105a91e77fa22138b2e",
+    "bytes": 4184
+  },
+  "checks": {
+    "research_pytest_passed": 47,
+    "research_pytest_skipped_missing_mcp": 1,
+    "contract_pytest_passed": 2,
+    "go_test_all_passed": true,
+    "go_vet_all_passed": true,
+    "ruff_passed": true,
+    "shell_syntax_passed": true
+  },
+  "cross_builds": {
+    "repository": "siq-agent-security",
+    "path": "var/flagship/report-generation-20260924/cross-build.sanitized.json",
+    "sha256": "17ade4e0089d82e5d3491aa7df378214e9e13f070e73eda8f72240f5f8881c24",
+    "bytes": 86
+  },
+  "final_image": {
+    "repository": "siq-research-engine",
+    "path": "var/ops/flagship-report-generation-20260924/image-v3/candidate-image.json",
+    "sha256": "6389547c03bf329132b4b0638b318deca9ded051672cd8956866cfee497f91f7",
+    "bytes": 1614
+  },
+  "producer_image": {
+    "repository": "siq-research-engine",
+    "path": "var/ops/flagship-report-generation-20260924/image-v2/candidate-image.json",
+    "sha256": "baed751d8c3bae0aa95e072a7c9c1995ab46d2b67966b4cc5f30ff42dae033c0",
+    "bytes": 1614
+  },
+  "limits": [
+    "Real report producer used network-disabled Docker and no model/business identity.",
+    "MCP consent and model-to-business report review remain unverified for this new tool.",
+    "No running service or frozen release worktree was replaced."
+  ]
+}

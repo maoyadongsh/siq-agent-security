@@ -1,0 +1,261 @@
+{
+  "candidate_id": "dgx-spark-hermes-v0210-openshell-v0083-20260921",
+  "candidate_ready": false,
+  "checks": [
+    {
+      "level": "configuration_correct",
+      "name": "hardware.dgx_spark_identity",
+      "observed": {
+        "architecture": "aarch64",
+        "product": "NVIDIA_DGX_Spark"
+      },
+      "reason": "hardware_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.security.head",
+      "observed": "af275efb1732d9bc1fcb9ea624e55a2ced58032c",
+      "reason": "head_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.security.dirty_state_recorded",
+      "observed": {
+        "dirty": true
+      },
+      "reason": "dirty_state_observed",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.research.head",
+      "observed": "47c0eda39119662a8f230c7a3b3bea97216abab6",
+      "reason": "head_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.research.dirty_state_recorded",
+      "observed": {
+        "dirty": true
+      },
+      "reason": "dirty_state_observed",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.hermes.head",
+      "observed": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+      "reason": "head_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.hermes.dirty_state_recorded",
+      "observed": {
+        "dirty": false
+      },
+      "reason": "dirty_state_observed",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.hermes_adapter",
+      "observed": "2e4bda264a8ef061135ab150a554fbaf5d42fe499207819c6f704d41f1cdf942",
+      "reason": "drift_detected",
+      "status": "fail"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.openshell_cli",
+      "observed": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.openshell_gateway",
+      "observed": "3a8e7f502b28467e56df8467726fbeff9f60f2cdec8ef003b17893f0b3b93b99",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.hermes_integration_patch",
+      "observed": "4d1b3cffdee9ea107f221845f270e5b4f394aa996bc4d424b31266bb183b2e2a",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.profile_source_config",
+      "observed": "cd0d6d8409ed82ddfddd8ff2975ca94e94a8e94a4069fc5b4efc2424dfd9c1e1",
+      "reason": "drift_detected",
+      "status": "fail"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_image_state",
+      "observed": "9a677e3cc685b3847ea497a012b12725b5ff5e2103c1bad1d4d151b093b74a1a",
+      "reason": "drift_detected",
+      "status": "fail"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_smoke_state",
+      "observed": "3e92255d99dfaa2431e783a312845c451f25c9270d5d6d03fb9a6dcedbdf67bf",
+      "reason": "drift_detected",
+      "status": "fail"
+    },
+    {
+      "level": "identity_match",
+      "name": "openshell.cli.version",
+      "observed": "openshell 0.0.83",
+      "reason": "version_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "openshell.gateway.version",
+      "observed": "openshell-gateway 0.0.83",
+      "reason": "version_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "service_reachable",
+      "name": "openshell.gateway_process",
+      "reason": "gateway_process_running",
+      "status": "pass"
+    },
+    {
+      "level": "service_reachable",
+      "name": "endpoint.model_loopback",
+      "reason": "http_200_json",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "model.model_loopback.id",
+      "observed": [
+        "NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4"
+      ],
+      "reason": "model_id_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "service_reachable",
+      "name": "endpoint.model_openshell_bridge",
+      "reason": "http_200_json",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "model.model_openshell_bridge.id",
+      "observed": [
+        "NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4"
+      ],
+      "reason": "model_id_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "service_reachable",
+      "name": "endpoint.host_hermes",
+      "reason": "health_ok",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "endpoint.host_hermes.version",
+      "observed": "0.21.0",
+      "reason": "version_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "service_reachable",
+      "name": "endpoint.v021_pool",
+      "reason": "health_ok",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "endpoint.v021_pool.version",
+      "observed": "0.21.0",
+      "reason": "version_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "service_reachable",
+      "name": "endpoint.v013_control_canary",
+      "reason": "health_ok",
+      "status": "pass"
+    },
+    {
+      "level": "service_reachable",
+      "name": "model.bridge_unit",
+      "reason": "bridge_active_enabled",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "runtime.active_binding",
+      "reason": "active_binding_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "runtime.manifest",
+      "reason": "runtime_manifest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "runtime.container_image",
+      "observed": "sha256:52c265e9329151e64e418f62e816d474940b2cd92b0ee0ba89d773c7111e3991 running",
+      "reason": "container_image_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "openshell.supervisor.digest",
+      "observed": "d88f7a288e82ce8243216883ba8389524f31ff501a22d8b3555962a67b68cc57",
+      "reason": "supervisor_digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "security_behavior",
+      "name": "evidence.security_validation",
+      "reason": "v01_v12_evidence_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "inference_verified",
+      "name": "evidence.routed_inference",
+      "reason": "routed_inference_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "business_completed",
+      "name": "evidence.business_completion",
+      "reason": "v13_v18_evidence_matches_lock",
+      "status": "pass"
+    }
+  ],
+  "deployment_verified": false,
+  "levels": {
+    "business_completed": "pass",
+    "configuration_correct": "fail",
+    "identity_match": "pass",
+    "inference_verified": "pass",
+    "security_behavior": "pass",
+    "service_reachable": "pass"
+  },
+  "limitations": [
+    "Candidate readiness does not grant production approval.",
+    "Locked evidence proves only its recorded candidate, scope, fixtures, and observations."
+  ],
+  "recorded_at": "2026-09-21T05:57:37.142699Z",
+  "schema_version": "siq.dgx-spark.doctor-report.v1",
+  "secrets_included": false
+}

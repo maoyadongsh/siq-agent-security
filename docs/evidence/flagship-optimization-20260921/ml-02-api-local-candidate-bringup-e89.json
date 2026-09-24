@@ -1,0 +1,70 @@
+{
+  "schema_version": "siq.flagship.evidence.api-local-candidate-bringup.v1",
+  "captured_at_utc": "2026-09-22T10:35:45.842049+00:00",
+  "scope": "actual_research_API_source_on_loopback_18081_with_own_siq_app_database_and_transient_user_service",
+  "finding_fixed": "partial_canonical_env_shadowed_complete_legacy_auth_and_database_configuration",
+  "configuration": {
+    "existing_canonical_keys_preserved": true,
+    "legacy_file_unchanged": true,
+    "private_backup_created": true,
+    "missing_keys_added": 95,
+    "explicit_psycopg3_app_database": true
+  },
+  "database": {
+    "private_custom_archive_created": true,
+    "restore_catalog_verified": true,
+    "normalized_schema_unchanged": true,
+    "schema_comparison_ignores_only_comments_blank_lines_and_random_psql_restrict_tokens": true,
+    "backup_contains_business_data_and_is_not_publishable": true
+  },
+  "online_API": {
+    "health_http_status": 200,
+    "unauthenticated_system_status_http_status": 401,
+    "unauthenticated_grant_creation_http_status": 401,
+    "openapi_route_count": 361,
+    "grant_routes_present": true,
+    "listens_only_on_loopback": true,
+    "pool_recovery_enabled": true,
+    "pool_recovery_required": true,
+    "pool_recovery_ready": true,
+    "unit": "siq-research-api-candidate.service",
+    "transient": true,
+    "automatic_restart": false,
+    "primary_market_reconciliation_enabled": false
+  },
+  "unchanged_runtime": {
+    "Qwen_and_bridge_running_without_restart": true,
+    "existing_full_stack_service_historical_failure_not_repaired": true,
+    "frozen_Hermes_baseline_not_modified": true
+  },
+  "validation": {
+    "migration_tests_passed": 12,
+    "ruff_passed": true,
+    "read_only_auth_and_schema_preflight_passed": true
+  },
+  "source_sha256": {
+    "scripts/ops/migrate_backend_env.py": "185aacbf3a102786af8cfd2e882b27a0761cf93e987be8eb5d77fa147227ddcb",
+    "scripts/ops/tests/test_migrate_backend_env.py": "a697effe3a2ad6bc5682db3a2ce7845411232efe8d8081e5fc53e3565ba69f42",
+    "docs/runbooks/openshell/api-local-candidate-bringup.md": "22f4dead1b71e1736c12bdc5920c670653684d257ecdc8ffaaa6cfaa96851a2d",
+    "apps/api/start.sh": "bfb4389d61b6ca3f862f71e2b960f7ea458f0f698df1a11cd46d4e6e62154dec",
+    "apps/api/services/openshell_pool_recovery.py": "9dc4d9c8ab0c4632c3e5f457ad0b8bf751535160b95c4c5dac88a0c4883e695a"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-api-env-migration-e89.sanitized.json": "f8ed605ddde64c685a3b8950996087183b6b7f75b129f50aa73a3fc7b3bb193b",
+    "artifacts/openshell/flagship/ml02-api-db-backup-e89.sanitized.json": "a33c05f405421de00db02f9810d373df003cde7ff629dfd694475489bfa0d361",
+    "artifacts/openshell/flagship/ml02-api-live-readiness-e89.sanitized.json": "ac070a952d7722a91ad8aa376488d0431e04ed67ec9f9c09682368c2a896f1a1",
+    "artifacts/openshell/flagship/ml02-api-schema-check-e89.sanitized.json": "03f0e2dd5487b4066b66ea5f66abde95d875f555586eb4e1a37f8250f10e4d4a",
+    "artifacts/openshell/flagship/ml02-api-schema-normalized-e89.sanitized.json": "21ae41dbd40272e2b488418414fd439fe0a99e1dc1fe42d5968362e4f508d5b0"
+  },
+  "not_proven": [
+    "formal_Qwen_pool_API_start_stop_and_recovery_integration",
+    "inflight_run_API_restart_and_revocation_exercise",
+    "production_SIQ_IAM_and_business_approval",
+    "synchronous_broker_revocation",
+    "three_repository_reviewable_candidate_and_native_CI",
+    "full_stack_recovery_or_production_deployment"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-bridge-inflight-revocation.v1",
+  "captured_at_utc": "2026-09-22T06:23:51Z",
+  "scope": "isolated_qwen38_candidate_bridge_and_generation",
+  "secrets_included": false,
+  "source_sha256": {
+    "authenticated_model_bridge.py": "cfc3cbea9373534dc27dceedc48c4a27ecd42f0a81dcb2f35452f61bac2ab31a",
+    "prove_qwen38_token_revocation.py": "c3b0eac95a67a8609b543015b656ffae003c7319971beca6127d56e4c728bf5a",
+    "siq-openshell-model-bridge-8005.service": "0d185bbfa4cb7d1001b032585967c2f89bb591aa0f2c173515958cf3654f9bbb"
+  },
+  "implementation": {
+    "request_admission_lock": "shared_from_authorization_through_response_send",
+    "token_rotation_lock": "exclusive_waits_for_admitted_requests_before_atomic_secret_replace",
+    "missing_or_unsafe_lock": "empty_503_before_upstream",
+    "runtime_directory_mode": "0700",
+    "admission_lock_mode": "0600",
+    "runtime_directory_preserve_configured": true,
+    "prior_unit_backed_up": true
+  },
+  "verification": {
+    "focused_tests": "59 passed",
+    "ruff": "passed",
+    "python_compile": "passed",
+    "systemd_unit_verify": "passed",
+    "fixture_inflight_rotation_waited_for_upstream_response": true,
+    "fixture_old_token_after_rotation_status": 401,
+    "fixture_new_token_after_rotation_status": 200,
+    "fixture_missing_lock_status": 503,
+    "real_provider_invalid_bearer_status": 401,
+    "real_provider_valid_bearer_status": 200,
+    "real_generation_old_bearer_status": 401,
+    "real_generation_old_hermes_terminal": "failed",
+    "real_generation_new_bearer_status": 200,
+    "real_generation_proof_passed": true,
+    "candidate_gateway_sandboxes_after": 0,
+    "qwen_model_service_active": true,
+    "bridge_service_active": true,
+    "both_service_automatic_restart_counts": 0
+  },
+  "boundary": {
+    "production_eligible": false,
+    "candidate_ready": false,
+    "real_inflight_model_request_during_rotation_tested": false,
+    "per_sandbox_model_token_isolation_tested": false,
+    "business_authorization_immediate_revocation_tested": false,
+    "formal_qwen_business_lifecycle_tested": false,
+    "siq_iam_and_production_postgresql_tested": false
+  }
+}

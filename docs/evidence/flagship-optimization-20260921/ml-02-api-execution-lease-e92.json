@@ -1,0 +1,57 @@
+{
+  "captured_at_utc": "2026-09-22T11:29:47.436532+00:00",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "schema_version": "siq.flagship.evidence.api-execution-lease.v1",
+  "scope": "supervisor_v2_API_owner_binding_and_isolated_PostgreSQL_CAS",
+  "live_results": {
+    "schema_version": "siq.qwen38.api-execution-lease-proof.v1",
+    "passed": true,
+    "scope": "isolated_PostgreSQL_coordination_with_synthetic_authorization_snapshot",
+    "full_API_or_sandbox_started": false,
+    "actual_clock_expiry_exercised": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "captured_exact_current_owner": true,
+    "attached_lifetime_seconds": 120.0,
+    "renewed_lifetime_seconds": 120.0,
+    "binding_survives_Hermes_run_id_handoff": true,
+    "concurrent_takeover_winners": 1,
+    "original_binding_denied_after_takeover": true,
+    "expired_heartbeat_denied": true,
+    "expired_bind_denied": true,
+    "temporary_database_removed": true
+  },
+  "code_results": {
+    "private_immutable_owner_scope_session_generation_binding": true,
+    "business_authority_fenced_before_and_after_lookup": true,
+    "v2_requires_real_business_broker_mode": true,
+    "Qwen_lease_seconds": 120,
+    "expired_renew_and_bind_rejected": true
+  },
+  "validation": {
+    "combined_E92_E93_suite_passed": 292,
+    "ruff_passed": true
+  },
+  "source_sha256": {
+    "apps/api/services/qwen38_runtime_lease.py": "1ee7d8f03ae629fcad67012ed2d10e565cf0ffaf60658f8cfdfbd2d6cd464b2e",
+    "apps/api/services/runtime_coordination.py": "4c675810c32475dc1cc297d0dd6b4ebc821c1a1171a63399ace68b93d5369664",
+    "apps/api/tests/test_qwen38_runtime_lease.py": "8958d37ae4f45188212f2d6a7cb74b987b3f4282fe39ae8027165e160efd5397",
+    "scripts/openshell/qwen38_candidate_supervisor.py": "f2ab913df341a36aff678c39f8953eaea8d4688eb0bd948cc56d44aaa6f7fea6",
+    "scripts/openshell/tests/test_qwen38_candidate_supervisor.py": "cac2943cc769dd3ef6a784818cb3cb693a348015a326d4928e8809433dcb5322",
+    "scripts/openshell/prove_qwen38_api_execution_lease.py": "c0e1ca9a223d4c2bf43898c0a474ee0f3cbfc2294ece7edc0fb457e18dce795c"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-qwen38-api-execution-lease-e92.sanitized.json": "1890fc9e265158bed0d6ad3de5a0e93d202b643aa9b07b73baa5a799d25b1252",
+    "artifacts/openshell/flagship/ml02-qwen38-api-execution-lease-e92-v2.sanitized.json": "1890fc9e265158bed0d6ad3de5a0e93d202b643aa9b07b73baa5a799d25b1252",
+    "artifacts/openshell/flagship/ml02-qwen38-api-execution-lease-e92-v3.sanitized.json": "1890fc9e265158bed0d6ad3de5a0e93d202b643aa9b07b73baa5a799d25b1252"
+  },
+  "not_proven": [
+    "formal_API_Qwen_request_runtime_wiring",
+    "actual_120_second_API_crash_expiry_and_sandbox_containment",
+    "new_v2_systemd_mode_live_recovery",
+    "production_IAM_and_approval",
+    "native_CI"
+  ]
+}

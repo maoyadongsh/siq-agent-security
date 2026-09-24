@@ -1,0 +1,111 @@
+{
+  "schema_version": "siq.flagship-business-result-page-validation/v1",
+  "batch": "E159",
+  "recorded_on": "2026-09-23",
+  "goal_status": "active",
+  "scope": "research business UI generated-reply result view; not security-console integration or formal reports",
+  "report": {
+    "path": "docs/development/ux-business-result-page-e159-validation-20260923.md",
+    "sha256": "ee40881f08e93a776a58f3a181ad74acddc89bbb6dd7f1d947dbd8feeef9e7b8",
+    "bytes": 5115
+  },
+  "specification": {
+    "path": "docs/development/business-result-page-e159-spec.md",
+    "sha256": "b005fb229a7ba88a6a81e19d6c4ab9819a6b5a07c8f632c012b86f69b6cb3885",
+    "bytes": 2218
+  },
+  "sources": {
+    "path": "var/flagship/ux-e159/source-manifest.json",
+    "sha256": "ac1fa4e8cd95d97fcb87787eb15a9a52fbcfc95f55ee9ee537b0200568c4960b",
+    "bytes": 5885
+  },
+  "research_web_build": {
+    "path": "var/flagship/ux-e159/research-web-build-manifest.json",
+    "sha256": "a51c70124f7f24c6724fece9b25b27bf04b362340e3f04230a088023942d4075",
+    "bytes": 47202
+  },
+  "validation": {
+    "web_node_tests": 544,
+    "web_behavior_tests": 119,
+    "result_page_targeted_tests": 24,
+    "browser_checks": 12,
+    "browser": {
+      "path": "var/flagship/ux-e159/browser/report.json",
+      "sha256": "41619c16cf3e09cf64eaaf9fd3564f304ec60966b608f0e1e8cda2f2fc697d40",
+      "bytes": 667
+    },
+    "identity": "explicit synthetic dependency override and fixture login/SSE; actual persisted result API and live isolated grants",
+    "logs": [
+      {
+        "path": "var/flagship/ux-e159/web-unit-full.log",
+        "sha256": "67c54738ed1258d8a5baf9ba08eebfd707e1dd6c2b109a2ca5e61759a7cb1b30",
+        "bytes": 118499
+      },
+      {
+        "path": "var/flagship/ux-e159/web-behavior-full.log",
+        "sha256": "a30bee3aec8b9cbb5c62fe478e6c7c90140607deb6c90854831d5bbc1393b506",
+        "bytes": 313
+      },
+      {
+        "path": "var/flagship/ux-e159/behavior-final.log",
+        "sha256": "b1bb6b4d7fcd9fc43e1ff16d2c95126b84f8cc428de252e5a389803e37d084de",
+        "bytes": 229
+      },
+      {
+        "path": "var/flagship/ux-e159/build-final.log",
+        "sha256": "7aa1a3b5e05124f5f8d5ca092f03d03f041ce61cd091b9fe89f46d186055abed",
+        "bytes": 11142
+      },
+      {
+        "path": "var/flagship/ux-e159/strict-types.log",
+        "sha256": "78d6f69a6f7bc580e84a6b55c0a70c1fd8da02fd92f40095f9a88010ab9ea6e2",
+        "bytes": 63
+      },
+      {
+        "path": "var/flagship/ux-e159/lint-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "var/flagship/ux-e159/ruff-final.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "bytes": 19
+      },
+      {
+        "path": "var/flagship/ux-e159/checks.json",
+        "sha256": "33f0d4fa8b04d5828edd34f835b848114f5dfab2cb81db125a25c6f74635845b",
+        "bytes": 203
+      },
+      {
+        "path": "var/flagship/ux-e159/browser-run.log",
+        "sha256": "b687df39b96acd892bb4ea04a4840812231ed1671b5079334a4bbddc57116ad6",
+        "bytes": 15
+      }
+    ],
+    "screenshots": [
+      {
+        "path": "var/flagship/ux-e159/browser/result-desktop.png",
+        "sha256": "15fb4b88b7da666c75ae23f9510736e62d9b349bb21fcad1ddf64a31410fa0f7",
+        "bytes": 98823
+      },
+      {
+        "path": "var/flagship/ux-e159/browser/result-mobile.png",
+        "sha256": "f626ca2db9e01e588ad6a630f4b28d02d5fdc5cbcccb6ec4eb2cbf236e657d6a",
+        "bytes": 56693
+      }
+    ]
+  },
+  "prior_source_candidate": {
+    "path": "var/flagship/ux-e158/candidate.json",
+    "sha256": "1fc531cd1aeff3c384189827edc32d95f4a99adb9789c0599743cdab8bf8ef3e",
+    "bytes": 716
+  },
+  "candidate_path": "var/flagship/ux-e159/candidate.json",
+  "limitations": [
+    "No persistent chat-to-run association or full historical run directory yet",
+    "No security-console business identity connection or source map yet",
+    "Generated reply only; no formal publication attestation",
+    "Terminal-to-result-commit crash recovery remains pending",
+    "No real model, sandbox, production IAM, online deployment or installed application replacement"
+  ]
+}
