@@ -34,7 +34,7 @@ def check_flagship_exceptions(binary, config, token):
             lines.append(line)
             excepted.add(("generic-api-key", name, len(lines)))
             lines.append(re.sub(r'"[a-f0-9]{32,64}"',
-                                '"' + secrets.token_hex(32) + '"', line))
+                                '"' + "0123456789abcdef" * 4 + '"', line))
             required.add(("generic-api-key", name, len(lines)))
             lines.append(re.sub(r'"[^\"]+":', '"api_key":', line, count=1))
             required.add(("generic-api-key", name, len(lines)))
@@ -69,7 +69,9 @@ def check_flagship_exceptions(binary, config, token):
         actual = {(row["RuleID"], row["File"].replace("\\", "/"), row["StartLine"])
                   for row in rows}
         if result.returncode != 1 or not required <= actual or actual & excepted:
-            raise SystemExit("scanner calibration failed: flagship exceptions are not exact")
+            raise SystemExit("scanner calibration failed: flagship exceptions are not exact; "
+                             f"missing={sorted(required - actual)}; "
+                             f"unexpected={sorted(actual & excepted)}")
 
 
 def check_session_hash_exception(binary, config, token):
