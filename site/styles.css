@@ -137,6 +137,11 @@ p { margin: 0 0 1rem; }
 
 /* hero 直接落在暖纸发丝线上，不再另铺色块 */
 .hero { padding: 5.5rem 0 4.5rem; }
+@keyframes siq-hero-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-grid > div { animation: siq-hero-enter 300ms ease-out both; }
+  .hero-grid > .execution-chain { animation-delay: 90ms; }
+}
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 3.5rem; align-items: center; }
 .lede { font-size: 1.075rem; color: var(--muted); max-width: 40rem; }
 .hero-statement { margin: 1.5rem 0; color: var(--ink); font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
@@ -153,6 +158,10 @@ p { margin: 0 0 1rem; }
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
 }
 .btn:hover { border-color: var(--gold); color: var(--accent); text-decoration: none; }
+@media (pointer: fine) {
+  .btn { transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 120ms ease-out; }
+  .btn:active { transform: scale(.98); }
+}
 .btn-primary { background: var(--ink); border-color: var(--ink); color: #fdfcf9; }
 .btn-primary:hover { background: var(--ink-strong); border-color: var(--ink-strong); color: #fdfcf9; }
 .text-links a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -160,7 +169,7 @@ p { margin: 0 0 1rem; }
 
 /* 证据链面板：12px 圆角 + 面板影 */
 .execution-chain { padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px; background: var(--card); box-shadow: var(--shadow-panel); }
-.panel-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; color: var(--muted); font-size: .65rem; letter-spacing: .08em; font-weight: 600; }
+.panel-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; color: var(--muted); font-size: .6875rem; letter-spacing: .08em; font-weight: 600; }
 .chain { margin: 1.6rem 0; padding: 0; list-style: none; }
 .chain li { display: flex; gap: 1rem; padding: 1rem 0; }
 .chain li + li { border-top: 1px solid var(--border); }
@@ -212,6 +221,7 @@ thead th { color: #2b3448; background: var(--surface); font-family: var(--font-d
 tbody th { width: 24%; font-weight: 600; }
 tbody tr { transition: background 160ms ease, box-shadow 160ms ease; }
 tbody tr:hover { background: #faf7f0; box-shadow: inset 2px 0 0 var(--gold); }
+#evidence td strong { font-family: var(--font-numeric); font-weight: 400; font-size: 1.05rem; color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
 tbody tr:last-child > * { border-bottom: 0; }
 
 .split { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 2.5rem; }

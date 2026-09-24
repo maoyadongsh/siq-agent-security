@@ -176,7 +176,7 @@ export default function DemoPage() {
         </section>
         <section className="demo-panel"><p className="demo-kicker">AGENT SKILLS</p><h2>Agent 选择的执行计划</h2>
           {task?.selected_skills?.length ? <ol className="demo-skill-plan" aria-label="Selected Skills">{task.selected_skills.map(skill =>
-            <li key={skill} data-selected-skill={skill}><span>{task.completed_skills?.includes(skill) ? '✓' : task.current_skill === skill ? '→' : '○'}</span><strong>{skill}</strong></li>)}</ol>
+            <li key={skill} data-selected-skill={skill}><span className={task.completed_skills?.includes(skill) ? 'plan-mark plan-mark-done' : task.current_skill === skill ? 'plan-mark plan-mark-current' : 'plan-mark'}>{task.completed_skills?.includes(skill) ? '✓' : task.current_skill === skill ? '→' : '○'}</span><strong>{skill}</strong></li>)}</ol>
             : <p>等待模型从受信 Registry 中选择 Skills。</p>}
           {task?.selected_skills?.length ? <p className="demo-note">未选择：{snapshot?.skills?.filter(s => !task.selected_skills?.includes(s)).join(' · ') || '无'}</p> : null}
           <details><summary>TRUSTED INTENT · 任务授权</summary>{current?.intent ? <dl><dt>Intent</dt><dd className="demo-mono">{current.intent.intent_id}</dd>
