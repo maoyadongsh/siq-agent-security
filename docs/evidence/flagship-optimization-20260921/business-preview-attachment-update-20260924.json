@@ -1,0 +1,97 @@
+{
+  "schema_version": "siq.flagship.attachment-preview-delivery.v1",
+  "production_eligible": false,
+  "result": {
+    "schema_version": "siq.flagship.preview-refresh.v1",
+    "passed": true,
+    "checks": {
+      "new_api_healthy_recovery_gate_preserved": true,
+      "preview_switched_to_updated_api": true,
+      "web_rollback_to_previous_api_verified": true,
+      "updated_preview_restored_after_rollback": true,
+      "unauthenticated_result_reads_denied_no_store": true,
+      "unauthenticated_project_attachment_and_history_denied": true,
+      "main_and_previous_api_identities_unchanged": true
+    },
+    "production_cutover": false,
+    "actual_account_acceptance": false,
+    "task_execution_acceptance": false,
+    "preview_url": "http://127.0.0.1:15173",
+    "preview_api_port": 18087,
+    "after": {
+      "qwen38-27b-nvfp4-dflash2-sglang.service": {
+        "MainPID": "494413",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "309643346d074db6866045b32ba0d6e9"
+      },
+      "siq-openshell-model-bridge-8005.service": {
+        "MainPID": "2911493",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "2ac166f702494bc6b357c9390cf98430"
+      },
+      "siq-research-api-candidate.service": {
+        "MainPID": "2301727",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "324c01b504e64141bead36cd1ec43bb8"
+      },
+      "siq-research-api-preview-20260924.service": {
+        "MainPID": "1726190",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "73ffe1c941514aeeaf1175177e4ac33d"
+      },
+      "siq-research-api-preview-e168.service": {
+        "MainPID": "966940",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "7de20786ec61462dbb90a2495016e595"
+      },
+      "siq-research-api-preview-result-20260924.service": {
+        "MainPID": "2049646",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "8e80e725060d4cafa55eda5bf784eefb"
+      },
+      "siq-research-web-preview-result-20260924.service": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ActiveState": "inactive",
+        "InvocationID": ""
+      },
+      "siq-research-api-preview-attachment-20260924.service": {
+        "MainPID": "2200486",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "c876d6724f204f3d8d0649148ca38401"
+      },
+      "siq-research-web-preview-attachment-20260924.service": {
+        "MainPID": "2201024",
+        "NRestarts": "0",
+        "ActiveState": "active",
+        "InvocationID": "c0cf4c4190f64821873f7f9d17ed1d11"
+      }
+    },
+    "artifacts_sha256": {
+      "source-manifest.json": "0786dad1aa5c22c07f316c7d7e8bc9dc70ec020de219d46a3dfe2953d3470216",
+      "web-manifest.json": "c17471f5a8d54b8a3a994cb160025f8c35ea54dd6d18cfd362d8d908bad77ea5",
+      "launch_api.py": "9b44adc0eb731cdaf634894a9b839d2aff51a73de983d3ad09ea21e5125f1754",
+      "prepare.py": "23da6cdf085bbc78a78e82d99a6860924bb282eca4cb0d969c5458643bc62802",
+      "verify_switch.py": "5b34b12fdaf3650b6190f43b636e338a5afa7edb7fa3b4b0c5c8580b155d3375"
+    }
+  },
+  "research_delivery": {
+    "path": "var/ops/flagship-preview-attachment-20260924/delivery.sanitized.json",
+    "sha256": "430dec88144e1bb3bc2867f03f2c81fc63c29653c0c1892e11bf56b805d6c799",
+    "bytes": 2922
+  },
+  "implementation_evidence": {
+    "path": "docs/evidence/flagship-optimization-20260921/project-attachment-access-20260924.json",
+    "sha256": "439a4a9feb04b58b0622986f34a254c02303545c459c8f29b85bd41fb31ae7ad",
+    "bytes": 2491
+  },
+  "startup_source_files": 965,
+  "web_files": 282
+}

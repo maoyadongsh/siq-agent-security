@@ -1,0 +1,69 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-candidate-relay-contract.v1",
+  "captured_at_utc": "2026-09-22T07:40:35.251469+00:00",
+  "scope": "candidate_gateway_relay_contract_and_component_integration",
+  "secrets_included": false,
+  "source_sha256": {
+    "security": {
+      "packages/contracts/openshell-decision-relay.v3.schema.json": "11c004d5f93280d2a40f8ecfd4bc7a8313f1cef8b891790715c11dec2b018af0",
+      "apps/agentshield/internal/decisionrelay/config.go": "c4a9228ec7968a9a3cda4b300f57e9aa005b653d5f93258370e8d45857639b10",
+      "apps/agentshield/internal/decisionrelay/relay_test.go": "8e01e2f1938b6c5c944e73e2cff6f9582293437a5890ee861dbbaa9df19a2661",
+      "apps/agentshield/internal/server/decision_relay_integration_test.go": "7184a6a99dad26cd8fa13fc6c7347c46d066bcce3daaa70f47e0efc99984cfe1",
+      "apps/agentshield/testdata/contracts/openshell-decision-relay-candidate.json": "ff7e9e47ecbdc4c2bc478277ada205dc7eee941c8d3c196d4a5d65e15640b8bb",
+      "apps/control-api/app/tests/test_schema_contracts.py": "b370df35e98c492eaac8ae8fd565a6d89d3dc9b3bdcea838cf73cac06b7aedb4"
+    },
+    "research": {
+      "scripts/openshell/build_agentshield_decision_relay_config.py": "1c5438ac20f819e88c0adda3e3d985f775e260052d925b217750f7fb46269eda",
+      "scripts/openshell/launch_agentshield_decision_relay.py": "2db2a860f63dd1b3cf159d1b85496ed202bf0c2cc786ceae83e64cf146f7d372",
+      "scripts/openshell/tests/test_build_agentshield_decision_relay_config.py": "1394d8ca930c394f4bfa1f3c62acecca1cdad05b5b4ab1dce855ae2893ab991d",
+      "scripts/openshell/tests/test_launch_agentshield_decision_relay.py": "9230e0fe532080aff17d4a37c7c847fb8bab01383947ca2db7b7d73ee9353344"
+    }
+  },
+  "observed_configuration": {
+    "candidate_gateway_sandbox_namespace": "siq-openshell-scope-validation",
+    "candidate_gateway_docker_network": "siq-openshell-dev",
+    "legacy_v2_rejected_candidate_namespace": true
+  },
+  "change": {
+    "legacy_v2_preserved": true,
+    "candidate_contract": "openshell-decision-relay/v3",
+    "candidate_namespace": "siq-openshell-scope-validation",
+    "candidate_name_pattern": "^siq-qwen38-scoped-[a-f0-9]{16}$",
+    "arbitrary_gateway_or_network_supported": false,
+    "routes_or_privileges_added": false,
+    "active_canary_relay_binary_replaced": false
+  },
+  "verification": {
+    "research_relay_and_adjacent_lifecycle_tests": "65 passed",
+    "control_api_schema_contract_suite": "passed",
+    "go_full_module_suite": "passed",
+    "go_vet": "passed",
+    "relay_and_server_authority_race_tests": "passed",
+    "cross_compilation": {
+      "linux/amd64": "agentshield and relay passed",
+      "linux/arm64": "agentshield and relay passed",
+      "darwin/arm64": "agentshield and relay passed",
+      "windows/amd64": "agentshield and relay passed"
+    },
+    "ruff": "passed",
+    "git_diff_check": "passed"
+  },
+  "negative_boundaries": [
+    "v2_candidate_namespace_rejected",
+    "v3_primary_namespace_rejected",
+    "unknown_version_or_namespace_rejected",
+    "invalid_candidate_nonce_rejected",
+    "container_namespace_mismatch_rejected",
+    "cross_runtime_agent_session_requests_rejected",
+    "management_routes_do_not_reach_upstream",
+    "revoked_identity_rejected_by_daemon_through_relay"
+  ],
+  "boundary": {
+    "candidate_ready": false,
+    "production_eligible": false,
+    "real_candidate_relay_deployed": false,
+    "candidate_runtime_identity_provisioned": false,
+    "agentshield_native_business_tool_positive_tested": false,
+    "tests_use_component_fixtures": true
+  }
+}

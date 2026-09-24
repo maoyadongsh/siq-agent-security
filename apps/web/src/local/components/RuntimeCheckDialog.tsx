@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from '@/components/Modal';
-import { localApi } from '../api';
+import { LocalApiError, localApi } from '../api';
+import { runtimeCheckActivityURL } from '../runtimeCheckActivity';
 import { useLocalSession } from '../session';
 import type { AdapterInstances, RuntimeCheckPlan, RuntimeCheckResult } from '../types';
 
@@ -32,16 +34,41 @@ function reasonMessage(reason: string): string {
 
 export default function RuntimeCheckDialog({ onClose, instanceId: requestedInstance }: { onClose: () => void; instanceId?: string }) {
   const { actorId, setActorId } = useLocalSession();
+  const navigate = useNavigate();
+  const activityRequest = useRef<AbortController | null>(null);
   const [catalog, setCatalog] = useState<AdapterInstances | null>(null);
   const [instanceId, setInstanceId] = useState('');
   const [plan, setPlan] = useState<RuntimeCheckPlan | null>(null);
   const [result, setResult] = useState<RuntimeCheckResult | null>(null);
   const [error, setError] = useState('');
+  const [activityError, setActivityError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [retry, setRetry] = useState(0);
   const running = isRunning(result);
   const close = useCallback(() => { if (!busy) onClose(); }, [busy, onClose]);
+  useEffect(() => () => activityRequest.current?.abort(), []);
+  useEffect(() => { setActivityError(''); }, [result?.check_id]);
+
+  const showActivity = async () => {
+    if (!result || running || busy || activityRequest.current) return;
+    const controller = new AbortController();
+    activityRequest.current = controller;
+    setBusy(true); setActivityError('');
+    try {
+      const activity = await localApi.runtimeCheckActivity(result, controller.signal);
+      if (!controller.signal.aborted) { onClose(); navigate(runtimeCheckActivityURL(activity)); }
+    } catch (err) {
+      if (!controller.signal.aborted) setActivityError(err instanceof LocalApiError && err.status === 404
+        ? '尚未找到本次自检的运行记录，请稍后重试。'
+        : err instanceof LocalApiError && err.status === 409
+          ? '本次记录的关联信息不完整，暂时无法打开。请重新读取自检状态。'
+          : '暂时无法读取本次运行记录，请检查服务连接后重试。');
+    } finally {
+      activityRequest.current = null;
+      if (!controller.signal.aborted) setBusy(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -130,12 +157,16 @@ export default function RuntimeCheckDialog({ onClose, instanceId: requestedInsta
       {error ? <p className="action-error" role="alert">{error}</p> : null}
       {result ? <div className="card" data-runtime-check-id={result.check_id} data-runtime-check-status={result.status}>
         <h3 role="status">{statusLabel[result.status]}</h3>
-        <p>开始于 {new Date(result.started_at).toLocaleString()}</p>
+        <p>开始于 {new Date(result.started_at).toLocaleString('zh-CN', { hour12: false })}</p>
         {result.status === 'failed' || result.status === 'invalidated' ? <p>{reasonMessage(result.reason_code)}</p> : null}
         <p>临时权限与材料：{result.cleanup === 'complete' ? '已撤权并清理' : result.cleanup === 'failed' ? '清理未完成' : '检查结束后清理'}</p>
         {result.cleanup === 'failed' ? <button type="button" className="btn" disabled={busy} onClick={cleanup}>重试清理</button> : null}
         <ul>{Object.entries(checkLabel).filter(([name]) => name in result.checks).map(([name, label]) => <li key={name}>{result.checks[name] ? '✓' : '未通过'} {label}</li>)}</ul>
-        {result.receipt_ids.length ? <p>本次关联 {result.receipt_ids.length} 条回执，可在回执页追溯。</p> : null}
+        {result.receipt_ids.length ? <>
+          <p>本次关联 {result.receipt_ids.length} 条回执。</p>
+          <button type="button" className="btn" disabled={busy || running} onClick={showActivity}>查看本次运行记录</button>
+          {activityError ? <p className="action-error" role="alert">{activityError}</p> : null}
+        </> : null}
         {result.status === 'passed' ? <p>仅确认本次测试调用经过门禁；配置变化后需重新检查。未证明其他会话、Skill 归属或系统隔离。</p> : null}
       </div> : null}
       {plan && !running ? <>

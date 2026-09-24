@@ -1,0 +1,79 @@
+{
+  "candidate_ready": false,
+  "current_private_artifact_sha256": "7edd82355ecaf663f8510369feb7338e2bd4fe19428dea087ebe95989e1848ec",
+  "failure_history": {
+    "artifact_sha256": "13067ad94fc3655e4a598f54c709c32413857eaa1e6ad87aff19ef077c974398",
+    "kind": "verifier_model_alias_assumption",
+    "observation": "Hermes API reports the gateway alias siq_analysis; the underlying Qwen route is verified by the compiled config, not by this API field."
+  },
+  "health": {
+    "api_key_synthetic": true,
+    "empty_store_valid": true,
+    "http_healthy": true,
+    "runtime_route_valid": true
+  },
+  "hermes_run_submitted": true,
+  "image": {
+    "base_image_id": "sha256:4b3f10593ea02f47b57fb57b1bce975291766e658e3ec17509ca0efd16175bb2",
+    "cloud_fallback": "forbidden",
+    "compiled_config_sha256": "d75571f945ffa2947ce492cff701ec61e76760e78cba2d8815cd21d655c2c34a",
+    "image_id": "sha256:22010ff8a757211a7bf8b5739b4b854cd515717d1e6d43a81512c63b3bcb23ad"
+  },
+  "limitations": [
+    "The initial synthetic Hermes run reached failed before model routing. Later diagnosis found a legacy custom Provider identity mismatch and root-owned runtime directories; do not interpret this run as evidence of an upstream model outage.",
+    "A corrected candidate image and separate synthetic run reached the bridge with a matching 502 receipt in E55; successful Qwen inference remains unproven.",
+    "The old LAN-published SGLang service remains active and has not adopted the secure loopback file-secret unit."
+  ],
+  "model_inference_attempted": false,
+  "outage_run": {
+    "api_model_alias_matches": true,
+    "create_status": 202,
+    "marker_absent": true,
+    "terminal_status": "failed"
+  },
+  "production_eligible": false,
+  "reanalysis": {
+    "checked_at": "2026-09-22T02:29:03.483508+00:00",
+    "corrected_candidate_evidence": "ml-02-qwen38-hermes-bridge-trace.json",
+    "current_run_route_receipt_claimed": false,
+    "initial_failure_before_model_request": true,
+    "initial_run_model_bridge_request_verified": false,
+    "root_causes": [
+      "legacy_custom_provider_identity_mismatch",
+      "root_owned_runtime_subdirectories"
+    ]
+  },
+  "recorded_at": "2026-09-22T02:32:58+00:00",
+  "sandbox": {
+    "create_exit_code": 0,
+    "gateway": "siq-openshell-scope-validation",
+    "gateway_sandbox_count_after": 0,
+    "host_business_mount_count": 0,
+    "lease_expires_at": 1790047978,
+    "policy_sha256": "e45f80d0daa7dcfbbf03bf86ccd73b31df6632433cb89badf273d26107a24ea8",
+    "removed": true,
+    "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+    "resource_profile": "hermes_minimal_poc",
+    "sandbox_name_sha256": "8d2ee2da2007c6237bb8e8b30c6e08154fd61d3d8c650947032cb5105c7f990c"
+  },
+  "schema_version": "siq.flagship.ml02-qwen38-hermes-openshell-gateway-bootstrap/v1",
+  "scope": "five_patch_hermes_qwen_candidate_real_openshell_gateway_and_offline_run",
+  "secrets_included": false,
+  "source_sha256": {
+    "candidate_builder": "66f9b459009c0848fba0136521d4b7a495175b31e669ac70b5dc591371f8b581",
+    "gateway_policy": "e45f80d0daa7dcfbbf03bf86ccd73b31df6632433cb89badf273d26107a24ea8",
+    "gateway_probe": "00aa72aedd18f500aa3f6f2c4cf833b842de350e45ba5371000f88c5102c2f35",
+    "gateway_probe_tests": "02c1840beb1fa11e215fa6efa1ac5f842c9029983fcad1fbb1339ef50d87e38e",
+    "runtime_validator": "3cbcc5973d1e19c70a9d62c1e35291b824cc79bce786e8afd098727c65e48f36"
+  },
+  "status": "passed_gateway_bootstrap_and_failed_run_without_route_receipt",
+  "successful_model_inference_verified": false,
+  "validation": {
+    "cleanup": "passed",
+    "focused_pytest_passed": 88,
+    "offline_run_terminal_failure": "passed",
+    "real_openshell_gateway_health": "passed",
+    "ruff": "passed",
+    "sanitizer": "passed"
+  }
+}

@@ -276,3 +276,32 @@ def test_unconfirmed_policy_load_never_returns_success_or_retries(rc, operation)
             backend.rollback("s1", receipt, authorizer=lambda _auth: True)
     assert runner.set_calls == before_writes + 1
     assert len(registry._records) == (1 if operation == "rollback" else 0)
+
+
+@pytest.mark.parametrize('tamper', [False, True])
+def test_clear_network_matches_real_gateway_empty_omission_without_ignoring_drift(tamper):
+    class OmittingRunner(StatefulRunner):
+        def __call__(self, args):
+            response = super().__call__(args)
+            if args[:2] == ['policy', 'set'] and not self.policy.get('network_policies'):
+                self.policy.pop('network_policies', None)
+                if tamper:
+                    self.policy['unexpected_change'] = True
+            return response
+    runner = OmittingRunner()
+    backend = OpenShellCliBackend(runner=runner, operation_registry=PolicyOperationRegistry())
+    compiled = _compiled(backend)
+    allowed = backend.apply_dynamic('s1', backend.plan_change('s1', compiled), '4')
+    deny = backend.compile({'network': [], 'enforcement_mode': 'block'})
+    plan = backend.plan_change('s1', deny)
+    if tamper:
+        with pytest.raises(AdapterError, match='policy_digest_mismatch'):
+            backend.apply_dynamic('s1', plan, allowed.backend_revision)
+        return
+    receipt = backend.apply_dynamic('s1', plan, allowed.backend_revision)
+    assert receipt.result == 'applied' and runner.set_calls == 2
+    assert 'network_policies' not in runner.policy
+    assert runner.policy == BASE_POLICY
+    assert backend.verify('s1', {'expect_deny': ['api.example.com:443']}, receipt).passed
+    restored = backend.rollback('s1', receipt, authorizer=lambda _: True)
+    assert restored.restored_digest == allowed.applied_policy_digest

@@ -1,0 +1,37 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-positive-sandbox-chain/v1",
+  "recorded_at": "2026-09-22T06:06:29Z",
+  "scope": "real_dgx_spark_qwen38_openshell_hermes_synthetic_enterprise_scope",
+  "status": "passed_real_synthetic_candidate_chain_not_production_eligible",
+  "sanitized_proof_sha256": {
+    "provider_bridge_positive": "1adafb09e785f411a67c70e1cd946199084c8d26d2e339e0164d5511f6c77af4",
+    "hermes_run_bridge_trace": "655159bfb2bbe63a97f8a890e286fea64081041742f88aabe37e6dd4e532e4b4",
+    "scoped_sandbox_business_broker_and_inference": "0526c38daf6551f80bcb1cc18f93c3fecb2ca120be209c76119aaadbbf75f73c",
+    "token_first_generation_revocation": "30340815d7afb02412d01c0c59d4d0a003ed88e2f790505617064a83883494f7"
+  },
+  "checks": {
+    "isolated_openshell_provider_invalid_bearer_401": true,
+    "isolated_openshell_provider_valid_bridge_200_and_exact_model": true,
+    "hermes_021_synthetic_run_completed_with_unique_marker": true,
+    "hermes_marker_digest_correlated_to_one_bridge_200_receipt": true,
+    "scoped_positive_model_run_preceded_broker_revocation": true,
+    "scoped_company_read_and_analysis_write_roundtrip": true,
+    "cross_company_read_and_company_root_write_denied": true,
+    "online_candidate_broker_revoke_before_sandbox_stop": true,
+    "data_identity_renewed_to_generation_3": true,
+    "old_model_bridge_generation_first_subsequent_request_401": true,
+    "new_model_bridge_generation_200_after_old_sandbox_drain": true,
+    "all_probe_sandboxes_synthetic_sources_and_candidate_broker_listener_removed": true,
+    "candidate_gateway_inventory_empty_after": true,
+    "related_focused_tests_passed": 67,
+    "ruff_and_diff_check": "pass",
+    "production_eligible": false
+  },
+  "limitations": [
+    "The enterprise directories, business authorization callback and candidate PostgreSQL/audit backend were synthetic; no real company material was used.",
+    "Hermes native business-tool dispatch with live AgentShield approval and SIQ IAM, formal Qwen business start/stop, periodic renewal, immediate grant withdrawal and production PostgreSQL remain unverified.",
+    "The generation proof establishes token-first bridge rejection and new-generation recovery, not an independent guarantee that OpenShell policy removal alone immediately revokes a live route.",
+    "The host auditor still reports candidate_ready=false until formal governed-route, confidential-policy and revocation promotion gates are bound to one reviewable release candidate."
+  ],
+  "secrets_included": false
+}

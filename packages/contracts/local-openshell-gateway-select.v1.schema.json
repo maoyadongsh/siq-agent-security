@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "gateway_id",
+    "configuration_fingerprint"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-openshell-gateway-select/v1"
+    },
+    "gateway_id": {
+      "type": "string",
+      "pattern": "^og-[0-9a-f]{32}$"
+    },
+    "configuration_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

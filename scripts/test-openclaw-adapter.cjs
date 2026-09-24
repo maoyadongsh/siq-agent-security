@@ -19,6 +19,7 @@ let decision = { action: 'allow', action_id: 'act-1', receipt_id: 'rcp-1', reaso
 let unavailable = false;
 let approvalMode = 'approved';
 let statusQueries = 0;
+let reserveAccepts = () => true;
 const exportsObject = {};
 const sandbox = {
   exports: exportsObject,
@@ -65,6 +66,7 @@ const sandbox = {
     }
     if (url.endsWith('/v1/hold-executions/reserve')) {
       const request = JSON.parse(options.body);
+      if (!reserveAccepts(request)) return { status: 409, json: async () => ({}) };
       return {
         status: 201,
         json: async () => ({
@@ -175,6 +177,42 @@ exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } 
   assert.equal(cancelled.block, true);
   decision = { action: 'hold', receipt_id: 'missing-action', reason: 'hold' };
   assert.equal((await hooks.before_tool_call({ ...event, toolCallId: 'missing-action' }, context)).block, true);
+
+  // BU-01/OC-01 shared business action: OpenClaw carries the exact same
+  // fixed semantic tuple as Hermes. The decision service binds the final
+  // digests again at reservation time, after both approval layers.
+  const businessTool = 'mcp__siq_business__research_publish_report';
+  const businessParams = {
+    task_id: 'bu01-task-001',
+    request_sha256: 'a'.repeat(64),
+    approval_sha256: 'b'.repeat(64),
+  };
+  approvalMode = 'approved';
+  decision = { action: 'hold', action_id: 'act-business', receipt_id: 'rcp-business', reason: 'approved report publication' };
+  reserveAccepts = request => request.tool === businessTool &&
+    JSON.stringify(request.params) === JSON.stringify(businessParams);
+  const businessEvent = { toolName: businessTool, toolCallId: 'business-exact', params: businessParams };
+  const businessApproval = await hooks.before_tool_call(businessEvent, context);
+  assert.equal(typeof businessApproval.requireApproval.beforeExecute, 'function');
+  assert.equal(await businessApproval.requireApproval.beforeExecute(businessParams), true);
+  const businessReserve = seen.filter(item => item.url.endsWith('/v1/hold-executions/reserve')).at(-1).body;
+  assert.equal(businessReserve.tool, businessTool);
+  assert.deepEqual(businessReserve.params, businessParams);
+  assert.equal(businessReserve.original_tool_call_id, 'business-exact');
+  assert.notEqual(businessReserve.retry_tool_call_id, businessReserve.original_tool_call_id);
+  await hooks.after_tool_call({ ...businessEvent, result: { ok: true, readback_verified: true } }, context);
+  const businessObservation = seen.filter(item => item.url.endsWith('/v1/observe')).at(-1).body;
+  assert.equal(businessObservation.tool, businessTool);
+  assert.deepEqual(businessObservation.params, businessParams);
+  assert.equal(businessObservation.tool_call_id, businessReserve.retry_tool_call_id);
+  assert.equal(businessObservation.decision_receipt_id, 'rcp-business-exec');
+
+  decision = { action: 'hold', action_id: 'act-business-changed', receipt_id: 'rcp-business-changed', reason: 'approved report publication' };
+  const changedEvent = { ...businessEvent, toolCallId: 'business-changed' };
+  const changedApproval = await hooks.before_tool_call(changedEvent, context);
+  assert.equal(await changedApproval.requireApproval.beforeExecute({ ...businessParams, request_sha256: '0'.repeat(64) }), false);
+  assert.equal(seen.filter(item => item.url.endsWith('/v1/observe') && item.body.tool_call_id === 'business-changed').length, 0);
+  reserveAccepts = () => true;
   for (const mode of ['warn', 'audit_only']) {
     const modeExports = {};
     const modeHooks = {};
@@ -191,4 +229,15 @@ exportsObject.default.register({ on(name, callback) { hooks[name] = callback; } 
     assert.equal(statusQueries, queries, 'advisory mode must not enter unsupported platform approval');
   }
   console.log('OpenClaw correlation, host capability and approval recheck gates passed');
+  console.log(JSON.stringify({
+    schema_version: 'siq.openclaw-business-tool-parity/v1',
+    status: 'passed',
+    tool: businessTool,
+    parameter_names: Object.keys(businessParams).sort(),
+    exact_final_params_reserved: true,
+    changed_digest_reserved: false,
+    approved_observation_uses_reservation: true,
+    arbitrary_command_parameter_supported: false,
+    arbitrary_path_parameter_supported: false,
+  }));
 })().catch(error => { console.error(error); process.exitCode = 1; });

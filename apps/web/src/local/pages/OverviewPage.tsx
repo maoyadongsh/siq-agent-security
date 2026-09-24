@@ -6,6 +6,7 @@ import { Icon, type IconName } from '@/components/icons';
 import { localApi } from '../api';
 import { useLocalSession } from '../session';
 import { useLoadGuard } from '../staleGuard';
+import DiscoveryPanel from '../components/DiscoveryPanel';
 import {
   adapterLabel,
   adapterTag,
@@ -154,11 +155,7 @@ export default function OverviewPage() {
           </button>
         }
       />
-      {connected ? <div className="card">
-        <h2>{overview?.assets ? '检查已有智能体与 Skill' : '从发现已有智能体开始'}</h2>
-        <p className="page-desc">查看本机安装、内容版本与配置关联，再选择要保护的对象和权限。</p>
-        <Link className="btn btn-primary" to="/agents">发现与管理</Link>
-      </div> : null}
+      {connected ? <DiscoveryPanel onCompleted={reload} /> : null}
       {error && !connected ? (
         <div className="notice" role="status">
           <p className="notice-title">决策 API 暂不可达</p>

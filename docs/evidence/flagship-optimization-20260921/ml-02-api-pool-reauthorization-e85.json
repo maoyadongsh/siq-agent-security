@@ -1,0 +1,76 @@
+{
+  "candidate_ready": false,
+  "captured_at_utc": "2026-09-22T09:26:38.113226+00:00",
+  "implementation": {
+    "authority_loss_enters_existing_stop_and_quiescence_path": true,
+    "authority_loss_prevents_pool_renewal_and_run_creation": true,
+    "heartbeat_interval_max_seconds": 60,
+    "initial_cancellation_or_driver_failure_releases_unused_reservation": true,
+    "known_pre_dispatch_denial_releases_unused_reservation": true,
+    "live_confidential_grant_rechecked_in_fresh_session": true,
+    "original_server_snapshot_retained_in_memory": true,
+    "raw_scope_snapshot_excluded_from_SIQ_export": true,
+    "recheck_timeout_seconds": 10,
+    "scope_principal_session_and_pool_binding_revalidated": true,
+    "snapshot_never_reissued_on_heartbeat": true,
+    "unknown_writer_remains_unconfirmed": true
+  },
+  "not_proven": [
+    "deployed_API_online_pool_revocation",
+    "synchronous_API_to_broker_revocation",
+    "formal_Qwen_start_stop_recover_and_resident_host_supervisor",
+    "production_SIQ_IAM_and_publisher_authority",
+    "reviewable_three_repository_candidate_and_native_CI"
+  ],
+  "production_eligible": false,
+  "rollback": "Restore the matching API runtime/client sources and revalidate; do not restore revoked grants or reconstruct authority from exported digests; confidential promotion remains blocked.",
+  "schema_version": "siq.flagship.evidence.ml02-api-pool-reauthorization.v1",
+  "scope": "existing_business_API_pool_admission_heartbeat_and_create_fences_with_isolated_database",
+  "secrets_included": false,
+  "source_sha256": {
+    "apps/api/README.md": "ba8b73c62449aeed5336893aed6fbd18eb9963d5fa44f1b01dae03115c9ebff9",
+    "apps/api/services/agent_chat_runtime_impl.py": "cb38f2d84f71cb87c64a97e32aac6218c460c7c3f46b7fa77177df48f3c0361c",
+    "apps/api/services/hermes_client.py": "2985bc5eeaaec156862682b8ae4596d0154b06f16859e67ab9970357a84b9201",
+    "apps/api/tests/test_openshell_pool_reauthorization.py": "c80ecabba2e228b3cb6ec3b7d568e0a6db95f4e68d3f95f6a334650cdf7fdcf0",
+    "docs/runbooks/openshell/local-confidential-data-grants.md": "b68b33de5488235a3ecc83687fa4329178ae532294d90fb5c8ac0578ab08a584"
+  },
+  "test_command": "apps/api/.venv/bin/python -m pytest -q --disable-warnings apps/api/tests/test_openshell_pool_reauthorization.py apps/api/tests/test_hermes_canary_routing.py apps/api/tests/test_agent_runtime_active_runs.py apps/api/tests/test_openshell_pool_recovery.py apps/api/tests/test_siq_security_export.py apps/api/tests/test_openshell_data_scope.py apps/api/tests/test_openshell_data_grant_api.py apps/api/tests/test_openshell_candidate_reauthorization.py apps/api/tests/test_hermes_client.py",
+  "verification": {
+    "changed_sources_compile": true,
+    "database": "isolated_SQLite_with_real_account_grant_and_snapshot_services",
+    "database_migration_needed": false,
+    "diff_check_passed": true,
+    "doubles": [
+      "pool_admission_and_heartbeat_transport",
+      "Hermes_create_stop_transport",
+      "durable_coordination_for_stop_path_test"
+    ],
+    "existing_canary_routing_recovery_and_export_regressions_passed": true,
+    "focused_and_adjacent_passed": 181,
+    "http_probe": {
+      "endpoint": "http://127.0.0.1:18081",
+      "health": "unavailable",
+      "system_status": "unavailable"
+    },
+    "live_API_or_Qwen_run_performed_this_batch": false,
+    "negative_cases": [
+      "grant_revoked",
+      "grant_expired",
+      "account_disabled",
+      "account_unapproved",
+      "token_version_changed",
+      "company_permission_removed",
+      "snapshot_expired",
+      "snapshot_tampered",
+      "tenant_user_market_company_scope_digest_changed",
+      "pool_scope_generation_changed",
+      "other_user_session",
+      "missing_snapshot_or_lease_owner",
+      "database_error",
+      "reauthorization_timeout",
+      "cancellation"
+    ],
+    "ruff_passed": true,
+    "skipped": 0
+  }
+}

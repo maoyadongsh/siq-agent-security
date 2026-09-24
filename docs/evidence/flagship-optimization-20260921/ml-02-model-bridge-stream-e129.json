@@ -1,0 +1,110 @@
+{
+  "schema_version": "siq.flagship.evidence.model-bridge-stream.v1",
+  "research_evidence": {
+    "captured_at_utc": "2026-09-22T22:52:35.139192+00:00",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest scripts/openshell/tests/test_authenticated_model_bridge.py scripts/openshell/tests/test_model_bridge_stream.py scripts/openshell/tests/test_qwen38_candidate_run_guard.py scripts/openshell/tests/test_prove_qwen38_business_api.py scripts/openshell/tests/test_prove_qwen38_streaming_api.py scripts/openshell/tests/test_prove_qwen38_cancel_api.py apps/api/tests/test_agent_runtime_active_runs.py -q --disable-warnings",
+      "passed": 111,
+      "warnings": 265,
+      "duration_seconds": 3.1,
+      "shared_suite_do_not_add_across_exports": true
+    },
+    "not_proven": [
+      "actual_API_crash_and_restart",
+      "business_grant_revocation_during_actual_HTTP_run",
+      "failed_ExecStopPost_automatic_retry",
+      "independent_active_history_authorization_and_remaining_host_retrieval_boundaries",
+      "real_IAM_business_approval_and_events",
+      "native_CI_and_production_readiness"
+    ],
+    "schema_version": "siq.qwen38.model-bridge-stream-evidence.v1",
+    "scope": "authenticated_streaming_bridge_controlled_deployment_and_real_local_model",
+    "live_proof": {
+      "artifact": "ml02-bridge-stream-deploy-e129-v3.sanitized.json",
+      "sha256": "d609c8c82ad9480d743057cd7215b27af65478de2fbb2a31a0531722e8ec6473",
+      "result": {
+        "schema_version": "siq.e129.bridge-upgrade.v1",
+        "passed": true,
+        "production_eligible": false,
+        "checks": {
+          "candidate_gateway_quiescent_before_change": true,
+          "prior_requests_drained": true,
+          "valid_models_200": true,
+          "invalid_credential_401": true,
+          "model_exact": true,
+          "real_stream_model_marker_and_DONE": true,
+          "new_bridge_invocation_active": true,
+          "main_API_and_model_unchanged": true
+        },
+        "rolled_back": false,
+        "first_valid_frame_ms": 144,
+        "stream_frame_count": 6,
+        "probe_origin": "approved_Docker_bridge_network",
+        "source_sha256": {
+          "authenticated_model_bridge.py": "8df4239926d6e8ed831c7a3f9ecd0cba9ff7edbb0936920ad64c419bb2c24199",
+          "model_bridge_stream.py": "2d00fa20c0e3203cd48256320155453e18ecb0ff3a3c057b8268c6e092a50cfe"
+        },
+        "rollback_sha256": "091871bbfca101662696d697d40b9cd9997c632f9a374c9e836b9e2a12e01c9d"
+      }
+    },
+    "predeployment_proof": {
+      "artifact": "ml02-bridge-stream-e129-v1.sanitized.json",
+      "sha256": "9cfec5053e6f3b5c765070c6fbe0f62696780030b9a70a3292c0c83243f4dc11",
+      "result": {
+        "schema_version": "siq.qwen38.loopback-stream-proof.v1",
+        "passed": true,
+        "production_eligible": false,
+        "scope": "temporary_loopback_bridge_real_Qwen_synthetic_prompt",
+        "deployed_bridge_changed": false,
+        "checks": {
+          "HTTP_200_SSE": true,
+          "model_bound_frames_and_DONE": true,
+          "synthetic_model_marker_returned": true,
+          "temporary_listener_closed": true,
+          "existing_services_unchanged": true
+        },
+        "first_valid_frame_ms": 144,
+        "frame_count": 6,
+        "total_ms": 516,
+        "reply_sha256": "d6dfadd53b8f2f3e86ea2333de01ccc65e29f979cf0271b93cf5a567c1099025"
+      }
+    },
+    "historical_attempts": [
+      {
+        "artifact": "ml02-bridge-stream-deploy-e129-v1.sanitized.json",
+        "sha256": "9da199a9e40232699a20f550492ed576b66b9d4852d8330181b2f184975bb078",
+        "passed": false,
+        "rolled_back": true
+      },
+      {
+        "artifact": "ml02-bridge-stream-deploy-e129-v2.sanitized.json",
+        "sha256": "d9c29ed32e59cefcd87ee9232b07997bfcb0dda5d7e6e97074be3ed3a636a0c3",
+        "passed": false,
+        "rolled_back": false
+      }
+    ],
+    "interpretation": {
+      "bridge_service_restarted": true,
+      "main_API_and_model_not_restarted": true,
+      "network_authentication_not_widened": true,
+      "first_frame_measurement_is_single_synthetic_probe_not_benchmark": true,
+      "drain_timeout_seconds_default": 10,
+      "synchronous_inflight_revocation_proven": false
+    },
+    "source_sha256": {
+      "scripts/openshell/authenticated_model_bridge.py": "8df4239926d6e8ed831c7a3f9ecd0cba9ff7edbb0936920ad64c419bb2c24199",
+      "scripts/openshell/model_bridge_stream.py": "2d00fa20c0e3203cd48256320155453e18ecb0ff3a3c057b8268c6e092a50cfe",
+      "scripts/openshell/prove_qwen38_bridge_stream.py": "e31b5848f395c25cec5dc0e95d3b0fc8f0b3010280687f5cac4f838a26e7dd57",
+      "scripts/openshell/tests/test_authenticated_model_bridge.py": "6de655e17a64071161cc522b5a75054f05067e78147601e184d59fa8a56899db",
+      "scripts/openshell/tests/test_model_bridge_stream.py": "173b1a3319eb46f3e0f5a5ee750ea16dd58d90dd03faffaa117d271d7ab61769"
+    }
+  },
+  "research_evidence_sha256": "4d5357c84779cf0363780f76330e7451f2183f031897e86f0f57b77425ff0b2c",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

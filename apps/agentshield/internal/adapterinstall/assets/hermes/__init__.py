@@ -26,6 +26,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import sys
 import threading
 import time
@@ -42,6 +43,7 @@ _DEFAULTS = {
     "timeout_s": 20 if sys.platform == "win32" else 5,
     "platform": "hermes",
     "agent_id": "",
+    "session_namespace": "",
     "mcp_sources": {},
 }
 
@@ -79,13 +81,29 @@ def _load_config() -> dict[str, Any]:
         pass  # Retain the supported legacy environment-only configuration.
     except (OSError, ValueError, TypeError):
         cfg["_config_error"] = True
+    environment_identity = False
+    if identity := _env("SIQ_AGENT_SECURITY_RUNTIME_IDENTITY_ID"):
+        configured = cfg.get("runtime_identity_id")
+        if configured not in (None, identity):
+            cfg["_config_error"] = True
+        else:
+            cfg["runtime_identity_id"] = identity
+            environment_identity = configured is None
+    if path := _env("SIQ_AGENT_SECURITY_TOKEN_PATH"):
+        configured = cfg.get("token_path")
+        if configured and configured != path and not environment_identity:
+            cfg["_config_error"] = True
+        else:
+            cfg["token_path"] = path
     for key, envs in (
         ("endpoint", ("SIQ_AGENT_SECURITY_ENDPOINT", "AGENTSHIELD_ENDPOINT")),
         ("enforcement_mode", ("SIQ_AGENT_SECURITY_MODE", "AGENTSHIELD_MODE")),
         ("agent_id", ("SIQ_AGENT_SECURITY_AGENT_ID", "AGENTSHIELD_AGENT_ID")),
+        ("session_namespace", ("SIQ_AGENT_SECURITY_SESSION_NAMESPACE",)),
+        ("openshell_proxy", ("SIQ_AGENT_SECURITY_OPENSHELL_PROXY",)),
     ):
         if v := _env(*envs):
-            if key == "agent_id" and "runtime_identity_id" in cfg:
+            if key == "agent_id" and "runtime_identity_id" in cfg and not environment_identity:
                 check = os.environ.get("SIQ_RUNTIME_CHECK_ID", "")
                 if not (re.fullmatch(r"rc-[a-f0-9]{32}", check) and v == "rca-" + check[3:]):
                     continue
@@ -107,7 +125,26 @@ def _check_launch_present() -> bool:
 
 def _managed() -> bool:
     return ("runtime_identity_id" in _CFG or bool(_CFG.get("_config_error"))
-            or str(_CFG.get("agent_id", "")).startswith("hri-"))
+            or str(_CFG.get("agent_id", "")).startswith("hri-")
+            or bool(_CFG.get("session_namespace")))
+
+
+def _authority_session_id(native_session_id: str) -> str | None:
+    """Bind an opaque Hermes session to the orchestrator-issued run namespace."""
+    if not isinstance(native_session_id, str) or not native_session_id or len(native_session_id) > 256 \
+            or any(ord(character) < 32 for character in native_session_id):
+        return None
+    namespace = _CFG.get("session_namespace", "")
+    if not namespace:
+        return native_session_id
+    if (not isinstance(namespace, str) or len(namespace) > 191
+            or re.fullmatch(
+                r"siq:openshell:pool:[a-f0-9]{24}:[A-Za-z0-9][A-Za-z0-9._-]{0,127}:"
+                r"siq_analysis",
+                namespace,
+            ) is None):
+        return None
+    return namespace + ":" + hashlib.sha256(native_session_id.encode("utf-8")).hexdigest()
 
 
 def _token() -> str | None:
@@ -125,16 +162,32 @@ def _token() -> str | None:
             return credential
         return None
     if _TOKEN is None:
+        descriptor = -1
         try:
             path = Path(_CFG["token_path"])
-            if path.is_symlink():
+            if not path.is_absolute() or ".." in path.parts:
                 return None
-            with path.open("r", encoding="ascii") as handle:
-                _TOKEN = handle.read(513).strip()
-            if len(_TOKEN) > 512:
+            before = path.lstat()
+            if (not stat.S_ISREG(before.st_mode) or before.st_nlink != 1
+                    or os.name != "nt" and before.st_mode & 0o077):
+                return None
+            flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
+            descriptor = os.open(path, flags)
+            opened = os.fstat(descriptor)
+            if (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino):
+                return None
+            raw = os.read(descriptor, 514)
+            finished = os.fstat(descriptor)
+            if (len(raw) > 513 or (finished.st_dev, finished.st_ino, finished.st_size)
+                    != (opened.st_dev, opened.st_ino, opened.st_size)):
                 _TOKEN = ""
+            else:
+                _TOKEN = raw.decode("ascii").strip()
         except (OSError, UnicodeError, ValueError, TypeError):
             _TOKEN = ""
+        finally:
+            if descriptor >= 0:
+                os.close(descriptor)
     if _managed() and not (
             re.fullmatch(r"ri-[a-f0-9]{32}\.[a-f0-9]{64}", _TOKEN or "")
             and _TOKEN.startswith(str(_CFG.get("runtime_identity_id", "")) + ".")):
@@ -146,6 +199,20 @@ def _local_endpoint() -> str | None:
     try:
         value = str(_CFG["endpoint"])
         endpoint = urllib.parse.urlsplit(value)
+        if endpoint.hostname == "host.openshell.internal":
+            # OpenShell owns this alias; the host launcher pins its Docker bridge,
+            # container and session. Never extend this to arbitrary remote hosts.
+            if (endpoint.scheme != "http" or endpoint.port is None
+                    or not 47611 <= endpoint.port <= 47710
+                    or value != f"http://host.openshell.internal:{endpoint.port}"
+                    or _CFG.get("_config_error") or _check_launch_present()
+                    or _CFG.get("openshell_proxy") != "http://10.200.0.1:3128"
+                    or not re.fullmatch(r"ri-[a-f0-9]{32}", str(_CFG.get("runtime_identity_id", "")))
+                    or not re.fullmatch(r"hri-[a-f0-9]{32}", str(_CFG.get("agent_id", "")))
+                    or not _CFG.get("session_namespace")
+                    or _authority_session_id("endpoint-validation") is None):
+                return None
+            return value
         if (endpoint.scheme != "http" or endpoint.hostname not in ("127.0.0.1", "::1", "localhost")
                 or endpoint.username is not None or endpoint.password is not None
                 or endpoint.query or endpoint.fragment or endpoint.path not in ("", "/")
@@ -177,6 +244,10 @@ def _post(
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {tok}"},
         method="POST",
     )
+    if endpoint.startswith("http://host.openshell.internal:"):
+        # This reviewed OpenShell 0.0.83 policy proxy is in the sandbox network
+        # namespace. Explicit set_proxy ignores HTTP_PROXY and NO_PROXY alike.
+        req.set_proxy("10.200.0.1:3128", "http")
     try:
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoCheckRedirect())
         timeout = float(_CFG["timeout_s"])
@@ -529,7 +600,9 @@ def _pre_tool_call(
     context_assertion_id: Any = None,
     **_: Any,
 ):
-    sid = session_id or task_id or "hermes-default"
+    sid = _authority_session_id(session_id or task_id or "hermes-default")
+    if sid is None:
+        return _fail_closed("instance session namespace is invalid", tool=tool_name)
     with _CORRELATION_LOCK:
         key = (sid, tool_name, tool_call_id)
         prior = _CORRELATIONS.get(key)
@@ -538,9 +611,8 @@ def _pre_tool_call(
             return {"action": "block", "message": "siq-agent-security: duplicate tool call"}
     if not _attach_runtime_check(session_id):
         return {"action": "block", "message": "siq-agent-security: runtime check session could not be verified"}
-    if not _enroll_runtime_session(session_id):
-        return _fail_closed("instance session could not be verified", tool=tool_name, session_id=session_id)
-    sid = session_id or task_id or "hermes-default"
+    if not _enroll_runtime_session(sid):
+        return _fail_closed("instance session could not be verified", tool=tool_name, session_id=sid)
     params = args if isinstance(args, dict) else {}
     retry_handled, retry_decision = _approved_retry(sid, task_id, tool_name, tool_call_id, params)
     if retry_handled:
@@ -677,7 +749,10 @@ def _post_tool_call(
     tool_call_id: str = "",
     **_: Any,
 ) -> None:
-    sid = session_id or task_id or "hermes-default"
+    sid = _authority_session_id(session_id or task_id or "hermes-default")
+    if sid is None:
+        _fail_closed("instance session namespace is invalid", tool=tool_name)
+        return
     text = result if isinstance(result, str) else json.dumps(result, ensure_ascii=False, default=str)
     decision_reference = _decision_reference(sid, tool_name, tool_call_id)
     if decision_reference:

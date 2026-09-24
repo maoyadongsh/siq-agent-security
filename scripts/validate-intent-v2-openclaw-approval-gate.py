@@ -33,6 +33,9 @@ require = fixture.require
 
 
 class ApprovalHarness(native.OpenClawHarness):
+    tool_name = "exec"
+    tool_params = {"command": "printf fixture"}
+
     def setup_grant(self):
         path = ROOT / "apps/agentshield/internal/admission/testdata/skills/benign/official-like"
         admitted = self.api("/v1/admit", {"path": str(path)})["admission"]
@@ -178,6 +181,13 @@ class ApprovalHarness(native.OpenClawHarness):
                     "workspace": str(self.workspace),
                     "agent_id": fixture.AGENT,
                     "session_id": fixture.SESSION,
+                    # OpenClaw 2026.9 supplies a host-owned UUID epoch in
+                    # ctx.sessionId. Keep the routing key stable and model the
+                    # epoch separately so the adapter cannot accept a legacy
+                    # raw session key as execution authority.
+                    "session_epoch": "11111111-1111-4111-8111-111111111111",
+                    "tool_name": self.tool_name,
+                    "tool_params": self.tool_params,
                     "cases": cases,
                 }
             )
@@ -252,7 +262,11 @@ class ApprovalHarness(native.OpenClawHarness):
                         "platform approval order violated",
                     )
                     reservations, observations = execution_records(self.receipts(), decision, call_id, require)
-                    expected = case["platform"] == "allow-once" and case["local"] is True
+                    expected = (
+                        case["platform"] == "allow-once"
+                        and case["local"] is True
+                        and "final_params" not in case
+                    )
                     require(
                         len(reservations) == int(expected) and len(observations) == int(expected),
                         "observation authorization invariant failed",
@@ -322,7 +336,7 @@ class ApprovalHarness(native.OpenClawHarness):
             "limitations": [
                 "synthetic tool executor and operator; no model or human approval proof",
                 "native gateway WebSocket, approval manager and before wrapper; after relay invoked by harness",
-                "optional unbound exec; required bound opaque shell remains denied",
+                f"optional unbound {self.tool_name}; required bound opaque shell remains denied",
                 "reservation response loss is uncertain and requires explicit reconciliation",
                 "cancelled native wait is explicitly resolved as deny after execution settles, for fixture cleanup",
                 "test IO guard is not OS isolation; installed runtime and real settings unchanged",

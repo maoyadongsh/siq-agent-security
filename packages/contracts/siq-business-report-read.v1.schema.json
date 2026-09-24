@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-report-read/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "draft_id": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Draft Id",
+      "type": "string"
+    },
+    "expected_bundle_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Bundle Sha256",
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "input_preflight",
+        "input_metric_snapshot",
+        "input_evidence_package",
+        "report_markdown",
+        "report_json",
+        "report_html",
+        "quality_receipt",
+        "factcheck_receipt"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "confirm_display": {
+      "const": true,
+      "title": "Confirm Display",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "draft_id",
+    "expected_bundle_sha256",
+    "role",
+    "confirm_display"
+  ],
+  "title": "Read",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": "siq.flagship.evidence.qwen38-request-preparation.v1",
+  "captured_at_utc": "2026-09-22T12:41:07.377913+00:00",
+  "scope": "API_owned_request_plan_and_private_staging_with_isolated_PostgreSQL_proof",
+  "implementation": {
+    "read_only_plan": true,
+    "original_authority_and_current_execution_owner_required": true,
+    "authorization_checked_before_and_after_artifact_verification": true,
+    "full_model_manifest_and_route_digests_bound": true,
+    "shared_image_verifier_used_without_diagnostic_launchers": true,
+    "exact_reserved_owner_required_for_staging": true,
+    "directory_descriptor_output_creation": true,
+    "company_and_output_inode_bound": true,
+    "independent_random_private_API_key": true,
+    "credential_absent_from_plan_and_receipt": true,
+    "credential_read_requires_current_original_authority": true,
+    "partial_failure_retains_owner_and_uncommitted_state": true
+  },
+  "validation": {
+    "combined_tests_passed": 115,
+    "test_warnings": 63,
+    "warning_cause_verified": "existing Pydantic datetime.utcnow default factory deprecation on Python 3.13; no tests skipped",
+    "test_files": [
+      "apps/api/tests/test_qwen38_request_runtime.py",
+      "apps/api/tests/test_qwen38_runtime_lease.py",
+      "apps/api/tests/test_openshell_data_scope.py",
+      "scripts/openshell/tests/test_probe_qwen38_image_sandbox.py",
+      "scripts/openshell/tests/test_build_qwen38_candidate_image.py",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py",
+      "scripts/openshell/tests/test_qwen38_candidate_gateway_owner.py"
+    ],
+    "ruff_passed": true
+  },
+  "live": {
+    "isolated_PostgreSQL_preparation_runs_passed": 2,
+    "final_source_revalidated": true,
+    "grant_revocation_denies_credential_read": true,
+    "private_file_permissions_verified": true,
+    "temporary_database_removed": true,
+    "synthetic_fixture_and_credentials_removed": true,
+    "gateway_owner_and_inventory_empty": true,
+    "actual_image_verified": "sha256:5a45f0d98c0c86d57d601dc1a7d2bcd99d36e2b9e9c05cb6d94527cebe5548ac",
+    "actual_API_request_sent": false,
+    "sandbox_or_model_started": false,
+    "API_model_bridge_same_PID_and_invocation": true
+  },
+  "source_sha256": {
+    "apps/api/services/qwen38_request_runtime.py": "a55209f23f1f1846264b1e3ede80cb81351a3e2c880344688d4dbbe397f1d80c",
+    "apps/api/tests/test_qwen38_request_runtime.py": "12cc84d1c682a69a8d4b868c8289d9f1a24a249598e4919996f7d17b18282aed",
+    "scripts/openshell/build_qwen38_candidate_image.py": "c7185aa71fd29784a8de7a07839bb4827074837036542c98b26db7e6f762c229",
+    "scripts/openshell/probe_qwen38_image_sandbox.py": "08abfcbd12bd5c965d077be9c6e4851dc7f17966a9996ccf1aadf446623258d6",
+    "scripts/openshell/prove_qwen38_request_preparation.py": "44ab5592a027fbcf358f2dc25532ad7be00357f4833013594c2a180c98e57acd",
+    "docs/architecture/qwen38-request-runtime-v1.md": "905b4d8a47cefb03e64181207df76f0676407694c982246af0a78cfb593e3388",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "325f700a99e2a24875f8ef3a15369f829b9588dc23e4aeddfed1d8cba83e451f"
+  },
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-request-preparation-e97.sanitized.json": "df4564b670f407b2ee3fb40eccdd259c29f0ea29a5acb6ab7ca5d632c84da915",
+    "artifacts/openshell/flagship/ml02-request-preparation-e97-v2.sanitized.json": "df4564b670f407b2ee3fb40eccdd259c29f0ea29a5acb6ab7ca5d632c84da915"
+  },
+  "not_proven": [
+    "formal_API_route_and_request_creator_integration",
+    "private_credential_transport_and_Hermes_bootstrap",
+    "real_v2_supervisor_business_run_and_API_lease_expiry",
+    "formal_stop_recover_status_and_output_retention",
+    "production_IAM_approval_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "research_evidence_sha256": "c34c458396c7784af3b94a2bd905946627fbfbebfcad73be32a2b2327757751a"
+}

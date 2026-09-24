@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq.openclaw-runtime-compatibility/v1",
+  "evaluated_at": "2026-09-21",
+  "adapter": {
+    "contract": "before_tool_call/after_tool_call",
+    "source": "adapters/runtime/openclaw-agentshield/index.ts",
+    "sha256": "3327205ebc2e33ffe30384b8c785e991834b0eb9fbc67d9af59ba4db1cca2b91"
+  },
+  "entries": [
+    {
+      "tier": "upstream-stock",
+      "package": "openclaw",
+      "version": "2026.9.5",
+      "build": "ec9c1a1",
+      "source_target": "dist/agent-tools.before-tool-call-ya9NNSXc.mjs",
+      "source_sha256": "39e6ae403ad478b147c9af6306dec376b026ab95aa0a7580fcba027db896270c",
+      "capabilities": {
+        "before_after_tool_hooks": true,
+        "native_session_epoch": true,
+        "plugin_approval": true,
+        "approval_resolution_notification": true,
+        "post_approval_final_params_recheck": false,
+        "siq_hold_execution_reservation": false
+      },
+      "siq_hold_behavior": "fail_closed_before_platform_approval",
+      "eligible_for_controlled_report_publish_hold": false
+    },
+    {
+      "tier": "siq-controlled",
+      "package": "openclaw",
+      "version": "2026.9.5",
+      "build": "ec9c1a1",
+      "source_target": "dist/agent-tools.before-tool-call-ya9NNSXc.mjs",
+      "stock_source_sha256": "39e6ae403ad478b147c9af6306dec376b026ab95aa0a7580fcba027db896270c",
+      "controlled_source_sha256": "6622ed7166a870ddbf68e31f9467f0c1ecbcfb6febd0e90f5bc78c010fa5ee34",
+      "patch": "patches/openclaw/2026.9.5-approval-execution-recheck-v1.patch",
+      "patch_sha256": "1fd2285c326d21c0162c0488f5ded294ea191248f0b6a92931100dbe58f3b1f6",
+      "checkpoint_protocol_version": 1,
+      "capabilities": {
+        "before_after_tool_hooks": true,
+        "native_session_epoch": true,
+        "plugin_approval": true,
+        "approval_resolution_notification": true,
+        "post_approval_final_params_recheck": true,
+        "siq_hold_execution_reservation": true
+      },
+      "siq_hold_behavior": "local_approval_then_platform_approval_then_exact_recheck_and_reservation",
+      "eligible_for_controlled_report_publish_hold": true,
+      "release_scope": "isolated_non_production_candidate"
+    }
+  ],
+  "rules": [
+    "Version equality without the exact source, adapter, and patch digests is insufficient.",
+    "A stock host without checkpoint protocol v1 may run allow, deny, and redact decisions but must reject SIQ hold recovery.",
+    "The controlled tier must be prepared in a new private copy; it must not mutate the operator's stock installation.",
+    "A passing controlled candidate does not establish upstream support or production eligibility."
+  ]
+}

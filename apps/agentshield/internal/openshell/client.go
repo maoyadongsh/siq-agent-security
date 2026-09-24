@@ -174,6 +174,12 @@ func (c *Client) invocationFingerprint() string {
 	switch inv.Source {
 	case SourceEnvPair:
 		fmt.Fprintf(h, "env_pair\x00%s\x00%s\x00%v", inv.CLIPath, inv.Endpoint, inv.Insecure)
+		if inv.GatewayName != "" {
+			fmt.Fprintf(h, "\x00gateway:%s", inv.GatewayName)
+		}
+		for _, key := range []string{"HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "XDG_CONFIG_HOME", "XDG_STATE_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_RUNTIME_DIR"} {
+			fmt.Fprintf(h, "\x00%s=%s", key, c.env(key))
+		}
 		if st, err := os.Stat(inv.CLIPath); err == nil {
 			fmt.Fprintf(h, "\x00%d\x00%d", st.Size(), st.ModTime().UnixNano())
 		}

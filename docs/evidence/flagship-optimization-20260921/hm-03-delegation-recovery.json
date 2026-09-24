@@ -1,0 +1,121 @@
+{
+  "absolute_paths_included": false,
+  "acceptance": {
+    "approval_retry_revalidation": {
+      "binding": [
+        "session_id",
+        "runtime_task_id",
+        "tool",
+        "canonical_params"
+      ],
+      "changed_binding": "not_reserved",
+      "lost_reservation": "fail_closed",
+      "reservation_required": true,
+      "status": "passed"
+    },
+    "cancellation_linkage": {
+      "parent_interrupt_propagation": "native_hermes_test_passed",
+      "remote_write_quiescence": "deferred_to_os01",
+      "status": "passed",
+      "targeted_child_interrupt": "observed"
+    },
+    "checkpoint_authority_revalidation": {
+      "every_tool_boundary": true,
+      "revoked_identity": "blocked_before_decide",
+      "status": "passed"
+    },
+    "child_privilege_contraction": {
+      "child": [
+        "file",
+        "web"
+      ],
+      "code_execution_removed": true,
+      "max_spawn_depth": 1,
+      "mcp_inheritance": false,
+      "orchestrator_enabled": false,
+      "parent": [
+        "terminal",
+        "file",
+        "code_execution",
+        "web"
+      ],
+      "status": "passed",
+      "terminal_removed": true
+    },
+    "model_driven_delegation": {
+      "api_mode": "openai_chat",
+      "business_data_sent": false,
+      "child_marker": true,
+      "fixture": "synthetic_public_only",
+      "model": "step-5-preview",
+      "model_catalog_verified": true,
+      "parent_marker": true,
+      "parent_output_present": true,
+      "provider": "StepFun Step Plan",
+      "run_create_status": 202,
+      "run_status": "completed",
+      "status": "passed"
+    }
+  },
+  "candidate_generation_isolation": {
+    "candidate_doctor_live_environment": "fail_model_mismatch_ornith_vs_locked_nemotron",
+    "candidate_doctor_package_ready": true,
+    "current_hm03_image_does_not_rewrite_ml01_evidence": true,
+    "nemotron_ml01_lock_uses_immutable_image_snapshots": true,
+    "runtime_lock_sha256": "57e895e6ed5cb55ad328158ba71b370486727a0844f8ca4b2c2e40bba6ce1bbb"
+  },
+  "candidate_images": {
+    "confidential_native": {
+      "id": "sha256:24da236da27b35c498cb13a234eab4b7c91b3275a687879be8cbc559b12a9ba9",
+      "model_invoked": false,
+      "ref": "siq/hermes-openshell-siq-analysis:063ad659f260d2917a57665e",
+      "smoke": "passed"
+    },
+    "public_packaging": {
+      "id": "sha256:c4c40c5f2e2fedbdb1c765d08063399898b1dba9239edbb995cad13386e38261",
+      "model_invoked": false,
+      "ref": "siq/hermes-openshell-siq-analysis:59e129bc8166b504e2a566eb",
+      "smoke": "passed"
+    }
+  },
+  "evidence": {
+    "cloud_proof_sha256": "b61f4783ff6cea62486228c92790b4921ce15ff552a9834c4752c7d2d96831ef",
+    "cloud_schema": "siq.hm03.cloud-delegation-proof/v1",
+    "native_proof_sha256": "497d144e90327f0b78780ee625399409617307918da3bb557cab822b138c4a95",
+    "native_schema": "siq.hm03.delegation-recovery-proof/v1"
+  },
+  "hermes": {
+    "commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "delegation_patch_sha256": "248d63cd64fc939ebef09aea7b87c2ade98d7ae5157fec30f2175ef28757486d",
+    "integration_patch_sha256": "9babdac2be758d323f452215bf743ab21ca70bb8eb33c905a51ee22146f3ac22",
+    "version": "0.21.0"
+  },
+  "limitations": [
+    "The Step Plan probe uses only a synthetic public prompt and does not authorize cloud processing of confidential_local data.",
+    "The cloud probe runs in a temporary host Hermes gateway; OpenShell candidate-image permission enforcement is proven separately by the network-disabled native image probe.",
+    "Production IAM approval and persisted checkpoint restoration were not exercised.",
+    "Remote write quiescence after cancellation remains an OS-01 acceptance item."
+  ],
+  "production_eligible": false,
+  "prompt_or_response_included": false,
+  "readiness_effect": "none",
+  "schema_version": "siq.flagship.hm03-delegation-recovery-evidence.v1",
+  "scope": "isolated_candidates_and_synthetic_public_cloud_probe",
+  "secrets_included": false,
+  "status": "passed",
+  "test_results": {
+    "agentshield_adapter": "103 passed",
+    "agentshield_go": [
+      "runtimeidentity passed",
+      "runtimeauthz no test files",
+      "server passed"
+    ],
+    "candidate_doctor": "15 passed, 17 subtests passed",
+    "confidential_image_smoke": "passed",
+    "hermes_native": "159 passed",
+    "public_image_smoke": "passed",
+    "python_compile": "passed",
+    "research_hm03_focused": "36 passed",
+    "ruff": "passed"
+  }
+}

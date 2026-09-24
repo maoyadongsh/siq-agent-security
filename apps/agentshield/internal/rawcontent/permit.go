@@ -166,5 +166,6 @@ func (a *Authority) CaptureWithPermit(permit CapturePermit, runtimeIdentityID, s
 	if len(content.raw) == 0 || len(content.raw) > grant.MaxPlaintextBytes {
 		return Envelope{}, ErrDenied
 	}
-	return a.store.write(taskID, content, time.Duration(grant.RetentionSeconds)*time.Second, now)
+	return a.store.writeFromRuntime(taskID, content, time.Duration(grant.RetentionSeconds)*time.Second, now,
+		&RuntimeSource{RuntimeIdentityRef: identityRef, SessionRef: sessionRef, BindingRef: bindingRef})
 }

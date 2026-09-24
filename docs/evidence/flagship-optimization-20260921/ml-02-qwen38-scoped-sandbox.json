@@ -1,0 +1,49 @@
+{
+  "checks": {
+    "authorized_synthetic_company_read": true,
+    "bridge_http_status": 502,
+    "candidate_gateway_empty_after": true,
+    "company_root_write_denied": true,
+    "cross_company_synthetic_read_denied": true,
+    "focused_tests_passed": 136,
+    "hermes_gateway_health": {
+      "api_key_synthetic": true,
+      "empty_store_valid": true,
+      "http_healthy": true,
+      "runtime_route_valid": true
+    },
+    "private_proof_state_removed": true,
+    "real_openshell_scoped_mount_applied": true,
+    "ruff_passed": true,
+    "sandbox_removed": true,
+    "synthetic_directories_removed": true,
+    "task_analysis_write_roundtrip": true
+  },
+  "gateway": "siq-openshell-scope-validation",
+  "gateway_bind_mount_contract": "siq_analysis_v2",
+  "image_id": "sha256:22010ff8a757211a7bf8b5739b4b854cd515717d1e6d43a81512c63b3bcb23ad",
+  "limitations": [
+    "Only unique synthetic company directories were used; no real enterprise data or IAM authorization was tested.",
+    "The Qwen bridge returned 502 because its fixed loopback SGLang upstream remains offline; positive model inference was not verified.",
+    "The data broker, AgentShield decision relay, business publisher, and formal writer revocation were not exercised in this proof.",
+    "The proof used the hermes_minimal_poc resource lease, not a production business capacity acceptance."
+  ],
+  "mount_plan_sha256": "b9a32b37a6cb809617f8e79c6b3cfd0f248dbc9a0909cfa9126291ec4147aaac",
+  "policy_sha256": "769ac3387df52abca561bb83f8fd0c9bbc965f590c2dcc92b8c55326d883dd69",
+  "private_proof_sha256": "9236d67485f0fb697a452773b6f925fb1d60165f32c82fd9f694ff43f1277972",
+  "production_eligible": false,
+  "proof_command": "python3 scripts/openshell/prove_qwen38_scoped_sandbox.py",
+  "recorded_at": "2026-09-22T03:11:55.840125+00:00",
+  "resource_profile": "hermes_minimal_poc",
+  "schema_version": "siq.flagship.ml02-qwen38-scoped-sandbox/v1",
+  "scope": "synthetic_enterprise_company_mount_plus_qwen_candidate_policy",
+  "scope_ref_sha256": "4b4d1b4285bad29b92f8792b20bad9dac61a08ed0a8f14fc5b404e5e87ab1f9d",
+  "secrets_included": false,
+  "source_sha256": {
+    "mount_compiler": "93eeda0b8be5da92366530c72540ec68d62c45630160ab2b104e89c3bbc227d2",
+    "policy_compiler": "23afedb3944245db655e5150a2aba4af5e188f3471619d8bb1e09df585a2a290",
+    "scoped_sandbox_proof": "8cc4f9ebbd483153514af341c550da9ae2368994c87d5b37162c2a6991b4a80a",
+    "scoped_sandbox_tests": "73f4e3eb1d5bbf7fd30220fe2cebd759adcaacd0f31b639adcf8b394d462bab7"
+  },
+  "status": "passed_synthetic_scoped_sandbox_boundary"
+}

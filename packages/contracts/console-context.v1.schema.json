@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "console-context.v1.schema.json",
+  "title": "ConsoleContext v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evaluated_at",
+    "tenant",
+    "actor",
+    "authentication",
+    "roles",
+    "custom_role_count",
+    "access",
+    "actions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "console-context/v1"
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tenant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
+        }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "type": {
+          "enum": [
+            "user",
+            "service"
+          ]
+        }
+      }
+    },
+    "authentication": {
+      "enum": [
+        "development_headers",
+        "verified_token"
+      ]
+    },
+    "roles": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "label",
+          "description"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      }
+    },
+    "custom_role_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "access": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workspace",
+        "overview",
+        "agents",
+        "permissions",
+        "findings",
+        "policies",
+        "changes",
+        "runtime_bindings",
+        "environments",
+        "audit",
+        "settings"
+      ],
+      "properties": {
+        "workspace": {
+          "type": "boolean"
+        },
+        "overview": {
+          "type": "boolean"
+        },
+        "agents": {
+          "type": "boolean"
+        },
+        "permissions": {
+          "type": "boolean"
+        },
+        "findings": {
+          "type": "boolean"
+        },
+        "policies": {
+          "type": "boolean"
+        },
+        "changes": {
+          "type": "boolean"
+        },
+        "runtime_bindings": {
+          "type": "boolean"
+        },
+        "environments": {
+          "type": "boolean"
+        },
+        "audit": {
+          "type": "boolean"
+        },
+        "settings": {
+          "type": "boolean"
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confirm_assets",
+        "manage_environment",
+        "enroll_devices",
+        "manage_policy",
+        "propose_change",
+        "approve_change"
+      ],
+      "properties": {
+        "confirm_assets": {
+          "type": "boolean"
+        },
+        "manage_environment": {
+          "type": "boolean"
+        },
+        "enroll_devices": {
+          "type": "boolean"
+        },
+        "manage_policy": {
+          "type": "boolean"
+        },
+        "propose_change": {
+          "type": "boolean"
+        },
+        "approve_change": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "siq.host-database-scope.proof.v1",
+  "passed": true,
+  "production_deployed": false,
+  "synthetic_data_only": true,
+  "checks": {
+    "foreign_fixture_reachable_without_scope": true,
+    "sql_rejects_foreign_document_identity": true,
+    "sql_returns_only_authorized_company": true,
+    "mixed_query_cannot_expand_company": true,
+    "foreign_canonical_id_with_matching_ticker_excluded": true,
+    "runtime_bound_scope_rejects_forged_document": true,
+    "runtime_rejects_market_switch_before_connection": true,
+    "legacy_foreign_fallback_fixture_reachable": true,
+    "legacy_missing_code_does_not_fall_back": true,
+    "legacy_fact_query_stays_in_authorized_company": true,
+    "own_database_removed": true
+  },
+  "source_sha256": {
+    "apps/api/services/agent_runtime_host_scope.py": "bcf9d1ac29035f566600cf7bdd4101cf327e64b67fd5ce13c94b69bbbcc551d6",
+    "apps/api/services/agent_runtime_postgres_fallback.py": "510eba78bb966cc03ffcc415981c8b75eed0a307717bc885057bc1bcf2a8e7d3",
+    "apps/api/services/agent_chat_runtime_impl.py": "3358f7524dc52c2eb1e8dc058d9566d77e11803fccdca874a6223238438a6631",
+    "db/imports/financial_query_api.py": "550eae9d5f92712830f59442bcc0e34179864421e7a7e9288d86a2a9661edca5"
+  }
+}

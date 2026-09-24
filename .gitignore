@@ -87,3 +87,8 @@ docs/evidence/**/*-private/
 /platforms/**/state/
 /evaluations/**/*.db
 /evaluations/**/*.db-*
+# Isolated E102 daemon state, credentials, private logs and build outputs.
+/var/flagship/e102-runtime-self/
+
+# Local runtime state, candidate builds and private acceptance artifacts.
+/var/

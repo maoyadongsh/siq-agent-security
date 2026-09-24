@@ -1,0 +1,40 @@
+{
+  "schema_version": "openshell-decision-relay/v3",
+  "binding": {
+    "platform": "hermes",
+    "runtime_identity_id": "ri-00000000000000000000000000000000",
+    "instance_id": "hi-11111111111111111111111111111111",
+    "agent_id": "hri-11111111111111111111111111111111",
+    "sandbox_namespace": "siq-openshell-scope-validation",
+    "sandbox_name": "siq-qwen38-scoped-0123456789abcdef",
+    "sandbox_id": "123e4567-e89b-12d3-a456-426614174000",
+    "sandbox_generation": 7,
+    "profile": "siq_analysis",
+    "scope_id": "222222222222222222222222",
+    "run_id": "canary-0921c0ffee21",
+    "session_namespace": "siq:openshell:pool:222222222222222222222222:canary-0921c0ffee21:siq_analysis"
+  },
+  "listener": {
+    "url": "http://host.openshell.internal:47612",
+    "inherited_fd": 3,
+    "transport": "verified_docker_bridge_gateway/v1",
+    "target_container_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "network_name": "siq-openshell-dev",
+    "network_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "gateway_ip": "172.23.0.1",
+    "host_alias": "host.openshell.internal"
+  },
+  "upstream": "http://127.0.0.1:47611",
+  "allowed_routes": [
+    "/v1/runtime-sessions",
+    "/v1/decide",
+    "/v1/observe",
+    "/v1/hold-status",
+    "/v1/hold-executions/reserve",
+    "/v1/provenance-reports",
+    "/v1/raw-task-content/native-captures"
+  ],
+  "max_request_bytes": 1048576,
+  "max_response_bytes": 1048576,
+  "upstream_timeout_ms": 5000
+}

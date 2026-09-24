@@ -29,7 +29,8 @@ func (s *Server) hermesRoots() hermeshome.Options {
 	if home == "" {
 		home, _ = os.UserHomeDir()
 	}
-	return hermeshome.Options{Home: home, Override: s.d.HermesHome, LocalAppData: s.d.LocalAppData, OS: s.d.HermesOS}
+	roots, _, err := s.d.Store.LoadDiscoveryRoots()
+	return hermeshome.Options{Home: home, Override: s.d.HermesHome, LocalAppData: s.d.LocalAppData, OS: s.d.HermesOS, ProjectDirs: roots.ProjectDirs, ProjectScopeUnavailable: err != nil}
 }
 func (s *Server) resolveAdapterOptions(platform, id string) (adapterinstall.Options, error) {
 	opts := s.adapterOptions(platform)
@@ -68,6 +69,11 @@ func (s *Server) adapterInstances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	platform := r.URL.Query().Get("platform")
+	includeProjects := r.URL.Query().Get("include_projects")
+	if values, ok := r.URL.Query()["include_projects"]; ok && (len(values) != 1 || includeProjects != "true" || platform != adapterinstall.Hermes) {
+		writeJSON(w, 400, map[string]any{"error": "invalid project discovery request"})
+		return
+	}
 	if platform != adapterinstall.Hermes && platform != adapterinstall.OpenClaw && platform != adapterinstall.WorkBuddy {
 		writeJSON(w, 400, map[string]any{"error": "instance listing requires hermes, openclaw or workbuddy"})
 		return
@@ -81,6 +87,13 @@ func (s *Server) adapterInstances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	roots := s.hermesRoots()
+	schema := "local-adapter-instances/v1"
+	if includeProjects == "true" {
+		schema = "local-adapter-instances/v3"
+	} else {
+		roots.ProjectDirs = nil
+		roots.ProjectScopeUnavailable = false
+	}
 	scan := hermeshome.Scan(roots)
 	rows := []AdapterInstance{}
 	for _, root := range scan.Roots {
@@ -92,7 +105,7 @@ func (s *Server) adapterInstances(w http.ResponseWriter, r *http.Request) {
 		opts := adapterinstall.WithHermesInstance(s.adapterOptions(adapterinstall.Hermes), root)
 		rows = append(rows, AdapterInstance{ID: root.ID, Platform: adapterinstall.Hermes, Name: root.Name, ConfigDir: shown, Source: root.Source, Default: root.Default, Active: root.Active, Detected: root.Detected, Diagnosis: s.diagnoseInstance(opts)})
 	}
-	writeJSON(w, 200, map[string]any{"schema_version": "local-adapter-instances/v1", "platform_changes": false, "native_available": adapterinstall.FindHermesCLI(s.d.HermesCLI) != "", "instances": rows, "issues": scan.Issues})
+	writeJSON(w, 200, map[string]any{"schema_version": schema, "platform_changes": false, "native_available": adapterinstall.FindHermesCLI(s.d.HermesCLI) != "", "instances": rows, "issues": scan.Issues})
 }
 
 func (s *Server) workBuddyInstanceRow(w http.ResponseWriter) {

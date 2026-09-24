@@ -42,7 +42,7 @@ def build_env(environ=None):
 
 
 def run(args, *, cwd, env, phase):
-    result = subprocess.run([str(a) for a in args], cwd=cwd, env=env, capture_output=True)
+    result = subprocess.run([str(a) for a in args], cwd=cwd, env=env, capture_output=True, check=False)
     if result.returncode:
         # Subprocess output can contain private build paths or signing diagnostics.
         raise ValueError(f"{phase} failed (exit {result.returncode}); no release produced")
@@ -80,6 +80,19 @@ def extract_source(archive, destination):
             if name.name == ".env" or name.suffix == ".seed":
                 raise ValueError("private state in source archive")
         bundle.extractall(destination, members=members, filter="data")
+
+
+def verify_source_inventory(source, expected):
+    """Bind the exported commit to an independently reviewed source snapshot."""
+    if expected.stat().st_size > 16 * 1024 * 1024:
+        raise ValueError("expected source inventory exceeds size limit")
+    doc = json.loads(expected.read_text())
+    if (not isinstance(doc, dict) or set(doc) != {"schema_version", "files"}
+            or doc["schema_version"] != "siq-release-source-inventory/v1"
+            or not isinstance(doc["files"], dict) or not doc["files"]):
+        raise ValueError("invalid expected source inventory")
+    if inventory(source) != doc["files"]:
+        raise ValueError("exported commit differs from reviewed source inventory; no release produced")
 
 
 def stage_skill(source, target, version):
@@ -162,6 +175,8 @@ def build(args):
         run(["git", "archive", "--format=tar", "--output", archive, commit, "--", *SOURCE_PATHS],
             cwd=source_root, env=env, phase="tracked source export")
         extract_source(archive, source)
+        if getattr(args, "expected_source_inventory", None) is not None:
+            verify_source_inventory(source, args.expected_source_inventory)
         embedded = source / "apps/agentshield/internal/ui/embedded"
         before = inventory(embedded)
         if "index.html" not in before:
@@ -311,6 +326,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-root", type=Path, default=ROOT)
     parser.add_argument("--source-sha", required=True)
+    parser.add_argument("--expected-source-inventory", type=Path,
+                        help="require exported commit bytes/modes to match a reviewed source inventory before builds")
     parser.add_argument("--version", required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--sign", action="store_true", help="sign using the existing publisher key; verify the built-in trust root")

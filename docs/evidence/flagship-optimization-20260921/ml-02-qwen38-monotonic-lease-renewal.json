@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-monotonic-lease-renewal/v1",
+  "recorded_at": "2026-09-22T04:51:22Z",
+  "scope": "real_qwen_candidate_sandbox_same_run_identity_renewal_with_synthetic_reauthorization",
+  "status": "passed_isolated_same_run_renewal_canary",
+  "source_sha256": {
+    "candidate_lease_controller": "38b1863f733bf5975262a4af32a5404f43be3a4db1a33f609ec31dadca3f4f01",
+    "candidate_renewal_tick": "ba837831710ba4049a2f424c5d0bcb314be46aa58679a730b2bc8c1b7b995ff0",
+    "sandbox_proof": "7ff29352cacd9df22e4b5d16dfe3db4512f572b89483e009e3c734162b86587d",
+    "candidate_lease_tests": "e848418046ac96a16436d4da616683342c254ef4beca3c187fb357ff38cde5b3"
+  },
+  "private_proof_sha256": "bf287abe161ec8670cfa7be21ba6336790a31c2b01322b774fab86d32ae0d404",
+  "checks": {
+    "lease_schema_version": "siq.openshell.qwen38-candidate-data-lease.v2",
+    "run_session_and_nonce_stable_across_renewals": true,
+    "issued_at_strictly_increases": true,
+    "renewal_generations": [2, 3],
+    "synthetic_reauthorization_checks": 2,
+    "reauthorization_denial_revokes_tested": true,
+    "changed_scope_revokes_tested": true,
+    "corrupt_lease_state_revokes_tested": true,
+    "same_issued_at_or_changed_run_revokes_tested": true,
+    "old_token_denied_after_each_renewal": true,
+    "final_revoke_before_sandbox_stop": true,
+    "synthetic_backend_calls": 6,
+    "synthetic_audit_events": 6,
+    "focused_and_adjacent_tests_passed": 154,
+    "candidate_gateway_empty_after": true,
+    "candidate_broker_listener_stopped": true,
+    "production_eligible": false
+  },
+  "limitations": [
+    "The reauthorization callback was synthetic and only compared the scope digest; real IAM and business authorization must supply the callback before a formal renewal scheduler is enabled.",
+    "The renewal tick is callable but has no installed timer or supervisor, and the formal Qwen business start/stop path is not yet wired to it.",
+    "Hermes gateway business-tool dispatch, positive Qwen inference, real enterprise database access, and crash recovery of a live writer remain unverified."
+  ],
+  "secrets_included": false
+}

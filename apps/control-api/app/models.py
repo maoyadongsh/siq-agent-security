@@ -448,3 +448,21 @@ class OutboxEvent(Base):
     attempt: Mapped[int] = mapped_column(Integer, default=0)
     next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     dead_lettered_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class DeploymentSubmission(Base):
+    """Durable single execution reservation; unknown outcomes are never replayed."""
+
+    __tablename__ = 'deployment_submission'
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id('dsub'))
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey('tenant.id', ondelete='CASCADE'), index=True)
+    change_request_id: Mapped[str] = mapped_column(String(64), ForeignKey('change_request.id'))
+    deployment_id: Mapped[str] = mapped_column(String(64), ForeignKey('deployment.id'), unique=True)
+    request_key: Mapped[str] = mapped_column(String(36))
+    request_digest: Mapped[str] = mapped_column(String(64))
+    preview_digest: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    __table_args__ = (
+        UniqueConstraint('tenant_id', 'request_key', name='uq_deployment_submission_key'),
+        UniqueConstraint('tenant_id', 'change_request_id', name='uq_deployment_submission_change'),
+    )

@@ -22,6 +22,9 @@ type Descriptor struct {
 	Hosts                    []string
 	Paths                    []string
 	FilesystemWriteHint      bool
+	// Only reviewed fixed operations may classify individual paths as read-only.
+	// This map is derived here, never populated from caller context.
+	ReadOnlyPaths map[string]bool
 }
 
 var writeCommand = regexp.MustCompile(`(>>?|\b(cp|mv|tee|rm|chmod|install|mkdir)\b)`)
@@ -33,6 +36,9 @@ func Describe(tool string, params map[string]any) Descriptor {
 func describeWithNormalizer(tool string, params map[string]any, normalize func(string, string) (string, error)) Descriptor {
 	if err := ValidateParameters(params); err != nil {
 		return Descriptor{Tool: tool, Operation: "invoke", Effects: []string{EffectUnknown}, ResourceError: err}
+	}
+	if fixed, ok := generationDescriptor(tool, params, normalize); ok {
+		return fixed
 	}
 	op, effects := normalizeEffects(tool, params)
 	d := Descriptor{Tool: tool, Operation: op, Effects: effects, HighImpactParameterPaths: []string{}}
@@ -108,6 +114,11 @@ func describeWithNormalizer(tool string, params map[string]any, normalize func(s
 		}
 	}
 	walk(params, "")
+	if businessReportShape(tool, params) {
+		for key := range params {
+			d.HighImpactParameterPaths = append(d.HighImpactParameterPaths, "/"+key)
+		}
+	}
 	sort.Strings(d.HighImpactParameterPaths)
 	return d
 }

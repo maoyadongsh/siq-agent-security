@@ -1,0 +1,156 @@
+{
+  "schema_version": "siq.flagship-business-result-history-validation/v1",
+  "batch": "E160",
+  "recorded_on": "2026-09-23",
+  "goal_status": "active",
+  "scope": "persistent business history and Linux ARM64 local preview handoff; not full production delivery",
+  "report": {
+    "path": "docs/development/ux-business-result-history-e160-validation-20260923.md",
+    "sha256": "d6f14c089d726ca69e2d1a7b830c612c57f40b662e5924f8f7088b96c6614882",
+    "bytes": 5876
+  },
+  "specification": {
+    "path": "docs/development/business-result-history-e160-spec.md",
+    "sha256": "8862fb51208fcb6d8576fc6c7883aa9483a45167a23dd869685085699c5aa0fb",
+    "bytes": 2854
+  },
+  "sources": {
+    "path": "var/flagship/ux-e160/source-manifest.json",
+    "sha256": "4651632144f97663a18ce2d35545706709d3218abeb63517509232e283140e08",
+    "bytes": 8748
+  },
+  "research_web_build": {
+    "path": "var/flagship/ux-e160/research-web-build-manifest.json",
+    "sha256": "bc4f2995d7536c8f44eb2779bef5e1d7c249a9a9a1c70a3fc1535d1a5f62a1df",
+    "bytes": 47366
+  },
+  "validation": {
+    "api_and_migration_tests": 125,
+    "contract_tests": 276,
+    "web_node_tests": 544,
+    "web_behavior_tests": 135,
+    "browser_checks": 15,
+    "browser": {
+      "path": "var/flagship/ux-e160/browser-complete/report.json",
+      "sha256": "e16875e6c4b22ce8afa25c2fe662ebfd7e4ced5a1c6157a56df5445fb4145d70",
+      "bytes": 828
+    },
+    "logs": [
+      {
+        "path": "var/flagship/ux-e160/api-final.log",
+        "sha256": "17027ef8d437b939a79664c3fb7b18084a31d5045e50583db1625af0060bf7ac",
+        "bytes": 1726
+      },
+      {
+        "path": "var/flagship/ux-e160/contracts.log",
+        "sha256": "9afe9b613df9c72577a5d581657d8d389091dfcb3f7350665231736a3d957ee3",
+        "bytes": 877
+      },
+      {
+        "path": "var/flagship/ux-e160/web-unit.log",
+        "sha256": "e6e6d2f81f524f3b315f99b10d11d6295da8573ec16d2aa0b6416cd86e848b78",
+        "bytes": 118517
+      },
+      {
+        "path": "var/flagship/ux-e160/web-behavior.log",
+        "sha256": "0856f4972a30e1565ab125a5f1df6a98805885c538fbd27f2aacb1deaf1629c7",
+        "bytes": 313
+      },
+      {
+        "path": "var/flagship/ux-e160/behavior-focused.log",
+        "sha256": "5f001de5b9869bcab42f4a0191fd9652f591c7f70713d676d856389a45cada59",
+        "bytes": 400
+      },
+      {
+        "path": "var/flagship/ux-e160/build-final.log",
+        "sha256": "5368ae7b6dd0daf528c6c70a1011d95f1f18676ee6510fca4c12a6e092d9f0fd",
+        "bytes": 11227
+      },
+      {
+        "path": "var/flagship/ux-e160/strict-types.log",
+        "sha256": "78d6f69a6f7bc580e84a6b55c0a70c1fd8da02fd92f40095f9a88010ab9ea6e2",
+        "bytes": 63
+      },
+      {
+        "path": "var/flagship/ux-e160/eslint-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "var/flagship/ux-e160/ruff-complete.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "bytes": 19
+      },
+      {
+        "path": "var/flagship/ux-e160/browser-complete.log",
+        "sha256": "13a32636825126540332b45a150caa2a3a777f56cb284453ce459bf02b922fee",
+        "bytes": 15
+      }
+    ],
+    "screenshots": [
+      {
+        "path": "var/flagship/ux-e160/browser-complete/history-desktop.png",
+        "sha256": "232028dc29291731b2a0d57276580d1cd4e9228af88ddfbe48cb7b1ebee487fb",
+        "bytes": 349185
+      },
+      {
+        "path": "var/flagship/ux-e160/browser-complete/history-mobile.png",
+        "sha256": "0f74c037e520946327b14edc55ab9d9b55e3932eaa6033c4d19b0a6354c7d3bf",
+        "bytes": 71008
+      },
+      {
+        "path": "var/flagship/ux-e160/browser-complete/result-desktop.png",
+        "sha256": "f96f579327c624d8f854b995b407e1e9ee5589e8ee669e3ecd01e18e6145d5d2",
+        "bytes": 98552
+      },
+      {
+        "path": "var/flagship/ux-e160/browser-complete/result-mobile.png",
+        "sha256": "e68711bbe22dfecac38385412065a7eccd325ee4f2946c46c011d38c36f6ea74",
+        "bytes": 59563
+      }
+    ],
+    "client_start_stop": {
+      "path": "var/flagship/ux-e160/client-start-stop.json",
+      "sha256": "a756f41c1c1ec9f72747843d3275e9b7f5251ac8afaaaa7b86b20cc71324d638",
+      "bytes": 777
+    },
+    "extracted_preview_start_stop": {
+      "path": "var/flagship/ux-e160/preview-package-start-stop.json",
+      "sha256": "671db1f28023974c5c9d86e972dcf8044cebedf674e6a776522b097d6a3367d3",
+      "bytes": 777
+    },
+    "preview_verification": {
+      "path": "var/flagship/ux-e160/preview-package-verification.json",
+      "sha256": "b95806b13784d56c9bfc9b54dd8d71735afe2725f5fdd1047fd04abfbeefe15d",
+      "bytes": 383
+    },
+    "checks": {
+      "path": "var/flagship/ux-e160/checks.json",
+      "sha256": "d85db60da0853b83440bf6709ccc421ae53023114a5360953e34d294e851aeef",
+      "bytes": 284
+    },
+    "synthetic_identity_and_sse": true,
+    "actual_result_store_and_grant_queries": true,
+    "models_invoked": false
+  },
+  "preview_archive": {
+    "path": "var/flagship/ux-e160/siq-agent-security-linux-arm64-preview-20260923.tar.gz",
+    "sha256": "3dcb7a5f125a0b6420dd956e40d5a44e4868c810fbfaa6acb208c9ba2e1f39f3",
+    "bytes": 15414098
+  },
+  "preview_metadata": {
+    "path": "var/flagship/ux-e160/preview-package.json",
+    "sha256": "d7390a54bae17692cdd8503a1ec4ad396bf7c1688ed77ca02f69375f69bef032",
+    "bytes": 567
+  },
+  "deployed": false,
+  "production_eligible": false,
+  "remaining": [
+    "formal_installation_and_upgrade_acceptance",
+    "explicit_security_console_business_identity_connection",
+    "formal_report_attribution",
+    "pre_commit_terminal_recovery",
+    "production_IAM_and_other_native_OS_acceptance",
+    "deferred_SEC_F01_F10"
+  ]
+}

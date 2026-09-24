@@ -1,0 +1,90 @@
+{
+  "absolute_paths_included": false,
+  "acceptance": {
+    "agentshield_binding": {
+      "binding": [
+        "session_id",
+        "runtime_task_id",
+        "tool",
+        "canonical_params"
+      ],
+      "controlled_tool": "mcp__siq_business__research_publish_report",
+      "digest_change_reuses_approval": false,
+      "exact_retry_reservation_required": true,
+      "status": "passed"
+    },
+    "business_tool_shape": {
+      "accepted_inputs": [
+        "task_id",
+        "request_sha256",
+        "approval_sha256"
+      ],
+      "arbitrary_command": "rejected_by_schema",
+      "arbitrary_path": "rejected_by_schema",
+      "arbitrary_sql": "rejected_by_schema",
+      "arbitrary_url": "rejected_by_schema",
+      "status": "passed"
+    },
+    "hermes_native_mcp": {
+      "registered_tools": [
+        "mcp__siq_business__research_publish_report",
+        "mcp__siq_business__research_verify_published_report"
+      ],
+      "runtime_warning_count": 0,
+      "status": "passed",
+      "trust_tier": "untrusted",
+      "verify_read_only_hint": true,
+      "write_read_only_hint": false
+    },
+    "publication": {
+      "denial_has_no_effect": true,
+      "digest_revalidated_inside_publisher": true,
+      "idempotent_repeat": true,
+      "readback_verified": true,
+      "status": "passed",
+      "task_workspace_owner_only": true
+    },
+    "terminal": {
+      "command_approval": "manual",
+      "hermes_approvals_mode": "off",
+      "regex_blacklist_authoritative": false,
+      "required_external_gate": "siq-agent-security",
+      "semantic_classification": "unknown_requires_external_policy_or_human_approval",
+      "status": "passed"
+    }
+  },
+  "evidence": {
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "hermes_version": "0.21.0",
+    "mcp_watcher_patch_sha256": "b410492f83a0c210c2860971919cbf9547dd5377667d5dc15729daa14667d9c7",
+    "next_generation_patch_bundle_sha256": "e091ea2692ac1bf7a1d2a0c0e18be9171eeb08410bdaca2d4f43c790039ded90",
+    "proof_schema": "siq.bu01.controlled-business-tool-proof/v1",
+    "proof_sha256": "68c21742342983f3643a4ca10334884e92931cbd4c3e8665c429b9d0b0e12d7e",
+    "research_artifact": "artifacts/openshell/flagship/bu01-controlled-business-tool.sanitized.json"
+  },
+  "implementation": {
+    "business_tool_server": "scripts/openshell/research_business_tools_mcp.py",
+    "candidate_overlay": "infra/openshell/hermes/siq-business-tools-mcp.v1.yaml",
+    "proof_schema": "infra/openshell/schemas/bu01-controlled-business-tool-proof.schema.json",
+    "publisher": "scripts/openshell/publish_verified_report.py"
+  },
+  "limitations": [
+    "The report target and approval authority are synthetic non-production fixtures.",
+    "The MCP overlay is a next-generation candidate and has not been merged into the frozen active profile or deployed to an active pool.",
+    "Production IAM, separation-of-duties approval, and production publication transactions remain outside this proof.",
+    "The fifth Hermes patch is source-native tested and build-context validated; no replacement ARM64 image was promoted."
+  ],
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "schema_version": "siq.flagship.bu01-controlled-business-tool-evidence.v1",
+  "scope": "isolated_local_hermes_mcp_canary",
+  "secrets_included": false,
+  "status": "passed",
+  "test_results": {
+    "agentshield_adapter": "124 passed",
+    "hermes_native_mcp": "112 passed",
+    "next_generation_build_context": "generated; three mount scans passed",
+    "research_focused": "37 passed",
+    "ruff_and_python_compile": "passed"
+  }
+}

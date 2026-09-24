@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"siq-agent-security/edge/agent/canon"
 	"siq-agent-security/edge/agent/protocol"
 )
 
@@ -234,7 +235,17 @@ func (c *Client) UploadBatch(ctx context.Context, taskID string, candidates []*p
 		"evidence":         evidence,
 		"permission_facts": permissionFacts,
 	}
-	payload, err := CanonicalJSON(body)
+	// Match the exact JSON field set and number literals sent over HTTP.
+	// Typed candidate/evidence slices are not values in the canonical JSON model.
+	raw, err := json.Marshal(body)
+	if err != nil {
+		return fmt.Errorf("control plane: encode evidence batch: %w", err)
+	}
+	wire, err := canon.Decode(raw)
+	if err != nil {
+		return fmt.Errorf("control plane: decode evidence batch: %w", err)
+	}
+	payload, err := CanonicalJSON(wire)
 	if err != nil {
 		return fmt.Errorf("control plane: canonicalize evidence batch: %w", err)
 	}

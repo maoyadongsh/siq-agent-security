@@ -1,0 +1,32 @@
+{
+  "schema_version": "siq.flagship.ml02-authorization-window-boundary/v1",
+  "recorded_at": "2026-09-22T05:40:42Z",
+  "scope": "isolated_qwen_candidate_lease_initial_activation_and_renewal",
+  "status": "passed_isolated_authorization_window_contract",
+  "source_sha256": {
+    "business_authorization_and_callback": "5ff6ccf8b99f73c5be5662287c53366323b6c8f6d0f3f11daac876e670060642",
+    "candidate_lease": "47e235495207760844b8ed39bdb9d8d02999223c9fddd806db1685e7ca77a309",
+    "renewal_tick": "cfccf8b569574cb2326261bc6b4b61c2c39291efd3ad5ea50caa297c7ea9d1ab",
+    "lease_test": "1ce83303acbf28b0291c903b1ad99a031a72aa66e180ad1e6a2f826f3635a615",
+    "business_integration_test": "2ecf7dd9d98656239933f57e1182f6780fadf3a1eb24883166ee482f1fc178db"
+  },
+  "checks": {
+    "initial_token_must_end_by_authorization_deadline": true,
+    "invalid_initial_deadline_does_not_publish_broker_admission": true,
+    "reauthorization_deadline_is_minimum_of_snapshot_and_live_grant": true,
+    "renewed_token_ttl_capped_by_authorization_deadline": true,
+    "unbounded_boolean_reauthorization_rejected_and_revoked": true,
+    "current_token_outliving_authorization_revoked_on_tick": true,
+    "combined_api_route_lease_and_migration_tests_passed": 164,
+    "optional_postgresql_test_skipped": 1,
+    "ruff_and_diff_check": "pass",
+    "production_eligible": false
+  },
+  "limitations": [
+    "The business authorization test used isolated SQLite and deterministic OpenShell CLI upload/install doubles; no live Qwen sandbox was used in this proof.",
+    "Initial activation still requires the trusted lifecycle caller to obtain the deadline from the authoritative callback; a formal business start/stop supervisor is not wired yet.",
+    "Grant revocation is enforced on the next tick, not synchronously at the moment of grant withdrawal.",
+    "SIQ Org IAM, production PostgreSQL, Hermes gateway business-tool dispatch and positive Qwen sandbox inference remain unverified."
+  ],
+  "secrets_included": false
+}

@@ -370,7 +370,7 @@ func (r *run) declaredTools(locator string, tools []string, evID string) {
 }
 
 func (r *run) hermesInstances(seen map[string]bool) bool {
-	scan := hermeshome.Scan(hermeshome.Options{Home: r.opts.Home, Override: r.opts.HermesHome, LocalAppData: r.opts.LocalAppData})
+	scan := hermeshome.Scan(hermeshome.Options{Home: r.opts.Home, Override: r.opts.HermesHome, LocalAppData: r.opts.LocalAppData, ProjectDirs: r.opts.ProjectDirs})
 	for _, issue := range scan.Issues {
 		r.report.Skipped = append(r.report.Skipped, "hermes:"+issue)
 	}

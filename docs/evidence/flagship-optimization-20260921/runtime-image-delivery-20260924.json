@@ -1,0 +1,87 @@
+{
+  "schema_version": "siq.flagship.runtime-image-delivery.v1",
+  "generated_at": "2026-09-23T23:35:38.770485+00:00",
+  "passed": true,
+  "goal_complete": false,
+  "production_eligible": false,
+  "image_promotion": {
+    "passed": true,
+    "formal_release": false,
+    "main_api_changed": false,
+    "business_execution_started": false,
+    "checks": {
+      "new_image_selected": true,
+      "previous_image_restored": true,
+      "new_image_reselected": true,
+      "no_gateway_execution_during_switch": true,
+      "existing_services_unchanged": true
+    },
+    "proof_sha256": "9e9107692db14e40a6b280b46c57870c85f8d25f9f4c6b734302899f9108295d",
+    "previous_image_id": "sha256:5a45f0d98c0c86d57d601dc1a7d2bcd99d36e2b9e9c05cb6d94527cebe5548ac",
+    "current_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "previous_record_sha256": "f12b6943c3970c1efd779e1b67b81c934beb9986eda177b78ddfaed34ec1b3cc",
+    "current_record_sha256": "c7d9fa3528622b71fb89a4e7dfe14369dffcc89b365531114dca4e38308f591f"
+  },
+  "main_preparation": {
+    "passed": true,
+    "source_file_count": 994,
+    "archive_sha256": "4c269900b7d62ac8323b45c3b119d159d9fea17f7bbf380471d6c529356213c4",
+    "source_matches_current_preview": true,
+    "source_is_original_main_snapshot": false,
+    "main_process_unchanged": true,
+    "main_before": {
+      "MainPID": "2301727",
+      "ActiveState": "active",
+      "InvocationID": "324c01b504e64141bead36cd1ec43bb8"
+    },
+    "planned_environment_written_not_applied": true,
+    "pending": [
+      "runtime_permission_approval",
+      "main_cutover_and_recovery_verification",
+      "actual_business_identity_verification"
+    ],
+    "rollback_limit": "Archive is tested current preview source, not the old main process source; no old-main cold restart claim."
+  },
+  "services_http_health": [
+    {
+      "port": 47611,
+      "status": 200
+    },
+    {
+      "port": 18081,
+      "status": 200
+    },
+    {
+      "port": 18089,
+      "status": 200
+    },
+    {
+      "port": 15173,
+      "status": 200
+    }
+  ],
+  "runtime_permission_change_applied": false,
+  "main_api_cutover_performed": false,
+  "research_artifacts": [
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/promote_image.py",
+      "sha256": "f96ca992967b514a261ec417e47d9062f8abc0a1fbbaffcc9ed0299e722d3b08",
+      "bytes": 4446
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/image-promotion.sanitized.json",
+      "sha256": "cedbcc49847254941b281cedd87f5790cedd172a9d006ff7a730066ff60b0b53",
+      "bytes": 798
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/main-preparation.sanitized.json",
+      "sha256": "29fac890d2e5ff26a32a46dce8ff97267f18b0e3ef2dca63d618e6942cdad909",
+      "bytes": 718
+    },
+    {
+      "path": "var/ops/main-runtime-delivery-20260924/api-source-manifest.json",
+      "sha256": "490b00eef627e9f5cfddab4ff1835bc5ff20a834d12cfdd48d6a532539df1891",
+      "bytes": 120352
+    }
+  ]
+}

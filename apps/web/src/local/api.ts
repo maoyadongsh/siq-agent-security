@@ -1,6 +1,7 @@
 import { isSkillUpdateCheckResult, isSkillUpdateScheduleView, type SkillUpdateCheckRequest, type SkillUpdateSourceDisableRequest, type SkillUpdateSourceRequest } from './skillUpdateCheck';
 import { isActivitySources } from './taskSources';
 import { isRawContentActivation, isRawContentPurgeResult, isRawContentStatus } from './rawTaskContent';
+import { parseTaskOutputs, parseTaskOutputContent } from './taskOutputs';
 import {
   isRawContentGrant,
   isRawContentRecordContent,
@@ -14,12 +15,19 @@ import {
   type RawContentRecord,
 } from './rawTaskContentManagement';
 import type { TaskActivityDetail } from './taskActivities';
+import { isRuntimeCheckActivity } from './runtimeCheckActivity';
+import { isOpenShellTargets, isOpenShellInspection, type DiscoveredSandbox, type OpenShellTargets } from './openshellDiscovery';
+import { isModelConnections, isModelConnectionResult, type ModelConnection } from './modelConnections';
+import { isModelInferenceRecord } from './modelInference';
+import { isGatewayCatalog, type RegisteredGateway } from './openshellGateways';
+import { isActivityQueryPage, type ActivityQueryFilters } from './activityQuery';
 import { isTaskExport } from './taskExport';
 import { isTaskTraceExport } from './taskTraceExport';
 import { readEffectEvidence } from './effectEvidence';
 import { isActivityCompletion } from './taskCompletion';
 import type { TaskActivityItem } from './taskActivities';
 import { isTaskActivityDetail, isTaskActivityPage, isTaskActivitySearch, type ActivityFilters, type ActivityView } from './taskActivities';
+import { isTaskSecurityView } from './taskSecurityView';
 import { isSkillUpdateComparison, isSkillUpdateCreated, isSkillUpdatePlan, isSkillUpdateView } from './skillUpdate';
 import type { SkillUpdateCompareRequest, SkillUpdateStageRequest, SkillUpdateCommit, SkillUpdateRecover } from './types';
 import {
@@ -110,7 +118,8 @@ async function fetchLocal(path: string, init: RequestInit = {}): Promise<Respons
   const adapterManagementRequest = ['/v1/adapter/preview', '/v1/adapter/install', '/v1/adapter/uninstall', '/v1/adapter/recover'].includes(path);
   const identityManagementRequest = path === '/v1/runtime-identities' || /^\/v1\/runtime-identities\/[^/]+\/revoke$/.test(path);
   const skillContextManagementRequest = path === '/v1/skill-contexts' || path.startsWith('/v1/skill-contexts/');
-  const timeout = setTimeout(cancel, adapterManagementRequest ? 180000 : (importRequest || identityManagementRequest || skillContextManagementRequest) ? 70000 : 8000);
+  const discoveryRequest = path === '/v1/openshell/targets' || path === '/v1/openshell/targets/inspect' || path.startsWith('/v1/openshell/gateways');
+  const timeout = setTimeout(cancel, discoveryRequest ? 190000 : adapterManagementRequest ? 180000 : (importRequest || identityManagementRequest || skillContextManagementRequest) ? 70000 : 8000);
   try {
     const response = await fetch(path, { ...init, credentials: 'same-origin', cache: 'no-store', signal: controller.signal });
     if (response.status === 503) {
@@ -712,6 +721,11 @@ export const localApi = {
       plan_digest: plan.plan_digest, actor_id: actorId, confirm: true }),
   }),
   runtimeCheck: (id: string) => request<RuntimeCheckResult>(`/v1/runtime-checks/${encodeURIComponent(id)}`),
+  runtimeCheckActivity: async (result: RuntimeCheckResult, signal?: AbortSignal) => {
+    const data = await request<unknown>(`/v1/runtime-checks/${encodeURIComponent(result.check_id)}/activity`, { signal, cache: 'no-store' });
+    if (!isRuntimeCheckActivity(data, result)) throw new Error('自检记录关联不完整，请重新读取后重试。');
+    return data;
+  },
   runtimeCheckLatest: (instanceId: string) => request<{ schema_version: 'local-runtime-check-list/v1'; items: RuntimeCheckResult[] }>(
     `/v1/runtime-checks?instance_id=${encodeURIComponent(instanceId)}`),
   runtimeCheckCancel: (id: string) => request<RuntimeCheckResult>(`/v1/runtime-checks/${encodeURIComponent(id)}/cancel`, { method: 'POST' }),
@@ -748,6 +762,27 @@ export const localApi = {
     if (!isActivityCompletion(data, activity, snapshot, view)) throw new Error('效果核验响应不完整，请刷新重试。');
     return data;
   },
+  taskActivitySecurityView: async (activity: TaskActivityItem, view: ActivityView, snapshot: string, signal?: AbortSignal) => {
+    const query = new URLSearchParams({ view, snapshot });
+    const data = await request<unknown>(`/v1/task-activities/${encodeURIComponent(activity.activity_id)}/security-view?${query}`, { signal });
+    if (!isTaskSecurityView(data, activity, view, snapshot)) throw new Error('任务安全视图响应不完整，请刷新重试。');
+    return data;
+  },
+  taskOutputs: async (activity: TaskActivityItem, snapshot: string, signal?: AbortSignal) => {
+    if (!activity.binding) throw new LocalApiError(409, 'task_output_source_unavailable');
+    const taskRef = await rawContentTaskRef(activity.binding.task_id);
+    const query = new URLSearchParams({ view: 'tasks', snapshot });
+    const data = await request<unknown>(`/v1/task-activities/${encodeURIComponent(activity.activity_id)}/outputs?${query}`, { signal });
+    return parseTaskOutputs(data, activity.activity_id, snapshot, taskRef);
+  },
+  readTaskOutput: async (activity: TaskActivityItem, snapshot: string, record: RawContentRecord, signal?: AbortSignal) => {
+    const query = new URLSearchParams({ view: 'tasks', snapshot });
+    const data = await request<unknown>(`/v1/task-activities/${encodeURIComponent(activity.activity_id)}/outputs/read?${query}`, {
+      method: 'POST', body: JSON.stringify({ schema_version: 'local-task-output-read/v1', record_id: record.record_id,
+        expected_plaintext_sha256: record.plaintext_sha256, confirm_display: true }), signal,
+    });
+    return parseTaskOutputContent(data, activity.activity_id, snapshot, record);
+  },
   taskActivityDetail: async (id: string, view: ActivityView, offset = 0, snapshot?: string, signal?: AbortSignal) => {
     const query = new URLSearchParams({ view, offset: String(offset), limit: '50' });
     if (snapshot) query.set('snapshot', snapshot);
@@ -769,6 +804,13 @@ export const localApi = {
     if (!isTaskActivitySearch(data, view, offset, filters, snapshot)) throw new Error('活动筛选响应不完整，请刷新重试。');
     return data;
   },
+  taskActivityQuery: async (view: ActivityView, offset: number, filters: ActivityQueryFilters, snapshot?: string, signal?: AbortSignal) => {
+    const query = new URLSearchParams({ view, offset: String(offset), limit: '50', ...filters });
+    if (snapshot) query.set('snapshot', snapshot);
+    const data = await request<unknown>(`/v1/task-activities/query?${query}`, { signal, cache: 'no-store' });
+    if (!isActivityQueryPage(data, view, offset, filters, snapshot)) throw new Error('运行记录响应不完整，请刷新重试。');
+    return data;
+  },
   receipts: () => request<{ receipts: Receipt[]; verified: boolean }>('/v1/receipts?since_seq=-1'),
   resolveHold: (id: string, approve: boolean, actorId: string) =>
     request(`/v1/hold/${id}`, {
@@ -782,7 +824,12 @@ export const localApi = {
     }),
   adapterStatus: () =>
     request<{ detected: string[]; platforms: PlatformInfo[] }>('/v1/adapter/status'),
-  adapterInstances: (platform: string) => request<AdapterInstances>(`/v1/adapter/instances?platform=${encodeURIComponent(platform)}`).then((data) => {
+  adapterInstances: (platform: string) => request<AdapterInstances>(`/v1/adapter/instances?platform=${encodeURIComponent(platform)}${platform === 'hermes' ? '&include_projects=true' : ''}`).then((data) => {
+    if (platform === 'hermes' && (data.schema_version !== 'local-adapter-instances/v3'
+      || data.platform_changes !== false || !Array.isArray(data.instances) || !Array.isArray(data.issues)
+      || data.instances.some((item) => !item || item.platform !== 'hermes' || !/^hi-[a-f0-9]{32}$/.test(item.instance_id)))) {
+      throw new LocalApiError(502, '无法核对 Hermes 项目实例，请检查服务版本并重新读取。');
+    }
     if (platform === 'workbuddy' && (data.schema_version !== 'local-adapter-instances/v2'
       || typeof data.managed_runtime_available !== 'boolean' || data.platform_changes !== false
       || !Array.isArray(data.instances) || !Array.isArray(data.issues)
@@ -791,8 +838,8 @@ export const localApi = {
     }
     return data;
   }),
-  adapterPreview: (platform: string, action: 'install' | 'uninstall', instance_id?: string, native_enable = false, runtime_identity_id?: string) =>
-    request<AdapterPlan>('/v1/adapter/preview', { method: 'POST', body: JSON.stringify({ platform, action, instance_id, native_enable, runtime_identity_id }) }),
+  adapterPreview: (platform: string, action: 'install' | 'uninstall', instance_id?: string, native_enable = false, runtime_identity_id?: string, signal?: AbortSignal) =>
+    request<AdapterPlan>('/v1/adapter/preview', { method: 'POST', signal, body: JSON.stringify({ platform, action, instance_id, native_enable, runtime_identity_id }) }),
   adapterApply: (plan: AdapterPlan, actor_id?: string) =>
     request<AdapterResult>(`/v1/adapter/${plan.action}`, {
       method: 'POST',
@@ -818,6 +865,57 @@ export const localApi = {
         started_gateway?: boolean;
       };
     }>('/v1/openshell/probe'),
+  openshellTargets: async (signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/openshell/targets', { signal });
+    if (!isOpenShellTargets(data)) throw new Error('OpenShell 发现结果不完整，请重新发现。');
+    return data;
+  },
+  openshellGateways: async (signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/openshell/gateways', { signal });
+    if (!isGatewayCatalog(data)) throw new Error('网关登记清单不完整');
+    return data;
+  },
+  openshellGatewayTargets: async (gateway: RegisteredGateway, signal?: AbortSignal) => {
+    const data = await request<{ schema_version?: string; gateway_id?: string; configuration_fingerprint?: string; catalog?: unknown }>('/v1/openshell/gateways/targets', {
+      method: 'POST', signal, body: JSON.stringify({ schema_version: 'local-openshell-gateway-select/v1', gateway_id: gateway.gateway_id, configuration_fingerprint: gateway.configuration_fingerprint }),
+    });
+    if (data.schema_version !== 'local-openshell-gateway-targets/v1' || data.gateway_id !== gateway.gateway_id || data.configuration_fingerprint !== gateway.configuration_fingerprint || !isOpenShellTargets(data.catalog)) throw new Error('所选网关清单已变化');
+    return data.catalog;
+  },
+  openshellGatewayInspect: async (gateway: RegisteredGateway, item: DiscoveredSandbox, catalog: OpenShellTargets, signal?: AbortSignal) => {
+    const data = await request<{ schema_version?: string; gateway_id?: string; configuration_fingerprint?: string; inspection?: unknown }>('/v1/openshell/gateways/inspect', {
+      method: 'POST', signal, body: JSON.stringify({ schema_version: 'local-openshell-gateway-inspect/v1', gateway_id: gateway.gateway_id, configuration_fingerprint: gateway.configuration_fingerprint, sandbox_id: item.sandbox_id, name: item.name, endpoint_fingerprint: catalog.endpoint_fingerprint }),
+    });
+    if (data.schema_version !== 'local-openshell-gateway-inspection/v1' || data.gateway_id !== gateway.gateway_id || data.configuration_fingerprint !== gateway.configuration_fingerprint || !isOpenShellInspection(data.inspection, item, catalog)) throw new Error('所选网关策略读回已变化');
+    return data.inspection;
+  },
+  modelConnections: async (signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/model-connections', { signal });
+    if (!isModelConnections(data)) throw new Error('模型配置响应不完整');
+    return data;
+  },
+  latestModelInference: async (item: ModelConnection, signal?: AbortSignal) => {
+    const data = await request<{ schema_version?: string; record?: unknown }>(`/v1/model-inference-tests?model_id=${encodeURIComponent(item.id)}`, { signal });
+    if (data.schema_version !== 'local-model-inference-latest/v1' || (data.record !== null && !isModelInferenceRecord(data.record, item))) throw new Error('模型测试状态不完整');
+    return data.record;
+  },
+  startModelInference: async (item: ModelConnection, requestId: string, signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/model-inference-tests', { method: 'POST', signal, body: JSON.stringify({ schema_version: 'local-model-inference-create/v1', request_id: requestId, model_id: item.id, fingerprint: item.fingerprint, confirm_test: true }) });
+    if (!isModelInferenceRecord(data, item) || data.request_id !== requestId || data.fingerprint !== item.fingerprint) throw new Error('模型测试响应不完整');
+    return data;
+  },
+  checkModelConnection: async (item: ModelConnection, signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/model-connections/check', { method: 'POST', signal, body: JSON.stringify({ schema_version: 'local-model-connection-check/v1', id: item.id, fingerprint: item.fingerprint }) });
+    if (!isModelConnectionResult(data, item)) throw new Error('模型检查响应不完整');
+    return data;
+  },
+  openshellInspectTarget: async (item: DiscoveredSandbox, catalog: OpenShellTargets, signal?: AbortSignal) => {
+    const data = await request<unknown>('/v1/openshell/targets/inspect', { method: 'POST', signal, body: JSON.stringify({
+      schema_version: 'local-openshell-target-inspect/v1', sandbox_id: item.sandbox_id, name: item.name, endpoint_fingerprint: catalog.endpoint_fingerprint,
+    }) });
+    if (!isOpenShellInspection(data, item, catalog)) throw new Error('目标策略读回不完整，请重新发现后重试。');
+    return data;
+  },
   openshellApply: (body: {
     target: string;
     network: { endpoint: string; effect: 'allow'; binary_paths: string[] }[];

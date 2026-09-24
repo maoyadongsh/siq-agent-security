@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq.flagship.evidence.api-bound-supervisor-service.v1",
+  "captured_at_utc": "2026-09-22T12:27:04.953479+00:00",
+  "scope": "v2_supervisor_service_selection_readiness_and_installed_template_verification",
+  "implementation": {
+    "v2_selects_separate_fixed_template": true,
+    "v2_requires_business_broker_readiness": true,
+    "state_max_age_seconds": 90,
+    "future_state_rejected": true,
+    "invocation_checked_before_and_after_state_read": true,
+    "effective_unit_commands_environment_and_dropins_verified": true,
+    "legacy_template_unchanged": true
+  },
+  "validation": {
+    "combined_tests_passed": 153,
+    "test_files": [
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py",
+      "scripts/openshell/tests/test_qwen38_candidate_supervisor.py",
+      "scripts/openshell/tests/test_qwen38_business_broker.py",
+      "scripts/openshell/tests/test_qwen38_candidate_run_guard.py",
+      "apps/api/tests/test_qwen38_runtime_lease.py",
+      "apps/api/tests/test_runtime_startup_guard.py"
+    ],
+    "systemd_analyze_verify_passed": true,
+    "ruff_passed": true,
+    "systemd_start_and_failure_tests_use_replacements": true
+  },
+  "live": {
+    "new_template_installed": true,
+    "actual_effective_unit_verified": true,
+    "api_bound_instance_started": false,
+    "enabled_at_boot": false,
+    "legacy_template_bytes_preserved": true,
+    "candidate_gateway_E95_identity_unchanged": true,
+    "API_model_bridge_active_same_PID": true
+  },
+  "failures_retained": {
+    "first_live_template_check": "systemd reports unexpanded environment expressions; expanded-argv expectation rejected valid unit; corrected with exact expression and separate environment-source checks"
+  },
+  "source_sha256": {
+    "scripts/openshell/qwen38_supervisor_service.py": "e9eacaa12d847396735fb9c9f20ac43a3958f2085ab8a4d15d6279ba82da7eea",
+    "scripts/openshell/tests/test_qwen38_supervisor_service.py": "fa404e38b10a2e239a1d127d754b91a2a5707054bb0bf0790a82baf014d6d9c1",
+    "infra/systemd-user/siq-qwen38-api-supervisor@.service": "02fb70569d9b198ea4aa7958b537483dc1022cd1ad0a71ac994c02e9cedd28df",
+    "infra/systemd-user/siq-qwen38-supervisor@.service": "08bfbaf18de71a75f5864d82ea3e93c69629665afbb19a9b5f8751480f66b56d",
+    "docs/architecture/qwen38-request-runtime-v1.md": "ebb825df5596e8eced04989f2698c5aa2fa8446e47d2af9a0d20572e6217ee23",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "291e3724e203418ef7418bfcae196f4f046bd7009833d76ca6dbfd9c30cb285e"
+  },
+  "not_proven": [
+    "formal_API_request_creator_integration",
+    "real_v2_systemd_broker_lifecycle_and_crash_recovery",
+    "actual_API_exit_then_120_second_lease_expiry_in_real_sandbox",
+    "production_IAM_approval_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "research_evidence_sha256": "ba29deb9b449d44c901711c66e50b36692a4d8220a1b46633d466752f26c4177"
+}

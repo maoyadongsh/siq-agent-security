@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-cross-process-run-guard.v1",
+  "captured_at_utc": "2026-09-22T07:00:53Z",
+  "scope": "qwen_candidate_guard_cross_process_tick_stop_recovery_serialization",
+  "secrets_included": false,
+  "source_sha256": {
+    "qwen38_candidate_run_guard.py": "29d686e7c052675280d70927a93706a99505f4b83a263c841f8131013bf58c79",
+    "test_qwen38_candidate_run_guard.py": "c15c6f39837bce2171cda1ccd4a0d3d5189813d321da5242230dc2e2a9ebfb12"
+  },
+  "contract": {
+    "thread_and_process_operation_serialization": true,
+    "host_lock_owner_only_directory_and_file": true,
+    "host_lock_symlink_rejected": true,
+    "host_lock_inode_rechecked_after_acquisition": true,
+    "host_lock_wait_timeout_seconds": 30,
+    "ordinary_tick_failure_contains_while_lock_held": true,
+    "lock_failure_attempts_all_containment_and_reports_failure": true,
+    "containment_order": ["revoke_broker_admission", "rotate_model_bridge_token", "verify_sandbox_removal", "verify_candidate_gateway_empty"]
+  },
+  "verification": {
+    "independent_process_held_lock_blocks_stop_until_release": true,
+    "unsafe_lock_mode_attempts_broker_model_and_sandbox_containment": true,
+    "focused_guard_tests": "11 passed",
+    "guard_lease_identity_and_business_authorization_tests": "30 passed",
+    "ruff": "passed",
+    "python_compile": "passed",
+    "git_diff_check": "passed"
+  },
+  "boundary": {
+    "candidate_ready": false,
+    "production_eligible": false,
+    "formal_business_start_stop_recover_entrypoint": false,
+    "persistent_supervisor_process": false,
+    "gateway_wide_start_ownership_lock": false,
+    "real_sandbox_inflight_stop_exercised": false,
+    "siq_iam_integrated": false
+  }
+}

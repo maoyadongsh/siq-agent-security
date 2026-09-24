@@ -1,0 +1,159 @@
+{
+  "access_snapshot_binding": {
+    "bound_dimensions": [
+      "tenant",
+      "principal",
+      "project",
+      "market",
+      "company",
+      "object_scopes",
+      "data_classification"
+    ],
+    "business_api_snapshot": "short_lived_revalidated",
+    "classification_consistency_required": true,
+    "principal_storage": "sha256_only",
+    "scope_ref_signed_by_host": true
+  },
+  "artifacts": {
+    "api_scope_source_sha256": "676979c4d2b38cdea2585d799dcc6679314bf509f3be7eb5e847e2c5f718a924",
+    "broker_identity_source_sha256": "1d9be51a7050c695cde6df7a437eed03d5a6b8e917bf7fb25834668a989918fa",
+    "data_broker_source_sha256": "b55c7e41155453e4fb798f47c0714cde10fcf13878e468b47150e9ec508119bd",
+    "hermes_client_source_sha256": "020a1c469943ca0be6f5778b9c1b4e20e15e818a4318b51989d314b275a6b77c",
+    "mount_compiler_source_sha256": "42bcc56a6eb5368de37c7b8b068fce0864368749a7cd544825590cec1b13ea38",
+    "proof_runner_source_sha256": "ccb9da4b1b73d9b3bdd7d2a29ab02fab7bbee5de8874e0400410d38d234a6f27",
+    "proof_runner_test_sha256": "f40cf5a1ad192fc5e7b07e2c1f2790137bef07cc0052ba31b7a8bd6e616746d4",
+    "research_sanitized_proof_sha256": "45e1362a9a0cd7991bdba67ae7bbe5016627d11618f73f15a08722a60bb0d4aa",
+    "runtime_route_source_sha256": "de801c01c507350bcca9adaf4f9b16f88e06e1e88ad666f3a1633d05631c445e",
+    "scope_contract_source_sha256": "2b2467d8024b638b7b9d87e0c1d00486d27531c2ade1be3133dcfe505d0b6707"
+  },
+  "contracts": {
+    "business_scope_snapshot_schema": "siq.business.openshell-data-authorization.v1",
+    "enterprise_scope_schema": "siq.openshell.enterprise-data-scope.v1",
+    "mount_plan_schema": "siq.openshell.siq_analysis_mount_plan.v3",
+    "proof_schema": "siq.openshell.enterprise-data-scope-proof.v1",
+    "request_identity_schema": "siq.openshell.broker-request-identity.v3"
+  },
+  "enforcement": {
+    "data_broker": {
+      "client_cross_project_filter_denied": true,
+      "market_scope_rechecked_server_side": true,
+      "private_vector_requires_project_scope": true,
+      "project_filter_injected_server_side": true,
+      "unprovable_primary_key_get_denied": true,
+      "unscoped_private_access_denied": true
+    },
+    "filesystem": {
+      "business_mount_count": 8,
+      "company_directory_read_only_count": 1,
+      "public_shared_classification": "public_reference",
+      "public_shared_directory": "market_meta_only",
+      "task_output_read_write_count": 1,
+      "whole_wiki_root_mounted": false
+    },
+    "runtime_provenance": {
+      "business_scope_snapshot_sha256_attached": true,
+      "data_classification_attached": true,
+      "scope_ref_sha256_attached": true
+    }
+  },
+  "limitations": [
+    "This is a non-production host-broker and compiled-mount proof; it does not approve production traffic.",
+    "Existing active company pools retain their previous mount and broker identity generation and were not mutated.",
+    "The API admission snapshot is bound into run provenance; per-user delegation into a long-lived shared company sandbox remains a later generation design decision.",
+    "Private primary-key reads fail closed until record-level ownership can be proven by a server-side index."
+  ],
+  "observed_at": "2026-09-21T07:57:37.145875Z",
+  "runtime_proof": {
+    "audit_records_count": 5,
+    "audit_records_sha256": "e9e31d055966e90903f4ef240b9d68b48f76eae3a7952c6bed14bddb0bf02afc",
+    "business_scope_snapshot_sha256": "94526ae1e30d0a2edad5041d076252c571b7df149a5f1ac0bb2130eadd1607ac",
+    "captured_at_unix": 1789977445,
+    "cases": [
+      {
+        "case_id": "same_market_public",
+        "decision": "allow",
+        "error_code": "",
+        "http_status": 200
+      },
+      {
+        "case_id": "cross_market",
+        "decision": "deny",
+        "error_code": "enterprise_market_scope_denied",
+        "http_status": 403
+      },
+      {
+        "case_id": "cross_project",
+        "decision": "deny",
+        "error_code": "enterprise_project_scope_denied",
+        "http_status": 403
+      },
+      {
+        "case_id": "unscoped_private",
+        "decision": "deny",
+        "error_code": "enterprise_data_scope_required",
+        "http_status": 403
+      },
+      {
+        "case_id": "unsafe_scoped_get",
+        "decision": "deny",
+        "error_code": "enterprise_scoped_get_denied",
+        "http_status": 403
+      }
+    ],
+    "checks": {
+      "credentials_stored": false,
+      "cross_market_denied": true,
+      "cross_project_denied": true,
+      "public_shared_explicit": true,
+      "query_or_results_stored": false,
+      "same_market_public_data_allowed": true,
+      "single_company_mount": true,
+      "unsafe_scoped_get_denied": true,
+      "unscoped_private_denied": true
+    },
+    "gateway": "siq-openshell-dev",
+    "mount_plan_sha256": "f2ebb2490e7f594cf433154c919d5b2befb67e2ab5500bec3dcff820156e2461",
+    "mount_summary_sha256": "301b36585ba354e0af46f15e963542579c69e6bdcea1b37fe7c7286cfec564f5",
+    "passed": true,
+    "request_identity_schema": "siq.openshell.broker-request-identity.v3",
+    "schema_version": "siq.openshell.enterprise-data-scope-proof.v1",
+    "scope_ref_sha256": "47ad12e33cb0b47e41ee329db2644b4d341376728f1d4229e1bb9bb079ff3614",
+    "scope_schema": "siq.openshell.enterprise-data-scope.v1",
+    "scoped_run_id_sha256": "d1a6f9695537c6925760f6f379511bdcd13786792c1639cda6baaacd7a1f8567",
+    "unscoped_run_id_sha256": "582451e37f572f0933479fbc7bd71517d8948c501d350301f917c56cc4e53c5f"
+  },
+  "sanitization": {
+    "contains_company_name": false,
+    "contains_credentials": false,
+    "contains_identity_token": false,
+    "contains_local_absolute_paths": false,
+    "contains_query_or_result_body": false,
+    "contains_tenant_or_user_id": false
+  },
+  "schema_version": "siq.flagship.dt01-enterprise-data-scope-evidence.v1",
+  "scope": {
+    "gateway": "siq-openshell-dev",
+    "hermes_version": "0.21.0",
+    "openshell_version": "0.0.83",
+    "platform": "hermes",
+    "production_eligible": false,
+    "profile": "siq_analysis",
+    "readiness_effect": "none"
+  },
+  "status": "completed",
+  "validation": {
+    "api_scope_and_hermes_routing_tests": {
+      "count": 52,
+      "status": "passed",
+      "warnings": 5
+    },
+    "git_diff_check": "passed",
+    "python_compile": "passed",
+    "real_broker_case_count": 5,
+    "ruff": "passed",
+    "scope_mount_identity_broker_and_proof_tests": {
+      "count": 105,
+      "status": "passed"
+    }
+  }
+}

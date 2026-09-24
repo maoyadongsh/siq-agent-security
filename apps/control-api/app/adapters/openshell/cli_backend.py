@@ -101,7 +101,8 @@ _ERR_IDENTITY_UNCONFIRMED = (
 _STATUS_HEADING = "Server Status"
 _GATEWAY_LINE_RE = re.compile(r"^Gateway:\s*(\S.*)$")
 _GATEWAY_NAME_RE = re.compile(r"[A-Za-z0-9_.-]{1,64}")
-_GATEWAY_VERSION_RE = re.compile(r"(?m)^\s*Gateway version:\s*v?(\d+\.\d+\.\d+)\s*$")
+_GATEWAY_VERSION_RE = re.compile(r"(?im)^\s*Gateway version:\s*v?(\d+\.\d+\.\d+)\s*$")
+_STATUS_VERSION_RE = re.compile(r"(?im)^\s*Version:\s*v?(\d+\.\d+\.\d+)\s*$")
 
 # 版本/握手缓存 TTL：与调用指纹共同构成证据作用域（配置一变即失效）。
 _VERSION_CACHE_TTL_SECONDS = 300.0
@@ -128,8 +129,10 @@ def _parse_gateway_name(text: str) -> str:
 
 
 def _parse_gateway_version(text: str) -> str | None:
-    match = _GATEWAY_VERSION_RE.search(text)
-    return match.group(1) if match else None
+    versions = _GATEWAY_VERSION_RE.findall(text)
+    if _looks_like_openshell_status(text):
+        versions += _STATUS_VERSION_RE.findall(text)
+    return versions[0] if len(versions) == 1 else None
 
 
 def _parse_version(text: str) -> str | None:
@@ -328,7 +331,7 @@ class OpenShellCliBackend(EnforcementAdapter):
         """调用指纹（O04）：探测/缓存证据的作用域。
 
         - CLI_BIN + GATEWAY_ENDPOINT 直连 → 绑定 (cli, endpoint)；
-        - 显式配置包含 TLS 模式和 CLI 文件身份；
+        - 显式配置包含 TLS 模式、CLI 文件身份和实际配置/证书目录上下文；
         - env.sh 可间接切换目标，返回空指纹，禁止复用缓存。
         """
         cli_bin = os.getenv("SIQ_AS_OPENSHELL_CLI_BIN") or ""
@@ -344,6 +347,14 @@ class OpenShellCliBackend(EnforcementAdapter):
                 "env_pair", cli_bin, endpoint,
                 os.getenv("SIQ_AS_OPENSHELL_GATEWAY_INSECURE", "0"), identity,
             )
+            # These inputs survive clean_env() and select CLI registration and
+            # TLS state. A changed project context must invalidate old evidence.
+            context_keys = (
+                "HOME", "USERPROFILE", "APPDATA", "LOCALAPPDATA",
+                "XDG_CONFIG_HOME", "XDG_STATE_HOME", "XDG_DATA_HOME",
+                "XDG_CACHE_HOME", "XDG_RUNTIME_DIR",
+            )
+            parts += tuple(f"{key}={os.getenv(key, '')}" for key in context_keys)
         elif env_sh:
             # A script can source other files or select a different gateway.
             # No stable destination identity exists without running it.
@@ -567,7 +578,13 @@ class OpenShellCliBackend(EnforcementAdapter):
             if "network_policies" not in compiled.artifact:
                 raise AdapterError("openshell_network_intent_missing")
             merged = clone_policy(current.policy)
-            merged["network_policies"] = network_rules_to_gateway(compiled.artifact["network_policies"])
+            network = network_rules_to_gateway(compiled.artifact["network_policies"])
+            if network:
+                merged["network_policies"] = network
+            elif merged.get("network_policies") != {}:
+                # Preserve an already-empty document as a no-op. On actual
+                # revocation match gateway omission, keeping the full digest.
+                merged.pop("network_policies", None)
             expected_digest = policy_digest(merged)
             operation_id = f"opo-{secrets.token_hex(24)}"
             if expected_digest == current.policy_digest:

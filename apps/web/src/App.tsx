@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AuthGate from '@/components/AuthGate';
 import Layout from '@/components/Layout';
+import { ConsoleContextProvider } from '@/components/ConsoleContext';
+import WorkspacePage from '@/pages/WorkspacePage';
 import OverviewPage from '@/pages/OverviewPage';
 import AgentsPage from '@/pages/AgentsPage';
 import AgentDetailPage from '@/pages/AgentDetailPage';
@@ -16,14 +18,16 @@ import NotFoundPage from '@/pages/NotFoundPage';
 
 /**
  * 控制台路由（对齐设计文档 §20.1 信息架构）。
- * 各页已对接 Control API；API 不可达时页面降级为本地示例数据，不阻塞浏览。
+ * 身份与导航由只读控制面上下文派生；无法核对时不展示旧权限入口。
  */
 export default function App() {
   return (
     <AuthGate>
+      <ConsoleContextProvider>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/overview" replace />} />
+          <Route path="/" element={<Navigate to="/workspace" replace />} />
+          <Route path="/workspace" element={<WorkspacePage />} />
           <Route path="/overview" element={<OverviewPage />} />
           <Route path="/agents" element={<AgentsPage />} />
           <Route path="/agents/:id" element={<AgentDetailPage />} />
@@ -38,6 +42,7 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
+      </ConsoleContextProvider>
     </AuthGate>
   );
 }

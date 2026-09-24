@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/change-execution.v1.schema.json",
+  "title": "Change execution and exact audit references v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change_id",
+    "change_status",
+    "evaluated_at",
+    "deployments",
+    "deployments_truncated",
+    "audit_access",
+    "audit_events",
+    "audit_truncated",
+    "expanded"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "change-execution/v1"
+    },
+    "change_id": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "change_status": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deployments": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "environment_id",
+          "environment_name",
+          "binding_id",
+          "target",
+          "status",
+          "created_at",
+          "verification_level",
+          "independent_result",
+          "backend_mutated",
+          "error_digest"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "environment_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "environment_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "binding_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verification_level": {
+            "enum": [
+              "none",
+              "config_readback",
+              "behavior_enforced",
+              "failed",
+              "stale",
+              "unknown"
+            ]
+          },
+          "independent_result": {
+            "enum": [
+              "not_checked",
+              "verified",
+              "mismatch",
+              "unreachable",
+              "no_receipt",
+              "unknown"
+            ]
+          },
+          "backend_mutated": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error_digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "deployments_truncated": {
+      "type": "boolean"
+    },
+    "audit_access": {
+      "enum": [
+        "allowed",
+        "denied"
+      ]
+    },
+    "audit_events": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "action",
+          "actor_id",
+          "resource_id",
+          "created_at",
+          "review_digest",
+          "error_digest"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "action": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "actor_id": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "resource_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "review_digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error_digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "audit_truncated": {
+      "type": "boolean"
+    },
+    "expanded": {
+      "type": "boolean"
+    }
+  }
+}

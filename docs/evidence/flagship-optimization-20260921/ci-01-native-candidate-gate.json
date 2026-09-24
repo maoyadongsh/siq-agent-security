@@ -1,0 +1,123 @@
+{
+  "absolute_paths_included": false,
+  "candidate": {
+    "candidate_id": "dgx-spark-hermes-v0210-confidential-3d82b38a-20260921",
+    "deployment_verified": false,
+    "production_eligible": false,
+    "security_binding": "locked_baseline_ancestor_plus_clean_github_sha",
+    "sibling_repository_binding": "exact_head"
+  },
+  "gate_contract": {
+    "evidence_max_age_seconds": 14400,
+    "policy_sha256": "16b8ea3fa44a8f6106ac600d8fb9cc2139b5c7a456133bc2d9ace5d80939525a",
+    "required_runner_labels": [
+      "self-hosted",
+      "Linux",
+      "ARM64",
+      "dgx-spark",
+      "siq-openshell"
+    ],
+    "required_suites": [
+      "security_candidate_contracts",
+      "security_hermes_adapter",
+      "research_openshell_contracts",
+      "hermes_native_regression"
+    ],
+    "suite_commands_operator_overridable": false,
+    "workflow_dispatch_only": true
+  },
+  "implementation": {
+    "candidate_doctor_sha256": "dddcd20496333eca9e0224d53b0cac8a0167059973209dd3d31975e5a6898e73",
+    "candidate_lock_sha256": "901a5f574cdd51b54551e0a8b86a26a809f9874d0ce3771751c49081f0769005",
+    "gate_tool_sha256": "df8b9f464df81e27b27625ab783aa7de673eb3c64ee88457097d347838520bf7",
+    "private_logs_uploaded": false,
+    "static_checker_sha256": "f33559485a0db3825a473ae99a0b06dd350348d09d65a069c97f45c317d661b7",
+    "workflow_sha256": "973f8505c1f9468d95d57b99c1eeeb5cb8b8d1438906f652aaeff2b4782a1402"
+  },
+  "local_model_recovery_attempt": {
+    "configuration_and_weight_identity_match_governed_route": true,
+    "container_exit_code": 1,
+    "existing_model_services_changed": false,
+    "failure_category": "cuda_out_of_memory_during_engine_initialization",
+    "model_alias": "siq.local.nemotron-3.5-lightning.nvfp4.v1",
+    "private_raw_log_retained": true,
+    "private_sanitized_attempt_sha256": "b594358a6c1ef92faf6ba8f87720d2f1786876cd3dd9f641a9fe21849748430b",
+    "ready": false,
+    "retry_with_reduced_governance_parameters": false,
+    "secrets_included": false,
+    "start_attempted": true
+  },
+  "local_platform_probe": {
+    "architecture_matches": true,
+    "exit_code": 1,
+    "gpu_matches": true,
+    "product_matches": true,
+    "report_sha256": "36f8de5b5bf6441dbcd034430e1cc4e91cde2819431c1c830b5fec328bcb14d0",
+    "repositories_clean": false,
+    "runner_labels_match": true,
+    "status": "blocked_before_candidate_verification"
+  },
+  "native_pass_claimed": false,
+  "post_sp02_candidate_refresh": {
+    "aiohttp_patch_sha256": "4d1b3cffdee9ea107f221845f270e5b4f394aa996bc4d424b31266bb183b2e2a",
+    "candidate_doctor_levels": {
+      "candidate_gateway": "pass",
+      "configuration_correct": "pass",
+      "data_security": "pass",
+      "identity_match": "pass",
+      "inference_verified": "pass",
+      "live_environment": "fail",
+      "promotion_boundary": "pass"
+    },
+    "candidate_doctor_report": "docs/evidence/flagship-optimization-20260921/sp-01-confidential-candidate-doctor.json",
+    "candidate_doctor_report_sha256": "4f318991881b4416bd3e46d30ee86c5cd4c7ba3d33a25329e94f146f9af762f3",
+    "candidate_package_ready": true,
+    "current_environment_ready": false,
+    "gateway_status": "healthy",
+    "live_model_bridge": "fail",
+    "live_model_loopback": "fail",
+    "locked_image_aiohttp_compatibility_probe": "passed",
+    "locked_image_rebuild_required_for_aiohttp_fix": false,
+    "native_pass_claimed": false,
+    "resource_audit_operational_ready": true,
+    "source_baseline_binds_aiohttp_patch": true
+  },
+  "readiness_effect": "none",
+  "recorded_at": "2026-09-21T18:40:00Z",
+  "regression_discovery": {
+    "failure": "aiohttp_web_was_disabled_when_optional_request_key_import_failed",
+    "first_run": "36 failed and 54 passed in the selected Hermes set",
+    "fixed_module_sha256": "8d3fc3e4e48971ff600d168589c480bbbf43334e61953c43306309b9a9546843",
+    "negative_test_added": true,
+    "post_fix_selected_hermes_suite": "91 passed",
+    "test_module_sha256": "6800b707f4e141f47b4154bd1718149c3f3638d567f0b1023487df7fe85321b2"
+  },
+  "required_live_evidence": {
+    "candidate_doctor_all_levels_pass": true,
+    "fresh_resource_audit_bound_to_batch": true,
+    "gateway_status_must_equal_healthy": true,
+    "payload_column_read_must_equal_false": true,
+    "resource_operational_ready_must_equal_true": true,
+    "suite_receipts_bound_to_candidate_batch_policy_command_and_repository": true
+  },
+  "schema_version": "siq.flagship.ci01-native-candidate-gate/v1",
+  "scope": "dgx_spark_arm64_openshell_hermes_confidential_candidate_ci",
+  "secrets_included": false,
+  "status": "implemented_live_blocked",
+  "test_results": {
+    "action_pin_checker": "passed",
+    "candidate_doctor": "11 passed, 11 subtests passed",
+    "hermes_native_regression": "91 passed",
+    "python_compile": "passed",
+    "research_openshell_contracts": "96 passed, 1 skipped",
+    "security_candidate_contracts": "31 passed",
+    "security_hermes_adapter": "124 passed",
+    "workflow_contract_checker": "passed",
+    "workflow_yaml_syntax": "passed"
+  },
+  "unresolved_live_blockers": [
+    "All three local worktrees are dirty, so the native platform gate correctly fails before candidate-batch verification.",
+    "The locked local model is not currently reachable on both required endpoints.",
+    "No GitHub self-hosted native workflow run has passed, so no native candidate pass is claimed."
+  ]
+}

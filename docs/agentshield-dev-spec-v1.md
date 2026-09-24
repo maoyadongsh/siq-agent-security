@@ -1,5 +1,7 @@
 # siq-agent-security 开发规格 v1（Development Specification）
 
+2026-09-24 请求级固定报告生成增量见 [执行合同](development/research-report-generation-contract-20260924.md)：新增严格结构化工具，按公司只读/本次运行可写分别裁决；不放宽 terminal 的 unknown 副作用拒绝。工具实现、镜像身份和真实端到端验收缺一不可，不自动启用或升级冻结发行版本。
+
 - 日期：2026-09-04
 - 状态：**生效**；实现必须以本文为准，偏离先改本文再改代码
 - 上游文档：ADR-011（决策）→ `agentshield-design-v1.md`（方案）→ **本文（规格）** → `packages/contracts/`（合同事实源）
@@ -553,9 +555,211 @@ O04 复核修订以 `packages/contracts/openshell-capability-evidence.v3.md` 为
 
 ### 3.10.1 个人发现增量（2026-09-10）
 
+E162 发现故障验收修正：扫描预览的 available 必须通过当前进程实际只读打开检查；目录最多读取一个条目验证可枚举（空目录 EOF 通过），不遍历、不读取配置正文。沿用 safePath 与 statefs 打开约束，复核文件类型和打开前后对象身份。明确手动输入的不可读目录在预览及扫描提交前拒绝；默认不可读位置显示 unreadable，缺失可选位置仍是 missing。页面保留错误输入供修正，目录恢复后重新扫描可更新部分成功结果。本检查仅证明当前观察时可读，不代替扫描时重验或原子路径隔离。
+
 按 [ADR-020](adr/0020-personal-discovery-and-skill-identity.md) 实施 UX-005：Skill 安装身份按本机规范化目录稳定生成，内容版本独立保留摘要；支持有界分类目录、profile Skills 和基于配置的多个消费者关系。新增关系仅为 inferred，不改变权限事实来源。台账兼容旧 locator/ID，路径与内容不变的迁移不撤权，内容变化保持原有复核与撤权语义。新个人扫描入口触发真实扫描并展示范围和结果；手动范围独立版本化保存，不能以缓存读取伪装重新扫描。接口和关系合同见 `packages/contracts/local-discovery.v1.schema.json`。
 
+2026-09-23 便捷接入增量：配对后的首页和资产页复用既有 discovery 接口；本服务尚无扫描
+记录时自动发起默认范围扫描，同页并发挂载合并请求，已有扫描直接跟踪。默认扫描不需要
+填写目录，额外目录预览/登记折叠到高级选项。扫描完成后刷新实例列表，按服务端发现的
+Hermes/OpenClaw 实例显示名称、配置状态及“接入此实例”，直接传递原 instance_id 进入
+现有预览/批准/安装事务；不让用户复制目录或手工编辑配置。没有配置证据的实例不显示
+为已发现；安装和运行验证分别呈现，不把发现或安装提升为已保护。操作失败保留重试，
+自动扫描不得循环重试或静默安装。此阶段复用现有合同，不新增凭据存储、自动权限批准
+或模型调用；OpenShell/模型的统一发现与接入闭环继续按后续增量实施。
+
+同日对象分类增量：资产页按明确 source_type 区分智能体角色、Skill 和其他配置；框架
+列表汇总明确的框架配置和角色配置（Hermes 仅提供 profile 时仍应显示框架），不从
+单个 Skill 或显示名称推断框架安装及角色。配置关系注明尚未核验调用。详情的权限链接仅采用后端关联
+Grant 的 subject.id；多个主体分别提供入口，不回退到资产显示名。实例运行记录入口
+使用已签发 Runtime Identity 的 platform/agent_id，沿用任务列表的可信绑定筛选。
+Skill 检查期间阻止重复提交，结果及错误在主列表外显，不藏入高级操作折叠区。
+
+按钮完成标准：真实候选 daemon 上完成浏览器点击、后端执行、持久读回与刷新一致性；
+接入覆盖配置冲突后的重新预览、卸载和其他配置保留，权限覆盖先保存后批准、绑定接入
+与停用后的实际适配器拒绝。模拟接口、返回成功或按钮变灰均不能单独证明链路完成。
+连接组件安装、适配器钩子验证和原生宿主进程运行分别记账。验收细则见
+[易用性任务书](development/user-experience-onboarding-taskbook-20260923.md)。
+
+2026-09-23 Hermes 接入后验证接续：安装成功回调携带实际应用的平台、操作和实例，
+不得使用弹窗打开时的操作推断最终结果。首页重新读取实例诊断后，仅对刚成功安装且
+诊断 ready 的 Hermes 实例显示“验证刚接入的实例”，打开精确实例的既有原生自检预览；
+仍须用户确认才启动临时测试会话。卸载、恢复操作、读回失败及非 ready 实例不得显示
+此继续按钮；页面刷新后仍可从对应实例卡片“验证连接”读回后台检查，无自动重启或
+重复授权。验收必须从浏览器接入开始，经过真实 Hermes CLI、允许/拒绝工具调用、
+关闭/刷新后的结果读回及撤权清理；合成模型只验证工具链，不代表真实模型或业务质量。
+
+2026-09-23 首次权限接续：实例权限面板允许从现有资产清单选择有明确 admit_path 的
+Skill，在同一弹窗调用既有 `/v1/admit` 完成检查并选中返回的检查结果。只读取可信
+清单路径，不执行 Skill 内容，不自动创建、批准或部署权限；隔离结论不可用作授权
+参考。检查失败保留所选对象并允许显式重试；成功后继续原有起草、编辑、批准与接入
+链路。网络/模型等补充配置及协议标识按需展开，拒绝限制和必须确认的条件不能隐藏。
+Hermes 与 OpenClaw 均须通过真实浏览器授权生命周期；OpenClaw 额外使用现有安装的
+原生插件加载器及原生工具包装验证目录内允许、越界拒绝、停用后拒绝。
+
+运行详情默认先展示结果状态和原因，再提供运行模式、数据去向与权限摘要；工具调用、
+授权来源、导出和原始记录放在可展开的审计区。原有历史完整性失败提示仍外显。
+候选发布/CI 等内部工程门禁从业务结果默认区移入技术详情，不改变其未核验状态；
+无独立效果证据时仍显示未知，不能用允许调用或正常返回代替已完成。
+
+2026-09-23 自检记录直达：新增管理会话限定的
+`GET /v1/runtime-checks/{check_id}/activity`，响应合同
+`local-runtime-check-activity/v1`。读取已签名自检结果后，使用完整且有界的验签回执
+快照投影，要求结果的全部 receipt_ids 唯一存在、且全部属于同一个可信绑定的 Hermes
+活动；缺失、重复、跨主体/会话/意图、未归属、完整性失败不得返回活动链接。不得从
+check_id 拼接 task_id，不得按名称/时间猜测或仅搜索首 500 条。没有回执返回 404，
+尚在运行或绑定不完整返回 409，快照不可用返回 500；不接受额外查询参数。旧自检结果
+合同保持不变，配置漂移失效的结果仍可查看历史记录，不恢复其通过状态或权限。
+页面“查看本次运行记录”按需调用此接口，携带实际活动 ID、快照与完整主体筛选进入
+既有详情；失败留在原弹窗提供可重试提示。刷新及返回保留精确筛选；快照变化沿用
+既有重新加载机制。自检通过仍不等于业务结果已核验。
+
+2026-09-23 运行列表查询增量：新增只读管理查询
+`GET /v1/task-activities/query`，合同 `local-task-activity-query/v1`；保留原列表和 search
+合同。复用完整验签快照和全部绑定边界，先按平台/主体/会话/任务/关键词、最后一条
+回执时间及调用裁决筛选，再按最后回执序号降序分页。时间 from 包含、to 不包含，
+必须 RFC3339 且 from < to；未知时间不匹配指定时间范围。裁决仅统计 decision 和
+历史空 record_type，observation/hold_resolution 不重复计为调用；未知 action 单列
+other。action 筛选含义是“存在该裁决的调用”，不是任务成功、失败或完成状态。
+返回 last_recorded_at（无有效时间为 null）及五类裁决计数，完整性、快照和超限拒绝
+沿用旧语义。筛选必须作用于完整结果，不可只过滤当前页。
+
+界面默认展示框架、最近记录时间、调用裁决及可展开的精确标识，不猜角色名称或任务
+标题；关键词/平台/裁决/时间为常用筛选，精确标识在高级筛选。提供最近 24 小时/7 天
+快捷范围，应用时固化起止时间到 URL；刷新不悄悄改变范围。详情、返回与翻页保留
+全部筛选。完整性失败仍显式提示，无结果证据不得根据 allow 显示任务成功。
+
 ### 3.11 个人客户端 M1：启动识别与管理会话恢复（2026-09-10）
+
+2026-09-23 OpenShell 发现接续：新增管理只读 `GET /v1/openshell/targets`，
+合同 `local-openshell-targets/v1`。仅使用现有 CLI 配置及真实 status 握手，通过
+`sandbox list --limit 1000 --output json` 获取当前网关资源；严格校验唯一 UUID/名称、
+数组上限和完整 JSON，丢弃 labels/路径等非必要信息。不得按 Docker 名称猜归属。
+达到 1000 项视为可能截断而拒绝完整清单主张；命令或协议失败提供分类，不当空清单。
+PATH/脚本未固定端点时清单仅为发现结果，不能据此读取或改变指定目标策略。
+
+`POST /v1/openshell/targets/inspect` 是只读操作，接受上一清单中的名称、UUID 与
+endpoint_fingerprint；前后重新列举并核对同一端点与 UUID，再复用 DiagnoseTarget
+读回当前策略版本/摘要。失联、重建、配置变化、协议异常拒绝，不重试写入；无创建、
+启动、exec、策略下发或授予权限。此处固定端点与协议校验不等于加密服务身份或隔离
+行为验收。响应新合同 `local-openshell-target-inspection/v1`，隐藏原始配置、凭据和输出。
+页面在首页及运行环境页共享该入口：自动发现现有网关，明确来源/时间/CLI 版本，选
+沙箱后显式“读取当前策略”；错误可重新发现，未安装属可选能力缺失而非故障。
+首页智能体目录扫描完成不得取消独立的 OpenShell 策略读取；该区块由自己的
+“重新发现 OpenShell”更新。运行环境整页刷新须取消旧请求，不能回写过期结果。
+模型服务的统一发现和凭据引用接续仍须单独实现，不能由此列为完成。
+
+2026-09-23 模型配置发现接续：管理接口 `GET /v1/model-connections` 只读取既有
+Hermes 实例和 OpenClaw 默认配置根，不扫描端口、不调用模型、不写配置。展示 Hermes
+`model` 显式字段及 OpenClaw 默认模型/备用模型的已配置 provider；这是配置声明，
+不是原生运行时路由或进程在线证明。Hermes 只解析无别名/合并/重复字段的简单
+model 映射；其他 YAML 构造及 JSON5/include/动态引用不猜测，显示需在原框架核对。
+凭据仅在后端解析明确 inline/env 引用，Hermes 明确 key_env 可读同 profile 的 .env
+字面赋值；不执行 dotenv、不推断继承凭据、不返回原配置/密钥。未解析凭据不可声称可用。
+OpenClaw 支持显式 env SecretRef 与已登记 file provider 的 JSON Pointer 引用；
+文件路径须为绝对路径、无符号链接、普通且有界，POSIX 权限仅属主可读写，Windows
+复用私密文件 ACL 校验。只读取 JSON 字符串叶节点，拒绝重复键/错误指针及 exec provider。
+凭据文件更新也改变选择指纹；源文件不会被复制到产品状态或修改。
+
+`POST /v1/model-connections/check` 只接收已发现对象 ID 与不透明配置指纹，重新
+读取并匹配配置后，对该对象显式配置的 OpenAI 兼容 base URL 发出 GET models；
+只验证返回列表是否包含所选模型，不生成回答、不发送业务内容、不切换模型或回退云端。
+仅支持 Bearer 或无认证的明确接口配置；未知协议/认证/动态配置禁用检查并解释。
+配置指纹用进程私有 HMAC 绑定配置、已解析凭据及实例，检查后重新读取复验；配置变化
+返回冲突，浏览器清除旧成功并提供重新发现。重启后旧选择失效。
+不跟随重定向、不使用环境代理、不降低 TLS 校验、不访问链路本地/元数据地址；HTTP
+仅允许明确的本机或私网 IP，网络请求有超时与大小限制。区分认证失败、限流、连接
+失败、接口不支持、模型不在列表和列表匹配，均不得推断余额或实际推理成功。
+独立合同为 `local-model-connections/v1`、`local-model-connection-check/v1` 与
+`local-model-connection-result/v1`。首页/运行环境共享选择和检查入口，刷新不复用旧结果。
+
+2026-09-23 模型回答测试接续：新增管理 `POST /v1/model-inference-tests` 接受
+request_id、已发现模型 ID、配置指纹和明确 `confirm_test=true`；只发送后端生成的
+固定连接测试指令及随机标记，不接受用户提示词/URL/工具，不访问业务数据。
+对配置中的同一 OpenAI Chat Completions 服务发出一次非流式请求，输出上限 512 token，
+超时 45 秒。前后复验配置/凭据；仅当返回模型名称精确匹配、结束原因 stop、唯一
+assistant 回答精确匹配随机标记且没有工具调用时记 passed。不返回回答原文或推理内容。
+模型结果不能产生授权、隔离效果或业务成功结论。
+
+请求先登记进程内测试记录，再异步调用；同时最多一个测试。同 request_id/参数
+重发返回已有记录，不重复调用；同 ID 参数变化拒绝，最多保留 1024 个记录且不驱逐
+去重信息。`GET /v1/model-inference-tests?model_id=...` 返回当前服务会话内该模型
+最近记录，刷新恢复进行中和完成结果，不再次发起推理。关闭页面不取消已提交测试，
+超时/连接中断记 uncertain 并停止，不自动重试、不回退其他模型或地址。
+记录不跨服务重启保存；重启后的对象指纹和旧选择失效，页面明确测试只属本次服务会话。
+配置变化使旧结果失效；完成观察 5 分钟后显示过期。独立请求/记录/最近记录合同为
+`local-model-inference-create/v1`、`local-model-inference-record/v1`、`local-model-inference-latest/v1`。
+
+2026-09-23 运行结果易读与证据直达（E142）：沿用 `local-task-security-view/v1`、
+`completion-status/v1` 和已有验签证据读取接口，不从允许/拒绝推断业务执行状态。
+详情先显示结果核验结论、原因和下一步，逐项按签名要求的原顺序编号；编号是当前
+任务内的展示顺序，不冒充业务名称。每项只打开本项返回的证据引用，安全事件单列，
+要求与证据原始 ID 按需展开。没有业务输出合同就说明报告正文/文件下载尚未接入。
+历史 hold 显示“需批准裁决”，不能称实时待审批。证据详情采用现有模态框，保留
+同一 task_id/id 校验；未知原因用保守文案并将原码折叠，不回显为业务结论。
+加载失败可显式重试只读请求；刷新证据必须撤下旧成功内容，失败不保留旧成功。
+快照失效要求刷新整页详情，禁止拼接不同快照。验证使用隔离真实服务、真实签名
+意图/裁决及宿主文件观测，覆盖缺证、失败、冲突、核验通过、跨任务响应拒绝、
+重试/刷新、键盘关闭与焦点恢复。合成文件观测不冒充原生模型业务运行。
+
+2026-09-23 权限编辑业务表达（E141）：沿用 `grant-resource-edit/v1` 及原版本化
+保存/批准/应用合同。工具选择默认从当前授权声明和当前表单中列出原始工具名，辅以
+固定中文说明；未知工具标为自定义，不推断安装能力。高级手动输入保留，不自动补工具。
+“采用只读资料方案”仅保留当前已选择的 `read_file/read/cat/search_files`（大小写
+匹配仅用于说明，提交原文），把本页读写目录合并为只读，清空本页网络允许、模型允许；
+网络拒绝及后端保留事实/批准条件不变。无可保留读取工具时禁用。按钮只修改本地草稿，
+显示影响和可撤回操作；后续手动编辑后不再提供会覆盖新编辑的撤回。用户另行保存待批准
+权限并核对、批准、接入，不能由模板授予 Authority。明确摘要与字段同步，按工具名
+核对服务器保存结果，验证被移除工具、越界读取和停用身份仍被后端拒绝。
+
+E141 回归补充：卸载预览不使用 Runtime Identity。前端按实际动作所需的身份/原生启用
+参数驱动预览，清空权限面板的状态不得触发相同卸载预览的二次请求；保留后端管理互斥
+与错误恢复；失效/关闭的预览使用 AbortSignal 取消，只有明确 `adapter_busy` 拒绝
+可间隔 1 秒重试最多 2 次，其他错误不自动重试，安装/卸载写入不自动重试。
+真实权限替换→停用→卸载旅程核验成功预览及有限请求数。
+
+2026-09-23 已登记项目 Hermes 接续（E140）：复用 `local-discovery-roots/v1`
+显式登记的最多 16 个项目，仅读取每个项目的 `.hermes`、`agents/hermes` 及其
+一级 `profiles/*`。普通容器目录不构成角色，必须有普通文件 `config.yaml` 或
+`SOUL.md`；不递归搜项目、不读取启动脚本、不寻找/执行项目 CLI，不跟随目录符号链接。
+项目新增实例总数最多 128，每容器 profiles 最多 64；错误和截断显式报告。
+库存、模型、实例、接入/运行身份/Skill 目标和命令行复用同一目录 ID；项目登记
+不意味着批准、安装或执行。相同根按路径去重，既有身份、默认/active 不变。
+
+`GET /v1/adapter/instances?platform=hermes&include_projects=true` 返回独立
+`local-adapter-instances/v3`，新增 source `registered_project`；不带参数仍是原
+v1 默认/环境范围，不改变既有消费者。读取登记失败时 v3 返回明确 issue 且不接受
+未知项目 ID；写入仍走原预览、摘要复验和明确应用。被移走、标记消失或换成 symlink
+的项目角色不可解析，过期计划不能写其他 profile。CLI 实例枚举和 SEC 解析同样
+读取当前登记。前端添加一次项目，完成扫描后同时刷新实例和模型；位置说明给出
+项目来源，同名角色保留不同 ID。项目私有 OpenShell 上下文与任意布局仍不推断。
+
+2026-09-23 多网关只读选择接续（E139）：管理 `GET /v1/openshell/gateways`
+只通过已明确的 CLI（env_pair 或 PATH）执行 `gateway list --output json` 读取本地
+登记，不扫描磁盘、启动网关、选择原生 active gateway 或读取/复制私钥。Env script
+无法固定 CLI 身份时保持不支持多网关，既有当前环境读取入口保留。清单最多 128 项、
+输出有界、拒绝重复键/重名/非法名称或地址；不透传 auth/source 等原始字段。公开 ID
+绑定 CLI、HOME/XDG 和登记名，选择指纹另绑定当前清单原文摘要及 CLI 文件身份。
+
+新增管理 `POST /v1/openshell/gateways/targets` 和
+`POST /v1/openshell/gateways/inspect`，仅接受已发现的 gateway_id、配置指纹及现有
+沙箱 UUID/名称/端点指纹。服务端重新读取登记并匹配后创建隔离的只读 Client，以明确
+`--gateway` + `--gateway-endpoint` 使用该登记认证，TLS 验证保持开启；调用后再次核对
+登记指纹。前后不一致拒绝。所选网关不可达显示未连接，不能回退到默认网关或把失败
+当作空清单。成功清单的网关身份须匹配登记名，策略读回复用现有 UUID/修订/摘要复验。
+
+独立合同为 `local-openshell-gateways/v1`、`local-openshell-gateway-select/v1`、
+`local-openshell-gateway-targets/v1`、`local-openshell-gateway-inspect/v1`、
+`local-openshell-gateway-inspection/v1`；嵌套原 targets/inspection v1，不改变旧接口。
+页面仅保存无权限效力的选择 ID，刷新后用新登记清单恢复，登记消失明确提示重新选择，
+不静默切换。网关切换清空旧沙箱/策略并取消旧读取；库存扫描不取消独立的策略操作。
+选择只影响当前页面查看范围，不更改智能体运行位置、执行客户端或 effective 权限。
+
+既有命名网关 mTLS 接续：显式 CLI/endpoint 配置可补充
+`SIQ_AS_OPENSHELL_GATEWAY_NAME`，仅接受安全单段名称。仍固定同一 endpoint，同时传
+`--gateway <name>` 让原生 CLI 使用该已注册网关的认证材料，不复制或读取私钥。
+名称、HOME/XDG 配置位置加入调用指纹；缺少显式 CLI/endpoint 时不得单独采用该名称，
+非法名称在执行命令前拒绝。没有设置名称时保持原 argv/发现路径不变，不降低 TLS 校验。
 
 依据 [ADR-019](adr/0019-local-session-recovery.md) 和 [个人体验任务书](personal-experience-lan-team-development-taskbook-20260910-145507.md)。本节是当前已授权个人开发周期增量，历史发布/比赛快照不变。
 
@@ -699,6 +903,10 @@ Linux service-rollback 增加 --restore-missing-binary，与 --confirm-rollback 
 已有健康实例时先复验目录健康、当前程序 unit 的签名归属及 manager active/PID/注册 scope，再复用，不申请主 Writer、不换配对码或重启。其他情况复用 init 的不覆盖语义，然后 service-register、service-start；部分失败保留已完成步骤，重试仍逐步复验，不删除未知对象。显式端口与已有配置冲突由初始化/复用检查拒绝。成功输出实际端口的管理页面 URL 和独立 pair 操作提示；URL 不带令牌或配对码。没有真正权限生效证据时只报告管理服务就绪。
 
 `--runtime` 仅当前登录会话的注册，适合隔离测试；默认持久注册仍不隐式登录自启。本批只整合已有 Linux 生命周期，Windows/macOS 继续使用前台 start，后续完成对应系统后台入口和安装制品。
+
+E161 首次 Linux 服务准备修正：在创建自身 service-control 锁前，先持主 Writer 建立/读取签名身份；释放后按原生命周期锁→主 Writer 顺序重新加锁，只读重载并比较公钥，再保存签名单位。初次生成仍受原历史状态检查限制，不将 service-control 或未知历史文件加入可忽略白名单。已有历史缺钥、并发锁、损坏密钥及不兼容状态均拒绝；不自动轮换身份。此顺序修复适用于 service-prepare/register 与 setup 的复用路径，不改变发行信任根或批准权限。
+
+E161 Hermes 原生重新接入：原生命令卸载后可能规范化 config.yaml。仅当最后操作为同一配置根/实例的已提交且认证成功的原生卸载、其原始恢复副本路径及认证封装中的副本字节与现存副本完全匹配时，允许新的原生安装复用该不可变副本。副本优先核对卸载输入；旧卸载未读取副本时，最多回查 64 条历史，核对同实例已提交安装封装的原始副本输入或首次发布内容，无证明即拒绝。当前配置仍从实时 YAML 读取，并通过原有无关字段保留检查；不得将历史副本整体覆盖当前配置。未知、篡改或跨实例副本仍拒绝，备份内容不重写。此增量不放宽普通非原生安装、其他文件或其他框架的副本匹配条件。
 
 ### 3.11.19 本机管理页面入口（UX-003/004/012）
 
@@ -1245,6 +1453,20 @@ Git CLI 克隆暂不具备经验证的连接地址固定、逐跳地址约束及
 新版检查使用独立错误映射，不改变旧安装流程：Git 传输未支持 → 503 skill_update_source_unavailable；获取/存储不可用 → 503 skill_install_unavailable；URL 策略拒绝 → 400 skill_update_url_blocked；来源绑定变化 → 409 skill_install_changed；限额 → 413；取消/超时 → 408。UI 不显示底层异常或原始链接，错误不产生“已是最新”结果。
 
 个人控制台从已安装 Skill 发起显式新版检查，ZIP 需输入原链接（不持久保存），展示检查中、失败、无差异或需要确认及截断差异。切换安装/离开组件取消请求并清空旧结果。发现变化后链接至现有更新审阅流程，仍需重新导入候选和用户确认，不自动安装。后台定期自动检查与真实 OS 更新旅程继续独立验收。
+
+### 3.12.36 任务安全视图（UX-01）
+
+新增管理鉴权 GET `/v1/task-activities/<activity_id>/security-view`，合同为 `local-task-security-view/v1`。请求必须携带活动 `view` 与完整 `snapshot`，不接受分页参数；活动不存在返回 404，快照变化返回 409。服务端从一次已验签的完整回执快照生成业务对象引用、运行模式、匿名数据去向、逐动作授权汇总、实际效果及证据完整性，完成前后再次核对回执快照；已读取效果证据也须保持一致。活动超过 10000 条回执或匿名去向超过 1024 项时拒绝，不截断后继续给结论。
+
+业务对象只显示经过任务绑定核对的 task/intent 引用。签名意图存在且与任务、平台、主体和摘要一致时标为 verified；缺少意图仅保留 referenced/missing；未归属回执保持 unknown。当前合同没有受信业务显示名，因此页面明确显示不可用，不从 Purpose、模型文本或任务 ID 猜名称。
+
+运行模式来自签名回执中的 platform、enforcement_mode、model_key 与沙箱绑定存在性；模型键只接受有效 UTF-8、无控制字符、最多 256 字节的受信显示值，同一活动最多 64 个，超限拒绝。模式、模型或沙箱字段缺失及混合时分别保留 consistent/mixed/unknown。数据去向只投影 filesystem/network/message 域及规范资源 SHA-256，不返回路径、主机、接收方、参数摘录或原始内容；涉及数据的效果没有资源引用时计入 unresolved 并显示 partial/unknown。
+
+授权按 action_id 的最终回执状态汇总，hold resolution 覆盖同一动作的等待态。只有 bound Intent 且 AuthorityStatus=valid 的 allow/redact 才计为 authorized；deny、hold 和无法证明的旧记录分别计入 denied、pending、unknown。该统计描述已经裁决的动作，不授予未来动作，也不把 allow 推导为效果完成。
+
+实际结果复用签名 Intent、历史动作和独立 EffectEvidence 的 Completion 结果；verified 继续服从非空要求、非空证据和零 incident 规则。`release_assurance` 在未接入原生候选证据时固定为 `not_evaluated/native_candidate_evidence_not_connected`，页面明确说明任务视图不能替代 CI-01、OpenShell 资源审计或生产批准。未来如接入候选证据必须发布新版合同并完成签名来源、候选绑定、新鲜度和撤销语义，不能把前端文案改成 passed。
+
+前端严格校验活动/快照、状态组合、计数、排序、匿名摘要和 Completion 关系；拒绝授权或效果乐观升级、明文 destination 字段及伪造的发布通过。视图用文字与徽标同时表达状态，窄屏单列；加载失败隐藏旧摘要并明确所有结论未确认。页面仍保留原始回执、历史 Skill 来源、脱敏导出和按需原文管理，各自证明范围不变。
 
 ## 4. 平台适配器规格
 
@@ -1852,6 +2074,58 @@ does not change normalization of exec/shell text (still includes unknown).
 Process-start and returned digest are reported observations, not independent
 process-effect evidence or OS containment. File/network Completion continues
 to use the existing observers and exact immutable execution Intent.
+
+### Fixed sandbox report MCP contract (2026-09-22)
+
+`siq-research-business-call/v1` describes exactly two reviewed MCP operations:
+`mcp__siq_business__research_publish_report` and
+`mcp__siq_business__research_verify_published_report`. These names are case
+sensitive and must match in full; arbitrary MCP names remain unknown. Publish
+accepts only a bounded task ID and two lowercase SHA-256 digests; readback
+accepts only a bounded report key. Extra fields, paths, URLs, invalid types and
+malformed digests remain unknown effects and cannot authorize execution.
+
+This version is specific to the frozen sandbox implementation whose business
+data root is `/sandbox/siq-business`. Publication is file.read + file.write over
+that bounded root; readback is file.read over that root. The descriptor carries
+the actual fixed root as a filesystem resource, so an explicit matching Grant
+and Intent are still required. A tool allow fact alone, a read-only Grant for
+publication, or another filesystem root must deny. No resource is inferred
+from a task ID, digest, prompt or a tool response. Changing the implementation's
+root requires a new contract; a host MCP configured with another root is outside
+this contract and must not claim its scope enforcement.
+
+All operation parameters are high-impact provenance fields. Exact parameter
+constraints and signed receipt digests bind task/request/approval identity;
+the descriptor never reads business files, validates an approval itself or
+claims a publication completed. The frozen publisher separately revalidates
+the exact file digests, approval, quality receipts and atomic publication.
+Actual completion requires independent readback. Synthetic fixture approval
+does not become production IAM authorization. Runtime identity and sandbox
+image/source identity remain separate mandatory deployment evidence.
+
+For synthetic gateway validation, grant only the fixed business root in
+addition to the existing read-only company fixture. If generic write_file is
+retained for the native denial regression, require per-use AgentShield HOLD on
+that generic tool; the model cannot use it to replace publisher inputs or its
+approval. This does not relax unknown interpreter effects or the MCP untrusted
+write approval in Hermes.
+
+The frozen Hermes 0.21 candidate also routes MCP consent from HTTP `/v1/runs`
+to that exact run's registered approval callback. The upstream generic
+unattended-platform classification must not hide this explicit HTTP consent
+surface. Only non-cron `api_server` elicitation is included; absent callbacks
+fail closed, and no CLI prompt or automatic approval substitutes for them.
+Request IDs, run/session isolation, cancellation and single-use consent remain
+owned by Hermes' existing approval queue. This does not enable unattended
+terminal commands or change other platforms' approval policies.
+
+The isolated candidate daemon uses loopback `127.0.0.1:47811` and its own
+private state. `openshell-decision-relay/v4` binds only the existing candidate
+namespace/name shape to this exact upstream; v2/v3 retain upstream 47611.
+No arbitrary upstream option or management forwarding is added. This allows
+new runtime semantics to be exercised without restarting the active daemon or
+borrowing production grants. A v4 relay must never serve a company pool name.
 ### Hackathon structured resource hints (2026-09-08)
 
 Real model reviews exposed a false denial: a `write_file` report body mentioning
@@ -1915,6 +2189,72 @@ ADR-028 核心存储约束：实例记录最多 512 项、单条 16 KiB；`runti
 自动会话核心按 identity ID 与原生 session ID 派生稳定 Intent/task ID；权限包络复用 Grant 工具允许/人批集合并保留 deny 优先，列举已知效果但不允许 unknown，具体资源与条件仍由所选 Grant 裁决。首次签发与绑定分步追加，中断后只复用完全匹配且未过期的原包络；重试不延长期限，撤销或新身份不能重新接管旧会话。此处核心包实现不等于 HTTP 路由、适配器、安装事务或 UI 已接通；须由后续证据分别确认。
 
 ADR-028 HTTP 接入增量：`GET/POST /v1/runtime-identities` 仅管理会话访问，发行返回脱敏身份摘要和客户端凭据路径（不读回秘密），查询返回 issued/revoked/grant_unavailable，runtime_state 始终 unverified。`POST /v1/runtime-identities/{ri}/revoke` 要求版本和操作者。`POST /v1/runtime-sessions` 只接受实例凭据和真实 session_id；派生身份由服务端输出。新增请求严格拒绝缺省、null、重复/未知字段、大小写别名及超过 16 KiB 正文。既有六类决策端点在解析平台/主体/会话后验证凭据范围；身份字段大小写别名或重复拒绝。全局决策凭据保留旧主体兼容，但不得访问 hri-/rca- 保留主体。运行自检的短期启动凭据只认证活动检查已绑定的真实 session；失效即拒绝，不能代替普通实例或管理权限。
+
+### 按请求监督器的自身身份查询与撤销（E102）
+
+独立宿主监督器不得持有管理会话或全局 decision token。新增固定 loopback API：
+`GET /v1/runtime-identity/self` 只接受一个精确 Runtime Identity Bearer，按每次请求的
+签名记录、当前撤销、实例/profile 和固定 Grant 复核，返回
+`local-runtime-identity-self/v1`：自身 identity/instance/agent/platform、grant_ref、
+session_ttl_seconds、`status=active`、`runtime_state=unverified`。不返回凭据、哈希、
+路径、签名或其他身份，不创建 session，不证明工具或沙箱已就绪。
+
+`POST /v1/runtime-identity/self/revoke` 的正文只接受
+`{"schema_version":"local-runtime-identity-self-revoke/v1"}`。撤销对象和 actor 完全从
+已验签发行记录及恒定时间匹配的自身凭据派生，不接受 ID、Grant 或操作者覆盖；
+actor 固定为 `runtime-self:<identity_id>`。此清理权限不依赖仍有效的 Grant、仍存在的
+实例/profile 或未撤销状态，因此授权过期、实例消失以及已撤销后的重复恢复都可安全
+追加或读回同一原始签名撤销记录。绝不重新签发身份、延长会话、重新激活 Grant 或
+撤销其他身份。认证与撤销在既有写锁内完成，持久化失败不能返回成功。
+
+两个端点拒绝 query、编码路径别名、重复 Authorization、错误 method 和正文变体。
+查询拒绝非空正文；撤销采用现有严格 16 KiB JSON 解析，未知/null/重复/大小写别名
+字段拒绝。响应 no-store，撤销沿用 `local-runtime-identity-revoked/v1`。管理会话、
+全局 token 及其他身份的拼接凭据均不能代替自身凭据。自身查询仍受正常授权校验，
+撤销后为 401；撤销写失败为 503，调用方必须保留未确认清理状态。
+
+这些端点仅供宿主监督控制，不加入 OpenShell relay 的七条沙箱路由，不扩大沙箱
+网络 policy 或管理能力。正式 API 接线须核对自身查询的实际 identity/instance/agent/
+Grant 与原批准绑定一致；该接口的实现不代表已完成按请求身份签发、relay 托管或
+真实 API 崩溃后的身份撤销验收。
+
+### 按请求宿主身份签发（E116）
+
+仅管理端 `POST /v1/runtime-request-issuers` 可显式为一个仍有效的 Hermes v1 根身份
+登记签名、不可变的宿主签发许可：固定 parent identity/签名摘要、24 位企业 scope、
+60–3600 秒请求身份期限上限与不超过 24 小时的许可截止时间。许可不创建或批准 Grant，
+继承根身份已选 Grant/instance/agent；根身份、实例、Grant 不再有效即停止签发。每个
+根身份只有一个许可，参数完全相同可读回，变化需撤销原根身份再明确设置。
+
+宿主 `POST /v1/runtime-identity/self/requests` 仅接受已登记根身份的 Runtime Bearer，
+正文为版本、`qwen-request-<16hex>`、原执行绑定 SHA-256 和明确截止时间。独立请求
+身份使用签名私有 `local-runtime-identity/v3`；Grant/agent/instance 不接受客户端覆盖，
+namespace 固定派生为 `siq:openshell:pool:<scope>:<request>:siq_analysis`。只允许该
+前缀加 64 位小写十六进制会话摘要；根身份的已有会话不能由子身份接管。子身份不得
+再次取得签发许可或签发后代，期限不得超过许可、原 Grant 或单请求上限。
+
+每次子身份认证、会话登记、决策及观察复核都读取根身份撤销、许可摘要/截止、请求
+截止和请求取消记录。根身份或 Grant 撤销立即阻断后续认证，子身份仍可用自身凭据
+执行仅清理撤销。原根身份一实例一身份规则不变；请求身份不参与根身份选择/替换。
+会话包络截止进一步收紧到请求身份截止，重复请求/登记不延长时间。
+
+确定性请求身份 ID 按域隔离哈希绑定根身份和请求 ID。签名 request attempt 在凭据/
+发行前排他发布，固定执行摘要、期限和创建时间；中断重试只可复用完全相同尝试及
+私有凭据，响应丢失不会产生第二身份。秘密不从 HTTP 返回，只返回受控凭据路径。
+签名发行记录仍是认证与审计的唯一生效点；孤立秘密或 attempt 不能认证。
+
+`POST /v1/runtime-identity/self/requests/cancel` 接受同一根身份凭据和原 request/
+execution 摘要，仅撤销该请求。根身份/Grant/许可已失效时仍可清理。先追加签名取消
+记录，再确认已发行身份撤销；尚未发行时返回 issued=false 并保留取消记录以拒绝迟到
+发行。所有步骤在既有 writer/进程写锁内完成，原记录不可覆盖，未知持久化不报成功。
+新记录分别位于 runtime-request-issuers、runtime-request-attempts 和
+runtime-request-cancellations 私有目录，沿用 0700/0600、签名、严格 JSON、排他发布
+和有界库存。请求身份计入原 512 项上限；不声称已实现历史归档或无限容量。
+
+宿主 API 不获得管理权限，许可登记不是工具执行批准；资源仍由原 Grant 与沙箱策略
+逐次校验。签发/取消路由不进入 relay，不改变 OpenShell 出网或机密云回退策略。
+本增量不代表业务 API builder、真实 IAM/审批、生产部署或原生 CI 已完成。新 v3
+记录须用匹配版本处理，回滚前先停止新准入并清理，不能删除历史记录规避兼容检查。
 
 ### 已管理实例安装整合（ADR-029，实施中）
 
@@ -2152,6 +2492,24 @@ Windows WorkBuddy 实测补充（2026-09-19）：受管钩子 enroll/decide/obse
 
 真实 Windows Hermes 安装绑定 Skill 调用发现：安装内容逐次复验及签名台账开销使原 5 秒客户端 HTTP 等待先于有效服务端响应结束，导致有 allow 回执但工具实际未执行。Windows Hermes 新安装的 `timeout_s` 与无配置默认值统一为 20 秒/请求；非 Windows Hermes 保持 5 秒。显式配置和调用处更短的超时继续生效，原生原文采集 0.25 秒上限不变。此项只调整已有 HTTP 请求等待，不是整条 hook 的总时限；不增加重试，不更改安装内容校验的服务端 5 秒限额，不缓存 Authority，任何超时仍按原 managed/block 规则拒绝。旧已安装配置不静默改写，须经正常预览、确认接入流程更新。
 
+### OpenShell 宿主决策中继（2026-09-21）
+
+DGX Spark 上的 OpenShell 沙箱不得直接开放 AgentShield daemon，也不得把管理会话、状态签名私钥或全局 decision token 装入沙箱。`openshell-decision-relay/v2` 是 Hermes managed adapter 到宿主 loopback daemon 的唯一沙箱传输增量。OpenShell v0.0.83 会在 Docker 容器网络内为受控业务进程再创建一层网络命名空间，因此绑定容器外层 `127.0.0.1` 的 listener 不能被真实 Hermes 进程访问。当前合同使用 `verified_docker_bridge_gateway/v1`：宿主普通用户 launcher 复验目标 Docker 容器的完整 ID、OpenShell namespace/name/UUID 标签、固定 bridge 的完整 network ID、RFC1918 gateway IP 和容器实际网络挂载，只在该 gateway IP 的受限端口 `47611..47710` 创建 listener，设置 `no_new_privs` 后 exec relay。单实例兼容入口使用 `47611`；pool 槽位由其已预留的本地转发端口确定性映射到 `47612..47710`，每个槽位的沙箱环境、OpenShell 精确网络 policy、launcher 配置和 relay 监听地址必须一致，端口越界或冲突均失败关闭。Hermes 通过固定别名和该槽位的精确端口访问；relay 上游仍固定为 `127.0.0.1:47611`。launcher 不调用 `setns`，不解除 AppArmor，也不把 Docker socket 或任何凭据交给 relay。relay 不创建、不读取、不替换运行身份凭据，只将沙箱提交的精确 Runtime Identity bearer 发送给 daemon 在线复验；同 bridge 的其他进程即使到达 listener，也没有该 sandbox 的凭据和 session 绑定。
+
+配置只含公开绑定事实：Runtime Identity/实例/agent ID、OpenShell namespace/name/UUID/generation、profile、scope、run、会话 namespace、固定 transport 和完整目标 container ID。配置不得包含 bearer、管理会话、daemon 全局 token、签名密钥或私钥路径。启动器创建 binder 前须再次按 sandbox UUID/namespace/name/run/profile/generation 标签唯一解析运行容器，并要求完整 container ID 与配置相同；helper 镜像也必须按 image ID 固定。relay 进程只接受通过 Unix descriptor passing 得到的、已核对地址和监听状态的 fd，不自行从宿主 bridge 或 `0.0.0.0` 监听。
+
+Hermes adapter 在配置 `session_namespace` 时，把原生 session ID 映射为 `<session_namespace>:<sha256(native_session_id)>` 后再注册和裁决；空、超长或畸形 namespace 在 managed 模式下失败关闭。relay 要求所有带 identity tuple 的 JSON 请求严格匹配 `platform=hermes`、绑定 `agent_id` 和该 session prefix；`/v1/runtime-sessions` 同样要求绑定 prefix。Runtime Identity ID 必须与 bearer 前缀精确一致。该映射是 transport scope，不签发权限、不接受调用方自报 scope，也不替代 daemon 的 Runtime Identity、Grant 和签名 Binding 校验。
+
+relay 仅允许 `POST` 且无 query 的七条固定路径：`/v1/runtime-sessions`、`/v1/decide`、`/v1/observe`、`/v1/hold-status`、`/v1/hold-executions/reserve`、`/v1/provenance-reports`、`/v1/raw-task-content/native-captures`。任何管理路径、额外方法、重定向、代理、畸形/重复 identity 字段、超过 1 MiB 的请求或响应都拒绝；上游固定为 `http://127.0.0.1:47611`，重建最小请求头且禁止环境代理。上游失联、身份撤销、session 跨界或响应超限均不得产生 allow。原文辅助采集的失败仍遵循既有可选语义，不反转已经完成的决策。
+
+负向验收至少覆盖：其他沙箱网络命名空间无法连接；同一 listener 上跨 Runtime Identity、agent、session namespace、platform 的请求被拒；端口范围外、host/path/query 变体和继承 listener 地址不一致被拒；管理路由和 query 被拒且未触达上游；bearer 吊销后 daemon 拒绝；relay/daemon 终止后 required Hermes gate 阻断且工具副作用探针保持不存在。合同事实源为 `packages/contracts/openshell-decision-relay.v2.schema.json`。
+
+
+### Qwen 独立候选决策桥（2026-09-22）
+
+`openshell-decision-relay/v3` 专用于 `siq-openshell-scope-validation`，沙箱名称严格为 `siq-qwen38-scoped-<16 位小写十六进制 nonce>`。v2 继续只接受主网关 `siq-openshell-dev` 的既有 `siq-analysis-*` 名称，不自动升级、不更换活动 bridge 二进制。两版都使用经容器实际挂载验证的固定 `siq-openshell-dev` Docker bridge；gateway 的 sandbox namespace 与 Docker network name 是独立字段，不可互相替代。
+
+v3 不增加路由或权限，不改变上游、端口范围、Runtime Identity、会话、凭据文件、容器 UUID/完整 ID 绑定及撤销语义。 Hermes adapter 仅在 Runtime Identity/agent ID 合法、会话 namespace 已绑定、无 runtime-check 凭据混用时接受精确 `http://host.openshell.internal:47611..47710`；拒绝用户信息、尾斜杠、路径、query/fragment、端口变体及其他远端主机。常规宿主仍使用 loopback，传输继续禁止重定向和环境代理。OpenShell 0.0.83 嵌套网络仅允许 policy proxy 出站：该模式还必须由宿主显式设置 `SIQ_AGENT_SECURITY_OPENSHELL_PROXY=http://10.200.0.1:3128`，适配器用固定代理目标构造请求，不读取 HTTP_PROXY/NO_PROXY，不接受其他代理或外部主机。该端点只适用于已核验的固定 OpenShell 版本；其他版本必须重新核验网络合同。版本、namespace、名称组合不一致必须在查询 Docker 前拒绝；Docker 实际 namespace 与配置不一致仍拒绝。合同通过只说明新候选传输可配置，独立身份签发、真实 Hermes 工具正向、效果核验和撤销演练仍需单独证明。事实源为 `packages/contracts/openshell-decision-relay.v3.schema.json`。
 
 ### 运行身份管理响应预算（2026-09-19）
 
@@ -2176,3 +2534,23 @@ WorkBuddy 登记超时仅输出固定阶段分类：请求前截止（含输入�
 `skills/siq-agent-security/` 为可持续修改的开发源码，不携带旧版本的 `skill-manifest.json`。源码合并依赖代码、安全回归与平台检查，不依赖发行私钥。历史 v0.2.0 完整签名包逐字节保存在 `apps/agentshield/testdata/releases/siq-agent-security-v0.2.0/`，仅作兼容验签夹具，不是最新安装入口或新二进制授权。
 
 CI 必须对历史完整包执行官方信任根验签及内容摘要校验，同时用临时测试密钥签署当前源码副本来覆盖 bootstrap 正反路径；测试信任根不得写回真实源码、内置公钥或发行制品。源码中缺失清单时，无论 pinned 或 allow-local 都继续拒绝 bootstrap。新发行须在隔离暂存副本中以正式根对实际 Skill 内容与实际二进制重新签名，安装端不允许跳过验签、目录摘要或平台工件验证。历史证据与比赛快照不修改。
+
+### E149：真实网关 status 版本标记兼容（2026-09-23）
+
+现场 v0.0.83 `status` 返回 `Server Status`、单一 `Gateway:` 和 `Version:`。本地与控制面共享版本语料，接受该经过结构校验的版本行并保留旧 `Gateway version:` 格式；拒绝多版本歧义，不把 CLI Version 或 endpoint 地址当作 gateway_version，不提升配置或行为证据等级。实施记录见 `docs/development/enterprise-openshell-context-e149-spec.md`。
+
+E149 同步要求 env_pair 调用指纹始终绑定传给 CLI 的 HOME、USERPROFILE、APPDATA、LOCALAPPDATA 和 XDG_CONFIG_HOME/STATE_HOME/DATA_HOME/CACHE_HOME/RUNTIME_DIR。目录变化后旧检查/计划失效；此摘要只证明配置输入一致，不证明同路径内容不可变。历史签名和记录不重写。
+
+### E151：撤销全部网络允许规则的写入形式（2026-09-23）
+
+真实 OpenShell 网关完整读回省略空 network_policies。构造空网络意图的完整写入文档时，应删除 network_policies 并据此计算预期完整摘要；不得改变观察策略摘要或忽略非网络差异。完整静态边界/扩展保留，额外字段漂移依旧失败关闭。验收见 enterprise-live-deployment-e151-spec.md 与本批真实执行记录。
+
+E151 兼容边界：当前已为空（省略字段或显式空 map）时保留原完整文档并返回 no-op，不为序列化差异执行无意义写入；只有实际撤销非空规则才省略空网络字段。两种空形式均需证明零 set、摘要/版本不变。
+
+### E152：可选原文的运行来源（2026-09-23）
+
+按 [E152 规格](development/runtime-output-provenance-e152-spec.md) 为已授权原生采集写 v2 envelope，来源哈希绑定 AES-GCM AAD。CaptureWithPermit 从已验证 runtime identity/session/binding 派生来源；原任务级 v1 保留不归属。新增内部运行级 output 列表/读取方法必须核对 task 与完整来源，不能用于默认采集或推定业务成功。现有 v1 管理 API 不增加字段；旧程序拒绝未知 v2 文件，回退保留原密文。
+
+### E153：单次运行输出目录与显式读取（2026-09-23）
+
+按 [E153 规格](development/runtime-output-view-e153-spec.md)，新增管理认证的活动 outputs 列表与 POST read。服务器只从签名历史 activity/binding/intent/runtime identity 解析来源，不接受客户端身份/路径；旧 v1、不匹配来源与非 output 排除。读取不恢复执行权限，正文在明确确认后临时显示，活动快照和预期摘要变化拒绝；密文保留期与仓状态继续生效。

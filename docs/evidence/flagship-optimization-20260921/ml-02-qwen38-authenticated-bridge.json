@@ -1,0 +1,44 @@
+{
+  "schema_version": "siq.flagship.ml02-authenticated-model-bridge.v1",
+  "recorded_at": "2026-09-22",
+  "scope": "isolated_qwen38_candidate_offline_bridge",
+  "model_id": "Qwen3.8-27B-NVFP4",
+  "status": "offline_implementation_verified",
+  "implementation": {
+    "bridge_source_sha256": "c2b337dc84ce840f7698b4777e292cdef86ff6fe701a8f2345ab95760c9cdf28",
+    "bridge_test_sha256": "6db4e34fff82182a99fd8da93a4fea6bfef2442e143b23435035e9399209a5af",
+    "systemd_unit_sha256": "79bacbac7ec8e30248a44620b11e2251d66ba2d7b649dba2c48ef67b54e76a65",
+    "bind_contract": "discovered_openshell_bridge_gateway_ipv4_port_8005",
+    "upstream_contract": "loopback_ipv4_port_8005",
+    "client_auth": "distinct_private_file_bearer_token",
+    "upstream_auth": "host_private_file_key_injected_per_request",
+    "candidate_manifest_checked_at_start": true,
+    "allowed_requests": ["GET /v1/models", "POST /v1/chat/completions"],
+    "request_limit_bytes": 4194304,
+    "response_limit_bytes": 16777216,
+    "concurrency_limit": 8,
+    "upstream_error_body_forwarded": false
+  },
+  "verification": {
+    "new_bridge_fixture_tests_passed": 16,
+    "new_and_existing_bridge_tests_passed": 24,
+    "ruff": "passed",
+    "python_script_entrypoint": "passed",
+    "systemd_unit_syntax": "passed"
+  },
+  "runtime": {
+    "unit_installed_or_enabled": false,
+    "candidate_route_changed": false,
+    "active_sandbox_changed": false,
+    "real_openshell_bridge_verified": false,
+    "hermes_sandbox_inference_verified": false,
+    "route_revocation_verified": false,
+    "candidate_ready": false
+  },
+  "limitations": [
+    "The candidate SGLang service still awaits a controlled restart onto loopback with file-based credentials.",
+    "A generation-scoped client token has not been provisioned into an OpenShell sandbox.",
+    "SSE is bounded and buffered before delivery; latency and client compatibility need live verification."
+  ],
+  "secrets_included": false
+}

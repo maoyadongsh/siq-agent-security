@@ -1077,15 +1077,16 @@ func (e *Engine) evaluateGrant(req Request, s *session, descriptor runtimeaction
 		if credPathRe.MatchString(p) {
 			return ActionDeny, "credential path " + p + " denied (credential facts are never allow)"
 		}
+		write := descriptor.FilesystemWriteHint && !descriptor.ReadOnlyPaths[p]
 		fid, ok := "", false
 		if g.SchemaVersion == "grant/v2" {
 			var err error
-			fid, ok, err = windowsPathMatch(g, p, descriptor.FilesystemWriteHint)
+			fid, ok, err = windowsPathMatch(g, p, write)
 			if err != nil {
 				return denyGrantAuthority(rec, "intent_filesystem_identity_unavailable")
 			}
 		} else {
-			fid, ok = pathGranted(g, p, descriptor.FilesystemWriteHint)
+			fid, ok = pathGranted(g, p, write)
 		}
 		if ok {
 			if fid != "" {

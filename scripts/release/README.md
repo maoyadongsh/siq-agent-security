@@ -38,6 +38,8 @@ python3 scripts/release/readback.py --reference-dir "$release_dir" \
 
 [package.py](package.py) 从固定完整 Git SHA 导出产品允许清单，隔离构建四目标；`--help` 给出候选参数。没有签发参数时产生明确的未签名候选，不宣称为可安装发行版。签发是独立维护者流程，遵守[源码与发行边界](../../docs/skill-source-release-boundary-20260919.md)。工具不更改已发布资产。
 
+当经过验证的增量尚未包含在旧冻结提交中，使用 `--expected-source-inventory <reviewed.json>` 将新提交导出的完整发行源码与已审阅快照比对。清单格式为 `{"schema_version":"siq-release-source-inventory/v1","files":{...}}`，`files` 使用本工具 `inventory()` 的相对路径、SHA-256、字节数、可执行标记，范围恰为 `SOURCE_PATHS`。清单应在评审时固定并另行核对其摘要，不能从待签提交临时生成来代替评审。缺文件、多文件、内容或可执行标记不一致，均在 npm/Go 构建及签发前失败；该清单不是签名或源码证明，不替代正式发行验签。未指定此参数的历史打包行为保持不变。
+
 ```bash
 python3 -m unittest discover -s scripts/release -p 'test_*.py' -v
 python3 -m ruff check scripts/release

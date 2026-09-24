@@ -1,0 +1,99 @@
+{
+  "candidate_ready": false,
+  "failure_history": [
+    "The initial candidate failed before model routing. The legacy custom Provider display name did not identify the locked route.",
+    "Adding provider_key to the legacy list was insufficient because Hermes compatibility normalization discarded that field; the candidate now uses the keyed providers map.",
+    "A later candidate still failed before model routing because the image carried root-owned private runtime subdirectories; the dedicated image now owns them as sandbox.",
+    "Failure artifacts remain owner-only and were not counted as successful inference."
+  ],
+  "image": {
+    "base_image_id": "sha256:4b3f10593ea02f47b57fb57b1bce975291766e658e3ec17509ca0efd16175bb2",
+    "cloud_fallback": "forbidden",
+    "compiled_config_sha256": "d75571f945ffa2947ce492cff701ec61e76760e78cba2d8815cd21d655c2c34a",
+    "image_id": "sha256:22010ff8a757211a7bf8b5739b4b854cd515717d1e6d43a81512c63b3bcb23ad",
+    "offline_provider_resolver": true,
+    "snapshot_mode": "fresh"
+  },
+  "limitations": [
+    "The matched bridge response is 502 because the loopback SGLang upstream is offline; this does not prove successful Qwen inference.",
+    "The old LAN-published SGLang service and command-line credential have not been cut over to the secure loopback file-secret unit.",
+    "This isolated candidate has no enterprise data scope, AgentShield business action, or production writer lifecycle proof."
+  ],
+  "private_artifact_sha256": {
+    "current_generation": "6ad8ed1e0d9796e7a867497db3530229fbea7f7786b7242119286bf83e415860",
+    "current_trace": "6b2bcba2dbaf58bfd903456fc57a0439b19d8c3325496904ee93bf4382974948",
+    "failure_history": {
+      "after_legacy_provider_fix": "c3a5b5a67addc0f177d378eec35a9db94b723ed5451b8b60ae6fb5f6ed9e0bf2",
+      "initial": "8821dc9e9db5e5ac369e03fecdcd5ff83d8b06d84c84a6b9cf0965330e2f4119"
+    }
+  },
+  "production_eligible": false,
+  "proof": {
+    "bridge_baseline_status": 502,
+    "bridge_receipt_count": 1,
+    "bridge_receipt_statuses": [
+      502
+    ],
+    "gateway_health": {
+      "api_key_synthetic": true,
+      "empty_store_valid": true,
+      "http_healthy": true,
+      "runtime_route_valid": true
+    },
+    "hermes_run": {
+      "api_model_alias_matches": true,
+      "create_status": 202,
+      "marker_absent": true,
+      "terminal_status": "failed"
+    },
+    "new_generation_bridge_status": 502,
+    "new_image_generation_rotation_revalidated": true,
+    "old_generation_first_status_after_rotation": 401,
+    "runtime_resolver": {
+      "api_key_placeholder": true,
+      "base_url_local": true,
+      "provider_custom": true,
+      "resolved": true,
+      "runtime_logs_writable": true,
+      "runtime_parent_writable": true
+    },
+    "synthetic_marker_sha256": "3bb5cdcc6fb87084f29dff35d5b0beb3d881891ce96741c6331bfc54528de1d5",
+    "trace_correlated": true
+  },
+  "recorded_at": "2026-09-22T02:25:39+00:00",
+  "runtime": {
+    "bridge_service_active": true,
+    "bridge_synthetic_receipt_enabled": true,
+    "candidate_gateway_empty_after": true,
+    "host_business_mount_count": 0,
+    "model_upstream_loopback_online": false,
+    "old_sglang_service_active": true,
+    "provider_inventory_valid_after": true,
+    "sandbox_removed": true
+  },
+  "schema_version": "siq.flagship.ml02-qwen38-hermes-bridge-trace/v1",
+  "scope": "dedicated_qwen_hermes_candidate_run_to_bridge_receipt",
+  "secrets_included": false,
+  "source_sha256": {
+    "bridge_tests": "cd1e971705772a5a0ccdeb6536f54849404aca73f834d7ad3c98f6b40e465b3a",
+    "bridge_unit": "5e09633f2da10b8f1b690d0922b2ae95341ffd33915219b704a42ceb2a03f502",
+    "candidate_builder": "66f9b459009c0848fba0136521d4b7a495175b31e669ac70b5dc591371f8b581",
+    "candidate_dockerfile": "ba6f0e9daf539a4b3665b1a462a50be7ead158d0451a2d54602d83ca2c1f9ac6",
+    "candidate_entrypoint": "651c15f822ba09e7035f2557e9579b9802a693cf61951fa483ddb2c3958b064d",
+    "gateway_policy": "e45f80d0daa7dcfbbf03bf86ccd73b31df6632433cb89badf273d26107a24ea8",
+    "model_bridge_source": "1322e64dd22315ddfa68f159fab28b9937ef37adc6fe4838b83cec4911fa49d9",
+    "route_compiler": "9dc319eed28950e3454c7e6edbbd0e39d308678a0feada0e681a17024910dca6",
+    "runtime_validator": "3cbcc5973d1e19c70a9d62c1e35291b824cc79bce786e8afd098727c65e48f36",
+    "trace_proof": "7947ef5fb124ea01f9cca65c43c3493d1b0d4c40b7d4cccfaa389e22bc9fca83",
+    "trace_tests": "ea684ef6631bec05691162d090a7b55057f1f062d51e392d22e4ac4241f464ff"
+  },
+  "status": "passed_correlated_outage_only",
+  "validation": {
+    "bash_syntax": "passed",
+    "candidate_cleanup": "passed",
+    "focused_pytest_passed": 88,
+    "ruff": "passed",
+    "sanitizer": "passed",
+    "systemd_unit_verify": "passed"
+  }
+}

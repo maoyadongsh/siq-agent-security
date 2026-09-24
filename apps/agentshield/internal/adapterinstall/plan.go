@@ -206,7 +206,7 @@ func (p *Plan) write(path string, raw []byte, mode uint32, purpose string) error
 			return err
 		}
 		if snapshot.Exists && !bytes.Equal(snapshot.Data, before.Data) && !jsonDocumentsEqual(snapshot.Data, before.Data) {
-			if !p.workBuddyReinstallSnapshot(path, original, snapshot) {
+			if !p.workBuddyReinstallSnapshot(path, original, snapshot) && !p.hermesReinstallSnapshot(path, original, snapshot) {
 				return errors.New("adapter: existing original snapshot needs review")
 			}
 		}

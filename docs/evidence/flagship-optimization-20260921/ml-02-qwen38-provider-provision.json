@@ -1,0 +1,62 @@
+{
+  "absolute_paths_included": false,
+  "candidate_gateway": {
+    "credential_key_names": [
+      "SIQ_QWEN38_BRIDGE_TOKEN"
+    ],
+    "gateway_db_mode": "0600",
+    "profile_export_routes": [
+      "GET host.openshell.internal:8005/v1/models",
+      "POST host.openshell.internal:8005/v1/chat/completions"
+    ],
+    "provider_count_after": 1,
+    "provider_name": "siq-qwen38-bridge",
+    "provider_type": "siq-qwen38-bridge",
+    "providers_v2_after": "true",
+    "providers_v2_before": "<unset>",
+    "sandbox_count_at_provision": 0
+  },
+  "candidate_ready": false,
+  "gateway_endpoint": "https://127.0.0.1:17771",
+  "limitations": [
+    "The bridge systemd unit is inactive; authenticated model traffic from a sandbox is not yet proven.",
+    "The existing Qwen service still has legacy host publication and argv credential exposure pending controlled restart.",
+    "Provider registration does not prove Hermes key_env placeholder resolution, model inference, or route revocation.",
+    "Credential is scoped operationally to a single candidate generation and must rotate after stop and lease revocation."
+  ],
+  "openshell_version": "0.0.83",
+  "primary_gateway": {
+    "name": "siq-openshell-dev",
+    "provider_v2_remained": "true",
+    "qwen38_provider_absent": true
+  },
+  "production_eligible": false,
+  "recorded_at": "2026-09-22T00:11:51.907167+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-provider-provision/v1",
+  "scope": "isolated_openshell_qwen38_provider_configuration",
+  "secret_transport": {
+    "gateway_credential_value_exported": false,
+    "host_client_token_file_mode": "0o600",
+    "host_client_token_separate_from_upstream_key": true,
+    "provision_cli_argv_contains_token": false,
+    "single_json_source_for_bridge_and_provisioner": true,
+    "token_value_recorded": false
+  },
+  "secrets_included": false,
+  "source_sha256": {
+    "provider_manifest": "5bf55a7d5470e5747c27de53f50172abed47d3854c06c924baf43ad3ccff019e",
+    "provider_profile": "4f8a654f25c4348df1bb63a732a9ea83082f33891569bb5b374a9d0da8c87ebd",
+    "provisioner": "33bd8c3a55036a7e94dbcf8b2f89cd74cc6593ce3789810871d717c59ba8ada7"
+  },
+  "target_gateway": "siq-openshell-scope-validation",
+  "validation": {
+    "candidate_manifest_dry_run": "passed",
+    "candidate_provider_export": "passed",
+    "combined_provider_bridge_route_policy_snapshot_pytest_passed": 114,
+    "focused_pytest_passed": 32,
+    "pinned_cli_profile_lint": "passed",
+    "provision_apply": "passed",
+    "python_compile": "passed",
+    "ruff": "passed"
+  }
+}

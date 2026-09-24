@@ -1,0 +1,73 @@
+{
+  "absolute_paths_included": false,
+  "acceptance": {
+    "audit_correlation": {
+      "admission_and_terminal_share_run_ref": true,
+      "audit_trace_hashed": true,
+      "status": "passed"
+    },
+    "business_authorization": {
+      "authorization_snapshot_revalidated": true,
+      "data_scope_revalidated": true,
+      "model_route_digest_bound": true,
+      "tenant_identity_bound_to_scope": true,
+      "status": "passed"
+    },
+    "connector_boundary": {
+      "business_database_accessed": false,
+      "credentials_available_to_connector": false,
+      "network_access": false,
+      "permission_facts_emitted": 0,
+      "status": "passed"
+    },
+    "lifecycle": {
+      "children_terminal_confirmed": true,
+      "runtime_terminal_confirmed": true,
+      "status": "passed",
+      "terminal_status": "succeeded",
+      "write_quiesced": true
+    },
+    "negative": {
+      "cross_tenant_event": "rejected",
+      "hardlink_event": "rejected",
+      "malicious_string_execution": "rejected_without_execution",
+      "raw_identity_field": "rejected",
+      "symlink_event": "rejected",
+      "unknown_or_duplicate_json_field": "rejected"
+    }
+  },
+  "evidence": {
+    "proof_schema": "siq.en01-business-connector-proof.v1",
+    "proof_sha256": "b8bf5aae956ea966e5336620685fe89a5047e78166bda434cfcc197461f49f7e",
+    "research_artifact": "artifacts/openshell/flagship/en01-siq-business-connector.sanitized.json"
+  },
+  "implementation": {
+    "connector": "connectors/siq",
+    "event_contract": "packages/contracts/siq-business-security-event.v1.schema.json",
+    "producer": "apps/api/services/siq_security_export.py",
+    "runtime_hooks": [
+      "agent_run.admitted",
+      "agent_run.terminal"
+    ]
+  },
+  "limitations": [
+    "The event export is opt-in and was validated in an isolated local cross-repository canary; production service configuration was not changed.",
+    "The Edge run-once path is validated, while remote Edge registration still advertises only its earlier four connector capabilities.",
+    "The canary uses the real authorization and governed-route code with synthetic principal values; it does not claim production IAM enrollment.",
+    "The connector observes business facts through a versioned export and does not make the security database authoritative for SIQ business state."
+  ],
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "schema_version": "siq.flagship.en01-business-connector-evidence.v1",
+  "scope": "isolated_local_cross_repository_canary",
+  "secrets_included": false,
+  "status": "passed",
+  "test_results": {
+    "connector_go": "passed",
+    "control_api_schema_contracts": "244 passed",
+    "edge_agent_go": "passed",
+    "research_api_runtime_regression": "112 passed",
+    "research_export_unit": "6 passed",
+    "ruff_and_python_compile": "passed"
+  }
+}

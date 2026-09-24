@@ -2,7 +2,9 @@
  * 桌面端侧边栏支持 展开（图标+文字）/ 收起（仅图标 + tooltip），选择持久化
  * localStorage（非敏感 UI 偏好）；移动端 <768px 为抽屉导航。 */
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useConsoleContext } from '@/components/ConsoleContext';
+import { canVisit, routeAccessKey } from '@/api/consoleContext';
 import { Icon, type IconName } from '@/components/icons';
 
 /** 侧边导航分组（对齐设计文档 §20.1 信息架构；组名折叠态隐藏） */
@@ -16,6 +18,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: '监测',
     items: [
+      { to: '/workspace', label: '工作台', icon: 'overview' },
       { to: '/overview', label: '总览', icon: 'overview' },
       { to: '/agents', label: '智能体资产', icon: 'agents' },
       { to: '/permissions', label: '权限视图', icon: 'permissions' },
@@ -33,7 +36,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: '系统',
     items: [
-      { to: '/environments', label: '环境与 Connector', icon: 'environments' },
+      { to: '/environments', label: '环境与设备', icon: 'environments' },
       { to: '/audit', label: '审计', icon: 'audit' },
       { to: '/settings', label: '设置', icon: 'settings' },
     ],
@@ -65,6 +68,9 @@ function currentTitle(pathname: string): string {
 
 export default function Layout() {
   const location = useLocation();
+  const context = useConsoleContext();
+  const groups = NAV_GROUPS.map(group => ({ ...group, items: group.items.filter(item => canVisit(context.data, item.to)) })).filter(group => group.items.length > 0);
+  const accessible = !routeAccessKey(location.pathname) || canVisit(context.data, location.pathname);
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(readCollapsed);
 
@@ -112,7 +118,7 @@ export default function Layout() {
           </span>
         </div>
         <nav className="nav">
-          {NAV_GROUPS.map((group) => (
+          {groups.map((group) => (
             <div className="nav-group" key={group.label}>
               <span className="nav-group-label" aria-hidden={collapsed}>
                 {group.label}
@@ -169,12 +175,14 @@ export default function Layout() {
             <Icon name="menu" size={20} />
           </button>
           <span className="topbar-title">{currentTitle(location.pathname)}</span>
-          <span className="topbar-phase"><span aria-hidden="true" />证据优先 · 安全控制面</span>
+          <Link className="topbar-phase" to="/workspace">组织与权限</Link>
         </header>
         <main className="content">
-          {/* key 驱动换页入场动画 */}
-          <div key={`${location.pathname}${location.search}`} className="siq-page-enter content-page">
-            <Outlet />
+          {/* 同页查询参数由页面处理；弹窗开关不能清掉未确认写入的恢复状态。 */}
+          <div key={location.pathname} className="siq-page-enter content-page">
+            {accessible ? <Outlet /> : context.status === 'loading' ? <p role="status">正在核对页面访问权限…</p>
+              : context.status === 'error' ? <section className="card"><h1>暂时无法核对访问权限</h1><p role="alert">请重试，当前不显示旧身份的业务页面。</p><button className="btn" onClick={context.reload}>重新核对权限</button><p><Link to="/workspace">返回工作台</Link></p></section>
+                : <section className="card"><h1>当前账号无法访问此页面</h1><p>请联系所属组织管理员，说明需要访问的功能和用途。后端仍会独立检查每次请求。</p><Link to="/workspace">查看我的组织与权限</Link></section>}
           </div>
         </main>
       </div>

@@ -1,0 +1,62 @@
+{
+  "schema_version": "siq.flagship.evidence.request-builder.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.request-builder-evidence.v1",
+    "captured_at_utc": "2026-09-22T20:13:54.159383+00:00",
+    "scope": "formal_builder_orchestration_with_SQLite_threads_locks_and_runtime_doubles",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "combined_before_final_CAS_change": {
+        "passed": 221,
+        "warnings": 656
+      },
+      "final_builder_after_CAS_change": {
+        "passed": 24,
+        "warnings": 72
+      },
+      "overlapping_tests_not_additive": true,
+      "ruff_passed": true,
+      "compile_passed": true,
+      "both_repositories_diff_check_passed": true
+    },
+    "proven": [
+      "ordered_queue_assets_create_issue_supervision_gateway_endpoint_route",
+      "original_lease_renewal_before_and_after_stages",
+      "cancel_waits_for_late_create_issue_endpoint_route_workers",
+      "background_authority_loss_joins_worker_before_cleanup",
+      "pending_lock_held_through_handoff",
+      "duplicate_preparation_does_not_cleanup_previous_request",
+      "highest_recovery_descriptor_cannot_downgrade_on_corruption",
+      "unknown_remote_creation_retains_owner_and_database_row",
+      "resource_cleanup_confirmation_precedes_database_terminal",
+      "full_original_binding_CAS_rejects_concurrent_generation_change",
+      "replacement_owner_not_closed",
+      "business_content_preserved"
+    ],
+    "not_proven": [
+      "actual_API_selector_calling_builder",
+      "real_builder_OpenShell_Hermes_model_business_request",
+      "real_API_crash_restart_and_unknown_early_window_recovery",
+      "production_IAM_approval_events_native_CI"
+    ],
+    "runtime": {
+      "API_model_bridge_unchanged": true,
+      "services_active": true,
+      "services_restarted": false,
+      "live_builder_run": false
+    },
+    "source_sha256": {
+      "apps/api/services/qwen38_request_builder.py": "61a8e18ebef7b3d398075f7fc17d4714b9cb2746ed9f39ec9224fee36992e16b",
+      "apps/api/tests/test_qwen38_request_builder.py": "f4b1aa322d803eced642d7322ca844a1e6b7acf9dfbb7b5b9f5490541a263d06",
+      "docs/architecture/qwen38-request-runtime-v1.md": "38242cb6a58a6f8bc07a37483b6a889ac7c99af827bc839cf6d80ac5ad0d398f",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "52c304f7dfe7409959502633c23887bf6ef8502ba9ef5b3ae6c246bd85304076"
+    }
+  },
+  "research_evidence_sha256": "3d1957a9565d6a6ee692458c246529a64278ae17ece1180dae18837bda03c23b",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "local-task-output-read.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_id",
+    "expected_plaintext_sha256",
+    "confirm_display"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-task-output-read/v1"
+    },
+    "record_id": {
+      "type": "string",
+      "pattern": "^raw-[a-f0-9]{32}$"
+    },
+    "expected_plaintext_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "confirm_display": {
+      "const": true
+    }
+  }
+}

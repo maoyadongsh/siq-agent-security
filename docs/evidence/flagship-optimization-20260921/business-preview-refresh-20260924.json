@@ -1,0 +1,61 @@
+{
+  "schema_version": "siq.flagship.preview-refresh.v1",
+  "passed": true,
+  "checks": {
+    "new_api_healthy_recovery_gate_preserved": true,
+    "preview_switched_to_updated_api": true,
+    "web_rollback_to_previous_api_verified": true,
+    "updated_preview_restored_after_rollback": true,
+    "unauthenticated_result_reads_denied_no_store": true,
+    "main_and_previous_api_identities_unchanged": true
+  },
+  "production_cutover": false,
+  "actual_account_acceptance": false,
+  "task_execution_acceptance": false,
+  "preview_url": "http://127.0.0.1:15173",
+  "preview_api_port": 18085,
+  "after": {
+    "siq-research-api-candidate.service": {
+      "MainPID": "2301727",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "324c01b504e64141bead36cd1ec43bb8"
+    },
+    "siq-research-api-preview-e168.service": {
+      "MainPID": "966940",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "7de20786ec61462dbb90a2495016e595"
+    },
+    "siq-research-web-preview-e168.service": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "InvocationID": ""
+    },
+    "siq-research-api-preview-20260924.service": {
+      "MainPID": "1726190",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "73ffe1c941514aeeaf1175177e4ac33d"
+    },
+    "siq-research-web-preview-20260924.service": {
+      "MainPID": "1735222",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "553256e7093949d2a2b6f40af008b53c"
+    }
+  },
+  "artifacts_sha256": {
+    "source-manifest.json": "765083da52dcd2ff37c55ed3ee3284cd704a0d5a4e5aa1227d6182e0147e9723",
+    "web-manifest.json": "c17471f5a8d54b8a3a994cb160025f8c35ea54dd6d18cfd362d8d908bad77ea5",
+    "launch_api.py": "b15bf6c065516ec0fd4b2ade554a659011cc4a75e9619932b873532e6a77d86a",
+    "prepare.py": "f163bba0eacd83ed065ad7a237b859b8cbf250a983d78c4aa28da5c81b128711",
+    "verify_switch.py": "eec18b3828abff1119f68cd3dcc2a5dfb5c4fff2a703f33a5d952254c5b28ef5"
+  },
+  "web_assets": {
+    "original_build_assets_verified": 256,
+    "compressed_assets_verified": 24,
+    "passed": true
+  }
+}

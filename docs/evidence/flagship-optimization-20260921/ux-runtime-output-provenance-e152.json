@@ -1,0 +1,150 @@
+{
+  "schema_version": "flagship-ux-runtime-output-provenance-e152/v1",
+  "date": "2026-09-23",
+  "goal_status": "active",
+  "task": "UX-11 runtime output provenance foundation",
+  "production_eligible": false,
+  "candidate_descriptor_path": "var/flagship/ux-e152/candidate.json",
+  "source_manifest": {
+    "path": "var/flagship/ux-e152/source-manifest.json",
+    "sha256": "78acf77068e45ab8cd3be8c8c09fd9665aab65b36143f90f35905856a966a88d",
+    "bytes": 244250
+  },
+  "resource_manifests": [
+    {
+      "path": "var/flagship/ux-e152/embedded-web-manifest.json",
+      "sha256": "942de9491c47189974ee4d9549564a5a91c6dbe3bd12ea6517f7c3a8e9c1f147",
+      "bytes": 47625
+    }
+  ],
+  "tests": {
+    "go_packages": 44,
+    "contract_tests": 269,
+    "race_packages": [
+      "rawcontent",
+      "server (focused)"
+    ],
+    "cross_builds": 4,
+    "go_checks": {
+      "path": "var/flagship/ux-e152/go-checks.json",
+      "sha256": "e45ca60effbd5b6ddc223f1e77418b9c12d3028d693c62a2c7c3f89ff47eeaba",
+      "bytes": 113
+    }
+  },
+  "artifacts": [
+    {
+      "path": "var/flagship/ux-e152/build-darwin-arm64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e152/build-linux-amd64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e152/build-linux-arm64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e152/build-windows-amd64.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e152/contracts-full.log",
+      "sha256": "69f3e48213150a9cfb8c2f10998df1b484f28d865086cb2fa7f11ff272a6e311",
+      "bytes": 860
+    },
+    {
+      "path": "var/flagship/ux-e152/fixture.log",
+      "sha256": "f95c233933ed90da956b8b275fa662abcb3fdcb54ac53da52f4125b4310cd5ac",
+      "bytes": 68
+    },
+    {
+      "path": "var/flagship/ux-e152/focused-final.log",
+      "sha256": "6abbc0c56ef5b7c9fdca1d173474fbfe6fd6902399f8577e1fabed46c96cb73e",
+      "bytes": 132
+    },
+    {
+      "path": "var/flagship/ux-e152/go-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e152/go-full.log",
+      "sha256": "a6ff25fa30d2413936f5fd36618855a5199b077d7b227554d90e8f8b27b680f7",
+      "bytes": 3684
+    },
+    {
+      "path": "var/flagship/ux-e152/go-race.log",
+      "sha256": "ab9740c0aef23cf89f60b638b511bec5030df571c0aaaf4b54e05d284cf33dfe",
+      "bytes": 132
+    },
+    {
+      "path": "var/flagship/ux-e152/go-vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e152/native-version.log",
+      "sha256": "9983e395d4c6f5c7ce7e743b7006acb5118ba7c2f8675a0b1b36ce71a89769c2",
+      "bytes": 43
+    },
+    {
+      "path": "var/flagship/ux-e152/rawcontent.log",
+      "sha256": "9c2ba63692658f5c6ecd1a2a82347436ae2d86b7638508b4a7c8e13bb316ba72",
+      "bytes": 68
+    },
+    {
+      "path": "var/flagship/ux-e152/ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/flagship/ux-e152/schema.log",
+      "sha256": "06b7885ca0cdcb3445731620c55857a48b0154d45cd243e903a9574a6c84ce63",
+      "bytes": 634
+    }
+  ],
+  "native_candidates": [
+    {
+      "path": "var/flagship/ux-e152/siq-agent-security-darwin-arm64",
+      "sha256": "9fcd3210b50cc5835d68aeae1aea985a98d209c11d2d6bb39be9b99955d99770",
+      "bytes": 24319858
+    },
+    {
+      "path": "var/flagship/ux-e152/siq-agent-security-linux-amd64",
+      "sha256": "f99181b6348509954653685a09f9c4c3f4b29766c2148a86afc62ff06ee17f36",
+      "bytes": 25368933
+    },
+    {
+      "path": "var/flagship/ux-e152/siq-agent-security-linux-arm64",
+      "sha256": "ffc2e3bf5269e9892469408a0c06ed63de911c7b52de5ef71b5ede78a949ebbb",
+      "bytes": 23845951
+    },
+    {
+      "path": "var/flagship/ux-e152/siq-agent-security-windows-amd64.exe",
+      "sha256": "63137b49091b485435a050b6e5679eaff78eb8a97d48e5f49ef2a508c05dd1c2",
+      "bytes": 25997824
+    }
+  ],
+  "verified": [
+    "Runtime source is persisted atomically with ciphertext and authenticated in AES-GCM AAD.",
+    "Actual native capture HTTP route retains server-verified source without changing adapter request.",
+    "Same task with different identity/session/binding and non-output records are excluded.",
+    "Source tamper, removal and forged schema downgrade cannot authenticate.",
+    "Legacy v1 remains readable by task but never acquires runtime provenance.",
+    "Store reopen, expiry rejection, deletion and filtered credentials are tested.",
+    "Python decrypts Go-generated deterministic sample; each source field is covered by authentication."
+  ],
+  "limits": [
+    "Activity-level output API and UI not yet implemented; do not claim complete business result UX.",
+    "Not a report publication or business lifecycle proof.",
+    "No real Hermes/OpenClaw capture rerun or browser acceptance this batch; real server route tests only.",
+    "Expiry uses injected test time; store reopen is not a process restart acceptance.",
+    "Legacy readers reject v2; preserve state when reverting.",
+    "No activation of user capture, installed replacement, sibling mutation, commit, push or release."
+  ]
+}

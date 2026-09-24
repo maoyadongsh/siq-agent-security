@@ -24,8 +24,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILE_STEMS = {
     "2026.5.12": "2026.5.12-approval-execution-recheck-v2",
     "2026.9.4": "2026.9.4-approval-execution-recheck-v1",
+    "2026.9.5": "2026.9.5-approval-execution-recheck-v1",
 }
 ADAPTER = ROOT / "adapters/runtime/openclaw-agentshield/index.ts"
+COMPATIBILITY_MANIFEST = ROOT / "patches/openclaw/compatibility.v1.json"
 MARKER = ".siq-controlled-runtime.json"
 
 
@@ -85,7 +87,44 @@ def profile(version: str) -> tuple[dict, Path]:
     require(data.get("version") == version, "patch_profile_version_mismatch")
     require(digest(regular(patch)) == data["patch_sha256"], "patch_checksum_mismatch")
     require(digest(ADAPTER) == data["adapter_sha256"], "adapter_checksum_mismatch")
+    if version == "2026.9.5":
+        validate_compatibility_manifest(data, patch)
     return data, patch
+
+
+def validate_compatibility_manifest(metadata: dict, patch: Path) -> None:
+    """Bind the current OC-01 profile to its stock/controlled support tiers."""
+    manifest = json.loads(regular(COMPATIBILITY_MANIFEST).read_text())
+    require(manifest.get("schema_version") == "siq.openclaw-runtime-compatibility/v1",
+            "compatibility_manifest_schema_invalid")
+    adapter = manifest.get("adapter")
+    require(isinstance(adapter, dict)
+            and adapter.get("source") == metadata["adapter_source"]
+            and adapter.get("sha256") == metadata["adapter_sha256"],
+            "compatibility_manifest_adapter_mismatch")
+    entries = manifest.get("entries")
+    require(isinstance(entries, list), "compatibility_manifest_entries_invalid")
+    matching = [entry for entry in entries if isinstance(entry, dict)
+                and entry.get("package") == metadata["package"]
+                and entry.get("version") == metadata["version"]]
+    stock = [entry for entry in matching if entry.get("tier") == "upstream-stock"]
+    controlled = [entry for entry in matching if entry.get("tier") == "siq-controlled"]
+    require(len(stock) == 1 and len(controlled) == 1,
+            "compatibility_manifest_tiers_invalid")
+    require(stock[0].get("source_target") == metadata["target"]
+            and stock[0].get("source_sha256") == metadata["before_sha256"]
+            and stock[0].get("eligible_for_controlled_report_publish_hold") is False,
+            "compatibility_manifest_stock_mismatch")
+    expected_patch = str(patch.relative_to(ROOT))
+    require(controlled[0].get("source_target") == metadata["target"]
+            and controlled[0].get("stock_source_sha256") == metadata["before_sha256"]
+            and controlled[0].get("controlled_source_sha256") == metadata["after_sha256"]
+            and controlled[0].get("patch") == expected_patch
+            and controlled[0].get("patch_sha256") == metadata["patch_sha256"]
+            and controlled[0].get("checkpoint_protocol_version")
+                == metadata["checkpoint_protocol_version"]
+            and controlled[0].get("eligible_for_controlled_report_publish_hold") is True,
+            "compatibility_manifest_controlled_mismatch")
 
 
 def source_runtime(path: Path) -> tuple[Path, dict, Path]:

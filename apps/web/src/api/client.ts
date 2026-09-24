@@ -234,10 +234,14 @@ export async function requestWithHeaders<T>(
   }
   if (!response.ok) {
     const envelope = body as ApiEnvelope<never> | null;
+    // FastAPI uses {detail: code}; only accept bounded machine codes, never
+    // display arbitrary adapter diagnostics or validation payloads.
+    const detail = body && typeof body === 'object' && 'detail' in body ? body.detail : undefined;
+    const detailCode = typeof detail === 'string' && /^[a-z][a-z0-9_]{0,95}$/.test(detail) ? detail : undefined;
     throw new ApiError(
       response.status,
       envelope?.error?.message ?? `请求失败（HTTP ${response.status}）`,
-      envelope?.error?.code,
+      envelope?.error?.code ?? detailCode,
       envelope?.request_id,
     );
   }

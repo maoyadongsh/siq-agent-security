@@ -9,6 +9,8 @@ import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import { Icon, type IconName } from '@/components/icons';
 import { api, ApiError } from '@/api/client';
+import { useConsoleContext } from '@/components/ConsoleContext';
+import { canVisit } from '@/api/consoleContext';
 import type { OverviewStats } from '@/api/types';
 
 /** 指标卡色调：neutral 常规；ok/warn/err 语义强调（风险类指标为 0 时保持安静的中性色） */
@@ -39,6 +41,7 @@ const QUICK_TILES: QuickTile[] = [
 ];
 
 export default function OverviewPage() {
+  const { data: context } = useConsoleContext();
   const [stats, setStats] = useState<OverviewStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,12 +68,12 @@ export default function OverviewPage() {
 
   const connected = stats !== null;
   const cards: StatCardDef[] = [
-    { key: 'agents', label: '纳管资产', icon: 'agents', value: stats?.agents, tone: 'primary' },
+    { key: 'agents', label: '已确认及纳管资产', icon: 'agents', value: stats?.agents, tone: 'primary' },
     { key: 'candidates', label: '待评审候选', icon: 'scan', value: stats?.candidates, tone: (stats?.candidates ?? 0) > 0 ? 'warn' : 'neutral' },
     { key: 'open_findings', label: '未处置风险', icon: 'findings', value: stats?.open_findings, tone: (stats?.open_findings ?? 0) > 0 ? 'warn' : 'neutral' },
     { key: 'critical_findings', label: '高危风险', icon: 'shield-alert', value: stats?.critical_findings, tone: (stats?.critical_findings ?? 0) > 0 ? 'err' : 'neutral' },
     { key: 'environments', label: '环境', icon: 'environments', value: stats?.environments, tone: 'neutral' },
-    { key: 'edges_online', label: '在线 Edge', icon: 'activity', value: stats?.edges_online, tone: (stats?.edges_online ?? 0) > 0 ? 'ok' : 'neutral' },
+    { key: 'edges_online', label: '心跳正常的设备', icon: 'activity', value: stats?.edges_online, tone: (stats?.edges_online ?? 0) > 0 ? 'ok' : 'neutral' },
     { key: 'policies', label: '策略', icon: 'policies', value: stats?.policies, tone: 'neutral' },
   ];
 
@@ -107,7 +110,7 @@ export default function OverviewPage() {
       <div className="card">
         <h2>快速入口</h2>
         <div className="quick-grid">
-          {QUICK_TILES.map((tile) => (
+          {QUICK_TILES.filter(tile => canVisit(context, tile.to)).map((tile) => (
             <Link key={tile.to} to={tile.to} className="quick-tile">
               <span className="quick-tile-icon">
                 <Icon name={tile.icon} size={18} />

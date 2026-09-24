@@ -39,6 +39,14 @@ type taskActivityDetail struct {
 }
 
 func (s *Server) taskActivityDetail(w http.ResponseWriter, r *http.Request) {
+	if strings.HasSuffix(r.URL.Path, "/outputs") || strings.HasSuffix(r.URL.Path, "/outputs/read") {
+		s.taskActivityOutputs(w, r)
+		return
+	}
+	if strings.HasSuffix(r.URL.Path, "/security-view") {
+		s.taskActivitySecurityView(w, r)
+		return
+	}
 	if strings.HasSuffix(r.URL.Path, "/trace-export") {
 		s.taskActivityTraceExport(w, r)
 		return

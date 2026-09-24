@@ -1,0 +1,112 @@
+{
+  "schema_version": "siq.flagship.runtime-evidence-review.v1",
+  "goal_complete": false,
+  "production_eligible": false,
+  "review_method": "Read saved check assertions and compare explicit referenced artifact SHA-256; no live test repeated",
+  "contract": {
+    "path": "docs/architecture/qwen38-request-runtime-v1.md",
+    "sha256": "ebeb4d87ef4a98d8291aeb882bf5240d6fb4b763e5b24e0725b7d6228096788c",
+    "bytes": 79130
+  },
+  "reviewed_security_evidence": [
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/ml-02-business-api-e126.json",
+      "sha256": "8465e4c15da1ce1467374feba1931724fee26f686333cdd058e9d67bda73fa21",
+      "bytes": 6670
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/ml-02-streaming-api-e127.json",
+      "sha256": "7a3a584ee4341e3f3d12abcdacc15cf70f7a8be802e2bae7b7634e0e8d32ad5a",
+      "bytes": 4510
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/ml-02-business-cancel-e128.json",
+      "sha256": "c65bd65ebea50d08911481196e15a624ba4a9ec25f9109ba2324c75fd1dafcdb",
+      "bytes": 7403
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/ml-02-business-crash-e165.json",
+      "sha256": "d5ce6e25ae9f2ea4ec5660fb31aa34561281fa781755df4e1da762bce1b9d1e3",
+      "bytes": 4560
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/ml-02-business-revoke-e166.json",
+      "sha256": "5173a970f558c97d45e2cd3a046b09e24be136b4edfbc07e0482e23a2e223bca",
+      "bytes": 7773
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/business-cleanup-retry-e169.json",
+      "sha256": "1642ac394912b24669e8f91b9f788c13706af59ac5e46f9840bffb93ed49841d",
+      "bytes": 4492
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/business-early-crash-e170.json",
+      "sha256": "f95f36d11a427d76145536294dc0cdf64c2c1bf72d1cccfd84c5912788d4c9e2",
+      "bytes": 3192
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/business-unknown-startup-e171.json",
+      "sha256": "d6645317b4ea2e1a4857089da85256f313ab4285d08cdd4ceb4edb8eda6ad320",
+      "bytes": 4990
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/business-create-ack-crash-20260924.json",
+      "sha256": "58f8934e6cdd0e3f280da850e8363ef5db62924f57260275cda4fc2a58035aa8",
+      "bytes": 3327
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/business-result-commit-recovery-20260924.json",
+      "sha256": "bc0b36e9d5ef3208b4548f2e3f6142d506b4209cae753bcb77253c4639209edc",
+      "bytes": 7756
+    },
+    {
+      "path": "docs/evidence/flagship-optimization-20260921/business-unknown-child-recovery-20260924.json",
+      "sha256": "4a27a1b1eecf51f53cb6eb42ed6cd67c6438a381bd4802f765ad195bebbeeff5",
+      "bytes": 4279
+    }
+  ],
+  "verified_research_artifacts": [
+    {
+      "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v1.sanitized.json",
+      "sha256": "4ba8cdcdccc04d0fb088d37a61356af8185473442525c960fcb2bcac4e348659",
+      "bytes": 1735
+    },
+    {
+      "path": "artifacts/openshell/flagship/ml02-business-revoke-e166-v1.sanitized.json",
+      "sha256": "ed40558ac9e0c6b2816e8b8234bdd5f9da01abaeb7c829327b96e0d692beacbf",
+      "bytes": 1811
+    },
+    {
+      "path": "artifacts/openshell/flagship/ml02-business-stream-e127-v2.sanitized.json",
+      "sha256": "763b27a7d55131fa0395ddc9e4098494fbc0dfcd494ac8ee683bf52449b6438c",
+      "bytes": 1411
+    },
+    {
+      "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v2.sanitized.json",
+      "sha256": "ca88d08ecd29118ae9d9eac4cea7646c1bf250924793315e7e8beec3fcebfcea",
+      "bytes": 1653
+    },
+    {
+      "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v3.sanitized.json",
+      "sha256": "5178359f0cd0f39cf9ba16d7fd3e598472a9f7f6373b8ac6fdbdacf123a08ad3",
+      "bytes": 1598
+    },
+    {
+      "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v4.sanitized.json",
+      "sha256": "223a355cda20df55fa0c86b69d38be66f06e335817aabaa54cb822ca80122c36",
+      "bytes": 1658
+    },
+    {
+      "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v5.sanitized.json",
+      "sha256": "84b3da40a2a8f3c35012832d0deff8192fa9c79412ab50a254cc57e59f4ab582",
+      "bytes": 1946
+    }
+  ],
+  "remaining_unverified": [
+    "queue_authorization_expiry_in_real_business_API",
+    "second_tenant_request_in_real_business_API",
+    "supervisor_SIGKILL_bound_to_formal_API_owner",
+    "data_tools_to_formal_publication_to_authorized_readback"
+  ],
+  "historical_source_results_are_not_current_production_acceptance": true
+}

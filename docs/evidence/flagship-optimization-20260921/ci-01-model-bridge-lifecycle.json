@@ -1,0 +1,48 @@
+{
+  "schema_version": "siq.model-bridge.lifecycle-proof.v1",
+  "generated_at": "2026-09-22T02:54:32+08:00",
+  "scope": "dgx_spark_openshell_local_model_bridge",
+  "result": "passed_fail_closed_lifecycle",
+  "implementation": {
+    "source_sha256": "bcfe5fde71cfa4b6207af87b6364ff993878f21aca91058077ff073485e647b0",
+    "test_sha256": "940ef903017c59e7175ef9c6b9015c8eecf23da26d67b968a77cce372f850e74",
+    "systemd_unit_sha256": "acd773ea53e2fb6696ebb30595431e6753db49c9ce98d51c941d63208873e25f",
+    "client_task_strong_reference": true,
+    "completed_task_result_consumed": true,
+    "relay_tasks_cancelled_and_drained": true,
+    "shutdown_handlers_cancelled_and_drained": true
+  },
+  "verification": {
+    "focused_tests": {
+      "passed": 8,
+      "failed": 0
+    },
+    "bridge_route_contract_tests": {
+      "passed": 31,
+      "failed": 0
+    },
+    "systemd_unit_verified": true,
+    "service_active_after_restart": true,
+    "service_restart_count": 0,
+    "offline_connection_probes": 50,
+    "offline_probes_failed_closed": 50,
+    "tasks_returned_to_baseline": true,
+    "async_lifecycle_errors_after_restart": 0
+  },
+  "environment": {
+    "model_upstream_online": false,
+    "model_inference_verified": false,
+    "current_environment_ready": false
+  },
+  "security": {
+    "contains_credentials": false,
+    "contains_absolute_paths": false,
+    "contains_business_data": false,
+    "production_eligible": false,
+    "readiness_effect": "none"
+  },
+  "limitations": [
+    "This proof covers connection ownership, cleanup, shutdown draining, and fail-closed behavior while the upstream is offline.",
+    "It is not evidence that the governed Nemotron model is currently reachable or that native candidate CI passed."
+  ]
+}

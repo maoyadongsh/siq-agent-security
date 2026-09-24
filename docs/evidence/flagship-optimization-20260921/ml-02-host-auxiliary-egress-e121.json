@@ -1,0 +1,61 @@
+{
+  "schema_version": "siq.flagship.evidence.host-auxiliary-egress.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.host-auxiliary-egress-evidence.v1",
+    "captured_at_utc": "2026-09-22T20:43:26.667008+00:00",
+    "scope": "host_chat_vision_memory_embedding_rerank_confidential_egress_with_synthetic_HTTP_servers",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "combined_tests_passed": 176,
+      "included_focused_tests": 19,
+      "warnings": 485,
+      "overlap_not_additive": true,
+      "ruff_passed": true,
+      "compile_passed": true,
+      "research_diff_check_passed": true
+    },
+    "proven": [
+      "versioned_exact_loopback_endpoint_and_model_allowlist",
+      "confidential_guard_before_chat_preflight",
+      "background_task_and_thread_context_inheritance",
+      "stream_context_restored_before_yield_and_applied_during_close",
+      "actual_HTTP_clients_ignore_environment_proxies",
+      "redirects_do_not_forward_synthetic_input",
+      "unregistered_endpoints_receive_zero_requests",
+      "unregistered_vision_model_denied_before_image_read",
+      "confidential_error_response_body_not_logged"
+    ],
+    "not_proven": [
+      "live_auxiliary_model_process_or_weights_identity",
+      "all_host_network_and_Milvus_document_parser_egress",
+      "live_selector_builder_API_Hermes_model_request",
+      "API_crash_restart_and_unknown_early_startup_windows",
+      "real_IAM_approval_event_projection_native_CI"
+    ],
+    "runtime": {
+      "services_restarted_by_this_increment": false,
+      "selector_activated_in_live_API": false,
+      "real_models_called": false
+    },
+    "source_sha256": {
+      "apps/api/services/confidential_auxiliary_models.py": "6a72da46509e26329cf4fe51e9df4689db63524bbb402632add1509b81b810bc",
+      "apps/api/services/agent_memory_service.py": "8a889e45f738580d562f01147a63acac3b53ee487288ad6ca53176970f35fde9",
+      "apps/api/services/rerank_provider.py": "24a35d4e775c398d82506a247c99d1cdd63713bb9ba672c1a21eeb820e9e9c00",
+      "apps/api/services/agent_runtime_attachments.py": "4b3e8d7109485efca7e83b4a6f3c3102b9ed94091f62950fb40a4fcd7ce1bc21",
+      "apps/api/services/agent_chat_runtime_impl.py": "af091a23ba9a2dc0d34dd8a596d8750ba7e123111e564726c7f8c006af552ba4",
+      "apps/api/tests/test_confidential_auxiliary_models.py": "195f2f442e5c42b0fc21d06dd82053d5878d72e27fdfcda8f042f1264baaf9f2",
+      "infra/model-services/auxiliary/confidential-egress.v1.json": "4a2009e5d0102d9dd1246d5193338a34cc07b396d73f863702567d3000d999c5",
+      "docs/architecture/qwen38-request-runtime-v1.md": "e592c2a4daf7f55b9f800673c455d1b86c28a6f1e93d492f9aa2ac6916db1df1",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "07b1d20192565358058ed807bd2ea0de8713728ac3126ae2bc7f551489dfe31c",
+      "apps/api/README.md": "5f87b69bee8ef04cc025556a9fcf566cc77541f1e23393544708dec6d1dfe68b",
+      "infra/model-services/README.md": "a7c2d766813f623f6d2e6b488ed0bafa1c5e9a5d0380bc243994d38bb09910b3"
+    }
+  },
+  "research_evidence_sha256": "58f9d01fada7d16eae0054220b13fe9d5ced316dec8140a53355642ebe228559",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

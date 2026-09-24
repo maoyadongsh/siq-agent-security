@@ -1,0 +1,57 @@
+{
+  "candidate_ready": false,
+  "limitations": [
+    "The loopback SGLang upstream remained offline; 502 denotes bridge acceptance, not successful model inference.",
+    "The revoked Hermes run failed with no success marker; that individual revoked run was not correlated to a bridge receipt. A separate unrevoked synthetic run has a matching bridge 502 receipt in E55.",
+    "This is an isolated candidate gateway lifecycle proof without enterprise data scope or production business writer.",
+    "The old LAN-published SGLang process and argv credential have not yet been replaced by the secure loopback file-secret unit."
+  ],
+  "prior_image_proof_archived": true,
+  "private_artifact_sha256": "6ad8ed1e0d9796e7a867497db3530229fbea7f7786b7242119286bf83e415860",
+  "production_eligible": false,
+  "proof": {
+    "bridge_status_before_rotation": 502,
+    "new_gateway_healthy": true,
+    "new_generation_accepted": true,
+    "new_generation_bridge_status": 502,
+    "old_gateway_healthy": true,
+    "old_generation_first_request_after_rotation": 401,
+    "old_generation_first_response_empty": true,
+    "old_generation_first_response_from_bridge": true,
+    "old_generation_immediately_denied": true,
+    "provider_reprovisioned_only_after_drain": true,
+    "revoked_hermes_run": {
+      "api_model_alias_matches": true,
+      "create_status": 202,
+      "marker_absent": true,
+      "terminal_status": "failed"
+    }
+  },
+  "recorded_at": "2026-09-22T02:26:09+00:00",
+  "sandbox": {
+    "candidate_gateway_empty_after": true,
+    "gateway": "siq-openshell-scope-validation",
+    "host_business_mount_count": 0,
+    "image_id": "sha256:22010ff8a757211a7bf8b5739b4b854cd515717d1e6d43a81512c63b3bcb23ad",
+    "new_sandbox_removed": true,
+    "old_sandbox_removed": true,
+    "policy_sha256": "e45f80d0daa7dcfbbf03bf86ccd73b31df6632433cb89badf273d26107a24ea8",
+    "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+    "resource_profile": "hermes_minimal_poc"
+  },
+  "schema_version": "siq.flagship.ml02-qwen38-hermes-generation/v1",
+  "scope": "isolated_five_patch_hermes_candidate_token_first_generation_revoke",
+  "secrets_included": false,
+  "source_sha256": {
+    "gateway_policy": "e45f80d0daa7dcfbbf03bf86ccd73b31df6632433cb89badf273d26107a24ea8",
+    "generation_proof": "115b8377a2c5f646b7913b3471fa7bbd4053d91013a5be65818639fcf3dce52b",
+    "generation_tests": "4ca5b11e387c3104ac978c0a8f400127178b27a20239f9e1e1fee85e60e01b7d"
+  },
+  "status": "passed_candidate_generation_revocation_only",
+  "validation": {
+    "candidate_gateway_zero": "passed",
+    "focused_pytest_passed": 88,
+    "ruff": "passed",
+    "sanitizer": "passed"
+  }
+}

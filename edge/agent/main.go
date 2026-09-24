@@ -13,11 +13,13 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/signal"
@@ -91,11 +93,29 @@ func cmdRegister(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("register", flag.ContinueOnError)
 	cp := fs.String("control-plane", "http://127.0.0.1:8600", "control plane base URL")
 	code := fs.String("enrollment-code", "", "enrollment code issued by the control plane (required)")
+	stdinCode := fs.Bool("enrollment-code-stdin", false, "read enrollment code from standard input instead of process arguments")
 	if err := parseFlags(fs, args); err != nil {
 		return err
 	}
+	if *stdinCode {
+		if *code != "" {
+			return errors.New("use only one enrollment code input")
+		}
+		value, err := readEnrollmentCode(os.Stdin)
+		if err != nil {
+			return err
+		}
+		*code = value
+	}
 	if *code == "" {
 		return errors.New("--enrollment-code is required")
+	}
+	statePath, err := StateFilePath()
+	if err != nil {
+		return err
+	}
+	if _, err := os.Lstat(statePath); !os.IsNotExist(err) {
+		return errors.New("local device state already exists or is unreadable; use its heartbeat/tasks commands")
 	}
 	identity, err := NewUUID()
 	if err != nil {
@@ -137,6 +157,19 @@ func cmdRegister(ctx context.Context, args []string) error {
 	}
 	log.Printf("registered device %s (state written to %s, mode 0600; secret never logged)", state.DeviceIdentity, path)
 	return nil
+}
+
+func readEnrollmentCode(input io.Reader) (string, error) {
+	reader := bufio.NewReader(io.LimitReader(input, 1025))
+	line, err := reader.ReadString('\n')
+	if err != nil && err != io.EOF || len(line) > 1024 {
+		return "", errors.New("invalid enrollment code input")
+	}
+	code := strings.TrimSpace(line)
+	if code == "" || strings.ContainsAny(code, " \t\r\n") {
+		return "", errors.New("invalid enrollment code input")
+	}
+	return code, nil
 }
 
 func newAuthedClient(state *State) *Client {
@@ -218,7 +251,7 @@ func cmdTasks(ctx context.Context, args []string) error {
 // {"candidate":...}, {"evidence":...}, {"checkpoint":...}.
 func cmdRunOnce(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("run-once", flag.ContinueOnError)
-	connector := fs.String("connector", "hermes", "connector name (hermes|openclaw|docker|directory|systemd|kubernetes|process|mcp|piagent|workbuddy|dify)")
+	connector := fs.String("connector", "hermes", "connector name (hermes|openclaw|docker|directory|systemd|kubernetes|process|mcp|piagent|workbuddy|dify|siq)")
 	scopeJSON := fs.String("scope", "", "connector scope as JSON (default: connector default scope)")
 	binOverride := fs.String("connector-bin", "", "explicit connector binary path")
 	if err := parseFlags(fs, args); err != nil {

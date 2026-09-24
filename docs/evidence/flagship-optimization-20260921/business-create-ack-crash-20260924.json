@@ -1,0 +1,79 @@
+{
+  "schema_version": "siq.flagship.create-ack-crash-evidence.v1",
+  "production_eligible": false,
+  "source_repository": "siq-research-engine",
+  "source_files": [
+    {
+      "path": "scripts/openshell/prove_qwen38_create_ack_crash.py",
+      "sha256": "723ae80b04d188980484137f020a756c10c7ccf2b364309c7e1c3a010216f2ea",
+      "bytes": 6753
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_qwen38_create_ack_crash.py",
+      "sha256": "0938c7a0cf028b741286d7d6afcc9ad0bd42e06f2d10c92dc89e3efe4c58569b",
+      "bytes": 3022
+    }
+  ],
+  "proof": {
+    "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v2.sanitized.json",
+    "sha256": "ca88d08ecd29118ae9d9eac4cea7646c1bf250924793315e7e8beec3fcebfcea",
+    "bytes": 1653
+  },
+  "result": {
+    "schema": "siq.qwen38.candidate-api-proof.v1",
+    "passed": true,
+    "scope": "actual_API_SIGKILL_after_Hermes_create_ack_before_run_id_bind",
+    "production_ready": false,
+    "checks": {
+      "fresh_database_migrations": true,
+      "request_recovery_ready": true,
+      "legacy_recovery_disabled": true,
+      "original_HTTP_interrupted": true,
+      "Hermes_live_status_observed_after_create_ack": true,
+      "API_killed_before_Hermes_run_id_persistence": true,
+      "original_lease_expired_naturally": true,
+      "same_database_API_restart": true,
+      "original_provisional_execution_authority_lost": true,
+      "recovery_ready_after_containment": true,
+      "sandbox_supervisor_and_forward_absent": true,
+      "child_identity_revoked_before_root_cleanup": true,
+      "old_child_credential_401": true,
+      "root_identity_still_active_before_diagnostic_cleanup": true,
+      "API_finalizer_released_before_diagnostic_cleanup": true,
+      "no_replayed_or_rebound_execution": true,
+      "anonymous_analysis_denied": true,
+      "real_http_login": true,
+      "analyst_cannot_issue_grant": true,
+      "grant_retry_same_identity": true,
+      "analyst_cannot_revoke_grant": true,
+      "admin_http_revoke": true,
+      "business_settled_before_api_stop": true,
+      "candidate_listener_closed": true,
+      "business_runtime_cleanup_confirmed": true,
+      "temporary_database_removed": true,
+      "existing_service_identity_unchanged": true
+    },
+    "business_HTTP_attempted": true,
+    "hermes_run_sha256": "fc683e0105cc4a1a96f897b7ccf7d80ee4b2d0b1a891ffd5ea0763fc56afc4fc",
+    "recovery_wait_seconds": 134.009,
+    "model_completion_acceptance": false,
+    "remaining_running_execution_count": 0
+  },
+  "launcher_result": {
+    "passed": true,
+    "production_eligible": false,
+    "proof_passed": true,
+    "proof_file": "artifacts/openshell/flagship/ml02-business-crash-e165-v2.sanitized.json",
+    "proof_sha256": "ca88d08ecd29118ae9d9eac4cea7646c1bf250924793315e7e8beec3fcebfcea",
+    "preview_services_unchanged": true,
+    "isolated_identity_starts": 1,
+    "isolated_ports_closed": true
+  },
+  "tests": {
+    "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest scripts/openshell/tests/test_prove_qwen38_create_ack_crash.py scripts/openshell/tests/test_prove_qwen38_crash_api.py scripts/openshell/tests/test_prove_qwen38_business_api.py -q --disable-warnings --tb=short",
+    "passed": 21,
+    "failed": 0,
+    "duration_seconds": 0.57,
+    "ruff": "passed for the two create-ack diagnostic files"
+  }
+}

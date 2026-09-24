@@ -12,12 +12,23 @@ import secrets
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy import or_, select, update
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import get_session
-from app.models import Deployment, EdgeAgent, EdgeTask, EnrollmentToken, Environment, new_id, utcnow
+from app.models import (
+    AuditEvent,
+    Deployment,
+    EdgeAgent,
+    EdgeTask,
+    EnrollmentToken,
+    Environment,
+    Evidence,
+    new_id,
+    utcnow,
+)
+from app.onboarding import OnboardingAccess, OnboardingDevice, OnboardingScan, OnboardingStatus
 from app.outbox import audit, emit_event
 from app.schemas import (
     EdgeHeartbeatRequest,
@@ -95,7 +106,15 @@ def create_environment(
         {"environment_id": env.id},
         resource_ref=env.id,
     )
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        if session.scalar(select(Environment.id).where(
+            Environment.tenant_id == identity.tenant_id, Environment.name == body.name
+        )):
+            raise HTTPException(status_code=409, detail="environment_name_conflict") from None
+        raise
     session.refresh(env)
     return env
 
@@ -109,6 +128,78 @@ def list_environments(
         session.scalars(
             select(Environment).where(Environment.tenant_id == identity.tenant_id).order_by(Environment.name)
         )
+    )
+
+
+@router.get("/api/v1/environments/access", response_model=OnboardingAccess)
+def onboarding_access(identity: Identity = Depends(require_permission("env:read"))):
+    return OnboardingAccess(
+        can_create=identity.has_permission("env:manage"),
+        can_enroll=identity.has_permission("edge:manage"),
+        can_scan=identity.has_permission("env:manage"),
+        can_view_assets=identity.has_permission("agent:read"),
+    )
+
+
+@router.get("/api/v1/environments/{environment_id}/onboarding", response_model=OnboardingStatus)
+def environment_onboarding(
+    environment_id: str,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    from app.config import load_settings
+
+    env = _env_or_404(session, identity.tenant_id, environment_id)
+    ensure_permission(identity, "env:read")
+    now = utcnow()
+    stale_seconds = load_settings().heartbeat_stale_seconds
+    cutoff = now - timedelta(seconds=stale_seconds)
+    count = session.scalar(select(func.count(EdgeAgent.id)).where(EdgeAgent.environment_id == env.id)) or 0
+    edges = session.scalars(select(EdgeAgent).where(EdgeAgent.environment_id == env.id).order_by(
+        EdgeAgent.registered_at.desc(), EdgeAgent.id
+    ).limit(100))
+    devices = []
+    for edge in edges:
+        state = "revoked" if edge.revoked_at else "waiting" if edge.last_seen_at is None else (
+            "online" if cutoff <= edge.last_seen_at <= now else "stale"
+        )
+        declared = edge.capabilities.get("connectors", []) if isinstance(edge.capabilities, dict) else []
+        connectors = [
+            name for name in ("hermes", "openclaw", "directory", "docker")
+            if isinstance(declared, list) and name in declared
+        ]
+        devices.append(OnboardingDevice(
+            id=edge.id, device_identity=edge.device_identity, version=edge.version,
+            registered_at=edge.registered_at, last_seen_at=edge.last_seen_at, status=state, connectors=connectors,
+        ))
+    tasks = list(session.scalars(select(EdgeTask).where(
+        EdgeTask.environment_id == env.id, EdgeTask.task_type == "scan"
+    ).order_by(EdgeTask.created_at.desc(), EdgeTask.id).limit(21)))
+    summaries = {event.resource_id: event.summary for event in session.scalars(select(AuditEvent).where(
+        AuditEvent.tenant_id == identity.tenant_id, AuditEvent.action == "edge.task.receipt",
+        AuditEvent.resource_id.in_([task.id for task in tasks[:20]]),
+    ).order_by(AuditEvent.created_at))}
+    scans = []
+    for task in tasks[:20]:
+        summary = summaries.get(task.id, {})
+        def total(key, values=summary):
+            value = values.get(key)
+            return value if type(value) is int and value >= 0 else None
+        scans.append(OnboardingScan(
+            id=task.id, connector=task.payload.get("connector") or "hermes",
+            status="expired" if task.status in ("pending", "uploaded") and task.expires_at < now else task.status,
+            created_at=task.created_at, expires_at=task.expires_at, device_identity=task.lease_owner,
+            candidate_count=total("candidate_count"), evidence_count=total("evidence_count"),
+        ))
+    evidence_query = select(func.count(Evidence.id), func.max(Evidence.collected_at)).where(
+        Evidence.tenant_id == identity.tenant_id, Evidence.environment_id == env.id
+    )
+    evidence_count, last_evidence = session.execute(evidence_query).one()
+    return OnboardingStatus(
+        environment_id=env.id, evaluated_at=now, heartbeat_stale_seconds=stale_seconds,
+        device_count=count, devices=devices, devices_truncated=count > len(devices),
+        evidence_count=evidence_count, last_evidence_at=last_evidence,
+        scans=scans, scans_truncated=len(tasks) > 20,
     )
 
 

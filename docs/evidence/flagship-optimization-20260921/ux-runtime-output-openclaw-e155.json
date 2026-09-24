@@ -1,0 +1,177 @@
+{
+  "schema_version": "siq.flagship-native-output-validation/v1",
+  "batch": "E155",
+  "recorded_on": "2026-09-23",
+  "goal_status": "active",
+  "openclaw_version": "2026.9.5",
+  "hermes_version": "0.21.0",
+  "scope": "real native component execution and installed hooks to paired output UI; synthetic files; OpenClaw after relay invoked by harness",
+  "report": {
+    "path": "docs/development/ux-runtime-output-openclaw-e155-validation-20260923.md",
+    "sha256": "97c484014c1f67c8fa06c656b41dcffd0410c6b7b103b572e4c3392ac4229735",
+    "bytes": 4861
+  },
+  "specification": {
+    "path": "docs/development/runtime-output-openclaw-e155-spec.md",
+    "sha256": "ade1941deb20ea367e1a7e8cedf491a1e8d1ef2996eead0f51575e7fdc3fc317",
+    "bytes": 1729
+  },
+  "sources": {
+    "path": "var/flagship/ux-e155/source-manifest.json",
+    "sha256": "cdaafc157f76cf16a2750beb04cc2aea94720e484f63ea53dc89603237174349",
+    "bytes": 394994
+  },
+  "resources": {
+    "path": "var/flagship/ux-e155/embedded-web-manifest.json",
+    "sha256": "5c2276f1ea9c2098631f07943498ca3e617ff02c22b8fc1ca2998e5bba71789b",
+    "bytes": 47625
+  },
+  "binaries": [
+    {
+      "path": "var/flagship/ux-e155/siq-agent-security",
+      "sha256": "65e839a9be9aa76ab3944509dbe03b15a0334e411ca7833258609973fccfb421",
+      "bytes": 23931343
+    },
+    {
+      "path": "var/flagship/ux-e155/siq-agent-security-darwin-arm64",
+      "sha256": "af0f6b10edf6c328194f2083c2b822c54cffe9b51bcac5f663466328af491d2e",
+      "bytes": 24320898
+    },
+    {
+      "path": "var/flagship/ux-e155/siq-agent-security-linux-amd64",
+      "sha256": "0799a34fd4e0c7b190559a3a93ac5d5396456393771a9d2a3d49eea8d53c6979",
+      "bytes": 25371947
+    },
+    {
+      "path": "var/flagship/ux-e155/siq-agent-security-linux-arm64",
+      "sha256": "b070d6a54c04b8af2f9c795c8493058f5331d8a25f0acfc3ee515f8850b51055",
+      "bytes": 23843237
+    },
+    {
+      "path": "var/flagship/ux-e155/siq-agent-security-windows-amd64.exe",
+      "sha256": "edc2d87ec06168439294c83af30f1b10fa9430373536442009b961f40608dfab",
+      "bytes": 26001408
+    }
+  ],
+  "browser": [
+    {
+      "path": "var/flagship/ux-e155/openclaw-complete/result.json",
+      "sha256": "137a1b852c8d0ca5e46dfb167b38bed0bbf7b551404e8b32546c45863c1e740e",
+      "bytes": 3150
+    },
+    {
+      "path": "var/flagship/ux-e155/hermes-complete/result.json",
+      "sha256": "1ceaf8dda1b669c29466d0568aa78e13c6357cb912114bbbc23dfa9d24ee0c1d",
+      "bytes": 2585
+    },
+    {
+      "path": "var/flagship/ux-e155/output-regression/result.json",
+      "sha256": "583900c82c4f59798b7fc5390a648241c16b56aa50e766d16f41183244ae07e7",
+      "bytes": 690
+    }
+  ],
+  "openclaw_loaded_modules": [
+    {
+      "path": "/home/maoyd/.nvm/versions/node/v24.21.0/lib/node_modules/openclaw/dist/plugins/loader.js",
+      "sha256": "b297bd1cedbd43d14d2a76751aa52d8ba32ed839df2d3438daabc87318fe8497",
+      "bytes": 844
+    },
+    {
+      "path": "/home/maoyd/.nvm/versions/node/v24.21.0/lib/node_modules/openclaw/dist/agent-tools.before-tool-call-ya9NNSXc.mjs",
+      "sha256": "39e6ae403ad478b147c9af6306dec376b026ab95aa0a7580fcba027db896270c",
+      "bytes": 155438
+    },
+    {
+      "path": "/home/maoyd/.nvm/versions/node/v24.21.0/lib/node_modules/openclaw/dist/hook-helpers-B6Z9eReH.mjs",
+      "sha256": "7b1f98cc998c5abe6d1627b7b21460199a9763bca077179f09d8775b71311532",
+      "bytes": 3039
+    },
+    {
+      "path": "/home/maoyd/.nvm/versions/node/v24.21.0/lib/node_modules/openclaw/dist/resource-loader-Ce6BVgUs.mjs",
+      "sha256": "0dc66f364bc84ebc60a49ba0f38d644a31f8a56e616eee4f3745d429dffc0e08",
+      "bytes": 446412
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "var/flagship/ux-e155/openclaw-complete/native-output-desktop.png",
+      "sha256": "1162ffc1b4ed779b8f71c5181953158af433545e71c86db735206976be43fbfa",
+      "bytes": 202466
+    },
+    {
+      "path": "var/flagship/ux-e155/openclaw-complete/native-output-mobile.png",
+      "sha256": "46a2d94586e09b4b7e4760c0772a2964b579ab9f5a69b8dcc6b84be46be2baf9",
+      "bytes": 65204
+    },
+    {
+      "path": "var/flagship/ux-e155/hermes-complete/native-output-desktop.png",
+      "sha256": "86628ef5580aababcb3d68fb0497ac64c95991d7b573e5da97e73d427ca7c948",
+      "bytes": 200999
+    },
+    {
+      "path": "var/flagship/ux-e155/hermes-complete/native-output-mobile.png",
+      "sha256": "eeb505f3bbd8f0e52c0d6216b18f91b5e8636081c6104d57a4320894320db15c",
+      "bytes": 63248
+    }
+  ],
+  "validation": {
+    "web_files": 53,
+    "web_tests": 290,
+    "openclaw_native_checks": 12,
+    "hermes_native_checks": 12,
+    "output_regression_checks": 11,
+    "go_command": "go test ./internal/ui ./internal/server -run 'ActivityOutputs|RuntimeOutput'",
+    "go_ui_filter": "no tests to run",
+    "cross_builds": [
+      "linux/arm64",
+      "linux/amd64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "logs": [
+      {
+        "path": "var/flagship/ux-e155/web-tests.log",
+        "sha256": "aa121bc21e297c49bd6dc348ff83c503230a60d6b00e29ddf0ed6e38798cefa9",
+        "bytes": 286
+      },
+      {
+        "path": "var/flagship/ux-e155/build-local.log",
+        "sha256": "c6597cba8f3be25fd3499d216d5e047986c09fb72de2f4bbb8f480540f37eb98",
+        "bytes": 23135
+      },
+      {
+        "path": "var/flagship/ux-e155/build-enterprise.log",
+        "sha256": "30586041bf887300379c49624ea00955656cb683c705b02fa9d3b24b8b77f77a",
+        "bytes": 30534
+      },
+      {
+        "path": "var/flagship/ux-e155/go-focused.log",
+        "sha256": "4c1a708ce802bb293c0a0ffe8befd4e0246038b6932f82730ad376cfbdaa5286",
+        "bytes": 142
+      },
+      {
+        "path": "var/flagship/ux-e155/ruff.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "bytes": 19
+      },
+      {
+        "path": "var/flagship/ux-e155/version.log",
+        "sha256": "9983e395d4c6f5c7ce7e743b7006acb5118ba7c2f8675a0b1b36ce71a89769c2",
+        "bytes": 43
+      }
+    ]
+  },
+  "prior_candidate_reference": {
+    "path": "var/flagship/ux-e154/candidate.json",
+    "sha256": "3e25354c4126e295fe977bdebea981e2cdd248fd594b952297575e5a1099f328",
+    "bytes": 1659
+  },
+  "limitations": [
+    "No full model-driven native conversation",
+    "OpenClaw after relay invoked by fixture",
+    "No OpenShell sandbox execution this batch",
+    "No formal business report publication",
+    "No full Go/API rerun this batch",
+    "No installed replacement or release"
+  ]
+}

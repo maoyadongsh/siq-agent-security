@@ -1,0 +1,321 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "local-task-activity-query/v1"
+    },
+    "snapshot": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "view": {
+      "enum": [
+        "tasks",
+        "unassigned"
+      ]
+    },
+    "offset": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "next_offset": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "prefix_valid": {
+      "const": true
+    },
+    "history_integrity": {
+      "enum": [
+        "verified",
+        "unknown",
+        "failed"
+      ]
+    },
+    "evidence_freshness": {
+      "enum": [
+        "unknown"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "activity_id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "attribution": {
+            "enum": [
+              "bound",
+              "unknown"
+            ]
+          },
+          "binding": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "chain_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "platform": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "agent_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "task_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "intent_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "intent_digest": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "chain_id",
+                  "platform",
+                  "session_id",
+                  "agent_id",
+                  "task_id",
+                  "intent_id",
+                  "intent_digest"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "receipt_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "first_seq": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "last_seq": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "last_recorded_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decisions": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "allow",
+              "deny",
+              "hold",
+              "redact",
+              "other"
+            ],
+            "properties": {
+              "allow": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "deny": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "hold": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "redact": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "other": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "required": [
+          "activity_id",
+          "attribution",
+          "binding",
+          "receipt_count",
+          "first_seq",
+          "last_seq",
+          "last_recorded_at",
+          "decisions"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "attribution": {
+                  "const": "bound"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "binding": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "chain_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "platform": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "session_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "agent_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "task_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "intent_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "intent_digest": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "chain_id",
+                    "platform",
+                    "session_id",
+                    "agent_id",
+                    "task_id",
+                    "intent_id",
+                    "intent_digest"
+                  ]
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "binding": {
+                  "type": "null"
+                },
+                "receipt_count": {
+                  "const": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "filters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "agent_id",
+        "session_id",
+        "task_id",
+        "q",
+        "from",
+        "to",
+        "action"
+      ],
+      "properties": {
+        "platform": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "task_id": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "q": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "from": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "to": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "action": {
+          "enum": [
+            "",
+            "allow",
+            "deny",
+            "hold",
+            "redact"
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "snapshot",
+    "view",
+    "offset",
+    "total",
+    "next_offset",
+    "prefix_valid",
+    "history_integrity",
+    "evidence_freshness",
+    "items",
+    "filters"
+  ],
+  "$id": "local-task-activity-search.v1.schema.json"
+}

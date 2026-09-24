@@ -1,0 +1,86 @@
+{
+  "schema_version": "discovery-recovery-acceptance/v1",
+  "candidate": "ux-e162",
+  "passed": true,
+  "production_eligible": false,
+  "official_signed_release": false,
+  "binary": {
+    "path": "var/flagship/ux-e162/siq-agent-security",
+    "sha256": "5ea51b1727bef963679340deb661585f3ba9db8640d13ccdbf78df95d1cf0720",
+    "bytes": 23933906
+  },
+  "baseline_failure": {
+    "path": "var/flagship/ux-e162/baseline/result.json",
+    "sha256": "f710d4eb58bc9d5556533e17fceb0917d9ad7c843a87254330179e5edd5f30e3",
+    "bytes": 1025
+  },
+  "recovery_journey": {
+    "path": "var/flagship/ux-e162/fixed/result.json",
+    "sha256": "b98110aa6effc81efe76305ab74b42c887ea12887035225010ae647f769b11f5",
+    "bytes": 1150
+  },
+  "onboarding_regression": {
+    "path": "var/flagship/ux-e162/onboarding/summary.sanitized.json",
+    "sha256": "9ef647f05ebababe9823a5fea3210bb9cf90f2d0fda0fa7399559648ff771620",
+    "bytes": 4636
+  },
+  "checks": {
+    "recovery": 9,
+    "onboarding": 53,
+    "go_packages": 44
+  },
+  "verification": [
+    {
+      "path": "var/flagship/ux-e162/focused.log",
+      "sha256": "623c724ad00fe401dbaf4ef5d2708ccaaa42465b4fb4924c756831e65a23e7d7",
+      "bytes": 131
+    },
+    {
+      "path": "var/flagship/ux-e162/go-full.log",
+      "sha256": "7c4f1e72034ed193f82c30a5dc26db15ba0f57c49720e76fd1fc59ce038577f6",
+      "bytes": 3676
+    },
+    {
+      "path": "var/flagship/ux-e162/go-vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e162/cross-builds.json",
+      "sha256": "1e1d2244fa98bb4c63df2c3442414070d496ab3d8555068b79fdc39c3bd88cff",
+      "bytes": 177
+    },
+    {
+      "path": "var/flagship/ux-e162/package-verification.json",
+      "sha256": "bddd2f3979766478855451528dd59cf956be820e9fe6bacfb80f118413fdd781",
+      "bytes": 84
+    },
+    {
+      "path": "var/flagship/ux-e162/package-start-stop.json",
+      "sha256": "719e1f99a2b7e1864e2287579894004b02300b836e0b7ac01f70162628ab9c15",
+      "bytes": 777
+    }
+  ],
+  "source_manifest": {
+    "path": "var/flagship/ux-e162/sources.json",
+    "sha256": "edbcc894fe4a9b8a17b50593abd11eece49a4daa60ab8ce5c86f19ccf5338e39",
+    "bytes": 233724
+  },
+  "preview_package": {
+    "path": "var/flagship/ux-e162/preview-package.json",
+    "sha256": "39989cdde5c2c732bdb31f897010b8b8fa13a82ec71532deed15d1f939f6110b",
+    "bytes": 332
+  },
+  "screenshot": {
+    "path": "var/flagship/ux-e162/fixed/recovered.png",
+    "sha256": "0f0df0914b8be514ebd5217411ba16f82d537b6d4c892697a27e1df2793b3a3b",
+    "bytes": 173423
+  },
+  "limitations": [
+    "Not signed release installation or upgrade",
+    "POSIX permission faults only",
+    "No model call or production IAM",
+    "No native macOS/Windows acceptance"
+  ],
+  "cleanup": "Owned runtime units unregistered; fixture permission restored; shared manager environment unchanged"
+}

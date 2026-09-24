@@ -1,0 +1,91 @@
+{
+  "candidate_lock": {
+    "path": "deploy/dgx-spark/runtime-lock.confidential-candidate.v1.json",
+    "schema_version": "siq.dgx-spark.confidential-candidate-lock.v1"
+  },
+  "evidence_max_age_seconds": 14400,
+  "runner": {
+    "architectures": [
+      "aarch64",
+      "arm64"
+    ],
+    "gpu_name_patterns": [
+      "NVIDIA GB10"
+    ],
+    "product_names": [
+      "NVIDIA_DGX_Spark",
+      "NVIDIA DGX Spark"
+    ],
+    "required_labels": [
+      "self-hosted",
+      "Linux",
+      "ARM64",
+      "dgx-spark",
+      "siq-openshell"
+    ]
+  },
+  "schema_version": "siq.dgx-spark.native-candidate-gate-policy.v1",
+  "suites": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/dgx-spark/tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "id": "security_candidate_contracts",
+      "root": "security",
+      "timeout_seconds": 900
+    },
+    {
+      "argv": [
+        "apps/control-api/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "adapters/runtime/hermes-agentshield/tests"
+      ],
+      "id": "security_hermes_adapter",
+      "root": "security",
+      "timeout_seconds": 900
+    },
+    {
+      "argv": [
+        "apps/api/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "scripts/openshell/tests/test_sandbox_resource_governance.py",
+        "scripts/openshell/tests/test_siq_analysis_lifecycle.py",
+        "scripts/openshell/tests/test_hermes_delegation_child_toolset_patch.py",
+        "scripts/openshell/tests/test_hermes_v0210_run_quiescence_patch.py",
+        "scripts/openshell/tests/test_hermes_v0210_mcp_watcher_patch.py",
+        "scripts/openshell/tests/test_research_business_tools_mcp.py"
+      ],
+      "id": "research_openshell_contracts",
+      "root": "research",
+      "timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_model_tools.py",
+        "tests/gateway/test_api_server_runs.py",
+        "tests/tools/test_delegate_toolset_scope.py",
+        "tests/tools/test_mcp_stdio_fastfail_reconnect.py",
+        "tests/tools/test_mcp_stdio_watchdog.py"
+      ],
+      "id": "hermes_native_regression",
+      "root": "hermes",
+      "timeout_seconds": 1200
+    }
+  ]
+}

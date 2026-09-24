@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-real-supervised-sandbox.v1",
+  "captured_at_utc": "2026-09-22T07:13:59Z",
+  "scope": "real_openshell_hermes_synthetic_company_supervised_candidate_lifecycle",
+  "secrets_included": false,
+  "source_sha256": {
+    "prove_qwen38_scoped_sandbox.py": "89c291f6126d57cf4f8380d576146edf09b1f7fdad378504603a021c1406d7e0",
+    "qwen38_candidate_gateway_owner.py": "06475d508e623c97b30c2c25907c13db023f8cb406a91f181d5ab217eb793d4e",
+    "qwen38_candidate_run_guard.py": "29d686e7c052675280d70927a93706a99505f4b83a263c841f8131013bf58c79",
+    "qwen38_candidate_host_guard.py": "b112be015ce23bbc33f0a2a8450b3ca95bcba91fa22ef152d748643ed886259d"
+  },
+  "runtime_evidence": {
+    "relative_path": "artifacts/openshell/flagship/ml02-qwen38-supervised-lifecycle.sanitized.json",
+    "sha256": "42da63b1276dc619a0f9435c82ed90980fe1fb8fb71da41152296b0c95b121e6",
+    "size_bytes": 3723,
+    "secrets_included": false,
+    "real_business_data_used": false,
+    "production_eligible": false
+  },
+  "observed": {
+    "candidate_gateway_empty_before": true,
+    "gateway_owner_reserved_before_sandbox_create": true,
+    "gateway_owner_activated_after_exact_sandbox_create": true,
+    "hermes_0210_positive_run_completed": true,
+    "model_bridge_status": 200,
+    "model_request_correlated_to_bridge_receipt": true,
+    "business_data_identity_generations": [1, 2, 3],
+    "old_data_identity_rejected_after_renewal": true,
+    "broker_admission_revoked_before_final_sandbox_stop": true,
+    "model_bridge_client_token_rotated_before_sandbox_delete": true,
+    "sandbox_removed": true,
+    "candidate_provider_reprovisioned_after_model_cut": true,
+    "new_provider_generation_positive_probe_passed": true,
+    "gateway_owner_released_after_verified_stop": true,
+    "synthetic_sources_and_private_proof_state_removed": true,
+    "candidate_gateway_sandboxes_after": 0,
+    "model_and_bridge_services_active": true,
+    "model_and_bridge_automatic_restart_counts": 0
+  },
+  "verification": {
+    "real_supervised_proof": "passed",
+    "focused_and_adjacent_pytest": "44 passed",
+    "ruff": "passed",
+    "python_compile": "passed",
+    "git_diff_check": "passed"
+  },
+  "boundary": {
+    "candidate_ready": false,
+    "production_eligible": false,
+    "actual_business_grant_used_for_run": false,
+    "siq_iam_integrated": false,
+    "standalone_formal_start_stop_recover_command": false,
+    "persistent_supervisor_process": false,
+    "synchronous_business_grant_revocation": false,
+    "agentshield_native_business_tool_positive_tested": false,
+    "three_repository_native_ci_accepted": false
+  }
+}

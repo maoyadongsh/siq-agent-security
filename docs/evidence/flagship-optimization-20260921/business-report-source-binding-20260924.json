@@ -1,0 +1,85 @@
+{
+  "schema_version": "siq.flagship.business-report-source.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source_repository": "siq-research-engine",
+  "sources": [
+    {
+      "path": "apps/api/services/business_report_source.py",
+      "sha256": "a91d909f90edfa8411b2555a61b637f90491ca81152e18eaf2337da5ad1a5762",
+      "bytes": 6429
+    },
+    {
+      "path": "apps/api/services/business_run_result_store.py",
+      "sha256": "bfac2de7f21e56bb915e93a375cffcc9a694a0d61e6b3ca3b6564cd394baec7e",
+      "bytes": 10153
+    },
+    {
+      "path": "apps/api/tests/test_business_report_source.py",
+      "sha256": "bb065cbf8e6a6663b7464b2d722152e3187d7577b3678dd7521bfde29c4a82ab",
+      "bytes": 4265
+    },
+    {
+      "path": "apps/api/tests/test_business_run_result_store.py",
+      "sha256": "1b4b7f707b18119c0c5adbf5a1f643de8190d88e9d36cad8bce66481627d56dc",
+      "bytes": 23230
+    },
+    {
+      "path": "apps/api/tests/test_business_run_history.py",
+      "sha256": "4f7bd18f4c0ec2eb9f37060b49181a0f5086d747db797921cc7f93c5a646e2a7",
+      "bytes": 6786
+    },
+    {
+      "path": "docs/architecture/business-run-result-access-v1.md",
+      "sha256": "954e526b957d720b49bf20d188629f2cc4f413989329dac7c43ac7fb7f729cae",
+      "bytes": 9205
+    }
+  ],
+  "tests": {
+    "modules": [
+      "apps/api/tests/test_business_report_source.py",
+      "apps/api/tests/test_business_run_result_store.py",
+      "apps/api/tests/test_business_run_history.py",
+      "apps/api/tests/test_business_run_results.py"
+    ],
+    "passed": 111,
+    "skipped": 1,
+    "warnings": 426,
+    "seconds": 42.8,
+    "postgres_supplement": {
+      "artifact": {
+        "path": "var/ops/flagship-report-source-20260924/regression.sanitized.json",
+        "sha256": "d5a2c78c818839c5f52b6b61b4390ec769260e90a600044534daab61b11f2b82",
+        "bytes": 263
+      },
+      "result": {
+        "passed": true,
+        "files": [
+          "apps/api/tests/test_business_run_result_store.py::test_postgres_migration_concurrent_insert_and_reauthorization"
+        ],
+        "test_exit_code": 0,
+        "summary": "1 passed, 5 warnings in 1.35s",
+        "isolated_database_removed": true
+      }
+    },
+    "ruff": "passed",
+    "targeted_diff_check": "passed"
+  },
+  "deployment": {
+    "performed": false,
+    "internal_envelope": "siq.business-run-retention/v3",
+    "older_envelopes_readable": [
+      "v1",
+      "v2"
+    ],
+    "new_database_columns": false,
+    "reader_upgrade_required_before_new_writer": true,
+    "public_result_contract_changed": false
+  },
+  "limitations": [
+    "source_binding_is_not_publication",
+    "file_content_integrity_requires_publication_preparation",
+    "approval_publication_version_read_and_ui_not_completed",
+    "no_new_live_model_test"
+  ]
+}

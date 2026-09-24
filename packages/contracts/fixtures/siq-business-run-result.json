@@ -1,0 +1,18 @@
+{
+  "schema_version": "siq.business-run-result/v1",
+  "run_ref": "sha256:f4f3466559192d827c86749bcad7da83be461e4670b6c4a33bde4327a23dd6c3",
+  "session_ref": "sha256:fd3cd578a936ffc512b559fe11242cb2fe5c4fdaf5dcaf05edc2d42f791053cd",
+  "profile": "siq_analysis",
+  "status": "completed",
+  "runtime_terminal_confirmed": true,
+  "children_terminal_confirmed": true,
+  "write_quiesced": true,
+  "output": {
+    "kind": "generated_reply",
+    "state": "ready",
+    "plaintext_sha256": "d2c83eaf8bd3198b3c5b2adbae2d79f650c28701dd184025541adc99de6a29ff",
+    "plaintext_bytes": 26
+  },
+  "publication_status": "not_attested",
+  "snapshot": "8304a7870b3fa3d1a78a0f1099fd4e3030e47cf5990bfaaa6687ae07e25aca84"
+}

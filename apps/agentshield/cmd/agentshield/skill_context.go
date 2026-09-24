@@ -44,10 +44,13 @@ func openSkillContexts(st *state.Store, key *signing.Key, intents *intent.Store)
 		if err != nil {
 			return skillinstall.Target{}, skillinstall.ErrChanged
 		}
+		scope, _, scopeErr := st.LoadDiscoveryRoots()
 		options := hermeshome.Options{
-			Home:         home,
-			Override:     os.Getenv("HERMES_HOME"),
-			LocalAppData: os.Getenv("LOCALAPPDATA"),
+			Home:                    home,
+			ProjectDirs:             scope.ProjectDirs,
+			ProjectScopeUnavailable: scopeErr != nil,
+			Override:                os.Getenv("HERMES_HOME"),
+			LocalAppData:            os.Getenv("LOCALAPPDATA"),
 		}
 		root, err := hermeshome.Resolve(options, id)
 		if err != nil || !root.Detected {

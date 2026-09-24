@@ -1,0 +1,223 @@
+{
+  "schema_version": "flagship-ux-deployment-recovery-e150/v1",
+  "date": "2026-09-23",
+  "goal_status": "active",
+  "task": "ENT-UX-04 partial",
+  "production_eligible": false,
+  "candidate_descriptor_path": "var/flagship/ux-e150/candidate.json",
+  "source_manifest": {
+    "path": "var/flagship/ux-e150/source-manifest.json",
+    "sha256": "9a9155a3de3821cfb447ae511e38fe4adf0d476f9c993089b5d93133cb17d68f",
+    "bytes": 59311
+  },
+  "resource_manifests": [
+    {
+      "path": "var/flagship/ux-e150/enterprise-web-manifest.json",
+      "sha256": "f607b06f70e30e5a8fa1c03bce582a9a176d9a8862f3386903cc43005b19547d",
+      "bytes": 81463
+    },
+    {
+      "path": "var/flagship/ux-e150/dev-web-manifest.json",
+      "sha256": "945717418acaed97785514172c0b10ffc2711809077bd5474a4c99e90ea9d495",
+      "bytes": 87613
+    }
+  ],
+  "checks": {
+    "recovery-complete": {
+      "count": 17,
+      "result": {
+        "path": "var/flagship/ux-e150/recovery-complete/result.json",
+        "sha256": "d8f8eb4a7150aec11aff77821a79863da4f7a5a5529a0def4518d1ace2fee60d",
+        "bytes": 1365
+      }
+    },
+    "review": {
+      "count": 12,
+      "result": {
+        "path": "var/flagship/ux-e150/review/result.json",
+        "sha256": "866d0b9736b00634d2f57ab1b81bc0db66765fc0a30eb17624274b4f6e07820e",
+        "bytes": 911
+      }
+    },
+    "postgres-complete": {
+      "count": 11,
+      "result": {
+        "path": "var/flagship/ux-e150/postgres-complete/result.json",
+        "sha256": "6651eacc1a8efd1a9c5b9bdae377de7ee32d1db82702d9d8346b0e0d4a519013",
+        "bytes": 1016
+      }
+    }
+  },
+  "test_counts": {
+    "api": 1060,
+    "api_added": 10,
+    "web": 281,
+    "web_files": 51
+  },
+  "artifacts": [
+    {
+      "path": "var/flagship/ux-e150/recovery-complete/execution-desktop.png",
+      "sha256": "86b4201b7459e610adc1977d194c53cfff00fc5b411a5d9155039b4a1d608abc",
+      "bytes": 189655
+    },
+    {
+      "path": "var/flagship/ux-e150/recovery-complete/execution-mobile.png",
+      "sha256": "6366752c4774ef0fa8de4b1b428685e79e074d8836eadce56c0f6af2e7e54aee",
+      "bytes": 64682
+    },
+    {
+      "path": "var/flagship/ux-e150/recovery-complete/preview-desktop.png",
+      "sha256": "106989bbfa2c2fdda541a2630122fc24a32a82f5417bdf4852d5b53220d57f6e",
+      "bytes": 233082
+    },
+    {
+      "path": "var/flagship/ux-e150/recovery-complete/preview-mobile.png",
+      "sha256": "6cfb4ab9d8d840c830e5142cdf5fbb5906c1e2a691fc5c2f810ce39b9dd92e9b",
+      "bytes": 70533
+    },
+    {
+      "path": "var/flagship/ux-e150/recovery-complete/recovered-request.png",
+      "sha256": "9f0e9179eefed6b6cf444498e6097daa0dbe13de602d98391599bb8ac064406b",
+      "bytes": 181819
+    },
+    {
+      "path": "var/flagship/ux-e150/recovery-complete/targets.png",
+      "sha256": "b9b63aced0767fa987f86113bc1a79a69c05ca4430483c39b2d425a107613b28",
+      "bytes": 202438
+    },
+    {
+      "path": "var/flagship/ux-e150/review/changes-mobile.png",
+      "sha256": "420cfcae598803a3a3c05e86574605288a9e45ae066ad4b5bf71424a8cc04782",
+      "bytes": 64110
+    },
+    {
+      "path": "var/flagship/ux-e150/review/review-desktop.png",
+      "sha256": "552486d4cb0323a38db2a3030b3d5710b6a3323fb99805196dbf31605a29fe30",
+      "bytes": 171232
+    },
+    {
+      "path": "var/flagship/ux-e150/review/review-mobile.png",
+      "sha256": "200c5737d193e623a406758849025f9a13a170f736782820ce6724e6836819f5",
+      "bytes": 72725
+    }
+  ],
+  "logs": [
+    {
+      "path": "var/flagship/ux-e150/api-tests-verified.log",
+      "sha256": "284b6162771b944224bdb315541f11d145f71806432fde468f60706e76b3b7fb",
+      "bytes": 1742
+    },
+    {
+      "path": "var/flagship/ux-e150/web-tests.log",
+      "sha256": "3639b77015f3e8665965a12e4aa627c13c6773874a457ff216e3b34f7da3d537",
+      "bytes": 292
+    },
+    {
+      "path": "var/flagship/ux-e150/dev-build.log",
+      "sha256": "0f119c3ab43dd9cb5be9331e1eaa52fe116c1e8b52f6801c5f8127a85e85f189",
+      "bytes": 42848
+    },
+    {
+      "path": "var/flagship/ux-e150/build-production.log",
+      "sha256": "fcbecff285e4be953dd6a2371a3f447bb0f7f05c66218bc29e994d3ebaedaae4",
+      "bytes": 30534
+    },
+    {
+      "path": "var/flagship/ux-e150/build-local.log",
+      "sha256": "5ccea5b11bcacd45214e5799e87cda2784ddf9e253789e12d909fae1c1fa18cd",
+      "bytes": 23135
+    },
+    {
+      "path": "var/flagship/ux-e150/recovery-complete.log",
+      "sha256": "96f314ac3e14889b4d780bcd846d4130a971919f4e8e14d61bce2b73a899575b",
+      "bytes": 31
+    },
+    {
+      "path": "var/flagship/ux-e150/review.log",
+      "sha256": "20cad602474a5b8fe0204fb9d0e47851cb6a4208e4c1c345fe639b96d76ff07d",
+      "bytes": 31
+    },
+    {
+      "path": "var/flagship/ux-e150/postgres-complete.log",
+      "sha256": "c0541f5ccce8b219fdd1650ff4a95d52fade7946f3cb5f43a078f5e3f624197c",
+      "bytes": 31
+    },
+    {
+      "path": "var/flagship/ux-e150/sqlite-migration.log",
+      "sha256": "dd0c8e7b1c96edff989f6c27290c971551b4807d3d24590c599a69d32801a3ed",
+      "bytes": 2874
+    },
+    {
+      "path": "var/flagship/ux-e150/ruff-verified.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/flagship/ux-e150/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e150/postgres-complete/worker.log",
+      "sha256": "158aa82de3c3278f078da155225b076d308821f8027778cfe58680c83dd12715",
+      "bytes": 908
+    },
+    {
+      "path": "var/flagship/ux-e150/postgres-complete/migration-0.log",
+      "sha256": "f2c03517755a93586af6621bec14cc511b82f2c5766274f698dad3672d13c2d2",
+      "bytes": 2365
+    },
+    {
+      "path": "var/flagship/ux-e150/postgres-complete/migration-1.log",
+      "sha256": "4c3bfd3f260a2f493b42547816c633c4f14b81bb49e934e71fb454bf5e83bd32",
+      "bytes": 237
+    },
+    {
+      "path": "var/flagship/ux-e150/postgres-complete/migration-2.log",
+      "sha256": "2974565be10a0e7866b1394b777a0b3787e1a177083bf227fdddee0a87e8a6bd",
+      "bytes": 235
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/development/enterprise-deployment-recovery-e150-spec.md",
+      "sha256": "4c57642d45817cee48e36a7b4ba1972a5e1b74117c15133e977dfa089210f5c8",
+      "bytes": 3464
+    },
+    {
+      "path": "docs/development/ux-deployment-recovery-e150-validation-20260923.md",
+      "sha256": "50f489ce4cc9937a789383057ebfd25fe55e506ca1a31421b3176e098bdd4d93",
+      "bytes": 6285
+    },
+    {
+      "path": "apps/control-api/README.md",
+      "sha256": "7c317939ee2d5320446d02cb38f23d1c95d7888730f050364b7ebee16b1da752",
+      "bytes": 7139
+    }
+  ],
+  "native_baseline_unchanged": {
+    "candidate": {
+      "path": "var/flagship/ux-e149/siq-agent-security",
+      "sha256": "3779e21c114c34bb25b5900cb1ce7138a8362e14477ba975ce1f5adbd679697b",
+      "bytes": 23867253
+    },
+    "embedded_resources": {
+      "path": "var/flagship/ux-e149/local-resources.json",
+      "sha256": "8745c81bc59b35c4efdfd5129f58a1ce03e75b35c47f1786beb3e86033e87d48",
+      "bytes": 47676
+    },
+    "go_and_cross_platform_tests_not_repeated": true
+  },
+  "limits": [
+    "No distributed runtime exactly-once claim",
+    "Unknown pending requests never auto-released or re-executed",
+    "Real OpenShell policy mutation not performed; adapter effects use deterministic runner",
+    "PostgreSQL 17 is an isolated real database with dev identity, not production IdP/HA acceptance",
+    "Old code rollback requires disabling deployment writes and retaining 0017 data",
+    "Remaining real sandbox behavior, human reconciliation/safe retries, business artifacts, installation and production identity"
+  ],
+  "failed_attempts": [
+    "Initial PostgreSQL different-key delivery waited behind executor lock; fast claim lookup fixed and reverified",
+    "Concurrency test barrier included new post-reservation snapshot; confined to two initial contenders without weakening assertions"
+  ]
+}

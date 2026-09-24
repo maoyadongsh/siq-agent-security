@@ -1,0 +1,438 @@
+{
+  "Go_sources_changed_this_increment": false,
+  "Go_tests_rerun": false,
+  "candidate_ready": false,
+  "launches": {
+    "e108-live-v1-v2": {
+      "result": {
+        "API_model_bridge_unchanged": true,
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true,
+        "passed": false,
+        "production_eligible": false,
+        "runs": [
+          {
+            "exit_code": 0,
+            "graceful": false,
+            "passed": true,
+            "suffix": "v1"
+          },
+          {
+            "exit_code": 1,
+            "graceful": true,
+            "passed": false,
+            "suffix": "v2"
+          }
+        ],
+        "schema_version": "siq.e108.live-launch.v1"
+      },
+      "sha256": "924e79d322366529d7a68f9dc7771c5c7427891156987da37a4c62d4377c53d6"
+    },
+    "e108-live-v3": {
+      "result": {
+        "API_model_bridge_unchanged": true,
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true,
+        "passed": true,
+        "production_eligible": false,
+        "runs": [
+          {
+            "exit_code": 0,
+            "graceful": true,
+            "passed": true,
+            "suffix": "v3"
+          }
+        ],
+        "schema_version": "siq.e108.live-launch.v1"
+      },
+      "sha256": "f1a82a7144886beffd6e20887f77d8761cb18908326e090ed8e630ef96d3edb2"
+    },
+    "e108-live-v4-v5": {
+      "result": {
+        "API_model_bridge_unchanged": true,
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true,
+        "passed": true,
+        "production_eligible": false,
+        "runs": [
+          {
+            "exit_code": 0,
+            "graceful": false,
+            "passed": true,
+            "suffix": "v4"
+          },
+          {
+            "exit_code": 0,
+            "graceful": true,
+            "passed": true,
+            "suffix": "v5"
+          }
+        ],
+        "schema_version": "siq.e108.live-launch.v1"
+      },
+      "sha256": "5ddea4f0cb70791c2541015704e60ea403df918c915b6d9a1898a583e99bcfd5"
+    }
+  },
+  "production_eligible": false,
+  "research_evidence": {
+    "all_historical_live_runs_passed": false,
+    "artifact_sha256": {
+      "ml02-request-heartbeat-e108-initial-summary.sanitized.json": "30765820b35ed72e15f1ade6ec57bfe515b7b1437c99647dcb24f2acc8e5e7a6",
+      "ml02-request-heartbeat-e108-v1.sanitized.json": "72ac3eafbef0996f34791f68908448efc3fa0fb7a61f106a8f1b60da6343c6dd",
+      "ml02-request-heartbeat-e108-v2.sanitized.json": "20bfd3799b4478e9269b7da26526b801f1f881f692f4b6f388b7f1d7da718ab2",
+      "ml02-request-heartbeat-e108-v3.sanitized.json": "4cc61e9992c8ad67d7af8a1068327a02f028fdcf04f25558603afb11228e0aed",
+      "ml02-request-heartbeat-e108-v4.sanitized.json": "b73b0d377edd39589f60876ed1adf54cad04a556530108fe2221f8c8f46639a2",
+      "ml02-request-heartbeat-e108-v5.sanitized.json": "007544836c18e0873100bcce4c372f343c6476515d8bdbfd71a8cb9bb3246b19",
+      "ml02-request-heartbeat-provider-e108-v1.sanitized.json": "d2bbe63a6c0c249a00d6f121dfa72c5b3fe4c30a614d45cfa7590547a83a6c27",
+      "ml02-request-heartbeat-provider-e108-v2.sanitized.json": "918634b132076090a685188852e9fcb6a268227ef3c9e5c97da33c8a700e5890",
+      "ml02-request-heartbeat-provider-e108-v3.sanitized.json": "329d78aee297b1c7d47b83ab8662950156cd218aae09ed9cc729eb05dc262312",
+      "ml02-request-heartbeat-provider-e108-v4.sanitized.json": "46aa90a021afb309b734f369746bc53957008136d13b874f1ddf5ec9c448b260",
+      "ml02-request-heartbeat-provider-e108-v5.sanitized.json": "7df63735523fae12dc506a2e4a2400b14c30e0c552925bf98c99df0287b746af"
+    },
+    "candidate_ready": false,
+    "captured_at_utc": "2026-09-22T16:55:14.070646+00:00",
+    "final_state": {
+      "gateway_empty": true,
+      "owner_empty": true,
+      "port_18796_closed": true,
+      "port_47710_closed": true,
+      "port_47811_closed": true
+    },
+    "final_two_live_runs_passed": true,
+    "history": {
+      "v1_passed": true,
+      "v2_cleanup_passed": true,
+      "v2_error_category": "TimeoutError",
+      "v2_passed": false,
+      "v2_root_cause_proven": false,
+      "v3_passed": true
+    },
+    "implementation_validation_passed": true,
+    "live_SIGKILL": {
+      "API_owner_heartbeats": 5,
+      "AgentShield_relay_started": true,
+      "Hermes_HTTP_run_sha256": "adf7fa441dc79d20f6e37715f01b5d2fa0b931fa617c8e8103523a6a95ffff39",
+      "Hermes_bootstrap_attempted": true,
+      "Hermes_gateway_started": true,
+      "actual_API_process_killed": false,
+      "actual_API_request_sent": false,
+      "agentshield_grant_and_profile_unchanged_at_containment": true,
+      "bootstrap_receipt": {
+        "business_ready": false,
+        "child_pid": 102,
+        "invalid_key_status": 401,
+        "key_absent_from_child_argv": true,
+        "key_sha256": "b5ff843db779bc6e10a95a291bcf9b7bdd110fcbde897c0a7df1631457958f24",
+        "phase": "authenticated",
+        "run_sha256": "f24c13bd727fbf8f0592a36f6b7cf2687bf2bf2d66b1f379bbfdeb981e469411",
+        "schema_version": "siq.qwen38.request-bootstrap.v2",
+        "tool_identity_installed": true,
+        "tool_packet_sha256": "eeeecc4450e2e4ac50bd36bdc68fca0e5b43882d0521addca2537bb6c903a3af",
+        "tool_token_absent_from_child_argv": true,
+        "transport_authenticated": true,
+        "uploaded_key_removed": true,
+        "uploaded_tool_packet_removed": true
+      },
+      "business_client_HTTP_attempted": true,
+      "business_client_create_and_SSE_passed": true,
+      "business_client_stop_and_status_passed": true,
+      "business_client_terminal_quiesced": true,
+      "business_grant_still_valid_at_containment": true,
+      "business_ready": false,
+      "client_bridge_statuses": [
+        200
+      ],
+      "client_log_error_counts_before_cleanup": {
+        "APIConnectionError": 0,
+        "APITimeoutError": 0,
+        "AuthenticationError": 0,
+        "BadRequestError": 0,
+        "ConnectError": 0,
+        "ConnectTimeout": 0,
+        "InternalServerError": 0,
+        "PermissionDeniedError": 0,
+        "PoolTimeout": 0,
+        "RateLimitError": 0,
+        "ReadTimeout": 0,
+        "RemoteProtocolError": 0,
+        "WriteTimeout": 0
+      },
+      "client_phase": "completed",
+      "client_started_unix": 1790095785,
+      "client_status_observations": [
+        {
+          "status": "running",
+          "write_quiesced": false
+        },
+        {
+          "status": "running",
+          "write_quiesced": false
+        },
+        {
+          "status": "running",
+          "write_quiesced": false
+        },
+        {
+          "status": "running",
+          "write_quiesced": false
+        },
+        {
+          "status": "running",
+          "write_quiesced": false
+        }
+      ],
+      "client_trace_sha256": "ddb5f5a33ca7f72378d7d4edbc9e3a4e7cdd04f146b30cc6219ea17827895c08",
+      "company_content_preserved": true,
+      "credential_absent_from_plan_and_receipt": true,
+      "data_lease_revoked": true,
+      "endpoint_invalid_key_status": 401,
+      "endpoint_same_bootstrap_PID": true,
+      "endpoint_transport_authenticated": true,
+      "execution_lease_seconds": 120,
+      "execution_lease_still_current_at_containment": true,
+      "final_credential_denial_also_has_expired_execution_lease": false,
+      "forward_child_and_listener_gone": true,
+      "forward_is_supervisor_child_in_same_cgroup": true,
+      "forward_owns_loopback_listener": true,
+      "identity_revoked_before_diagnostic_admin_cleanup": true,
+      "identity_sha256": "77fc5420621e5c02136c559c9337aaab3c7fd1cb2ce661a39bd286acc6dbacbe",
+      "independent_private_identity_copy": true,
+      "invocation_sha256": "ffb678b81ac9e30d042cd9b85148e10acf3a78bd02967c9d24f091abf0bbfce0",
+      "model_client_credential_rotated": true,
+      "model_inference_started": true,
+      "model_synthetic_marker_confirmed": true,
+      "native_dispatcher_separate_process_from_HTTP_gateway": true,
+      "native_tool_probe": {
+        "denied_write_effect_absent": true,
+        "native_read_completed": true,
+        "native_write_blocked": true
+      },
+      "natural_execution_lease_expired": false,
+      "new_synthetic_request_identity_issued": true,
+      "old_identity_inspection_and_enrollment_401": true,
+      "original_execution_binding_renewed_and_current": true,
+      "original_execution_row_unchanged": false,
+      "passed": true,
+      "private_credential_valid": true,
+      "private_file_modes": true,
+      "private_files_fixture_and_owner_removed": true,
+      "production_IAM_integrated": false,
+      "production_eligible": false,
+      "provider_restored_positive_probe": true,
+      "read_only_prepare": true,
+      "real_read_only_broker_probe": {
+        "error_code": "",
+        "ok": true,
+        "real_read_only_query": true,
+        "secret_file_private": true,
+        "status": 200
+      },
+      "relay_child_and_listener_gone_after_sigkill": true,
+      "relay_host_enrollment_and_cross_session_denial": true,
+      "relay_is_exact_supervisor_child_in_same_cgroup": true,
+      "relay_self_revoke_route_hidden": true,
+      "revoked_grant_denies_credential_read": true,
+      "sandbox_or_model_started": true,
+      "sandbox_removed_owner_retained": true,
+      "schema_version": "siq.qwen38.request-heartbeat-proof.v1",
+      "scope": "original_API_owner_heartbeat_and_Hermes_client_model_run_SIGKILL_recovery",
+      "seconds_waited_after_probe": 2.562,
+      "secrets_included": false,
+      "service_broker_and_sandbox_stopped": true,
+      "signed_native_receipts": {
+        "allowed_read_observation_present": true,
+        "exact_runtime_grant_matched": true,
+        "native_allow_and_deny_correlated": true,
+        "signed_chain_verified": true
+      },
+      "supervision_fixtures_removed": true,
+      "supervisor_main_sigkill_confirmed": true,
+      "synthetic_identity_fixture_and_private_copy_removed": true,
+      "temporary_database_removed": true,
+      "terminal_service": {
+        "ActiveState": "failed",
+        "ExecMainCode": "2",
+        "ExecMainStatus": "9",
+        "Result": "signal",
+        "SubState": "failed"
+      },
+      "v2_service_with_broker_ready": true,
+      "v3_service_with_identity_ready": true,
+      "v4_service_with_relay_ready": true,
+      "v5_service_with_forward_ready": true
+    },
+    "live_graceful": {
+      "API_owner_heartbeats": 2,
+      "AgentShield_relay_started": true,
+      "Hermes_HTTP_run_sha256": "9acf95d85f06fac8554ec66b7c9adb66a7f0282f86e8c5c56c2ec549a187f078",
+      "Hermes_bootstrap_attempted": true,
+      "Hermes_gateway_started": true,
+      "actual_API_process_killed": false,
+      "actual_API_request_sent": false,
+      "agentshield_grant_and_profile_unchanged_at_containment": true,
+      "bootstrap_receipt": {
+        "business_ready": false,
+        "child_pid": 108,
+        "invalid_key_status": 401,
+        "key_absent_from_child_argv": true,
+        "key_sha256": "94014eb8e888bc6d597aaa1afada3f8438182434e816ebd1763f8b4f15e85faa",
+        "phase": "authenticated",
+        "run_sha256": "81762f04a92525d0be5c739b1ad3460aa7dabb0ebd689f3c38c7111f5454b278",
+        "schema_version": "siq.qwen38.request-bootstrap.v2",
+        "tool_identity_installed": true,
+        "tool_packet_sha256": "e8a0463170ae12a48eb89de11f7f5db8053415ad9f42c4e772145a23c5c038bf",
+        "tool_token_absent_from_child_argv": true,
+        "transport_authenticated": true,
+        "uploaded_key_removed": true,
+        "uploaded_tool_packet_removed": true
+      },
+      "business_client_HTTP_attempted": true,
+      "business_client_create_and_SSE_passed": true,
+      "business_client_stop_and_status_passed": true,
+      "business_client_terminal_quiesced": true,
+      "business_grant_still_valid_at_containment": true,
+      "business_ready": false,
+      "cleared_invocation_accepted_with_matching_recovery_digest": true,
+      "client_bridge_statuses": [
+        200
+      ],
+      "client_log_error_counts_before_cleanup": {
+        "APIConnectionError": 0,
+        "APITimeoutError": 0,
+        "AuthenticationError": 0,
+        "BadRequestError": 0,
+        "ConnectError": 0,
+        "ConnectTimeout": 0,
+        "InternalServerError": 0,
+        "PermissionDeniedError": 0,
+        "PoolTimeout": 0,
+        "RateLimitError": 0,
+        "ReadTimeout": 0,
+        "RemoteProtocolError": 0,
+        "WriteTimeout": 0
+      },
+      "client_phase": "completed",
+      "client_started_unix": 1790095936,
+      "client_trace_sha256": "3dbef0b3a764ff6eb0efa59437db5c6a22e6d6f9c8d59ee8c6cfb62a212f8ae1",
+      "company_content_preserved": true,
+      "credential_absent_from_plan_and_receipt": true,
+      "data_lease_revoked": true,
+      "endpoint_invalid_key_status": 401,
+      "endpoint_same_bootstrap_PID": true,
+      "endpoint_transport_authenticated": true,
+      "execution_lease_seconds": 120,
+      "execution_lease_still_current_at_containment": true,
+      "final_credential_denial_also_has_expired_execution_lease": false,
+      "forward_child_and_listener_gone": true,
+      "forward_is_supervisor_child_in_same_cgroup": true,
+      "forward_owns_loopback_listener": true,
+      "identity_revoked_before_diagnostic_admin_cleanup": true,
+      "identity_sha256": "0ddbcafbe7d3f8ca3d8c47cb7c2ac3c45fca0ace5794961f332e9043c2640430",
+      "independent_private_identity_copy": true,
+      "invocation_sha256": "bd4eed7a9e040c15f3bb942a1faeb5c4bce5a66615bccd3d9c21ee7dabe9bd63",
+      "model_client_credential_rotated": true,
+      "model_inference_started": true,
+      "model_synthetic_marker_confirmed": true,
+      "native_dispatcher_separate_process_from_HTTP_gateway": true,
+      "native_tool_probe": {
+        "denied_write_effect_absent": true,
+        "native_read_completed": true,
+        "native_write_blocked": true
+      },
+      "natural_execution_lease_expired": false,
+      "new_synthetic_request_identity_issued": true,
+      "old_identity_inspection_and_enrollment_401": true,
+      "original_execution_binding_renewed_and_current": true,
+      "original_execution_row_unchanged": false,
+      "passed": true,
+      "private_credential_valid": true,
+      "private_file_modes": true,
+      "private_files_fixture_and_owner_removed": true,
+      "production_IAM_integrated": false,
+      "production_eligible": false,
+      "provider_restored_positive_probe": true,
+      "read_only_prepare": true,
+      "real_read_only_broker_probe": {
+        "error_code": "",
+        "ok": true,
+        "real_read_only_query": true,
+        "secret_file_private": true,
+        "status": 200
+      },
+      "relay_child_and_listener_gone_after_stop": true,
+      "relay_host_enrollment_and_cross_session_denial": true,
+      "relay_is_exact_supervisor_child_in_same_cgroup": true,
+      "relay_self_revoke_route_hidden": true,
+      "revoked_grant_denies_credential_read": true,
+      "sandbox_or_model_started": true,
+      "sandbox_removed_owner_retained": true,
+      "schema_version": "siq.qwen38.request-heartbeat-proof.v1",
+      "scope": "original_API_owner_heartbeat_and_Hermes_client_model_run_graceful_recovery",
+      "seconds_waited_after_probe": 3.002,
+      "secrets_included": false,
+      "service_broker_and_sandbox_stopped": true,
+      "signed_native_receipts": {
+        "allowed_read_observation_present": true,
+        "exact_runtime_grant_matched": true,
+        "native_allow_and_deny_correlated": true,
+        "signed_chain_verified": true
+      },
+      "supervision_fixtures_removed": true,
+      "supervisor_graceful_stop_confirmed": true,
+      "synthetic_identity_fixture_and_private_copy_removed": true,
+      "temporary_database_removed": true,
+      "terminal_service": {
+        "ActiveState": "inactive",
+        "ExecMainCode": "0",
+        "ExecMainStatus": "0",
+        "Result": "success",
+        "SubState": "dead"
+      },
+      "v2_service_with_broker_ready": true,
+      "v3_service_with_identity_ready": true,
+      "v4_service_with_relay_ready": true,
+      "v5_service_with_forward_ready": true
+    },
+    "model_inference_proven_by_client_output_and_correlated_bridge_200": true,
+    "not_proven": [
+      "stable_model_latency_or_v2_timeout_root_cause",
+      "formal_API_route_selection_and_request_creation",
+      "formal_API_process_crash_recovery",
+      "in_flight_model_cancellation",
+      "production_IAM_and_approved_request_identity_issuance",
+      "model_selected_data_tools",
+      "native_CI"
+    ],
+    "production_eligible": false,
+    "provider_restoration_is_authenticated_models_probe_only": true,
+    "schema_version": "siq.qwen38.request-heartbeat-evidence.v1",
+    "scope": "API_client_original_owner_heartbeat_and_synthetic_model_run_two_final_stop_modes",
+    "secrets_included": false,
+    "source_sha256": {
+      "apps/api/services/hermes_client.py": "88acf42901a5051ecb8de94435dc779f3f1ddbc01c64d8993e7078d109ab1c5b",
+      "apps/api/services/qwen38_request_endpoint.py": "85731d363f39fb4001ea2ae1b42038a7032e898ff2abb14792ebecb698e653c9",
+      "apps/api/services/qwen38_request_heartbeat.py": "d8439cf7ab147652adba3689991c97b61b742d8bfe592e9f9ce53e0af9e7e4bc",
+      "apps/api/services/qwen38_request_http.py": "0e7e0420497a452074247e061a330c0298b10e64c3b6f24e1e9f902f84d0beef",
+      "apps/api/tests/test_qwen38_request_client_proof.py": "0c3ded49d684f3dda3ed60bec8a1f9de3ce317d20dafc03220b0fffa48e138bd",
+      "apps/api/tests/test_qwen38_request_heartbeat.py": "2de1ff56ed7dd5e96d1d98c8aab77927908a340dbc2b4eaea89bd958557100cc",
+      "docs/architecture/qwen38-request-runtime-v1.md": "1b0f6a14a5f1231a223c31e148111f15b1d110832d05f7ce4b511cada8b31d14",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "ba12a194452544cb922bd5a9d2a23a7b6a3b5f6e5402710df8a55b8f96b44a52",
+      "scripts/openshell/prove_qwen38_request_identity_supervision.py": "833d9e95df9d4afdbbd13a110b117a2b33f6447ee931491b381d8d55dc4baa31",
+      "scripts/openshell/prove_qwen38_request_supervision.py": "a5974c54d8b4ff0a2ef60c213d8b77597a5b978512770a5153cf5da8343873dc"
+    },
+    "validation": {
+      "combined_test_files": 28,
+      "combined_tests_passed": 536,
+      "diagnostics_include_three_preexisting_tests": true,
+      "final_diagnostics_tests_passed": 8,
+      "git_diff_check_passed": true,
+      "python_compile_passed": true,
+      "ruff_passed": true,
+      "warnings": 410
+    }
+  },
+  "research_evidence_sha256": "69e93ba9dcfc1248ea3e016c4f54ace546afcd48ed521c11659e0c4124463f7e",
+  "schema_version": "siq.flagship.evidence.request-heartbeat.v1",
+  "scope": "versioned_sanitized_research_owner_heartbeat_and_client_model_completion",
+  "secrets_included": false
+}

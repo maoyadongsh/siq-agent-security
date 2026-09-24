@@ -1,0 +1,37 @@
+{
+  "schema_version": "siq.flagship.ml02-live-business-scope-grant/v1",
+  "recorded_at": "2026-09-22T05:01:29Z",
+  "scope": "business_api_confidential_pool_admission_with_live_local_grant",
+  "status": "passed_local_database_and_route_contract",
+  "source_sha256": {
+    "data_scope_service": "48e54e7831395472c816696c9c82744cfcf50d1ca3fd6ac9c9bf05ed9514b9c1",
+    "business_pool_route": "72e3c7af49dc384e3014d28081de076034076eab04eae4365daaf2521d1d3ba7",
+    "database_schema": "1f76a67abe440214e6a835c0cafab517b9695c84979dcdddaa5d3dffa01e3cdc",
+    "migration_016": "6e1e6a512888de05c7567fd21b3261bdbb4fd888210abf7829418148dca0df61",
+    "data_scope_tests": "17c8ba125ce0cf7d14e4962ec32d16469de3fa6242894a0f774bd5136c6f5244",
+    "routing_tests": "769421c8c5925ea2efede41ecdf5f3554059f3972d1125910a4ec59107c0c980",
+    "auth_regression_tests": "49d249377aaa72ab6ecfbaa184ffa860ef27f14dc0ebddfe0ed2d383e327cd11"
+  },
+  "checks": {
+    "explicit_grant_required": true,
+    "tenant_project_market_company_object_scope_exact_match": true,
+    "live_account_active_and_approved": true,
+    "current_role_company_view_required": true,
+    "account_token_version_bound": true,
+    "grant_expiry_and_revocation_checked": true,
+    "missing_grant_table_fails_closed": true,
+    "denied_route_releases_pool_lease": true,
+    "migration_governance": "pass_15_to_16_append_only",
+    "focused_and_adjacent_tests_passed": 122,
+    "auth_fixture_expired_object_failure_reproduced_and_repaired": true,
+    "ruff_and_diff_check": "pass",
+    "production_eligible": false
+  },
+  "limitations": [
+    "The test used an isolated local SQLite database and a stubbed pool admission; it is not a live enterprise IAM or PostgreSQL integration test.",
+    "Grant provisioning and revocation from the actual enterprise identity provider are not wired; the new table starts empty and confidential admission fails closed.",
+    "The Qwen lease renewal callback is still synthetic and does not yet call the live business authority; formal scheduler and start/stop lifecycle remain incomplete.",
+    "Positive Qwen model inference, Hermes gateway business-tool dispatch, live business data, and production canary are unverified."
+  ],
+  "secrets_included": false
+}

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { Icon } from '@/components/icons';
@@ -7,6 +7,7 @@ import { LocalApiError, localApi } from '../api';
 import type { LedgerAsset } from '../types';
 import { useLocalSession } from '../session';
 import DiscoveryPanel from '../components/DiscoveryPanel';
+import { assetKind, assetKinds, frameworkGroups, type FrameworkGroup } from '../assetKinds';
 import {
   assetStatusLabel,
   assetSourceLabel,
@@ -20,15 +21,24 @@ import {
 
 export default function AgentsPage() {
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
+  const selectedKind = assetKinds.find((item) => item.key === params.get('kind')) ?? assetKinds[1];
   const { reload: reloadStatus } = useLocalSession();
   const [rows, setRows] = useState<LedgerAsset[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [framework, setFramework] = useState('');
+  const framework = params.get('framework') ?? '';
+  const setFramework = (value: string) => setParams((current) => {
+    const next = new URLSearchParams(current);
+    if (value) next.set('framework', value); else next.delete('framework');
+    return next;
+  });
   const [statusFilter, setStatusFilter] = useState('');
   const [admitPath, setAdmitPath] = useState('');
   const [admitResult, setAdmitResult] = useState<{ name: string; verdict: string } | null>(null);
   const [admitErr, setAdmitErr] = useState<string | null>(null);
+  const [checkingPath, setCheckingPath] = useState('');
+  const checking = useRef(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -52,6 +62,9 @@ export default function AgentsPage() {
   }, [load]);
 
   const runAdmit = (path: string) => {
+    if (checking.current) return;
+    checking.current = true;
+    setCheckingPath(path);
     setAdmitResult(null);
     setAdmitErr(null);
     localApi
@@ -61,8 +74,9 @@ export default function AgentsPage() {
         load();
       })
       .catch((err: unknown) => {
-        setAdmitErr(err instanceof LocalApiError ? err.message : '准入失败');
-      });
+        setAdmitErr(err instanceof LocalApiError ? err.message : '检查失败，请重试');
+      })
+      .finally(() => { checking.current = false; setCheckingPath(''); });
   };
 
   const frameworks = useMemo(
@@ -74,10 +88,21 @@ export default function AgentsPage() {
     [rows],
   );
   const visible = rows.filter((r) => {
+    if (assetKind(r.source_type) !== selectedKind.key) return false;
     if (framework && r.framework !== framework) return false;
     if (statusFilter && r.status !== statusFilter) return false;
     return true;
   });
+  const groups = frameworkGroups(rows);
+  const visibleGroups = groups.filter((group) => !framework || group.framework === framework);
+  const groupColumns: TableColumn<FrameworkGroup>[] = [
+    { key: 'framework', header: '框架', render: (group) => platformLabel(group.framework) },
+    { key: 'records', header: '配置记录', render: (group) => group.configurationRecords },
+    { key: 'roles', header: '已发现角色', render: (group) => group.roleCount },
+    { key: 'action', header: '操作', render: (group) => <button className="btn btn-sm" type="button" onClick={() => {
+      setStatusFilter(''); setParams({ kind: 'roles', framework: group.framework });
+    }}>查看角色</button> },
+  ];
 
   const emptyText = loading
     ? '盘点中…'
@@ -85,7 +110,7 @@ export default function AgentsPage() {
       ? '暂时无法读取资产，请检查本地服务后重试。'
       : rows.length > 0
         ? '当前筛选无匹配资产，可放宽平台 / 状态条件。'
-        : '未发现资产。确认本机装有 Agent 平台，或在下方粘贴 Skill 目录做准入。';
+        : '尚未发现此类记录。可重新发现本机环境，或展开高级选项补充 Skill 目录。';
 
   const columns: TableColumn<LedgerAsset>[] = [
     {
@@ -97,13 +122,13 @@ export default function AgentsPage() {
     },
     {
       key: 'fw',
-      header: '平台',
+      header: '所属框架',
       render: (r) => <span className="cell-nowrap">{platformLabel(r.framework)}</span>,
     },
     { key: 'type', header: '来源', render: (r) => <span className="cell-nowrap">{assetSourceLabel(r.source_type)}</span> },
-    { key: 'relationships', header: '发现的关联', render: (r) => {
+    { key: 'relationships', header: '配置关联', render: (r) => {
       const linked = new Set((r.relationships ?? []).map((relation) => r.source_type === 'skill_dir' ? relation.source_id : relation.skill_id));
-      return linked.size ? `${linked.size} ${r.source_type === 'skill_dir' ? '个可能使用者' : '个 Skill'}` : '尚未确认';
+      return linked.size ? `${linked.size} ${r.source_type === 'skill_dir' ? '个配置来源' : '个 Skill'}（未核验调用）` : '未发现关联';
     } },
     {
       key: 'status',
@@ -112,7 +137,7 @@ export default function AgentsPage() {
     },
     {
       key: 'verdict',
-      header: '准入',
+      header: '安全检查',
       render: (r) =>
         r.admission_verdict ? (
           <span className={verdictTag(r.admission_verdict)} title={r.admission_verdict}>
@@ -124,7 +149,7 @@ export default function AgentsPage() {
     },
     {
       key: 'grant',
-      header: '签发',
+      header: '授权状态',
       render: (r) =>
         r.grant_status ? (
           <span className={grantTag(r.grant_status)} title={r.grant_status}>
@@ -148,18 +173,19 @@ export default function AgentsPage() {
       key: 'act',
       header: '',
       render: (r) =>
-        r.admit_path ? (
+        <div className="toolbar">{r.admit_path ? (
           <button
             type="button"
             className="btn btn-sm"
+            disabled={!!checkingPath}
             onClick={(e) => {
               e.stopPropagation();
               runAdmit(r.admit_path as string);
             }}
           >
-            准入
+            {checkingPath === r.admit_path ? '检查中…' : '安全检查'}
           </button>
-        ) : null,
+        ) : null}<Link to={`/agents/${encodeURIComponent(r.id)}`} onClick={(event) => event.stopPropagation()}>查看详情</Link></div>,
     },
   ];
 
@@ -168,8 +194,8 @@ export default function AgentsPage() {
       <PageHeader
         kicker="AGENTSHIELD"
         icon="agents"
-        title="智能体资产"
-        description="查看本机平台实例、Skill 安装位置、内容版本与配置关联。发现后由你选择保护范围。"
+        title="智能体与 Skill"
+        description="分别查看框架、智能体角色和 Skill，选择具体对象后管理权限和接入。"
         connection={loading ? 'loading' : error ? 'disconnected' : 'connected'}
         connectionError={error}
         actions={<>
@@ -179,10 +205,20 @@ export default function AgentsPage() {
           </button>
         </>}
       />
-      <DiscoveryPanel onCompleted={load} />
+      <DiscoveryPanel compact onCompleted={load} />
+      <div className="toolbar" role="group" aria-label="发现对象分类">
+        {assetKinds.map((item) => <button type="button" key={item.key}
+          className={selectedKind.key === item.key ? 'btn btn-primary' : 'btn'}
+          aria-pressed={selectedKind.key === item.key} onClick={() => setParams((current) => {
+            const next = new URLSearchParams(current); next.set('kind', item.key); return next;
+          })}>
+          {item.label}（{item.key === 'frameworks' ? groups.length : rows.filter((row) => assetKind(row.source_type) === item.key).length}）
+        </button>)}
+      </div>
+      <p className="page-desc">{selectedKind.description}</p>
       <div className="toolbar">
         <div className="field field-flush">
-          <label htmlFor="fw-filter">平台</label>
+          <label htmlFor="fw-filter">所属框架</label>
           <select id="fw-filter" value={framework} onChange={(e) => setFramework(e.target.value)}>
             <option value="">全部</option>
             {frameworks.map((f) => (
@@ -192,7 +228,7 @@ export default function AgentsPage() {
             ))}
           </select>
         </div>
-        <div className="field field-flush">
+        {selectedKind.key !== 'frameworks' ? <div className="field field-flush">
           <label htmlFor="st-filter">状态</label>
           <select
             id="st-filter"
@@ -206,7 +242,7 @@ export default function AgentsPage() {
               </option>
             ))}
           </select>
-        </div>
+        </div> : null}
       </div>
       {error ? (
         <div className="notice" role="status">
@@ -215,19 +251,21 @@ export default function AgentsPage() {
         </div>
       ) : null}
       <div className="card">
-        <h2>资产（{visible.length}）</h2>
-        <SimpleTable
-          columns={columns}
+        <h2>{selectedKind.label}（{selectedKind.key === 'frameworks' ? visibleGroups.length : visible.length}）</h2>
+        {selectedKind.key === 'frameworks' ? <SimpleTable columns={groupColumns} rows={visibleGroups} rowKey={(group) => group.framework} emptyText={emptyText} /> : <SimpleTable
+          columns={selectedKind.key === 'skills' ? columns : columns.filter((column) => !['verdict', 'grant', 'tools'].includes(column.key))}
           rows={visible}
           rowKey={(r) => r.id}
           emptyText={emptyText}
           onRowClick={(r) => navigate(`/agents/${encodeURIComponent(r.id)}`)}
-        />
+        />}
       </div>
-      <div className="card">
-        <h2>按路径准入</h2>
+      {admitResult ? <p role="status">{admitResult.name}：<span className={verdictTag(admitResult.verdict)}>{verdictLabel(admitResult.verdict)}</span>。检查结果已保存，可查看详情。</p> : null}
+      {admitErr ? <p className="action-error" role="alert">{admitErr}</p> : null}
+      <details className="card">
+        <summary>高级操作：检查指定 Skill 目录</summary>
         <p className="page-desc">
-          列表「准入」使用本机目录（admit_path）。平台 locator 不是文件系统路径，请用绝对路径或 ~/…
+          默认从上方发现结果选择 Skill；自定义目录可在这里填写绝对路径或 ~/…。
         </p>
         <div className="toolbar toolbar-end">
           <div className="field field-flush field-grow">
@@ -242,26 +280,13 @@ export default function AgentsPage() {
           <button
             type="button"
             className="btn btn-primary"
-            disabled={!admitPath.trim()}
+            disabled={!admitPath.trim() || !!checkingPath}
             onClick={() => runAdmit(admitPath.trim())}
           >
-            运行 admit
+            检查此 Skill
           </button>
         </div>
-        {admitResult ? (
-          <p className="page-desc">
-            {admitResult.name}{' '}
-            <span className={verdictTag(admitResult.verdict)} title={admitResult.verdict}>
-              {verdictLabel(admitResult.verdict)}
-            </span>
-          </p>
-        ) : null}
-        {admitErr ? (
-          <p className="action-error" role="alert">
-            {admitErr}
-          </p>
-        ) : null}
-      </div>
+      </details>
     </section>
   );
 }

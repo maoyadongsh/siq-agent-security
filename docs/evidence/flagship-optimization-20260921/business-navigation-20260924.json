@@ -1,0 +1,192 @@
+{
+  "schema_version": "siq.flagship.business-navigation-evidence/v1",
+  "date": "2026-09-24",
+  "engineering_checks_passed": true,
+  "production_ready": false,
+  "existing_services_updated": false,
+  "sources": {
+    "security": [
+      {
+        "path": "packages/contracts/siq-business-event-navigation.v1.md",
+        "sha256": "aae9c242773f3fab50583653b8355bcc891c1526824c555e2cf55bca4c5d21dd",
+        "bytes": 2208
+      },
+      {
+        "path": "apps/control-api/app/business_navigation.py",
+        "sha256": "acadad84b7840d7a13d6f0c9ef258d1957465f64f6331f55c0b476bfb2147f18",
+        "bytes": 2710
+      },
+      {
+        "path": "apps/control-api/app/routers/inventory.py",
+        "sha256": "45c1869a188eebb21f205eeded1a27b8285b1ec68acc1ef023d970b55d4e2686",
+        "bytes": 44835
+      },
+      {
+        "path": "apps/control-api/app/tests/test_business_navigation.py",
+        "sha256": "285144c352ff6802c79d75730588bbbc33208664638c05fe9298103dfd209db2",
+        "bytes": 3119
+      },
+      {
+        "path": "apps/control-api/app/tests/test_audit_outbox.py",
+        "sha256": "2f0ba58e113379ab8844eb2c2fb81aeff39a80df1ef9dc2472ba3363f39ffc0b",
+        "bytes": 7800
+      },
+      {
+        "path": "apps/control-api/.env.example",
+        "sha256": "f597c4162ca93428d93d07e3d5f14ec0e1fee5e62d8fc0ad4b3abb48dd8de2ae",
+        "bytes": 2394
+      },
+      {
+        "path": "apps/web/src/api/businessNavigation.ts",
+        "sha256": "c8a198a08c3c9c33ebe30022ed3b081387eb480b22b49bc13496f7d9abd46337",
+        "bytes": 1479
+      },
+      {
+        "path": "apps/web/src/api/businessNavigation.test.ts",
+        "sha256": "f7f87dd73e2e070719bdb3071fed37aa7ed7b60c2d87c457b22700925600df15",
+        "bytes": 1427
+      },
+      {
+        "path": "apps/web/src/components/BusinessRunLinks.tsx",
+        "sha256": "ca29158e81ec9bedf7030b1682e08718c04557d4e413feb67f062b716aa161a6",
+        "bytes": 1776
+      },
+      {
+        "path": "apps/web/src/pages/AgentDetailPage.tsx",
+        "sha256": "db6351251f73316294c1b9ae66d557b54de038ca4ab9826381e716042326fc44",
+        "bytes": 12992
+      },
+      {
+        "path": "scripts/enterprise-experience/business-navigation-browser-smoke.py",
+        "sha256": "985ce8560f3a490f1470cd77119621476f9a1892547f0a9a42d17823c695c46a",
+        "bytes": 7494
+      },
+      {
+        "path": "docs/development/business-navigation-20260924.md",
+        "sha256": "20a235194d17abd6de776f34218e27c548521a24678064c43e8e53af8f2900f3",
+        "bytes": 5555
+      }
+    ],
+    "research": [
+      {
+        "path": "apps/api/services/business_event_navigation.py",
+        "sha256": "c5be45a573b204bd68944d5325f268475166b7ea16b4111d2f941ed792bb509e",
+        "bytes": 4611
+      },
+      {
+        "path": "apps/api/services/siq_security_export.py",
+        "sha256": "c991e9cab9168ad7c7a7a24bb122da30291fa28ceaf78509b3ae2c6fbcc01daa",
+        "bytes": 10629
+      },
+      {
+        "path": "apps/api/routers/agent_business_results.py",
+        "sha256": "8ae24b2f46b869af03ce9c3c61d1820f7afe1661bea4ce6d05fa7fa3a57bd295",
+        "bytes": 4700
+      },
+      {
+        "path": "apps/api/tests/test_business_event_navigation.py",
+        "sha256": "495df90d5d904fff4bc59da8bc32881a0525aeb8b1b7319fb8d584c62f090027",
+        "bytes": 4928
+      },
+      {
+        "path": "apps/api/tests/business_navigation_browser_app.py",
+        "sha256": "b8a8f6e0bda5762e83c2457b87d0324b26a682f68e884b27dd47ead7620b9331",
+        "bytes": 976
+      },
+      {
+        "path": "apps/web/src/pages/AnalysisSecurityEvent.tsx",
+        "sha256": "cc9e686772ef2c16dd3a254456d9af012fa74e383bc24958be03eaab5ad881cf",
+        "bytes": 2778
+      },
+      {
+        "path": "apps/web/src/pages/AnalysisSecurityEvent.behavior.spec.tsx",
+        "sha256": "40373350f8ec5f47d9d9830bd380852cfa883c0f0a45047b20b44fcdb81a0b6a",
+        "bytes": 3200
+      },
+      {
+        "path": "apps/web/src/app/routes.tsx",
+        "sha256": "7f3088323b50ccb329c53e3e86866f0d533f11a9e497ff4a13029e51dcc10ca9",
+        "bytes": 9066
+      },
+      {
+        "path": "scripts/dev/business-navigation-browser-smoke.py",
+        "sha256": "a5aef650b6cdd34de7c8484f0c5acf1960c312c514a6454434a081d580c6a6b5",
+        "bytes": 7636
+      }
+    ]
+  },
+  "artifacts": {
+    "security": [
+      {
+        "path": "var/flagship/business-navigation-20260924/console-browser-v1/report.sanitized.json",
+        "sha256": "0ed6ef9f14497706ccc3a05df54953930c6f9bbf13e8493a87e30df78ca10f86",
+        "bytes": 307
+      },
+      {
+        "path": "var/flagship/business-navigation-20260924/console-browser-v1/console-desktop.png",
+        "sha256": "3a7bf8389d4fcab2ea6e83feefe899ffc2027b78a71355427444f051e56372c5",
+        "bytes": 113191
+      },
+      {
+        "path": "var/flagship/business-navigation-20260924/console-browser-v1/console-mobile.png",
+        "sha256": "b334bd33df8b4a82a37ead31ff06b0f6476e789d2c4eb49e6faeb9c1c48eed4b",
+        "bytes": 37336
+      },
+      {
+        "path": "var/flagship/business-navigation-20260924/console-browser-v2/report.sanitized.json",
+        "sha256": "0ed6ef9f14497706ccc3a05df54953930c6f9bbf13e8493a87e30df78ca10f86",
+        "bytes": 307
+      },
+      {
+        "path": "var/flagship/business-navigation-20260924/console-browser-v2/console-desktop.png",
+        "sha256": "72ea6274d631d18f80e08900550c5174d1cf247f893804ea6103f5fa576db170",
+        "bytes": 123480
+      },
+      {
+        "path": "var/flagship/business-navigation-20260924/console-browser-v2/console-mobile.png",
+        "sha256": "3358c05852aa2787443f72968b485ec6e7ea2b0962518bdf0eaedcdb8c82e30a",
+        "bytes": 55472
+      }
+    ],
+    "research": [
+      {
+        "path": "var/ops/business-navigation-20260924/browser-v1/report.sanitized.json",
+        "sha256": "c08d37b5762f70f8e431b44729213efa058d30046256e35f6dfa29b09d5fa078",
+        "bytes": 461
+      },
+      {
+        "path": "var/ops/business-navigation-20260924/browser-v1/navigation-desktop.png",
+        "sha256": "885b269703202199a4e74b1107e9a3c9f4018e6c8aafca9cfb18943aa544ebe8",
+        "bytes": 60299
+      },
+      {
+        "path": "var/ops/business-navigation-20260924/browser-v1/navigation-mobile.png",
+        "sha256": "e128514adbdf0b21bf4c53301c9a6a9e26a480b599ceebfcf37e8345945b005b",
+        "bytes": 57473
+      }
+    ]
+  },
+  "validation": {
+    "research_navigation_export_pytest": 25,
+    "research_results_regression_pytest": {
+      "passed": 91,
+      "skipped": 1,
+      "skip_reason": "SIQ_TEST_POSTGRES_URL not configured"
+    },
+    "control_api_focused_pytest": 44,
+    "research_web_behavior": 39,
+    "security_web_url_tests": 9,
+    "research_browser_checks": 5,
+    "control_browser_checks": 3,
+    "both_web_builds": true,
+    "research_strict_types": true,
+    "scoped_lint": true,
+    "connector_go_test": true
+  },
+  "limitations": [
+    "Synthetic identities; not production IAM acceptance",
+    "Browser journeys verified separately; console destination fixture is explicit",
+    "No existing service deployment, migration, image switch or formal release update"
+  ],
+  "preserved_failure": "Initial combined control tests exposed legacy unscoped Outbox assertion; fixed exact-asset selection and query; final 44 passed."
+}

@@ -2,9 +2,11 @@ package inventory
 
 import (
 	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 )
 
@@ -27,7 +29,7 @@ func NormalizeDirectory(home, input string) (string, error) {
 		return "", errors.New("目录不存在、不可读取或包含符号链接")
 	}
 	info, err := os.Stat(path)
-	if err != nil || !info.IsDir() {
+	if err != nil || !info.IsDir() || readableRoot(path, info) != nil {
 		return "", errors.New("所选路径不是可读取的目录")
 	}
 	return path, nil
@@ -53,6 +55,8 @@ func Preview(opts Options) []ScanRoot {
 			}
 		} else if info, err := os.Lstat(path); err != nil || (kind == "platform_config" || kind == "mcp_config") && !info.Mode().IsRegular() ||
 			(kind == "skill_directory" || kind == "profile_directory") && !info.IsDir() {
+			status = "unreadable"
+		} else if err := readableRoot(path, info); err != nil {
 			status = "unreadable"
 		}
 		out = append(out, ScanRoot{Path: redactHome(path, opts.Home), Kind: kind, Platform: platform, Status: status})
@@ -83,10 +87,10 @@ func Preview(opts Options) []ScanRoot {
 			}
 		}
 	}
-	for _, root := range hermeshome.Scan(hermeshome.Options{Home: opts.Home, Override: opts.HermesHome, LocalAppData: opts.LocalAppData}).Roots {
+	for _, root := range hermeshome.Scan(hermeshome.Options{Home: opts.Home, Override: opts.HermesHome, LocalAppData: opts.LocalAppData, ProjectDirs: opts.ProjectDirs}).Roots {
 		add(filepath.Join(root.Path, "config.yaml"), "platform_config", "hermes")
 		add(filepath.Join(root.Path, "skills"), "skill_directory", "hermes")
-		if root.Source == "named_profile" {
+		if root.Source == "named_profile" || filepath.Base(filepath.Dir(root.Path)) == "profiles" {
 			add(root.Path, "profile_directory", "hermes")
 		} else {
 			add(filepath.Join(root.Path, "profiles"), "profile_directory", "hermes")
@@ -116,4 +120,31 @@ func Preview(opts Options) []ScanRoot {
 		return out[i].Platform < out[j].Platform
 	})
 	return out
+}
+
+// Check access as this process rather than inferring it from mode bits. Read
+// at most one directory entry, and never read configuration content here.
+func readableRoot(path string, before os.FileInfo) error {
+	if !before.IsDir() && !before.Mode().IsRegular() {
+		return errors.New("unsupported scan root")
+	}
+	f, err := statefs.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	after, err := f.Stat()
+	if err != nil {
+		return err
+	}
+	if !os.SameFile(before, after) || before.Mode().Type() != after.Mode().Type() {
+		return errors.New("scan root changed")
+	}
+	if after.IsDir() {
+		_, err = f.ReadDir(1)
+		if err != nil && !errors.Is(err, io.EOF) {
+			return err
+		}
+	}
+	return nil
 }

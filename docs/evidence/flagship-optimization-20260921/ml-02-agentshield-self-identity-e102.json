@@ -1,0 +1,160 @@
+{
+  "schema_version": "siq.flagship.evidence.agentshield-self-identity.v1",
+  "captured_at_utc": "2026-09-22T14:11:15.599089+00:00",
+  "scope": "host_only_scoped_identity_HTTP_cleanup_without_management_credentials",
+  "research_evidence": {
+    "schema_version": "siq.agentshield.self-identity-client-evidence.v1",
+    "captured_at_utc": "2026-09-22T14:11:14.205575+00:00",
+    "live": {
+      "schema_version": "siq.agentshield.self-identity-proof.v1",
+      "passed": true,
+      "scope": "isolated_daemon_synthetic_approved_grants_and_host_client",
+      "secrets_included": false,
+      "production_eligible": false,
+      "sandbox_or_Hermes_started": false,
+      "request_supervisor_integrated": false,
+      "active_grant_initial_readback": true,
+      "active_grant_identity_sha256": "deea8a67965c7d250acae0b3c6d17c929466db70d6ae8bfed5696bd4702828f3",
+      "active_grant_self_revoke_and_retry_confirmed": true,
+      "active_grant_revoked_enrollment_denied": true,
+      "revoked_grant_initial_readback": true,
+      "revoked_grant_identity_sha256": "9ccced18317ea1f355d25f7fe6ec84139cbaeb8e84d76b42a83e237a5e386c29",
+      "revoked_grant_inspection_denied": true,
+      "revoked_grant_self_revoke_and_retry_confirmed": true,
+      "revoked_grant_revoked_enrollment_denied": true,
+      "missing_instance_initial_readback": true,
+      "missing_instance_identity_sha256": "55b29be4423f0bec71ddd03f61116d4796f6e5e9adb8951e70e4c64a83525713",
+      "missing_instance_inspection_denied": true,
+      "missing_instance_self_revoke_and_retry_confirmed": true,
+      "missing_instance_revoked_enrollment_denied": true,
+      "synthetic_profiles_and_admin_sessions_closed": true
+    },
+    "validation": {
+      "client_and_binding_tests_passed": 32,
+      "combined_client_binding_relay_tests_passed": 56,
+      "ruff_passed": true,
+      "compile_passed": true,
+      "git_diff_check_passed": true
+    },
+    "source_sha256": {
+      "scripts/openshell/agentshield_self_identity.py": "1b3e20d3679060bd4f80acd66873305a5b50e0ea6c45ca92e5e8db9401931cc2",
+      "scripts/openshell/prove_agentshield_self_identity.py": "0b59ff9056a0e0d08bbbbbabbed305efbb1f3ad254ca325fe2fb948d72636f0e",
+      "scripts/openshell/tests/test_agentshield_self_identity.py": "2333cfdf7bd378279413f16fef772fc8e48ada76338554de1583213ca0817eff",
+      "docs/architecture/qwen38-request-runtime-v1.md": "3c8b35c4eb06a4df679627057e3d73cc47cc53615a8ee8cdda7274b86cdb8535",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "08dc6fbae491952dda066ea09f104f4945e1f6ec7fbe71335ee760d20a93e910"
+    },
+    "artifact_sha256": {
+      "artifacts/openshell/flagship/ml02-self-identity-e102.sanitized.json": "1691d2f2ca0114dea595dcf681f81f162b389c3f2062108d5e581212c21c5368",
+      "artifacts/openshell/flagship/ml02-self-identity-e102-v2.sanitized.json": "1c65dd7da806c44ebdb267a350b53c5265193f5940179295f305577cc41e34c3",
+      "artifacts/openshell/flagship/ml02-self-identity-e102-v3.sanitized.json": "84ded66d034bf0e8ec56b097ba802627c0128b1d2abe2ea55955db38b150cd66"
+    },
+    "historical_failure": {
+      "initial_live_passed": false,
+      "cause": "new_go_build_mode_0775_rejected_by_existing_authority_binding_validator",
+      "resolution": "only_new_isolated_binaries_changed_to_0700_validation_unchanged"
+    },
+    "not_proven": [
+      "request_supervisor_persistent_identity_cleanup_handoff",
+      "sandbox_relay_and_Hermes_bootstrap_with_request_identity",
+      "formal_API_crash_recovery_and_business_lifecycle",
+      "production_IAM_approval_and_native_CI"
+    ],
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false
+  },
+  "research_evidence_sha256": "67d023a9e15af0087012f418f37e06266ae83b3c99c5aeb4805769ce5c7764c8",
+  "security_validation": {
+    "go_test_all_passed": true,
+    "go_vet_all_passed": true,
+    "focused_identity_HTTP_and_relay_race_passed": true,
+    "gofmt_passed": true,
+    "shared_contract_tests_passed": 11,
+    "contract_warning": "existing Starlette httpx TestClient deprecation",
+    "cross_platform_build_count": 8,
+    "cross_platform_execution_claimed": false,
+    "cross_build_sha256": {
+      "agentshield-linux-amd64": "8ee17f1e878a4ac35078c58d8c7250f92ec5abfc4cd0f46943d2d88bfa90aa57",
+      "agentshield-decision-relay-linux-amd64": "66cb31ee70c3be7ce22c177e6b22a3ee7d1514fdb429cbf23b9121e0c8db1476",
+      "agentshield-linux-arm64": "a7fef8a9e0828a3b089933cce755cda4dec57e072a3a53ccaf75f06b5bb5c18e",
+      "agentshield-decision-relay-linux-arm64": "04e0b9493b58b8b61d76ff13b60ebf4aff51bffa4183c36ecc58ed270cb70295",
+      "agentshield-darwin-arm64": "5797db371f9c679de501a4252700239a6152803ee94b3d6c1184b078bc71271f",
+      "agentshield-decision-relay-darwin-arm64": "4d1a835fad08bad0e0090015f1cbff48a345fc57eee517c08af409c705326690",
+      "agentshield-windows-amd64": "e5b8557d05aa3770567c18adbb72a54cec15f3a28a083028997bca7a9b2eb028",
+      "agentshield-decision-relay-windows-amd64": "c40842d365e641c273eb46cc04421f91e521be95060cda72547453d7323d63a5"
+    },
+    "git_diff_check_passed": true
+  },
+  "live_daemon": {
+    "schema_version": "siq.agentshield.self-identity-live-daemon.v1",
+    "production_eligible": false,
+    "secrets_included": false,
+    "binary_sha256": "a7fef8a9e0828a3b089933cce755cda4dec57e072a3a53ccaf75f06b5bb5c18e",
+    "relay_sha256": "04e0b9493b58b8b61d76ff13b60ebf4aff51bffa4183c36ecc58ed270cb70295",
+    "candidate_binary_modes_private": true,
+    "proof_exit_code": 0,
+    "proof": {
+      "schema_version": "siq.agentshield.self-identity-proof.v1",
+      "passed": true,
+      "scope": "isolated_daemon_synthetic_approved_grants_and_host_client",
+      "secrets_included": false,
+      "production_eligible": false,
+      "sandbox_or_Hermes_started": false,
+      "request_supervisor_integrated": false,
+      "active_grant_initial_readback": true,
+      "active_grant_identity_sha256": "deea8a67965c7d250acae0b3c6d17c929466db70d6ae8bfed5696bd4702828f3",
+      "active_grant_self_revoke_and_retry_confirmed": true,
+      "active_grant_revoked_enrollment_denied": true,
+      "revoked_grant_initial_readback": true,
+      "revoked_grant_identity_sha256": "9ccced18317ea1f355d25f7fe6ec84139cbaeb8e84d76b42a83e237a5e386c29",
+      "revoked_grant_inspection_denied": true,
+      "revoked_grant_self_revoke_and_retry_confirmed": true,
+      "revoked_grant_revoked_enrollment_denied": true,
+      "missing_instance_initial_readback": true,
+      "missing_instance_identity_sha256": "55b29be4423f0bec71ddd03f61116d4796f6e5e9adb8951e70e4c64a83525713",
+      "missing_instance_inspection_denied": true,
+      "missing_instance_self_revoke_and_retry_confirmed": true,
+      "missing_instance_revoked_enrollment_denied": true,
+      "synthetic_profiles_and_admin_sessions_closed": true
+    },
+    "daemon_stopped": true,
+    "daemon_exit_code": 0,
+    "port_closed": true
+  },
+  "source_sha256": {
+    ".gitignore": "e602a7244eab9926d682ba7536bc4a1252adc3626aa3d0bb45feb5bc4a35ba0e",
+    "docs/agentshield-dev-spec-v1.md": "c280003f716124182bf7952946c1a89530151ed3b122b6bd67e559d266cbf6bc",
+    "apps/agentshield/internal/runtimeidentity/store.go": "4d2514b957b24f61dbaeb8b37ffcca434a02f59f6d942bcb5dc7786a9b78bfaf",
+    "apps/agentshield/internal/runtimeidentity/self.go": "c45fd9308e55a650d59e60c10da0284e0ebd6a48d7bf8222b214f18840d96fb8",
+    "apps/agentshield/internal/runtimeidentity/self_test.go": "69581458d572e51fba06f12553bd9b3cde0ab7f202c97ddd151fcce018ae4842",
+    "apps/agentshield/internal/server/server.go": "42074956e75121c22c52a99db455c60654212bbfe6c50e656990262527d8dd73",
+    "apps/agentshield/internal/server/runtime_identity_self.go": "6ca25b03d06d9aef89e237b445f62dea527d524e464eeb2f70682ce5e77b2b39",
+    "apps/agentshield/internal/server/runtime_identity_self_test.go": "09804a567e60e6468176ac5f27c9ac49605aa297442f9cc7f4941b8b0de0ee0c",
+    "apps/control-api/app/tests/test_schema_contracts.py": "0ad006d9e2c0e41090cade7dcdc5c27e495986800c12be3e278b8483c7eb211f",
+    "packages/contracts/local-runtime-identity-self.v1.schema.json": "3e15b64e92c43146f55b481e10731013450f4c9dafe57da2f8fa34b86a2c503b",
+    "packages/contracts/local-runtime-identity-self-revoke.v1.schema.json": "e39f3da96a3a838762125709297ac4beba77c200351e1101bdd48bb903a3f86a",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-self.json": "0643f5312716572884c544a065fd82f36e6922f155e6c2af468436173a03ba65",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-self-revoke.json": "515ced8ac4da6ed22c33495327785627526ce4d1901e927b58b353fde5fb69fe"
+  },
+  "live_daemon_artifact_sha256": {
+    "live.sanitized.json": "ad28249169490a528fa0dc9446674a5aab9a4e80172abeb0a3499d43773499ad",
+    "live-v2.sanitized.json": "4eea621c8faee72d00f6cfedd2d996c4d88b64ffbbbe8385c6ff35cdc255c146",
+    "live-v3.sanitized.json": "a5ffc107cdf0dab5c0c6ee0a24fa9d039b491052e2be0ad11dbe002a76f20f54"
+  },
+  "final_state": {
+    "main_daemon_API_model_bridge_not_replaced_or_restarted": true,
+    "candidate_inventory_and_owner_empty": true,
+    "candidate_daemon_47811_and_broker_relay_ports_closed": true,
+    "synthetic_profiles_and_admin_sessions_closed": true,
+    "signed_candidate_history_preserved_in_ignored_private_state": true
+  },
+  "not_proven": [
+    "request_supervisor_persistent_identity_cleanup_handoff",
+    "sandbox_relay_and_Hermes_bootstrap_with_request_identity",
+    "formal_API_crash_recovery_and_business_lifecycle",
+    "production_IAM_approval_and_native_CI"
+  ],
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

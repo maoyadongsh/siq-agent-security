@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq.flagship.evidence.governed-analysis-entry.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.governed-analysis-entry-evidence.v1",
+    "captured_at_utc": "2026-09-22T21:00:28.253675+00:00",
+    "scope": "actual_specialist_router_and_chat_entry_security_regressions_with_isolated_SQLite_and_runtime_doubles",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "final_combined_tests_passed": 175,
+      "warnings": 504,
+      "ruff_passed": true,
+      "ruff_FastAPI_Depends_configured_as_immutable_call": true,
+      "compile_passed": true,
+      "research_diff_check_passed": true
+    },
+    "proven": [
+      "governed_report_requests_do_not_enter_host_workflow",
+      "governed_model_control_requests_do_not_mutate_host_model_configuration",
+      "invalid_backend_denied_before_quota_and_shortcuts",
+      "explicit_qwen_selection_before_attachments_catalog_cache_and_claim",
+      "revoked_foreign_user_and_missing_company_denied_before_shortcuts",
+      "governed_global_catalog_and_unscoped_response_cache_not_called",
+      "new_governed_stream_conflicts_instead_of_replaying_existing_stream",
+      "confidential_explicit_and_implicit_Host_routes_denied",
+      "public_legacy_workflow_and_active_request_regressions"
+    ],
+    "not_proven": [
+      "actual_business_HTTP_API_Hermes_model_end_to_end",
+      "independent_active_and_history_endpoints_full_authorization",
+      "host_report_pipeline_sandbox_migration",
+      "cross_API_database_recovery_ownership",
+      "actual_API_crash_restart_inflight_cancel",
+      "real_IAM_approval_event_projection_native_CI"
+    ],
+    "runtime": {
+      "real_model_called": false,
+      "online_API_restarted": false,
+      "online_selector_activated": false
+    },
+    "source_sha256": {
+      "apps/api/routers/agent_user_router.py": "1ab01480964695eb8e121b3b07418ee6d14f75d7649522909ead50adc41b507e",
+      "apps/api/services/agent_chat_runtime_impl.py": "fb9a0613b5b5ce7431c2a5c58b58c9384ba8d7771feff9a751eaf50cc171a082",
+      "apps/api/services/qwen38_request_selector.py": "8ec5451c4514694425d329466e168cd899aee3542e814207e9677ddc4eb3e73d",
+      "apps/api/tests/test_governed_analysis_entry.py": "56c7ddcc575433b22f478609fc5ef6865882869e2693342f22830956fddd1943",
+      "apps/api/tests/test_qwen38_request_selector.py": "128e6047b987d1c233677413b0137b06c5dd91bcdf399771bc245c369df68088",
+      "apps/api/README.md": "8f4a3e0fde1d04b4eea0fa3648e773e3a332346ca5a95e4437408c5b2c685fc7",
+      "docs/architecture/qwen38-request-runtime-v1.md": "ecf9f3cbc1c7292dc396244a047eedca010d35d9ab4513f39e0ca27c866e3cbb",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "a7ee141c6042f70d84284b6a9397dd416e8e8e108743013b89483fb6b3ea5cdc"
+    }
+  },
+  "research_evidence_sha256": "56db9999a8f1a11e1f0c43838251fc7c1f8c20a5dcb5a75fc60a0360adc2d671",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

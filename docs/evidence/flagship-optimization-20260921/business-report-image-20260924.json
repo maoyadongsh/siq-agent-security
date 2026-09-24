@@ -1,0 +1,116 @@
+{
+  "schema_version": "siq.flagship.business-report-image-evidence.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source": [
+    {
+      "path": "scripts/openshell/build_qwen38_candidate_image.py",
+      "sha256": "26097501e8385ddfcb0a258fca03c33264eb1dadac7831c401e40cb6b1eb7897",
+      "bytes": 34651
+    },
+    {
+      "path": "scripts/openshell/tests/test_build_qwen38_candidate_image.py",
+      "sha256": "b628215337b6d7c5237de8bc39b59b9736d92b805331fd411dd9892cd3acabf8",
+      "bytes": 5380
+    },
+    {
+      "path": "infra/openshell/sandbox/qwen38_candidate/Dockerfile",
+      "sha256": "0700363aad3bdca0b3fb83e2fa179edb2895099e9e9de3108a4e852cfe070638",
+      "bytes": 4495
+    },
+    {
+      "path": "infra/openshell/sandbox/qwen38_candidate/report-assets.lock.json",
+      "sha256": "62663d681c58555582eace7fc6c3859965b479c8791ecf121898996dd6448fb7",
+      "bytes": 965
+    },
+    {
+      "path": "scripts/openshell/README.md",
+      "sha256": "877e0b185f085051e702a86ca719321359e325f67cd029fa2db2eb9c79390ac4",
+      "bytes": 31889
+    }
+  ],
+  "build_records": [
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-image-20260924/build-result.sanitized.json",
+        "sha256": "6f46f364315162153caf143d4d8f1483f9cac804a16df7ba99aacb8641de3686",
+        "bytes": 307
+      },
+      "result": {
+        "passed": false,
+        "error_type": "CandidateImageError",
+        "error_code": "qwen_image_offline_smoke_failed",
+        "elapsed_seconds": 5.67,
+        "current_candidate_unchanged": true,
+        "services_unchanged": true,
+        "previous_candidate_sha256": "f12b6943c3970c1efd779e1b67b81c934beb9986eda177b78ddfaed34ec1b3cc"
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-image-20260924-v2/build-result.sanitized.json",
+        "sha256": "5bf0c0e90ec0f5246d1a7da2110bb8b1afc86a4e23dfb4ccccffaae8af80ca6f",
+        "bytes": 299
+      },
+      "result": {
+        "passed": false,
+        "error_type": "CandidateImageError",
+        "error_code": "qwen_image_build_failed",
+        "elapsed_seconds": 3.38,
+        "current_candidate_unchanged": true,
+        "services_unchanged": true,
+        "previous_candidate_sha256": "f12b6943c3970c1efd779e1b67b81c934beb9986eda177b78ddfaed34ec1b3cc"
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-image-20260924-v3/build-result.sanitized.json",
+        "sha256": "861ded4fc7670c5ec8701f7ed65f679c9f5ee9e3a1b977e291c509cbbfd9e14c",
+        "bytes": 431
+      },
+      "result": {
+        "passed": true,
+        "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:78e250f95afe784e32508227",
+        "image_id": "sha256:1a21a7de403ae13f00fc7709d77fa02c4be7d581953b9f9da0934b0eadad42bf",
+        "offline_report_import_verified": true,
+        "elapsed_seconds": 20.5,
+        "current_candidate_unchanged": true,
+        "services_unchanged": true,
+        "previous_candidate_sha256": "f12b6943c3970c1efd779e1b67b81c934beb9986eda177b78ddfaed34ec1b3cc"
+      }
+    }
+  ],
+  "image": {
+    "path": "var/ops/flagship-report-image-20260924-v3/candidate-image.json",
+    "sha256": "859c815f8d97d386c55db3d426be9a823375922a937a860bd533b41d7708ca35",
+    "bytes": 1614
+  },
+  "permissions": {
+    "artifact": {
+      "path": "var/ops/flagship-report-image-20260924-v3/report-permissions.sanitized.json",
+      "sha256": "678d59eb0c0e8e05a11deb889217aa588a9827f3fc466abaca11245b01f5d02c",
+      "bytes": 365
+    },
+    "result": {
+      "passed": true,
+      "image_id": "sha256:1a21a7de403ae13f00fc7709d77fa02c4be7d581953b9f9da0934b0eadad42bf",
+      "runtime_user": "non-root",
+      "profile_owner_matches_runtime": true,
+      "profile_mode": "0700",
+      "report_cli_owner": "root",
+      "report_cli_readonly": true,
+      "both_profile_locations_imported": true,
+      "network": "none",
+      "root_filesystem": "readonly"
+    }
+  },
+  "tests": "16 passed in 0.06s",
+  "ruff": "passed",
+  "research_diff_check": "passed",
+  "limitations": [
+    "offline_containers_only_no_model_or_business_quality_acceptance",
+    "current_candidate_unchanged",
+    "no_business_migration_or_service_rollout",
+    "trusted_navigation_pending"
+  ]
+}

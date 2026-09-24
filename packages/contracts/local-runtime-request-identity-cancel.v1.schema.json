@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "execution_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-request-identity-cancel/v1"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^qwen-request-[a-f0-9]{16}$"
+    },
+    "execution_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

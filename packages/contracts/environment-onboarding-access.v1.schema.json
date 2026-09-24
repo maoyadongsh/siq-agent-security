@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "environment-onboarding-access/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "environment-onboarding-access/v1"
+    },
+    "can_create": {
+      "type": "boolean"
+    },
+    "can_enroll": {
+      "type": "boolean"
+    },
+    "can_scan": {
+      "type": "boolean"
+    },
+    "can_view_assets": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "can_create",
+    "can_enroll",
+    "can_scan",
+    "can_view_assets"
+  ]
+}

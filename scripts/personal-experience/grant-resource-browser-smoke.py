@@ -35,7 +35,9 @@ def main():
             "allowed-tools: read_file\n---\nRead a synthetic report.\n"
         )
         env = {
-            **os.environ,
+            **{key: value for key, value in os.environ.items() if key in {
+                "PATH", "LANG", "LC_ALL", "TZ", "SYSTEMROOT", "TMPDIR", "TEMP", "TMP"
+            }},
             "HOME": str(home),
             "USERPROFILE": str(home),
             "LOCALAPPDATA": str(home / "AppData/Local"),
@@ -58,6 +60,9 @@ def main():
                 check=False,
             )
 
+        initialized = cli("init")
+        if initialized.returncode != 0:
+            raise RuntimeError("isolated initialization failed")
         process = subprocess.Popen(
             [str(binary), "serve", "--port", str(port)], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
@@ -114,7 +119,7 @@ def main():
                         "schema_version": "grant-resource-edit/v1",
                         "expected_revision": created["state_revision"],
                         "actor_id": "fixture-operator",
-                        "tools": ["read_file", "write_file", "web_fetch"],
+                        "tools": ["read_file", "write_file", "web_fetch", "opaque_private_tool"],
                         "filesystem": {
                             "read_only": ["/work/reports with spaces,commas"],
                             "read_write": ["/work/output"],
@@ -167,7 +172,7 @@ def main():
                 expect(actor).to_have_value("fixture-operator")
                 expect(actor).to_be_focused()
                 outcomes["typing_actor_preserves_focus"] = True
-                dialog.get_by_text(re.compile("保留的限制与批准条件")).click()
+                dialog.get_by_text(re.compile("保留的其他权限与批准条件")).click()
                 expect(dialog.get_by_text("tool · read_file · 保留该工具时仍需人工确认", exact=True)).to_be_visible()
                 outcomes["per_use_approval_condition_visible"] = True
                 before = api("GET", route)
@@ -175,7 +180,33 @@ def main():
                 dialog.get_by_role("button", name="取消", exact=True).click()
                 outcomes["cancel_does_not_write"] = api("GET", route) == before
                 dialog = open_editor()
-                dialog.get_by_role("button", name="目录全部改为只读", exact=True).click()
+                expect(dialog.get_by_label("允许的工具", exact=True)).not_to_be_visible()
+                expect(dialog.get_by_role("checkbox", name="自定义工具或工具组（opaque_private_tool）", exact=True)).to_be_checked()
+                reader = dialog.get_by_role("checkbox", name="读取文件（read_file）", exact=True)
+                reader.focus()
+                page.keyboard.press("Space")
+                expect(reader).not_to_be_checked()
+                expect(dialog.get_by_role("button", name="采用只读资料方案", exact=True)).to_be_disabled()
+                page.keyboard.press("Space")
+                expect(reader).to_be_checked()
+                outcomes["tool_choices_keyboard_operable_and_no_read_tool_disables_proposal"] = True
+                unchanged = api("GET", route)
+                dialog.get_by_role("button", name="采用只读资料方案", exact=True).click()
+                expect(dialog.get_by_role("checkbox", name="写入文件（write_file）", exact=True)).not_to_be_checked()
+                expect(dialog.get_by_role("checkbox", name="自定义工具或工具组（opaque_private_tool）", exact=True)).not_to_be_checked()
+                expect(dialog.get_by_label("允许的网络端点", exact=True)).to_have_value("")
+                outcomes["readonly_proposal_has_no_backend_write"] = api("GET", route) == unchanged
+                dialog.get_by_role("button", name="撤回只读方案", exact=True).click()
+                expect(dialog.get_by_role("checkbox", name="写入文件（write_file）", exact=True)).to_be_checked()
+                expect(dialog.get_by_label("读写目录", exact=True)).to_have_value("/work/output")
+                expect(dialog.get_by_label("允许的网络端点", exact=True)).to_have_value("api.example.test:443")
+                outcomes["undo_restores_entire_unsaved_draft"] = api("GET", route) == unchanged
+                page.set_viewport_size({"width": 375, "height": 844})
+                dialog.get_by_role("button", name="采用只读资料方案", exact=True).scroll_into_view_if_needed()
+                outcomes["mobile_tool_choices_fit"] = dialog.get_by_role("group", name="选择要允许的工具").evaluate("el => el.scrollWidth <= el.clientWidth + 1 && el.getBoundingClientRect().right <= innerWidth")
+                page.screenshot(path=str(args.out_dir / "readonly-tools-mobile.png"), full_page=True, animations="disabled")
+                page.set_viewport_size({"width": 1440, "height": 1000})
+                dialog.get_by_role("button", name="采用只读资料方案", exact=True).click()
                 expect(dialog.get_by_label("读写目录", exact=True)).to_have_value("")
                 expect(dialog.get_by_label("只读目录", exact=True)).to_have_value(
                     "/work/reports with spaces,commas\n/work/output"
@@ -191,8 +222,17 @@ def main():
                         for f in facts
                     )
                 )
+                outcomes["readonly_saved_scope_has_exact_reader_and_network_deny"] = (
+                    {f["resource"]["value"] for f in facts if f["domain"] == "tool" and f["effect"] == "allow"} == {"read_file"}
+                    and not any(f["effect"] == "allow" and f["domain"] in {"network", "model"} for f in facts)
+                    and any(f["domain"] == "network" and f["effect"] == "deny" for f in facts)
+                )
                 dialog = open_editor()
+                expect(dialog.get_by_role("checkbox", name="读取文件（read_file）", exact=True)).to_be_checked()
+                dialog.get_by_role("button", name="采用只读资料方案", exact=True).click()
                 dialog.get_by_label("读写目录", exact=True).fill("/work/my unsaved,draft")
+                expect(dialog.get_by_role("button", name="撤回只读方案", exact=True)).to_have_count(0)
+                outcomes["manual_edit_prevents_undo_overwriting_new_input"] = True
                 external = api(
                     "POST",
                     route + "/expiry",

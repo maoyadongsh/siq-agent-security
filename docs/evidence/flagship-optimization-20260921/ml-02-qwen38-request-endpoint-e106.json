@@ -1,0 +1,371 @@
+{
+  "schema_version": "siq.flagship.evidence.request-endpoint.v1",
+  "captured_at_utc": "2026-09-22T16:02:32.468354+00:00",
+  "scope": "versioned_research_E106_supervisor_owned_Hermes_HTTP_endpoint_evidence",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.request-endpoint-evidence.v1",
+    "captured_at_utc": "2026-09-22T16:01:23.541922+00:00",
+    "scope": "API_component_v5_endpoint_with_connection_owner_check_before_credentials_and_two_stop_modes",
+    "live_SIGKILL": {
+      "schema_version": "siq.qwen38.request-endpoint-proof.v1",
+      "passed": true,
+      "scope": "API_component_supervised_loopback_endpoint_and_SIGKILL_recovery",
+      "actual_API_request_sent": false,
+      "sandbox_or_model_started": true,
+      "production_eligible": false,
+      "secrets_included": false,
+      "read_only_prepare": true,
+      "private_credential_valid": true,
+      "credential_absent_from_plan_and_receipt": true,
+      "company_content_preserved": true,
+      "private_file_modes": true,
+      "actual_API_process_killed": false,
+      "Hermes_gateway_started": true,
+      "model_inference_started": false,
+      "business_ready": false,
+      "execution_lease_seconds": 120,
+      "new_synthetic_request_identity_issued": true,
+      "independent_private_identity_copy": true,
+      "identity_sha256": "b5306aad990b38ca53e97b856d001579d9805609b018f678794b8b8f06d9b70b",
+      "v2_service_with_broker_ready": true,
+      "v3_service_with_identity_ready": true,
+      "v4_service_with_relay_ready": true,
+      "v5_service_with_forward_ready": true,
+      "relay_is_exact_supervisor_child_in_same_cgroup": true,
+      "relay_host_enrollment_and_cross_session_denial": true,
+      "relay_self_revoke_route_hidden": true,
+      "Hermes_bootstrap_attempted": true,
+      "bootstrap_receipt": {
+        "business_ready": false,
+        "child_pid": 102,
+        "invalid_key_status": 401,
+        "key_absent_from_child_argv": true,
+        "key_sha256": "34ab51d616bd6c5df8f7c26d13b3732ffd1a5ce9402de1dabf133b92b884739f",
+        "phase": "authenticated",
+        "run_sha256": "628502fe85ef9dc30992ed45a7902a3157a2d372bdecfc02b939bdf29814810b",
+        "schema_version": "siq.qwen38.request-bootstrap.v2",
+        "tool_identity_installed": true,
+        "tool_packet_sha256": "027680f877a9900af0a56d9c4a3a0efb66c87f409b57e0e70edeef58b03b01a3",
+        "tool_token_absent_from_child_argv": true,
+        "transport_authenticated": true,
+        "uploaded_key_removed": true,
+        "uploaded_tool_packet_removed": true
+      },
+      "native_tool_probe": {
+        "denied_write_effect_absent": true,
+        "native_read_completed": true,
+        "native_write_blocked": true
+      },
+      "signed_native_receipts": {
+        "signed_chain_verified": true,
+        "native_allow_and_deny_correlated": true,
+        "allowed_read_observation_present": true,
+        "exact_runtime_grant_matched": true
+      },
+      "native_dispatcher_separate_process_from_HTTP_gateway": true,
+      "endpoint_transport_authenticated": true,
+      "endpoint_invalid_key_status": 401,
+      "endpoint_same_bootstrap_PID": true,
+      "forward_is_supervisor_child_in_same_cgroup": true,
+      "forward_owns_loopback_listener": true,
+      "invocation_sha256": "b53d34908b48b6c69d3fb970ed043d7cd25253540295281accfe6e5da7c88a77",
+      "real_read_only_broker_probe": {
+        "error_code": "",
+        "ok": true,
+        "real_read_only_query": true,
+        "secret_file_private": true,
+        "status": 200
+      },
+      "seconds_waited_after_probe": 2.312,
+      "terminal_service": {
+        "ActiveState": "failed",
+        "SubState": "failed",
+        "ExecMainCode": "2",
+        "ExecMainStatus": "9",
+        "Result": "signal"
+      },
+      "original_execution_row_unchanged": true,
+      "natural_execution_lease_expired": false,
+      "business_grant_still_valid_at_containment": true,
+      "final_credential_denial_also_has_expired_execution_lease": false,
+      "supervisor_main_sigkill_confirmed": true,
+      "execution_lease_still_current_at_containment": true,
+      "data_lease_revoked": true,
+      "model_client_credential_rotated": true,
+      "identity_revoked_before_diagnostic_admin_cleanup": true,
+      "old_identity_inspection_and_enrollment_401": true,
+      "agentshield_grant_and_profile_unchanged_at_containment": true,
+      "relay_child_and_listener_gone_after_sigkill": true,
+      "forward_child_and_listener_gone": true,
+      "sandbox_removed_owner_retained": true,
+      "provider_restored_positive_probe": true,
+      "service_broker_and_sandbox_stopped": true,
+      "synthetic_identity_fixture_and_private_copy_removed": true,
+      "supervision_fixtures_removed": true,
+      "AgentShield_relay_started": true,
+      "production_IAM_integrated": false,
+      "revoked_grant_denies_credential_read": true,
+      "private_files_fixture_and_owner_removed": true,
+      "temporary_database_removed": true
+    },
+    "live_graceful": {
+      "schema_version": "siq.qwen38.request-endpoint-proof.v1",
+      "passed": true,
+      "scope": "API_component_supervised_loopback_endpoint_and_graceful_recovery",
+      "actual_API_request_sent": false,
+      "sandbox_or_model_started": true,
+      "production_eligible": false,
+      "secrets_included": false,
+      "read_only_prepare": true,
+      "private_credential_valid": true,
+      "credential_absent_from_plan_and_receipt": true,
+      "company_content_preserved": true,
+      "private_file_modes": true,
+      "actual_API_process_killed": false,
+      "Hermes_gateway_started": true,
+      "model_inference_started": false,
+      "business_ready": false,
+      "execution_lease_seconds": 120,
+      "new_synthetic_request_identity_issued": true,
+      "independent_private_identity_copy": true,
+      "identity_sha256": "1cd86f1d26f1e8ca7b60d3ff02697cbddaa9a5d2706e739267e01c6bf28b1801",
+      "v2_service_with_broker_ready": true,
+      "v3_service_with_identity_ready": true,
+      "v4_service_with_relay_ready": true,
+      "v5_service_with_forward_ready": true,
+      "relay_is_exact_supervisor_child_in_same_cgroup": true,
+      "relay_host_enrollment_and_cross_session_denial": true,
+      "relay_self_revoke_route_hidden": true,
+      "Hermes_bootstrap_attempted": true,
+      "bootstrap_receipt": {
+        "business_ready": false,
+        "child_pid": 102,
+        "invalid_key_status": 401,
+        "key_absent_from_child_argv": true,
+        "key_sha256": "10947adcea29895da303c9e4328561d30e47e2fd277881084d34b36d8f3f801d",
+        "phase": "authenticated",
+        "run_sha256": "930db44acebec0053a9a4c39ea865708760f5d7a020844181fb3265228c16051",
+        "schema_version": "siq.qwen38.request-bootstrap.v2",
+        "tool_identity_installed": true,
+        "tool_packet_sha256": "20e3164da06713afe46f2fffb18f8b867922bb59a40eef61e15a541c42549730",
+        "tool_token_absent_from_child_argv": true,
+        "transport_authenticated": true,
+        "uploaded_key_removed": true,
+        "uploaded_tool_packet_removed": true
+      },
+      "native_tool_probe": {
+        "denied_write_effect_absent": true,
+        "native_read_completed": true,
+        "native_write_blocked": true
+      },
+      "signed_native_receipts": {
+        "signed_chain_verified": true,
+        "native_allow_and_deny_correlated": true,
+        "allowed_read_observation_present": true,
+        "exact_runtime_grant_matched": true
+      },
+      "native_dispatcher_separate_process_from_HTTP_gateway": true,
+      "endpoint_transport_authenticated": true,
+      "endpoint_invalid_key_status": 401,
+      "endpoint_same_bootstrap_PID": true,
+      "forward_is_supervisor_child_in_same_cgroup": true,
+      "forward_owns_loopback_listener": true,
+      "invocation_sha256": "c5e7d85c6a50ffa186ce9f5ed4a5de866df09241d798609b93282ca8d4c0de4c",
+      "real_read_only_broker_probe": {
+        "error_code": "",
+        "ok": true,
+        "real_read_only_query": true,
+        "secret_file_private": true,
+        "status": 200
+      },
+      "seconds_waited_after_probe": 2.474,
+      "terminal_service": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "ExecMainCode": "0",
+        "ExecMainStatus": "0",
+        "Result": "success"
+      },
+      "original_execution_row_unchanged": true,
+      "natural_execution_lease_expired": false,
+      "business_grant_still_valid_at_containment": true,
+      "final_credential_denial_also_has_expired_execution_lease": false,
+      "supervisor_graceful_stop_confirmed": true,
+      "execution_lease_still_current_at_containment": true,
+      "cleared_invocation_accepted_with_matching_recovery_digest": true,
+      "data_lease_revoked": true,
+      "model_client_credential_rotated": true,
+      "identity_revoked_before_diagnostic_admin_cleanup": true,
+      "old_identity_inspection_and_enrollment_401": true,
+      "agentshield_grant_and_profile_unchanged_at_containment": true,
+      "relay_child_and_listener_gone_after_stop": true,
+      "forward_child_and_listener_gone": true,
+      "sandbox_removed_owner_retained": true,
+      "provider_restored_positive_probe": true,
+      "service_broker_and_sandbox_stopped": true,
+      "synthetic_identity_fixture_and_private_copy_removed": true,
+      "supervision_fixtures_removed": true,
+      "AgentShield_relay_started": true,
+      "production_IAM_integrated": false,
+      "revoked_grant_denies_credential_read": true,
+      "private_files_fixture_and_owner_removed": true,
+      "temporary_database_removed": true
+    },
+    "provider_positive_passed": [
+      true,
+      true
+    ],
+    "validation": {
+      "combined_tests_passed": 368,
+      "combined_test_files": 20,
+      "warnings": 342,
+      "warning_source": "existing_Pydantic_datetime_utcnow_deprecation",
+      "initial_real_socket_tests_failed_due_to_FD_enumeration_race": 2,
+      "closed_FD_never_contributes_ownership": true,
+      "real_HTTP_redirect_proxy_oversize_echo_duplicate_response_tests_passed": true,
+      "ruff_passed": true,
+      "python_compile_passed": true,
+      "git_diff_check_passed": true,
+      "focused_endpoint_and_forward_passed": 35,
+      "foreign_process_received_zero_HTTP_bytes": true,
+      "cached_ready_not_sufficient_for_HTTP": true,
+      "connection_owner_checked_before_Authorization": true
+    },
+    "source_sha256": {
+      "scripts/openshell/qwen38_request_forward.py": "99f4519955f08f443352490014232ff5af6684a91334fd5034862c5bf54f0b8e",
+      "apps/api/services/qwen38_request_endpoint.py": "05d1f62543189f346e66f14c05b48aaaa5db8d6012090dd204ed6211e9c40486",
+      "scripts/openshell/qwen38_candidate_supervisor.py": "a9ba5a690f06d8f77fac011785fa99f1772553fc1a11be47a4accd2d43608ce2",
+      "scripts/openshell/qwen38_supervisor_service.py": "f2fb1fb149d4de0eeb2db1a1c204eef0447a761d41072ae2b3d63d78136616e3",
+      "apps/api/services/qwen38_request_supervision.py": "88f9c7accabd981b136f883b766ac0dd757bd7e69358ad5a17a3ee95abeb869d",
+      "apps/api/services/qwen38_request_gateway.py": "f16e3cd447af2d3ef0f945f375b0231e80bcd75212784f3726a9a6fa945fd2f9",
+      "scripts/openshell/prove_qwen38_request_identity_supervision.py": "a99bf17461d2dbdfb0fe5f7963168b63c3321beeec68b44c1946768c179c3513",
+      "scripts/openshell/prove_qwen38_request_supervision.py": "1c733775fbf8f4db14fbcd2e9ee5e33b465e031d6b2ae21d59a2a2d84115921d",
+      "apps/api/tests/test_qwen38_request_endpoint.py": "7d07d120f797b38a6f884c70de656eb45fd0b7944bf576b996eabae47ed0979d",
+      "scripts/openshell/tests/test_qwen38_request_forward.py": "7b8654a8b9afcdde3b18c4f9078cfca6387871b570134e525b180a93ef367792",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py": "6a538299d82f4ec209509c9bd859a3c4156e47312cc1bf7d9373a62966087758",
+      "apps/api/tests/test_qwen38_request_supervision.py": "ca337087d83d62991060ccfdd3f8a4811591c9c9f018c7d3d105e483f7fb96dd",
+      "scripts/openshell/run_cli.sh": "0d02f79bfa36434a3e90fae3f8a207ba45322c8e8457e5f23d6452dfbc977af5",
+      "scripts/openshell/env.sh": "f4221d97c7ef6e2354a403b4354ff836876729619112f0e25bf8d2127ace0d76",
+      "docs/architecture/qwen38-request-runtime-v1.md": "0d0bbd0a2b728fdb4a851afa1e8a99890bdd9ac236f4ddf33d9366b075784b78",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "6a478883eedec5f4e28fbeff16e975abd2b9826f312f1c6704afa32fdee6f5d0"
+    },
+    "artifact_sha256": {
+      "artifacts/openshell/flagship/ml02-request-endpoint-e106-summary.sanitized.json": "a54dc03fe4d90bd1462e9be6da0c95589815028c927d6d1d2bd811e6e264d26d",
+      "artifacts/openshell/flagship/ml02-request-endpoint-e106-v1.sanitized.json": "73ee8e0b1662e5e20e90c3dec022e4dd0ff1c080c0a4ad9750711087ab614380",
+      "artifacts/openshell/flagship/ml02-request-endpoint-e106-v2.sanitized.json": "a23078b7a16952f467cec53b8dc71609aa115cc25e6aa84a0c63552ae3a069e1",
+      "artifacts/openshell/flagship/ml02-request-endpoint-e106-v3.sanitized.json": "2422b15f28405aebb97982e488964fd25ea13ed9f46728c8a5025191b4b37cd9",
+      "artifacts/openshell/flagship/ml02-request-endpoint-e106-v4.sanitized.json": "18153ea3efd66c4d33c576e3f74e28839e050031d912838918cc67d5139da6d8",
+      "artifacts/openshell/flagship/ml02-request-endpoint-provider-e106-v1.sanitized.json": "b2e858e7a8f57b636ab6be1a8398d94b2a94c4764a6109a8973b79d1cab3fa36",
+      "artifacts/openshell/flagship/ml02-request-endpoint-provider-e106-v2.sanitized.json": "af80a35003ccad767c4f4567faec6f1f782fad8a7d998e59a3f2fcffd6d2a81c",
+      "artifacts/openshell/flagship/ml02-request-endpoint-provider-e106-v3.sanitized.json": "fdb5a2a2a539f32b29a40993b3722fb56f214b8dbb9e43952ef9b710c2c5d71a",
+      "artifacts/openshell/flagship/ml02-request-endpoint-provider-e106-v4.sanitized.json": "b2e4ab754e63978d362675593ae5cc0e9bc613d3b5b51c0728c7ac10ad6e1a55"
+    },
+    "forward_reference": {
+      "schema_version": "siq.qwen38.request-forward-reference.v1",
+      "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+      "wrapper_sha256": "0d02f79bfa36434a3e90fae3f8a207ba45322c8e8457e5f23d6452dfbc977af5",
+      "environment_sha256": "f4221d97c7ef6e2354a403b4354ff836876729619112f0e25bf8d2127ace0d76"
+    },
+    "local_permission_change": {
+      "source_scripts": [
+        "scripts/openshell/run_cli.sh",
+        "scripts/openshell/env.sh"
+      ],
+      "from_mode": "0775",
+      "to_mode": "0755",
+      "content_changed_this_increment": false,
+      "original_modes_private_and_ignored": true
+    },
+    "final_state": {
+      "gateway_empty": true,
+      "owner_empty": true,
+      "port_47811_closed": true,
+      "port_47710_closed": true,
+      "port_18794_closed": true,
+      "port_18796_closed": true,
+      "API_model_bridge_active_same_invocations": true
+    },
+    "not_proven": [
+      "formal_API_request_queue_heartbeat_terminal_recovery_integration",
+      "actual_HTTP_model_create_stream_stop_through_this_endpoint",
+      "formal_API_process_crash",
+      "trusted_per_request_identity_issuance_from_business_IAM",
+      "model_selected_data_tools",
+      "production_IAM_approval_and_native_CI"
+    ],
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "prior_summary_preserved": true
+  },
+  "research_evidence_sha256": "2bf5946ff1fc3cb3b672cf1c842509305a0951aedcf061326b145ccd9f2d86ff",
+  "isolated_daemon_launches": {
+    "e106-live-v1-v2": {
+      "result": {
+        "schema_version": "siq.e106.live-launch.v1",
+        "production_eligible": false,
+        "passed": true,
+        "runs": [
+          {
+            "suffix": "v1",
+            "graceful": false,
+            "exit_code": 0
+          },
+          {
+            "suffix": "v2",
+            "graceful": true,
+            "exit_code": 0
+          }
+        ],
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      },
+      "sha256": "18b821867062b9dd25ffcd8e796c35e63ef97ac6bc112e1fa0418c8fa63a51b3"
+    },
+    "e106-live-v3-v4": {
+      "result": {
+        "schema_version": "siq.e106.live-launch.v1",
+        "production_eligible": false,
+        "passed": true,
+        "runs": [
+          {
+            "suffix": "v3",
+            "graceful": false,
+            "exit_code": 0
+          },
+          {
+            "suffix": "v4",
+            "graceful": true,
+            "exit_code": 0
+          }
+        ],
+        "isolated_daemon_exit_code": 0,
+        "isolated_daemon_port_closed": true
+      },
+      "sha256": "4a3791a68a13f5cbca6afda74afcd7acc785b06e03b1aaec3b17051a36c6864f"
+    }
+  },
+  "reused_E102_binary_sha256": {
+    "agentshield-linux-arm64": "a7fef8a9e0828a3b089933cce755cda4dec57e072a3a53ccaf75f06b5bb5c18e",
+    "agentshield-decision-relay-linux-arm64": "04e0b9493b58b8b61d76ff13b60ebf4aff51bffa4183c36ecc58ed270cb70295"
+  },
+  "unchanged_security_source_sha256": {
+    "apps/agentshield/internal/runtimeidentity/store.go": "4d2514b957b24f61dbaeb8b37ffcca434a02f59f6d942bcb5dc7786a9b78bfaf",
+    "apps/agentshield/internal/runtimeidentity/self.go": "c45fd9308e55a650d59e60c10da0284e0ebd6a48d7bf8222b214f18840d96fb8",
+    "apps/agentshield/internal/runtimeidentity/self_test.go": "69581458d572e51fba06f12553bd9b3cde0ab7f202c97ddd151fcce018ae4842",
+    "apps/agentshield/internal/server/server.go": "42074956e75121c22c52a99db455c60654212bbfe6c50e656990262527d8dd73",
+    "apps/agentshield/internal/server/runtime_identity_self.go": "6ca25b03d06d9aef89e237b445f62dea527d524e464eeb2f70682ce5e77b2b39",
+    "apps/agentshield/internal/server/runtime_identity_self_test.go": "09804a567e60e6468176ac5f27c9ac49605aa297442f9cc7f4941b8b0de0ee0c",
+    "packages/contracts/local-runtime-identity-self.v1.schema.json": "3e15b64e92c43146f55b481e10731013450f4c9dafe57da2f8fa34b86a2c503b",
+    "packages/contracts/local-runtime-identity-self-revoke.v1.schema.json": "e39f3da96a3a838762125709297ac4beba77c200351e1101bdd48bb903a3f86a",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-self.json": "0643f5312716572884c544a065fd82f36e6922f155e6c2af468436173a03ba65",
+    "apps/agentshield/testdata/contracts/local-runtime-identity-self-revoke.json": "515ced8ac4da6ed22c33495327785627526ce4d1901e927b58b353fde5fb69fe"
+  },
+  "security_code_and_contracts_changed_this_increment": false,
+  "Go_tests_rerun_this_increment": false,
+  "main_AgentShield_same_listener_PID": true,
+  "private_daemon_state_and_logs_git_ignored": true,
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

@@ -1,0 +1,113 @@
+{
+  "artifact_sha256": {
+    "artifacts/openshell/flagship/ml02-qwen38-native-authority-e83.sanitized.json": "dbfd72f05f8e111e54cb75d90809fe1fd2cb0002d00ad1b517b74cbc4ca3868c",
+    "artifacts/openshell/flagship/ml02-qwen38-native-tool-security-e83.sanitized.json": "a8ced8b78b6f3f2c16b94a35b115c7985c8cd2cec720fb8443ccdc6089a2724a"
+  },
+  "candidate": {
+    "agentshield_adapter_sha256": "025d794d8313b692b445aef5520038965591c1cce74ecd17a34e5caae56b6e4b",
+    "base_image_id": "sha256:4b3f10593ea02f47b57fb57b1bce975291766e658e3ec17509ca0efd16175bb2",
+    "business_mcp_lock_sha256": "35fd4cd945f213468032e5c5ceb2e9c2ad8a17e3d6e7cae7a9613aa7d726ac2d",
+    "candidate_input_sha256": "841b40501a24d6040d12977d62cb5151397d64ae310f22bea08d3a69b9dc164c",
+    "cloud_fallback": "forbidden",
+    "data_classification": "confidential_local",
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "image_id": "sha256:a4acb1aa38565b94b9d4b935d719371d17d6d1a2566c97ab419f742911f626ae",
+    "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:841b40501a24d6040d12977d",
+    "model_inference_verified": false,
+    "offline_adapter_digest_verified": true,
+    "offline_business_mcp_discovery_verified": true,
+    "offline_dispatcher_fail_closed": true,
+    "offline_gateway_bootstrap": true,
+    "offline_pg_query_smoke": true,
+    "offline_provider_resolver": true,
+    "offline_smoke": true,
+    "openshell_sandbox_verified": false,
+    "pg_query_sha256": "464f52df29ad68e568917e0bd6844c59a373dd500709ef12fb692dacb8e4821c",
+    "production_eligible": false,
+    "runtime_config_sha256": "e6fd0397d7b7035c6132bc7567fccd792293c31d794cbcba4d5fa267f971324e",
+    "schema_version": "siq.openshell.qwen38_candidate_image.v1",
+    "snapshot_manifest_sha256": "f1d749fcbd806d5df36987078ad23ea6206ab79af12d797bd9a67a9950153b23",
+    "status": "offline_gateway_smoke_passed"
+  },
+  "candidate_ready": false,
+  "captured_at_utc": "2026-09-22T08:33:39.511366+00:00",
+  "dependency_source": {
+    "docker_build_network": "none",
+    "hash_verified": true,
+    "hermes_uv_lock_matches_base_image": true,
+    "license_metadata_reviewed": true,
+    "sdk_migration_reference": "https://github.com/modelcontextprotocol/python-sdk/releases/tag/v2.0.0",
+    "upstream_lock_sha256": "383cd8f98ec23dc3fe4cf63759ec73be5a869cc953f068b4e79ec4e8ed00287d",
+    "wheel_count": 9
+  },
+  "findings_fixed": [
+    "optional_mcp_extra_missing_from_frozen_base_image",
+    "business_server_fastmcp_import_removed_in_sdk2",
+    "hermes_sdk2_snake_case_readonly_annotation_unrecognized",
+    "qwen_snapshot_did_not_explicitly_register_business_mcp",
+    "business_tool_unit_fixture_used_wall_clock_after_expiry"
+  ],
+  "historical_e82_artifacts_preserved": true,
+  "not_proven": [
+    "model_selected_business_mcp_in_http_gateway_run",
+    "gateway_once_approval_to_publication_readback_in_same_run",
+    "production_IAM_and_grants",
+    "resident_supervisor_and_final_native_CI"
+  ],
+  "production_eligible": false,
+  "receipt_verification": {
+    "allowed_read_observation_present": true,
+    "exact_runtime_grant_matched": true,
+    "native_allow_and_deny_correlated": true,
+    "signed_chain_verified": true
+  },
+  "runtime": {
+    "business_mcp_image_enabled": true,
+    "model_bridge_status": 200,
+    "native_tool_after_revocation": {
+      "revoked_read_blocked": true
+    },
+    "native_tool_security": {
+      "denied_write_effect_absent": true,
+      "native_read_completed": true,
+      "native_write_blocked": true
+    },
+    "passed": true,
+    "positive_model_inference_verified": true,
+    "sandbox_removed": true,
+    "synthetic_sources_removed": true,
+    "tool_security_cleanup": {
+      "relay_process_stopped": true,
+      "runtime_identity_revoked": true
+    }
+  },
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-business-mcp-image.v1",
+  "scope": "qwen_candidate_mcp_sdk2_discovery_and_real_openshell_native_file_regression",
+  "secrets_included": false,
+  "source_sha256": {
+    "infra/openshell/patches/hermes-0.21.0/0006-mcp-sdk2-readonly-annotation.patch": "e548ff9e3b018af3684d622fc16df199b80e5cdc04c1d75249ff136df66e185c",
+    "infra/openshell/sandbox/qwen38_candidate/Dockerfile": "40f0f4beb083fc528c866ab145bc045a187e5254ea545b7bbdaaf23fbce536ce",
+    "infra/openshell/sandbox/qwen38_candidate/business-mcp.lock.json": "35fd4cd945f213468032e5c5ceb2e9c2ad8a17e3d6e7cae7a9613aa7d726ac2d",
+    "infra/openshell/sandbox/qwen38_candidate/validate_runtime.py": "c1f960249dbfb1495bb8567d5fc14db625293030adff83dd1c175d38f9bb5673",
+    "scripts/openshell/build_qwen38_candidate_image.py": "0ad2626aef4c33cc18eb111788ef90a77523ecd1909800c339e89734343f4464",
+    "scripts/openshell/build_siq_analysis_runtime_config.py": "d05ad3524606d65ba7f96cabbb8b62e35c07d398b5f5a3e150e5d24f7a383171",
+    "scripts/openshell/prepare_qwen38_business_mcp.py": "cd1f1f1b8c59ce4397cfa4484ca4d5921462a2dee7476f1272c0fc7e8510ed0c",
+    "scripts/openshell/prove_qwen38_scoped_sandbox.py": "bc2898859fbbe662df0e1c3b6ec06597814f00ab1de446e2fc12ca74ad7386ff",
+    "scripts/openshell/research_business_tools_mcp.py": "4404bc72dda9db7881986a332b532ed3e2eb4052256de9fb1722b0bd6961c205",
+    "scripts/openshell/snapshot_siq_analysis_runtime.py": "36634207b2b7d5b38bccedf7234f7e7affbccf14a1944fd84f7e61bf4167624a",
+    "scripts/openshell/tests/test_build_qwen38_candidate_image.py": "aee26b540b7ecb9e79ded677208d3f9fd2b7644c51810ea262c0a9876cfe9b4c",
+    "scripts/openshell/tests/test_qwen38_business_mcp.py": "6dcc52f63dcd01bf0ffc166260056eb7e7d685fee950859f1119d41fe5327791",
+    "scripts/openshell/tests/test_research_business_tools_mcp.py": "85a0531a7846c3dda0aa0165be175818a8086817cadb1f44eb887f50f902e7b8"
+  },
+  "verification": {
+    "candidate_gateway_sandbox_count_after": 0,
+    "model_and_bridge_active": true,
+    "model_and_bridge_nrestarts": 0,
+    "research_focused_passed": 118,
+    "research_focused_skipped": 1,
+    "sdk126_host_business_tests_passed": 7,
+    "sdk2_annotation_negative_cases_verified": true,
+    "skip_reason": "API venv lacks optional MCP SDK; discovery separately verified with SDK2 image and SDK1.26 host",
+    "temporary_broker_and_relay_listeners_after": 0
+  }
+}

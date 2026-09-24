@@ -1,0 +1,60 @@
+{
+  "batch": "client-report-release-handoff-20260924",
+  "recorded_at": "2026-09-24T00:31:10.767696+00:00",
+  "formal_release": false,
+  "native_smoke": {
+    "path": "var/flagship/client-report-release-handoff-20260924/native-smoke.sanitized.json",
+    "sha256": "5a62aa5a3ffa302fce1ea4211a7ba27f2193edb35777a533fc98109dfaa0db21",
+    "bytes": 777
+  },
+  "source_guard": {
+    "path": "var/flagship/client-report-release-handoff-20260924/source-guard.sanitized.json",
+    "sha256": "368bebd665d1c52dcff0a0c34f615d63f90c88f98a9c24c1c3b0a7ac9eafb54c",
+    "bytes": 303
+  },
+  "reviewed_source_inventory": {
+    "path": "var/flagship/client-report-release-handoff-20260924/reviewed-release-source-inventory.json",
+    "sha256": "6a65d84fdfff04152d98ae63bc4f3b620a9e7aadaca52c7ba5591afdd5f608dc",
+    "bytes": 380296
+  },
+  "prior_build_validation": {
+    "path": "var/flagship/client-report-release-preparation-20260924/verification-v2/validation.sanitized.json",
+    "sha256": "501919de32c9a383e3008e63890143be268b64b3e9773018676ceabd58596bbe",
+    "bytes": 1249
+  },
+  "changed_tools": [
+    {
+      "path": "scripts/release/package.py",
+      "sha256": "9dea47a8bc3525053f9c136c575e69c3e6de69c19718e59e16d60106e52feb71",
+      "bytes": 18188
+    },
+    {
+      "path": "scripts/release/test_package.py",
+      "sha256": "d213a346a2f51ff2b2867d2916dcaf35074bf1f053b0cba151a5d7cc66ce88cb",
+      "bytes": 10594
+    },
+    {
+      "path": "scripts/release/README.md",
+      "sha256": "a03c2d64557c5e1a1692ccf0ea37ea3ed6c3a9aa8989bf0ac20ddbbd055b1a79",
+      "bytes": 4992
+    }
+  ],
+  "validation": {
+    "release_unittest": {
+      "command": "python3 -m unittest discover -s scripts/release -p 'test_*.py' -q",
+      "passed": 18,
+      "failed": 0
+    },
+    "ruff": {
+      "command": "apps/control-api/.venv/bin/python -m ruff check scripts/release/package.py scripts/release/test_package.py",
+      "passed": true
+    }
+  },
+  "not_performed": [
+    "new_candidate_commit",
+    "official_signing",
+    "signed_install_upgrade_rollback",
+    "native_non_linux_arm64_acceptance",
+    "production_permission_change"
+  ]
+}

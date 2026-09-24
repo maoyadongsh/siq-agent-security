@@ -1,0 +1,85 @@
+{
+  "schema_version": "siq.flagship.evidence.business-database-delivery.v1",
+  "captured_at_utc": "2026-09-23T14:40:10.983118+00:00",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "delivery": {
+    "schema_version": "siq.flagship.database-delivery.v1",
+    "passed": true,
+    "production_eligible": false,
+    "online_API_restarted": false,
+    "checks": {
+      "backup_server_matches_live_API_database": true,
+      "full_backup_restored_and_original_ledger_matches": true,
+      "restored_database_forward_migrations_passed": true,
+      "live_migrations_current_and_prior_ledger_unchanged": true,
+      "live_runner_second_apply_noop": true,
+      "online_API_identity_unchanged": true,
+      "rehearsal_database_removed": true
+    },
+    "source_sha256": {
+      "migration_prerequisites/checksums.json": "b6fb8a2257c7281916739ea8ffcc1e4b89d8dd75db96e622a523985994459563",
+      "migration_prerequisites/001_create_user_artifacts.sql": "8deca50e7e6216e1373f7ba6479dcfe8b1cdfb57ed17b735174569cc1d2564ba",
+      "scripts/migration_governance.py": "81adbad8fb5bce8bf51e5ce835f36e876b25f6f178b49afecda2eb708366916d",
+      "scripts/audit_migrations.py": "4807709758f30b8d2b05b77985ee7519e6b8edd21029295002eac72134874432",
+      "scripts/run_migrations.py": "4b8d456b2bff543828672136359e9dcc379297e2fcc2ec2183c9897c7da984ad",
+      "scripts/migration_prerequisites.py": "9c44e6e93eea84c00b3b5ed0a625f68550a77cde8202b055a136236b594d21d9",
+      "migrations/017_create_proposal_pre_review_tables.sql": "a23aa9c7078e79236cfe1957ac8b5478f9ed0c330fd7c391b6be1f4f227b803f",
+      "migrations/018_create_proposal_pre_review_records.sql": "a0322861af86481062ee3ae00af3532093206337563eb0173e7d0e0aee4bc24b",
+      "migrations/019_add_proposal_archive_parse_fields.sql": "dc048c13b2268c031ac2064676d954352b3bf695c114e72fe5914a0f77e7abef",
+      "migrations/021_add_openshell_data_grant_request_key.sql": "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",
+      "migrations/README.md": "383cdff1eca734e91882c464fffaeb543de253548a2f893c440e6360ebc28bb9",
+      "migrations/checksums.json": "589b6e27af79805aef075fb085ce2b8412a94bb60dd85599cd48d56139a23f32",
+      "migrations/023_add_business_run_result_history.sql": "b1b5ea3fb87f7a1d276c922ad3f555a1be5da33b40269c1b8b6f6723f99dbeb0",
+      "migrations/020_create_openshell_data_grants.sql": "6e1e6a512888de05c7567fd21b3261bdbb4fd888210abf7829418148dca0df61",
+      "migrations/006_create_runtime_coordination_tables.sql": "581de7e587b74ceada556f5a836b4a02d005b32c7453aa6344f8d008df5feef8",
+      "migrations/010_create_workflow_queue_jobs.sql": "9581c52072a12d94764709c96cb16da36ea5f09b98ca45280e3ae2c7914e1ec2",
+      "migrations/012_create_agent_memory_core_schema.sql": "8349f499b6d95d54a0b85b0b3092bba75a05483e4280c0c5cdb2494586375043",
+      "migrations/002_create_meeting_tables.sql": "835261491fa000dbab587a3a30febe6c9e3904ce6bd17936892a5b75bdf239b5",
+      "migrations/016_create_proposal_archive_tables.sql": "3a7beba235ada5025bd7ab98021560d74e873d35f8e52da29b72b4b0a7a3b112",
+      "migrations/014_repair_document_parse_batch_defaults.sql": "a79366e200808b9c5242454db866e512a71c79120ee1b89f99c46695cc6ad71c",
+      "migrations/015_add_user_artifact_owner_key.sql": "61cb9ff1025af48942afa2abeb6cdb54cc15423b9b9deeb5bc19692f0ad7eee8",
+      "migrations/001_create_auth_tables.sql": "4d97bb176840cba3fa4c16ec96495ecef64ee8e5bb1a4cdc7baaee4f50814863",
+      "migrations/013_add_durable_background_job_payloads.sql": "24d1d3a9fba197b88363bcb0dc88e1fca621587830dfb52342bfd93070566f57",
+      "migrations/009_add_user_token_version.sql": "4a12763e3e72b22e44b13fb4772dc35d7a849b23c594b5e0a5c37458ab9b6c1e",
+      "migrations/004_create_meeting_native_capture_tables.sql": "6c2bc3636ec27e3af8a03ced994ff9cbf9c3cf32a1f237fdcab54509ba1b1e3c",
+      "migrations/008_add_meeting_native_capture_epoch_manifest_digest.sql": "363572d2e96c93fc314ea9b878273227b6ce76fc8b4a7d6e8b328395b1c5db02",
+      "migrations/007_create_meeting_native_capture_manifest_entries.sql": "d5251930b75137b094878165b2ca5ad7e463315ab5cbcca7ed8783fdcaac5f7d",
+      "migrations/003_create_meeting_import_tables.sql": "5028bdbbd49ddaebb6248d9df25516e7182d1bdec2cd9948d79f101fdf31fbbb",
+      "migrations/022_create_business_run_results.sql": "efa67fd96abb7e65b0de825a4b4cd54a98b565475822c3ba4751d8ea54119050",
+      "migrations/011_create_document_parse_batches.sql": "8dbd60c9cad4628453caa76d21f8c9db3c2cb262087fc702373842ae8229ba4b",
+      "migrations/005_create_meeting_native_capture_finalization_tables.sql": "c0b44555dadb296b8ee9bdc76ced95170cd6f204681e1b1bea1d4f59ca9b6de4"
+    },
+    "running_rows_before": 1,
+    "unexpired_running_rows_before": 0,
+    "backup": {
+      "sha256": "84a610d2eecbc7f904d188ecbc0a420a885de0df448ac0b98d6a4279b82f8132",
+      "bytes": 6078277,
+      "contains_business_data": true,
+      "publishable": false
+    },
+    "applied_migrations": [
+      "022_create_business_run_results.sql",
+      "023_add_business_run_result_history.sql"
+    ],
+    "live_chain_sha256": "a37bba70c2564065f2b25408a0e29699174e5332edd7ee68974619c07758eb40"
+  },
+  "online_after": {
+    "health_HTTP_status": 200,
+    "runtime_result_list_route_loaded": false,
+    "result_route_count": 0,
+    "private_backup_mode": "0o600",
+    "private_directory_mode": "0o700",
+    "API_restarted": false
+  },
+  "backup_contents_exported": false,
+  "not_proven": [
+    "online_API_and_Web_update",
+    "authenticated_result_history_in_existing_business_environment",
+    "production_IAM_approval_events",
+    "remaining_fault_windows",
+    "native_CI",
+    "signed_client_install_upgrade"
+  ]
+}

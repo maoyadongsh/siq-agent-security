@@ -155,6 +155,7 @@ class ApprovalHarness(native.OpenClawHarness):
                     "workspace": str(self.workspace),
                     "agent_id": fixture.AGENT,
                     "session_id": fixture.SESSION,
+                    "session_epoch": "11111111-1111-4111-8111-111111111111",
                     "cases": cases,
                 }
             )

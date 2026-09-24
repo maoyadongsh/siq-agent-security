@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-report-publish/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "draft_id": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Draft Id",
+      "type": "string"
+    },
+    "expected_bundle_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Bundle Sha256",
+      "type": "string"
+    },
+    "expected_version": {
+      "exclusiveMaximum": 1000000,
+      "minimum": 0,
+      "title": "Expected Version",
+      "type": "integer"
+    },
+    "accept_warnings": {
+      "title": "Accept Warnings",
+      "type": "boolean"
+    },
+    "confirm_publish": {
+      "const": true,
+      "title": "Confirm Publish",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "draft_id",
+    "expected_bundle_sha256",
+    "expected_version",
+    "accept_warnings",
+    "confirm_publish"
+  ],
+  "title": "Publish",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

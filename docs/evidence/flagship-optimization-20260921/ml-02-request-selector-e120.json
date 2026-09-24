@@ -1,0 +1,68 @@
+{
+  "schema_version": "siq.flagship.evidence.request-selector.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.request-selector-evidence.v1",
+    "captured_at_utc": "2026-09-22T20:27:33.271362+00:00",
+    "scope": "explicit_API_selection_delayed_request_builder_integration_with_synthetic_runtime",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "initial_combined_tests": {
+        "passed": 204,
+        "warnings": 553
+      },
+      "final_selector_client_startup_tests": {
+        "passed": 74,
+        "warnings": 78
+      },
+      "overlap_not_additive": true,
+      "ruff_passed": true,
+      "compile_passed": true,
+      "research_diff_check_passed": true,
+      "compose_YAML_parsed_API_worker_only_legacy_defaults": true
+    },
+    "proven": [
+      "streaming_and_nonstreaming_API_select_scope_before_preflight_without_runtime_start",
+      "verified_principal_overrides_untrusted_context_principal",
+      "live_business_grant_and_company_scope_required",
+      "strict_configuration_and_recovery_readiness",
+      "scope_root_loaded_and_self_inspected_before_selection_and_attach",
+      "read_only_nonexecuting_plan",
+      "original_claim_attach_only_at_create_time",
+      "existing_request_HTTP_create_and_bind_branch_after_activation",
+      "no_generic_release_after_activation_unknown",
+      "revoked_changed_foreign_scope_and_symlink_denial",
+      "unmaterialized_plan_cannot_call_Hermes_create",
+      "legacy_Host_canary_behavior_regressions"
+    ],
+    "not_proven": [
+      "live_selector_builder_Hermes_model_business_request",
+      "actual_API_crash_restart_and_unknown_early_startup_windows",
+      "host_auxiliary_model_data_egress_end_to_end",
+      "real_IAM_approval_event_projection_native_CI"
+    ],
+    "runtime": {
+      "API_model_bridge_unchanged": true,
+      "services_active": true,
+      "services_restarted": false,
+      "selector_activated_in_live_API": false
+    },
+    "source_sha256": {
+      "apps/api/services/qwen38_request_selector.py": "2e43d903750bc73f2c3a58e8db389d3d8175e98f2713d2ab3bf555e008b88709",
+      "apps/api/services/agent_chat_runtime_impl.py": "c1a448b86b39b88896e03737444e51dfa48fbd26cfa2d67745fa799a13a52056",
+      "apps/api/tests/test_qwen38_request_selector.py": "fa57b01ee1441dc959603d5ff90ab606d9c3be846a0a0290e99e02531ded78f3",
+      "apps/api/tests/test_qwen38_request_api.py": "fd63a68183512c5eef21891b7d65e7b8816ce92b85b409578b1cee17c7ba83b4",
+      "infra/env/local.example": "d49c82ab5743710030086b7f69f93c8c89645a95d7d4cd943738fd96a33fe86f",
+      "infra/docker/docker-compose.yml": "41848ca4d8b24c05e2a36f0952803e6ccd08cbd59293dbc4e7fe657d23ca780e",
+      "apps/api/README.md": "a9b7cd6374d0364d860a1424588560170bc921df1579e426597d9fa7b9680eb1",
+      "docs/architecture/qwen38-request-runtime-v1.md": "8b4159b371f04c740328e2b152edd861a2b64c61f1e42dc08de0834666038ab9",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "cae2b300067c83d284ec3ce66e03bb3482cd9409386a75cc76d7e12e72e0a6c9"
+    }
+  },
+  "research_evidence_sha256": "581ee83d45bdfddd6bcbb70ebd6cb7dfa119a4afe293c280a0c31509b6082b22",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

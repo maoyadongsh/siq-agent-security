@@ -1,0 +1,40 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-qwen38-gateway-ownership.v1",
+  "captured_at_utc": "2026-09-22T07:05:48Z",
+  "scope": "persistent_exclusive_ownership_contract_for_qwen_candidate_gateway",
+  "secrets_included": false,
+  "source_sha256": {
+    "qwen38_candidate_gateway_owner.py": "06475d508e623c97b30c2c25907c13db023f8cb406a91f181d5ab217eb793d4e",
+    "qwen38_candidate_host_guard.py": "b112be015ce23bbc33f0a2a8450b3ca95bcba91fa22ef152d748643ed886259d",
+    "test_qwen38_candidate_gateway_owner.py": "0866835614a3819ecaf4a210b1adcb724a4d29026cf74c039bb389dd0cf370cf"
+  },
+  "contract": {
+    "reservation_persisted_before_sandbox_create": true,
+    "existing_or_corrupt_reservation_blocks_new_start": true,
+    "foreign_or_unobservable_gateway_inventory_blocks_new_start": true,
+    "activation_requires_exact_owned_sandbox": true,
+    "release_invokes_stop_before_verifying_gateway_empty": true,
+    "failed_stop_or_foreign_sandbox_keeps_owner_state": true,
+    "separate_processes_cannot_reserve_same_gateway": true,
+    "lock_wait_timeout_seconds": 30,
+    "stop_lock_timeout_invokes_containment_but_keeps_owner": true,
+    "owner_state_and_lock_owner_only": true,
+    "host_guard_accepts_shared_private_operation_lock": true
+  },
+  "verification": {
+    "gateway_owner_and_guard_tests": "16 passed",
+    "owner_guard_lease_and_business_authorization_tests": "32 passed",
+    "ruff": "passed",
+    "python_compile": "passed",
+    "git_diff_check": "passed"
+  },
+  "boundary": {
+    "candidate_ready": false,
+    "production_eligible": false,
+    "ownership_contract_wired_into_real_start": false,
+    "formal_business_start_stop_recover_entrypoint": false,
+    "persistent_supervisor_process": false,
+    "real_gateway_owner_reservation_exercised": false,
+    "siq_iam_integrated": false
+  }
+}

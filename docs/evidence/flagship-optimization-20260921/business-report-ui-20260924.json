@@ -1,0 +1,261 @@
+{
+  "schema_version": "siq.flagship.business-report-ui.v1",
+  "production_eligible": false,
+  "goal_complete": false,
+  "source_repository": "siq-research-engine",
+  "sources": [
+    {
+      "path": "apps/api/services/business_report_publication.py",
+      "sha256": "19453acd52b1b2fe868e71eaa54d49cd7e9ea9cc619ae49a963b1fce1c4d0b4b",
+      "bytes": 17419
+    },
+    {
+      "path": "apps/api/routers/agent_business_reports.py",
+      "sha256": "6b89bcbcbb928e6d198eb21a63ba6f86fd5560819e14dd2221b11a43cdb8b305",
+      "bytes": 5799
+    },
+    {
+      "path": "apps/api/tests/test_business_report_directory.py",
+      "sha256": "7466bbb13342cf07fc11c1f5418956134e065f5f58aed809c8ea3a97bd1678b1",
+      "bytes": 4830
+    },
+    {
+      "path": "apps/api/tests/business_report_browser_app.py",
+      "sha256": "3e5ec42d482c2d6e04ef87cca72d83ccfc27d5c817bb46ee84be756334577d5c",
+      "bytes": 4775
+    },
+    {
+      "path": "scripts/dev/business-report-browser-smoke.py",
+      "sha256": "8763bf4bf42aa28452a18ed0ad95a45aad0271d70b4df9bb2740507a4a32298a",
+      "bytes": 9958
+    },
+    {
+      "path": "apps/web/src/features/business-reports/api.ts",
+      "sha256": "0da892fdc149a0a4d8b7fd28908008cc2fb748eb3a91c13b7cc53ef311db07d3",
+      "bytes": 9144
+    },
+    {
+      "path": "apps/web/src/pages/AnalysisReports.tsx",
+      "sha256": "eb60070286be6baff24faaa4d9c6ec5767822524bf569a0564fdc0678a41180d",
+      "bytes": 11673
+    },
+    {
+      "path": "apps/web/src/pages/AnalysisReports.behavior.spec.tsx",
+      "sha256": "a928642b4d7c0dc41f1fa76240b990836d758378e58f2aa2a568b452b2d43cc8",
+      "bytes": 11590
+    },
+    {
+      "path": "apps/web/src/pages/AnalysisRunResult.tsx",
+      "sha256": "5da6087a77f4760f011f4db28349e399ef9894b56e44b189c8b4a3a08fe23630",
+      "bytes": 7583
+    },
+    {
+      "path": "apps/web/src/pages/AnalysisRunResult.behavior.spec.tsx",
+      "sha256": "f986d564b3fae845972b7d83980e22de9f5e90ad3888a942669bf87ee4fcad42",
+      "bytes": 7181
+    },
+    {
+      "path": "apps/web/src/pages/AnalysisRunHistory.behavior.spec.tsx",
+      "sha256": "531926757ddee76095259fcae8d0bf4707179ad0591b2383d9a4a5f42d3a989b",
+      "bytes": 6838
+    },
+    {
+      "path": "apps/web/src/app/routes.tsx",
+      "sha256": "fd916e1de12ab087afa57bc364bc8a356a79a99d63709196e364dfac930a2b32",
+      "bytes": 8975
+    },
+    {
+      "path": "docs/architecture/business-report-publication-v1.md",
+      "sha256": "7776c6bd733ff55bfebbe85d9958ba16f5067f45a74146e5392e77fbb8018f71",
+      "bytes": 6040
+    }
+  ],
+  "contracts": [
+    {
+      "path": "packages/contracts/siq-business-report-entry.v1.schema.json",
+      "sha256": "a84164c4860080dbd1d3d9bf6cfe60b1639e44d8bf445c2ea0e52dd834969ba0",
+      "bytes": 6662
+    },
+    {
+      "path": "packages/contracts/siq-business-report-list.v1.schema.json",
+      "sha256": "c386f540d99c27908df483bd592f6cc5dff0e614581cb1edf38a8d7ef79ec7b2",
+      "bytes": 8911
+    }
+  ],
+  "contract_http_fixtures": [
+    {
+      "path": "var/ops/flagship-report-ui-20260924/postgres-v2/contracts/entry.json",
+      "sha256": "90e6ad4aa88f93e9347635cbc7d4ff5d111d61cf96f049cca1f1233798ca6202",
+      "bytes": 2206
+    },
+    {
+      "path": "var/ops/flagship-report-ui-20260924/postgres-v2/contracts/list.json",
+      "sha256": "169a2b6cd493cefed884ada821a6dd1c142c614c215d10fa9c9ce6d7c3067cf7",
+      "bytes": 2569
+    }
+  ],
+  "contract_validation": "both passed Draft202012Validator",
+  "records": [
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-ui-20260924/postgres/regression.sanitized.json",
+        "sha256": "9e9114aa8a99e379ff9e20c20e989deca75ee900fc56621c1988bf7b3eb844b9",
+        "bytes": 372
+      },
+      "result": {
+        "passed": false,
+        "files": [
+          "apps/api/tests/test_business_report_publication.py::test_postgres_migration_concurrent_version_and_atomic_publication",
+          "apps/api/tests/test_business_report_directory.py::test_directory_entry_http_current_reviewer_and_publication"
+        ],
+        "test_exit_code": 4,
+        "summary": "see_private_log",
+        "isolated_database_removed": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-ui-20260924/postgres-v2/regression.sanitized.json",
+        "sha256": "6c010474eca46cc8b1fceed66c561a6fa511e3896e81badcf5e98e365c344309",
+        "bytes": 386
+      },
+      "result": {
+        "passed": true,
+        "files": [
+          "apps/api/tests/test_business_report_publication.py::test_postgres_migration_concurrent_version_and_atomic_publication",
+          "apps/api/tests/test_business_report_directory.py::test_directory_entry_http_current_reviewer_and_publication"
+        ],
+        "test_exit_code": 0,
+        "summary": "2 passed, 16 warnings in 1.94s",
+        "isolated_database_removed": true
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-ui-20260924/browser/report.sanitized.json",
+        "sha256": "d2663e736b2fb875b468f5c156ae8b1e81d039fea23ebec97cadb23aa70b73ca",
+        "bytes": 190
+      },
+      "result": {
+        "passed": false,
+        "identity": "explicit synthetic dependency override",
+        "production_iam": false,
+        "owned_processes_stopped": true,
+        "failure_type": "TimeoutError",
+        "checks": []
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-ui-20260924/browser-v2/report.sanitized.json",
+        "sha256": "a472baccc366b6dd98e036f683d497d1c70f951ed60e54458889550765f75e9f",
+        "bytes": 566
+      },
+      "result": {
+        "passed": true,
+        "identity": "explicit synthetic dependency override",
+        "production_iam": false,
+        "owned_processes_stopped": true,
+        "temporary_fixture_removed": true,
+        "checks": [
+          "owner_prepares_actual_bound_materials_without_self_approval",
+          "reviewer_actual_http_read_keyboard_plaintext_no_script",
+          "mobile_375px_material_wrap_reduced_motion",
+          "confirmed_warning_acceptance_atomic_publish_and_version_read",
+          "published_version_persists_reload_without_automatic_content",
+          "actual_grant_revocation_hides_content_and_directory"
+        ]
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-ui-20260924/browser-v3/report.sanitized.json",
+        "sha256": "8d158b25987576d032f9cb074534de978f864fdda22e1afc0d8a20d600ae5a36",
+        "bytes": 360
+      },
+      "result": {
+        "passed": false,
+        "identity": "explicit synthetic dependency override",
+        "production_iam": false,
+        "owned_processes_stopped": true,
+        "failure_type": "AssertionError",
+        "temporary_fixture_removed": true,
+        "checks": [
+          "owner_prepares_actual_bound_materials_without_self_approval",
+          "reviewer_actual_http_read_keyboard_plaintext_no_script"
+        ]
+      }
+    },
+    {
+      "artifact": {
+        "path": "var/ops/flagship-report-ui-20260924/browser-v4/report.sanitized.json",
+        "sha256": "a472baccc366b6dd98e036f683d497d1c70f951ed60e54458889550765f75e9f",
+        "bytes": 566
+      },
+      "result": {
+        "passed": true,
+        "identity": "explicit synthetic dependency override",
+        "production_iam": false,
+        "owned_processes_stopped": true,
+        "temporary_fixture_removed": true,
+        "checks": [
+          "owner_prepares_actual_bound_materials_without_self_approval",
+          "reviewer_actual_http_read_keyboard_plaintext_no_script",
+          "mobile_375px_material_wrap_reduced_motion",
+          "confirmed_warning_acceptance_atomic_publish_and_version_read",
+          "published_version_persists_reload_without_automatic_content",
+          "actual_grant_revocation_hides_content_and_directory"
+        ]
+      }
+    }
+  ],
+  "screenshots_and_layout": [
+    {
+      "path": "var/ops/flagship-report-ui-20260924/browser-v4/report-directory-desktop.png",
+      "sha256": "39527017c80cf38d4db374fa4d5f7b1a0b1c7d0dc4815be49b48a8037cefc920",
+      "bytes": 84011
+    },
+    {
+      "path": "var/ops/flagship-report-ui-20260924/browser-v4/report-review-desktop.png",
+      "sha256": "25375f99e083f2436893471f47383ba328e2d6a17b31c203155de246c3498570",
+      "bytes": 164672
+    },
+    {
+      "path": "var/ops/flagship-report-ui-20260924/browser-v4/report-review-mobile.png",
+      "sha256": "c0cd3647cba42bcd72a02cd4d2cab14026352a449c014144171d3b8ff2df6883",
+      "bytes": 119318
+    },
+    {
+      "path": "var/ops/flagship-report-ui-20260924/browser-v4/mobile-layout.sanitized.json",
+      "sha256": "b2c987e22a142fee24c2f716ce8a518b0503ed61c15069c80312aaefa0d096cb",
+      "bytes": 100
+    }
+  ],
+  "verification": {
+    "backend_initial": "24 passed, 1 skipped, 168 warnings in 9.31s",
+    "backend_distinct_executed_passed": 25,
+    "postgres_supplement": "2 passed, 16 warnings in 1.94s; includes one repeated HTTP fixture export",
+    "frontend_initial": "56 passed across report, result and history pages",
+    "frontend_report_page_after_two_added_cases": "18 passed",
+    "frontend_distinct_passed": 58,
+    "build": "passed",
+    "strict_types": "passed",
+    "changed_frontend_eslint": "passed",
+    "changed_python_ruff": "passed",
+    "both_repository_diff_check": "passed",
+    "browser_final_checks": 6,
+    "browser_identity": "synthetic dependency override; actual HTTP routes and isolated SQLite"
+  },
+  "deployment": {
+    "performed": false,
+    "business_database_changed": false,
+    "existing_preview_restarted": false
+  },
+  "remaining": [
+    "natural_hermes_material_manifest_and_business_end_to_end",
+    "security_console_trusted_report_navigation",
+    "production_identity_approval_events_integration",
+    "migration_and_service_rollout_rollback",
+    "fixed_model_quality_native_ci_signing_installation"
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "schema_version": "siq.flagship.ux-permission-journey-evidence.v1",
+  "captured_at_utc": "2026-09-22T23:46:51.499399+00:00",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "installed_release_changed": false,
+  "existing_services_restarted": false,
+  "secrets_included": false,
+  "browser": {
+    "schema_version": "siq.ux.environment-onboarding-proof.v1",
+    "passed": true,
+    "scope": "isolated_HOME_real_daemon_browser_discovery_admission_permissions_install_revoke_activity",
+    "production_eligible": false,
+    "failure_category": null,
+    "failure_point": null,
+    "binary_sha256": "87e21df024451f66a62209892e349f384a5e6ae8e10e558d9ceeef225e65061d",
+    "checks": {
+      "default_scan_automatic_once": true,
+      "advanced_paths_collapsed": true,
+      "both_platforms_detected": true,
+      "exact_instance_preselected": true,
+      "cancel_does_not_install": true,
+      "setup_controls_fit_375": true,
+      "setup_click_escape_focus_375": true,
+      "setup_controls_fit_768": true,
+      "setup_click_escape_focus_768": true,
+      "hermes_install_files_match_preview": true,
+      "hermes_backend_state_changed": true,
+      "hermes_reload_exact_instance_without_false_runtime_claim": true,
+      "hermes_uninstall_backend_readback": true,
+      "stale_config_rejected_and_repreview_recovers": true,
+      "openclaw_install_files_match_preview": true,
+      "openclaw_backend_state_changed": true,
+      "openclaw_reload_exact_instance_without_false_runtime_claim": true,
+      "openclaw_uninstall_backend_readback": true,
+      "four_explicit_connector_writes_plus_one_rejected_stale_attempt": true,
+      "explicit_rescan": true,
+      "inline_quarantined_skill_cannot_prepare_permissions": true,
+      "first_check_inside_connection_without_automatic_grant": true,
+      "inline_missing_skill_preserves_selection_and_retry_recovers": true,
+      "categories_match_real_backend_inventory": true,
+      "skill_check_persisted_after_reload": true,
+      "skill_detail_without_guessed_permission_subject": true,
+      "hermes_permission_draft_edit_persisted_without_approval": true,
+      "hermes_permission_approval_and_deploy_readback": true,
+      "hermes_permission_bound_install_readback": true,
+      "hermes_installed_adapter_allowed_synthetic_read": true,
+      "hermes_installed_adapter_denies_outside_approved_directory": true,
+      "hermes_missing_result_evidence_not_shown_as_completed": true,
+      "hermes_instance_activity_filter_detail_result_reload_and_back": true,
+      "hermes_permission_revocation_persisted_blocks_apply": true,
+      "hermes_installed_adapter_blocks_read_after_ui_revocation": true,
+      "openclaw_permission_draft_edit_persisted_without_approval": true,
+      "openclaw_permission_approval_and_deploy_readback": true,
+      "openclaw_permission_bound_install_readback": true,
+      "openclaw_installed_adapter_allowed_synthetic_read": true,
+      "openclaw_installed_adapter_denies_outside_approved_directory": true,
+      "openclaw_missing_result_evidence_not_shown_as_completed": true,
+      "openclaw_instance_activity_filter_detail_result_reload_and_back": true,
+      "openclaw_permission_revocation_persisted_blocks_apply": true,
+      "openclaw_installed_adapter_blocks_read_after_ui_revocation": true,
+      "no_browser_errors": true,
+      "hermes_existing_config_preserved": true,
+      "openclaw_existing_settings_preserved": true,
+      "other_hermes_profile_unchanged": true,
+      "isolated_daemon_stopped": true
+    },
+    "not_proven": [
+      "Hermes_native_plugin_loading_and_runtime_verification",
+      "OpenClaw_full_model_session",
+      "business_result_artifact_verification",
+      "model_and_OpenShell_unified_discovery",
+      "enterprise_onboarding",
+      "usability_study",
+      "installed_release_upgrade"
+    ],
+    "openclaw_native_runtime": {
+      "sources": {
+        "dist/plugins/loader.js": "b297bd1cedbd43d14d2a76751aa52d8ba32ed839df2d3438daabc87318fe8497",
+        "dist/agent-tools.before-tool-call-ya9NNSXc.mjs": "39e6ae403ad478b147c9af6306dec376b026ab95aa0a7580fcba027db896270c",
+        "dist/hook-helpers-B6Z9eReH.mjs": "7b1f98cc998c5abe6d1627b7b21460199a9763bca077179f09d8775b71311532",
+        "dist/resource-loader-Ce6BVgUs.mjs": "0dc66f364bc84ebc60a49ba0f38d644a31f8a56e616eee4f3745d429dffc0e08"
+      },
+      "openclaw_version": "2026.9.5"
+    }
+  },
+  "browser_check_count": 49,
+  "validation": {
+    "frontend_test_files": 35,
+    "frontend_tests_passed": 243,
+    "typescript_and_local_build": true,
+    "enterprise_build": true,
+    "candidate_go_build": true,
+    "proof_ruff": true,
+    "native_worker_syntax": true,
+    "diff_check": true
+  },
+  "boundary": {
+    "synthetic_data": true,
+    "isolated_home": true,
+    "api_mocks": false,
+    "OpenClaw": "installed_native_loader_before_wrapper_file_tools_and_after_relay",
+    "Hermes": "direct_installed_adapter_hooks",
+    "model_calls": false,
+    "real_business_artifacts": false,
+    "production_configuration_mutated": false
+  },
+  "historical_attempts": [
+    {
+      "artifact": "var/flagship/ux-e132/browser-baseline/summary.sanitized.json",
+      "sha256": "68b797904a66c4f6bc0d57d55ee7ed5b8db33614eb6ba66cce36346be4e892ea",
+      "passed": false,
+      "failure_category": "RuntimeError"
+    },
+    {
+      "artifact": "var/flagship/ux-e132/browser-v1/summary.sanitized.json",
+      "sha256": "0a1edd4a289493663f0dc4baad58ad346262492a03473f7f782bd1a2e4a7340f",
+      "passed": false,
+      "failure_category": "RuntimeError"
+    },
+    {
+      "artifact": "var/flagship/ux-e132/browser-v2/summary.sanitized.json",
+      "sha256": "26348b790104eaa9bdf4c75c2c692e19bb5d99d2001b701777d54b8ed2a2346d",
+      "passed": false,
+      "failure_category": "AssertionError"
+    },
+    {
+      "artifact": "var/flagship/ux-e132/browser-v3/summary.sanitized.json",
+      "sha256": "360e0dae3ee68cb07108ea8bad23e64474c0e49d18b8ffe0b93e5c6198ab71b2",
+      "passed": true,
+      "failure_category": null
+    },
+    {
+      "artifact": "var/flagship/ux-e132/browser-v4/summary.sanitized.json",
+      "sha256": "12b4d12881ece28838239f38d4e13ef2f55509c4936951ce21a98826b054fcd0",
+      "passed": false,
+      "failure_category": "AssertionError"
+    },
+    {
+      "artifact": "var/flagship/ux-e132/browser-v5/summary.sanitized.json",
+      "sha256": "0dc86a5b871892f704aaf02ada376ffd99b012df33d1f1bdffbb18bef8bd9aa6",
+      "passed": true,
+      "failure_category": null
+    }
+  ],
+  "source_sha256": {
+    "apps/web/src/local/components/InstanceSkillCheck.tsx": "2dc0beb14dddf77a0233fd23072c69ac9b5b9d9e1f07dfa4cf9f4f878cbff751",
+    "apps/web/src/local/components/useInstancePermissions.tsx": "1d966f5b51eee3d4fea1bf82779dfc00b2bf6dbbb569e2ef3a99134ffdc70360",
+    "apps/web/src/local/components/GrantResourceDialog.tsx": "688787cf071594291f37285c929d1bba85634d4f4267326abc2e7fd0e39fa33b",
+    "apps/web/src/local/components/TaskSecurityViewPanel.tsx": "9984a04abc59460fb0e670e2f43c84188fba6a13b17aae1ba0941431dd798256",
+    "apps/web/src/local/pages/TaskActivitiesPage.tsx": "f0a0f1e99cc37e15eabfcee472f116166bd1a8e085472f9344af26629263baae",
+    "apps/web/src/local/pages/TaskActivityDetailPage.tsx": "70e9a5619a3fa2ee14d703efa7d48d3e16ee2f14f0b3f8c39dc12ed7bfd54a03",
+    "apps/web/src/local/Layout.tsx": "eb06b1c4f954c0e51d49ce541858fecfc28ffdd2c1c54217d5e5366aa97962be",
+    "scripts/personal-experience/environment-onboarding-browser-smoke.py": "c564dc321de8ef9013e190217cd99f4643a9aa8aba96eb592b5336b2344b2a08",
+    "scripts/openclaw-native-worker.mjs": "26f47c978b5207b22e149772a0756331e1d5686dd0020377b354524cbe1f2118"
+  },
+  "artifact_sha256": {
+    "var/flagship/ux-e132/web-tests-v3.log": "54b61caf17f54c18bdf70ac1d1a6be620e42fa0cd5116eace558f8c50f4d4fd6",
+    "var/flagship/ux-e132/web-build-v3.log": "90ff47941348f36df84883fd3880f16a97459bfdecdd458aaeca0a8372ad4444",
+    "var/flagship/ux-e132/web-enterprise-build-v3.log": "6551760b44fa399d3087c0c83b0e683b36da4879ed6b6dd050366dca8f9b648b",
+    "var/flagship/ux-e132/browser-v6/summary.sanitized.json": "b70799c5b9fc9a0258e196ab3931a111a23a35206b0199e90d29358413ca9d29",
+    "var/flagship/ux-e132/browser-v6/openclaw-activity-detail.png": "630ac03ce193a58029d0094196f14386bbdd636216e756325297809b2d21e838",
+    "var/flagship/ux-e132/browser-v6/hermes-permission-approved.png": "c5837aeb19abf96842b2245fa675c777578f2b305696a4992deff83d6a07e4ab",
+    "var/flagship/ux-e132/browser-v6/skills.png": "f4c19fa5d2d4fd4e0944d00b3aac06fc7fa41116e791e6eb671242fed1efe4b7",
+    "var/flagship/ux-e132/browser-v6/viewport-375.png": "1ee189dc2800d81dcf2504d5341c4f79df8bc0a334c8d57b14b2ea2dc9da7cbc",
+    "var/flagship/ux-e132/browser-v6/viewport-768.png": "6dcaca429a8dd416846a854524f4e17e2119e73229437b30fe920605d05163ec",
+    "var/flagship/ux-e132/browser-v6/desktop.png": "4ec3e3825646e9b578e67ad604e86b285cc0d89f7f8b5ae071af9070efaed496",
+    "var/flagship/ux-e132/browser-v6/hermes-activity-detail.png": "4c8928a2900347298978e172a01b4c2edeb66709273ff80d723097a9dd174744",
+    "var/flagship/ux-e132/browser-v6/openclaw-permission-approved.png": "f0ef902b4db2fdc1c91222cde0a0283316eea35ff3964db827429f2c70ab56ac"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "local-raw-task-content-envelope/v2",
+  "record_id": "raw-07070707070707070707070707070707",
+  "task_ref": "sha256:a0b3ab797d78c6b43759993022d2c7173270794fcc57189cf851e4838abdb0f5",
+  "kind": "output",
+  "created_at": "2026-09-23T00:00:00Z",
+  "expires_at": "2026-09-24T00:00:00Z",
+  "plaintext_sha256": "a49eb7ce2faa9fee44deb60b27a14ba450eeb34f9b42f2e7b1a335e907db5acc",
+  "plaintext_bytes": 150,
+  "omitted_secret_count": 0,
+  "algorithm": "aes-256-gcm/v1",
+  "nonce_base64": "BwcHBwcHBwcHBwcH",
+  "ciphertext_base64": "tbk5XG6D0gQTn+RITLDJGm6fpXyWHQUNQ/N0iKSccK2Xn7WIPKWlXNORs8NyNi3Z/A9MLxHV72uqdRkChLr4NboyFhMG57IXdLD5+LLW3zn6F3IKeWIZaY7sykYC1zs99NhmUIWA8wsSQ+ApCBykiblMFhOj+ZVnd0FG8JkayxBq1X2DJidCQ7TFYbtvAhAl4hmeW2PbZm4GQThWQ1wxykm4nr2p+A==",
+  "source": {
+    "runtime_identity_ref": "sha256:c0542a5886d8d0e8a5a469c0fb8a76a782c28dce3065649d4b1e9a3af210e0cf",
+    "session_ref": "sha256:d6440983c454c2e5999fdb66bbe9cf5f89a8f5847d6c9578ef14afd26eee122c",
+    "binding_ref": "sha256:b77a112196c8b6021ad677b12ac73f84da9446f4343de51c575edaf8ca692507"
+  }
+}

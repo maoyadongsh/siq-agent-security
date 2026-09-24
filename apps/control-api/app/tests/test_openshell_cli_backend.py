@@ -369,7 +369,11 @@ def test_apply_dynamic_tempfile_cleaned_on_cli_error():
 
     backend = OpenShellCliBackend(runner=runner)
     compiled = backend.compile(
-        {"policy_id": "p", "version": 1, "selector": {"agent_ids": ["a"]}, "network": [], "enforcement_mode": "block"}
+        {
+            "policy_id": "p", "version": 1, "selector": {"agent_ids": ["a"]},
+            "network": [{"endpoint": "api.example.com:443", "effect": "allow", "binary_paths": ["/usr/bin/curl"]}],
+            "enforcement_mode": "block",
+        }
     )
     plan = backend.plan_change("s1", compiled)
     with pytest.raises(AdapterError):
@@ -393,10 +397,14 @@ def test_apply_dynamic_revision_conflict():
         backend.apply_dynamic("s1", plan, expected_revision="1")
 
 
-def test_apply_dynamic_idempotent_unchanged_policy():
+@pytest.mark.parametrize("explicit_empty", [False, True])
+def test_apply_dynamic_idempotent_unchanged_policy(explicit_empty):
     """内容未变在本地识别为 no-op，零 policy set 写入。"""
     current_policy = _policy_from_output(REAL_POLICY_GET_FULL)
-    current_policy["network_policies"] = {}
+    if explicit_empty:
+        current_policy["network_policies"] = {}
+    else:
+        current_policy.pop("network_policies", None)
     current_output = _policy_output(5, current_policy)
     set_calls = 0
 
@@ -445,7 +453,11 @@ def test_fs_change_rejected_by_gateway_is_adapter_error():
 
     backend = OpenShellCliBackend(runner=runner)
     compiled = backend.compile(
-        {"policy_id": "p", "version": 1, "selector": {"agent_ids": ["a"]}, "network": [], "enforcement_mode": "block"}
+        {
+            "policy_id": "p", "version": 1, "selector": {"agent_ids": ["a"]},
+            "network": [{"endpoint": "api.example.com:443", "effect": "allow", "binary_paths": ["/usr/bin/curl"]}],
+            "enforcement_mode": "block",
+        }
     )
     plan = backend.plan_change("s1", compiled)
     with pytest.raises(AdapterError):

@@ -51,6 +51,15 @@ func permissionEnvelope(r Record, session string, g *grant.Grant, at time.Time) 
 			expires = end
 		}
 	}
+	if r.RequestScope != nil {
+		end, valid := requestTime(r.RequestScope.ExpiresAt)
+		if !valid {
+			return intent.Contract{}
+		}
+		if end.Before(expires) {
+			expires = end
+		}
+	}
 	envelope := intent.Contract{
 		SchemaVersion: "intent/v2", IntentID: id, TaskID: task,
 		Principal: intent.Principal{Type: "user", ID: r.ActorID}, Agent: intent.Agent{ID: r.AgentID, Platform: r.Platform},
@@ -138,7 +147,7 @@ func (s *Store) EnrollContext(token, session string) (Record, intent.Binding, er
 }
 func bindingMatches(r Record, session string, c *intent.Contract, b *intent.Binding) bool {
 	id, task := sessionNames(r, session)
-	profileMatch := c != nil && (r.SchemaVersion == "local-runtime-identity/v1" && c.SchemaVersion == "intent/v2" && c.FilesystemProfile == "" || r.SchemaVersion == "local-runtime-identity/v2" && c.SchemaVersion == "intent/v4" && c.AuthorityKind == "instance_permission" && c.FilesystemProfile == r.FilesystemProfile)
+	profileMatch := c != nil && ((r.SchemaVersion == "local-runtime-identity/v1" || r.SchemaVersion == "local-runtime-identity/v3") && c.SchemaVersion == "intent/v2" && c.FilesystemProfile == "" || r.SchemaVersion == "local-runtime-identity/v2" && c.SchemaVersion == "intent/v4" && c.AuthorityKind == "instance_permission" && c.FilesystemProfile == r.FilesystemProfile)
 	return profileMatch && b != nil && c.IntentID == id && b.IntentID == id && c.TaskID == task && b.TaskID == task && c.Authority.Issuer == "local-runtime-identity" && c.Authority.Revision == recordDigest(r) && b.GrantRef != nil && *b.GrantRef == r.GrantRef
 }
 

@@ -1,0 +1,64 @@
+{
+  "base_image": {
+    "context_sha256": "ab329baf2b7afb8c5aff37b1a0255b6f3b35302cfe835902b4b4aa505c981209",
+    "current_five_patch_base_verified": true,
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "image_id": "sha256:4b3f10593ea02f47b57fb57b1bce975291766e658e3ec17509ca0efd16175bb2",
+    "integration_patch_sha256": "e091ea2692ac1bf7a1d2a0c0e18be9171eeb08410bdaca2d4f43c790039ded90",
+    "mcp_watcher_patch_sha256": "b410492f83a0c210c2860971919cbf9547dd5377667d5dc15729daa14667d9c7"
+  },
+  "candidate_ready": false,
+  "current_candidate_evidence": "ml-02-qwen38-hermes-bridge-trace.json",
+  "historical_candidate": true,
+  "limitations": [
+    "No OpenShell sandbox has used the dedicated Qwen image yet.",
+    "The Qwen model service is still on the old LAN listener; the authenticated loopback bridge has no upstream.",
+    "No real Hermes Qwen inference, enterprise business scope, or token-first lifecycle revocation is proven.",
+    "The earlier derivative from the stale four-patch base was superseded and is not the candidate state."
+  ],
+  "preservation": {
+    "candidate_gateway_sandbox_count_after": 0,
+    "nemotron_image_pointer_unchanged": true,
+    "old_qwen_model_service_not_restarted": true,
+    "qwen_state_separate": true
+  },
+  "production_eligible": false,
+  "qwen_image": {
+    "auth_empty_after_boot": true,
+    "base_image_id": "sha256:4b3f10593ea02f47b57fb57b1bce975291766e658e3ec17509ca0efd16175bb2",
+    "candidate_input_sha256": "69b791d4a23c47aaf208eb440102c6c4e4065381e26d74baf90aaecbb90dea3c",
+    "cloud_fallback": "forbidden",
+    "compiled_config_sha256": "8693f18a38acee7a6b2033693acd0dfdf3b736cb8b8521061e1b4526b52267ba",
+    "image_id": "sha256:eaaa4a1a567a7a8325613afb1462c6aa485236e75aa588a0f02da3f8f3b673b5",
+    "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:69b791d4a23c47aaf208eb44",
+    "minimax_auth_template_removed": true,
+    "network_mode": "none",
+    "offline_gateway_healthy": true,
+    "snapshot_manifest_sha256": "520dbe7931538a86b6044f81b26142f2eddfdf44c153652938522877af080943",
+    "synthetic_provider_placeholder_only": true
+  },
+  "recorded_at": "2026-09-22T01:45:14.425424+00:00",
+  "schema_version": "siq.flagship.ml02-qwen38-dedicated-hermes-image/v1",
+  "scope": "qwen38_dedicated_current_patch_hermes_image_offline_gateway",
+  "secrets_included": false,
+  "source_sha256": {
+    "base_builder": "8693ca3c65725014b30ec8d5be665a9f52f332cfaf45efe519b9535ee6d1468c",
+    "base_lock": "356557f2d9d0c2cbd40892bce8e12691ff19484b4e81078e1c830e99f561c8d1",
+    "builder_tests": "ddb0f3201b31525913d5dd00f0bbfdc96b4f0d4b6ff60ea6b1377d6ce2e3298c",
+    "candidate_builder": "c3008067286707026b1954e1d8e547a04cc215f14722d11b92268a0aca006626",
+    "dockerfile": "904dab20cc1dbb1b815bad581134fb48974036ad2d4c77465b8134f95d286fee",
+    "empty_store_template": "cca05f385dd727e192c6c5e07cda4d2ab4231947ec507dda0f6b45a73a1f4243",
+    "entrypoint": "33924dee7c845a3c1f320b34b2130da3fc54bd12b81245d591add0ae0e4daa57",
+    "runtime_tests": "30a71849c64bbad8f532ad3ab8f49ca9624bb0f75ec1b2798be43c2f028dc08d",
+    "runtime_validator": "9af27c0fd10d80aee1f22995817063ec247b88b419c89f106646a611a48c16ee"
+  },
+  "status": "passed_image_only",
+  "validation": {
+    "docker_offline_gateway_bootstrap": "passed",
+    "empty_store_recheck": "passed",
+    "focused_pytest_passed": 44,
+    "ruff": "passed",
+    "shell_syntax": "passed",
+    "source_context_integrity": "passed"
+  }
+}

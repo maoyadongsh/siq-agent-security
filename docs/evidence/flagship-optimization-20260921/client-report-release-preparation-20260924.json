@@ -1,0 +1,96 @@
+{
+  "batch": "client-report-release-preparation-20260924",
+  "observed_at": "2026-09-24T00:26:08.689392+00:00",
+  "formal_release": false,
+  "source": {
+    "path": "var/flagship/client-report-release-preparation-20260924/source-preparation.json",
+    "sha256": "3394ff08def5bbcb46f5f2693d24e3c7a8803c88503a05489d268842ab6d7f67",
+    "bytes": 2762
+  },
+  "patch": {
+    "path": "var/flagship/client-report-release-preparation-20260924/client-report-overlay.patch",
+    "sha256": "718a448fd423840f3ae6093afffa846c12afc3322f4ecb66871740c49d04cccb",
+    "bytes": 21008
+  },
+  "failed_initial_attempt": {
+    "path": "var/flagship/client-report-release-preparation-20260924/validation.sanitized.json",
+    "sha256": "c4262e0bef324c065d3ce54cdc99f11514e197c5fb0b83cce8a5ed7b1534ed40",
+    "bytes": 228
+  },
+  "successful_attempt": {
+    "path": "var/flagship/client-report-release-preparation-20260924/verification-v2/validation.sanitized.json",
+    "sha256": "501919de32c9a383e3008e63890143be268b64b3e9773018676ceabd58596bbe",
+    "bytes": 1249
+  },
+  "validation_script": {
+    "path": "var/flagship/client-report-release-preparation-20260924/verification-v2/validate_build.py",
+    "sha256": "8dfeb05e3a3aa266d8f58226c6808e029bf899eb33dd340614c25f2238174108",
+    "bytes": 3264
+  },
+  "validation": {
+    "passed": true,
+    "signed": false,
+    "new_source_commit_created": false,
+    "version": "0.4.0-rc.2-preparation",
+    "checks": {
+      "gofmt": true,
+      "go_vet": true,
+      "isolated_full_go_tests": true,
+      "python_shared_contract_vectors": true,
+      "four_targets_built": true
+    },
+    "artifacts": [
+      {
+        "path": "bin/siq-agent-security-linux-amd64",
+        "sha256": "7c53d8de5643e74724bafb18660c4a51eef5489e5e731a02555d480022264e12",
+        "bytes": 20373666,
+        "target": "linux/amd64"
+      },
+      {
+        "path": "bin/siq-agent-security-linux-arm64",
+        "sha256": "fd80fdb70eca6737016282f01a59a22c9991ab85d38a1a388053bf57b895b891",
+        "bytes": 19136674,
+        "target": "linux/arm64"
+      },
+      {
+        "path": "bin/siq-agent-security-darwin-arm64",
+        "sha256": "4139cdfc2263be345b769f6d4ca55881809d89e0af1190f2ae04829f046d79ca",
+        "bytes": 19367762,
+        "target": "darwin/arm64"
+      },
+      {
+        "path": "bin/siq-agent-security-windows-amd64.exe",
+        "sha256": "6f8cb047839b788528b7dd7c4391d7432e6ceb12f87729e6c4d25f086ad1f4ab",
+        "bytes": 20951040,
+        "target": "windows/amd64"
+      }
+    ],
+    "go_test_counts": {
+      "packages_passed": 44,
+      "test_events_passed": 3668,
+      "test_events_skipped": 36
+    }
+  },
+  "current_services": {
+    "main_api": {
+      "port": 18081,
+      "pid": 453532,
+      "active": true,
+      "http_status": 200,
+      "both_recovery_managers_ready": true
+    },
+    "web": {
+      "port": 15173,
+      "pid": 464005,
+      "active": true,
+      "http_status": 200
+    }
+  },
+  "limitations": [
+    "unsigned_preparation_only",
+    "no_new_source_commit",
+    "no_native_install_upgrade_rollback_this_batch",
+    "real_business_permissions_and_IAM_pending",
+    "original_model_and_native_platform_gates_pending"
+  ]
+}

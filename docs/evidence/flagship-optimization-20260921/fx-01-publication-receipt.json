@@ -1,0 +1,90 @@
+{
+  "approval_decision": "approve_with_review",
+  "approval_kind": "non_production_test_fixture",
+  "approval_projection": "3625f5f221e68e6ea42bd650",
+  "artifact_set_sha256": "95dfa88c2e069f90b98503653c5bbbf695fb5a5bce66fa47a5a2a516a4194d28",
+  "completion": {
+    "agentshield_ingestion": {
+      "reason_code": "no_signed_intent_or_effect_observer_in_fixture",
+      "status": "not_ingested"
+    },
+    "reason_code": "publication_readback_verified",
+    "requirements": [
+      {
+        "evidence_sha256": "95dfa88c2e069f90b98503653c5bbbf695fb5a5bce66fa47a5a2a516a4194d28",
+        "kind": "input",
+        "status": "verified"
+      },
+      {
+        "evidence_sha256": "46a16f6918aee0b7b9c0508149a07322833f630adf920017dadccc9e5720582c",
+        "kind": "output",
+        "status": "verified"
+      },
+      {
+        "evidence_sha256": "537a28507c1ead5431501910910a687f3015986f183bea4f017321b8f218bbe7",
+        "kind": "quality",
+        "status": "verified"
+      },
+      {
+        "evidence_sha256": "46a16f6918aee0b7b9c0508149a07322833f630adf920017dadccc9e5720582c",
+        "kind": "publish_readback",
+        "status": "verified"
+      }
+    ],
+    "schema_version": "siq.report-publication-completion/v1",
+    "status": "verified",
+    "task_projection": "94d4025cb3a96b68c8767a13"
+  },
+  "factcheck_receipt_sha256": "5af4a8f8ce547cbeffa08f5254cc1b7a67860343d39e908f94caf1be16d0eea4",
+  "inputs": [
+    {
+      "role": "input_preflight",
+      "sha256": "7dba80551361ba63473944ba5c38174d91847d69a63e5e0ad59f44fafa0026b5",
+      "size": 751
+    },
+    {
+      "role": "input_metric_snapshot",
+      "sha256": "b971e7deaa147ee597e90df55925545cbec2ea9b6cf11a715613c7b6531d9f5e",
+      "size": 74776
+    },
+    {
+      "role": "input_evidence_package",
+      "sha256": "df7433d7fb7bc886105073dbf6de0c8ffa140082859843f9a8f6408de63550b3",
+      "size": 211532
+    }
+  ],
+  "outputs": [
+    {
+      "media_type": "text/markdown",
+      "role": "report_markdown",
+      "sha256": "b5ac07a990a64ce2d95a7bea53337a2a1e3d2c9303a2f2b9ee6ca670ccadb4d4",
+      "size": 45094
+    },
+    {
+      "media_type": "application/json",
+      "role": "report_json",
+      "sha256": "b2743f9ce19272b593b99134f220df4a1c1e6ba87dd5eecc27eaa093be92a2a3",
+      "size": 94141
+    },
+    {
+      "media_type": "text/html",
+      "role": "report_html",
+      "sha256": "05df9ffa1fabcd8e1be2e8f1f1ee17bc5219a9667a7d5a8eca1cd8890cb4afa1",
+      "size": 255252
+    }
+  ],
+  "production_eligible": false,
+  "publication_digest": "46a16f6918aee0b7b9c0508149a07322833f630adf920017dadccc9e5720582c",
+  "quality_receipt_sha256": "537a28507c1ead5431501910910a687f3015986f183bea4f017321b8f218bbe7",
+  "quality_status": "pass_with_review",
+  "readback_verified": true,
+  "readiness_effect": "none",
+  "report_key": "600104-2025-analysis",
+  "request_projection": "593e023200bd555140de6a1d",
+  "request_sha256": "129062f999fc9685692a46cb28b3eb0aed84d24d8e9eadf81d39f9320fac91ec",
+  "schema_version": "siq.report-publication-receipt/v1",
+  "task_projection": "94d4025cb3a96b68c8767a13",
+  "version": 3,
+  "version_id": "v000003",
+  "warnings_sha256": "bd5d2943b6c3e9f71b16fdddbe54f66a819ba437944247c7073d1b856cfb9399"
+}

@@ -1,0 +1,209 @@
+{
+  "artifacts": [
+    {
+      "id": "candidate_gateway_binary",
+      "path": "var/openshell/build/v0.0.83/gateway-candidates/9786e926ba5fd0419e384e39645f2fb473a50bf4155bec4e65642474d07e3e1d/openshell-gateway",
+      "role": "candidate_gateway_binary",
+      "root": "research",
+      "sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317"
+    },
+    {
+      "id": "candidate_gateway_record",
+      "path": "var/openshell/build/v0.0.83/gateway-candidates/9786e926ba5fd0419e384e39645f2fb473a50bf4155bec4e65642474d07e3e1d/candidate.runtime",
+      "role": "candidate_gateway_build_provenance",
+      "root": "research",
+      "sha256": "9a75f967e30b45eca407a2c9e4e745e840fd48e5436d096a39caa47afe92310b"
+    },
+    {
+      "id": "candidate_image_state",
+      "path": "var/openshell/siq-analysis-v0210/confidential_local/locked/dgx-spark-hermes-v0210-confidential-3d82b38a-20260921/image.json",
+      "role": "classified_candidate_image_state",
+      "root": "research",
+      "sha256": "8cc0ff96d1fbefaa4b294b630906207561ebca5cc70b88b919495591f63bc4e4"
+    },
+    {
+      "id": "candidate_image_smoke",
+      "path": "var/openshell/siq-analysis-v0210/confidential_local/locked/dgx-spark-hermes-v0210-confidential-3d82b38a-20260921/image.smoke.json",
+      "role": "candidate_image_smoke",
+      "root": "research",
+      "sha256": "a2337e90d9ada27a50b073a62caed1ffa357000be8726e317385aec4f03b1d17"
+    },
+    {
+      "id": "candidate_source_baseline",
+      "path": "var/openshell/siq-analysis-v0210/contexts/3d82b38a8022141b9513f3fbca91965927a35847c9d3853b916d8f8227f61d9e/SOURCE_BASELINE.json",
+      "role": "candidate_build_source_and_patch_provenance",
+      "root": "research",
+      "sha256": "264c96706f137c8d97e0dbd7ef115dad2064925d486ca8377407b4de55326bf1"
+    },
+    {
+      "id": "profile_manifest",
+      "path": "artifacts/openshell/flagship/profile-manifest-confidential-candidate.sanitized.json",
+      "role": "three_layer_profile_identity",
+      "root": "research",
+      "sha256": "519a644eac22954e29988e2daafad7dae8e7c234baec3fdbd2365a3189f88e13"
+    },
+    {
+      "id": "governed_model_routes",
+      "path": "infra/model-services/governed-model-routes.json",
+      "role": "governed_model_route_contract",
+      "root": "research",
+      "sha256": "5e349bc53572961024ac999bcacd9f483c2483c8484c0eca5f2857b505ba72e3"
+    },
+    {
+      "id": "hermes_auth_compatibility_patch",
+      "path": "infra/openshell/patches/hermes-0.21.0/0001-runtime-auth-file-override.patch",
+      "role": "runtime_auth_and_aiohttp_optional_import_compatibility_patch",
+      "root": "research",
+      "sha256": "4d1b3cffdee9ea107f221845f270e5b4f394aa996bc4d424b31266bb183b2e2a"
+    },
+    {
+      "id": "hermes_required_gate_patch",
+      "path": "infra/openshell/patches/hermes-0.21.0/0002-required-pre-tool-security-gate.patch",
+      "role": "required_pre_tool_gate_patch",
+      "root": "research",
+      "sha256": "4f5fc6167de11a8cb58b9d2b7221017b4dbad8a7b8ea2800e9127a277ac73560"
+    },
+    {
+      "id": "candidate_lifecycle",
+      "path": "scripts/openshell/siq_analysis_v0210_candidate_lifecycle.sh",
+      "role": "isolated_candidate_lifecycle",
+      "root": "research",
+      "sha256": "d046922a2dea248502779c154371f8aa04f6e1dfc1653cf9fad2b3cb04623d91"
+    },
+    {
+      "id": "model_sandbox_proof_runner",
+      "path": "scripts/openshell/run_ml01_confidential_sandbox_proof.py",
+      "role": "confidential_model_proof_runner",
+      "root": "research",
+      "sha256": "7fad03ec418cfc67b2bc0faf9acd46135f7b8087f0006d5882a030fa985dae9a"
+    },
+    {
+      "id": "nw01_evidence",
+      "path": "docs/evidence/flagship-optimization-20260921/nw-01-data-classification-egress.json",
+      "role": "data_classification_and_egress_evidence",
+      "root": "security",
+      "sha256": "8a95b84a65433f2d0453d8d17e8715dfc75d6c8f23faa7a2ff938af36d68fa8d"
+    },
+    {
+      "id": "dt01_evidence",
+      "path": "docs/evidence/flagship-optimization-20260921/dt-01-enterprise-data-scope.json",
+      "role": "enterprise_data_scope_evidence",
+      "root": "security",
+      "sha256": "b7583e0a4eb1cd3cbb095b35587a7938cad11e71e76be171157ee4a3afd78ba7"
+    },
+    {
+      "id": "model_host_proof",
+      "path": "artifacts/openshell/flagship/ml01-governed-local-model.sanitized.json",
+      "role": "host_and_bridge_model_proof",
+      "root": "research",
+      "sha256": "5b51efb31688ad8f616a02275dbecabd8e2101a827aa956501c2e0dc8024d8cf"
+    },
+    {
+      "id": "model_sandbox_proof",
+      "path": "artifacts/openshell/flagship/ml01-confidential-sandbox.sanitized.json",
+      "role": "confidential_sandbox_inference_and_outage_proof",
+      "root": "research",
+      "sha256": "ed13ae8ca75ee0aadfc8ddcce8b66848efc211de52566700c6db8fd8538159fb"
+    },
+    {
+      "id": "candidate_doctor",
+      "path": "deploy/dgx-spark/candidate_doctor.py",
+      "role": "candidate_lock_verifier",
+      "root": "security",
+      "sha256": "dddcd20496333eca9e0224d53b0cac8a0167059973209dd3d31975e5a6898e73"
+    }
+  ],
+  "candidate_id": "dgx-spark-hermes-v0210-confidential-3d82b38a-20260921",
+  "evidence": {
+    "dt01": {
+      "artifact_id": "dt01_evidence",
+      "schema_version": "siq.flagship.dt01-enterprise-data-scope-evidence.v1"
+    },
+    "model_host": {
+      "artifact_id": "model_host_proof",
+      "schema_version": "siq.model.governed-local-proof.v1"
+    },
+    "model_sandbox": {
+      "artifact_id": "model_sandbox_proof",
+      "schema_version": "siq.model.confidential-sandbox-proof.v1"
+    },
+    "nw01": {
+      "artifact_id": "nw01_evidence",
+      "schema_version": "siq.flagship.nw01-data-classification-egress-evidence.v1"
+    }
+  },
+  "gateway": {
+    "binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "expected_inventory_count": 0,
+    "health_url": "http://127.0.0.1:17772/health",
+    "namespace": "siq-openshell-scope-validation",
+    "version": "0.0.83"
+  },
+  "hardware": {
+    "architectures": [
+      "aarch64",
+      "arm64"
+    ],
+    "product_names": [
+      "NVIDIA_DGX_Spark",
+      "NVIDIA DGX Spark"
+    ]
+  },
+  "hermes": {
+    "commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "context_sha256": "3d82b38a8022141b9513f3fbca91965927a35847c9d3853b916d8f8227f61d9e",
+    "data_classification": "confidential_local",
+    "image_id": "sha256:6914a40ecfa3264b2e88d37fdb4d67cfdfcef757021c3f96615e3168ec95e48a",
+    "image_ref": "siq/hermes-openshell-siq-analysis:3d82b38a8022141b9513f3fb",
+    "runtime_config_sha256": "73cf7fca3ab395299927029666d38da42c493c46f874cb04e780920c13ba4f26",
+    "version": "0.21.0"
+  },
+  "model": {
+    "alias": "siq.local.nemotron-3.5-lightning.nvfp4.v1",
+    "cloud_fallback": "forbidden",
+    "endpoints": [
+      {
+        "id": "model_loopback",
+        "url": "http://127.0.0.1:8006/v1/models"
+      },
+      {
+        "id": "model_openshell_bridge",
+        "url": "http://172.23.0.1:8006/v1/models"
+      }
+    ],
+    "model_id": "NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4",
+    "route_sha256": "664c7128ada2469f7eb8486c20fd8204a6ec9c2baded63c764063fdb1ed5be47"
+  },
+  "profile_manifest": {
+    "active_runtime_matches_candidate": false,
+    "artifact_id": "profile_manifest",
+    "candidate_build_consistent": true,
+    "production_eligible": false,
+    "release_consistent": false,
+    "schema_version": "siq.hermes.profile-manifest.v1"
+  },
+  "recorded_at": "2026-09-21T10:22:19.357826Z",
+  "release_state": {
+    "active_pool_promoted": false,
+    "candidate_package_expected_ready": true,
+    "production_eligible": false,
+    "scope": "isolated_confidential_canary"
+  },
+  "repositories": {
+    "hermes": {
+      "head": "42f0c8179e30cf6ba4cba0a8f2852e609f717773"
+    },
+    "research": {
+      "head": "47c0eda39119662a8f230c7a3b3bea97216abab6"
+    },
+    "security": {
+      "head": "af275efb1732d9bc1fcb9ea624e55a2ced58032c"
+    }
+  },
+  "roots": {
+    "hermes": "SIQ_HERMES_ROOT",
+    "research": "SIQ_RESEARCH_ROOT",
+    "security": "."
+  },
+  "schema_version": "siq.dgx-spark.confidential-candidate-lock.v1"
+}

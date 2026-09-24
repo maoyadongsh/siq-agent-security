@@ -1,6 +1,8 @@
 """Managed instances require identity enrollment even in advisory modes."""
 
+import hashlib
 import json
+import os
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -12,6 +14,7 @@ def managed(mod, token):
     identity = "ri-" + "a" * 32
     agent = "hri-" + "b" * 32
     token.write_text(identity + "." + "c" * 64)
+    token.chmod(0o600)
     mod._CFG.update(runtime_identity_id=identity, agent_id=agent, token_path=str(token))
     mod._TOKEN = None
     _Fake.enroll = {
@@ -43,6 +46,94 @@ def test_managed_enrollment_precedes_decision_and_observation(server, mode):
         "schema_version": "local-runtime-session-enroll/v1", "session_id": "native-session",
     }
     assert "c" * 64 not in str([row[2] for row in _Fake.seen])
+
+
+def test_openshell_session_namespace_is_opaque_and_bound_on_every_route(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    managed(mod, token)
+    namespace = (
+        "siq:openshell:pool:" + "1" * 24
+        + ":run-001:siq_analysis"
+    )
+    expected = namespace + ":" + hashlib.sha256(b"native-session").hexdigest()
+    mod._CFG["session_namespace"] = namespace
+    _Fake.enroll["session_id"] = expected
+    _Fake.decision = {
+        "action": "allow", "reason": "ok", "receipt_id": "r", "action_id": "act-ns",
+    }
+
+    assert mod._pre_tool_call(
+        "read_file", {}, session_id="native-session", tool_call_id="call-ns"
+    ) is None
+    mod._post_tool_call(
+        "read_file", {}, result="ok", session_id="native-session", tool_call_id="call-ns"
+    )
+
+    assert _Fake.seen
+    assert all(row[2].get("session_id") == expected for row in _Fake.seen)
+    assert "native-session" not in json.dumps([row[2] for row in _Fake.seen])
+
+
+@pytest.mark.parametrize(
+    "namespace",
+    ["unscoped", "siq:openshell:pool:" + "1" * 23 + ":run:siq_analysis"],
+)
+def test_managed_invalid_session_namespace_fails_closed_without_upstream(server, namespace):
+    srv, token = server
+    mod = load("warn", f"http://127.0.0.1:{srv.server_port}", token)
+    managed(mod, token)
+    mod._CFG["session_namespace"] = namespace
+
+    result = mod._pre_tool_call("read_file", {}, session_id="native-session")
+    assert result["action"] == "block"
+    assert _Fake.seen == []
+
+
+def test_openshell_environment_supplies_only_scoped_runtime_identity(server, monkeypatch):
+    srv, token = server
+    identity = "ri-" + "a" * 32
+    agent = "hri-" + "b" * 32
+    namespace = "siq:openshell:pool:" + "1" * 24 + ":run-001:siq_analysis"
+    authority_session = namespace + ":" + hashlib.sha256(b"native-session").hexdigest()
+    token.write_text(identity + "." + "c" * 64)
+    token.chmod(0o600)
+    monkeypatch.setenv("SIQ_AGENT_SECURITY_RUNTIME_IDENTITY_ID", identity)
+    monkeypatch.setenv("SIQ_AGENT_SECURITY_AGENT_ID", agent)
+    monkeypatch.setenv("SIQ_AGENT_SECURITY_TOKEN_PATH", str(token))
+    monkeypatch.setenv("SIQ_AGENT_SECURITY_SESSION_NAMESPACE", namespace)
+    _Fake.enroll = {
+        "schema_version": "local-runtime-session-enrolled/v1",
+        "identity_id": identity,
+        "platform": "hermes",
+        "agent_id": agent,
+        "session_id": authority_session,
+        "binding_id": "bind-" + "d" * 64,
+        "intent_id": "int-ri-" + "e" * 64,
+        "expires_at": "2099-01-01T00:00:00Z",
+    }
+    _Fake.decision = {
+        "action": "allow", "reason": "ok", "receipt_id": "r", "action_id": "act-env",
+    }
+
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    assert mod._CFG["runtime_identity_id"] == identity
+    assert mod._pre_tool_call(
+        "read_file", {}, session_id="native-session", tool_call_id="env-call"
+    ) is None
+    assert all(row[2]["session_id"] == authority_session for row in _Fake.seen)
+
+
+def test_posix_runtime_token_must_remain_private_regular_file(server):
+    if os.name == "nt":
+        pytest.skip("POSIX mode contract")
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    managed(mod, token)
+    token.chmod(0o644)
+    mod._TOKEN = None
+    assert mod._pre_tool_call("read_file", {}, session_id="native-session")["action"] == "block"
+    assert _Fake.seen == []
 
 
 def test_managed_native_raw_capture_is_scoped_flattened_and_best_effort(server):
@@ -169,6 +260,44 @@ def test_managed_authority_loss_after_enrollment_cannot_fail_open(server, mode, 
     assert mod._pre_tool_call("read_file", {}, session_id="native-session")["action"] == "block"
 
 
+def test_checkpoint_style_resume_revalidates_revoked_runtime_identity(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    managed(mod, token)
+    _Fake.decision = {
+        "action": "allow",
+        "reason": "fixture",
+        "receipt_id": "rcp-before-resume",
+        "action_id": "act-before-resume",
+    }
+    assert (
+        mod._pre_tool_call(
+            "read_file",
+            {"path": "/approved/checkpoint"},
+            session_id="native-session",
+            task_id="resume-task",
+            tool_call_id="before-resume",
+        )
+        is None
+    )
+    decide_count = sum(path == "/v1/decide" for path, _, _ in _Fake.seen)
+
+    # A restored conversation may reuse its native session id, but every tool
+    # boundary must enroll against current authority again. Simulate revocation
+    # after the checkpoint and before the next tool call.
+    _Fake.status = 401
+    result = mod._pre_tool_call(
+        "read_file",
+        {"path": "/approved/checkpoint"},
+        session_id="native-session",
+        task_id="resume-task",
+        tool_call_id="after-resume",
+    )
+
+    assert result["action"] == "block"
+    assert sum(path == "/v1/decide" for path, _, _ in _Fake.seen) == decide_count
+
+
 def test_managed_config_locks_agent_and_corruption_blocks(server, tmp_path, monkeypatch):
     srv, token = server
     mod = load("warn", f"http://127.0.0.1:{srv.server_port}", token)
@@ -243,3 +372,65 @@ def test_localhost_credential_transport_is_pinned(server):
     for endpoint in ["http://localhost", "http://localhost:0", "http://localhost:65536", "http://user@localhost:80"]:
         mod._CFG["endpoint"] = endpoint
         assert mod._local_endpoint() is None
+
+
+@pytest.mark.parametrize("endpoint,allowed", [
+    ("http://host.openshell.internal:47611", True),
+    ("http://host.openshell.internal:47710", True),
+    ("http://host.openshell.internal:47711", False),
+    ("http://host.openshell.internal:47610", False),
+    ("http://host.openshell.internal:047611", False),
+    ("http://host.openshell.internal:47611/", False),
+    ("http://host.openshell.internal:47611?", False),
+    ("http://host.openshell.internal:47611#x", False),
+    ("http://user@host.openshell.internal:47611", False),
+    ("https://host.openshell.internal:47611", False),
+    ("http://other.internal:47611", False),
+])
+def test_openshell_transport_requires_exact_managed_endpoint(server, endpoint, allowed):
+    _srv, token = server
+    mod = load("block", endpoint, token)
+    managed(mod, token)
+    mod._CFG['session_namespace'] = 'siq:openshell:pool:' + '1' * 24 + ':run:siq_analysis'
+    mod._CFG['openshell_proxy'] = 'http://10.200.0.1:3128'
+    assert mod._local_endpoint() == (endpoint if allowed else None)
+
+
+@pytest.mark.parametrize("patch", [
+    {'session_namespace': ''}, {'session_namespace': 'unscoped'},
+    {'runtime_identity_id': ''}, {'agent_id': 'default'}, {'_config_error': True},
+    {'openshell_proxy': ''}, {'openshell_proxy': 'http://attacker.invalid:3128'},
+])
+def test_openshell_transport_rejects_missing_or_malformed_authority(server, patch):
+    _srv, token = server
+    mod = load("block", 'http://host.openshell.internal:47710', token)
+    managed(mod, token)
+    mod._CFG['session_namespace'] = 'siq:openshell:pool:' + '1' * 24 + ':run:siq_analysis'
+    mod._CFG['openshell_proxy'] = 'http://10.200.0.1:3128'
+    mod._CFG.update(patch)
+    assert mod._local_endpoint() is None
+    assert mod._pre_tool_call('read_file', {}, session_id='native-session')['action'] == 'block'
+    assert _Fake.seen == []
+
+
+def test_openshell_uses_only_explicit_policy_proxy_ignoring_environment(server, monkeypatch):
+    import io
+    _srv, token = server
+    mod = load('block', 'http://host.openshell.internal:47710', token)
+    managed(mod, token)
+    mod._CFG.update(session_namespace='siq:openshell:pool:' + '1' * 24 + ':run:siq_analysis',
+                    openshell_proxy='http://10.200.0.1:3128')
+    monkeypatch.setenv('HTTP_PROXY', 'http://attacker.invalid:8080')
+    monkeypatch.setenv('NO_PROXY', '*')
+    seen = []
+    class Response(io.BytesIO):
+        status = 200
+    class Opener:
+        def open(self, request, **kwargs):
+            seen.append(request)
+            return Response(b'{"action":"allow"}')
+    monkeypatch.setattr(mod.urllib.request, 'build_opener', lambda *handlers: Opener())
+    assert mod._post('/v1/decide', {}) == {'action': 'allow'}
+    assert seen[0].host == '10.200.0.1:3128'
+    assert seen[0].selector == 'http://host.openshell.internal:47710/v1/decide'
+    assert seen[0].origin_req_host == 'host.openshell.internal'

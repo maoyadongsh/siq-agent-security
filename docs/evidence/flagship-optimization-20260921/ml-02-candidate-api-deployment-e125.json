@@ -1,0 +1,96 @@
+{
+  "schema_version": "siq.flagship.evidence.candidate-api-deployment.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.candidate-api-deployment-evidence.v1",
+    "captured_at_utc": "2026-09-22T21:26:49.659068+00:00",
+    "scope": "isolated_candidate_API_startup_and_real_HTTP_local_authorization",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "combined_tests_passed": 119,
+      "warnings": 222,
+      "ruff_passed": true,
+      "compile_passed": true,
+      "diff_check_passed": true
+    },
+    "live_proof": {
+      "schema": "siq.qwen38.candidate-api-proof.v1",
+      "passed": true,
+      "scope": "isolated_real_http_local_authorization",
+      "production_ready": false,
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "candidate_listener_closed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      }
+    },
+    "live_proof_sha256": "2e7b3cdbb782b66e5aa509c9ac7540df7d448b1aa6d0dacaf3eb4050a778be47",
+    "previous_attempts": {
+      "v1": {
+        "proof": {
+          "schema": "siq.qwen38.candidate-api-proof.v1",
+          "passed": false,
+          "scope": "isolated_real_http_local_authorization",
+          "production_ready": false,
+          "checks": {
+            "candidate_listener_closed": true,
+            "existing_service_identity_unchanged": true
+          },
+          "failure": "PostgresqlGuardProofError"
+        },
+        "sha256": "07ee1cb69e2cf7f885cabb24755f658a0cd0b5ab0e2798c554758cc1177e0dbc"
+      },
+      "v2": {
+        "proof": {
+          "schema": "siq.qwen38.candidate-api-proof.v1",
+          "passed": false,
+          "scope": "isolated_real_http_local_authorization",
+          "production_ready": false,
+          "checks": {
+            "candidate_listener_closed": true,
+            "temporary_database_removed": true,
+            "existing_service_identity_unchanged": true
+          },
+          "failure": "candidate_bootstrap_failed"
+        },
+        "sha256": "f61d3bc6fbc90a3199dca785e509ee958bf338af6c722dcd220eb9c1816d19ef"
+      }
+    },
+    "not_proven": [
+      "authorized_analysis_HTTP_to_Hermes_model_and_finalizer",
+      "API_crash_restart_inflight_cancel_and_early_unknown_windows",
+      "real_IAM_business_approval_and_event_projection",
+      "native_CI_production_readiness"
+    ],
+    "source_sha256": {
+      "apps/api/main.py": "8e2077e2c3571d045dd7db95189b1647231b0153ce1b22926ef7f8de80aa805b",
+      "apps/api/services/qwen38_request_deployment.py": "a9e00ae25729cc0e81a92514a1ac21cb63f10041967b0d9cf5d51b5ad77ede90",
+      "apps/api/services/qwen38_request_selector.py": "7a0b88d34e10aeb78d090c40240767e96527c9e78c57a416e6a46b6c56cf0eee",
+      "apps/api/services/qwen38_recovery_manager.py": "a2dbbf56cc1aa3b992bf3f4d5fb16c0017f44661101e8c92e4074bebcedb10cb",
+      "apps/api/tests/test_qwen38_request_deployment.py": "580f97a70e0a43af907a52173becc2f95c99d34625f911b379a8ffb227e0eafb",
+      "apps/api/tests/test_qwen38_request_selector.py": "32d4a1801f39aa32a25e046ebc3544f91de2f05089156c0de9ab2c900299b5cd",
+      "apps/api/tests/test_qwen38_request_recovery.py": "03fdb3c971b354d2808038f4cce1c1e48a4102830ec2d78cfc0450de3f2b738a",
+      "scripts/openshell/prove_qwen38_candidate_api.py": "e1e013dcadd3979c1e9424bbe2ed8d3bff5bf67eb4a97f2e75202fdc94e118bd",
+      "infra/env/local.example": "89c4808db7c6f6339934eb2bfabb9b91c0fa5f745c48ee926612a8e709df0e10",
+      "infra/docker/docker-compose.yml": "760ef978bf458747323538f717dc9c3f0fcf2a371609178e7c3b8a4c6822e57c",
+      "apps/api/README.md": "1695f88f682931c47b9e0a63a76b0e96e424d80f825415b974dae0a82c409a6a",
+      "docs/architecture/qwen38-request-runtime-v1.md": "9bccc8709fcb13fcba9c18fd8a65c837d3fa1ae9a07b19190fcdf8d4255347f3",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "89a36ded829dfcb441bafe225751ffd84d8d47c2fd9f4fcfc16f29a62c289008"
+    }
+  },
+  "research_evidence_sha256": "7573cbf0f9ef439483039b5970740f2d1b950de47b2f8911c1bbd81497cc76d0",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

@@ -68,6 +68,7 @@ def server(tmp_path):
     t.start()
     token = tmp_path / "token"
     token.write_text("t" * 64)
+    token.chmod(0o600)
     _Fake.seen = []
     _Fake.status = 200
     _Fake.decision = {"action": "allow", "reason": "ok", "receipt_id": "rcp-1"}
@@ -279,6 +280,119 @@ def test_approved_hold_retry_is_reserved_once_before_execution(server):
     observe = [body for path, _, body in _Fake.seen if path == "/v1/observe"][-1]
     assert observe["action_id"] == "act-hold"
     assert observe["decision_receipt_id"] == "rcp-hold-exec"
+
+
+def test_controlled_business_mcp_retry_binds_tool_task_and_exact_digests(server):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    tool = "mcp__siq_business__research_publish_report"
+    args = {
+        "task_id": "bu01-task-001",
+        "request_sha256": "a" * 64,
+        "approval_sha256": "b" * 64,
+    }
+    _Fake.decision = {
+        "action": "hold",
+        "reason": "approval",
+        "action_id": "act-bu01",
+        "receipt_id": "rcp-bu01",
+        "task_id": "trusted-bu01-task",
+        "runtime_task_id": "bu01-task-001",
+    }
+    blocked = mod._pre_tool_call(
+        tool,
+        args,
+        task_id="bu01-task-001",
+        session_id="bu01-session",
+        tool_call_id="bu01-original",
+    )
+    assert blocked["action"] == "block"
+
+    _Fake.responses["/v1/hold-status"] = {
+        "schema_version": "hold-status/v1",
+        "status": "approved",
+    }
+    _Fake.responses["/v1/hold-executions/reserve"] = {
+        "schema_version": "hold-execution-status/v1",
+        "status": "reserved",
+        "action_id": "act-bu01",
+        "decision_receipt_id": "rcp-bu01",
+        "reservation_receipt_id": "rcp-bu01-exec",
+        "expires_at": "2026-09-22T00:00:00Z",
+        "reason_code": "hold_execution_reserved",
+    }
+
+    changed = mod._pre_tool_call(
+        tool,
+        {**args, "request_sha256": "c" * 64},
+        task_id="bu01-task-001",
+        session_id="bu01-session",
+        tool_call_id="bu01-changed",
+    )
+    assert changed["action"] == "block"
+    assert not any(path == "/v1/hold-executions/reserve" for path, _, _ in _Fake.seen)
+
+    assert (
+        mod._pre_tool_call(
+            tool,
+            args,
+            task_id="bu01-task-001",
+            session_id="bu01-session",
+            tool_call_id="bu01-approved-retry",
+        )
+        is None
+    )
+    reserve = [body for path, _, body in _Fake.seen if path == "/v1/hold-executions/reserve"]
+    assert len(reserve) == 1
+    assert reserve[0]["tool"] == tool
+    assert reserve[0]["runtime_task_id"] == "bu01-task-001"
+    assert reserve[0]["params"] == args
+
+
+@pytest.mark.parametrize(
+    "retry_args,retry_task,retry_session",
+    [
+        ({"command": "printf changed"}, "task-1", "s1"),
+        ({"command": "printf approved"}, "task-2", "s1"),
+        ({"command": "printf approved"}, "task-1", "s2"),
+    ],
+)
+def test_approved_hold_cannot_authorize_changed_params_task_or_session(
+    server, retry_args, retry_task, retry_session
+):
+    srv, token = server
+    mod = load("block", f"http://127.0.0.1:{srv.server_port}", token)
+    _Fake.decision = {
+        "action": "hold",
+        "reason": "approval",
+        "action_id": "act-bound",
+        "receipt_id": "rcp-bound",
+        "task_id": "trusted-task",
+        "runtime_task_id": "task-1",
+    }
+    approved_args = {"command": "printf approved"}
+    assert mod._pre_tool_call(
+        "exec",
+        approved_args,
+        task_id="task-1",
+        session_id="s1",
+        tool_call_id="original",
+    )["action"] == "block"
+
+    _Fake.responses["/v1/hold-status"] = {
+        "schema_version": "hold-status/v1",
+        "status": "approved",
+    }
+    result = mod._pre_tool_call(
+        "exec",
+        retry_args,
+        task_id=retry_task,
+        session_id=retry_session,
+        tool_call_id="changed-retry",
+    )
+
+    assert result["action"] == "block"
+    assert not any(path == "/v1/hold-executions/reserve" for path, _, _ in _Fake.seen)
 
 
 def test_lost_reservation_response_never_allows_blind_retry(server):

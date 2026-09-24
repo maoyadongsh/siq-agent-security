@@ -1,0 +1,190 @@
+{
+  "schema_version": "siq.flagship.result-commit-recovery-evidence.v1",
+  "production_eligible": false,
+  "deployed_to_main_or_preview": false,
+  "source_repository": "siq-research-engine",
+  "sources": [
+    {
+      "path": "apps/api/services/agent_chat_runtime_impl.py",
+      "sha256": "b99529f1879ce3a402d6760f8fe49ee4b745427222352415c1a99e1379e9003d",
+      "bytes": 364357
+    },
+    {
+      "path": "apps/api/tests/test_business_run_result_store.py",
+      "sha256": "024b1af2eac299a56323a097289bec157492ce6a2e9db6fc23f1ac843e551d87",
+      "bytes": 18138
+    },
+    {
+      "path": "scripts/openshell/prove_qwen38_result_commit_crash.py",
+      "sha256": "a53ab9150807948b89c1881caaeb5c8493cb7738410af375b395dd73958a02cb",
+      "bytes": 9742
+    },
+    {
+      "path": "scripts/openshell/tests/test_prove_qwen38_result_commit_crash.py",
+      "sha256": "ad38a184a55a90a1b37ea892ddf03606b523c15bcac485aef7b7a8d21d1b1b9d",
+      "bytes": 3726
+    },
+    {
+      "path": "docs/architecture/business-run-result-access-v1.md",
+      "sha256": "8bcadbdfda8ca77584d5ed03a942d29d5ef4d4359ebd6b49f141e87edc6c1e77",
+      "bytes": 6895
+    }
+  ],
+  "before_fix": {
+    "test": "test_quiesced_reply_commits_before_destructive_cleanup",
+    "old_runtime_sha256": "3358f7524dc52c2eb1e8dc058d9566d77e11803fccdca874a6223238438a6631",
+    "observed_before_fix": "expected one committed result before cleanup; observed zero",
+    "failed_tests": 1,
+    "passed_after_fix": true
+  },
+  "regression": {
+    "passed": true,
+    "files": [
+      "apps/api/tests/test_business_run_result_store.py",
+      "apps/api/tests/test_business_run_results.py",
+      "apps/api/tests/test_business_run_history.py",
+      "apps/api/tests/test_qwen38_request_api.py",
+      "apps/api/tests/test_qwen38_request_finalizer.py",
+      "apps/api/tests/test_qwen38_request_recovery.py",
+      "apps/api/tests/test_agent_runtime_streaming.py",
+      "apps/api/tests/test_agent_runtime_history.py",
+      "scripts/openshell/tests/test_prove_qwen38_result_commit_crash.py",
+      "scripts/openshell/tests/test_prove_qwen38_create_ack_crash.py",
+      "scripts/openshell/tests/test_prove_qwen38_crash_api.py"
+    ],
+    "test_exit_code": 0,
+    "summary": "229 passed, 750 warnings in 115.66s (0:01:55)",
+    "isolated_database_removed": true
+  },
+  "ruff": "passed for four changed Python files",
+  "proofs": [
+    {
+      "phase": "before_commit",
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v3.sanitized.json",
+        "sha256": "5178359f0cd0f39cf9ba16d7fd3e598472a9f7f6373b8ac6fdbdacf123a08ad3",
+        "bytes": 1598
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_API_SIGKILL_result_before_commit_before_resource_release",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "original_HTTP_interrupted": true,
+          "result_and_audit_atomic": true,
+          "uncommitted_result_not_fabricated": true,
+          "original_lease_expired_naturally": true,
+          "same_database_API_restart": true,
+          "original_execution_authority_lost": true,
+          "recovery_ready_after_containment": true,
+          "sandbox_supervisor_and_forward_absent": true,
+          "child_identity_revoked_before_root_cleanup": true,
+          "old_child_credential_401": true,
+          "root_identity_still_active_before_diagnostic_cleanup": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "no_replayed_or_rebound_execution": true,
+          "model_bridge_correlated_200": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "recovery_wait_seconds": 122.806,
+        "model_completion_acceptance": false,
+        "bridge_statuses": [
+          200
+        ],
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-crash-e165-v3.sanitized.json",
+        "proof_sha256": "5178359f0cd0f39cf9ba16d7fd3e598472a9f7f6373b8ac6fdbdacf123a08ad3",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    },
+    {
+      "phase": "after_commit",
+      "artifact": {
+        "path": "artifacts/openshell/flagship/ml02-business-crash-e165-v4.sanitized.json",
+        "sha256": "223a355cda20df55fa0c86b69d38be66f06e335817aabaa54cb822ca80122c36",
+        "bytes": 1658
+      },
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_API_SIGKILL_result_after_commit_before_resource_release",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "original_HTTP_interrupted": true,
+          "result_and_audit_atomic": true,
+          "original_authorized_result_read_after_restart": true,
+          "original_lease_expired_naturally": true,
+          "same_database_API_restart": true,
+          "original_execution_authority_lost": true,
+          "recovery_ready_after_containment": true,
+          "retained_result_denied_after_revoke": true,
+          "sandbox_supervisor_and_forward_absent": true,
+          "child_identity_revoked_before_root_cleanup": true,
+          "old_child_credential_401": true,
+          "root_identity_still_active_before_diagnostic_cleanup": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "no_replayed_or_rebound_execution": true,
+          "model_bridge_correlated_200": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "recovery_wait_seconds": 122.778,
+        "model_completion_acceptance": false,
+        "bridge_statuses": [
+          200
+        ],
+        "remaining_running_execution_count": 0
+      },
+      "launcher": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-crash-e165-v4.sanitized.json",
+        "proof_sha256": "223a355cda20df55fa0c86b69d38be66f06e335817aabaa54cb822ca80122c36",
+        "preview_services_unchanged": true,
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      }
+    }
+  ],
+  "limitations": [
+    "uncommitted_in_memory_reply_not_restored",
+    "unknown_writers_not_precommitted",
+    "production_identity_and_deployment_not_accepted"
+  ]
+}

@@ -1,10 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { api, ApiError, describeApiError } from '@/api/client';
+import { assetStatusLabel, inventoryAccess, type InventoryAccess } from '@/api/inventoryReview';
 import type { AgentAsset, Evidence } from '@/api/types';
+import BusinessRunLinks from '@/components/BusinessRunLinks';
 
 type LoadStatus = 'loading' | 'connected' | 'disconnected';
 
@@ -52,6 +54,8 @@ function InfoRow({ label, value }: { label: string; value: ReactNode }) {
  */
 export default function AgentDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const [params] = useSearchParams();
+  const [evidenceError, setEvidenceError] = useState(false);
   const [agent, setAgent] = useState<AgentAsset | null>(null);
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [status, setStatus] = useState<LoadStatus>('loading');
@@ -67,6 +71,9 @@ export default function AgentDetailPage() {
     let cancelled = false;
     setStatus('loading');
     setError(null);
+    setAgent(null);
+    setEvidence([]);
+    setEvidenceError(false);
 
     Promise.allSettled([api.getAgent(id), api.getAgentEvidence(id)]).then(
       ([assetResult, evidenceResult]) => {
@@ -77,6 +84,7 @@ export default function AgentDetailPage() {
           return;
         }
         setAgent(assetResult.value);
+        setEvidenceError(evidenceResult.status === 'rejected');
         setEvidence(
           evidenceResult.status === 'fulfilled' ? evidenceResult.value : [],
         );
@@ -122,7 +130,7 @@ export default function AgentDetailPage() {
                 label="状态"
                 value={
                   <span className={`tag ${statusTag[agent.status] ?? ''}`}>
-                    {agent.status}
+                    {assetStatusLabel(agent.status)}
                   </span>
                 }
               />
@@ -138,19 +146,21 @@ export default function AgentDetailPage() {
             </dl>
           </div>
           <div className="card">
-            <h2>关联证据（{evidence.length}）</h2>
+            <h2>关联证据{evidenceError ? '' : `（${evidence.length}）`}</h2>
+            {evidenceError ? <p role="alert">关联证据读取失败，不能据此判断没有证据。<button className="btn" onClick={() => setReloadSeq(s => s + 1)}>重试读取证据</button></p> : null}
             <SimpleTable
               columns={evidenceColumns}
               rows={evidence}
               rowKey={(e) => e.id}
-              emptyText="暂无关联证据"
+              emptyText={evidenceError ? '当前证据不可用' : '暂无关联证据'}
             />
           </div>
-          <PermissionGovernance assetId={id ?? ""} assetName={agent.name} />
+          {agent.source_type === 'siq_hub' && <BusinessRunLinks key={agent.id} assetId={agent.id} evidence={evidence} />}
+          <PermissionGovernance key={agent.id} assetId={id ?? ""} assetName={agent.name} />
         </>
       ) : null}
       <p>
-        <Link to="/agents">← 返回智能体资产列表</Link>
+        <Link to={params.get('view') === 'candidates' ? '/agents?view=candidates' : '/agents?view=agents'}>← 返回智能体资产列表</Link>
       </p>
     </section>
   );
@@ -162,6 +172,15 @@ export default function AgentDetailPage() {
  * - 五域精细编辑器：文件读写路径 / 网络端点 / 进程身份 / 工具 / 模型 → 生成 Desired Policy；
  * - 策略与部署列表（部署目标沙箱）。 */
 function PermissionGovernance({ assetId, assetName }: { assetId: string; assetName: string }) {
+  const [access, setAccess] = useState<InventoryAccess>();
+  const [accessError, setAccessError] = useState(false);
+  const [accessRetry, setAccessRetry] = useState(0);
+  useEffect(() => {
+    let live = true;
+    inventoryAccess().then(value => { if (live) { setAccess(value); setAccessError(false); } })
+      .catch(() => { if (live) { setAccess(undefined); setAccessError(true); } });
+    return () => { live = false; };
+  }, [assetId, accessRetry]);
   const [enf, setEnf] = useState<Awaited<ReturnType<typeof api.getAgentEnforcement>> | null>(null);
   const [policies, setPolicies] = useState<Awaited<ReturnType<typeof api.getAgentPolicies>>>([]);
   const [fsRO, setFsRO] = useState('/etc,/usr,/lib');
@@ -243,7 +262,8 @@ function PermissionGovernance({ assetId, assetName }: { assetId: string; assetNa
         </p>
       )}
 
-      <div className="form-box">
+      {accessError ? <p role="alert">无法核对策略操作权限。<button className="btn" onClick={() => setAccessRetry(n => n + 1)}>重新核对策略权限</button></p> : access && !access.can_manage_policy ? <p>当前账号无策略管理权限；如需调整工具或资源访问范围，请联系组织管理员。</p> : null}
+      {access?.can_manage_policy ? <div className="form-box">
         <label>
           文件只读路径（逗号分隔）
           <input value={fsRO} onChange={(e) => setFsRO(e.target.value)} />
@@ -277,7 +297,7 @@ function PermissionGovernance({ assetId, assetName }: { assetId: string; assetNa
         </button>
         {formMsg && <span className="sync-ok">{formMsg}</span>}
         {formErr && <span className="sync-err">{formErr}</span>}
-      </div>
+      </div> : null}
 
       {policies.length > 0 && (
         <div className="card">

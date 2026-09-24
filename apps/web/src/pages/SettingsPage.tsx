@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { useConsoleContext } from '@/components/ConsoleContext';
 import { useEffect, useState } from 'react';
 
 import PageHeader from '@/components/PageHeader';
@@ -10,7 +12,7 @@ import type { ApiConnectionStatus } from '@/hooks/useApiList';
  * 平台嵌入时走 IAM 会话；token 仍只允许驻留内存。
  */
 export default function SettingsPage() {
-  const devMode = import.meta.env.VITE_DEV_MODE === 'true';
+  const { data } = useConsoleContext();
   const [connection, setConnection] = useState<ApiConnectionStatus>('loading');
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
@@ -51,25 +53,14 @@ export default function SettingsPage() {
           <label htmlFor="api-base">控制面 API 基础地址（VITE_API_BASE）</label>
           <input id="api-base" type="text" value={API_BASE} readOnly disabled />
         </div>
-        <div className="field">
-          <label htmlFor="dev-mode">开发模式身份注入（VITE_DEV_MODE）</label>
-          <input
-            id="dev-mode"
-            type="text"
-            value={`${devMode}${devMode ? ` · tenant=${import.meta.env.VITE_DEV_TENANT_ID ?? '(未设置)'} · user=${import.meta.env.VITE_DEV_USER_ID ?? '(未设置)'}` : ''}`}
-            readOnly
-            disabled
-          />
-        </div>
-        <p className="page-desc">
-          开发身份注入默认关闭；只有显式设置 VITE_DEV_MODE=true 才会发送 X-Dev-* 头。
-        </p>
+        <p>当前组织：{data?.tenant.name || '尚未核对名称'}。身份与权限以服务端读回为准。</p>
+        <p><Link to="/workspace">查看组织与角色</Link></p>
       </div>
       <div className="card">
         <h2>会话安全边界</h2>
         <ul className="page-desc">
           <li>
-            <strong>访问凭证不写入浏览器长期存储</strong>：凭证仅保留在当前页面会话内，刷新后即失效；
+            <strong>访问凭证不写入浏览器长期存储</strong>：凭证仅保留在内存中；刷新页面后，通过现有 IAM 会话重新获取；
           </li>
           <li>
             开发身份模拟默认关闭，只有显式启用开发模式后才会附加租户与用户标识；

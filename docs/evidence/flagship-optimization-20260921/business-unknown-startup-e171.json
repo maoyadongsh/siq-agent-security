@@ -1,0 +1,114 @@
+{
+  "schema_version": "siq.flagship.unknown-startup-e171.v1",
+  "passed": true,
+  "goal_complete": false,
+  "automatic_unknown_recovery_proven": false,
+  "validation": {
+    "pytest_passed": 32,
+    "exit_code": 0,
+    "ruff": "passed",
+    "tests": [
+      "scripts/openshell/tests/test_prove_qwen38_unknown_startup.py",
+      "scripts/openshell/tests/test_prove_qwen38_early_crash.py",
+      "scripts/openshell/tests/test_prove_qwen38_business_api.py",
+      "scripts/openshell/tests/test_prove_qwen38_crash_api.py"
+    ],
+    "source_sha256": {
+      "scripts/openshell/prove_qwen38_unknown_startup.py": "64e35daf43a35929b12ab2cb586a72bb5f19d7745a4e6adc40dcd9a064fb4fe6",
+      "scripts/openshell/tests/test_prove_qwen38_unknown_startup.py": "8e5373ae70498c9580fa2a9f33854047fefd0ca77ce389c0ff7f3cc1f03d751c",
+      "scripts/openshell/prove_qwen38_candidate_api.py": "41a56131ffc96d66f69b5e64f693fe7e2e8043fd8c74c88d2c8fd85f48edacba"
+    }
+  },
+  "cases": {
+    "create": {
+      "launch": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-unknown-create-e171-v1.sanitized.json",
+        "proof_sha256": "596efd77a06c1ba0a5a0242320d4c5afde348308a0b3270ee567605dc076d509",
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      },
+      "proof": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_unknown_create_retention_and_explicit_diagnostic_reconciliation",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "original_HTTP_interrupted": true,
+          "independent_original_observation_before_restart": true,
+          "expired_unknown_request_kept_owner_and_original_row": true,
+          "recovery_unready_without_automatic_replay_or_release": true,
+          "diagnostic_reconciliation_bound_to_original_observation": true,
+          "API_released_after_explicit_diagnostic_reconciliation": true,
+          "reconciled_runtime_cleanup_confirmed": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "failure_observation_seconds": 120.024,
+        "diagnostic_reconciliation_required": true,
+        "model_inference_attempted": false,
+        "remaining_running_execution_count": 0
+      }
+    },
+    "invocation": {
+      "launch": {
+        "passed": true,
+        "production_eligible": false,
+        "proof_passed": true,
+        "proof_file": "artifacts/openshell/flagship/ml02-business-unknown-invocation-e171-v1.sanitized.json",
+        "proof_sha256": "7da75b12b40c75f650c7b2b4f727385b25210cdfd005a7b73268c03adf55e408",
+        "isolated_identity_starts": 1,
+        "isolated_ports_closed": true
+      },
+      "proof": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_unknown_invocation_retention_and_explicit_diagnostic_reconciliation",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "original_HTTP_interrupted": true,
+          "independent_original_observation_before_restart": true,
+          "expired_unknown_request_kept_owner_and_original_row": true,
+          "recovery_unready_without_automatic_replay_or_release": true,
+          "diagnostic_reconciliation_bound_to_original_observation": true,
+          "API_released_after_explicit_diagnostic_reconciliation": true,
+          "reconciled_runtime_cleanup_confirmed": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "failure_observation_seconds": 120.062,
+        "diagnostic_reconciliation_required": true,
+        "model_inference_attempted": false,
+        "remaining_running_execution_count": 0
+      }
+    }
+  }
+}

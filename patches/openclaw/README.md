@@ -6,13 +6,28 @@
 
 | 宿主版本 / 材料 | 用途与状态 |
 | --- | --- |
-| [2026.9.4 检查点补丁](2026.9.4-approval-execution-recheck-v1.patch) / [指纹元数据](2026.9.4-approval-execution-recheck-v1.json) | 当前 Linux 双宿主实验的受控副本路线；审批后最终参数复验与检查点协议 v1 |
+| [库存/受控兼容清单](compatibility.v1.json) | OC-01 的权威支持档位；固定 2026.9.5 build、源码、补丁、适配器和能力边界 |
+| [2026.9.5 检查点补丁](2026.9.5-approval-execution-recheck-v1.patch) / [指纹元数据](2026.9.5-approval-execution-recheck-v1.json) | OC-01 当前受控副本路线；基于本机实际 CLI `2026.9.5 (ec9c1a1)`，审批后最终参数复验与检查点协议 v1 |
+| [2026.9.4 检查点补丁](2026.9.4-approval-execution-recheck-v1.patch) / [指纹元数据](2026.9.4-approval-execution-recheck-v1.json) | 历史 Linux 双宿主实验的受控副本路线；审批后最终参数复验与检查点协议 v1 |
 | [2026.5.12 检查点 v2](2026.5.12-approval-execution-recheck-v2.patch) | 历史原生集成、故障与回退实验；使用该版本对应指纹 |
 | [2026.5.12 空闲重置](2026.5.12-idle-transcript-reset.patch) | 独立的 transcript 生命周期实验，不与审批修复混为一项 |
 
-2026.9.4 的选择与运行按 [Linux 受控启动指南](../../docs/openclaw-controlled-start-linux-20260919.md)操作。元数据固定宿主文件、补丁和适配器摘要；仅版本号相同不够，摘要不匹配必须重新评审，不能模糊套用。受控副本的阶段结果见[评测索引](../../evaluations/README.md)，不代表 OpenClaw 上游原版或所有宿主已具备该能力。
+2026.9.4/2026.9.5 的选择与运行按 [Linux 受控启动指南](../../docs/openclaw-controlled-start-linux-20260919.md)操作。元数据固定宿主文件、补丁和适配器摘要；仅版本号相同不够，摘要不匹配必须重新评审，不能模糊套用。受控副本的阶段结果见[评测索引](../../evaluations/README.md)，不代表 OpenClaw 上游原版或所有宿主已具备该能力。2026.9.5 原版已有审批和 `onResolution` 通知，但没有 SIQ 所需的批准后执行前复验回调；当前适配器因此对 `hold` 失败关闭，只有精确命中该指纹的受控副本才进入检查点档。
 
 这些补丁用于研究审批与执行之间的时序缺口：平台批准之后，仍要检查当前授权和最终参数，再由 SIQ 建立执行预留。它们不签发权限、不代替沙箱，也不自动获得对真实用户安装的修改授权。第三方原始许可见 [LICENSE](LICENSE)和[仓库声明](../../THIRD_PARTY_NOTICES.md)。
+
+## 2026.9.5 当前验收
+
+从仓库根目录执行以下命令。脚本先核对库存指纹，再复制完整运行时、只在临时副本应用补丁，并分别运行库存负向和受控原生场景：
+
+```bash
+python3 scripts/validate-openclaw-approval-integration.py \
+  --openclaw-root /absolute/path/to/openclaw-2026.9.5 \
+  --node /absolute/path/to/node \
+  --out /private/path/openclaw-approval-integration.json
+```
+
+OC-01 当前结果为 **20/20**：库存同名业务工具失败关闭 1 项，普通审批 6 项，撤权 2 项，检查点故障与参数变化 9 项，同一受控报告发布工具 2 项；46 条回执链验签。安装的库存目标文件在运行前后摘要一致。脱敏汇总见 [OC-01 证据](../../docs/evidence/flagship-optimization-20260921/oc-01-openclaw-parity.json)。
 
 ## 2026.5.12 历史验收
 

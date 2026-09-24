@@ -4,7 +4,10 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 const FOCUSABLE =
-  'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
+  'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), summary, [tabindex]:not([tabindex="-1"])';
+
+const focusableItems = (panel: HTMLElement) => Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE))
+  .filter((element) => element.getClientRects().length > 0 && !element.closest('[inert]'));
 
 interface ModalProps {
   open: boolean;
@@ -17,6 +20,8 @@ interface ModalProps {
 
 export default function Modal({ open, onClose, title, description, className, children }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  useEffect(() => { closeRef.current = onClose; }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
@@ -26,17 +31,17 @@ export default function Modal({ open, onClose, title, description, className, ch
 
     // 初始焦点落到面板内第一个可聚焦元素，落空则聚焦面板本身
     const panel = panelRef.current;
-    const first = panel?.querySelector<HTMLElement>(FOCUSABLE);
+    const first = panel ? focusableItems(panel)[0] : undefined;
     (first ?? panel)?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.stopPropagation();
-        onClose();
+        closeRef.current();
         return;
       }
       if (event.key !== 'Tab' || !panel) return;
-      const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE));
+      const items = focusableItems(panel);
       if (items.length === 0) {
         event.preventDefault();
         return;
@@ -57,7 +62,7 @@ export default function Modal({ open, onClose, title, description, className, ch
       window.removeEventListener('keydown', onKeyDown, true);
       restoreTo?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 

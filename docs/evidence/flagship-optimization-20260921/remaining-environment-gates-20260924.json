@@ -1,0 +1,50 @@
+{
+  "batch": "remaining-environment-gates-20260924",
+  "observed_at": "2026-09-24T00:52:20.165838+00:00",
+  "read_only": true,
+  "goal_complete": false,
+  "model_probe": {
+    "nemotron_8006": "connection_failed",
+    "qwen_8005_unauthenticated_http": 401,
+    "bridge_8006_active": true,
+    "bridge_8005_active": true
+  },
+  "memory_observed_approx_gib": {
+    "total": 121,
+    "used": 109,
+    "available": 12,
+    "swap_total": 15,
+    "swap_used": 15
+  },
+  "remote": {
+    "repository": "maoyadongsh/siq-agent-security",
+    "runner_query_success": true,
+    "runner_count": 0,
+    "native_workflow_http_status": 404,
+    "repository_release_sign_publish_secret_names": [],
+    "environment_names": [
+      "github-pages"
+    ]
+  },
+  "current_process_release_seed_configured": false,
+  "new_permissions_requested": [
+    "local_candidate_commit_only"
+  ],
+  "existing_pending_inputs": [
+    "original_signing_environment_entry_or_reference",
+    "report_scope_permission_decision",
+    "real_business_identity_and_accessible_origin"
+  ],
+  "not_started": [
+    "nemotron_restore_or_benchmark",
+    "runner_registration",
+    "remote_workflow_dispatch",
+    "new_candidate_commit",
+    "release_signing"
+  ],
+  "no_progress_audit": {
+    "consecutive_blocked_goal_turns": 1,
+    "reason": "remaining_execution_requires_missing_inputs_or_environment_change",
+    "previous_turn": "progress_enterprise_runtime_deployment"
+  }
+}

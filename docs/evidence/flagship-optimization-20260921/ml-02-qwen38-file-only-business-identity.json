@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq.flagship.ml02-qwen38-file-only-business-identity/v1",
+  "recorded_at": "2026-09-22T04:23:58Z",
+  "scope": "real_qwen_candidate_sandbox_synthetic_business_broker_file_only_identity_and_renewal",
+  "status": "passed_real_sandbox_file_only_identity_renewal_canary",
+  "source_sha256": {
+    "sandbox_proof": "ddd8d3bda83d81030ae718b2c1ce884211e238e50330e517ae5e7412f740abbf",
+    "sandbox_proof_tests": "1b256d329ce6a915e6906c99ccc25df44e227cfeaa213953498e968e3e57cfd9"
+  },
+  "private_proof_sha256": "cd8b6d3921bc946c5c3274b1cfee9864a449bf83467725f729bc79540ea8fce2",
+  "checks": {
+    "startup_shell_verified_identity_file": true,
+    "sandbox_exec_identity_environment_absent": true,
+    "identity_file_owner_and_mode_private": true,
+    "identity_value_absent_from_create_args": true,
+    "identity_renewal_generation": 2,
+    "old_token_denied_after_renewal": true,
+    "helper_registered_exit_code": 0,
+    "helper_after_renewal_exit_code": 0,
+    "helper_revoked_exit_code": 2,
+    "helper_revoked_error_code": "broker_admission_denied",
+    "synthetic_backend_calls": 4,
+    "synthetic_audit_events": 4,
+    "candidate_admission_revoked_after": true,
+    "candidate_gateway_empty_after": true,
+    "candidate_broker_listener_stopped": true,
+    "host_identity_source_removed": true,
+    "focused_and_adjacent_tests_passed": 140,
+    "production_eligible": false
+  },
+  "limitations": [
+    "The proof invokes the business helper directly in the sandbox; it does not prove a Hermes gateway tool-dispatch path or AgentShield positive decision.",
+    "The absence of the token in the sandbox exec environment is observed; the Hermes gateway process environment was not readable through /proc and remains unverified.",
+    "The broker and audit backends were synthetic. The tested identity renewal is an isolated canary, not a durable formal Qwen lifecycle with scheduled refresh and recovery.",
+    "Positive model inference and real enterprise IAM/database access remain unverified."
+  ],
+  "secrets_included": false
+}

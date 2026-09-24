@@ -1,0 +1,300 @@
+{
+  "schema_version": "flagship-ux-openshell-live-preview-e149/v1",
+  "date": "2026-09-23",
+  "goal_status": "active",
+  "production_eligible": false,
+  "task": "ENT-UX-04 / real OpenShell context partial",
+  "checks": {
+    "live-preview-final": {
+      "count": 8,
+      "result": {
+        "path": "var/flagship/ux-e149/live-preview-final/result.json",
+        "sha256": "81c69209da26c1cda8029159577625f51e11b3e13810c5bd2fef6a7159323c56",
+        "bytes": 1410
+      }
+    },
+    "gateways-browser": {
+      "count": 19,
+      "result": {
+        "path": "var/flagship/ux-e149/gateways-browser/result.sanitized.json",
+        "sha256": "41d66e31ad6af29de212c06f581677276c9b8d0f90f062ad710c1381caf75898",
+        "bytes": 1680
+      }
+    },
+    "preview-browser": {
+      "count": 16,
+      "result": {
+        "path": "var/flagship/ux-e149/preview-browser/result.json",
+        "sha256": "bda845b45e79e552a4739f7ef16525b5d06f1274dfdcae6bed3fb48356ffa326",
+        "bytes": 1288
+      }
+    },
+    "local-results": {
+      "count": 32,
+      "result": {
+        "path": "var/flagship/ux-e149/local-results/result.sanitized.json",
+        "sha256": "bcdee5661e365f6a98175c25964c6df1d1fbf13d790f5e93005badafc608ac04",
+        "bytes": 2580
+      }
+    }
+  },
+  "test_counts": {
+    "api": 1050,
+    "api_added": 24,
+    "go_test_packages": 44
+  },
+  "candidate": {
+    "path": "var/flagship/ux-e149/siq-agent-security",
+    "sha256": "3779e21c114c34bb25b5900cb1ce7138a8362e14477ba975ce1f5adbd679697b",
+    "bytes": 23867253
+  },
+  "sources": [
+    {
+      "path": "apps/control-api/app/adapters/openshell/cli_backend.py",
+      "sha256": "9fe3b98ecbca54a132a53aafb0cd9a448fcabc452400879920d37945da567f17",
+      "bytes": 42162
+    },
+    {
+      "path": "apps/control-api/app/adapters/openshell/policy_safety.py",
+      "sha256": "c63e04660e92ed6cfb34b9c2f63bdf86f20de6654d0a401cbc015746a06dc857",
+      "bytes": 14669
+    },
+    {
+      "path": "apps/control-api/app/tests/test_openshell_evidence.py",
+      "sha256": "4358490ce70b5a2a26d54bb98717d806ab573655d015645bc86fba10ea74f8c9",
+      "bytes": 6319
+    },
+    {
+      "path": "apps/control-api/app/tests/test_deployment_preview.py",
+      "sha256": "54aca7ad713ebe6f4d2d9ac05baa0a1664dbf1901bc6ca2c12852c89a4da7c4a",
+      "bytes": 9251
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/client.go",
+      "sha256": "d8f684c475b276a73f96b8d13946baaa427250cd4d647b0ab6d562cf0999ad3f",
+      "bytes": 15422
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/identity.go",
+      "sha256": "f51b113ac347ba79e20a0615ffda8185358d32fc7a404a8db3ef6d2c4d2ddbef",
+      "bytes": 2474
+    },
+    {
+      "path": "apps/agentshield/internal/openshell/evidence_test.go",
+      "sha256": "0e1b4b8117cd5f90f3efdc776a99c371f1b932dc0055e8d82d8489e92639ceaf",
+      "bytes": 4862
+    },
+    {
+      "path": "testdata/openshell-status-version.v1.json",
+      "sha256": "aa914711a145c5df8c2dea3a43b6869d67f8398f756cf064570d23881f8f1e06",
+      "bytes": 972
+    },
+    {
+      "path": "scripts/enterprise-experience/openshell-preview-live-check.py",
+      "sha256": "49a955f474e402228cb87003c6e08808ae7286fc6812b2edce52552f2b231d13",
+      "bytes": 9772
+    },
+    {
+      "path": "scripts/enterprise-experience/deployment-preview-browser-smoke.py",
+      "sha256": "6819669753c291493fe1ba0b5156b86b1d21cfed9187543ec5980824a92f2390",
+      "bytes": 20573
+    },
+    {
+      "path": "scripts/personal-experience/openshell-gateways-browser-smoke.py",
+      "sha256": "1253f5d20f3c813874a910528d9fdc64a0af8c84d646b480ee1827703d08fe09",
+      "bytes": 15024
+    },
+    {
+      "path": "scripts/personal-experience/result-evidence-browser-smoke.py",
+      "sha256": "ea652b6fbf30e65d7ff62933eea9bcddb3dddc48a3852bbbaf81ad31854a009d",
+      "bytes": 15668
+    },
+    {
+      "path": "apps/control-api/README.md",
+      "sha256": "f2818c6d1bd7f92d01e8c496f04b10db04c22a25a199e68128058f6064ed676e",
+      "bytes": 5776
+    },
+    {
+      "path": "docs/development/enterprise-openshell-context-e149-spec.md",
+      "sha256": "386c0d8390054b58559835abe3d728fc8642a6d010d3a404165cb8ad3f5bc922",
+      "bytes": 3399
+    },
+    {
+      "path": "docs/development/ux-openshell-live-preview-e149-validation-20260923.md",
+      "sha256": "f01bdd9868bbe54b55336c06b66e161a7d16b9ee08fa988d2afd46c903d578f6",
+      "bytes": 6017
+    },
+    {
+      "path": "docs/agentshield-dev-spec-v1.md",
+      "sha256": "e3fb204b3c132cf23156f20171839ee1f03d1e0867ad5c98c578ca2be85b66cb",
+      "bytes": 379037
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "var/flagship/ux-e149/gateways-browser/gateway-mobile.png",
+      "sha256": "65ed70b5813b086b0dd070df84fdbecfdff56f9f2bf565352d3083549b078244",
+      "bytes": 78141
+    },
+    {
+      "path": "var/flagship/ux-e149/gateways-browser/gateway-policy.png",
+      "sha256": "7eecee87d32fd942e494a3e2d4d6bc29d14f27cfd7d0f0391068f80a3b7c6277",
+      "bytes": 214607
+    },
+    {
+      "path": "var/flagship/ux-e149/preview-browser/execution-desktop.png",
+      "sha256": "2d158bbb997bb0ca4ea92ab74a2d9575c79ae671210dbd2bb4fb1ae20efeba0c",
+      "bytes": 180435
+    },
+    {
+      "path": "var/flagship/ux-e149/preview-browser/execution-mobile.png",
+      "sha256": "f93d17a3c6efc7c9341a7e97bbccbe0b19a24a7b1c8a462fa1a1088cba86a163",
+      "bytes": 61784
+    },
+    {
+      "path": "var/flagship/ux-e149/preview-browser/preview-desktop.png",
+      "sha256": "ebd82931db22e964dd7df3bf1b27e562f234e940839cf8a7c216bfcd4995ac68",
+      "bytes": 223127
+    },
+    {
+      "path": "var/flagship/ux-e149/preview-browser/preview-mobile.png",
+      "sha256": "6cfb4ab9d8d840c830e5142cdf5fbb5906c1e2a691fc5c2f810ce39b9dd92e9b",
+      "bytes": 70533
+    },
+    {
+      "path": "var/flagship/ux-e149/preview-browser/targets.png",
+      "sha256": "47e5f058fb7dbe62db650d2a7d4c919b835ec33a408d163b3b88148cb0b58ff3",
+      "bytes": 195481
+    },
+    {
+      "path": "var/flagship/ux-e149/local-results/evidence-mobile.png",
+      "sha256": "e7dc14297cfc56a9c0e5aaae00a4d66d1027782a125fb0bb3ea1b53891e9bd94",
+      "bytes": 68941
+    },
+    {
+      "path": "var/flagship/ux-e149/local-results/results-desktop.png",
+      "sha256": "d8630a0b028e30e4c2e590d1942a3632369748b4fce94101b9cbef086cf8eb09",
+      "bytes": 156629
+    }
+  ],
+  "logs": [
+    {
+      "path": "var/flagship/ux-e149/api-tests-final.log",
+      "sha256": "45c87b3e0f8a035e5877901b28c78db7cdf3030f795ff03ab57249b725cc276b",
+      "bytes": 1742
+    },
+    {
+      "path": "var/flagship/ux-e149/go-tests-final.log",
+      "sha256": "0323b46669779422f7797b19e767fcd29cf4507141e49f578c8ecf3e36010d09",
+      "bytes": 3683
+    },
+    {
+      "path": "var/flagship/ux-e149/go-vet-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e149/openshell-race.log",
+      "sha256": "cc828e3509fc85d7b3ac5496066ca1045c687e24e30c81dee68e2299cd03dfb3",
+      "bytes": 67
+    },
+    {
+      "path": "var/flagship/ux-e149/cross-build.log",
+      "sha256": "660cbe2c5b8b8188abd456974bd3d8103d587f826783def2e54e39fa65957a11",
+      "bytes": 71
+    },
+    {
+      "path": "var/flagship/ux-e149/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e149/ruff-final.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/flagship/ux-e149/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/flagship/ux-e149/live-preview-final.log",
+      "sha256": "98f02c7e130a93f3376e00601d41bd54f5cdaf788622acd94f6ed8851057a792",
+      "bytes": 431
+    },
+    {
+      "path": "var/flagship/ux-e149/gateways-browser.log",
+      "sha256": "c5979cd95b76183c3855b191e23fc4ce831e08fb791ad06573f98596020a2f4d",
+      "bytes": 1580
+    },
+    {
+      "path": "var/flagship/ux-e149/preview-browser.log",
+      "sha256": "47492fa52852c75a2d27a3d58347082b737295031347eeddfa81512df33772dc",
+      "bytes": 31
+    },
+    {
+      "path": "var/flagship/ux-e149/local-results.log",
+      "sha256": "8d35403e5adc7097d7f6c189bf5d63011d7b0cf3113d06366f461b3a846486e3",
+      "bytes": 31
+    }
+  ],
+  "resource_manifests": [
+    {
+      "path": "var/flagship/ux-e149/local-resources.json",
+      "sha256": "8745c81bc59b35c4efdfd5129f58a1ce03e75b35c47f1786beb3e86033e87d48",
+      "bytes": 47676
+    },
+    {
+      "path": "var/flagship/ux-e149/enterprise-test-resources.json",
+      "sha256": "46db3cad2bde846efe3b539149ebd369d91ad34b261633f6c4818f0b72167a35",
+      "bytes": 87655
+    }
+  ],
+  "cross_builds": [
+    {
+      "path": "var/flagship/ux-e149/siq-agent-security-darwin-arm64",
+      "sha256": "5bd5cee77c27d932d0dbf727a76239ad099df8e293e4e9f1f60b17c0ea92dc1e",
+      "bytes": 24319442
+    },
+    {
+      "path": "var/flagship/ux-e149/siq-agent-security-linux-amd64",
+      "sha256": "912b3bf081cdc73df30f3d6792790b245830ea4ba96e820a5b661c9150cbc590",
+      "bytes": 25363633
+    },
+    {
+      "path": "var/flagship/ux-e149/siq-agent-security-linux-arm64",
+      "sha256": "66eb3fc1908bb2b020409780b65ac099e89af44d6c48c38f7010f9edf346922f",
+      "bytes": 23844699
+    },
+    {
+      "path": "var/flagship/ux-e149/siq-agent-security-windows-amd64.exe",
+      "sha256": "9d2ec9c457679da4a99f2858b8d388ab2276847b009a35ae93e9c82a8794f4ec",
+      "bytes": 25989120
+    }
+  ],
+  "live_scope": {
+    "gateway_version": "0.0.83",
+    "tls_verification_enabled": true,
+    "runtime_policy_mutated": false,
+    "runtime_enforcement_verified": false,
+    "control_plane_identity": "isolated_dev_headers",
+    "before_revision": "2",
+    "after_revision": "2",
+    "policy_digest": "900e77138f185f927a734f3a8520ca3f44ca2f87763bc614acc992bebd0ba3c1"
+  },
+  "corrections": [
+    "E148 certificate error came from missing XDG_STATE_HOME, not expired or replaced certificates",
+    "E148 diagnostic TypeError came from len(SandboxPage), not a required list_targets argument"
+  ],
+  "remaining": [
+    "persistent deployment recovery",
+    "actual policy write/readback and behavior acceptance in a dedicated sandbox",
+    "production identity and PostgreSQL concurrency",
+    "installer and native OS release acceptance"
+  ],
+  "failed_attempts": [
+    "live check required optional absent data directory; corrected",
+    "first real read failed on supported but unparsed restrictions; fixed with negative tests"
+  ]
+}

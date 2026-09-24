@@ -1,0 +1,77 @@
+{
+  "candidate_ready": false,
+  "current_candidate_evidence": "ml-02-qwen38-hermes-bridge-trace.json",
+  "failure_history": [
+    {
+      "artifact_sha256": "73b8a9b3516df86a9f5018f37da40adcbc1931b358554b0bbcc431a4359b2c3b",
+      "kind": "image_smoke_first_failure",
+      "observation": "entrypoint returned nonzero while Provider boundary remained 401/502"
+    },
+    {
+      "artifact_sha256": "0a3d979c7d25de3d0a9a9f8c2f09d576aef6a4c06c9e318095cb66d881991db4",
+      "kind": "openshell_environment_difference",
+      "observation": "OpenShell did not inherit the image runtime identity variables; explicit lifecycle environment injection resolved it"
+    }
+  ],
+  "historical_candidate": true,
+  "image": {
+    "base_image_id": "sha256:4b3f10593ea02f47b57fb57b1bce975291766e658e3ec17509ca0efd16175bb2",
+    "compiled_config_sha256": "8693f18a38acee7a6b2033693acd0dfdf3b736cb8b8521061e1b4526b52267ba",
+    "five_patch_hermes_0210": true,
+    "image_id": "sha256:eaaa4a1a567a7a8325613afb1462c6aa485236e75aa588a0f02da3f8f3b673b5"
+  },
+  "limitations": [
+    "The sandbox exercised image entrypoint smoke and Provider protocol, not a persistent Hermes gateway or model inference.",
+    "A valid Provider placeholder received 502 because the loopback model upstream is still offline.",
+    "Enterprise business scope, AgentShield tool execution, and token-first lifecycle revocation remain unproven for this image."
+  ],
+  "probe": {
+    "entrypoint_checks": {
+      "auth_env_valid": true,
+      "auth_file_absent": true,
+      "auth_lock_absent": true,
+      "minimax_template_absent": true,
+      "profile_env_valid": true,
+      "project_env_valid": true,
+      "runtime_env_valid": true,
+      "runtime_writable": true
+    },
+    "entrypoint_error_code": null,
+    "entrypoint_smoke": true,
+    "invalid_bearer_status": 401,
+    "placeholder_valid": true,
+    "runtime_validator": true,
+    "valid_placeholder_status": 502
+  },
+  "production_eligible": false,
+  "recorded_at": "2026-09-22T01:45:14.425617+00:00",
+  "sandbox": {
+    "create_exit_code": 0,
+    "gateway": "siq-openshell-scope-validation",
+    "gateway_sandbox_count_after": 0,
+    "lease_expires_at": 1790042335,
+    "policy_sha256": "57a7d0e9577586fabe1897d36e583233996baa63f3319341fcde4351b2281a76",
+    "removed": true,
+    "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+    "resource_profile": "siq_analysis_security_probe",
+    "sandbox_name_sha256": "08b62b093a814df0f5a0403cab3734c5743f3ac6b499610424e613e75d184ff3"
+  },
+  "schema_version": "siq.flagship.ml02-qwen38-dedicated-image-openshell-probe/v1",
+  "scope": "dedicated_qwen_image_real_openshell_sandbox_protocol_without_model_inference",
+  "secrets_included": false,
+  "source_sha256": {
+    "candidate_builder": "c3008067286707026b1954e1d8e547a04cc215f14722d11b92268a0aca006626",
+    "image_probe": "84eea6be7dcbff946f75e95816afd10668b4f31b49b774eacbb9635f4c628649",
+    "image_probe_policy": "57a7d0e9577586fabe1897d36e583233996baa63f3319341fcde4351b2281a76",
+    "image_probe_tests": "a74a9a7a2820e91735fe4bad75a5f0dc99af6fe5be07168729840a6070cfd5cf",
+    "runtime_validator": "9af27c0fd10d80aee1f22995817063ec247b88b419c89f106646a611a48c16ee"
+  },
+  "status": "passed_protocol_only",
+  "validation": {
+    "cleanup": "passed",
+    "focused_pytest_passed": 50,
+    "real_openshell_sandbox": "passed",
+    "ruff": "passed",
+    "sanitizer": "passed"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": "siq.flagship.evidence.ml02-postgresql-grant-migration.v1",
+  "captured_at_utc": "2026-09-22T06:55:06Z",
+  "scope": "research_application_postgresql_migration_and_isolated_grant_integration",
+  "secrets_included": false,
+  "source_sha256": {
+    "016_create_proposal_archive_tables.sql": "3a7beba235ada5025bd7ab98021560d74e873d35f8e52da29b72b4b0a7a3b112",
+    "017_create_proposal_pre_review_tables.sql": "a23aa9c7078e79236cfe1957ac8b5478f9ed0c330fd7c391b6be1f4f227b803f",
+    "018_create_proposal_pre_review_records.sql": "a0322861af86481062ee3ae00af3532093206337563eb0173e7d0e0aee4bc24b",
+    "019_add_proposal_archive_parse_fields.sql": "dc048c13b2268c031ac2064676d954352b3bf695c114e72fe5914a0f77e7abef",
+    "020_create_openshell_data_grants.sql": "6e1e6a512888de05c7567fd21b3261bdbb4fd888210abf7829418148dca0df61",
+    "021_add_openshell_data_grant_request_key.sql": "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",
+    "checksums.json": "3a45da6a767f5f56f4e36edfb753ccbedca4f44ccda1770b95fe0f3179a368f5",
+    "openshell_data_scope.py": "5ff6ccf8b99f73c5be5662287c53366323b6c8f6d0f3f11daac876e670060642"
+  },
+  "migration": {
+    "existing_live_ledger_versions": 19,
+    "existing_016_to_019_reconciled_by_exact_checksum": true,
+    "previous_unapplied_grant_migrations_renumbered_to": [20, 21],
+    "repository_governance_passed": true,
+    "pre_migration_custom_backup_sha256": "90ca639c7c48b879f75ae8d9eaf7719f9eae4e1bd7a337a7a992ea299bfaeae3",
+    "pre_migration_backup_owner_only": true,
+    "backup_restore_rehearsal_used_template0": true,
+    "rehearsal_migration_repeat_noop": true,
+    "live_applied_versions": [20, 21],
+    "live_migration_repeat_noop": true,
+    "live_ledger_versions_after": 21,
+    "live_grant_rows_after": 0
+  },
+  "isolated_postgresql_grant_integration": {
+    "database_restored_from_pre_migration_backup": true,
+    "temporary_database_removed": true,
+    "no_grant_denied": true,
+    "grant_issued_and_reauthorized": true,
+    "same_request_key_idempotent": true,
+    "cross_tenant_scope_denied": true,
+    "revocation_denied_on_next_check": true,
+    "grant_and_revoke_audits_recorded": 2,
+    "production_accounts_or_grants_modified": false
+  },
+  "private_configuration": {
+    "backend_database_url_password_drift_found": true,
+    "backend_env_backed_up_before_change": true,
+    "backend_database_urls_corrected": ["SIQ_APP_DATABASE_URL", "DATABASE_URL"],
+    "corrected_urls_connect": true,
+    "secrets_or_url_values_recorded": false
+  },
+  "verification": {
+    "focused_pytest": "21 passed, 1 skipped",
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "model_and_bridge_services_active": true,
+    "model_and_bridge_automatic_restart_counts": 0
+  },
+  "boundary": {
+    "candidate_ready": false,
+    "production_eligible": false,
+    "siq_iam_integrated": false,
+    "production_business_grants_issued": false,
+    "qwen_formal_start_stop_recover_attached": false,
+    "persistent_supervisor_attached": false,
+    "agentshield_native_business_tool_positive_tested": false,
+    "three_repository_native_ci_accepted": false
+  }
+}

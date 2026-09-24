@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/deployment-preview-request.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change_request_id",
+    "environment_id",
+    "binding_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "deployment-preview-request/v1"
+    },
+    "change_request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "environment_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "binding_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    }
+  }
+}

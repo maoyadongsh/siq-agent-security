@@ -12,10 +12,11 @@ import (
 )
 
 const (
-	envCLIBin   = "SIQ_AS_OPENSHELL_CLI_BIN"
-	envEndpoint = "SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT"
-	envInsecure = "SIQ_AS_OPENSHELL_GATEWAY_INSECURE"
-	envEnvSH    = "SIQ_AS_OPENSHELL_ENV_SH"
+	envCLIBin      = "SIQ_AS_OPENSHELL_CLI_BIN"
+	envEndpoint    = "SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT"
+	envInsecure    = "SIQ_AS_OPENSHELL_GATEWAY_INSECURE"
+	envEnvSH       = "SIQ_AS_OPENSHELL_ENV_SH"
+	envGatewayName = "SIQ_AS_OPENSHELL_GATEWAY_NAME"
 )
 
 var safeEnvKeys = map[string]bool{
@@ -67,11 +68,12 @@ const errCLIUnconfigured = "OpenShell CLI 未配置：PATH 上没有 openshell�
 
 // Invocation is how AgentShield will invoke the OpenShell CLI.
 type Invocation struct {
-	Source    string
-	CLIPath   string
-	Endpoint  string
-	EnvScript string
-	Insecure  bool
+	Source      string
+	CLIPath     string
+	Endpoint    string
+	EnvScript   string
+	Insecure    bool
+	GatewayName string
 }
 
 // ResolveInvocation picks explicit env, then ENV_SH, then PATH. It never
@@ -79,6 +81,10 @@ type Invocation struct {
 func (c *Client) ResolveInvocation() (Invocation, error) {
 	cliBin := c.env(envCLIBin)
 	endpoint := c.env(envEndpoint)
+	name := c.env(envGatewayName)
+	if name != "" && (!validTaskTarget(name) || cliBin == "" || endpoint == "") {
+		return Invocation{Source: SourceInvalid}, fail("命名网关需要有效名称及显式 CLI/endpoint")
+	}
 	insecure := c.env(envInsecure) == "1"
 	if (cliBin == "") != (endpoint == "") {
 		return Invocation{Source: SourceInvalid}, fail("SIQ_AS_OPENSHELL_CLI_BIN 与 SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT 必须同时配置")
@@ -87,7 +93,7 @@ func (c *Client) ResolveInvocation() (Invocation, error) {
 		if err := validateGatewayEndpoint(endpoint, insecure); err != nil {
 			return Invocation{Source: SourceInvalid}, err
 		}
-		return Invocation{Source: SourceEnvPair, CLIPath: cliBin, Endpoint: endpoint, Insecure: insecure}, nil
+		return Invocation{Source: SourceEnvPair, CLIPath: cliBin, Endpoint: endpoint, Insecure: insecure, GatewayName: name}, nil
 	}
 	envScript := c.EnvScript
 	if envScript == "" {
@@ -127,6 +133,9 @@ func (c *Client) BuildCommand(args []string) ([]string, error) {
 	switch inv.Source {
 	case SourceEnvPair:
 		cmd := []string{inv.CLIPath, "--gateway-endpoint", inv.Endpoint}
+		if inv.GatewayName != "" {
+			cmd = append(cmd, "--gateway", inv.GatewayName)
+		}
 		if inv.Insecure {
 			cmd = append(cmd, "--gateway-insecure")
 		}

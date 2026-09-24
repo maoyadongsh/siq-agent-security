@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity_id",
+    "instance_id",
+    "agent_id",
+    "platform",
+    "grant_ref",
+    "session_ttl_seconds",
+    "runtime_state",
+    "schema_version",
+    "status"
+  ],
+  "properties": {
+    "identity_id": {
+      "type": "string",
+      "pattern": "^ri-[a-f0-9]{32}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^hri-[a-f0-9]{32}$"
+    },
+    "platform": {
+      "enum": [
+        "hermes",
+        "openclaw",
+        "workbuddy"
+      ]
+    },
+    "grant_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "admission_id",
+        "permission_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "admission_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "permission_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "permission_digest_schema": {
+          "const": "grant-permissions/v2"
+        }
+      }
+    },
+    "session_ttl_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 86400
+    },
+    "runtime_state": {
+      "const": "unverified"
+    },
+    "schema_version": {
+      "const": "local-runtime-identity-self/v1"
+    },
+    "status": {
+      "const": "active"
+    }
+  }
+}

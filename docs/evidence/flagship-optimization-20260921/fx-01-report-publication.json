@@ -1,0 +1,226 @@
+{
+  "schema_version": "siq.flagship.fx01-report-publication-evidence/v1",
+  "generated_on": "2026-09-21",
+  "task": "FX-01",
+  "result": "passed_non_production_canary",
+  "scope": "non_production_test_fixture",
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "subject": {
+    "company_code": "600104",
+    "report_year": 2025,
+    "report_key": "600104-2025-analysis"
+  },
+  "implementation": {
+    "publisher": {
+      "sha256": "01b9f8ca19341689a12c148b287911e10e7972835f2e6ca254dd6425a3d10538"
+    },
+    "quality_validator": {
+      "sha256": "29c2c905d4d11d80fa0cc86c4b9f4f76690564c125a3dbfb656310931b758d56"
+    },
+    "report_pipeline": {
+      "sha256": "c172720c7301dc6c6ebdbed6e2fabd5740396aefea31dae93e6be2f8e2eb0988"
+    },
+    "peer_metric_builder": {
+      "sha256": "b393b82c0fe68e73381bc0fe551f856024fa785eedf26cbfa1d319961f8977c6"
+    },
+    "section_builder": {
+      "sha256": "9040421ab59f0e2a6ed6d21b26c0929351c6a12bf14d5e0beb422975df1e496a"
+    },
+    "factchecker": {
+      "sha256": "0f7e4a2eae2b5bfb4456359f9f4e886f3ab402c4b55d70cbdec6b07d0f5b727c"
+    }
+  },
+  "artifact_binding": {
+    "required_roles": [
+      "input_preflight",
+      "input_metric_snapshot",
+      "input_evidence_package",
+      "report_markdown",
+      "report_json",
+      "report_html",
+      "quality_receipt",
+      "factcheck_receipt"
+    ],
+    "artifact_set_sha256": "95dfa88c2e069f90b98503653c5bbbf695fb5a5bce66fa47a5a2a516a4194d28",
+    "inputs": [
+      {
+        "role": "input_preflight",
+        "sha256": "7dba80551361ba63473944ba5c38174d91847d69a63e5e0ad59f44fafa0026b5",
+        "size": 751
+      },
+      {
+        "role": "input_metric_snapshot",
+        "sha256": "b971e7deaa147ee597e90df55925545cbec2ea9b6cf11a715613c7b6531d9f5e",
+        "size": 74776
+      },
+      {
+        "role": "input_evidence_package",
+        "sha256": "df7433d7fb7bc886105073dbf6de0c8ffa140082859843f9a8f6408de63550b3",
+        "size": 211532
+      }
+    ],
+    "outputs": [
+      {
+        "media_type": "text/markdown",
+        "role": "report_markdown",
+        "sha256": "b5ac07a990a64ce2d95a7bea53337a2a1e3d2c9303a2f2b9ee6ca670ccadb4d4",
+        "size": 45094
+      },
+      {
+        "media_type": "application/json",
+        "role": "report_json",
+        "sha256": "b2743f9ce19272b593b99134f220df4a1c1e6ba87dd5eecc27eaa093be92a2a3",
+        "size": 94141
+      },
+      {
+        "media_type": "text/html",
+        "role": "report_html",
+        "sha256": "05df9ffa1fabcd8e1be2e8f1f1ee17bc5219a9667a7d5a8eca1cd8890cb4afa1",
+        "size": 255252
+      }
+    ],
+    "quality_receipt_sha256": "537a28507c1ead5431501910910a687f3015986f183bea4f017321b8f218bbe7",
+    "factcheck_receipt_sha256": "5af4a8f8ce547cbeffa08f5254cc1b7a67860343d39e908f94caf1be16d0eea4",
+    "quality_report_binding_matches": true,
+    "factcheck_report_binding_matches": true
+  },
+  "quality": {
+    "ok": true,
+    "contract_pass": true,
+    "status": "pass_with_review",
+    "publish_ready": false,
+    "failures": [],
+    "warnings": [
+      "critical_review_queue_items:利息费用,市值数据,同业样本未聚合"
+    ],
+    "warnings_sha256": "bd5d2943b6c3e9f71b16fdddbe54f66a819ba437944247c7073d1b856cfb9399",
+    "approval_decision": "approve_with_review"
+  },
+  "factcheck": {
+    "verdict": "approve",
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 4,
+    "company_evidence_status": "local_wiki_available",
+    "local_evidence_rows": 24,
+    "database_status": "unavailable"
+  },
+  "publication": {
+    "version": 3,
+    "version_id": "v000003",
+    "publication_digest": "46a16f6918aee0b7b9c0508149a07322833f630adf920017dadccc9e5720582c",
+    "request_projection": "593e023200bd555140de6a1d",
+    "task_projection": "94d4025cb3a96b68c8767a13",
+    "readback_verified": true,
+    "idempotent_retry": true,
+    "current_after_retry": "v000003",
+    "completion_schema": "siq.report-publication-completion/v1",
+    "completion_status": "verified",
+    "agentshield_ingestion": "not_ingested"
+  },
+  "negative_proofs": {
+    "source_tamper_after_approval": {
+      "exit_code": 2,
+      "error_code": "publication_artifact_digest_mismatch"
+    },
+    "stale_quality_report_binding": "rejected",
+    "stale_factcheck_report_binding": "rejected",
+    "stale_target_version": "rejected",
+    "approval_warning_mismatch": "rejected",
+    "approval_expired": "rejected",
+    "symlink_or_hardlink": "rejected",
+    "production_target": "rejected",
+    "source_restored_retry": {
+      "idempotent": true,
+      "version_id": "v000003"
+    }
+  },
+  "agentshield_effect": {
+    "binary_sha256": "d92b0d3b289cb6d6bc36b1cf010cdcaa0bb04f0d8dbc597722f77d9718d59362",
+    "dedicated_ephemeral_instance": true,
+    "intent_schema": "intent/v3",
+    "effect_schema": "effect-evidence/v1",
+    "completion_schema": "completion-status/v1",
+    "real_publication": {
+      "publisher_ok": true,
+      "version": 3,
+      "publication_digest": "46a16f6918aee0b7b9c0508149a07322833f630adf920017dadccc9e5720582c",
+      "decision": "allow",
+      "action_projection": "419858744735886fb770c7fd",
+      "effect_projection": "e19b91cd5641ff450f422193",
+      "effect_result": "expected",
+      "completion": {
+        "schema_version": "completion-status/v1",
+        "task_id": "fx01-publish-real",
+        "status": "verified",
+        "reason_code": "effects_verified",
+        "requirements": [
+          {
+            "requirement_id": "published-report",
+            "status": "verified",
+            "reason_code": "effect_verified",
+            "evidence_ids": [
+              "fx01-real-output"
+            ]
+          }
+        ],
+        "incident_ids": []
+      }
+    },
+    "fake_success": {
+      "tool_claim_submitted": true,
+      "file_created": false,
+      "decision": "allow",
+      "action_projection": "d6e4f23a7f86d2cfa5ab104d",
+      "independent_effect_result": "unexpected",
+      "completion": {
+        "schema_version": "completion-status/v1",
+        "task_id": "fx01-publish-fake",
+        "status": "conflicting",
+        "reason_code": "effect_evidence_conflicting",
+        "requirements": [
+          {
+            "requirement_id": "published-report",
+            "status": "conflicting",
+            "reason_code": "effect_evidence_conflicting",
+            "evidence_ids": [
+              "fx01-fake-output",
+              "fx01-tool-claimed-success"
+            ]
+          }
+        ],
+        "incident_ids": []
+      }
+    }
+  },
+  "verification": {
+    "python_tests": {
+      "result": "passed",
+      "count": 80
+    },
+    "ruff": "passed",
+    "py_compile": "passed",
+    "go_packages": [
+      "internal/effectevidence",
+      "internal/completion",
+      "internal/server"
+    ],
+    "go_tests": "passed"
+  },
+  "history": {
+    "v000001": "superseded_after_receipt_to_report_binding_gap_was_found",
+    "v000002": "fully_bound_predecessor",
+    "authoritative_current": "v000003"
+  },
+  "limitations": [
+    "The quality gate is pass_with_review because interest expense, market data, and peer aggregation remain in the exact review queue.",
+    "PostgreSQL evidence was unavailable; the fact-check used 24 local wiki evidence rows.",
+    "The approval authority is a local non-production fixture, not enterprise IAM or separation-of-duties approval.",
+    "No production business transaction or production publication target was used.",
+    "The main OpenShell pools, main AgentShield instance, and current model service were unchanged."
+  ],
+  "secrets_included": false,
+  "business_content_included": false,
+  "absolute_paths_included": false
+}

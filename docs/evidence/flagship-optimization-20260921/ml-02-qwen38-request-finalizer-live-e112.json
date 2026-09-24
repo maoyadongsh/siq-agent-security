@@ -1,0 +1,170 @@
+{
+  "Go_sources_changed_this_increment": false,
+  "Go_tests_rerun": false,
+  "candidate_ready": false,
+  "production_eligible": false,
+  "research_evidence": {
+    "actual_API_process_crashed": false,
+    "candidate_ready": false,
+    "captured_at_utc": "2026-09-22T18:06:53.695172+00:00",
+    "database": "isolated_PostgreSQL_with_synthetic_business_grant",
+    "formal_API_selector_enabled": false,
+    "formal_HTTP_business_request_sent": false,
+    "launcher": {
+      "API_model_bridge_unchanged": true,
+      "isolated_daemon_exit_code": 0,
+      "isolated_daemon_port_closed": true,
+      "passed": true,
+      "production_eligible": false,
+      "runs": [
+        {
+          "exit_code": 0,
+          "graceful": true,
+          "passed": true,
+          "suffix": "v1"
+        },
+        {
+          "exit_code": 0,
+          "graceful": true,
+          "passed": true,
+          "suffix": "v2"
+        }
+      ],
+      "schema_version": "siq.e112.live-launch.v1"
+    },
+    "live_model_invoked": false,
+    "not_proven": [
+      "real_API_restart_scanner_and_process_crash",
+      "partial_startup_recovery_before_endpoint_descriptor",
+      "formal_request_selection_preparation_queue_identity_issuance",
+      "request_financial_receipts_and_security_events",
+      "production_IAM_and_business_approval",
+      "native_CI",
+      "historical_model_timeout_root_cause_and_latency_stability"
+    ],
+    "passed": true,
+    "post_cleanup": {
+      "candidate_inventory_empty": true,
+      "owner_empty": true,
+      "port_18796_closed": true,
+      "port_47710_closed": true,
+      "port_47811_closed": true
+    },
+    "production_IAM_integrated": false,
+    "production_eligible": false,
+    "provider_probe_claim": "authenticated_models_protocol_only_not_inference",
+    "real_OpenShell_systemd_provider_used": true,
+    "runs": [
+      {
+        "actual_API_process_killed": false,
+        "actual_API_request_sent": false,
+        "artifact": "ml02-request-finalizer-live-e112-v1.sanitized.json",
+        "artifact_sha256": "c7f388a94243f601befe4409ceb889f3767ff61071e08c9a49945755c5d5ed47",
+        "business_grant_still_valid_at_containment": true,
+        "data_lease_revoked": true,
+        "disk_loaded_finalizer_stopped_active_service": true,
+        "disk_reloaded_finalizer_retry_preserved_credential": true,
+        "execution_lease_still_current_at_containment": true,
+        "finalizer_journal_sha256": "c38adc035e332ab16e0c47710103c4ce91e34462b30a61daa3511e064457eeaa",
+        "forward_child_and_listener_gone": true,
+        "identity_revoked_before_diagnostic_admin_cleanup": true,
+        "model_client_credential_rotated": true,
+        "model_inference_started": false,
+        "original_execution_row_unchanged": true,
+        "passed": true,
+        "private_files_fixture_and_owner_removed": true,
+        "provider_probe": {
+          "invalid_bearer_status": 401,
+          "placeholder_valid": true,
+          "served_model_exact": true,
+          "valid_placeholder_status": 200
+        },
+        "provider_probe_sha256": "bf47ed9ba0d4d653dbb639d04bd91b5bb14d029e88a08b634825b91feb715054",
+        "provider_restored_positive_probe": true,
+        "relay_child_and_listener_gone_after_stop": true,
+        "sandbox_removed_owner_released_by_finalizer": true,
+        "seconds_waited_after_probe": 2.676,
+        "temporary_database_removed": true,
+        "terminal_service": {
+          "ActiveState": "inactive",
+          "ExecMainCode": "0",
+          "ExecMainStatus": "0",
+          "Result": "success",
+          "SubState": "dead"
+        }
+      },
+      {
+        "actual_API_process_killed": false,
+        "actual_API_request_sent": false,
+        "artifact": "ml02-request-finalizer-live-e112-v2.sanitized.json",
+        "artifact_sha256": "94f780eb95b2ddb90d585e57f28fa2f3461e9a876a595b8cbd787c92f23701f4",
+        "business_grant_still_valid_at_containment": true,
+        "data_lease_revoked": true,
+        "disk_loaded_finalizer_stopped_active_service": true,
+        "disk_reloaded_finalizer_retry_preserved_credential": true,
+        "execution_lease_still_current_at_containment": true,
+        "finalizer_journal_sha256": "a184e21d2c6f866ea89a9de9754fcc2a9048ac7c0b64a2f1479e32809bb4f9d5",
+        "forward_child_and_listener_gone": true,
+        "identity_revoked_before_diagnostic_admin_cleanup": true,
+        "model_client_credential_rotated": true,
+        "model_inference_started": false,
+        "original_execution_row_unchanged": true,
+        "passed": true,
+        "private_files_fixture_and_owner_removed": true,
+        "provider_probe": {
+          "invalid_bearer_status": 401,
+          "placeholder_valid": true,
+          "served_model_exact": true,
+          "valid_placeholder_status": 200
+        },
+        "provider_probe_sha256": "55331412ff3457aefc6c99da571fc3fb911fa0c78492daa2b9e26f5cf1f71925",
+        "provider_restored_positive_probe": true,
+        "relay_child_and_listener_gone_after_stop": true,
+        "sandbox_removed_owner_released_by_finalizer": true,
+        "seconds_waited_after_probe": 2.802,
+        "temporary_database_removed": true,
+        "terminal_service": {
+          "ActiveState": "inactive",
+          "ExecMainCode": "0",
+          "ExecMainStatus": "0",
+          "Result": "success",
+          "SubState": "dead"
+        }
+      }
+    ],
+    "schema_version": "siq.qwen38.request-finalizer-live-evidence.v1",
+    "scope": "real_candidate_v5_Hermes_endpoint_disk_recovery_formal_finalizer_and_provider_handoff",
+    "secrets_included": false,
+    "source_sha256": {
+      "apps/api/services/qwen38_recovery_manager.py": "1bc9f319d5b05141a4d56a35075a607be8eb27dd9f5e60cd2697fe4ef61d91fe",
+      "apps/api/services/qwen38_request_finalizer.py": "a868171f1b0f6875d976bb433eea8d1c6e416849e8adb9798c71f85f15a1a034",
+      "apps/api/services/qwen38_request_recovery.py": "a50d69903a7f071aef207e66f90e76317b8f9618e06399a9111dfe3f350dde2d",
+      "apps/api/tests/test_qwen38_finalizer_proof.py": "e70716f0c357778366fa458e89e354e71009d34c44e933c124e24f8b4c9bc394",
+      "docs/architecture/qwen38-request-runtime-v1.md": "5dd3bb2c29583508e97876644016c23b884713916252de7c83d93660dd6efc38",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "0f65be3b9cf858f3dc08e76258b6c454347dc5265405e1c2173aa9a705f36d65",
+      "scripts/openshell/prove_qwen38_request_identity_supervision.py": "aeedb0668ba3e27af1886200444a561a305005e084e2511b0bd991ad6e3ebffd",
+      "scripts/openshell/prove_qwen38_request_preparation.py": "e11f3dfeba9cdbe588a63018fce463b81b8ebd524ac5b65b4a8f1cb5535e8476",
+      "scripts/openshell/prove_qwen38_request_supervision.py": "d8b8993047c1a388fd614dbc8530fe150d246ae7a7ded7cbc93da08f6a6303a5",
+      "scripts/openshell/qwen38_provider_lifecycle.py": "71ec76633e8fec912450164b3b05d42ca6977c08cc62faafbbb95da7ef4e7fec",
+      "scripts/openshell/qwen38_supervisor_service.py": "068acf65d4a25c973b8b24e8b94dd210a703c74aae7481800818ecaa198e01e6"
+    },
+    "test_history": {
+      "cause": "diagnostic_inventory_test_fixture_used_fixed_empty_owner_inventory_callback",
+      "fixture_fixed_without_weakening_assertion": true,
+      "initial_failed": 1,
+      "initial_passed": 160
+    },
+    "timing_claim": "two_observations_not_SLA",
+    "validation": {
+      "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest -q apps/api/tests/test_qwen38_finalizer_proof.py apps/api/tests/test_qwen38_request_recovery.py apps/api/tests/test_qwen38_request_finalizer.py scripts/openshell/tests/test_prove_qwen38_request_bootstrap.py scripts/openshell/tests/test_qwen38_provider_lifecycle.py scripts/openshell/tests/test_qwen38_supervisor_service.py",
+      "git_diff_check_passed": true,
+      "passed": 161,
+      "py_compile_passed": true,
+      "ruff_passed": true,
+      "seconds": 49.83,
+      "warnings": 200
+    }
+  },
+  "research_evidence_sha256": "a9325883fa5ccd62b660e6f5e742923e1deb815f49d33cfbd391577fa8e46d66",
+  "schema_version": "siq.flagship.request-finalizer-live-export.v1"
+}

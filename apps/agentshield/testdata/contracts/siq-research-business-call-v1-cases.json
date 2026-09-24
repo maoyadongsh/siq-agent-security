@@ -1,0 +1,252 @@
+[
+  {
+    "name": "publish",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": true
+  },
+  {
+    "name": "verify",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_verify_published_report",
+      "params": {
+        "report_key": "report-001"
+      }
+    },
+    "valid": true
+  },
+  {
+    "name": "task_id-2",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "../task",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "task_id-3",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "/tmp/task",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "task_id-4",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "task\n",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "task_id-5",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": true,
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "task_id-6",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "request_sha256-7",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "approval_sha256-8",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "command-9",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "command": "touch /tmp/bypass"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "path-10",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/tmp/report"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "alias-11",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "MCP__SIQ_BUSINESS__RESEARCH_PUBLISH_REPORT",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "alias-12",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__evil__research_publish_report",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "alias-13",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "research_publish_report",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "alias-14",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_publish_report ",
+      "params": {
+        "task_id": "task-001",
+        "request_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "readback-15",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_verify_published_report",
+      "params": {
+        "report_key": "../report"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "readback-16",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_verify_published_report",
+      "params": {
+        "report_key": "https://example.invalid"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "readback-17",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_verify_published_report",
+      "params": {
+        "report_key": "r\n"
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "readback-18",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_verify_published_report",
+      "params": {
+        "report_key": ""
+      }
+    },
+    "valid": false
+  },
+  {
+    "name": "readback-19",
+    "call": {
+      "schema_version": "siq-research-business-call/v1",
+      "tool": "mcp__siq_business__research_verify_published_report",
+      "params": {
+        "report_key": 0
+      }
+    },
+    "valid": false
+  }
+]

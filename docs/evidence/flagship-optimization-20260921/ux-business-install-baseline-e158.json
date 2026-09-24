@@ -1,0 +1,76 @@
+{
+  "schema_version": "siq.flagship-install-baseline-validation/v1",
+  "batch": "E158",
+  "recorded_on": "2026-09-23",
+  "goal_status": "active",
+  "scope": "numbered migration prerequisite repair; not complete application deployment",
+  "report": {
+    "path": "docs/development/ux-business-install-baseline-e158-validation-20260923.md",
+    "sha256": "f3c274b1d957afd743d10bad7163f9939ae3e5ba2c32845db8e78caa00f65868",
+    "bytes": 4772
+  },
+  "specification": {
+    "path": "docs/development/business-install-baseline-e158-spec.md",
+    "sha256": "e179575235f9c21c9c4c5c18a20dfb3cafdcbe26cc015f76870a3317b333ba20",
+    "bytes": 1661
+  },
+  "sources": {
+    "path": "var/flagship/ux-e158/source-manifest.json",
+    "sha256": "ac860042f720b87501c4f10ee52c552798d1ae6f91a9055bf53380ddd4e884ae",
+    "bytes": 7821
+  },
+  "validation": {
+    "api_combined_passed": 273,
+    "skipped": 0,
+    "deselected": 0,
+    "migration_focused_passed": 24,
+    "new_prerequisite_tests": 12,
+    "previous_full_chain_failure_resolved": true,
+    "transport": "isolated PostgreSQL container; actual numbered runner and read-only audit CLI; no real business database",
+    "logs": [
+      {
+        "path": "var/flagship/ux-e158/api-full-final.log",
+        "sha256": "8f12e2093d84cefb6a8aba3b30093736f0d20ebe271b1d3c2382727048730ef8",
+        "bytes": 3860
+      },
+      {
+        "path": "var/flagship/ux-e158/migration-expanded-postgres.log",
+        "sha256": "76014ab860be68f48f4c76a9bf89c793f85bfdc64c61b04b3328e9dd0503cc82",
+        "bytes": 100
+      },
+      {
+        "path": "var/flagship/ux-e158/ruff-final.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "bytes": 19
+      },
+      {
+        "path": "var/flagship/ux-e158/history-gate.json",
+        "sha256": "98426135a5b6f15e49e0558712898db8c3c01c5486681ffa1fb74e79bfc32a9e",
+        "bytes": 521
+      },
+      {
+        "path": "var/flagship/ux-e158/checks.json",
+        "sha256": "c24d39dfd260e06b2ab5b6eb049fb0700a012370b2754cb1e0080b7337218639",
+        "bytes": 245
+      }
+    ],
+    "harness": {
+      "path": "var/flagship/ux-e158/run-isolated-tests.py",
+      "sha256": "1b0a9d9e96978c0cd7f7be5b4fb04b02104e13bb1692046a4e8bdd2615881dee",
+      "bytes": 1333
+    }
+  },
+  "prior_source_candidate": {
+    "path": "var/flagship/ux-e157/candidate.json",
+    "sha256": "81f3ff7ec8d9b3c074db736dc03cf803e441dd504aab9c1ff798be2c93563866",
+    "bytes": 715
+  },
+  "candidate_path": "var/flagship/ux-e158/candidate.json",
+  "limitations": [
+    "Only numbered migrations and their explicit prerequisites verified; not every application table or production configuration",
+    "Legacy installations may lack prerequisite ledger; wholesale administrator deletion is not detectable under this compatibility rule",
+    "No recovery guarantee for terminal-to-result-commit crash window",
+    "No new report publication, security-console business connection, production IAM or real runtime test",
+    "No business database migration, deployed API, installed binary replacement, commit or release"
+  ]
+}

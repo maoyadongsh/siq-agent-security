@@ -1,0 +1,308 @@
+{
+  "active_pool_promoted": false,
+  "candidate_id": "dgx-spark-hermes-v0210-confidential-3d82b38a-20260921",
+  "candidate_package_ready": true,
+  "checks": [
+    {
+      "level": "configuration_correct",
+      "name": "hardware.dgx_spark_identity",
+      "observed": {
+        "architecture": "aarch64",
+        "product": "NVIDIA_DGX_Spark"
+      },
+      "reason": "hardware_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.hermes.head",
+      "observed": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+      "reason": "head_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.research.head",
+      "observed": "47c0eda39119662a8f230c7a3b3bea97216abab6",
+      "reason": "head_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "repository.security.head",
+      "observed": "af275efb1732d9bc1fcb9ea624e55a2ced58032c",
+      "reason": "locked_baseline_ancestor",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_gateway_binary",
+      "observed": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_gateway_record",
+      "observed": "9a75f967e30b45eca407a2c9e4e745e840fd48e5436d096a39caa47afe92310b",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_image_state",
+      "observed": "8cc0ff96d1fbefaa4b294b630906207561ebca5cc70b88b919495591f63bc4e4",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_image_smoke",
+      "observed": "a2337e90d9ada27a50b073a62caed1ffa357000be8726e317385aec4f03b1d17",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_source_baseline",
+      "observed": "264c96706f137c8d97e0dbd7ef115dad2064925d486ca8377407b4de55326bf1",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.profile_manifest",
+      "observed": "519a644eac22954e29988e2daafad7dae8e7c234baec3fdbd2365a3189f88e13",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.governed_model_routes",
+      "observed": "5e349bc53572961024ac999bcacd9f483c2483c8484c0eca5f2857b505ba72e3",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.hermes_auth_compatibility_patch",
+      "observed": "4d1b3cffdee9ea107f221845f270e5b4f394aa996bc4d424b31266bb183b2e2a",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.hermes_required_gate_patch",
+      "observed": "4f5fc6167de11a8cb58b9d2b7221017b4dbad8a7b8ea2800e9127a277ac73560",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_lifecycle",
+      "observed": "d046922a2dea248502779c154371f8aa04f6e1dfc1653cf9fad2b3cb04623d91",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.model_sandbox_proof_runner",
+      "observed": "7fad03ec418cfc67b2bc0faf9acd46135f7b8087f0006d5882a030fa985dae9a",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.nw01_evidence",
+      "observed": "8a95b84a65433f2d0453d8d17e8715dfc75d6c8f23faa7a2ff938af36d68fa8d",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.dt01_evidence",
+      "observed": "b7583e0a4eb1cd3cbb095b35587a7938cad11e71e76be171157ee4a3afd78ba7",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.model_host_proof",
+      "observed": "5b51efb31688ad8f616a02275dbecabd8e2101a827aa956501c2e0dc8024d8cf",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.model_sandbox_proof",
+      "observed": "ed13ae8ca75ee0aadfc8ddcce8b66848efc211de52566700c6db8fd8538159fb",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "configuration_correct",
+      "name": "artifact.candidate_doctor",
+      "observed": "dddcd20496333eca9e0224d53b0cac8a0167059973209dd3d31975e5a6898e73",
+      "reason": "digest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "candidate_gateway",
+      "name": "gateway.binary_version",
+      "observed": "openshell-gateway 0.0.83",
+      "reason": "version_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "candidate_gateway",
+      "name": "gateway.build_record",
+      "reason": "gateway_build_record_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "live_environment",
+      "name": "gateway.process_identity",
+      "reason": "candidate_process_valid",
+      "status": "pass"
+    },
+    {
+      "level": "live_environment",
+      "name": "gateway.health",
+      "reason": "gateway_healthy",
+      "status": "pass"
+    },
+    {
+      "level": "live_environment",
+      "name": "gateway.inventory_empty",
+      "observed": {
+        "count": 0
+      },
+      "reason": "candidate_inventory_empty",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "hermes.candidate_state",
+      "reason": "candidate_state_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "hermes.candidate_smoke",
+      "reason": "candidate_smoke_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "hermes.source_baseline",
+      "reason": "source_baseline_binds_compatibility_patch",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "hermes.profile_manifest",
+      "reason": "candidate_profile_manifest_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "hermes.local_image",
+      "reason": "local_image_labels_match_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "hermes.aiohttp_compatibility",
+      "reason": "locked_image_keeps_aiohttp_web_available",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "model.governed_route_contract",
+      "reason": "governed_route_contract_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "identity_match",
+      "name": "model.governed_route",
+      "reason": "governed_route_matches_lock",
+      "status": "pass"
+    },
+    {
+      "level": "data_security",
+      "name": "evidence.nw01",
+      "reason": "nw01_evidence_valid",
+      "status": "pass"
+    },
+    {
+      "level": "data_security",
+      "name": "evidence.dt01",
+      "reason": "dt01_evidence_valid",
+      "status": "pass"
+    },
+    {
+      "level": "data_security",
+      "name": "evidence.confidential_sandbox",
+      "reason": "confidential_sandbox_controls_valid",
+      "status": "pass"
+    },
+    {
+      "level": "live_environment",
+      "name": "endpoint.model_loopback",
+      "observed": [],
+      "reason": "model_endpoint_or_identity_mismatch",
+      "status": "fail"
+    },
+    {
+      "level": "live_environment",
+      "name": "endpoint.model_openshell_bridge",
+      "observed": [],
+      "reason": "model_endpoint_or_identity_mismatch",
+      "status": "fail"
+    },
+    {
+      "level": "inference_verified",
+      "name": "evidence.host_model_inference",
+      "reason": "host_model_inference_valid",
+      "status": "pass"
+    },
+    {
+      "level": "inference_verified",
+      "name": "evidence.sandbox_model_and_outage",
+      "reason": "sandbox_inference_and_outage_valid",
+      "status": "pass"
+    },
+    {
+      "level": "promotion_boundary",
+      "name": "release.active_pool_separated",
+      "reason": "active_pool_remains_separate",
+      "status": "pass"
+    },
+    {
+      "level": "promotion_boundary",
+      "name": "release.production_not_claimed",
+      "reason": "production_eligibility_false",
+      "status": "pass"
+    }
+  ],
+  "current_environment_ready": false,
+  "deployment_verified": false,
+  "levels": {
+    "candidate_gateway": "pass",
+    "configuration_correct": "pass",
+    "data_security": "pass",
+    "identity_match": "pass",
+    "inference_verified": "pass",
+    "live_environment": "fail",
+    "promotion_boundary": "pass"
+  },
+  "limitations": [
+    "Readiness applies only to the locked isolated confidential candidate.",
+    "The active non-production pool remains separately identified and is not this confidential candidate.",
+    "This report does not grant production approval or deployment verification."
+  ],
+  "production_eligible": false,
+  "recorded_at": "2026-09-21T18:33:08.364931Z",
+  "schema_version": "siq.dgx-spark.confidential-candidate-doctor-report.v1",
+  "secrets_included": false
+}

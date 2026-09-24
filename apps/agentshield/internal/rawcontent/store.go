@@ -137,18 +137,19 @@ func Prepare(kind string, fields []Field) (Prepared, error) {
 }
 
 type Envelope struct {
-	Schema        string `json:"schema_version"`
-	RecordID      string `json:"record_id"`
-	TaskRef       string `json:"task_ref"`
-	Kind          string `json:"kind"`
-	CreatedAt     string `json:"created_at"`
-	ExpiresAt     string `json:"expires_at"`
-	PlaintextHash string `json:"plaintext_sha256"`
-	PlaintextSize int    `json:"plaintext_bytes"`
-	OmittedCount  int    `json:"omitted_secret_count"`
-	Algorithm     string `json:"algorithm"`
-	Nonce         string `json:"nonce_base64"`
-	Ciphertext    string `json:"ciphertext_base64"`
+	Schema        string         `json:"schema_version"`
+	RecordID      string         `json:"record_id"`
+	TaskRef       string         `json:"task_ref"`
+	Kind          string         `json:"kind"`
+	CreatedAt     string         `json:"created_at"`
+	ExpiresAt     string         `json:"expires_at"`
+	PlaintextHash string         `json:"plaintext_sha256"`
+	PlaintextSize int            `json:"plaintext_bytes"`
+	OmittedCount  int            `json:"omitted_secret_count"`
+	Algorithm     string         `json:"algorithm"`
+	Nonce         string         `json:"nonce_base64"`
+	Ciphertext    string         `json:"ciphertext_base64"`
+	Source        *RuntimeSource `json:"source,omitempty"`
 }
 
 type Store struct {
@@ -314,6 +315,10 @@ func (s *Store) diskBytes() (int64, error) {
 // write is intentionally package-private. All production writes must pass
 // through Authority.Capture so an initialized store alone cannot capture data.
 func (s *Store) write(taskID string, content Prepared, retention time.Duration, now time.Time) (Envelope, error) {
+	return s.writeFromRuntime(taskID, content, retention, now, nil)
+}
+
+func (s *Store) writeFromRuntime(taskID string, content Prepared, retention time.Duration, now time.Time, source *RuntimeSource) (Envelope, error) {
 	storeMu.Lock()
 	defer storeMu.Unlock()
 	if err := s.checkCachedKey(); err != nil {
@@ -338,6 +343,13 @@ func (s *Store) write(taskID string, content Prepared, retention time.Duration, 
 	}
 	sum := sha256.Sum256(content.raw)
 	e := Envelope{Schema: "local-raw-task-content-envelope/v1", RecordID: "raw-" + hex.EncodeToString(idBytes), TaskRef: ref, Kind: p.Kind, CreatedAt: now.UTC().Format(time.RFC3339Nano), ExpiresAt: now.Add(retention).UTC().Format(time.RFC3339Nano), PlaintextHash: hex.EncodeToString(sum[:]), PlaintextSize: len(content.raw), OmittedCount: p.OmittedCount, Algorithm: "aes-256-gcm/v1", Nonce: base64.StdEncoding.EncodeToString(nonce)}
+	if source != nil {
+		if !source.valid() {
+			return Envelope{}, ErrInvalid
+		}
+		copy := *source
+		e.Schema, e.Source = "local-raw-task-content-envelope/v2", &copy
+	}
 	block, err := aes.NewCipher(s.key)
 	if err != nil {
 		return Envelope{}, ErrState
@@ -404,7 +416,7 @@ func (s *Store) readEnvelope(id string) (Envelope, error) {
 	_ = f.Close()
 	created, createdErr := time.Parse(time.RFC3339Nano, e.CreatedAt)
 	expires, expiresErr := time.Parse(time.RFC3339Nano, e.ExpiresAt)
-	if err != nil || extraErr != io.EOF || e.RecordID != id || e.Schema != "local-raw-task-content-envelope/v1" ||
+	if err != nil || extraErr != io.EOF || e.RecordID != id || !validEnvelopeSource(e) ||
 		!digestRefPattern.MatchString(e.TaskRef) || !allowedKind(e.Kind) || createdErr != nil || expiresErr != nil || !created.Before(expires) ||
 		!lowerHex(e.PlaintextHash, 32) || e.PlaintextSize < 1 || e.PlaintextSize > MaxPlaintext || e.OmittedCount < 0 || e.OmittedCount > 1024 || e.Algorithm != "aes-256-gcm/v1" {
 		return Envelope{}, ErrState
@@ -446,6 +458,10 @@ func (s *Store) decryptEnvelope(e Envelope) (payload, error) {
 }
 
 func (s *Store) Read(taskID, id string, now time.Time) ([]Field, Envelope, error) {
+	return s.readForSource(taskID, id, now, nil)
+}
+
+func (s *Store) readForSource(taskID, id string, now time.Time, source *RuntimeSource) ([]Field, Envelope, error) {
 	storeMu.Lock()
 	defer storeMu.Unlock()
 	ref, ok := taskRef(taskID)
@@ -457,7 +473,13 @@ func (s *Store) Read(taskID, id string, now time.Time) ([]Field, Envelope, error
 		return nil, Envelope{}, err
 	}
 	if e.TaskRef != ref {
+		if source != nil {
+			return nil, Envelope{}, ErrDenied
+		}
 		return nil, Envelope{}, ErrState
+	}
+	if source != nil && (e.Kind != "output" || e.Source == nil || *e.Source != *source) {
+		return nil, Envelope{}, ErrDenied
 	}
 	expires, err := time.Parse(time.RFC3339Nano, e.ExpiresAt)
 	p, err := s.decryptEnvelope(e)
@@ -503,6 +525,10 @@ func envelopeMetadata(e Envelope, now time.Time) Metadata {
 // ListMetadata authenticates every bounded envelope before returning records
 // for one task. A corrupt unrelated record fails the entire list.
 func (s *Store) ListMetadata(taskID string, now time.Time) ([]Metadata, error) {
+	return s.listMetadataForSource(taskID, now, nil)
+}
+
+func (s *Store) listMetadataForSource(taskID string, now time.Time, source *RuntimeSource) ([]Metadata, error) {
 	storeMu.Lock()
 	defer storeMu.Unlock()
 	ref, ok := taskRef(taskID)
@@ -532,7 +558,7 @@ func (s *Store) ListMetadata(taskID string, now time.Time) ([]Metadata, error) {
 		if _, err := s.decryptEnvelope(e); err != nil {
 			return nil, err
 		}
-		if e.TaskRef == ref {
+		if e.TaskRef == ref && (source == nil || (e.Kind == "output" && e.Source != nil && *e.Source == *source)) {
 			out = append(out, envelopeMetadata(e, now))
 		}
 	}

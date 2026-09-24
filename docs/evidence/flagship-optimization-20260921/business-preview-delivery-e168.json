@@ -1,0 +1,114 @@
+{
+  "schema_version": "siq.flagship.preview-delivery.v1",
+  "passed": true,
+  "checks": {
+    "preview_removed_and_old_api_unchanged": true,
+    "preview_restarted": true,
+    "new_result_route_loaded": true,
+    "unauthenticated_result_reads_denied_no_store": true,
+    "old_api_identity_preserved": true,
+    "required_recovery_gate_preserved": true,
+    "web_proxy_health": true,
+    "desktop_mobile_login_rendered": true
+  },
+  "preview_url": "http://127.0.0.1:15173",
+  "production_cutover": false,
+  "actual_account_acceptance": false,
+  "task_execution_acceptance": false,
+  "before": {
+    "siq-research-api-preview-e168.service": {
+      "MainPID": "951567",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "838b6de9ea7645229339eef6511d97ec"
+    },
+    "siq-research-web-preview-e168.service": {
+      "MainPID": "955121",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "f6642052fd31448597cb39f0f030a83c"
+    }
+  },
+  "http": [
+    {
+      "port": 18084,
+      "path": "/api/analysis/chat/result/list",
+      "status": 401,
+      "cache_control": "no-store"
+    },
+    {
+      "port": 18084,
+      "path": "/api/analysis/chat/result",
+      "status": 401,
+      "cache_control": "no-store"
+    },
+    {
+      "port": 15173,
+      "path": "/api/analysis/chat/result/list",
+      "status": 401,
+      "cache_control": "no-store"
+    },
+    {
+      "port": 15173,
+      "path": "/api/analysis/chat/result",
+      "status": 401,
+      "cache_control": "no-store"
+    }
+  ],
+  "after": {
+    "siq-research-api-candidate.service": {
+      "MainPID": "2301727",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "324c01b504e64141bead36cd1ec43bb8"
+    },
+    "siq-research-api-preview-e168.service": {
+      "MainPID": "966940",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "7de20786ec61462dbb90a2495016e595"
+    },
+    "siq-research-web-preview-e168.service": {
+      "MainPID": "967139",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "65f771e8847540a094c8ea92b10731c9"
+    }
+  },
+  "browser": [
+    {
+      "viewport": "desktop",
+      "title": "SIQ",
+      "path": "/login",
+      "inputs": 2,
+      "buttons": [
+        "登录",
+        "创建新账户"
+      ],
+      "horizontalOverflow": false,
+      "pageErrors": []
+    },
+    {
+      "viewport": "mobile",
+      "title": "SIQ",
+      "path": "/login",
+      "inputs": 2,
+      "buttons": [
+        "登录",
+        "创建新账户"
+      ],
+      "horizontalOverflow": false,
+      "pageErrors": []
+    }
+  ],
+  "artifacts": {
+    "source-manifest.json": "c10e80ce3ae08842ce0d796a55e22ff17088d82bae9c6af0c04cd41599fdd4b1",
+    "build.sanitized.json": "c6ba9d4a32c80790fb578724f64844575ca49bf0574116a5ee44514f735104b8",
+    "browser.sanitized.json": "6d4464f3026c84ca53a404aa509dd91338f179e376ff4df1b24a14468bb25c23",
+    "login-desktop.png": "8892c3a5d8b4d6ff57e0188f5bcdfc04c50cecf7c8bc46764da5605cf9b4f7e7",
+    "login-mobile.png": "aa42968727580c3f341f609d4cd6c022082d743da8e4da18ad54ab7522aa7276",
+    "launch_api.py": "8a4e59f65b345701ee95b9d256d7b0b5c110f520f1f2ea831c0c3580d463cfb3",
+    "prepare_preview.py": "8affd7791a511e864ea2ea7e3694c55d14dec1a3a8cf7735ab0505ec24146023",
+    "verify_delivery.py": "34e7f7b2cc6ec6d3c187723d1ef82f9a6873dba0f5027390625297f98b507987"
+  }
+}

@@ -1,8 +1,9 @@
 import ActivitySourcesPanel from '../components/ActivitySourcesPanel';
 import ActivityExportButton from '../components/ActivityExportButton';
 import ActivityTraceExportButton from '../components/ActivityTraceExportButton';
-import ActivityCompletionPanel from '../components/ActivityCompletionPanel';
+import TaskSecurityViewPanel from '../components/TaskSecurityViewPanel';
 import RawContentTaskPanel from '../components/RawContentTaskPanel';
+import TaskOutputsPanel from '../components/TaskOutputsPanel';
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
@@ -27,14 +28,14 @@ export default function TaskActivityDetailPage() {
   const [params, setParams] = useSearchParams();
   const view: ActivityView = params.get('view') === 'unassigned' ? 'unassigned' : 'tasks';
   const offset = offsetValue(params.get('offset'));
-  const from = offsetValue(params.get('from'));
+  const from = offsetValue(params.get('list_offset') ?? params.get('from'));
   const snapshot = params.get('snapshot') || undefined;
-  const retainedFilters: [string, string][] = ['platform', 'agent_id', 'session_id', 'task_id', 'q'].flatMap((name): [string, string][] => {
+  const retainedFilters: [string, string][] = ['platform', 'agent_id', 'session_id', 'task_id', 'q', 'from', 'to', 'action'].flatMap((name): [string, string][] => {
     const value = params.get(name) ?? '';
-    return value && validActivityFilter(value) ? [[name, value]] : [];
+    return value && validActivityFilter(value) && !(name === 'from' && /^[0-9]+$/.test(value)) ? [[name, value]] : [];
   });
   const detailParams = (extra: Record<string, string> = {}) => {
-    const next = new URLSearchParams({ view });
+    const next = new URLSearchParams({ view, list_offset: String(from) });
     for (const [name, value] of retainedFilters) next.set(name, value);
     for (const [name, value] of Object.entries(extra)) next.set(name, value);
     return next;
@@ -61,26 +62,33 @@ export default function TaskActivityDetailPage() {
   const data = current?.data;
   const binding = data?.activity.binding;
   const page = (next: number) => {
-    if (data) setParams(detailParams({ offset: String(next), snapshot: data.snapshot, from: String(from) }));
+    if (data) setParams(detailParams({ offset: String(next), snapshot: data.snapshot, list_offset: String(from) }));
   };
   const back = detailParams();
-  if (snapshot) { back.set('snapshot', snapshot); back.set('offset', String(from)); }
+  if (data?.snapshot || snapshot) back.set('snapshot', data?.snapshot ?? snapshot!);
+  back.set('offset', String(data?.snapshot || snapshot ? from : 0));
   return <section>
-    <PageHeader kicker="任务追溯" icon="audit" title="活动详情" description="查看这一活动的裁决记录。允许执行与实际效果核验是不同结论。"
+    <PageHeader kicker="任务追溯" icon="audit" title="运行详情" description="在同一证据快照中查看业务对象、运行模式、数据去向、授权裁决与实际结果。"
       connection={loading ? 'loading' : current?.error ? 'disconnected' : 'connected'} connectionError={current?.error}
       actions={<button className="btn btn-primary" disabled={loading} onClick={() => { setParams(detailParams()); setRetry((n) => n + 1); }}>刷新详情</button>} />
     <div className="card">
-      <p><Link to={`/activities?${back}`}>返回活动列表</Link></p>
+      <p>{loading ? <span role="status">正在读取运行记录…</span> : <Link to={`/activities?${back}`}>返回运行记录</Link>}</p>
       {current?.error ? <p role="alert" className="action-error">{current.error}</p> : null}
       {data ? <>
-        <h2>{binding?.task_id ?? '未归属活动'}</h2>
-        <p>{binding ? `${platformLabel(binding.platform)} · 智能体 ${binding.agent_id} · 会话 ${binding.session_id}` : '缺少完整可信绑定，不能确定任务与主体归属。'}</p>
-        <p role="status">回执前缀验签通过。{data.history_integrity === 'verified' ? '历史已与独立检查点核对。' : data.history_integrity === 'failed' ? '历史完整性核对失败。' : '完整历史是否缺失仍未知。'}这些裁决记录不代表效果已核验。</p>
+        <h2>{binding ? `${platformLabel(binding.platform)} · 运行记录` : '未归属活动'}</h2>
+        {binding ? <details><summary>查看任务和会话标识</summary>
+          <p>任务：{binding.task_id}</p><p>智能体：{binding.agent_id}</p><p>会话：{binding.session_id}</p>
+        </details> : <p>缺少完整可信绑定，不能确定任务与主体归属。</p>}
+        <p role={data.history_integrity === 'failed' ? 'alert' : 'status'}>{data.history_integrity === 'verified'
+          ? '调用记录已验签，并已核对历史完整性。' : data.history_integrity === 'failed'
+            ? '历史完整性核对失败，请展开审计详情检查记录。' : '调用记录已验签；完整历史尚待核对。'}</p>
       </> : null}
+      {data ? <TaskSecurityViewPanel detail={data} /> : null}
+      {data && binding && view === 'tasks' ? <TaskOutputsPanel detail={data} /> : null}
+      <details className="block-gap"><summary>查看工具调用和审计详情</summary>
       {data && binding ? <ActivityExportButton key={key} detail={data} /> : null}
       {data && binding ? <ActivityTraceExportButton key={`trace-${key}`} detail={data} /> : null}
       {data ? <ActivitySourcesPanel key={key} detail={data} /> : null}
-      {data ? <ActivityCompletionPanel detail={data} /> : null}
       {data && binding ? <RawContentTaskPanel key={`raw-${key}`} taskId={binding.task_id} actorId={actorId} /> : null}
       <SimpleTable columns={columns} rows={data?.receipts ?? []} rowKey={(r) => String(r.seq)} emptyText={loading ? '正在读取详情…' : current?.error ? '详情当前不可用。' : '本页没有回执。'} />
       {data ? <div className="toolbar toolbar-end">
@@ -88,6 +96,7 @@ export default function TaskActivityDetailPage() {
         <span>共 {data.total} 条回执</span>
         <button className="btn" disabled={data.next_offset === null} onClick={() => { if (data.next_offset !== null) page(data.next_offset); }}>下一页</button>
       </div> : null}
+      </details>
     </div>
   </section>;
 }

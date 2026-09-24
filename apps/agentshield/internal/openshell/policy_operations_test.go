@@ -231,3 +231,81 @@ func TestRollbackDetectsPrewriteAndPostwriteDrift(t *testing.T) {
 		})
 	}
 }
+
+func TestClearNetworkMatchesGatewayEmptyOmissionWithoutIgnoringDrift(t *testing.T) {
+	for _, tamper := range []bool{false, true} {
+		active := testdata(t, "policy_get_full.txt") + "network_policies:\n  original:\n    endpoints:\n    - host: api.example.com\n      port: 443\n    binaries:\n    - path: /usr/bin/curl\n"
+		writes := 0
+		client := New(Options{PollInterval: -1, policyCoordinator: newPolicyCoordinator(), Runner: func(args []string) (int, string, string) {
+			if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+				return 0, active, ""
+			}
+			if len(args) >= 5 && args[0] == "policy" && args[1] == "set" {
+				writes++
+				raw, err := os.ReadFile(args[4])
+				if err != nil {
+					t.Fatal(err)
+				}
+				parsed, err := parseYAML(string(raw))
+				if err != nil {
+					t.Fatal(err)
+				}
+				doc := asMap(parsed)
+				if len(asMap(doc["network_policies"])) == 0 {
+					delete(doc, "network_policies")
+				}
+				if tamper {
+					doc["unexpected_change"] = true
+				}
+				active = policyOutput("2", dumpYAML(doc))
+				return 0, "Policy version 2 submitted (hash: cafe)", ""
+			}
+			return 1, "", "unexpected"
+		}})
+		receipt, err := client.ApplyNetwork("s1", []NetworkRule{}, "1")
+		if tamper {
+			if err == nil {
+				t.Fatal("extra policy change must not be hidden by empty omission")
+			}
+			continue
+		}
+		if err != nil {
+			t.Fatal(err)
+		}
+		snapshot, err := client.ReadEffective("s1")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(snapshot.Network) != 0 || receipt.AppliedPolicyDigest != snapshot.PolicyDigest || writes != 1 {
+			t.Fatal("empty intent not verified")
+		}
+		_, err = client.ApplyNetwork("s1", []NetworkRule{}, "2")
+		if err != nil || writes != 1 {
+			t.Fatal("already empty intent should not write again")
+		}
+	}
+}
+
+func TestEmptyNetworkFormsAreNoOp(t *testing.T) {
+	for _, suffix := range []string{"", "network_policies: {}\n"} {
+		full := testdata(t, "policy_get_full.txt") + suffix
+		client := New(Options{PollInterval: -1, policyCoordinator: newPolicyCoordinator(), Runner: func(args []string) (int, string, string) {
+			if len(args) >= 4 && args[0] == "policy" && args[1] == "get" {
+				return 0, full, ""
+			}
+			t.Fatalf("already-empty policy must not write: %v", args[:2])
+			return 1, "", "unexpected"
+		}})
+		before, err := client.ReadEffective("s1")
+		if err != nil {
+			t.Fatal(err)
+		}
+		receipt, err := client.ApplyNetwork("s1", nil, before.Revision)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if receipt.Result != "no_op" || receipt.BackendRevision != before.Revision || receipt.AppliedPolicyDigest != before.PolicyDigest {
+			t.Fatal("already-empty policy must preserve its exact revision and digest")
+		}
+	}
+}

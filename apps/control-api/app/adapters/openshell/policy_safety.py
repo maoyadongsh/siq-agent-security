@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import ipaddress
 import json
 import re
 from typing import Any
@@ -38,7 +39,9 @@ _AMBIGUOUS_SCALAR_RE = re.compile(
 )
 _NETWORK_RULE_KEYS = frozenset({"endpoint", "effect", "binary_paths", "rule_name"})
 _GATEWAY_RULE_KEYS = frozenset({"name", "endpoints", "binaries"})
-_GATEWAY_ENDPOINT_KEYS = frozenset({"host", "port"})
+_GATEWAY_ENDPOINT_KEYS = frozenset({
+    "host", "port", "protocol", "enforcement", "rules", "allowed_ips", "request_body_credential_rewrite",
+})
 _GATEWAY_BINARY_KEYS = frozenset({"path"})
 
 
@@ -222,21 +225,61 @@ def gateway_network_to_rules(raw: Any) -> list[dict[str, Any]]:
                 raise AdapterError("openshell_gateway_network_unsupported")
             binary_paths.append(path)
         for endpoint in endpoints:
-            if not isinstance(endpoint, dict) or set(endpoint) != _GATEWAY_ENDPOINT_KEYS:
+            if not isinstance(endpoint, dict) or set(endpoint) - _GATEWAY_ENDPOINT_KEYS:
                 raise AdapterError("openshell_gateway_network_unsupported")
             host = endpoint.get("host")
             port = endpoint.get("port")
             if not isinstance(host, str) or not isinstance(port, int) or isinstance(port, bool):
                 raise AdapterError("openshell_gateway_network_unsupported")
             split_endpoint(format_endpoint(host, port))
-            result.append(
-                {
+            restrictions: dict[str, Any] = {}
+            for field, supported in (("protocol", "rest"), ("enforcement", "enforce")):
+                if field in endpoint:
+                    if endpoint[field] != supported:
+                        raise AdapterError("openshell_gateway_network_unsupported")
+                    restrictions[field] = endpoint[field]
+            if "request_body_credential_rewrite" in endpoint:
+                rewrite = endpoint["request_body_credential_rewrite"]
+                if not isinstance(rewrite, bool):
+                    raise AdapterError("openshell_gateway_network_unsupported")
+                restrictions["request_body_credential_rewrite"] = rewrite
+            if "allowed_ips" in endpoint:
+                ips = endpoint["allowed_ips"]
+                if not isinstance(ips, list) or not ips:
+                    raise AdapterError("openshell_gateway_network_unsupported")
+                for address in ips:
+                    if not isinstance(address, str) or "/" not in address:
+                        raise AdapterError("openshell_gateway_network_unsupported")
+                    try:
+                        ipaddress.ip_network(address.strip(), strict=False)
+                    except ValueError:
+                        raise AdapterError("openshell_gateway_network_unsupported") from None
+                restrictions["allowed_ips"] = list(ips)
+            allows: list[dict[str, str]] = [{}]
+            if "rules" in endpoint:
+                rules = endpoint["rules"]
+                if not isinstance(rules, list) or not rules:
+                    raise AdapterError("openshell_gateway_network_unsupported")
+                allows = []
+                for rule_item in rules:
+                    if not isinstance(rule_item, dict) or set(rule_item) != {"allow"}:
+                        raise AdapterError("openshell_gateway_network_unsupported")
+                    allow = rule_item["allow"]
+                    if (not isinstance(allow, dict) or set(allow) != {"method", "path"}
+                            or any(not isinstance(allow[k], str) or not allow[k] for k in ("method", "path"))):
+                        raise AdapterError("openshell_gateway_network_unsupported")
+                    allows.append(dict(allow))
+            # Readback restrictions cannot pass validate_network_rules(): the
+            # L3/L4 writer must never silently discard method/path/IP limits.
+            for allow in allows:
+                result.append({
                     "endpoint": format_endpoint(host, port),
                     "effect": "allow",
                     "binary_paths": list(binary_paths),
                     "rule_name": rule.get("name", key),
-                }
-            )
+                    **copy.deepcopy(restrictions),
+                    **allow,
+                })
     return result
 
 

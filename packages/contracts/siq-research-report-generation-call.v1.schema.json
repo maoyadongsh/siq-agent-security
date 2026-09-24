@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/siq-research-report-generation-call.v1.schema.json",
+  "title": "Fixed request-scoped research report generation",
+  "description": "Shape only; permission, immutable implementation and sandbox scope require independent verification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool",
+    "params"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "siq-research-report-generation-call/v1"
+    },
+    "tool": {
+      "const": "mcp__siq_business__research_generate_report"
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "company_path",
+        "run_id",
+        "year"
+      ],
+      "properties": {
+        "company_path": {
+          "type": "string",
+          "maxLength": 4096,
+          "pattern": "^/(?:[^/\\\\\\u0000-\\u001f\\u007f]+/)+data/wiki/companies/[0-9]{6}-[^/\\\\\\u0000-\\u001f\\u007f]{1,153}$",
+          "not": {
+            "pattern": "(?:^|/)\\.{1,2}(?:/|$)|[\\r\\n]"
+          }
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 29,
+          "maxLength": 29,
+          "pattern": "^qwen-request-[a-f0-9]{16}$"
+        },
+        "year": {
+          "type": "integer",
+          "minimum": 2000,
+          "maximum": 2200
+        }
+      }
+    }
+  }
+}

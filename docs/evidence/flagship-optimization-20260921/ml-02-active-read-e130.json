@@ -1,0 +1,48 @@
+{
+  "schema_version": "siq.flagship.evidence.active-read.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.active-read-authorization-evidence.v1",
+    "captured_at_utc": "2026-09-22T23:07:42.094783+00:00",
+    "scope": "independent_active_snapshot_and_SSE_replay_with_isolated_SQLite_grants",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "focused_tests": 20,
+      "combined_tests": 86,
+      "focused_is_subset": true,
+      "warnings": 179,
+      "ruff": true,
+      "diff_check": true
+    },
+    "red_before_fix": [
+      "revoked_grant_read_did_not_raise",
+      "expired_grant_read_did_not_raise"
+    ],
+    "covered": [
+      "current_grant_for_retained_output_after_execution_snapshot_expiry",
+      "revocation_expiry_account_disable_token_version_and_wrong_company_denied",
+      "per_event_replay_recheck",
+      "state_replacement_denied",
+      "scope_digest_principal_binding",
+      "no_global_diagnostic_when_own_state_absent",
+      "configuration_change_cannot_downgrade_retained_confidential_output"
+    ],
+    "not_proven": [
+      "persistent_history_session_summary_audit_trace_scope_authorization",
+      "live_API_deployment",
+      "real_IAM",
+      "full_production_readiness"
+    ],
+    "source_sha256": {
+      "apps/api/services/agent_runtime_read_access.py": "772cb5444af52b0e7b761cbb6623288f573d326c9a12c56a5667d49bc4d7b1ee",
+      "apps/api/routers/agent_user_router.py": "58ec1ea4463f54d566e5f56af24cdcc1cb23109fe03b1dedd95221e0bede2618",
+      "apps/api/tests/test_agent_runtime_read_access.py": "4de1bcc2036e0846a8b7ccaeb74028612bd57e8450b732e0825fa0c51135587e"
+    }
+  },
+  "research_evidence_sha256": "8106b6c593c6d2e6a48aaafaf5b4c57f7d24a37cf2160f6fc085d08592adb92b",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

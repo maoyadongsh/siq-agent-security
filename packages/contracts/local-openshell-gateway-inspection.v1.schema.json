@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "gateway_id",
+    "configuration_fingerprint",
+    "inspection"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-openshell-gateway-inspection/v1"
+    },
+    "gateway_id": {
+      "type": "string",
+      "pattern": "^og-[0-9a-f]{32}$"
+    },
+    "configuration_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "inspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "sandbox_id",
+        "name",
+        "endpoint_fingerprint",
+        "observed_at",
+        "expires_at",
+        "state",
+        "revision",
+        "policy_digest",
+        "enforcement_verified"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "local-openshell-target-inspection/v1"
+        },
+        "sandbox_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,62}$"
+        },
+        "endpoint_fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "state": {
+          "const": "policy_readable"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "enforcement_verified": {
+          "const": false
+        }
+      }
+    }
+  }
+}

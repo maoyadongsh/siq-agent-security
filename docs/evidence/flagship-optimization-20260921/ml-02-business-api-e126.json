@@ -1,0 +1,151 @@
+{
+  "schema_version": "siq.flagship.evidence.business-api.v1",
+  "research_evidence": {
+    "schema_version": "siq.qwen38.business-api-evidence.v1",
+    "captured_at_utc": "2026-09-22T21:38:21.927750+00:00",
+    "scope": "actual_nonstream_business_HTTP_Hermes_Qwen_and_API_finalizer_with_synthetic_authority",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "regression_before_fix": {
+      "negative_tests_failed": 2,
+      "confidential_request_enumerated_unscoped_host_parser_results": true,
+      "live_v2_returned_other_company_parser_metadata": true,
+      "raw_response_not_exported": true
+    },
+    "validation": {
+      "combined_tests_passed": 170,
+      "warnings": 0,
+      "ruff_passed": true,
+      "compile_passed": true,
+      "diff_check_passed": true
+    },
+    "live_proof": {
+      "schema": "siq.qwen38.candidate-api-proof.v1",
+      "passed": true,
+      "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+      "production_ready": false,
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "business_model_marker_returned": true,
+        "business_execution_completed": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "business_HTTP_attempted": true,
+      "business_HTTP_status": 200,
+      "request_run_sha256": "4b29cea6206b7abcdcb276966b3256737df8238bf302e3a3dd5c2c49f2ba8f78",
+      "bridge_statuses": [
+        200
+      ],
+      "remaining_running_execution_count": 0
+    },
+    "live_proof_sha256": "e5673922b70c666b6e97de53033dc09237e45277a0e71ce3c859ff3117c5c729",
+    "launcher": {
+      "API_model_bridge_unchanged": true,
+      "isolated_daemon_exit_code": 0,
+      "isolated_daemon_port_closed": true,
+      "passed": true,
+      "production_eligible": false,
+      "runs": [
+        {
+          "exit_code": 0,
+          "graceful": true,
+          "passed": true,
+          "suffix": "v3"
+        }
+      ],
+      "schema_version": "siq.e126.live-launch.v1"
+    },
+    "launcher_sha256": "44ab617fde1d8a6d7380fe34a67fe223bb5bf4a09e1e9abd7731d2f88649439d",
+    "previous_attempts": {
+      "v1": {
+        "proof": {
+          "schema": "siq.qwen38.candidate-api-proof.v1",
+          "passed": false,
+          "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+          "production_ready": false,
+          "checks": {
+            "fresh_database_migrations": true,
+            "request_recovery_ready": true,
+            "legacy_recovery_disabled": true,
+            "candidate_listener_closed": true,
+            "business_runtime_cleanup_confirmed": true,
+            "temporary_database_removed": true,
+            "existing_service_identity_unchanged": true
+          },
+          "failure": "ToolSecurityError",
+          "remaining_running_execution_count": 0
+        },
+        "sha256": "0d5f934e360ab522fa88d7f055a543dafae503f0a7050ec3ace210b355aa829a"
+      },
+      "v2": {
+        "proof": {
+          "schema": "siq.qwen38.candidate-api-proof.v1",
+          "passed": false,
+          "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+          "production_ready": false,
+          "checks": {
+            "fresh_database_migrations": true,
+            "request_recovery_ready": true,
+            "legacy_recovery_disabled": true,
+            "business_model_marker_returned": false,
+            "business_execution_completed": false,
+            "API_finalizer_released_before_diagnostic_cleanup": true,
+            "model_bridge_correlated_200": true,
+            "candidate_listener_closed": true,
+            "business_runtime_cleanup_confirmed": true,
+            "temporary_database_removed": true,
+            "existing_service_identity_unchanged": true
+          },
+          "business_HTTP_attempted": true,
+          "business_HTTP_status": 200,
+          "request_run_sha256": "b37229a994f512b59bce8ed59e6ccc3ad7f8fef980ca2068be68726ef694878f",
+          "bridge_statuses": [
+            200
+          ],
+          "failure": "candidate_business_result_unconfirmed",
+          "remaining_running_execution_count": 0
+        },
+        "sha256": "f6f52136d4791714b481c597428ca1d122ae5d7912d35cc77defdf74671e1191"
+      }
+    },
+    "not_proven": [
+      "streaming_business_HTTP",
+      "API_crash_restart_inflight_cancellation_and_revocation",
+      "other_host_retrieval_paths_and_independent_history_active_authorization",
+      "real_IAM_business_approval_and_event_projection",
+      "native_CI_production_readiness"
+    ],
+    "source_sha256": {
+      "apps/api/services/agent_runtime_parse_only.py": "ac66d6738fa3e72361cecc60b4fac6ea2821c999515d7442ba6527cd0b14762f",
+      "apps/api/tests/test_agent_runtime_parse_only.py": "4458556d393688ec69fd8e11bdb3f76ced4106eda1015494d276c6152570adb8",
+      "scripts/openshell/prove_qwen38_candidate_api.py": "c7ba7d5812ec4e3027a0dcc456046d35c24c88764ecfbb92b4cf179cd3d95184",
+      "scripts/openshell/prove_qwen38_business_api.py": "4d01253e16f8bc082d1584b20c706a7fd5cb9756e606058cc3811951a25fd19e",
+      "scripts/openshell/tests/test_prove_qwen38_business_api.py": "fd9f4a17041640a6c16b3310abaa670af839998c6d38e6986de11f970254341e",
+      "apps/api/main.py": "8e2077e2c3571d045dd7db95189b1647231b0153ce1b22926ef7f8de80aa805b",
+      "apps/api/services/qwen38_request_selector.py": "7a0b88d34e10aeb78d090c40240767e96527c9e78c57a416e6a46b6c56cf0eee",
+      "apps/api/services/qwen38_request_deployment.py": "a9e00ae25729cc0e81a92514a1ac21cb63f10041967b0d9cf5d51b5ad77ede90",
+      "apps/api/README.md": "16fab6ec1100f3e9ff657163f6b827fe2655cf4770865091a79653ab118d9875",
+      "docs/architecture/qwen38-request-runtime-v1.md": "9643d13331718a7ff25a6eeff6e4a9f4c53d1366d3d5b1f85e46920ce2e51f5b",
+      "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "45664b0945fcb38051d4ab5658bc7f8748001c028c1682069c4f0f424e4b9943"
+    }
+  },
+  "research_evidence_sha256": "ddfa4ac46d582e37eefc1e95efcc7eb4ac80d2e2b2f18a6c095ed8f262159d59",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

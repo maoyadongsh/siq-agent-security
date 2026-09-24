@@ -1,0 +1,124 @@
+{
+  "schema_version": "siq.flagship.report-deployment-evidence/v1",
+  "date": "2026-09-24",
+  "passed": true,
+  "production_ready": false,
+  "actual_account_acceptance": false,
+  "url": "http://127.0.0.1:15173",
+  "api_port": 18089,
+  "applied_migrations": [
+    "024_create_business_report_publications.sql"
+  ],
+  "checks": {
+    "delivery.sanitized.json": {
+      "backup_server_matches_live_API_database": true,
+      "full_backup_restored_and_original_ledger_matches": true,
+      "restored_database_forward_migrations_passed": true,
+      "live_migrations_current_and_prior_ledger_unchanged": true,
+      "live_runner_second_apply_noop": true,
+      "online_API_identity_unchanged": true,
+      "rehearsal_database_removed": true
+    },
+    "web-delivery.sanitized.json": {
+      "new_api_routes_present_recovery_gate_preserved": true,
+      "new_bundle_served_from_isolated_web_directory": true,
+      "actual_rollback_to_previous_web_and_api": true,
+      "new_bundle_restored_after_rollback": true,
+      "anonymous_navigation_report_and_confirmation_denied": true,
+      "new_frontend_routes_served": true,
+      "main_api_old_api_model_and_bridge_unchanged": true
+    },
+    "retired-previews.sanitized.json": {
+      "retired": [
+        "siq-research-api-preview-e168.service",
+        "siq-research-api-preview-20260924.service",
+        "siq-research-api-preview-result-20260924.service",
+        "siq-research-api-preview-attachment-20260924.service"
+      ],
+      "protected_unchanged": true,
+      "passed": true
+    },
+    "browser/report.sanitized.json": [
+      "deployed_navigation_requires_business_login",
+      "mobile_login_no_horizontal_overflow",
+      "deployed_reports_require_business_login"
+    ]
+  },
+  "research_artifacts": [
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/prepare_database.py",
+      "sha256": "be10149f6a4e461295b2268fe54d7a82fc2f1636f053cc3ad04d7bbb3d0fd2b6",
+      "bytes": 8380
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/delivery.sanitized.json",
+      "sha256": "f3ec6cfaad42dafcf9e32abb4d958d45533ca4d06782257df37121c1efe60214",
+      "bytes": 4883
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/api-source-manifest.json",
+      "sha256": "8815e8baeb32dee258e28235b525207e23ae9c5b409a2e98fa864edac0193a76",
+      "bytes": 120351
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/web-manifest.json",
+      "sha256": "78771aae494b28355078f902be029094f2c8167fc003e71ed32dd08b220e1f8e",
+      "bytes": 30140
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/deployment-before.sanitized.json",
+      "sha256": "f721755af7b1f642c80e53a14e2673c52a2c82c9844efebf3a25706ca64f3ec5",
+      "bytes": 934
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/launch_api.py",
+      "sha256": "03e8f0a7e5451cc23675698e81608b36042d14e2abaa6ca1a79d5639c6cc49db",
+      "bytes": 754
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/deploy_web.py",
+      "sha256": "54c998963a426d911be2f2217890daf0a12190d5ba8e0453bd3a09b9ec0d94c1",
+      "bytes": 6158
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/web-delivery.sanitized.json",
+      "sha256": "f71258f43e577d66ff36653bf7ee109b7c8f267f4602653a828d75192483ceb1",
+      "bytes": 1998
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/retire_previews.py",
+      "sha256": "3916739715426de21f63a5e77ea25ea22f162bf0b14c9dc607b9e4636de8f439",
+      "bytes": 1824
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/retired-previews.sanitized.json",
+      "sha256": "9149ae00f0c402073aa9d6799cd30394e3fea443bcb82e6c67104bcb153ffa87",
+      "bytes": 280
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/browser/report.sanitized.json",
+      "sha256": "a4c86bcc804d129bd87e0b6133f6b67b98f9952be777806b528870ae1ae78ea3",
+      "bytes": 206
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/browser/login-desktop.png",
+      "sha256": "835799a386bab85f03e0544822560b4f00e61eb37412e4d4ceb83673f896a12b",
+      "bytes": 660735
+    },
+    {
+      "path": "var/ops/flagship-report-delivery-20260924/browser/login-mobile.png",
+      "sha256": "391d4829ef2f5faccd49ddf016fd9e83f7f16f0d144e42082a31afe7df98ae65",
+      "bytes": 153681
+    }
+  ],
+  "report": {
+    "path": "docs/development/business-report-deployment-20260924.md",
+    "sha256": "028adf27e0ec833f6cd970844d0e66e96a0215992a7ec61b52943c630fef77ec",
+    "bytes": 5710
+  },
+  "limitations": [
+    "Main API 18081 unchanged; preview execution recovery remains disabled and required",
+    "Real account/production IAM and enterprise control console not accepted",
+    "No formal release/signing or native platform acceptance"
+  ]
+}

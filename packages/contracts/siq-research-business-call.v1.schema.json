@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/siq-research-business-call.v1.schema.json",
+  "title": "Fixed sandbox research report business call",
+  "description": "Only the reviewed sandbox publisher rooted at /sandbox/siq-business. Tool names or schema validation do not constitute permission or effect evidence.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tool",
+    "params"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "siq-research-business-call/v1"
+    },
+    "tool": {
+      "type": "string"
+    },
+    "params": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "not": {
+        "pattern": "[^A-Za-z0-9._-]"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "tool": {
+          "const": "mcp__siq_business__research_publish_report"
+        },
+        "params": {
+          "type": "object",
+          "required": [
+            "task_id",
+            "request_sha256",
+            "approval_sha256"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "task_id": {
+              "$ref": "#/$defs/id"
+            },
+            "request_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "approval_sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "tool": {
+          "const": "mcp__siq_business__research_verify_published_report"
+        },
+        "params": {
+          "type": "object",
+          "required": [
+            "report_key"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "report_key": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

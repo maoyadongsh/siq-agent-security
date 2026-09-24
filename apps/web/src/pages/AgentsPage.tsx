@@ -1,399 +1,78 @@
-/**
- * 智能体资产（DEV13-B）：智能扫描须显式选择环境，禁止静默 envs[0]。
- */
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
-import FormDialog from '@/components/FormDialog';
-import { Icon } from '@/components/icons';
+import CandidateReview from '@/components/inventory/CandidateReview';
 import { useApiList } from '@/hooks/useApiList';
-import { api, ApiError } from '@/api/client';
-import type { AgentAsset, Environment } from '@/api/types';
+import { assetStatusLabel, inventoryAccess, inventoryStamp, type InventoryAccess } from '@/api/inventoryReview';
+import type { AgentAsset } from '@/api/types';
 
-/** 控制面不可达时的安全示例数据；已连接时由 GET /agents 覆盖 */
-const PLACEHOLDER_AGENTS: AgentAsset[] = [
-  {
-    id: 'agt-01h2kd93nf',
-    name: 'siq_legal_advisor',
-    role: 'contract-review',
-    framework: 'hermes',
-    status: 'managed',
-    system_id: null,
-    owner_user_id: 'u-admin',
-    source_type: 'hermes_profile',
-    source_locator: 'hermes://legal@v1',
-    updated_at: '2026-08-12T09:30:00Z',
-  },
-  {
-    id: 'agt-02k8w1b3m7',
-    name: 'ops_incident_responder',
-    role: 'incident-response',
-    framework: 'openclaw',
-    status: 'confirmed',
-    system_id: null,
-    owner_user_id: null,
-    source_type: 'process_list',
-    source_locator: 'proc://incident@v1',
-    updated_at: '2026-08-08T11:02:00Z',
-  },
-  {
-    id: 'agt-04r7t2y8j5',
-    name: 'finance_reporting_bot',
-    role: 'reporting',
-    framework: 'hermes',
-    status: 'managed',
-    system_id: null,
-    owner_user_id: 'u-admin',
-    source_type: 'docker',
-    source_locator: 'docker://finance-reporting:1.2.0',
-    updated_at: '2026-06-18T08:05:00Z',
-  },
-];
-
-/** placeholder 候选（联调后由 /candidates 返回：status ∈ candidate|needs_review） */
-const PLACEHOLDER_CANDIDATES: AgentAsset[] = [
-  {
-    id: 'agt-03q4z9p6c2',
-    name: 'data_analyst_ghost',
-    role: null,
-    framework: 'unknown',
-    status: 'needs_review',
-    system_id: null,
-    owner_user_id: null,
-    source_type: 'process_list',
-    source_locator: 'proc://analyst@v2',
-    updated_at: '2026-08-10T23:47:00Z',
-  },
-  {
-    id: 'agt-05m2n8v4d1',
-    name: 'code_review_bot',
-    role: null,
-    framework: 'openclaw',
-    status: 'candidate',
-    system_id: null,
-    owner_user_id: null,
-    source_type: 'docker',
-    source_locator: 'docker://code-review:latest',
-    updated_at: '2026-08-13T02:18:00Z',
-  },
-];
-
-const statusTag: Record<string, string> = {
-  managed: 'tag-ok',
-  confirmed: 'tag-ok',
-  stale: 'tag-warn',
-  candidate: 'tag-warn',
-  needs_review: 'tag-warn',
-  dismissed: 'tag-err',
-  retired: '',
-};
-
-const agentColumns: TableColumn<AgentAsset>[] = [
-  {
-    key: 'name',
-    header: '名称',
-    render: (a) => <Link to={`/agents/${a.id}`}>{a.name}</Link>,
-  },
-  { key: 'role', header: '角色', render: (a) => a.role ?? '—' },
-  {
-    key: 'status',
-    header: '状态',
-    render: (a) => (
-      <span className={`tag ${statusTag[a.status] ?? ''}`}>{a.status}</span>
-    ),
-  },
-  { key: 'framework', header: '框架', render: (a) => a.framework },
-  { key: 'updated_at', header: '更新时间', render: (a) => a.updated_at },
-];
-
-type TabKey = 'agents' | 'candidates';
-
+const empty: AgentAsset[] = [];
+const sourceLabels: Record<string, string> = { hermes_profile: 'Hermes 角色配置', openclaw_config: 'OpenClaw 配置', openclaw_agent: 'OpenClaw 角色配置', docker: '容器配置', process_list: '进程信息' };
 export default function AgentsPage() {
-  const [tab, setTab] = useState<TabKey>('agents');
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [busyId, setBusyId] = useState<string | null>(null);
-  const [scanning, setScanning] = useState(false);
-  const [scanMessage, setScanMessage] = useState<string | null>(null);
-  const [scanError, setScanError] = useState<string | null>(null);
-  const [scanEnvironmentId, setScanEnvironmentId] = useState('');
-  /** 候选确认 / 驳回模态目标（替代原生 prompt） */
-  const [confirmTarget, setConfirmTarget] = useState<AgentAsset | null>(null);
-  const [dismissTarget, setDismissTarget] = useState<AgentAsset | null>(null);
-
-  const agents = useApiList<AgentAsset>('/agents', PLACEHOLDER_AGENTS);
-  const candidates = useApiList<AgentAsset>('/candidates', PLACEHOLDER_CANDIDATES);
-  const { rows: environments, status: envStatus } = useApiList<Environment>('/environments', []);
-
-  /** 智能扫描：标准安全范围一次下发（hermes profiles / OpenClaw 配置 / docker 标签）。 */
-  const runSmartScan = async () => {
-    setScanning(true);
-    setScanError(null);
-    setScanMessage(null);
-    try {
-      if (!scanEnvironmentId) {
-        setScanError('请先选择环境（禁止自动选首个）');
-        return;
-      }
-      const known = environments.some((e) => e.id === scanEnvironmentId);
-      if (!known) {
-        setScanError('所选环境不在当前列表中，请重新选择');
-        return;
-      }
-      const result = await api.smartScan(scanEnvironmentId);
-      const names = result.tasks.map((t) => t.connector).join('、');
-      setScanMessage(`已下发 ${result.tasks.length} 个扫描任务（${names}）；本机 Edge 执行后候选将自动更新`);
-      if (result.note) setScanError(result.note);
-      // 给 Edge 一点执行时间后刷新候选
-      setTimeout(() => {
-        agents.refresh();
-        candidates.refresh();
-      }, 2500);
-    } catch (err) {
-      setScanError(err instanceof ApiError ? err.message : '扫描失败');
-    } finally {
-      setScanning(false);
-    }
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('view') === 'candidates' ? 'candidates' : 'agents';
+  const agents = useApiList<AgentAsset>('/agents', empty);
+  const candidates = useApiList<AgentAsset>('/candidates', empty);
+  const [access, setAccess] = useState<InventoryAccess>();
+  const [accessError, setAccessError] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const [message, setMessage] = useState('');
+  const [target, setTarget] = useState<{ asset: AgentAsset; action: 'confirm' | 'dismiss' }>();
+  const active = tab === 'candidates' ? candidates : agents;
+  useEffect(() => {
+    let live = true;
+    inventoryAccess().then(v => { if (live) { setAccess(v); setAccessError(false); } })
+      .catch(() => { if (live) { setAccess(undefined); setAccessError(true); } });
+    return () => { live = false; };
+  }, [retry]);
+  const refresh = () => { agents.refresh(); candidates.refresh(); setAccess(undefined); setRetry(n => n + 1); setMessage(''); };
+  const resolved = (asset: AgentAsset, reconciled: boolean) => {
+    setTarget(undefined);
+    setMessage(reconciled ? `已核对“${asset.name}”当前为${assetStatusLabel(asset.status)}。这可能包含其他操作者的处理，请按详情核查。`
+      : `已读回“${asset.name}”：${assetStatusLabel(asset.status)}。${asset.status === 'confirmed' ? '工具权限没有因此改变。' : '原配置保持不变。'}`);
+    if (['confirmed', 'managed', 'stale', 'retired'].includes(asset.status)) setParams({ view: 'agents' });
+    agents.refresh(); candidates.refresh();
   };
-
-  const active = tab === 'agents' ? agents : candidates;
-
-  /** 执行写操作；成功返回 true，失败时记录 actionError 并返回 false */
-  const runAction = async (fn: () => Promise<unknown>): Promise<boolean> => {
-    setActionError(null);
-    try {
-      await fn();
-      return true;
-    } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : '操作失败');
-      return false;
-    }
-  };
-
-  /** 确认候选：模态输入 role / owner（均可选）；成功后候选移入资产列表 */
-  const handleConfirmSubmit = async (values: Record<string, string>) => {
-    const c = confirmTarget;
-    if (!c) return;
-    setBusyId(c.id);
-    const ok = await runAction(() =>
-      api.confirmCandidate(c.id, {
-        role: values.role?.trim() || undefined,
-        owner_user_id: values.owner?.trim() || undefined,
-      }),
-    );
-    setBusyId(null);
-
-    if (ok) {
-      setConfirmTarget(null);
-      candidates.mutate((rows) => rows.filter((r) => r.id !== c.id));
-      agents.refresh();
-    }
-  };
-
-  /** 驳回候选：模态输入原因（必填） */
-  const handleDismissSubmit = async (values: Record<string, string>) => {
-    const c = dismissTarget;
-    const reason = values.reason?.trim();
-    if (!c || !reason) return;
-
-    setBusyId(c.id);
-    const ok = await runAction(() => api.dismissCandidate(c.id, { reason }));
-    setBusyId(null);
-
-    if (ok) {
-      setDismissTarget(null);
-      candidates.mutate((rows) => rows.filter((r) => r.id !== c.id));
-    }
-  };
-
-  const candidateColumns: TableColumn<AgentAsset>[] = [
-    {
-      key: 'name',
-      header: '名称',
-      render: (c) => <Link to={`/agents/${c.id}`}>{c.name}</Link>,
-    },
-    { key: 'role', header: '角色', render: (c) => c.role ?? '—' },
-    { key: 'framework', header: '框架', render: (c) => c.framework },
-    {
-      key: 'source',
-      header: '来源',
-      render: (c) => (
-        <span title={c.source_locator ?? undefined}>
-          {c.source_type ?? '—'}
-        </span>
-      ),
-    },
-    {
-      key: 'status',
-      header: '状态',
-      render: (c) => (
-        <span className={`tag ${statusTag[c.status] ?? ''}`}>{c.status}</span>
-      ),
-    },
-    { key: 'updated_at', header: '发现时间', render: (c) => c.updated_at },
-    {
-      key: 'actions',
-      header: '操作',
-      render: (c) => (
-        <span className="row-actions">
-          <button
-            type="button"
-            className="btn btn-sm btn-ghost"
-            disabled={busyId === c.id}
-            onClick={() => setConfirmTarget(c)}
-          >
-            确认
-          </button>
-          <button
-            type="button"
-            className="btn btn-sm btn-danger"
-            disabled={busyId === c.id}
-            onClick={() => setDismissTarget(c)}
-          >
-            驳回
-          </button>
-        </span>
-      ),
-    },
+  const columns: TableColumn<AgentAsset>[] = [
+    { key: 'name', header: '名称', render: a => <Link to={`/agents/${encodeURIComponent(a.id)}?view=${tab}`}>{a.name}</Link> },
+    { key: 'role', header: '业务用途', render: a => a.role || '未填写' },
+    { key: 'framework', header: '框架', render: a => a.framework === 'unknown' ? '尚未识别' : a.framework },
+    { key: 'status', header: '状态', render: a => assetStatusLabel(a.status) },
+    { key: 'source', header: '发现来源', render: a => sourceLabels[a.source_type ?? ''] ?? '其他采集来源' },
+    { key: 'updated', header: '更新时间', render: a => inventoryStamp(a.updated_at) },
   ];
-
-  return (
-    <section>
-      <PageHeader
-        icon="agents"
-        title="智能体资产"
-        description="集中管理已发现与已纳管的智能体资产，并在候选视图中完成确认或驳回。"
-        connection={active.status}
-        connectionError={active.error}
-        actions={
-          <div className="scan-actions">
-            <label className="scan-env-pick">
-              <select
-                className="deploy-target"
-                value={scanEnvironmentId}
-                onChange={(e) => setScanEnvironmentId(e.target.value)}
-                disabled={scanning || envStatus === 'loading'}
-                aria-label="扫描目标环境"
-              >
-                <option value="">选择环境…</option>
-                {environments.map((env) => (
-                  <option key={env.id} value={env.id}>
-                    {env.name || env.id}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              className="btn-scan"
-              onClick={() => void runSmartScan()}
-              disabled={scanning || !scanEnvironmentId}
-              title={!scanEnvironmentId ? '请先选择环境' : undefined}
-            >
-              <span className="scan-icon">
-                <Icon name={scanning ? 'loading' : 'scan'} size={15} className={scanning ? 'icon-spin' : undefined} />
-              </span>
-              {scanning ? '扫描下发中…' : '智能扫描'}
-            </button>
-            <button className="btn-scan btn-scan-ghost" onClick={() => { agents.refresh(); candidates.refresh(); }} title="重新拉取资产与候选">
-              <span className="scan-icon">
-                <Icon name="refresh" size={14} />
-              </span>
-              刷新
-            </button>
-          </div>
-        }
-      />
-
-      {(scanMessage || scanError) && (
-        <div className="scan-result">
-          {scanMessage && <p className="sync-ok">{scanMessage}</p>}
-          {scanError && <p className="sync-err">{scanError}</p>}
-        </div>
-      )}
-      <div className="tabs" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'agents'}
-          className={`tab-btn${tab === 'agents' ? ' active' : ''}`}
-          onClick={() => setTab('agents')}
-        >
-          已纳管（{agents.rows.length}）
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'candidates'}
-          className={`tab-btn${tab === 'candidates' ? ' active' : ''}`}
-          onClick={() => setTab('candidates')}
-        >
-          发现候选（{candidates.rows.length}）
-        </button>
-      </div>
-      {actionError ? (
-        <p className="action-error" role="alert">
-          操作失败：{actionError}
-        </p>
-      ) : null}
-      {active.status === 'disconnected' ? (
-        <DisconnectedNotice error={active.error} onRetry={active.reload} />
-      ) : null}
-      {active.coverageText ? (
-        <p className="list-coverage" role="status">
-          {active.coverageText}
-        </p>
-      ) : null}
-      {tab === 'agents' ? (
-        <SimpleTable
-          columns={agentColumns}
-          rows={agents.rows}
-          rowKey={(a) => a.id}
-        />
-      ) : (
-        <SimpleTable
-          columns={candidateColumns}
-          rows={candidates.rows}
-          rowKey={(c) => c.id}
-          emptyText="暂无待评审候选"
-        />
-      )}
-      {active.hasMore ? (
-        <div className="list-more">
-          <button
-            type="button"
-            className="btn-sm"
-            disabled={active.loadingMore}
-            onClick={() => active.loadMore()}
-          >
-            {active.loadingMore ? '加载中…' : '加载更多'}
-          </button>
-        </div>
-      ) : null}
-
-      <FormDialog
-        open={confirmTarget !== null}
-        title={`确认候选「${confirmTarget?.name ?? ''}」为纳管资产`}
-        description="确认后候选将移入资产列表；业务角色与负责人均可稍后补充。"
-        fields={[
-          { key: 'role', label: '业务角色', placeholder: '如 contract-review' },
-          { key: 'owner', label: '负责人 user id', placeholder: '如 u-admin' },
-        ]}
-        submitLabel="确认纳管"
-        busy={busyId !== null}
-        onSubmit={(values) => void handleConfirmSubmit(values)}
-        onClose={() => setConfirmTarget(null)}
-      />
-      <FormDialog
-        open={dismissTarget !== null}
-        title={`驳回候选「${dismissTarget?.name ?? ''}」`}
-        fields={[{ key: 'reason', label: '驳回原因', required: true, placeholder: '必填，说明驳回依据' }]}
-        submitLabel="确认驳回"
-        danger
-        busy={busyId !== null}
-        onSubmit={(values) => void handleDismissSubmit(values)}
-        onClose={() => setDismissTarget(null)}
-      />
-    </section>
-  );
+  if (tab === 'candidates' && access?.can_confirm) columns.push({ key: 'actions', header: '操作', render: a => <span className="row-actions">
+    <button className="btn btn-sm" disabled={active.status !== 'connected' || !!target} onClick={() => setTarget({ asset: a, action: 'confirm' })}>确认资产</button>
+    <button className="btn btn-sm" disabled={active.status !== 'connected' || !!target} onClick={() => setTarget({ asset: a, action: 'dismiss' })}>驳回</button>
+  </span> });
+  const shownRows = active.status === 'connected' ? active.rows : [];
+  return <section>
+    <PageHeader icon="agents" title="智能体资产" description="先核对发现的配置与业务用途，再确认资产。确认资产不代表权限已经生效。"
+      connection={active.status} connectionError={active.error} actions={<div className="row-actions">
+        {access?.can_discover ? <Link className="btn" to="/environments">接入环境与发现</Link> : null}
+        <button className="btn" onClick={refresh}>刷新资产列表</button>
+      </div>} />
+    <div className="tabs" role="tablist" aria-label="资产视图">
+      <button role="tab" aria-selected={tab === 'agents'} className={`tab-btn${tab === 'agents' ? ' active' : ''}`} onClick={() => setParams({ view: 'agents' })}>资产清单{agents.status === 'connected' ? `（已加载 ${agents.rows.length}）` : ''}</button>
+      <button role="tab" aria-selected={tab === 'candidates'} className={`tab-btn${tab === 'candidates' ? ' active' : ''}`} onClick={() => setParams({ view: 'candidates' })}>发现候选{candidates.status === 'connected' ? `（已加载 ${candidates.rows.length}）` : ''}</button>
+    </div>
+    {message ? <p role="status">{message}</p> : null}
+    {accessError ? <p role="alert">无法核对操作权限，请刷新资产列表重试。</p> : null}
+    {tab === 'candidates' && access && !access.can_confirm ? <p>当前账号仅可查看候选。处理候选需要资产确认权限，请联系组织管理员申请。</p> : null}
+    {active.status === 'disconnected' ? <DisconnectedNotice error={active.error} onRetry={refresh} /> : null}
+    {active.coverageText ? <p role="status">{active.coverageText}</p> : null}
+    {shownRows.length ? <>
+      <div className="inventory-desktop"><SimpleTable columns={columns} rows={shownRows} rowKey={a => a.id} /></div>
+      <div className="inventory-mobile">{shownRows.map(asset => <article className="card" key={asset.id}>
+        <h2>{columns[0].render(asset)}</h2>
+        <dl className="kv-list">{columns.slice(1).map(column => <div className="inventory-field" key={column.key}><dt>{column.header}</dt><dd>{column.render(asset)}</dd></div>)}</dl>
+      </article>)}</div>
+    </> : <SimpleTable columns={columns} rows={[]} rowKey={(a: AgentAsset) => a.id}
+      emptyText={active.status === 'loading' ? '正在读取资产…' : active.status === 'disconnected' ? '当前无法读取资产。' : tab === 'candidates' ? '暂无待处理候选。可从环境与设备页面提交发现任务。' : '暂无已确认资产。请在发现候选中核对后确认。'} />}
+    {active.hasMore ? <div className="list-more"><button className="btn" disabled={active.loadingMore || active.status !== 'connected'} onClick={active.loadMore}>{active.loadingMore ? '正在加载…' : '加载更多'}</button></div> : null}
+    {active.error && active.status === 'connected' ? <p role="alert">{active.error}</p> : null}
+    {target && access?.can_confirm ? <CandidateReview key={`${target.asset.id}:${target.action}`} asset={target.asset} action={target.action} onClose={() => setTarget(undefined)} onResolved={resolved} /> : null}
+  </section>;
 }

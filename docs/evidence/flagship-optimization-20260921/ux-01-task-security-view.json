@@ -1,0 +1,104 @@
+{
+  "absolute_paths_included": false,
+  "api_contract": {
+    "activity_receipt_limit": 10000,
+    "destination_limit": 1024,
+    "endpoint": "GET /v1/task-activities/{activity_id}/security-view?view={view}&snapshot={snapshot}",
+    "schema_version": "local-task-security-view/v1",
+    "snapshot_conflict_status": 409
+  },
+  "artifacts": {
+    "frontend_component_sha256": "d7a74f0856c7cd99c14ec577138441bfca692d08d77120ea95f0feb4dfce751f",
+    "embedded_detail_bundle": "apps/agentshield/internal/ui/embedded/assets/TaskActivityDetailPage-LSsh_tq5.js",
+    "embedded_detail_bundle_sha256": "202ba37fe26cb34c80a0d4412a81eabc26cd47a63636fa66d51e96c63b38ad06",
+    "embedded_index_sha256": "0fe06f36d8766a221b9f62f57d77f5fa94867214e568edac73a2d9ed540b9210",
+    "embedded_main_bundle": "apps/agentshield/internal/ui/embedded/assets/index.local-CwDE7B5h.js",
+    "embedded_main_bundle_sha256": "4777437221169cc4c21f9573c899ed0883da77e1ade81bcbb94e60d33b36c75d",
+    "frontend_contract_sha256": "39674c0ef14de25f8fbcaf35c4341dc4c90b550a2e741e5f633803ccd2f32389",
+    "frontend_contract_test_sha256": "d998752508e934df0ed2708b43894071f3c32860c6158e7fd4b1d0c836adedf1",
+    "server_contract_fixture_sha256": "ca64f133a50e0f21edd8e5d7aaee20c0e85750c00c77f335e2289704587bc0bc",
+    "server_implementation_sha256": "4886e6962cec5080bf0100739488ea26b26a677d6102599641c4b58a5a35f1d6",
+    "server_test_sha256": "192f659eb8c67af15781dc045b05f2c34d751f16203849b62cf5d93928f94776"
+  },
+  "authorization_semantics": {
+    "allow_requires": [
+      "intent_binding_bound",
+      "authority_status_valid"
+    ],
+    "decision_key": "final_receipt_per_action_id",
+    "statuses": [
+      "authorized",
+      "denied",
+      "pending",
+      "mixed",
+      "unknown"
+    ],
+    "task_wide_future_authority_claimed": false
+  },
+  "candidate_and_deployment": {
+    "ci01_current_documented_state": "blocked_before_candidate_verification",
+    "release_assurance_reason_code": "native_candidate_evidence_not_connected",
+    "release_assurance_status": "not_evaluated",
+    "task_view_implies_candidate_pass": false,
+    "task_view_implies_production_approval": false
+  },
+  "data_boundary": {
+    "destination_plaintext_exposed": false,
+    "destination_projection": [
+      "domain",
+      "sha256_resource_ref",
+      "effect_types",
+      "receipt_count"
+    ],
+    "excluded": [
+      "business_purpose",
+      "filesystem_path",
+      "network_host",
+      "message_recipient",
+      "params",
+      "params_excerpt",
+      "raw_task_content",
+      "sandbox_id"
+    ]
+  },
+  "evidence_source": {
+    "business_object": "verified_activity_binding_and_signed_intent",
+    "completion": "signed_intent_historical_actions_and_effect_evidence",
+    "data_destinations": "signed_receipt_resource_refs",
+    "run_mode": "signed_receipt_platform_enforcement_model_key_and_sandbox_binding_presence"
+  },
+  "negative_tests": [
+    "missing_or_stale_snapshot_rejected",
+    "unauthenticated_and_decision_credentials_rejected",
+    "wrong_method_rejected",
+    "unassigned_activity_not_upgraded",
+    "purpose_params_destination_and_sandbox_plaintext_not_returned",
+    "forged_authorized_status_rejected_by_frontend",
+    "verified_completion_without_evidence_rejected",
+    "forged_release_pass_rejected",
+    "plaintext_destination_field_rejected",
+    "invented_business_label_rejected",
+    "cross_task_binding_rejected"
+  ],
+  "production_eligible": false,
+  "readiness_effect": "none",
+  "recorded_at": "2026-09-21T23:47:40+08:00",
+  "scope": "local_admin_task_security_view",
+  "secrets_included": false,
+  "status": "implemented_local_nonproduction",
+  "test_results": {
+    "go_full_suite": "passed",
+    "go_vet": "passed",
+    "local_web_production_build": "passed",
+    "server_focused_security_view": "2 passed",
+    "web_full_suite": "233 passed",
+    "web_security_view_contract": "3 passed"
+  },
+  "view_sections": [
+    "business_object",
+    "run_mode",
+    "data_destinations",
+    "authorization",
+    "actual_result"
+  ]
+}

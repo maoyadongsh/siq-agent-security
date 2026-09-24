@@ -3,13 +3,75 @@
 
 import argparse
 import json
+import re
 import secrets
 import string
 import subprocess
 import tempfile
 from pathlib import Path
 
+import tomllib
+
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def check_flagship_exceptions(binary, config, token):
+    """Reviewed evidence values are allowed only at the exact field and path."""
+    settings = tomllib.loads(config.read_text())
+    entries = [entry for rule in settings.get("rules", [])
+               if rule["id"] == "generic-api-key"
+               for entry in rule.get("allowlists", [])
+               if any("flagship-optimization-20260921" in path
+                      for path in entry.get("paths", []))]
+    required, excepted, files = set(), set(), {}
+    for entry in entries:
+        pattern = entry["paths"][0]
+        name = pattern.removeprefix("^").removesuffix("$").replace(r"\.", ".")
+        source = (ROOT / name).read_text().splitlines()
+        lines = []
+        for expression in entry["regexes"]:
+            line = next(line for line in source if re.fullmatch(expression, line))
+            lines.append(line)
+            excepted.add(("generic-api-key", name, len(lines)))
+            lines.append(re.sub(r'"[a-f0-9]{32,64}"',
+                                '"' + "0123456789abcdef" * 4 + '"', line))
+            required.add(("generic-api-key", name, len(lines)))
+            lines.append(re.sub(r'"[^\"]+":', '"api_key":', line, count=1))
+            required.add(("generic-api-key", name, len(lines)))
+        lines.append(f'"token": "{token}"')
+        required.add(("github-pat", name, len(lines)))
+        files[name] = "\n".join(lines) + "\n"
+        copied = "copied/" + name
+        files[copied] = lines[0] + "\n"
+        required.add(("generic-api-key", copied, 1))
+    if not entries:
+        raise SystemExit("scanner calibration failed: flagship exceptions missing")
+    with tempfile.TemporaryDirectory(prefix="siq-flagship-scanner-") as directory:
+        root = Path(directory)
+        for name, content in files.items():
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content)
+        for arguments in (("init", "-q", "-b", "main"),
+                          ("config", "user.name", "Scanner calibration"),
+                          ("config", "user.email", "scanner@example.invalid"),
+                          ("config", "commit.gpgsign", "false"),
+                          ("add", "."), ("commit", "-qm", "reviewed metadata fixtures")):
+            subprocess.run(["git", *arguments], cwd=root, capture_output=True,
+                           timeout=30, check=True)
+        report = root / "report.json"
+        result = subprocess.run([
+            str(binary.resolve()), "git", str(root), "--config", str(config.resolve()),
+            "--log-opts=-1 HEAD", "--redact", "--report-format", "json",
+            "--report-path", str(report),
+        ], capture_output=True, timeout=30, check=False)
+        rows = json.loads(report.read_text()) if report.exists() else []
+        actual = {(row["RuleID"], row["File"].replace("\\", "/"), row["StartLine"])
+                  for row in rows}
+        if result.returncode != 1 or not required <= actual or actual & excepted:
+            raise SystemExit("scanner calibration failed: flagship exceptions are not exact; "
+                             f"missing={sorted(required - actual)}; "
+                             f"unexpected={sorted(actual & excepted)}")
 
 
 def check_session_hash_exception(binary, config, token):
@@ -147,6 +209,7 @@ def main():
         if len(historical_rows) != 1 or historical_rows[0]["StartLine"] != 2:
             raise SystemExit("scanner calibration failed: historical test exception is not exact")
     check_session_hash_exception(args.binary, args.config, token)
+    check_flagship_exceptions(args.binary, args.config, token)
     check_history(args.binary, args.config, token)
     summary = {"status": "passed", "synthetic_only": True, "checks": [
         "ordinary credential detected", "new credential in allowed test path detected",
@@ -154,6 +217,7 @@ def main():
         "private-key block detected", "source hash metadata is not a secret",
         "historical synthetic value exception is exact and path-restricted",
         "reviewed session digest exception is exact by value, field and path",
+        "flagship digest and invocation exceptions reject changed values, fields and paths",
         "new digest and credentials in the same evidence file are detected",
         "same reviewed digest under a prefixed copy of the path is detected",
         "removed credentials in root, independent history and merge-only additions detected"], "raw_values_retained": False}

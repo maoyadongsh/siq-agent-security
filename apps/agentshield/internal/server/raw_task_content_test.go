@@ -589,7 +589,7 @@ func TestRawTaskContentNativeCaptureResolvesRuntimeBindingAndUniqueGrant(t *test
 	}); code != http.StatusOK {
 		t.Fatal(code, out)
 	}
-	_, binding, err := s.runtimeIdentities.AuthorizeSessionContext(credential, "hermes", agent, sessionID)
+	runtimeRecord, binding, err := s.runtimeIdentities.AuthorizeSessionContext(credential, "hermes", agent, sessionID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -629,6 +629,13 @@ func TestRawTaskContentNativeCaptureResolvesRuntimeBindingAndUniqueGrant(t *test
 	fields, _, err := s.rawStore.Read(binding.TaskID, result["record_id"].(string), time.Now())
 	if err != nil || len(fields) != 1 || fields[0].Value != "NATIVE_PRIVATE_RESULT" {
 		t.Fatal("native ciphertext unreadable", fields, err)
+	}
+	outputs, err := s.rawStore.ListRuntimeOutputs(binding.TaskID, runtimeRecord.IdentityID, sessionID, binding.BindingID, time.Now())
+	if err != nil || len(outputs) != 1 || outputs[0].RecordID != result["record_id"] {
+		t.Fatal("native output lost server-verified runtime provenance", outputs, err)
+	}
+	if outputs, err := s.rawStore.ListRuntimeOutputs(binding.TaskID, runtimeRecord.IdentityID, "other-session", binding.BindingID, time.Now()); err != nil || len(outputs) != 0 {
+		t.Fatal("native output attributed to another session", outputs, err)
 	}
 	second, err := s.rawAuthority.Issue(binding.TaskID, []string{"output"}, "operator", time.Hour, time.Hour, 4096, time.Now())
 	if err != nil {

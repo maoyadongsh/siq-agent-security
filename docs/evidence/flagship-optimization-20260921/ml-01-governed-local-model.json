@@ -1,0 +1,76 @@
+{
+  "bindings": {
+    "data_classification": "confidential_local",
+    "gateway": "siq-openshell-scope-validation",
+    "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "hermes_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+    "hermes_version": "0.21.0",
+    "image_id": "sha256:6914a40ecfa3264b2e88d37fdb4d67cfdfcef757021c3f96615e3168ec95e48a",
+    "image_ref": "siq/hermes-openshell-siq-analysis:3d82b38a8022141b9513f3fb",
+    "model_alias": "siq.local.nemotron-3.5-lightning.nvfp4.v1",
+    "model_id": "NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4",
+    "model_route_sha256": "664c7128ada2469f7eb8486c20fd8204a6ec9c2baded63c764063fdb1ed5be47",
+    "openshell_version": "0.0.83",
+    "runtime_config_sha256": "73cf7fca3ab395299927029666d38da42c493c46f874cb04e780920c13ba4f26"
+  },
+  "captured_at": "2026-09-21T10:12:00Z",
+  "checks": {
+    "cloud_fallback_forbidden": true,
+    "confidential_classification_bound": true,
+    "enterprise_scope_mount_count": 8,
+    "fallback_count": 0,
+    "governed_model_route_bound": true,
+    "hermes_v0210_candidate_bound": true,
+    "local_model_route_removed_only": true,
+    "original_policy_restored": true,
+    "outage_run_failed": true,
+    "outage_success_marker_absent": true,
+    "prompt_or_response_stored": false,
+    "provider_count": 0,
+    "public_egress_route_present": false,
+    "real_hermes_inference_completed": true
+  },
+  "evidence": {
+    "research_host_proof": "artifacts/openshell/flagship/ml01-governed-local-model.sanitized.json",
+    "research_host_proof_sha256": "5b51efb31688ad8f616a02275dbecabd8e2101a827aa956501c2e0dc8024d8cf",
+    "research_sandbox_proof": "artifacts/openshell/flagship/ml01-confidential-sandbox.sanitized.json",
+    "research_sandbox_proof_sha256": "ed13ae8ca75ee0aadfc8ddcce8b66848efc211de52566700c6db8fd8538159fb"
+  },
+  "limitations": [
+    "isolated_non_production_candidate",
+    "active_company_pool_not_replaced",
+    "api_response_model_field_is_profile alias; upstream identity is digest-bound by governed route and host model proof"
+  ],
+  "production_traffic_changed": false,
+  "readiness_effect": "none",
+  "run_receipts": {
+    "local_route_outage": {
+      "api_model_alias": "siq_analysis",
+      "create_status": 202,
+      "marker_absent": true,
+      "marker_exact": false,
+      "output_sha256": null,
+      "run_id_sha256": "c8d589e022a496002df1c5b5de5440a9d99691a2f9aa1064cce5ded00f004bba",
+      "terminal_status": "failed"
+    },
+    "positive": {
+      "api_model_alias": "siq_analysis",
+      "create_status": 202,
+      "marker_absent": false,
+      "marker_exact": true,
+      "output_sha256": "541a027519847d0ef1ee7ac0b4ab7b9b6141b6039e6e68fcf9c0145375c1188e",
+      "run_id_sha256": "a8fb64d0f4bc6a4b4dd3bb8f81e28fdcc74311e74cec1232db3dc944cf82ce96",
+      "terminal_status": "completed"
+    }
+  },
+  "schema_version": "siq.flagship.ml01-evidence.v1",
+  "status": "completed_isolated_confidential_candidate",
+  "task": "ML-01",
+  "validation": {
+    "candidate_inventory_after_stop": 0,
+    "focused_tests_passed": 163,
+    "main_canaries_healthy_after_stop": 2,
+    "ml01_proof_tests_passed": 4,
+    "temporary_api_stopped": true
+  }
+}

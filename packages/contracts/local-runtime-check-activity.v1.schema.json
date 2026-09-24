@@ -1,0 +1,184 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trusted activity reference for a completed Hermes runtime check",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "check_id",
+    "instance_id",
+    "snapshot",
+    "prefix_valid",
+    "history_integrity",
+    "activity"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-check-activity/v1"
+    },
+    "check_id": {
+      "type": "string",
+      "pattern": "^rc-[a-f0-9]{32}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "snapshot": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "prefix_valid": {
+      "const": true
+    },
+    "history_integrity": {
+      "enum": [
+        "verified",
+        "unknown"
+      ]
+    },
+    "activity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "activity_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "attribution": {
+          "const": "bound"
+        },
+        "binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "chain_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "platform": {
+              "const": "hermes"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "agent_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "task_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "intent_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "intent_digest": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "chain_id",
+            "platform",
+            "session_id",
+            "agent_id",
+            "task_id",
+            "intent_id",
+            "intent_digest"
+          ]
+        },
+        "receipt_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "first_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_seq": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "activity_id",
+        "attribution",
+        "binding",
+        "receipt_count",
+        "first_seq",
+        "last_seq"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "attribution": {
+                "const": "bound"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "binding": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "chain_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "platform": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "agent_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "task_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "intent_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "intent_digest": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "chain_id",
+                  "platform",
+                  "session_id",
+                  "agent_id",
+                  "task_id",
+                  "intent_id",
+                  "intent_digest"
+                ]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "binding": {
+                "type": "null"
+              },
+              "receipt_count": {
+                "const": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

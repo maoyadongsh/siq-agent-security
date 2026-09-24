@@ -1,0 +1,156 @@
+{
+  "schema_version": "siq.flagship.evidence.business-cancel.v1",
+  "research_evidence": {
+    "captured_at_utc": "2026-09-22T22:52:35.139192+00:00",
+    "passed": true,
+    "candidate_ready": false,
+    "production_eligible": false,
+    "secrets_included": false,
+    "validation": {
+      "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest scripts/openshell/tests/test_authenticated_model_bridge.py scripts/openshell/tests/test_model_bridge_stream.py scripts/openshell/tests/test_qwen38_candidate_run_guard.py scripts/openshell/tests/test_prove_qwen38_business_api.py scripts/openshell/tests/test_prove_qwen38_streaming_api.py scripts/openshell/tests/test_prove_qwen38_cancel_api.py apps/api/tests/test_agent_runtime_active_runs.py -q --disable-warnings",
+      "passed": 111,
+      "warnings": 265,
+      "duration_seconds": 3.1,
+      "shared_suite_do_not_add_across_exports": true
+    },
+    "not_proven": [
+      "actual_API_crash_and_restart",
+      "business_grant_revocation_during_actual_HTTP_run",
+      "failed_ExecStopPost_automatic_retry",
+      "independent_active_history_authorization_and_remaining_host_retrieval_boundaries",
+      "real_IAM_business_approval_and_events",
+      "native_CI_and_production_readiness"
+    ],
+    "schema_version": "siq.qwen38.business-cancel-evidence.v1",
+    "scope": "actual_HTTP_cancel_after_model_output_and_API_self_finalization",
+    "live_proof": {
+      "artifact": "ml02-business-cancel-e128-v4.sanitized.json",
+      "sha256": "d7b72257be2622cddb1804e2805a06a72014f0f4a865fd0ac3a38f6a04b0bc50",
+      "result": {
+        "schema": "siq.qwen38.candidate-api-proof.v1",
+        "passed": true,
+        "scope": "actual_HTTP_inflight_cancel_after_local_model_output",
+        "production_ready": false,
+        "checks": {
+          "fresh_database_migrations": true,
+          "request_recovery_ready": true,
+          "legacy_recovery_disabled": true,
+          "original_execution_running_before_stop": true,
+          "anonymous_stop_denied": true,
+          "authenticated_stop_matched_original_run": true,
+          "cancel_sent_after_model_output": true,
+          "cancelled_stream_has_no_success_done": true,
+          "cancelled_stream_single_original_run": true,
+          "cancelled_stream_has_explicit_terminal": true,
+          "model_delta_observed_before_stop": true,
+          "business_execution_cancelled": true,
+          "API_finalizer_released_before_diagnostic_cleanup": true,
+          "model_bridge_stream_started_200": true,
+          "sandbox_supervisor_and_forward_absent": true,
+          "child_identity_revoked_before_root_cleanup": true,
+          "old_child_credential_401": true,
+          "root_identity_still_active_before_diagnostic_cleanup": true,
+          "anonymous_analysis_denied": true,
+          "real_http_login": true,
+          "analyst_cannot_issue_grant": true,
+          "grant_retry_same_identity": true,
+          "analyst_cannot_revoke_grant": true,
+          "admin_http_revoke": true,
+          "business_settled_before_api_stop": true,
+          "candidate_listener_closed": true,
+          "business_runtime_cleanup_confirmed": true,
+          "temporary_database_removed": true,
+          "existing_service_identity_unchanged": true
+        },
+        "business_HTTP_attempted": true,
+        "business_HTTP_status": 200,
+        "SSE_event_counts": {
+          "delta": 3,
+          "error": 2,
+          "progress": 8,
+          "replace": 2,
+          "run": 1
+        },
+        "request_run_sha256": "4a9358379e7f637375f1ffcf95050f7c4bcae7681dee9fdb6d10405b993ce9b4",
+        "bridge_stream_start_statuses": [
+          200
+        ],
+        "bridge_terminal_statuses": [
+          502
+        ],
+        "remaining_running_execution_count": 0
+      }
+    },
+    "interpretation": {
+      "cancelled_error_events": 2,
+      "terminal_event_deduplication_proven": false,
+      "bridge_start_200_is_not_complete_answer": true,
+      "bridge_terminal_502_is_interrupted_stream": true,
+      "existing_service_identity_check_baseline": "after_E129_bridge_deployment"
+    },
+    "historical_attempts": [
+      {
+        "artifact": "ml02-business-cancel-e128-v1.sanitized.json",
+        "sha256": "2fd83233a88a4d243beeb07bec7ab7581388faa537a84f26fba05adbd0aacced",
+        "passed": false,
+        "meaning": "cancel_not_sent"
+      },
+      {
+        "artifact": "ml02-business-cancel-e128-v1-recovery.sanitized.json",
+        "sha256": "5868348475b8d9e5b9f80a052e858ce9e875d6a26dec0fe60d6812bd1c8db03a",
+        "passed": false,
+        "meaning": "original_manager_recovery_failed"
+      },
+      {
+        "artifact": "ml02-business-cancel-e128-v1-operator-recovery.sanitized.json",
+        "sha256": "54269c58ae53b13e7c06fdc30cd21824dc1a8fd8fe696455943765f17bd91987",
+        "passed": false,
+        "meaning": "operator_attempt_failed_before_action"
+      },
+      {
+        "artifact": "ml02-business-cancel-e128-v1-operator-recovery-v2.sanitized.json",
+        "sha256": "730cfe9eeb1cf0259c857d2a85efc62e1eb884cbc59534903fadacbc2e8c0ba9",
+        "passed": true,
+        "meaning": "explicit_operator_cleanup_not_automatic_recovery"
+      },
+      {
+        "artifact": "ml02-business-cancel-e128-v2.sanitized.json",
+        "sha256": "6ad814012e1f5c8a951a336131fced91be91a23974a2b159e2ae0df4e6650870",
+        "passed": false,
+        "meaning": "cancel_failed"
+      },
+      {
+        "artifact": "ml02-business-cancel-e128-v2-recovery.sanitized.json",
+        "sha256": "bb761ed63360dc902e4008892921ffc017a44daa6c18f9ba0a72406ea96639e8",
+        "passed": true,
+        "meaning": "original_manager_recovery"
+      },
+      {
+        "artifact": "ml02-business-cancel-e128-v3.sanitized.json",
+        "sha256": "6ad814012e1f5c8a951a336131fced91be91a23974a2b159e2ae0df4e6650870",
+        "passed": false,
+        "meaning": "runtime_notice_not_model_output"
+      },
+      {
+        "artifact": "ml02-business-cancel-e128-v3-recovery.sanitized.json",
+        "sha256": "bb761ed63360dc902e4008892921ffc017a44daa6c18f9ba0a72406ea96639e8",
+        "passed": true,
+        "meaning": "original_manager_recovery"
+      }
+    ],
+    "source_sha256": {
+      "scripts/openshell/prove_qwen38_cancel_api.py": "8b567afa6bd1a20fd1ba55eaa5f0d3378a07298595cf920e4a519d8e4b4f86e7",
+      "scripts/openshell/prove_qwen38_business_api.py": "654d9d9a7d388468cfeecfaa9df2fcd223ac36017c862a37a75586fe52828a2e",
+      "scripts/openshell/prove_qwen38_candidate_api.py": "1121e1b2b21be5ddb4aa19e2a693151108ba15b170fde5b681006d5fe76db56f",
+      "scripts/openshell/qwen38_candidate_renewal.py": "98c2c34fd09b1ada25a66a83ac77f9fbac80f5764cd6ccd8280ad587ceb5ab06",
+      "scripts/openshell/prove_qwen38_hermes_bridge_trace.py": "1f6bef943150f6885524e0fbb8c6f9f2445d1f5e8065a6cea3797e602a02b8f6",
+      "apps/api/services/agent_chat_runtime_impl.py": "0548e4dbcff94b2c93aeccb764c91f81218cf6c6c3df177e17e39038b4bb3486",
+      "scripts/openshell/tests/test_prove_qwen38_cancel_api.py": "cf189b53eb26ba1e324aea96c1f6a43cfdff0c2ee5b706d490c0748646944242",
+      "scripts/openshell/tests/test_qwen38_candidate_lease.py": "461ce2bb77c524bad161d5a5d94391ff1ea91f35380cfaf25ad8a786766404a9"
+    }
+  },
+  "research_evidence_sha256": "f8a8e849878f3cd5d2305d8375c88adc3786a11ad0004b015ce09510e54db505",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false
+}

@@ -1,0 +1,71 @@
+{
+  "captured_at_utc": "2026-09-22T11:29:47.436532+00:00",
+  "candidate_ready": false,
+  "production_eligible": false,
+  "secrets_included": false,
+  "schema_version": "siq.flagship.evidence.api-startup-lease-guard.v1",
+  "scope": "actual_API_startup_function_with_isolated_SQLite_coordination_and_mock_Hermes_pool_transports",
+  "code_results": {
+    "startup_heartbeat_covers_queue_and_create": true,
+    "initial_predispatch_and_result_owner_checks": true,
+    "check_timeout_seconds": 10,
+    "maximum_interval_seconds": 60,
+    "expired_claim_cannot_be_revived": true,
+    "database_errors_fail_closed_with_categorical_diagnostics": true,
+    "owner_or_pool_loss_cancels_and_joins_startup": true,
+    "unknown_create_preserves_orphan": true,
+    "late_returned_run_stopped_and_quiescence_required": true,
+    "startup_watcher_joined_before_run_ID_handoff": true,
+    "no_host_or_cloud_replay_added": true
+  },
+  "validation": {
+    "focused_startup_tests_passed": 13,
+    "combined_suite_passed": 292,
+    "initial_neighbor_run": {
+      "passed": 170,
+      "failed": 5,
+      "reason": "legacy_unit_fixtures_mocked_claim_without_DB_row_or_renewal; updated_explicit_renewal_mocks_and_order_assertions"
+    },
+    "ruff_passed": true,
+    "diff_check_passed": true,
+    "test_files": [
+      "apps/api/tests/test_runtime_startup_guard.py",
+      "apps/api/tests/test_runtime_coordination.py",
+      "apps/api/tests/test_qwen38_runtime_lease.py",
+      "apps/api/tests/test_hermes_canary_routing.py",
+      "apps/api/tests/test_openshell_pool_reauthorization.py",
+      "apps/api/tests/test_agent_runtime_active_runs.py",
+      "apps/api/tests/test_agent_runtime_chat_preflight.py",
+      "apps/api/tests/test_openshell_pool_recovery.py",
+      "apps/api/tests/test_openshell_recovery_authorization.py",
+      "scripts/openshell/tests/test_qwen38_candidate_supervisor.py",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py",
+      "scripts/openshell/tests/test_qwen38_business_broker.py"
+    ]
+  },
+  "runtime_observation": {
+    "API_model_bridge_active": true,
+    "API_health_http_status": 200,
+    "services_restarted_this_stage": false,
+    "online_API_loaded_E93": false
+  },
+  "source_sha256": {
+    "apps/api/services/runtime_startup_guard.py": "4ac37e8db1ef30c5fa0a6eb151f9a22fd8c61f7f8e1d0af75064ac25280ebc88",
+    "apps/api/services/agent_chat_runtime_impl.py": "c902f64c0260a075f2c6aebeaa2a1ca57eded2dd7a5a5fe5fd8a601fd3d94cb9",
+    "apps/api/services/runtime_coordination.py": "4c675810c32475dc1cc297d0dd6b4ebc821c1a1171a63399ace68b93d5369664",
+    "apps/api/tests/test_runtime_startup_guard.py": "cceb0cb23c1426d81d3b2858dd2a91d7aa6d30f4d53688684a25fa494a49ea52",
+    "apps/api/tests/test_hermes_canary_routing.py": "0369a8c7cbd02e1cce65f7f6aa7954265c0a54227cd32a38ec161af5480d3c47",
+    "apps/api/tests/test_openshell_pool_reauthorization.py": "16fca96bd95b7a0612888ba6ed2afc5f9b9e65ab74fc4d8701f73cc5919dc18f",
+    "apps/api/tests/test_agent_runtime_active_runs.py": "29eb110eabf467cd819245909dfc25d57aef17c3845c41cd208a110194320269",
+    "apps/api/tests/test_agent_runtime_chat_preflight.py": "824382538a7e4083bc7ab9c5734ff74b443b3dae3e9d8234a1afdfbef8a6d8e4",
+    "docs/architecture/qwen38-request-runtime-v1.md": "61f719513b3857b2ca302fd56704e299977b0b0a414c300771b9c57bf6a2d635",
+    "docs/runbooks/openshell/qwen38-candidate-supervisor.md": "5e9a3ad44f391fea46d7e2dc79ec0cb282daf5b44917845531f6682b7fbc525f"
+  },
+  "not_proven": [
+    "online_API_rollout",
+    "formal_Qwen_request_runtime_start_stop_recover_adapter",
+    "real_API_login_to_Qwen_sandbox_business_E2E",
+    "production_IAM_and_approval",
+    "three_repository_reviewable_candidate_and_native_CI"
+  ]
+}

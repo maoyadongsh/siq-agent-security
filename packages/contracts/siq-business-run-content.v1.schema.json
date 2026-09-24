@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/siq-business-run-content.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_ref",
+    "session_ref",
+    "snapshot",
+    "kind",
+    "content"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "siq.business-run-content/v1"
+    },
+    "run_ref": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "session_ref": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "snapshot": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "kind": {
+      "const": "generated_reply"
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1048576
+    }
+  }
+}

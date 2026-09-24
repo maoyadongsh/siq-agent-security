@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "environment-onboarding/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "environment-onboarding/v1"
+    },
+    "environment_id": {
+      "type": "string"
+    },
+    "evaluated_at": {
+      "type": "string"
+    },
+    "heartbeat_stale_seconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "device_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "device_identity": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "registered_at": {
+            "type": "string"
+          },
+          "last_seen_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "waiting",
+              "online",
+              "stale",
+              "revoked"
+            ]
+          },
+          "connectors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 4
+          }
+        },
+        "required": [
+          "id",
+          "device_identity",
+          "version",
+          "registered_at",
+          "last_seen_at",
+          "status",
+          "connectors"
+        ]
+      },
+      "maxItems": 100
+    },
+    "devices_truncated": {
+      "type": "boolean"
+    },
+    "evidence_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "last_evidence_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "connector": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "uploaded",
+              "delivered",
+              "failed",
+              "expired"
+            ]
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string"
+          },
+          "device_identity": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "candidate_count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "evidence_count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "connector",
+          "status",
+          "created_at",
+          "expires_at",
+          "device_identity",
+          "candidate_count",
+          "evidence_count"
+        ]
+      },
+      "maxItems": 20
+    },
+    "scans_truncated": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "environment_id",
+    "evaluated_at",
+    "heartbeat_stale_seconds",
+    "device_count",
+    "devices",
+    "devices_truncated",
+    "evidence_count",
+    "last_evidence_at",
+    "scans",
+    "scans_truncated"
+  ]
+}
