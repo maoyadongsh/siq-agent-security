@@ -1287,7 +1287,9 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **测试与静态检查**：`scripts/enterprise-experience/` 全部 **73 passed**（本轮 **18 + 9 = 27** 条为新增；该目录逐文件为 `contract_version_chain_audit` 12 + `enterprise_gate_run` 33 + `run_browser_smoke_suite` 18 + `source_freeze_preflight` 10 = 73，用 `pytest --collect-only` 实测，不是估算）。**一处与不可变记录的差异需说明**：提交 `52cb855` 的**提交信息**里写的是"回归用例 17 + 9 条"——17 是落笔时的记忆数字、**不准确**，实测为 18；提交信息无法追改（改写历史属 §3.2 禁止的破坏性操作），故在此**如实标注**：**以本节实测的 18 为准**。ruff 按仓库基线（`--config apps/control-api/pyproject.toml`）对四个文件检查：新增/改动的行**零告警**，全仓该目录仍只余 5 条既存项（1 `UP017` + 4 `E731`）。
 
-**落盘与提交**：7 条路径提交为 `52cb855`（父 `f1709cd`，分支 `deepseek/enterprise-mainline-closeout-20260926`，**未推送**，`main` 仍 `ebaaf3b`）；同口径账目 `107 tracked / 706 untracked → 102 / 704`（差 7 = 5 个已跟踪改动 + 2 个新增）。清单因此由 26 条增至 **28 条**，复核报告 `/tmp/preflight-r0711-20260926T171754.json`（`requested=28 / verified=28`、`head=f1709cd`）。**E3 全跑报告**：`/tmp/gate-F3-browser-20260926T170755.json`。
+**落盘与提交**：7 条路径提交为 `52cb855`（父 `f1709cd`，分支 `deepseek/enterprise-mainline-closeout-20260926`，**未推送**，`main` 仍 `ebaaf3b`）；同口径账目 `107 tracked / 706 untracked → 102 / 704`（差 7 = 5 个已跟踪改动 + 2 个新增）。清单因此由 26 条增至 **28 条**，复核报告 `/tmp/preflight-r0711-20260926T171754.json`（`requested=28 / verified=28`、`head=f1709cd`）。**E3 全跑报告**：`/tmp/gate-F3-browser-20260926T170755.json`；**E4 定向报告**：`/tmp/gate-E4-browser-20260926T173911.json`。
+
+**R07.11b 的落盘**：6 条路径提交为 **`bed0fbb`**（父 `b4586c1`，**未推送**，`main` 仍 `ebaaf3b`）；同口径账目 `108 tracked / 704 untracked → 102 / 704`（差 6 = 4 个已跟踪代码文件 + 2 份文档，**无新增路径**，故清单仍 28 条）。复核报告 `/tmp/preflight-r0711b-20260926T174446.json`（`requested=28 / verified=28`、`unverified=excluded=missing=0`、`scan_stable=true`、`conflicts=0`、`head=b4586c1`）。
 
 ### R07.11b 范围声明按实测改精确（原声明**低估**了这批脚本）
 
