@@ -1782,6 +1782,8 @@ git log --oneline -3 -- apps/control-api/app/main.py → 6ba1f7c / 4a4bcd0 / 977
 
 **允许清单第 10 次核验（49 条）**：新增 3 条路径（上表 2 条工具/测试 + `08-import-closure-check-2026-09-26.txt`），46 → **49**；重跑 `apps/control-api/.venv/bin/python scripts/enterprise-experience/source-freeze-preflight.py --repo . --allowlist docs/development/deepseek-enterprise-mainline-closeout-freeze-allowlist-20260926.txt --out /tmp/preflight-r0917b-20260926T134002.json`（`2026-09-26T13:40:02Z`）→ **`requested=49 / verified=49`**（含内容级 sha256）、`unverified=0 / excluded=0 / missing=0`、`conflicts=0`、`head=033f50d`、`106 tracked / 707 untracked`、`status_entries=813`、`signed=installable=published=false`、`conclusion=blocked`（唯一原因 `unreviewed_paths:806`）。**同口径逐条相减（对第 9 次）= 新增 7 / 消失 0**，新增的 7 条逐条等于本节待提交的 7 条路径（4 条已跟踪被改 + 3 条未跟踪）；三项计数互相闭合：`806 − 0 + 7 = 813`、`tracked 102 + 4 = 106`、`untracked 704 + 3 = 707`。**又一次同值不同源**：第 10 次 `unreviewed=806 = 813 − 7`，第 9 次 `806 = 806 − 0` —— **同值不可读作"未复核范围没变"**，判据是同口径相减，不是标量相等。
 
+**提交与提交后收口**：本单元 7 条路径已提交为 **`7891f7e`**（父 `033f50d`；`main` 仍 `ebaaf3b`、**未推送**、**未签发**、**未部署**），现场 `git rev-list --count ebaaf3b..HEAD` = **23**，`git show --name-only` 与该 7 条逐条一致、无清单外路径。提交后同一条命令再跑一次（第 11 次，`2026-09-26T13:40:57Z`，`--out /tmp/preflight-r0917bb-20260926T134057.json`）→ `requested=49 / verified=49`、`head=7891f7e`、`102 tracked / 704 untracked`、`status_entries=806`、`conclusion=blocked`（`unreviewed_paths:806`）；**同口径逐条相减 = 新增 0 / 消失 7，逐条等于本次提交路径**，三项计数闭合（`813 − 7 = 806`、`106 − 4 = 102`、`707 − 3 = 704`）。**此处第三次出现同值不同源**：第 11 次 `806 = 806 − 0`，第 10 次 `806 = 813 − 7` —— 三次 `806` 分属三种来源，**只可同口径相减，不可比标量**。
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
