@@ -3,7 +3,9 @@
 本轮由使用者指定受控目标：**siq 投研决策引擎（`siq-research-engine`）的智能分析助手**所适配的 OpenShell 网关。
 
 阅读顺序：**§一～§六 全部是只读**（未启动/重启/停止任何网关，未创建/删除沙箱，未 `policy set`）；
-**§七 是使用者逐次许可后的一次受控写入闭环**（`policy set` → 读回 → 回滚），回收结果见该节，原始留痕见 `06-`。
+**§七 是使用者逐次许可后的一次受控写入闭环**（`policy set` → 读回 → 回滚），回收结果见该节，原始留痕见 `06-`；
+**§八 是把 §五 那条结构性失败修掉的工具改动，全部在合成件上验证**（不碰任何真实网关），原始留痕见 `07-`。
+另见 R09.17：**本分支 HEAD 检出无法 `import app.main`**，该缺口已单独立项（见执行记录，不属本目录范围）。
 
 链接方式沿用仓库既定契约（`AGENTSHIELD.md:76`）：设
 `SIQ_AS_OPENSHELL_ENV_SH=/home/maoyd/siq-research-engine/scripts/openshell/env.sh`，不改对方仓库任何源码/配置/数据库。
@@ -190,3 +192,25 @@ if authorizer is None:
 **边界（不要越读）**：本次**未**产生 `enforcement_verified`，天花板仍是 `readback_verified`；
 **未**做任何真实 deny 观测；`expect_deny` 仍是固定兼容样例。`readback_verified` 只说明"网关读回的配置与我方提交的一致"，
 **不**说明"运行时真的按它执行了"。终态：canary 网络策略恢复原状，v3 作为**可审计历史修订**留在网关，未删除。
+
+## 八、把 §五 的结构性失败修掉：预览工具改从算子授权目录读身份 id（2026-09-26 追加）
+
+§五 的结论是「在当前候选上，该工具按自身代码**不可能**通过预览断言」。本轮把它修了，
+改动与逐条留痕见 `07-preview-tool-operator-authority-2026-09-26.txt`。摘要：
+
+- 新增必填 `--target-authority`（算子签发的 `enterprise-runtime-target-authority/v1` 目录）与
+  可选 `--assignment-id`；tenant / environment / asset / agent_instance 全部改从该目录读取，
+  再显式落隔离库，使门禁的**精确元组相等**判定有可能成立；
+- 读目录复用门禁自己的 `_read_authority_bytes` / `_unique_object` / `TargetAuthority`，
+  不另写一套判定；
+- 新增 5 条隔离测试（合成 CLI + 合成目录，不联网）；**负对照**：改动前的工具在同一合成 bench 上
+  仍在同一行、以同一症状失败（`('/deployment-preview', 409)`，rc=1）；
+- **顺带更正 §五/本节的机制描述**：上下文变化时被拒的断面**已经换了**。实测得到的判别码是
+  `deployment_target_authority_unverified`（授权闸在 `_prepare` 内先跑），而不是
+  `deployment_preview_changed`（`deployment_preview.py:252`，本路径不可达）。性质仍在，位置更靠前；
+  工具检查项已据此改名为 `changed_context_refused_without_writes`，并把实际判别码记进
+  `changed_context_detail`。
+
+**这一节仍不构成 E149 的恢复**：合成跑法下 `real_gateway` 只是工具常量；真跑需要**算子签发**一条授权
+条目（由执行者代签 = 自己制造授权，越界）。E149 文档记录的 8/8 即使目录完全正确也**不可逐字复现**
+（断言观测码必为授权闸的码）。天花板不变：无 `enforcement_verified`、无真实 deny 观测。

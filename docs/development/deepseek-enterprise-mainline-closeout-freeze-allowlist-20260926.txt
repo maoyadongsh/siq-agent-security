@@ -73,6 +73,24 @@ docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/05-live-prereq-block
 # rev2 与 rev4 的 --full 载荷逐字节相同）。**天花板是 readback_verified，不是 enforcement_verified**；
 # 未做任何真实 deny 观测。执行经使用者逐次许可（「先补 authorizer 再跑」）。
 docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/06-live-readback-rollback-2026-09-26.txt
+# 07 为 R09.16 的预览工具修复留痕：含**实跑①失败**（错指纹目录 → rc=1 / authority_endpoint_mismatch，
+# 两个摘要都打出来）与**实跑②通过**（rc=0、10 条 checks）、改动前版本的**负对照**（同一行同一 409）、
+# 以及 5 条"本轮没有证明什么"。**全部在合成件上**：无真实网关、无真实身份、无真实策略写入；
+# `real_gateway: true` 是工具常量而非测出来的。不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/07-preview-tool-operator-authority-2026-09-26.txt
+
+# --- 工具：R09.16 预览工具改「身份 id 来自算子授权目录」（**既有已跟踪件被修改**，需复核） ---
+# 使用者 2026-09-26 两轮答复：「授权我修预览工具」+「改从算子目录读身份 id」。
+#   - openshell-preview-live-check.py 是**已跟踪**文件（HEAD 中存在），本轮改动集中在：新增**必填**
+#     `--target-authority`（绝对路径/非符号链接/常规文件）与 `--assignment-id`、子进程注入
+#     SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE、探测后对授权目录做**精确元组比对**、
+#     身份 id 全部取自目录条目、新增 write_failure() 有界失败留痕（只写固定判别码+实测摘要）。
+#     安全读取与重复键判定**复用门禁自己的** _read_authority_bytes/_unique_object/TargetAuthority，
+#     不另写一套（符号改名即 ImportError，不会静默放宽）。
+#   - test_openshell_preview_live_check.py 为**新增未跟踪**文件（5 条隔离用例，合成 openshell CLI）。
+# 两者都不产生 enforcement_verified；E149 的 8/8 仍不可逐字复现（checks 8→10、拒绝提前到授权层）。
+scripts/enterprise-experience/openshell-preview-live-check.py
+scripts/enterprise-experience/test_openshell_preview_live_check.py
 
 # --- 工具：A7 --live 兼容闭环（**既有已跟踪件被修改**，超出原清单范围，需复核） ---
 # source-freeze-preflight 之前对这两个路径只做只读标记；本轮在使用者选定「先补 authorizer 再跑」后修改/新增：

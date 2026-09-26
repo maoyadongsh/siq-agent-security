@@ -1706,7 +1706,52 @@ PASS: 全部期望一致
 
 **允许清单第 7 次核验（43 条）**：新增上表 2 条工具路径 + `06-…txt`，共 40 → **43**。重跑 `source-freeze-preflight.py --repo .`：`requested=43 / verified=43 / unverified=0 / missing=0 / excluded=0`、`scan_stable=true`、`conflicts=0`、`head=6f04c15`、`tracked=105`、`untracked=706`、`status_entries=811`、`conclusion=blocked`（`unreviewed_paths:806`）。对第 6 次报告（40 条 / head `d214e00` / 809 / 104 / 705）逐条相减 = **新增 3 / 消失 1**：新增 `06-…txt`、`test_openshell_compat_live.py`、`openshell_compat_check.py`；消失 `05-live-prereq-blocked.txt`（它已被 `6f04c15` 提交，故不再出现在工作树状态里）。三项计数闭合：**809 − 1 + 3 = 811**（条目数）、tracked **104 + 1 = 105**（`openshell_compat_check.py` 变为已跟踪改动）、untracked **705 − 1 + 2 = 706**（05 入库、06 与测试文件新增）。
 
-**仍未决**：`--live` 到此为止——它**不**把任何门禁变绿，也**不**关闭 A7。A7 仍只差**行为 fixture 通道**（使用者已授权"隔离环境内建"，**具体方案待提交后实施**）；路径③（换一次性专用沙箱）未使用。**预览工具修复（"改从算子目录读身份 id"）仍未开工。**
+**仍未决**：`--live` 到此为止——它**不**把任何门禁变绿，也**不**关闭 A7。A7 仍只差**行为 fixture 通道**（使用者已授权"隔离环境内建"，**具体方案待提交后实施**）；路径③（换一次性专用沙箱）未使用。
+
+### R09.16 预览工具改「身份 id 来自算子授权目录」：**已实现 + 合成闭环 10/10 + 负对照**（2026-09-26，承接 R09.13 §五）
+
+**触发**：使用者决策（2）「授权我修预览工具」→「**改从算子目录读身份 id**」。原工具的 `environment_id`（服务端生成）与 `asset_id`/`agent_instance_id`（运行期 `flush()` 生成）**不可能**出现在算子运行前写好的授权目录里，而门禁 `require_target_authority` 做**精确元组相等**判定 ⇒ 结构性地过不了预览断言（README §五第二层根因）。
+
+**改动（2 条路径）**：
+
+| 路径 | 状态 | 要点 |
+| --- | --- | --- |
+| `scripts/enterprise-experience/openshell-preview-live-check.py` | 既有件被修改 | 新增必填 `--target-authority`、可选 `--assignment-id`；读目录（复用门禁的 `_read_authority_bytes`/`_unique_object`/`TargetAuthority`）→ 选中唯一条目 → 用条目里的 tenant/environment/asset/agent_instance **显式主键**直插隔离库；把 `SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE` 设回子进程环境；无 HIT 时写有界失败记录（`write_failure`） |
+| `scripts/enterprise-experience/test_openshell_preview_live_check.py` | **新增未跟踪** | 5 条隔离测试：合成 CLI + 合成目录，**不接触任何网关**；含缺条目/多条/不安全权限/重复键/缺参数五类有界失败 |
+
+**合成闭环**（详细原文见 `docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/07-…txt`）：跑 1（目录里两个摘要全 0）→ `rc=1` + `reason=authority_endpoint_mismatch` + 记录**两个观测摘要**；跑 2（用观测摘要补全目录、同一条命令）→ `rc=0`、`passed=true`、**10/10 检查**、`identity=operator_declared_authority`、前后 revision/digest 相同、`counts()` 五表前后相等（本轮把 `DeploymentSubmission`/`OutboxEvent` 也计入）。
+
+**负对照**：把改动前的工具（`git show ad3116e:…`）放在 `<repo>/tmp-negctl/inner/`（深度使 `parents[2]` 仍解析到仓库根，从而用得上**工作树**里的 app）用**同一合成 bench** 跑 ⇒ **同一行、同一症状**失败（`line 136 … AssertionError: ('/deployment-preview', 409)`，`rc=1`），与 README §五 的真实网关跑法一致；临时目录跑完即删，未落任何仓库路径。
+
+**顺带更正（重要）**：上下文变化被拒的**断面已经换了**。实测判别码是 `deployment_target_authority_unverified`（授权闸在 `_prepare` 内先跑），**不是** `deployment_preview_changed`（`deployment_preview.py:252`，本路径不可达）。性质（上下文变化必被拒 + 零写入）仍在。工具检查项据此由 `changed_context_refuses_old_digest_without_writes` 改名为 `changed_context_refused_without_writes`，并把实际判别码写进 `changed_context_detail`，隔离测试钉住该断面。**对 E149 的影响**：`ux-openshell-live-preview-e149-validation-20260923.md` 的 8/8 **即使授权目录完全正确也不可逐字复现**；性质可复现，字面记录不可复现。
+
+**天花板与未证**：本轮**未碰任何真实网关**；合成跑法下结果里的 `real_gateway: true` 是**工具常量、不是检查项**（不得当证据）；**未**产生 `enforcement_verified`；**未**做真实 deny 观测。要真跑必须有**算子签发**的授权条目（含真实 tenant/id/指纹/网关名哈希）——由执行者代签等于自己制造授权，**越界，故停在"工具已就绪 + 待算子条目"**。另：环境创建这一支不再经过 `POST /environments`（该端点不接受算子指定 id），代价已记入 `07-` §七。
+
+**允许清单第 8 次核验（46 条）**：新增 3 条路径（上表 2 条 + `07-preview-tool-operator-authority-2026-09-26.txt`），43 → **46**；重跑 `apps/control-api/.venv/bin/python scripts/enterprise-experience/source-freeze-preflight.py --repo . --allowlist docs/development/deepseek-enterprise-mainline-closeout-freeze-allowlist-20260926.txt --out /tmp/preflight-r0916-20260926T132527.json`（`2026-09-26T13:25:27Z`）→ **`requested=46 / verified=46`**（含内容级 sha256）、`unverified=0 / excluded=0 / missing=0`、`conflicts=0`、`head=ad3116e`、`107 tracked / 706 untracked`、`status_entries=813`、`signed=installable=published=false`、`conclusion=blocked`（唯一原因 `unreviewed_paths:806`）。**同口径逐条相减 = 新增 5 / 消失 3**（新增：3 条 R09.16 路径 + 两份滚动文档；消失：`06-…txt`、`test_openshell_compat_live.py`、`openshell_compat_check.py`，**三条均已被 `ad3116e` 提交**，非删除）；三项计数互相闭合：`811 − 3 + 5 = 813`、`tracked 105 − 1 + 3 = 107`、`untracked 706 − 2 + 2 = 706`，且 `head` 由 `6f04c15` 前移到 `ad3116e` 可独立佐证。**复核前另跑**：`ruff --config apps/control-api/pyproject.toml` 两条 R09.16 路径 → `All checks passed!`；`pytest scripts/enterprise-experience/test_openshell_preview_live_check.py` → **5 passed**（7.77s）。
+
+### R09.17 **可启动性缺口：本分支 HEAD 检出无法 `import app.main`**（2026-09-26，新发现，非本轮改动引入）
+
+**发现路径**：R09.16 的负对照本想在 `git archive HEAD` 的干净检出里跑，结果解包树**连导入都做不到**：`ImportError: cannot import name 'DiscoveryScheduleRecord' from 'app.models'`。
+
+**实测（可复现）**：
+
+```text
+# 1) HEAD 的 main.py 引用了工作区里才有的路由模块
+git show ebaaf3b:apps/control-api/app/main.py | grep -c discovery_schedules   → 0
+git show HEAD:apps/control-api/app/main.py   | grep -c discovery_schedules   → 2
+# 2) 该引用由 6ba1f7c 引入（本分支提交，26 files, +4811/-91）
+git log --oneline -3 -- apps/control-api/app/main.py → 6ba1f7c / 4a4bcd0 / 977c5eb
+# 3) routers 目录：HEAD 跟踪 15 个，工作区 35 个（未跟踪 20 个）
+# 4) 干净检出里迭代 graft 工作区文件直到 import app.main 成功 → 共需补入 25 条路径
+```
+
+**足够集（非最小）**：`app/models.py`（**已跟踪但被修改**，含 `DiscoveryScheduleRecord` 等 12 个新模型与若干既有表约束变更）+ **24 条未跟踪新模块**（22 个 `app/routers/*.py`：`discovery_schedules`、`discovery_schedule_confirmation`、`discovery_origin`、`framework_inventory`、`skill_inventory`、`skill_upload`、`credential_rotation`、`registration_recovery`、`device_lifecycle`、`enterprise_connection`、`initial_scan`、`install_plans`、`network_revoke_proposals`、`network_revoke_batches`、`deployment_preview`、`deployment_batch_draft`、`deployment_batch_execute`、`deployment_batch_result`、`deployment_impact`、`deployment_submission`、`role_configuration_history`、`role_skill_sources`；以及 `app/adapters/openshell/enterprise_connection.py`、`app/adapters/openshell/network_change.py`）。补齐后 `import app.main` **成功**（`IMPORT_OK`）。
+
+**归属（如实自陈）**：`app/main.py` 由 **`6ba1f7c`（本轮执行者的 R01/R05/R07/R08 收口提交）** 重写，注册了 6 个新路由，其中**只有 `discovery_schedule_pending.py` 被提交**，另外 5 个及其模型/服务层留在未跟踪状态。这是**冻结允许清单的覆盖面缺口**：清单核验的是"稳定性/冲突/是否有未复核路径"，**没有核验"所提交路径的导入闭包"**。据此：
+
+- §1 R08.8 / R09.15 里"用 `git archive HEAD` 做干净检出复核"的说法**只在被复核对象的导入面内成立**（兼容矩阵测试只导入 `app.adapters.openshell.contracts`，所以它能跑）；**不得**推广为"HEAD 检出可用"。
+- `pytest apps/control-api/app/tests` 在 HEAD 干净检出上**根本无法收集**；从 HEAD 发布**起不了控制面**。
+- 本轮**不扩大**允许清单去补齐这 25 条：它们绝大多数是并作者的未复核在途代码（含既有表约束变更），纳入即等于由本轮执行者代其背书（D-1/D-3）。**已作为决策问题提交**（见下）。
 
 ## 本轮决策门槛汇总
 
@@ -1719,5 +1764,6 @@ PASS: 全部期望一致
 | D-3 共享影响 / 运行事实 | R00.6 | **已决策：保持 `unknown` 不猜** |
 | D-4 证据时效 | R04 | **未确认**（未自行设 TTL） |
 | D-5 保留治理 | R00.6 | **已决策：只补齐声明与缺口** |
-| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**；**`--live` 经使用者选定路径①（先补 authorizer 再跑）后已真实执行闭环**（R09.15：`policy set` → `readback_verified` → 回滚，回滚后载荷逐字节复原，对方 CLI 独立复核），**天花板仍是 `readback_verified`，未产生 `enforcement_verified`**；行为 fixture 通道使用者已授权**在隔离环境内建**，具体方案待提交后实施。**A5/A7 仍 blocked** |
-| D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认** |
+| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**；**`--live` 经使用者选定路径①（先补 authorizer 再跑）后已真实执行闭环**（R09.15：`policy set` → `readback_verified` → 回滚，回滚后载荷逐字节复原，对方 CLI 独立复核），**天花板仍是 `readback_verified`，未产生 `enforcement_verified`**；行为 fixture 通道使用者已授权**在隔离环境内建**，具体方案待提交后实施。**A5/A7 仍 blocked**；**预览工具修复（R09.16）已实现并合成验证 10/10**（见下） |
+| D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认**。**新增阻断（R09.17）**：本分支 HEAD 干净检出**无法 `import app.main`**（闭包需再补 25 条），故 **D-7.6 在此之前不可能成立**，D-7.3 的"并作者归属"也从"文档噪声"升级为"缺的就是必需代码" |
+| D-8 冻结闭包与可启动性 | R09.17 | **未确认**：三选项——**(A) 并入本轮提交**：把导入闭包 25 条收进本分支（一次提交即可启动，但**会把并作者未完成的工作收编进"本轮成果"**，`app/models.py` 还含既有表约束变更）；**(B) 另建分支补最小子集**：只提交"导入闭合所需的最小子集"并逐条标注归属（HEAD 可启动，但仍在别人文件上写提交，需其同意）；**(C) 只诊断、不在本轮修**：把结论与 25 条清单交并作者/使用者（**零覆盖、风险最低**，代价是签发/部署与"HEAD 重跑"继续阻塞），**可另加一条只读闭包核验探针**把缺口变成可重复检查项。**执行者建议：先 C，再据并作者归属答复决定 A/B**。三选项都不等于"可发布" |
