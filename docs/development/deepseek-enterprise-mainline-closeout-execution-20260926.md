@@ -888,6 +888,27 @@ docker ps -a --filter name=siq-deployment-check-                                
 
 两条实跑证明"没轮到它"与"没启用"都会**如实地**留在 skipped 里，且都不会去碰 docker。**`action=run` 分支至今未真实执行过**：它要等 A1 拿到 §3.2 许可（R09.4）——本节的诚实结论是"分支已就位并被合成用例覆盖，尚未产生真实证据"，**不是**"门禁已经能跑了"。
 
+#### R07.10a 启用后跑出来的两个缺陷（都已修，**都由实跑暴露，不是推演**）
+
+| # | 现象 | 实测根因 | 最小修复 |
+| --- | --- | --- | --- |
+| 1 | 门禁 `failed`、`exit_code=1`、耗时 **0.03s**，stderr 里是 `FileExistsError` —— 看起来像"A1 失败了" | 我用 `tempfile.mkdtemp()` 先建了证据目录，而 A1 脚本要求传入一个**不存在**的新目录（`out.mkdir(parents=True, exist_ok=False)`），正是为了不可能覆盖上一次留证 | 用 `mkdtemp` 取一个不会撞名的路径后**立即 `os.rmdir`**，把"不存在"的路径交给脚本；新增用例 `test_postgres_evidence_dir_is_handed_over_not_pre_created` 断言**交付时该目录不存在** |
+| 2 | `--only migration_replay_postgres_ephemeral` 报 `no gate matched --only` —— 门禁永远无法被单独选中 | `--only` 的过滤发生在**追加门禁之前**，所以这个 id 永远不在候选集合里 | 改为"先算选中集合 → 判定是否探测 → 追加门禁 → **再**过滤"；"被 `--only` 排除时连只读探测都不做"的性质保持不变 |
+
+**缺陷 1 值得单独记一笔**：它把"我的接线错了"呈现成"A1 门禁失败"。若当时只看结论行而不读 stderr，就会得出"真实 PostgreSQL 上跑不过"的**假结论**——这正是任务书要求"失败也要给出证据路径与原始输出"的理由。
+
+#### R07.10b 启用后的真实执行（A1 已获许可，2026-09-26）
+
+许可到位后实跑三次，全部**通过**：
+
+| 实跑 | 命令 | 结果 |
+| --- | --- | --- |
+| A1 本体（直跑脚本） | `apps/control-api/.venv/bin/python scripts/enterprise-experience/deployment-postgres-check.py /tmp/a1-evidence-20260926T162846` | `{"passed": true, "checks": 18}`，**7.0s** |
+| F2（门禁内单跑） | `... enterprise-gate-run.py --only migration_replay_postgres_ephemeral --enable-ephemeral-postgres-gate` | 门禁 `passed`（`exit 0`，6.75–7.02s），`post_check` 通过：18 项检查、`migrated_head=0028`、镜像 id 与脚本摘要逐字一致 |
+| A1b（**全量** + 该门禁） | `... enterprise-gate-run.py --out /tmp/gate-run-A1b-20260926T163429.json --enable-ephemeral-postgres-gate` | **49 passed / 0 failed / 0 blocked / 2 skipped**，`conclusion=gates_incomplete`（4 分 49 秒）；`skipped_gate_ids` 已**只剩** `browser_acceptance` 与 `real_device_native_evidence`；后端同为 `2164 passed / 1 skipped` |
+
+**`migration_replay_postgres` 不再是恒 `skipped`**：A1b 的报告里它是一条**真实执行过**的门禁记录，而"声明不可用"的跳过项由 3 条减为 2 条。这是 R07.2 缺口 1 的**部分**闭合——完全闭合还需 A2/A3 那两条（`browser_acceptance`、`real_device_native_evidence`）。
+
 **遗留**：（a）`enterprise-gate-run.py` 仍有 1 条**既有** `UP017`（`utc_now` 用 `timezone.utc`），本轮 hunk 未触碰该行，按最小改动原则不动它；（b）测试文件仍有 4 条**既有** `E731`（`builder = lambda …`），本轮新增用例按 `def` 写法，未新增错误。
 
 ---
@@ -1043,9 +1064,9 @@ git commit -F -    # 正文写明"共享工作树快照、非独立成果切片"
 
 **因此 A1–A10 的状态一行未变，仍全部 `blocked`。**"可用"只解除了"有没有这台机器/这个容器"，**没有**解除"能不能现在动它"。下一动作：按 §3.2 对**第一项**（A1 数据库容器）写出隔离/目标/回收方案并请求该次许可，取得后逐项推进，每一步仍按 A1–A10 自己的判据验收。
 
-### R09.4 A1 的隔离／目标／回收方案（§3.2 要求的前置说明；**尚未执行，待许可**）
+### R09.4 A1 的隔离／目标／回收方案（§3.2 前置说明）与执行结果
 
-本节即 §3.2 要求"先说明隔离方式、目标与回收方案"的那份说明。**许可未取得前不启动任何容器**；R07.10 已经把"启用了才探测、探测不过就记跳过（带实测原因）"的代码准备好，因此许可一到即可一次跑完并留证。
+本节即 §3.2 要求"先说明隔离方式、目标与回收方案"的那份说明。**方案先写、许可后到、再执行**：许可于 2026-09-26 取得（主开发者答复"批准并执行完整 A1"），执行结果见本节末的（8）。
 
 #### （1）隔离方式：一次性回环实例，与宿主既有服务无交集
 
@@ -1106,6 +1127,78 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 ---
 
+#### （8）执行结果（2026-09-26，许可后）
+
+| 项 | 结果 |
+| --- | --- |
+| 命令①（A1 本体） | `/tmp/a1-evidence-20260926T162846` → `{"passed": true, "checks": 18}`，**7.0 秒**，`migrated_head=0028` |
+| 命令②（全量门禁 + 该门禁） | `/tmp/gate-run-A1b-20260926T163429.json` → **49 passed / 0 failed / 0 blocked / 2 skipped**，`conclusion=gates_incomplete`，4 分 49 秒 |
+| 三次独立运行一致性 | 直跑、门禁内单跑（F2）、全量（A1b）三次的 `migrated_head` 均为 `0028`、`script_sha256` 均为 `2802b08969f0…`、`checks` 均为 18 |
+| 18 项检查覆盖 | 部署预约重放与审计、4 条持久化/撤销/审计失败语义、`openshell` 成功／适配器失败／审计失败后置 3 种结局、真实行锁串行化、`0017` 破坏性降级守卫、`device-scope` 自动降级被拒、调度器 4 项（含真实锁竞争与跨租户唯一约束） |
+| 身份与真实性声明 | `ephemeral_database: true`、**`production_identity_tested: false`**；**未**产生 `enforcement_verified` |
+
+**回收核验（方案（4）的三项只读检查，全部通过）**：
+
+| 检查 | 结果 |
+| --- | --- |
+| `docker ps -a --filter name=siq-deployment-check-` | **0 行**（无残留容器） |
+| `docker image inspect postgres:17-alpine` | `sha256:ff80089083d7365046af7f03d949a2defa14e0b09e14bd5b8f08a242291be8b2`，与盘点**逐字一致**（镜像未被改动、未被拉取） |
+| 宿主既有容器集合 | `docker ps` 与运行前盘点**逐行 diff 为空**（45 条不变，无新增/删除/重启）；`siq-platform-postgres-1`（`127.0.0.1:55432`）、`siq-org-iam-postgres`（`5434`）、`siq-platform-agent-security-api-1/web-1`、`siq-platform-gateway-1`（`192.168.2.121:10082`）、`siq-platform-workbench-1`（`:1361`）端口映射均未变 |
+| 泄密检查 | 证据目录内**无** 48 位十六进制独立串（仅 64 位 sha256 摘要的前缀匹配）、无 `password=` 形式暴露；目录权限 `700` |
+
+**A1 到此的状态 = `verified`（隔离验证通过，**不是**实际交付）**：它证明的是"迁移与竞态在真实 PostgreSQL 引擎上成立"，证据来自**一次性、回环、无卷、合成身份**的实例；它**不**证明生产效果、**不**是已签候选、**不**产生 `enforcement_verified`，也**不**关闭任何 ENT。同一候选偏差仍在：取证脚本属并作者未提交改动（见（6））。
+
+### R09.5 A2（30 个浏览器验收）实跑结果：**25/30 通过，5 项按 UI 断言归因**
+
+**先纠正一处我自己提出的错误前提**：我在 R09.4（7）把 A2 描述为"需要运行中的控制面"，并据此请了"一次性服务实例"的许可。实测**不成立**：30 个脚本里 **28 个自带隔离环境**（`VITE_DEV_MODE=true` 模拟身份构建 + `127.0.0.1` 静态服务 + Playwright 路由 mock；其中 3 个还自带隔离 dev API），**不需要任何外部控制面、不需要容器**，因此**不需要那份许可**；另 **2 个需要原生 Edge 与框架连接器二进制**（临时 `go build` 即可，也不需要控制面实例）。该许可**未被使用**。
+
+| 项 | 实测 |
+| --- | --- |
+| 脚本总数 | **30**（`ls scripts/enterprise-experience/*-browser-smoke.py \| wc -l`） |
+| 参数族 | 4 个 `--output`；22 个 `--web`+`--out-dir`；4 个 `--web`+`--out`；2 个 `--edge`+`--connector-dir`+`--web`+`--out-dir` |
+| Python | `/home/maoyd/miniconda3/bin/python`（**本机唯一装了 playwright 的解释器**，仓储文档同款用法）；浏览器 `~/.cache/ms-playwright/chromium-*` **已存在** |
+| 前端构建 | 按仓储既有约定：`VITE_DEV_MODE=true npm exec -- vite build --outDir /tmp/siq-a2-dev-web-SIMULATED-NOT-RELEASABLE-<rand>`（**模拟身份、独立临时目录、不可发布**，与正式构建分离，符合 §8.6） |
+| 结果 | **25 PASS**（含 `four-entry-navigation` 24/24、`overview-four-entry` 24/24、`runtime-binding-explorer` 45/45，其余按各自 JSON 自述累计 **199 项** `checks`；口径不一致，**不作单一总数**） |
+| **5 FAIL** | `change-execution`、`deployment-preview`、`workspace`、`onboarding`、`candidate-review` —— **全部失败在 UI 可见性/文本断言，无一在业务逻辑** |
+
+**5 项失败的逐条归因（且都指向并作者未提交的前端改动）**：
+
+| 脚本 | 实测失败点 |
+| --- | --- |
+| `change-execution` | `expect(dialog.get_by_text('上次提交结果尚未确认')).to_be_visible()` 超时；该文本的渲染条件是 `uncertain && submission?.state !== 'recorded'`（`ChangeExecutionDialog.tsx:28`），文本**存在于构建产物**，即"条件不成立"而非"文本不存在" |
+| `deployment-preview` | 同一断言、同一文本、同一对话框 |
+| `workspace` | `assert {label.strip() for label in links} == labels, role` → 角色 **viewer** 的链接集合与预期不符 |
+| `onboarding` | 首个交互即失败：`get_by_label('设备可访问的控制面根地址')` **not visible**（该 label 在 `EnvironmentSetup.tsx:99`，且**存在于构建产物**）；原生 Edge 与 `hermes-connector` 已按临时构建就位（9.7MB / 3.8MB），失败发生在浏览器侧 |
+| `candidate-review` | 同 `onboarding`：同一 label、同一 `not visible` |
+
+**为什么可以判断"不是本轮引入"**（三条可复核证据）：① 本轮三个提交（`6ba1f7c`/`1f50a16`/`7209a76`）的路径清单里 **`apps/web` 一条都没有**；② `apps/web` 在工作树里有 **122 条未提交改动**（`git status --porcelain -- apps/web`），其中恰好包含失败点所在的组件：`ChangeExecutionDialog.tsx`、`ChangesPage.tsx`、`Layout.tsx`、`EnvironmentSetup.tsx`（后者 `+47/−18`）；③ 25 个通过项与这 5 个失败项用的是**同一份** dev 构建与同一套 mock。**结论**：这 5 项应交给前端作者线复核（"脚本期望过时"还是"组件可见条件真的变了"需他们裁决），**本轮不改这些文件、不加 skip、不记为通过**。
+
+**A2 证明了什么、没证明什么**：证明的是"当前候选的**前端在模拟身份 + mock API + 隔离 dev API** 条件下的交互行为有 25 个脚本通过"；**不**证明真实后端 HTTP 契约、**不**证明真实 IAM（脚本自述 `scope: mocked browser only`、`production_deployed: false`）。因此 R09.1 里 A2 的"证明什么"一栏（"前端—后端真实 HTTP 契约"）**表述过宽**，真实契约验收需要另立方案（那才是一开始请的"一次性实例"许可的正当用途）。
+
+**本轮自己踩的坑（都已修）**：① 先按 `--output` 一刀切调用 30 个脚本 → 26 个 `exit=2`；② 改用"检测 `"--web"`"时用了双引号模式，漏掉脚本里的单引号写法 → 仍是 26 个 `exit=2`。两次都是**我的调用方式错，不是脚本失败**——若不看 stderr 就会把"参数不对"误记成"26 项失败"。另：8 个脚本用 `--out` 而非 `--out-dir`。③ **ruff 误报绿**：仓库根没有 `pyproject.toml`/`ruff.toml`，直接 `ruff check scripts/...` **不带配置**会退回默认规则并打印 `All checks passed!`，而仓库基线是 `--config apps/control-api/pyproject.toml`（`line-length=120`，select `E,F,W,I,UP,B`）。按基线复跑后确实抓到**我自己新引入的 1 条 E501**（已改用相邻字符串拼接修掉）。**正确调用**：`apps/control-api/.venv/bin/ruff check --no-cache --config apps/control-api/pyproject.toml <files>`；本次残余 = **5 条既存**（1 条 `UP017` 在 `utc_now`、4 条 `E731` 测试内 lambda），**均不在我改动的行上**。
+
+**门禁登记的更正**：`enterprise-gate-run.py` 里 `browser_acceptance` 的登记原因原为 `requires_running_services`，**实测不准确**（25 个脚本不需要任何服务）。已改为实测事实（需要前端模拟构建 + playwright，且当前有 5 项 UI 断言失败）。**未**把它接成可执行门禁：一次全跑约 4 分钟且需 dev 构建，是否纳入统一报告属 R07 设计决策，**留作下一动作**。
+
+### R09.6 门禁登记更正 + 新增断言 + 复跑核验
+
+**改了什么**（都在 `scripts/enterprise-experience/`，未新增路径）：
+
+1. `enterprise-gate-run.py` 的 `DECLARED_UNAVAILABLE`：
+   - `browser_acceptance`：`reason` 由 `requires_running_services`（**实测不成立**）改为 `requires_frontend_simulated_build_and_playwright`；`note` 写实测事实（28/30 不需控制面、实跑 25/30、5 项已归因、自述 `mocked browser only`）。
+   - `migration_replay_postgres`：`note` 补一句"该路径已于 2026-09-26 获批并在一次性回环容器上执行通过，需 `--enable-ephemeral-postgres-gate` 显式启用"——**原因仍是资源要求 + 需逐次许可，不是"不可执行"**；未显式启用时仍如实记为 `skipped`。
+2. `test_enterprise_gate_run.py` 新增 `test_browser_acceptance_declaration_carries_the_measured_reason`：断言登记集合恰好是那 3 项、`browser_acceptance` 的原因**不再是**被推翻的旧值、note 含 `mocked browser only`、且每项 `reason`/`note` 都非空。**测试数 24 → 25，全过。**
+
+**实跑核验**（不是只跑单测）：
+
+| 核验 | 命令 | 结果 |
+| --- | --- | --- |
+| 单测 | `apps/control-api/.venv/bin/python -m pytest scripts/enterprise-experience/test_enterprise_gate_run.py -q` | **25 passed**（1.30s） |
+| 静态检查（**必须带仓库配置**） | `apps/control-api/.venv/bin/ruff check --no-cache --config apps/control-api/pyproject.toml <两文件>` | 余 **5 条既存**（1 `UP017` + 4 `E731`），**均不在改动行**；我新引入的 1 条 `E501` 已修 |
+| 报告渲染（真实运行，**默认不碰 docker**） | `enterprise-gate-run.py --repo . --out /tmp/gate-A2record-20260926T165110.json --only rulepack_python_go_identity` | `conclusion=partial_run_not_a_gate`；三行 `skipped_gates` 正确带出**新** `reason` 与新 `note`，`not_evidence_of` 五项齐全 |
+| 冻结前盘点复跑 | `source-freeze-preflight.py --allowlist ... --out /tmp/preflight-r09-20260926T165214.json` | `requested=26 / verified=26`（内容级 sha256）、`unverified=excluded=missing=0`、`scan_stable=true`、`conflicts=0`、`head_commit=7209a76`、`unreviewed=806`、`conclusion=blocked`；**清单仍 26 条**（本轮未新增路径） |
+
+**未做（刻意）**：没有把 30 个浏览器脚本接成可执行门禁。理由：整批约 4 分钟、需先做一次模拟身份前端构建、且当前有 5 项失败——把它塞进统一报告会让"门禁红"变成前端线的既有状态而非本轮可判定的信号。**是否纳入属 R07 设计决策，留作下一动作。**
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
@@ -1117,5 +1210,5 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 | D-3 共享影响 / 运行事实 | R00.6 | **已决策：保持 `unknown` 不猜** |
 | D-4 证据时效 | R04 | **未确认**（未自行设 TTL） |
 | D-5 保留治理 | R00.6 | **已决策：只补齐声明与缺口** |
-| D-6 原生验证与受控目标 | R09 | **部分**：数据库容器 / 真实 Linux 实机 / 受控 OpenShell 目标**可用但本轮未启用**（R09.3）；其余资源未确认 |
+| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）。真实 Linux 实机（A3+）与受控 OpenShell 目标（A7）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可 |
 | D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认** |

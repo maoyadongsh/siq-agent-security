@@ -93,13 +93,22 @@ DECLARED_UNAVAILABLE = (
     {
         "id": "migration_replay_postgres",
         "reason": "requires_database_container",
-        "note": "真实 PostgreSQL 迁移回放与部署竞态需临时数据库容器；按任务书 §3.2 需先说明隔离/目标/回收并取得许可",
+        # 2026-09-26：该门禁已在显式 opt-in 下真实执行并**通过**（一次性回环容器，见执行记录 R09.4(8)/R07.10b）。
+        # 因此下面的原因是"资源要求 + 需逐次许可"，不是"不可执行"；未显式启用时它仍如实记为 skipped。
+        "note": "真实 PostgreSQL 迁移回放与部署竞态需临时数据库容器；按任务书 §3.2 需先说明隔离/目标/回收并取得许可"
+        "（该路径已于 2026-09-26 获批并在一次性回环容器上执行通过，需 --enable-ephemeral-postgres-gate 显式启用）",
         "tool": "scripts/enterprise-experience/deployment-postgres-check.py",
     },
     {
         "id": "browser_acceptance",
-        "reason": "requires_running_services",
-        "note": "30 个 *-browser-smoke.py 需要运行中的控制面与浏览器环境；属 R09 资源门槛",
+        "reason": "requires_frontend_simulated_build_and_playwright",
+        # 2026-09-26 实测更正：原记为 requires_running_services，不准确。
+        # 28/30 自带隔离环境（VITE_DEV_MODE 模拟构建 + 127.0.0.1 静态服务 + 路由 mock，其中 3 个自带隔离 dev API），
+        # 不需要任何运行中的控制面；另 2 个需原生 Edge 与框架连接器二进制。实跑 25/30 通过，5 项失败均为 UI
+        # 可见性/文本断言，归因于并作者未提交的 apps/web 改动（本轮提交路径不含 apps/web）。见执行记录 R09.5。
+        "note": "30 个 *-browser-smoke.py 需前端模拟身份构建 + Playwright（2 个另需原生 Edge/连接器），"
+        "不需要运行中的控制面；实测 25/30 通过，5 项失败已归因；"
+        "自述 scope 为 mocked browser only，非真实 HTTP 契约证据",
         "tool": "scripts/enterprise-experience/*-browser-smoke.py",
     },
     {
@@ -556,11 +565,10 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
     selected = None
     if args.only:
         selected = {part.strip() for part in args.only.split(",") if part.strip()}
-        gates = [gate for gate in gates if gate["id"] in selected]
-        if not gates:
-            parser.exit(EXIT_USAGE, "no gate matched --only\n")
 
     # 只有本次**确实要跑**它时才探测 docker：`--only` 把它排除掉时连只读探测都不做。
+    # 顺序上必须先判定"是否被选中"、再把门禁**追加到过滤之前**，否则 `--only <本门禁 id>`
+    # 会得到 "no gate matched"——门禁永远无法被单独选中（见执行记录 R07.10 缺陷 2）。
     postgres_enabled = args.enable_ephemeral_postgres_gate and (
         selected is None or POSTGRES_GATE_ID in selected)
     postgres_decision = postgres_gate_decision(repo, enabled=postgres_enabled)
@@ -570,10 +578,18 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
                                      "未探测 docker、未启动容器；仍登记为不可跑")
         postgres_decision["excluded_by_only"] = True
     if postgres_decision["action"] == "run":
+        # **不预建**该目录：A1 脚本要求传入一个**不存在**的新目录（`mkdir(exist_ok=False)`），
+        # 正是为了不可能覆盖上一次的留证。`mkdtemp` 只为取一个不会撞名的路径，随后立即移除；
+        # 曾经预建导致 `FileExistsError`、门禁假失败（见执行记录 R07.10 缺陷 1）。
         evidence_dir = Path(tempfile.mkdtemp(prefix="siq-gate-postgres-evidence-"))
+        os.rmdir(evidence_dir)
         postgres_decision["evidence_dir"] = str(evidence_dir)
         gates = gates + [postgres_gate(repo, evidence_dir)]
         gates[-1]["timeout"] = args.timeout
+    if selected is not None:
+        gates = [gate for gate in gates if gate["id"] in selected]
+        if not gates:
+            parser.exit(EXIT_USAGE, "no gate matched --only\n")
 
     try:
         report = run_gates(repo, gates, build_dir, postgres_decision=postgres_decision)

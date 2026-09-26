@@ -87,6 +87,22 @@ class GateRunTest(unittest.TestCase):
                 self.assertEqual(item["status"], "skipped")
                 self.assertTrue(item["reason"])
 
+    def test_browser_acceptance_declaration_carries_the_measured_reason(self):
+        """登记原因必须是实测事实，不是猜测：2026-09-26 实测 28/30 不需要运行中的控制面。"""
+        by_id = {item["id"]: item for item in tool.DECLARED_UNAVAILABLE}
+        self.assertEqual(
+            sorted(by_id),
+            ["browser_acceptance", "migration_replay_postgres", "real_device_native_evidence"],
+        )
+        browser = by_id["browser_acceptance"]
+        self.assertNotEqual(browser["reason"], "requires_running_services")
+        self.assertEqual(browser["reason"], "requires_frontend_simulated_build_and_playwright")
+        self.assertIn("mocked browser only", browser["note"])
+        self.assertTrue(browser["tool"])
+        for item in tool.DECLARED_UNAVAILABLE:
+            self.assertTrue(item["reason"])
+            self.assertTrue(item["note"])
+
     def test_timeout_is_a_failure_never_a_pass(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = make_git_repo(Path(tmp))
@@ -417,6 +433,34 @@ class GateRunTest(unittest.TestCase):
             self.assertEqual(decision["action"], "skipped")
             self.assertIn(tool.POSTGRES_UNAVAILABLE_ID, report["skipped_gate_ids"])
             self.assertNotIn(tool.POSTGRES_GATE_ID, [r["id"] for r in report["gates"]])
+
+    def test_postgres_evidence_dir_is_handed_over_not_pre_created(self):
+        """A1 脚本要求一个**不存在**的新目录（防覆盖上次留证）；预建会让门禁假失败。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            out = Path(tmp) / "report.json"
+            seen = {}
+
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
+
+            def gate(repo_arg, evidence_dir):
+                seen["dir"] = evidence_dir
+                return {"id": tool.POSTGRES_GATE_ID, "kind": "command",
+                        "argv": ["git", "rev-parse", "HEAD"]}
+
+            with unittest.mock.patch.object(
+                    tool, "postgres_gate_decision",
+                    lambda _repo, **_kw: {"action": "run", "reason": None}), \
+                    unittest.mock.patch.object(tool, "postgres_gate", gate):
+                code = tool.main(["--repo", str(repo), "--out", str(out),
+                                  "--enable-ephemeral-postgres-gate"], gate_builder=builder)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            self.assertFalse(seen["dir"].exists())
+            report = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(report["optional_gate_decisions"][0]["evidence_dir"],
+                             str(seen["dir"]))
+            self.assertEqual(report["conclusion"], "gates_incomplete")
 
     def test_post_check_failure_downgrades_a_passing_command(self):
         with tempfile.TemporaryDirectory() as tmp:
