@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -27,6 +28,20 @@ func scheduleFixture(t *testing.T) (*State, DiscoverySchedule, time.Time) {
 	var plan map[string]any
 	if json.Unmarshal(s.DiscoveryPlan, &plan) != nil {
 		t.Fatal("fixture plan")
+	}
+	// Keep the shared schedule fixture portable across the arm64 developer
+	// host and the amd64 CI runner. Tests that reach installation-plan checks
+	// should exercise their intended boundary instead of failing earlier on a
+	// fixture-only architecture mismatch.
+	plan["target_arch"] = runtime.GOARCH
+	planRaw, err := json.Marshal(plan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.DiscoveryPlan = planRaw
+	s.DiscoveryPlanSHA256, err = compactPlanDigest(planRaw)
+	if err != nil {
+		t.Fatal(err)
 	}
 	raw, err := canon.Marshal(plan)
 	if err != nil {
