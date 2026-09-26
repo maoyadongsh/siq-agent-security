@@ -1239,6 +1239,8 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **测试与静态检查**：`scripts/enterprise-experience/` 全部 **73 passed**（本轮 15+9 条为新增）；ruff 按仓库基线（`--config apps/control-api/pyproject.toml`）对四个文件检查：新增/改动的行**零告警**，全仓该目录仍只余 5 条既存项（1 `UP017` + 4 `E731`）。
 
+**落盘与提交**：7 条路径提交为 `52cb855`（父 `f1709cd`，分支 `deepseek/enterprise-mainline-closeout-20260926`，**未推送**，`main` 仍 `ebaaf3b`）；同口径账目 `107 tracked / 706 untracked → 102 / 704`（差 7 = 5 个已跟踪改动 + 2 个新增）。清单因此由 26 条增至 **28 条**，复核报告 `/tmp/preflight-r0711-20260926T171754.json`（`requested=28 / verified=28`、`head=f1709cd`）。**E3 全跑报告**：`/tmp/gate-F3-browser-20260926T170755.json`。
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
