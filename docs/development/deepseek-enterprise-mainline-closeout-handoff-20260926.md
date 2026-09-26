@@ -1,5 +1,16 @@
 # DeepSeek 企业主线剩余开发与最终收口——交接
 
+> 综合复核补记（2026-09-26）：后续全量、浏览器、隔离 PostgreSQL 与直接修复见
+> [综合验收记录](enterprise-comprehensive-acceptance-review-20260926.md)。后端/前端/Go 验证已扩大，
+> 但 HEAD 导入闭包仍缺 39 个工作树文件；主线功能缺口与真实发行门槛仍未关闭。
+> 该记录不把下文历史完成措辞升级为完整交付，也未执行真实 OpenShell 写入或部署。
+
+> 主开发者复核补记（2026-09-26）：**本主线尚未整体验收通过**。本轮复核及直接修复见
+> [独立验收记录](deepseek-enterprise-mainline-review-20260926.md)。下文为滚动历史，
+> 包括已被后续记录修正的状态，不能把所有 R 单元或历史门禁视为当前候选完成。
+> 待确认周期枚举端点已接线，但 CLI 衔接未完成；行为证据绑定现补 target，
+> 通道核对实际报告 endpoint，拒绝臂禁止混合 endpoint。本轮没有执行真实行为探针。
+
 对应执行记录：[deepseek-enterprise-mainline-closeout-execution-20260926.md](deepseek-enterprise-mainline-closeout-execution-20260926.md)
 任务书：[deepseek-enterprise-mainline-final-closeout-taskbook-20260926.md](deepseek-enterprise-mainline-final-closeout-taskbook-20260926.md)
 

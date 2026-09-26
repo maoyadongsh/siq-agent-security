@@ -103,10 +103,10 @@ class _StubBackend:
         return self.snapshot
 
 
-def _report(outcomes: list[str]) -> str:
+def _report(outcomes: list[str], endpoint: str = ENDPOINT) -> str:
     payload = {
         "schema": AGENT_REPORT_SCHEMA,
-        "endpoint": ENDPOINT,
+        "endpoint": endpoint,
         "attempts": [{"outcome": outcome, "elapsed_ms": 1} for outcome in outcomes],
     }
     return AGENT_REPORT_PREFIX + json.dumps(payload) + "\n"
@@ -131,7 +131,7 @@ def _stub_runner(argv: list[str]) -> tuple[int, str, str]:
     if "upload" in parts:
         return 0, "", ""
     path = parts[parts.index("--") + 1]
-    return 0, _report(_OUTCOMES[path]), ""
+    return 0, _report(_OUTCOMES[path], parts[parts.index("--endpoint") + 1]), ""
 
 
 #: 允许臂 / 拒绝臂的形态（每个用例只翻转它要钉住的那一条）。

@@ -1,0 +1,18 @@
+{
+  "scope": "read-only stage recovery; not enrollment or service recovery",
+  "checks": {
+    "stage_negative_scenarios": 6,
+    "cli_resume_scenarios": 4,
+    "edge_go_vet_all": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/installplan/resume_linux.go": "8338d791e0eacb067bba5e5883098372970d4ecb26974916aec47a6b63ca1324",
+    "edge/agent/prepare_install_linux.go": "7a923dba2cc993a3a50aac598a15a523ea07013219f2dd2e228000c24d9d9454",
+    "edge/agent/prepare_install_linux_test.go": "1ef404f33ca9a9ce56a5401930888f8620d5d8383adf167802457a84d366d5e2",
+    "edge/agent/installplan/stage_linux_test.go": "f7b62d4e464a0f7587df6aa16484557c4613e5b1456fbcdcdab1984384dc2d31"
+  },
+  "live_deployment_changed": false,
+  "release_signed": false
+}

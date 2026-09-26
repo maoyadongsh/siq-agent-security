@@ -1,0 +1,17 @@
+{
+  "scope": "Linux native recovery with private credential persistence; no live deployment",
+  "checks": {
+    "edge_go_vet_all": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "native_gateway_api_serve_recovery": "9 passed; native-registration-recovery-r1.json",
+    "cross_compile_linux_amd64_darwin_arm64_windows_amd64": "passed; compile only",
+    "ruff_harness": "passed",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/registration_recovery_linux.go": "f5746f81cfae9ef2e635726c9d389e309dcd3449c71b3929ccc2fb580eac584c",
+    "edge/agent/registration_recovery_linux_test.go": "5db1fcb0b7a27e8b59d84d6aea98df341520d3459081cc051269a03fd821bed8",
+    "edge/agent/main.go": "8553b656741385c75b3c0b0256de4b124730f31c53a3abb78ac090b3376e749f"
+  },
+  "production_migration_or_deployment": false
+}

@@ -85,6 +85,18 @@ def check(binary, target):
                         result = subprocess.run([str(binary), action, '--port', str(port)], env=env,
                                                 stdout=stream, stderr=stream, timeout=20)
                         require(result.returncode == 0, f'{mode}: {action} failed')
+                    remote_env = {**env, 'SSH_CONNECTION': 'fixture-only-not-a-login-target',
+                                  'DISPLAY': '', 'WAYLAND_DISPLAY': ''}
+                    guided = subprocess.run([str(binary), 'ui'], env=remote_env,
+                                            capture_output=True, timeout=20)
+                    require(guided.returncode == 0, f'{mode}: SSH UI guidance failed')
+                    forwarding = f'-L 127.0.0.1:{port}:127.0.0.1:{port}'.encode()
+                    require(forwarding in guided.stdout and b'fixture-only' not in guided.stdout,
+                            f'{mode}: unsafe or missing SSH guidance')
+                    printed = subprocess.run([str(binary), 'ui', '--print'], env=remote_env,
+                                             capture_output=True, timeout=20)
+                    require(printed.returncode == 0 and printed.stdout == f'http://127.0.0.1:{port}/\n'.encode(),
+                            f'{mode}: print-only URL compatibility failed')
                     with opener.open(f'http://127.0.0.1:{port}/overview', timeout=5) as response:
                         require(response.status == 200 and b'<html' in response.read().lower(), 'missing console')
                     stopped = subprocess.run([str(binary), 'stop', '--confirm-stop'], env=env,
@@ -107,6 +119,7 @@ def check(binary, target):
             'skill_document_sha256': hashlib.sha256((skill / 'SKILL.md').read_bytes()).hexdigest(),
             'unsigned_source_bootstrap_refused_without_writes': True, 'self_admission': 'admit_with_conditions',
             'fresh_start_status_pair_console_stop': 'passed', 'init_serve_status_pair_console_stop': 'passed',
+            'ssh_ui_guidance_and_print_only': 'passed',
             'scope': 'source build setup in isolated state; not a signed installation package, host integration, desktop or background service acceptance',
             'published': False}
 

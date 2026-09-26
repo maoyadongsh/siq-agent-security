@@ -1,0 +1,26 @@
+{
+  "batch": 42,
+  "scope": "independent skill upload API using signed fixture tasks",
+  "verification": {
+    "api_passed": 1278,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "api_seconds": 32.48,
+    "final_targeted_upload_and_migration_passed": 19,
+    "saved_signature_input_reverified": true,
+    "audit_failure_rolls_back": true,
+    "revoked_device_replay_rejected": true,
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "task_issuer_implemented": false,
+    "native_collector_connected": false,
+    "production_migrated": false,
+    "postgres_concurrency_verified": false
+  },
+  "source_sha256": {
+    "apps/control-api/app/routers/skill_upload.py": "c7ef3de5b9c037be2419afdc5c1552a950fdcdea8ad3d29848ad78b620253e72",
+    "apps/control-api/app/skill_upload.py": "c33ca94a94153c72ca6e24359fb6481c1104594ebd5ca76706bf1f5599414144",
+    "apps/control-api/app/tests/test_skill_upload.py": "2dffc417a8d6bcb8218135e55e310dcd5470357d7b796813294351e2761f1e70",
+    "apps/control-api/migrations/versions/0022_skill_upload_receipt.py": "3db38356db05fc6f12829e17356f21ae86b4e8b0dee17f7f850f65c524ab2c3c"
+  }
+}

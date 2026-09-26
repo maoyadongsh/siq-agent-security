@@ -1,0 +1,17 @@
+{
+  "scope": "real API plan -> native consent -> allowed scan and signed scope denial audit; OpenClaw include enforcement",
+  "checks": {
+    "isolated_native_end_to_end": "11 passed; discovery-consent-native-r1.json",
+    "openclaw_go_vet_and_race_all": "passed",
+    "ruff_harness": "passed",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "connectors/openclaw/openclaw.go": "5fff1371aa8807353cd75524e178c7c9394e9b181b99cdbad3b432b06638fea8",
+    "connectors/openclaw/consent_scope_test.go": "2b248e7d10a9d2a9026297eaf891065db52ff4b8170127ce1ccc2bccd15b8dcb",
+    "scripts/enterprise-experience/gateway-edge-smoke.py": "887c4733046af4836998e43aae89d7960d13ae8e546580b23d4848ec7f868a08"
+  },
+  "catalog_manifest_digest_is_synthetic": true,
+  "publisher_or_staging_verification_in_this_scenario": false,
+  "live_deployment_changed": false
+}

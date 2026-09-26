@@ -1,0 +1,22 @@
+{
+  "schema_version": "siq.enterprise-contract-validation/v1",
+  "scope": "Authenticated route with isolated SQLite/dev identities and actual Go response consumption; not production IAM, release signing or installation",
+  "passed": true,
+  "source_sha256": {
+    "apps/control-api/app/install_catalog.py": "be4f5323842be940d8165387717cda6e42a80887a177bb90d29984ac30dec009",
+    "apps/control-api/app/routers/install_plans.py": "e08c5c43d69c4517f931d248ee87cf419cb40a68b22d78a4f8a15907b69fddd6",
+    "apps/control-api/app/main.py": "fb9e31ee3c4fc9777c328fed04944cb503736decc7f0d0a03365e1e945871ee7",
+    "apps/control-api/app/tests/test_install_plan_issuer.py": "7a5a1e86f1c42c7da3040db2da88350471394ebeb31df5dce6c91f952651e001",
+    "packages/contracts/enterprise-install-request.v1.schema.json": "134e2a7cad81bcd8bc4b5c0e8a3308993433fd83d567a5cafa713c93766d9c62"
+  },
+  "focused_passed": 399,
+  "full_command": "uv run pytest -o addopts='' -q",
+  "cwd": "apps/control-api",
+  "full_passed": 1206,
+  "full_skipped": 1,
+  "warnings": 1,
+  "ruff": "passed",
+  "diff_check": "passed",
+  "online_services_changed": false,
+  "device_enrollment_performed": false
+}

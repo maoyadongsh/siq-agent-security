@@ -1,0 +1,16 @@
+{
+  "schema_version": "siq-browser-connect-smoke/v1",
+  "binary_sha256": "02acea34b368e7dfa693826f17e0133309609c0bcf940da6559f55689a8916e2",
+  "checks": {
+    "desktop_and_mobile_entry": true,
+    "other_browser_cannot_claim": true,
+    "cancelled_request_cannot_be_approved": true,
+    "explicit_cli_confirmation_auto_connects": true,
+    "fixed_24h_cookie_and_reload_recovery": true,
+    "logout_invalidates_session": true,
+    "manual_pairing_fallback": true,
+    "restart_requires_reconnection": true,
+    "no_browser_javascript_errors": true
+  },
+  "scope": "isolated Linux ARM64 daemon and Chromium; not a signed installation or live agent acceptance"
+}

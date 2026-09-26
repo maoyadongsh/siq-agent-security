@@ -301,8 +301,35 @@ if ($LASTEXITCODE -ne 0 -or -not $VerifiedBin) {{ throw 'Package verification fa
 & "$VerifiedBin" start --port 47611
 ```
 
-Open http://127.0.0.1:47611/overview and enter the one-time pairing code printed
-by the service. Ctrl+C stops this foreground instance. Reuse the same state path
+## Open the console on the correct computer
+
+For normal personal use, install on the same computer as your browser. Open
+http://127.0.0.1:47611/overview there. This address is local to the browser's
+computer, not a public URL. Installing only the Skill does not start the runtime.
+
+If you installed on a remote/SSH machine, run the following on your **browser
+computer**, replacing SSH_USER@SSH_HOST with your established SSH login target:
+
+```text
+ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:47611:127.0.0.1:47611 SSH_USER@SSH_HOST
+```
+
+Keep that SSH terminal open, then open http://127.0.0.1:47611/overview on the
+browser computer. SSH access and a local SSH client are required. Use the same
+port at both ends to preserve Host/Origin checks; replace all three port values
+if your instance uses another port. If the local port is occupied, resolve its
+ownership first; do not kill an unknown process. Do not expose the personal
+service on 0.0.0.0, replace the URL with a LAN IP, or disable host-key checks.
+
+If the page offers “通过智能体连接”, send its connection request to the SIQ Skill
+on the **service machine**. After your explicit confirmation, that browser enters
+the console without copying a pairing code. New v2 management sessions last a
+fixed 24 hours; refreshing does not extend them. Logout or service restart
+requires reconnection. The connection request itself lasts 5 minutes.
+Older releases retain manual pairing and their original session duration.
+
+Manual fallback: enter the one-time pairing code printed by the service locally;
+do not paste it or any token into chat. Ctrl+C stops this foreground instance. Reuse the same state path
 to retain identity and history. A matching running instance is reused; use pair
 --port 47611 with the same verified program and state directory for a fresh code.
 
@@ -311,6 +338,12 @@ the verified program and the same state directory, and check initialization
 succeeded. Check readiness with status --port 47611; a bootstrap log line alone
 is not health verification. Starting the service does not install an adapter or
 grant permissions.
+
+For subsequent visits, use the same verified program and state directory with
+ui. It verifies the instance before opening a browser; SSH/headless environments
+receive access instructions instead. ui --print returns only the local URL for
+tools, not a guarantee that another computer can reach it. Session connection
+does not approve agent business permissions.
 
 For the Skill-only ZIP, same-version binary assets must exist at the signed URLs.
 On Linux/macOS explicitly set SIQ_AGENT_SECURITY_ALLOW_DOWNLOAD=1 and use the

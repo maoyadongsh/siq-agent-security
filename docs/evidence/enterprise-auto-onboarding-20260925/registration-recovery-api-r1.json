@@ -1,0 +1,18 @@
+{
+  "scope": "initial registration recovery server; native client and production rollout pending",
+  "checks": {
+    "focused_recovery_and_enrollment": "15 passed",
+    "control_api_full": "1214 passed, 1 skipped, 1 existing warning; 23.13 seconds",
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "clean_sqlite_alembic_upgrade_head": "0001 through 0018 passed",
+    "postgres_concurrent_recovery": "not run"
+  },
+  "source_sha256": {
+    "apps/control-api/app/routers/registration_recovery.py": "27fcba4690aee465f9c5718a4c765f841b3e7e5987d69bf1447021edefaf4ca2",
+    "apps/control-api/app/tests/test_registration_recovery.py": "fb280d8d2b55d269bd6fd0c91efb42089bd008f5e7f5cb6bcbc8148121820abf",
+    "apps/control-api/migrations/versions/0018_registration_recovery.py": "ba7a54ac0b727a19a13dd5a35e29a415d4a27cb18af9671cb232267423c7d273"
+  },
+  "live_deployment_changed": false,
+  "production_migration_applied": false
+}

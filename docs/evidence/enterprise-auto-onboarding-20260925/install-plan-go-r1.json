@@ -1,0 +1,19 @@
+{
+  "schema_version": "siq.enterprise-contract-validation/v1",
+  "scope": "Go plan consumer module and Python/Go shared corpus; not installer CLI, issuer route or deployment",
+  "passed": true,
+  "source_sha256": {
+    "edge/agent/installplan/plan.go": "dc6835edfe59fa0671a3961f2b3660db495a1c66f84a2cf9f4fce739d0aa2215",
+    "edge/agent/installplan/plan_test.go": "e3c5d23f3ebd2af64106b8140087353971f90ec82114b94128a9f83e287f730a",
+    "apps/control-api/app/tests/test_enterprise_install_plan.py": "925032e51b9e17c46b0c156cf4dfeeabc8ab60ccb85d79a176ee7e9cc5343201"
+  },
+  "python_command": "uv run pytest -o addopts='' -q app/tests/test_enterprise_install_plan.py app/tests/test_schema_contracts.py app/tests/test_environment_onboarding.py app/tests/test_enrollment_flow.py",
+  "python_passed": 379,
+  "python_warnings": 1,
+  "go_commands": ["go vet ./...", "go test -count=1 ./...", "go test -race ./installplan"],
+  "go_passed": true,
+  "shared_corpus": "Python invokes real Go test with private temporary inputs, revalidates accepted Go output against Schema and Python model",
+  "ruff": "passed",
+  "diff_check": "passed",
+  "online_services_changed": false
+}

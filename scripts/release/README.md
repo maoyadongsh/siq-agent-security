@@ -36,6 +36,33 @@ python3 scripts/release/readback.py --reference-dir "$release_dir" \
 
 ## 构建与边界
 
+企业 Edge/Connector 使用独立的 [enterprise_candidate.py](enterprise_candidate.py)，
+不是下述个人客户端打包入口。它要求完整提交 ID 和独立审阅的企业源码清单，
+离线构建 Linux amd64/arm64；默认包含 Hermes、OpenClaw、directory，可选择子集。
+产物包括 `CANDIDATE.json`、二进制、许可/摘要及明确标名的 `unsigned-candidate.zip`，
+ZIP 逐文件回读核对并保留可执行位；外层 SHA256SUMS 同时覆盖 ZIP 和散文件。
+不生成 `release.json` 或签名，
+不能交给生产安装器直接安装。参数、清单范围和限制见
+[enterprise-release-candidate/v1](../../packages/contracts/enterprise-release-candidate.v1.md)。
+工作树增量必须先完成评审和源码冻结，不能使用旧提交宣称包含最新开发成果。
+
+企业候选还包含 `publisher-signing-input.json`：原发行公钥、源码提交与二进制 pin
+组成的精确规范化 Ed25519 待签名字节，不是签名包。受控环境经授权签发后，可用独立
+可信构建的 `edge-agent verify-enterprise-release --release FILE` 核验正式信封；
+该命令不允许替换公钥、不注册设备；不加其他参数只证明信封签名。增加
+`--bundle /absolute/bundle` 可只读核对签名中的全部架构及采集器文件，不能替代安装时的
+计划绑定和私有暂存校验，也不证明未签入的说明/许可文件或运行行为。
+当前候选工具不执行签发、签后组包或发布。
+
+签发后的组包由独立 [enterprise_finalize.py](enterprise_finalize.py) 完成：输入候选目录、
+已由受控流程签发的信封、预期完整源码提交/版本，以及独立审阅的本机 Edge 验签程序
+和其 SHA-256。不能从待验候选取得验签程序或直接信任候选提供的摘要。
+工具先核对待签输入一致性，再验证候选全部制品，复制到私有暂存后二次核验，最后
+生成 ZIP、release.json、SOURCE-INFO.json 和 SHA256SUMS 到全新外部目录。
+它不持有签名密钥、不注册设备、不发布；组包成功也不代表安装验收完成。
+参数见 `python3 scripts/release/enterprise_finalize.py --help`，信任前提及失败边界见
+[enterprise-release-finalization/v1](../../packages/contracts/enterprise-release-finalization.v1.md)。
+
 [package.py](package.py) 从固定完整 Git SHA 导出产品允许清单，隔离构建四目标；`--help` 给出候选参数。没有签发参数时产生明确的未签名候选，不宣称为可安装发行版。签发是独立维护者流程，遵守[源码与发行边界](../../docs/skill-source-release-boundary-20260919.md)。工具不更改已发布资产。
 
 当经过验证的增量尚未包含在旧冻结提交中，使用 `--expected-source-inventory <reviewed.json>` 将新提交导出的完整发行源码与已审阅快照比对。清单格式为 `{"schema_version":"siq-release-source-inventory/v1","files":{...}}`，`files` 使用本工具 `inventory()` 的相对路径、SHA-256、字节数、可执行标记，范围恰为 `SOURCE_PATHS`。清单应在评审时固定并另行核对其摘要，不能从待签提交临时生成来代替评审。缺文件、多文件、内容或可执行标记不一致，均在 npm/Go 构建及签发前失败；该清单不是签名或源码证明，不替代正式发行验签。未指定此参数的历史打包行为保持不变。

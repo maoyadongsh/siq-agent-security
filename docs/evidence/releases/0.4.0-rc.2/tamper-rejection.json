@@ -1,0 +1,22 @@
+{
+  "schema_version": "siq-release-tamper-check/v1",
+  "version": "0.4.0-rc.2",
+  "source_sha": "7b68c14abeff707777278034f2ccfd19b43ac609",
+  "checks": [
+    {
+      "case": "skill-content",
+      "result": "rejected",
+      "exit_code": 3
+    },
+    {
+      "case": "binary-content",
+      "result": "rejected",
+      "exit_code": 3
+    },
+    {
+      "case": "wrong-public-key",
+      "result": "rejected",
+      "exit_code": 3
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "siq.enterprise-service-validation/v1",
+  "passed": true,
+  "scope": "Linux user unit generation and offline systemd syntax validation; no service installation/start or user-session lifecycle acceptance",
+  "source_sha256": {
+    "edge/agent/service_unit.go": "4e4abd6dd7bca0e881dfd75caa986e0efd41e9549f6af621c22af93f110a0922",
+    "edge/agent/service_unit_test.go": "9079a62411309e444b6ee8833554b8c81bd9e687af18d5305dbc874af3e90864",
+    "edge/agent/main.go": "947ebf689fcc3c7476f6afd6defb0577833129fe79bcbead79b7f0c5e62b193b"
+  },
+  "commands": ["go vet ./...", "go test -v -count=1 -run TestServiceUnitSystemdSyntax .", "go test -race -count=1 ./..."],
+  "native_systemd_analyze_verify": "passed including executable path with spaces",
+  "prior_failure": "WorkingDirectory quoted path rejected; unnecessary directive removed and retested",
+  "online_services_changed": false
+}

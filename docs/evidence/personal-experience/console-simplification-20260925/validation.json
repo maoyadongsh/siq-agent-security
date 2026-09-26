@@ -1,0 +1,66 @@
+{
+  "schema_version": "personal-console-validation/v1",
+  "date": "2026-09-25",
+  "security": {
+    "passed_tests": 3689,
+    "protected_files": 273,
+    "test_exit_code": 0,
+    "protected_unchanged": true,
+    "missing_previously_passing_tests": [],
+    "log_sha256": "c7f213296c129cf43c4519a2c9697bf3938ba0b16b6c32eccd755faeefff86e8",
+    "comparison": "stable top-level test identities; detailed subtests retained",
+    "protected_scope": "receipt, threat, rulepack, grant, state, statefs, signing, intent, provenance, skillcontext, trustedcontext, runtimeauthz, runtime adapters, shared Python rule data"
+  },
+  "web": {
+    "test_files": 57,
+    "passed_tests": 310,
+    "typescript": "passed",
+    "local_build": "passed",
+    "enterprise_build": "passed"
+  },
+  "backend": {
+    "go_vet": "passed",
+    "batch_revoke_race": "passed",
+    "cross_compile": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ]
+  },
+  "contracts": {
+    "passed_tests": 284,
+    "real_go_wire_responses": true
+  },
+  "browser": {
+    "personal_console_checks": 6,
+    "connection_regression_checks": 9,
+    "isolated_state": true,
+    "live_grants_mutated": false
+  },
+  "artifacts": [
+    {
+      "path": ".tmp/personal-console-20260925/before.json",
+      "sha256": "b5ef9ab2d30fccda3f9fe0aac921a55a6c078328947aed85f85fdcdd75af1919"
+    },
+    {
+      "path": ".tmp/personal-console-20260925/verified.json",
+      "sha256": "9cd05dedc528e9919d63ad56c32224bedd085a9223d2fae531f172496ca8e2cb"
+    },
+    {
+      "path": ".tmp/personal-console-20260925/browser-verified/report.json",
+      "sha256": "769354cf26b875794d7b00111ee2bfa8828a1ab159cf138ceb76f0edc9ba9d74"
+    },
+    {
+      "path": ".tmp/personal-console-20260925/connect-verified/report.json",
+      "sha256": "ed3deeeb9ba07826232f4795de66da9347ed857a08e02c202af0eca71a1735be"
+    }
+  ],
+  "limitations": [
+    "Synthetic grants on isolated Linux ARM64 and Chromium; not native host execution acceptance.",
+    "No live service switch, commits, push or signed package update.",
+    "Batch revocation only; no bulk permission expansion or atomic multi-grant transaction.",
+    "Audit UI shows latest 200 events, not a full historical search.",
+    "Existing ignored .tmp/fx01/refcalc.go remains reported by module-wide gofmt; edited Go files are formatted."
+  ]
+}

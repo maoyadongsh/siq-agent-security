@@ -162,24 +162,27 @@ def main():
                         assert response.status == 201
                         writes.append(1)
                         route.fulfill(status=503, content_type='application/json', body='{"detail":"fixture_response_lost"}')
-                    page.route('**/api/v1/deployment-preview/submit', lose_response)
+                    page.route('**/api/v1/deployment-submissions', lose_response)
                     row = page.locator('tr').filter(has_text=changes['lost']['id'])
                     row.get_by_role('button', name='部署', exact=True).click()
                     preview_dialog = page.get_by_role('dialog', name='确认部署目标')
                     expect(preview_dialog.get_by_role('button', name='确认并部署')).to_be_disabled()
                     preview_dialog.get_by_role('checkbox').check()
                     preview_dialog.get_by_role('button', name='确认并部署').click()
-                    expect(dialog.get_by_text('上次提交结果尚未确认', exact=False)).to_be_visible()
+                    expect(dialog.get_by_text('已找回本次部署请求。执行是否生效以下方验证为准。', exact=True)).to_be_visible()
                     expect(dialog.get_by_text('已创建下发任务', exact=False)).to_be_visible()
                     dialog.get_by_role('button', name='关闭', exact=True).click()
-                    row.get_by_role('button', name='核对部署结果', exact=True).click()
-                    expect(dialog.get_by_text('上次提交结果尚未确认', exact=False)).to_be_visible()
+                    expect(row.get_by_role('button', name='部署', exact=True)).to_have_count(0)
+                    row.get_by_role('button', name='部署与审计', exact=True).click()
+                    expect(dialog.get_by_text('已找回本次部署请求。执行是否生效以下方验证为准。', exact=True)).to_be_visible()
                     assert len(writes) == 1
-                    page.unroute('**/api/v1/deployment-preview/submit', lose_response)
+                    page.unroute('**/api/v1/deployment-submissions', lose_response)
                     checks['lost_response_opens_history_without_same_page_write_replay'] = True
                     page.reload()
-                    expect(dialog.get_by_text('上次提交结果尚未确认', exact=False)).to_be_visible()
-                    checks['uncertain_warning_preserved_in_result_url'] = True
+                    expect(dialog.get_by_text('已找回本次部署请求。执行是否生效以下方验证为准。', exact=True)).to_be_visible()
+                    assert 'unconfirmed=1' in page.url
+                    assert len(writes) == 1
+                    checks['lost_response_readback_restored_without_write_replay'] = True
 
                     page.goto(endpoint + '/changes?view=execution&change=' + changes['empty']['id'])
                     expect(dialog.get_by_text('尚未查询到关联部署记录', exact=False)).to_be_visible()

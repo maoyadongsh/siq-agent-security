@@ -1,0 +1,23 @@
+{
+  "batch": 36,
+  "scope": "populated SQLite migration preservation and discovered asset threat evidence binding",
+  "verification": {
+    "populated_sqlite_upgrade_0019_to_0020": "passed",
+    "history_signatures_and_instance_foreign_keys": "preserved",
+    "unsafe_downgrade": "rejected with data preserved",
+    "other_device_evidence_content": "rejected before analysis",
+    "correct_device_evidence_content": "accepted",
+    "api_passed": 1255,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "postgres_validation": "not_run",
+    "production_migrated": false
+  },
+  "source_sha256": {
+    "apps/control-api/app/tests/test_discovery_scope_migration.py": "4634ec0278218f328bf269a8b4244b94105dffe73eb45a70223cf284a12c2a64",
+    "apps/control-api/app/tests/test_threat_device_evidence.py": "30a53568a927ac2130006c939253c9ca213d010d4b5036873864f9346df39a9f",
+    "apps/control-api/app/discovery_identity.py": "94ca4a3be1e01ac4ac5f4c2923055b41cee8a2d34d37308755227ca6d7957666"
+  }
+}

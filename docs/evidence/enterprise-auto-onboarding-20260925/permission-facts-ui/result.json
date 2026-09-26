@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "checks": {
+    "loading_shows_no_zero_success": true,
+    "five_states_and_expired_effective_wording": true,
+    "keyboard_detail_revision_evidence": true,
+    "xss_text_only_and_missing_fields": true,
+    "load_more_failure_keeps_data_with_error": true,
+    "load_more_retry_success": true,
+    "combined_filters_and_clear": true,
+    "mobile_375_no_overflow": true,
+    "empty_list_distinct": true,
+    "disconnect_not_empty_list": true,
+    "no_writes_no_pageerrors": true
+  },
+  "scope": "mocked browser only",
+  "production_deployed": false,
+  "fixture_server_stopped": true
+}

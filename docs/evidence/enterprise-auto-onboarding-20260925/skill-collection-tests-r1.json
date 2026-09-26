@@ -1,0 +1,23 @@
+{
+  "batch": 43,
+  "scope": "Linux directory descriptor-anchored static skill collection",
+  "verification": {
+    "directory_go_vet": "passed",
+    "directory_go_test_race_count_1": "passed",
+    "edge_go_vet": "passed",
+    "edge_go_test_race_count_1": "passed",
+    "cross_compile_windows_amd64": "passed; collection unsupported",
+    "cross_compile_darwin_arm64": "passed; collection unsupported",
+    "native_schema_parity": "skill-collection-native-r1.json",
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "real_user_files_read": false,
+    "production_uploaded": false,
+    "edge_task_runner_connected": false
+  },
+  "source_sha256": {
+    "connectors/directory/skills_linux.go": "33adfb022b97387dff52f52ef4a21a9c9baad48391efc811a117339662663799",
+    "connectors/directory/skills_linux_test.go": "a13da1889fc8fa9b60b7810e225bb992ac95e9891ba60a06afceea5d8c0b56e9",
+    "edge/agent/protocol/skill_collection.go": "a46d67b78ad106eedba57780e112c63260c985cd5f31f396cddfa71d6b5612b6"
+  }
+}

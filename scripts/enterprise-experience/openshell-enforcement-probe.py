@@ -258,6 +258,7 @@ def main():
     accepted, reason = validate_enforcement_probe_evidence(
         evidence,
         EnforcementProbeExpectation(
+            target=args.target,
             endpoint_fingerprint=caps.endpoint_fingerprint,
             policy_revision=snapshot.revision,
             applied_policy_digest=snapshot.policy_digest,

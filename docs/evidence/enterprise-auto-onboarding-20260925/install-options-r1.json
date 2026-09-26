@@ -1,0 +1,14 @@
+{
+  "scope": "authenticated read-only install options API; frontend pending",
+  "checks": {
+    "focused_options_plan_contract": "116 passed",
+    "full_api": "1222 passed, 1 skipped, 1 existing warning; 22.97 seconds",
+    "ruff_and_diff_check": "passed"
+  },
+  "source_sha256": {
+    "apps/control-api/app/install_catalog.py": "dfd27e1fb4aed8944e8c7c67b6ac74d50635b57f981ec1011c7b8ce0b19238ed",
+    "apps/control-api/app/routers/install_plans.py": "3d7fcd549b55d9f6b8f8750c24428f8f7851249ac56bb73d2823c790b6af8a02",
+    "apps/control-api/app/tests/test_install_options.py": "58554ab0d910c4fba8a1b08d4e0db845c2cc3a477478f0cb491749641bf40564"
+  },
+  "live_deployment_changed": false
+}

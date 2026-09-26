@@ -1,5 +1,7 @@
 # siq-agent-security 开发规格 v1（Development Specification）
 
+2026-09-25 个人管理台简化与安全批量撤权增量见 [实施规格](development/personal-console-simplification-20260925.md)：四入口、证据限定对象层级、签名预览与逐项 CAS/事务审计；保持全部既有防御和旧技术入口。
+
 2026-09-24 请求级固定报告生成增量见 [执行合同](development/research-report-generation-contract-20260924.md)：新增严格结构化工具，按公司只读/本次运行可写分别裁决；不放宽 terminal 的 unknown 副作用拒绝。工具实现、镜像身份和真实端到端验收缺一不可，不自动启用或升级冻结发行版本。
 
 - 日期：2026-09-04
@@ -766,7 +768,7 @@ v1 默认/环境范围，不改变既有消费者。读取登记失败时 v3 返
 - `GET /healthz` 为无 secret 的版本化服务识别响应；`status [--port N]` 严格校验产品和协议，不以 TCP 连通认定健康。
 - 2026-09-12 UX-003/004 增量：`GET /healthz/instance` 使用独立 `local-service-instance-health/v1` 合同，附 `state_directory_id`。该值为 `sha256("local-state-directory/v1\0" + EvalSymlinks(Abs(state_dir)))` 的小写十六进制摘要；仅识别当前规范化目录，不是永久设备 ID、认证凭据或防同 UID 伪装证明。目录迁移改变摘要，符号链接别名复用同一摘要；不返回目录原文。服务启动时固定摘要，目录解析失败拒绝启动。`status`/`pair` 必须核对本地只读计算结果后才报告 ready 或发送恢复凭据；旧服务缺失新接口时明确要求升级，不回退为匹配。开发启动器只接受新合同。现有 `/healthz`、UI 会话与历史合同保持兼容。独立合同见 `packages/contracts/local-service-instance-health.v1.schema.json`。
 - `/ui-config.json` 增加 `product`、`schema_version`、`session_recovery`、`pairing_available`，不返回 Cookie、token 或配对码。
-- 新 UI 配对时提交 `remember:true` 与 `X-SIQ-Session:1`；access token 仍只在内存。HttpOnly/SameSite Strict/限定路径 Cookie 只用于 `POST /v1/session/restore`，有效期不超过原会话 12 小时，daemon 重启失效。
+- 新 UI 配对时提交 `remember:true` 与 `X-SIQ-Session:1`；access token 仍只在内存。HttpOnly/SameSite Strict/限定路径 Cookie 只用于 `POST /v1/session/restore`。2026-09-25 按用户要求改为固定 24 小时，daemon 重启失效；响应升为 `local-admin-session/v2`，原 v1 的 12 小时合同保持不变，新 UI 同时按各版本上限校验，不给旧会话延长有效期。
 - `POST /v1/session/logout` 经现有 admin bearer 校验，注销该会话和对应恢复凭据；Cookie 不能直接调用其他管理接口。
 - `<state>/admin-recovery.token` 是独立的本机恢复凭据，不提供给适配器；仅允许无浏览器 Origin/Fetch Metadata 的 `POST /v1/session/pairing`。该接口重发单次 5 分钟配对码、记录无 secret 审计，不返回通用管理会话、不更改 Grant。
 - `pair [--port N]` 通过上述本机恢复路径生成新码，用户无需重启决策服务。该路径仍属 desktop-same-uid，不宣称能阻止恶意同 UID 进程。
@@ -774,6 +776,15 @@ v1 默认/环境范围，不改变既有消费者。读取登记失败时 v3 返
 - 本节响应和请求定义见 `packages/contracts/local-client-session.v1.schema.json`；既有客户端 `{code}` 配对方式保持兼容。
 
 ### 3.11.1 个人客户端初始化（2026-09-12，UX-003）
+
+2026-09-25 安装复现补充：`start/serve`、`setup`、`client-install` 与 `ui` 的人类可读输出必须区分服务机器和浏览器机器。个人服务仍只监听 loopback，不把其 IP 替换为局域网入口。远程访问指引使用由用户填写的 SSH 登录目标、显式 `127.0.0.1` 本地绑定、`ExitOnForwardFailure=yes` 和与服务相同的转发端口；只打印模板，不执行 SSH、不改防火墙/Host/Origin 校验、不推测登录凭据。SSH 会话或 Linux 无 DISPLAY/WAYLAND_DISPLAY 时，`ui` 在完成同目录健康校验后返回指引，不调用服务机器浏览器；`ui --print` 保留单行 URL 兼容行为。新包内 INSTALL 与 Skill 提供相同两机规则、服务端确认/浏览器端领取规则，并明确源码验证、签名包验证与真实第三方复现是不同门槛。
+
+2026-09-25 Skill 引导连接增量（独立合同 `local-browser-connect/v1`）：
+
+- 未配对浏览器显式点击连接，以 `X-SIQ-Session:1` 调用 `POST /v1/session/connect/request`。服务创建 5 分钟、仅内存保存的 pending 请求；最多 32 个未过期请求。返回随机 128-bit 十六进制请求编号（公开关联标识，不是凭据），另设置随机 256-bit HttpOnly / SameSite Strict / 限定 `/v1/session/connect` 路径的领取 Cookie，服务端只保存其哈希。重启全部失效；不在 URL、日志、Web Storage 或聊天中传递领取凭据。
+- 页面提供包含该编号的用户请求，用户主动交给本机 Skill。Skill 只能针对用户本次明确给出的编号执行 `connect --request ID --confirm-connect [--port N]`，不得自行创建/枚举并批准连接。命令复用 `status/pair` 的同状态目录实例核验、禁代理与拒绝重定向，然后用独立 recovery 凭据调用 `POST /v1/session/connect/approve`；拒绝浏览器 Origin/Fetch Metadata、决策 token 和管理会话。编号本身不能领取会话。审计成功后才置 approved，不返回管理凭据，不改 Grant。
+- 浏览器显式发起请求后以 POST 轮询 `/v1/session/connect/poll`，发送编号及专用 Cookie，两者必须匹配。pending 不授予权限；approved 经成功审计后只能领取一次，生成与手动配对相同的 24 小时 v2 管理会话和恢复 Cookie，不延长已有会话。取消通过同样凭据调用 `/v1/session/connect/cancel` 并销毁请求。失效、取消、重放和其他浏览器一律拒绝；过期请求不能被批准。获取编号无需已有管理身份，但仍必须通过现有 loopback/Host/Origin/Fetch Metadata 和自定义请求头检查。
+- 页面仅在用户点击后发起请求，取消/卸载停止轮询；迟到响应不能替换新会话。手动配对继续可用；旧服务不支持新接口时明确提示使用手动配对或更新，不能把 SPA 的 200 HTML 当成功。会话固定 24 小时、重启失效，不引入长期设备信任或自动业务审批。本机制仍为 desktop-same-uid 边界。
 
 `init [--port N]` 复用当前状态目录和单写者锁，不启动服务、扫描资产、修改适配器或生成授权。成功输出 `local-client-initialization/v1`、`status:initialized`、实例 ID、目录摘要和实际配置端口，不能据此显示已保护。
 

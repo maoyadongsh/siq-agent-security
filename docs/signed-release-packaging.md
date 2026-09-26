@@ -4,6 +4,8 @@
 
 当前可下载版本：[0.3.1 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.1)。普通用户选择 `siq-agent-security-0.3.1-bundle.zip`，解压后按下文安装；维护者构建、签发步骤另列于下。该版 Linux ARM64 安装链路已验证，其他目标尚待原生验收，见[发行证据](evidence/releases/0.3.1/README.md)。
 
+2026-09-24 已从最新主线 `7b68c14` 使用原发行密钥签发 **0.4.0-rc.2 本机候选**，完整包为 `.tmp/releases/0.4.0-rc.2-signed/siq-agent-security-0.4.0-rc.2-bundle.zip`。官方验签、四目标 pin、Linux ARM64 最终包首次启动及三项篡改拒绝通过，见[候选记录](evidence/releases/0.4.0-rc.2/README.md)。尚未公开发布，不改变 Latest；使用完整离线包及独立状态目录，按包内 `INSTALL.md` 验签后启动。该候选发布前不要使用 Skill-only 的联网下载；系统服务安装、跨版本升级/回滚与其他目标原生验收仍待完成。
+
 ## 构建固定版本
 
 在仓库根运行，`--source-sha` 必须是已审阅的完整提交 ID，版本示例不是自动发布承诺：
@@ -47,6 +49,8 @@ python3 scripts/release/package.py \
 发行签名认证 Skill 内容和清单绑定的二进制；不把项目清单签名称为 Apple Developer ID、公证或 Windows Authenticode。首次平台安全提示、原生安装/升级及宿主能力的剩余门槛应在发行说明中保留。
 
 ## 用户从完整包安装
+
+浏览器与服务在同一台电脑时可直接使用 loopback 地址；远程服务器安装需要从浏览器所在电脑建立同端口 SSH 转发，步骤见[操作手册](personal-client-operation-guide-20260916.md#2-启动与配对)。新打包工具已将两种访问方式及 Skill 辅助连接说明写入生成的 `INSTALL.md`；这不改写历史安装包，也不表示包含新功能的签名版本已经发布。
 
 准备 Python 3（建议 3.12+）；Windows 示例使用已加入 PATH 的 `python`。把完整包解压到本人拥有的新目录，在该目录执行。首次体验使用独立状态目录，验签成功后再运行程序。
 

@@ -1,0 +1,19 @@
+{
+  "scope": "ENT-004 prepare-install CLI; staged_only, not enrollment or activation",
+  "checks": {
+    "orchestration_scenarios": 10,
+    "unsafe_document_and_argument_tests": "passed",
+    "edge_go_vet_all": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "go_run_prepare_install_help": "passed",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/prepare_install_linux.go": "fdd16f1509948b0ea6c7161b9c0aa696733023a84517bcb73d5de040e2553b63",
+    "edge/agent/prepare_install_linux_test.go": "107e8074037d77eef90d9ffa42fa85e99737b6366e1d01e4973adac77c450f00",
+    "edge/agent/prepare_install_other.go": "38e10814f92f27227c40841eaa121d080e9ff945eef1d787d4d4bd2bf8ec073e",
+    "edge/agent/main.go": "df0895256bedd8063462578502725218c1d25b2cfda57dec259f954a3cd2eed1"
+  },
+  "production_signed_bundle_end_to_end": false,
+  "live_deployment_changed": false
+}

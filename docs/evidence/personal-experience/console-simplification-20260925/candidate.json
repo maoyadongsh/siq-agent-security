@@ -1,0 +1,30 @@
+{
+  "schema_version": "personal-console-candidate/v1",
+  "id": "console-simplification-20260925",
+  "source": {
+    "repository": "siq-agent-security",
+    "base_commit": "7b68c14abeff707777278034f2ccfd19b43ac609",
+    "dirty_worktree": true
+  },
+  "evidence": [
+    "validation.json"
+  ],
+  "spec": "../../../development/personal-console-simplification-20260925.md",
+  "binary": {
+    "path": ".tmp/personal-console-20260925/siq-agent-security",
+    "version": "0.4.0-dev-console",
+    "target": "linux/arm64",
+    "sha256": "2bcbde4bc46a95b4aa599a94d7ad1aa707f9209823951ddbc438e2dfe5ec7b2e",
+    "signed_release": false
+  },
+  "live_service": {
+    "changed": false,
+    "version": "0.4.0-dev-connect",
+    "port": 47611
+  },
+  "disposition": "source_candidate_verified_not_deployed",
+  "next_gates": [
+    "Explicit live switch instruction with rollback preservation.",
+    "Fixed source commit and authorized release packaging before installer distribution."
+  ]
+}

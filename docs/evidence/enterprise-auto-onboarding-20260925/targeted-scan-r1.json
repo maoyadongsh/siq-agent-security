@@ -1,0 +1,19 @@
+{
+  "batch": 29,
+  "scope": "signed device-targeted scan create/claim/batch/receipt/execution",
+  "verification": {
+    "api_passed": 1244,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "edge_go_vet": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "ruff": "passed after import formatting",
+    "git_diff_check": "passed",
+    "postgres_concurrency": "not_run",
+    "deployed": false
+  },
+  "test_source_sha256": {
+    "apps/control-api/app/tests/test_targeted_scan.py": "c5e10b8a37982fb63dc872ec4cc516869ca7c483d255571bee42f12efe72724f",
+    "edge/agent/targeted_task_test.go": "f5bf5dc1fda39e765dc2916610d15a05cec258437091a0921ae50dcc818a40dc"
+  }
+}

@@ -33,6 +33,27 @@ def make_repo(base: Path) -> Path:
 
 
 class ContractVersionChainAuditTest(unittest.TestCase):
+    def test_runtime_json_and_env_variants_are_not_source(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_repo(Path(tmp))
+            for relative in ("apps/control-api/var/state.json",
+                             "apps/control-api/backups/state.json",
+                             "apps/control-api/.env.production.json",
+                             "apps/control-api/.tmp/probe.json"):
+                write(root, relative, '{"value": "enterprise-widget/v2"}')
+            self.assertNotIn(("enterprise-widget", 2), tool.collect_emitted(root))
+
+    def test_source_and_contract_symlinks_are_not_read(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_repo(Path(tmp))
+            outside = Path(tmp) / "synthetic.json"
+            outside.write_text('{"value": "enterprise-widget/v2"}')
+            (root / "apps/control-api/app/alias.json").symlink_to(outside)
+            (root / "packages/contracts/enterprise-widget.v2.md").symlink_to(outside)
+            self.assertNotIn(("enterprise-widget", 2), tool.collect_emitted(root))
+            self.assertNotIn(2, tool.collect_documented(root)["enterprise-widget"])
+            self.assertFalse(tool._alias_target_ok(root, "packages/contracts/enterprise-widget.v2.md"))
+
     def test_production_version_without_contract_is_a_gap(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = make_repo(Path(tmp))

@@ -1,0 +1,19 @@
+{
+  "schema_version": "siq.gateway-edge-smoke/v1",
+  "passed": false,
+  "scope": "Real HTTP, native binaries, isolated SQLite and synthetic dev identities; not production IAM or deployment.",
+  "checks": {
+    "anonymous_denied_and_unknown_version_not_spa": true,
+    "cross_tenant_environment_denied": true,
+    "native_registration_identity_preserved_and_code_replay_denied": true,
+    "native_heartbeat_read_back": true,
+    "device_does_not_receive_other_environment_tasks": true,
+    "native_connector_signed_upload_and_receipt_read_back": true
+  },
+  "edge_sha256": "86a2a805c31d05ab4d52b05834faa29c1cf868fbe05b7549a66f05881687abda",
+  "gateway_source_sha256": {
+    "src/siq_gateway/main.py": "b59aceb3599a190782764080231df25f86428bd30d57e5cd0b82413a376da8f0",
+    "src/siq_gateway/edge.py": "7e29f7059774a8696fc98ba35200fae68779b13d44c02caa0b07053f06f039c0"
+  },
+  "fixture_processes_stopped": true
+}

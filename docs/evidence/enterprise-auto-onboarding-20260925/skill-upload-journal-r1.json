@@ -1,0 +1,21 @@
+{
+  "batch": 45,
+  "scope": "Linux private append-only signed skill batch journal",
+  "verification": {
+    "go_vet": "passed",
+    "go_test_race_count_1": "passed",
+    "git_diff_check": "passed",
+    "cross_compile_windows_amd64": "passed",
+    "cross_compile_darwin_arm64": "passed",
+    "existing_different_batch": "rejected without overwrite",
+    "partial_or_unsafe_record": "rejected, not interpreted as absent",
+    "secret_or_seed_in_journal": false,
+    "task_runner_connected": false,
+    "production_deployed": false
+  },
+  "source_sha256": {
+    "edge/agent/skill_journal.go": "803145e3ce0b9795d2ca7d1821a702161b83022749f0ea62bc462cc8750946aa",
+    "edge/agent/skill_journal_linux.go": "1dd9ddcd29b027370e999c33689bea5e0c70233e725e1dd362df71472369c04e",
+    "edge/agent/skill_journal_linux_test.go": "fdbac6bf51b66dd9bc57799c8c5f797451415d084588f0aa0308920f447509a1"
+  }
+}

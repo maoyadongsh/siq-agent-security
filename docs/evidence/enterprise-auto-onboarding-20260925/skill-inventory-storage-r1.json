@@ -1,0 +1,21 @@
+{
+  "batch": 41,
+  "scope": "independent skill storage and isolated SQLite migration",
+  "verification": {
+    "api_passed": 1260,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "api_seconds": 30.92,
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "cross_tenant_observation_fk": "rejected",
+    "populated_downgrade": "rejected with records preserved",
+    "postgres_validated": false,
+    "upload_endpoint_implemented": false,
+    "production_migrated": false
+  },
+  "source_sha256": {
+    "apps/control-api/migrations/versions/0021_skill_inventory.py": "7536aaa07cd91eaa364e82f36d8a74531c1b1c49646e47be9baa31744439571d",
+    "apps/control-api/app/tests/test_skill_inventory_migration.py": "fa7b2bec44d213df8fb1afa60e6f39f9360a2ccc0c1526cceec2dec8d06d93e2"
+  }
+}

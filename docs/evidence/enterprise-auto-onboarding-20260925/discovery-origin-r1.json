@@ -1,0 +1,24 @@
+{
+  "batch": 37,
+  "scope": "read-only tenant-isolated discovered asset origin projection",
+  "verification": {
+    "api_passed": 1259,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "api_seconds": 28.17,
+    "ruff_app": "passed",
+    "git_diff_check": "passed",
+    "legacy_origin": "not inferred",
+    "foreign_source": "not disclosed",
+    "observation_limit": 200,
+    "revoked_device": "historical provenance only",
+    "frontend_integrated": false,
+    "production_deployed": false
+  },
+  "source_sha256": {
+    "apps/control-api/app/routers/discovery_origin.py": "74af362ff9cc3ee7fbeda84ddd413bec8c6f7afa80f66e15b9d3751b539911b8",
+    "apps/control-api/app/tests/test_discovery_origin.py": "42e7da9de4cd59ce1451feaa0b5803945e9df36c2eda3f6fc59f7e0c83b5d19d",
+    "apps/control-api/app/tests/test_discovery_device_identity.py": "70577c487c8a7b36d96e3664ebca55fefebace73d5871e4f85eb8392a26674cb",
+    "packages/contracts/enterprise-discovery-origin.v1.md": "98ad924a87f97580c3916ff70247202d96d6157f1c96d91348866a68695e96e4"
+  }
+}

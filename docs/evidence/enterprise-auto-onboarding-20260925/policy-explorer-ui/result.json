@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "checks": {
+    "a_loading_no_fake_zero": true,
+    "a_block_not_effective": true,
+    "a_keyboard_focus_detail": true,
+    "a_pagination_failure_retry_clears_error": true,
+    "a_unknown_enum_selector_anomaly_xss": true,
+    "a_filters_search_clear": true,
+    "a_empty_vs_down": true,
+    "a_no_access_no_link_direct_denied": true,
+    "a_no_overflow_five_viewports": true,
+    "a_readonly_zero_writes": true,
+    "b_create_success_original_payload": true,
+    "b_create_empty_endpoint_no_network_key": true,
+    "b_create_failure_keeps_form_and_error": true,
+    "no_pageerrors": true
+  },
+  "mock_writes": [
+    {
+      "method": "POST",
+      "path": "/api/v1/policies",
+      "body": {
+        "name": "财务智能体网络策略 v2",
+        "selector": {
+          "agent_ids": [
+            "agt-finance-02"
+          ]
+        },
+        "network": [
+          {
+            "endpoint": "api.example.com:443",
+            "effect": "allow",
+            "binary_paths": [
+              "/usr/bin/curl"
+            ],
+            "purpose": "web-created"
+          }
+        ],
+        "enforcement_mode": "block"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/policies",
+      "body": {
+        "name": "无端点策略",
+        "selector": {
+          "agent_ids": [
+            "agt-x"
+          ]
+        },
+        "enforcement_mode": "block"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/policies",
+      "body": {
+        "name": "失败策略",
+        "selector": {
+          "agent_ids": [
+            "agt-y"
+          ]
+        },
+        "enforcement_mode": "block"
+      }
+    }
+  ],
+  "mock_writes_note": "阶段 A 只读零写；阶段 B 的 POST 全部被 Playwright mock 拦截，没有真实策略创建",
+  "scope": "mocked browser only",
+  "production_deployed": false,
+  "fixture_server_stopped": true
+}

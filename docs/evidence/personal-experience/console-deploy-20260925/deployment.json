@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "formal_release": false,
+  "enterprise_changed": false,
+  "checks": {
+    "graceful_drain_with_idle_connections": true,
+    "same_state_and_new_version": true,
+    "existing_runtime_identities_preserved": true,
+    "receipt_chain_verified_unchanged": true,
+    "all_original_records_preserved": true,
+    "anonymous_denied": true
+  },
+  "established_connections_before_drain": 6,
+  "new_pid": 1458311,
+  "previous_pid": 820429,
+  "binary_sha256": "2bcbde4bc46a95b4aa599a94d7ad1aa707f9209823951ddbc438e2dfe5ec7b2e",
+  "previous_binary_sha256": "02acea34b368e7dfa693826f17e0133309609c0bcf940da6559f55689a8916e2",
+  "version": "0.4.0-dev-console",
+  "runtime_identity_count": 12,
+  "original_files": 411
+}

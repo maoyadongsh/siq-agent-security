@@ -1,0 +1,19 @@
+{
+  "batch": 26,
+  "scope": "authenticated capability heartbeat server and Go client wire",
+  "verification": {
+    "new_api_tests_passed": 13,
+    "api_full_suite": "passed; one existing skip and one existing warning",
+    "ruff": "passed",
+    "edge_go_vet": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed",
+    "periodic_measured_producer_wired": false,
+    "deployed": false
+  },
+  "source_sha256": {
+    "apps/control-api/app/edge_capabilities.py": "2796df56bf565c2596c829bdce6eb892bca5b31e61f9ccf760b2d59d8b0c70ee",
+    "apps/control-api/app/tests/test_capability_heartbeat.py": "8bac25fdc02dab267e1886196d31851f8c57029768a97750711eddd4369af93d",
+    "edge/agent/capability_heartbeat_test.go": "7f3cc8903f7642eda7088a46e6a6422bb24e46167d01d7aa632be9f7c3d7e61e"
+  }
+}

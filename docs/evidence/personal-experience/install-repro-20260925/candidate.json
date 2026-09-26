@@ -1,0 +1,12 @@
+{
+  "schema": "siq-local-candidate/v1",
+  "name": "personal-install-access-repro-20260925",
+  "base_commit": "7b68c14abeff707777278034f2ccfd19b43ac609",
+  "source_status": "uncommitted working-tree increment",
+  "binary_sha256": "6004284cab7d283b2d463c0ff8d145295cc7319b90ad1015c47971221dafa163",
+  "binary_platform": "linux/arm64",
+  "release_signed": false,
+  "evidence": ["../../../development/personal-install-repro-20260925.md"],
+  "checks": {"go_tests": "passed", "release_tool_tests": 18, "browser_checks": 9, "fresh_state_source_smoke": "passed", "cross_compile_targets": 4},
+  "excluded": ["signed final-package installation", "actual two-machine SSH tunnel", "native macOS/Windows acceptance", "public release", "live replacement"]
+}

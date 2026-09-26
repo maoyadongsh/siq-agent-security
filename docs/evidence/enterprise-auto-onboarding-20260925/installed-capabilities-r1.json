@@ -1,0 +1,18 @@
+{
+  "batch": 25,
+  "scope": "enterprise setup measured connector registration",
+  "verification": {
+    "go_vet_all": "passed",
+    "go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed",
+    "subprocess": "synthetic NDJSON fixture",
+    "registration": "isolated httptest server",
+    "formal_signed_setup_e2e": "not_run",
+    "deployed": false
+  },
+  "source_sha256": {
+    "edge/agent/installed_capabilities.go": "6bc8998395836124344fd3ffec82c26fac3bdf2167b3574a0fa7a28fb4b0c0c9",
+    "edge/agent/installed_capabilities_test.go": "4fd40ea05df34443122980c487ea139eadd3ff78ddac406dbfb4568fb4f3ff84",
+    "edge/agent/setup_enterprise_linux.go": "fb0c0a691f33cc88074cef7b9a38f15ce5a29aad7bb6644b9c29702c3a27a5d4"
+  }
+}

@@ -21,6 +21,7 @@ import argparse
 import json
 import os
 import re
+import stat
 import sys
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
@@ -36,6 +37,7 @@ EXIT_REPORT_WRITE_FAILED = 3
 SKIP_DIR_SEGMENTS = {
     ".git", ".venv", "venv", "node_modules", "__pycache__", ".pytest_cache",
     ".ruff_cache", ".mypy_cache", "dist", "build", "coverage", ".next",
+    "var", "backups", ".tmp", "tmp", ".build",
 }
 SKIP_SUFFIXES = (".private", ".seed", ".pem", ".key", ".p12", ".pfx", ".kdbx", ".pyc")
 
@@ -69,12 +71,22 @@ MD_LINK = re.compile(r"\[[^\]]*\]\((?P<target>[^)\s]+)\)")
 def _iter_text_files(root: Path, base: PurePosixPath):
     """按固定后缀与排除规则只读枚举；跳过敏感后缀与目录，绝不读取其正文。"""
     directory = root.joinpath(*base.parts)
+    if any(root.joinpath(*base.parts[:index]).is_symlink() for index in range(1, len(base.parts) + 1)):
+        return
     if not directory.is_dir():
         return
     for current, dirnames, filenames in os.walk(directory):
-        dirnames[:] = sorted(name for name in dirnames if name not in SKIP_DIR_SEGMENTS)
+        dirnames[:] = sorted(name for name in dirnames
+                             if name not in SKIP_DIR_SEGMENTS and not (Path(current) / name).is_symlink())
         for filename in sorted(filenames):
             if not filename.endswith(TEXT_SUFFIXES) or filename.endswith(SKIP_SUFFIXES):
+                continue
+            if filename == ".env" or filename.startswith(".env."):
+                continue
+            try:
+                if not stat.S_ISREG((Path(current) / filename).lstat().st_mode):
+                    continue
+            except OSError:
                 continue
             relative = Path(current).relative_to(root).joinpath(filename)
             posix = PurePosixPath(relative.as_posix())
@@ -90,6 +102,8 @@ def is_test_path(path: str) -> bool:
 
 def _read_text(path: Path) -> str | None:
     try:
+        if any(parent.is_symlink() for parent in path.parents) or not stat.S_ISREG(path.lstat().st_mode):
+            return None
         return path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return None
@@ -171,7 +185,10 @@ def _alias_target_ok(root: Path, target: object) -> bool:
     if candidate.is_absolute() or "://" in target or ".." in candidate.parts:
         return False
     resolved = root.joinpath(*candidate.parts)
-    return resolved.is_file() and candidate.parts[:2] == ("packages", "contracts")
+    return (candidate.parts[:2] == ("packages", "contracts")
+            and not any(root.joinpath(*candidate.parts[:index]).is_symlink()
+                        for index in range(1, len(candidate.parts) + 1))
+            and resolved.is_file())
 
 
 def audit(root: Path, aliases: dict | None = None) -> dict:

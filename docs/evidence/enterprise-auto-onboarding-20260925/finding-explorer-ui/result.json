@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "checks": {
+    "a_loading_no_fake_zero_or_actions": true,
+    "a_match_line_and_coverage": true,
+    "a_keyboard_detail_and_terminal_no_actions": true,
+    "a_pagination_failure_retry_no_duplicates_xss_text": true,
+    "a_filters_no_match_clear": true,
+    "a_no_overflow_five_viewports": true,
+    "a_empty_vs_disconnected_no_actions": true,
+    "a_readonly_zero_writes": true,
+    "b_resolve_requires_evidence_cancel_no_write": true,
+    "b_resolve_original_api_and_refresh": true,
+    "b_acknowledge_original_api_refresh": true,
+    "b_failure_keeps_error_no_fake_success": true,
+    "b_terminal_state_locked": true,
+    "no_pageerrors": true
+  },
+  "mock_writes": [
+    {
+      "method": "POST",
+      "path": "/api/v1/findings/fnd-1/resolve",
+      "body": {
+        "evidence_ref": "repair-ticket:SEC-123"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/findings/fnd-1/acknowledge",
+      "body": {}
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/findings/fnd-3/acknowledge",
+      "body": {}
+    }
+  ],
+  "mock_writes_note": "阶段 A 只读零写；阶段 B 写请求仅被 Playwright 拦截的模拟响应接收，真实业务写请求始终为零",
+  "scope": "mocked browser only",
+  "production_deployed": false,
+  "fixture_server_stopped": true
+}

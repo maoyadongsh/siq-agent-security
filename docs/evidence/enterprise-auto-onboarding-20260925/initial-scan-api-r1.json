@@ -1,0 +1,21 @@
+{
+  "batch": 31,
+  "scope": "issued-plan-bound initial scan transaction and durable replay",
+  "verification": {
+    "new_api_cases": 8,
+    "api_passed": 1252,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "clean_sqlite_migration_to_0019": "passed",
+    "postgres_concurrency": "not_run",
+    "installer_wired": false,
+    "production_migrated": false
+  },
+  "source_sha256": {
+    "apps/control-api/app/routers/initial_scan.py": "d975cacfe1bc86f198d5af88dfb1071d41a29e4e15a22c8909c3db9ad3cbb9f6",
+    "apps/control-api/app/tests/test_initial_scan.py": "f2fe5eb0cdfbf6cea51c0d1e1ee71fd47e3df4d1a57570cf89fcff6eca39c3a0",
+    "apps/control-api/migrations/versions/0019_initial_scan.py": "a6a8b65d54fca67a580e633839c8872706515fdc84dbf59ec5f43ab2093dbbef"
+  }
+}
