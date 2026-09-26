@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import uuid
+
 from app.db import session_scope
 from app.models import EdgeAgent, Environment
 from app.tests.edge_helpers import edge_public_key_pem
@@ -165,7 +167,26 @@ def test_wrong_secret_rejected(client, tenant_a, env_a):
     assert client.post("/edge/v1/heartbeat", json={"version": "0.1.0"}, headers=headers).status_code == 401
 
 
-def test_tasks_scoped_to_environment(client, tenant_a, tenant_b, env_a, env_b):
+def _fresh_env(client, headers, prefix):
+    """用例级独立环境。
+
+    `GET /edge/v1/tasks` 是**领取**语义，按 `created_at` 只取最旧 10 条
+    （routers/environments.py:486-491）。会话级共享环境 env_a 会被本文件与其他
+    文件累积的可领取任务填满，新任务排在第 11 位之后而不可见——本用例因此不能
+    依赖共享环境（放宽 10 条上限会扩大单次领取面，属既有 P1-5 语义，不动）。
+    """
+    resp = client.post(
+        "/api/v1/environments",
+        json={"name": f"{prefix}-{uuid.uuid4().hex[:12]}", "env_type": "host", "mode": "enforce"},
+        headers=headers,
+    )
+    assert resp.status_code == 201, resp.text
+    return resp.json()
+
+
+def test_tasks_scoped_to_environment(client, tenant_a, tenant_b):
+    env_a = _fresh_env(client, tenant_a, "enroll-iso-a")
+    env_b = _fresh_env(client, tenant_b, "enroll-iso-b")
     # 给 env_a 建扫描任务；env_b 的 Edge 看不到
     created = client.post(
         "/api/v1/scans", json={"environment_id": env_a["id"], "scope": {"connector": "hermes"}}, headers=tenant_a

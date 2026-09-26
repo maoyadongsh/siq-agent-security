@@ -1,0 +1,76 @@
+# R08 冻结前允许清单（草案，待主开发者复核）
+#
+# 用途：作为 scripts/enterprise-experience/source-freeze-preflight.py --allowlist 的输入，
+# 对下列路径做只读快照核验（逐段 lstat 拒符号链接，敏感路径只标记不读取）。
+#
+# 范围声明：本清单**只列本轮（R00–R08）由执行者创建或修改的路径**，不包含任何并行
+# 作者线的产物，也不构成对这些路径"应当进入发行候选"的判断。允许清单是**审阅输入**，
+# 不是发布授权，不是源码已冻结的结论。
+#
+# 已知边界偏差（需复核）：第 59–61 行的三个合同文件在本轮 R02 开工时**已存在于工作树**，
+# 本轮只在其末尾追加了"版本导航"段（仓储既有约定）。**精确表述**：这三个路径在 HEAD 中
+# **不存在**（`git ls-files` 无记录、`git cat-file -e HEAD:<path>` 失败），即它们是本未提交
+# 时期内的产物、**未纳入版本控制**；因此严格说这不是"修改已跟踪文件"，而是"**追加到工作树内
+# 既存、但归属未确认的未跟踪合同件**"。追加段是纯文档、无实现逻辑。
+# 请复核后保留或回退；如需回退，删除这三个路径对应文件的末尾追加段即可。
+#
+# 第四节（第 64–68 行）是本轮经 D-1 例外授权后修改的五个文件
+# （主开发者 2026-09-26 答复：D-1 = 全部放开）。逐条对应关系：
+#   - routers/policies.py            R05.5 非 openshell-cli 回滚分支补活体授权链重查
+#   - app/main.py                    R01.5 接线本 router（两行纯追加）
+#   - tests/test_policy_flow.py      R05.5 新增 4 条用例（含反例守卫）
+#   - tests/test_deployment_preview_consistency.py  R07.8 缺陷 1（读不存在的列）
+#   - tests/test_enrollment_flow.py  R07.8 缺陷 2（共享环境被 10 条上限截断）
+# **版本控制状态不统一（重要）**：前四项中 policies.py / main.py / test_policy_flow.py /
+# test_enrollment_flow.py 是**已跟踪**文件（HEAD 中存在，本轮只改其中一部分 hunk，
+# 其余 hunk 属并行作者线或本未提交时期的其它产物）；test_deployment_preview_consistency.py
+# 则是**未跟踪**的新文件（HEAD 中不存在）。因此"提交本清单"在 Git 的**文件粒度**上会把
+# 三个已跟踪文件里**非本轮**的 hunk、以及若干未跟踪文件里**非本轮**的正文一并纳入快照——
+# 见交接文档 §7 的提交说明。**冻结前请与并行作者线逐条对照**。
+#
+# 本清单中不含 .env / 私钥 / 种子 / 凭据；上游工具同样对 .env、.env.*、
+# *.private、*.seed、*.pem、*.key、*.p12、*.pfx、*.kdbx 做"只标记不读取"处理。
+
+# --- 源码：R01 设备侧待确认周期计划只读枚举（新增；已于 R01.5 接入 app/main.py） ---
+apps/control-api/app/routers/discovery_schedule_pending.py
+apps/control-api/app/tests/test_discovery_schedule_pending.py
+packages/contracts/enterprise-discovery-schedule-pending-list.v1.md
+
+# --- 源码：R03 证据拓扑（视角与来源边界）只读投影（新增，未接线） ---
+apps/control-api/app/evidence_topology.py
+apps/control-api/app/tests/test_evidence_topology.py
+packages/contracts/enterprise-evidence-topology.v1.md
+
+# --- 源码：R04 绑定失效联动只读投影（新增，未接线） ---
+apps/control-api/app/binding_invalidation_surface.py
+apps/control-api/app/tests/test_binding_invalidation_surface.py
+packages/contracts/enterprise-binding-invalidation-surface.v1.md
+
+# --- 合同：R02 角色—Skill 快照对照 v2（新增） ---
+packages/contracts/enterprise-role-skill-snapshot-comparison.v2.md
+
+# --- 工具：R06 版本化引用链审计（新增） ---
+scripts/enterprise-experience/contract-version-chain-audit.py
+scripts/enterprise-experience/contract-version-aliases.json
+scripts/enterprise-experience/test_contract_version_chain_audit.py
+
+# --- 工具：R07 统一防御门禁执行器（新增） ---
+scripts/enterprise-experience/enterprise-gate-run.py
+scripts/enterprise-experience/test_enterprise_gate_run.py
+
+# --- 文档：本轮收口执行记录与交接（新增） ---
+docs/development/deepseek-enterprise-mainline-closeout-execution-20260926.md
+docs/development/deepseek-enterprise-mainline-closeout-handoff-20260926.md
+docs/development/deepseek-enterprise-mainline-closeout-freeze-allowlist-20260926.txt
+
+# --- 既有件被追加"版本导航"段（超出 D-1 字面范围，需复核） ---
+packages/contracts/enterprise-discovery-schedule.v1.md
+packages/contracts/enterprise-skill-upload.v1.md
+packages/contracts/enterprise-skill-collection.v1.md
+
+# --- 既有件：经 D-1 例外授权（全部放开）的改动，逐条见上方第 24–30 行说明 ---
+apps/control-api/app/routers/policies.py
+apps/control-api/app/main.py
+apps/control-api/app/tests/test_policy_flow.py
+apps/control-api/app/tests/test_deployment_preview_consistency.py
+apps/control-api/app/tests/test_enrollment_flow.py

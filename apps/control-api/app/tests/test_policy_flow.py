@@ -7,9 +7,32 @@ from __future__ import annotations
 
 import uuid
 
+import pytest
+
 from app.db import session_scope
 from app.tests.binding_helpers import make_binding
 from app.tests.edge_helpers import edge_public_key_pem
+
+
+@pytest.fixture()
+def env_iso(client, tenant_a):
+    """用例级独立环境（真实 API 创建，enforce 模式，与会话级共享环境同租户）。
+
+    会话级共享环境会被跨文件用例累积未回执的 pending publish_policy 任务；
+    GET /edge/v1/tasks 按 created_at 升序只返回最旧 10 条，新部署任务不可见。
+    每个用例用唯一名称的环境隔离领取批次，且本文件不再向共享环境沉积任务。
+    """
+    resp = client.post(
+        "/api/v1/environments",
+        json={
+            "name": f"policy-flow-iso-{uuid.uuid4().hex[:12]}",
+            "env_type": "host",
+            "mode": "enforce",
+        },
+        headers=tenant_a,
+    )
+    assert resp.status_code == 201, resp.text
+    return resp.json()
 
 
 def _create_policy(client, headers, name=None, enforcement_mode="audit_only", agent_ids=None, network=None):
@@ -111,8 +134,8 @@ def test_idempotency_key(client, tenant_a):
     assert first.json()["id"] == second.json()["id"]
 
 
-def test_deployment_requires_approval(client, tenant_a, env_a):
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"])
+def test_deployment_requires_approval(client, tenant_a, env_iso):
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"])
     policy = _create_policy(client, tenant_a, agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -122,7 +145,7 @@ def test_deployment_requires_approval(client, tenant_a, env_a):
     # 未批准部署：拒绝
     resp = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert resp.status_code == 409
@@ -131,7 +154,7 @@ def test_deployment_requires_approval(client, tenant_a, env_a):
     client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert dep.status_code == 201, dep.text
@@ -151,8 +174,8 @@ def test_policy_cross_tenant_404(client, tenant_a, tenant_b):
     assert resp.status_code == 404
 
 
-def _approved_deployment(client, tenant_a, env_a):
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"])
+def _approved_deployment(client, tenant_a, env_iso):
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"])
     policy = _create_policy(client, tenant_a, agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -161,17 +184,24 @@ def _approved_deployment(client, tenant_a, env_a):
     ).json()
     approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
     client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
-    dep = client.post(
+    dep_resp = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
-    ).json()
-    return dep
+    )
+    assert dep_resp.status_code == 201, dep_resp.text
+    return dep_resp.json()
 
 
-def _edge_headers(client, tenant_a, env_a, identity):
-    enr = client.post(f"/api/v1/environments/{env_a['id']}/edge-enrollment", json={}, headers=tenant_a).json()
-    reg = client.post(
+def _edge_headers(client, tenant_a, env_iso, identity):
+    # device_identity 全局唯一（重复注册 409），每用例唯一化避免跨用例/跨文件冲突
+    identity = f"{identity}-{uuid.uuid4().hex[:8]}"
+    enr_resp = client.post(
+        f"/api/v1/environments/{env_iso['id']}/edge-enrollment", json={}, headers=tenant_a
+    )
+    assert enr_resp.status_code == 200, enr_resp.text
+    enr = enr_resp.json()
+    reg_resp = client.post(
         "/edge/v1/register",
         json={
             "enrollment_code": enr["code"],
@@ -179,15 +209,19 @@ def _edge_headers(client, tenant_a, env_a, identity):
             "public_key_pem": edge_public_key_pem(identity),
             "version": "0.1.0",
         },
-    ).json()
+    )
+    assert reg_resp.status_code == 200, reg_resp.text
+    reg = reg_resp.json()
     return {"Authorization": f"Bearer {reg['device_secret']}", "X-Edge-Identity": identity}
 
 
-def test_deployment_requires_verification_evidence(client, tenant_a, env_a):
+def test_deployment_requires_verification_evidence(client, tenant_a, env_iso):
     """不变量 #5：无验证证据的回执不得标记 effective（fail-closed）。"""
-    dep = _approved_deployment(client, tenant_a, env_a)
-    headers = _edge_headers(client, tenant_a, env_a, "edge-verify-1")
-    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    dep = _approved_deployment(client, tenant_a, env_iso)
+    headers = _edge_headers(client, tenant_a, env_iso, "edge-verify-1")
+    tasks_resp = client.get("/edge/v1/tasks", headers=headers)
+    assert tasks_resp.status_code == 200, tasks_resp.text
+    tasks = tasks_resp.json()
     task = next(
         t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
     )
@@ -205,10 +239,12 @@ def test_deployment_requires_verification_evidence(client, tenant_a, env_a):
         assert d.status == "failed"  # 无验证证据 → 不得 effective
 
 
-def test_deployment_effective_with_verification(client, tenant_a, env_a):
-    dep = _approved_deployment(client, tenant_a, env_a)
-    headers = _edge_headers(client, tenant_a, env_a, "edge-verify-2")
-    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+def test_deployment_effective_with_verification(client, tenant_a, env_iso):
+    dep = _approved_deployment(client, tenant_a, env_iso)
+    headers = _edge_headers(client, tenant_a, env_iso, "edge-verify-2")
+    tasks_resp = client.get("/edge/v1/tasks", headers=headers)
+    assert tasks_resp.status_code == 200, tasks_resp.text
+    tasks = tasks_resp.json()
     task = next(
         t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
     )
@@ -230,11 +266,13 @@ def test_deployment_effective_with_verification(client, tenant_a, env_a):
         assert d.verification is None
 
 
-def test_edge_publish_policy_receipt_constant_fail_closed(client, tenant_a, env_a):
+def test_edge_publish_policy_receipt_constant_fail_closed(client, tenant_a, env_iso):
     """常量语义：Phase 4 回执验证器落地前，publish_policy 成功回执一律 failed + edge_publish_unsupported。"""
-    dep = _approved_deployment(client, tenant_a, env_a)
-    headers = _edge_headers(client, tenant_a, env_a, "edge-const-1")
-    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    dep = _approved_deployment(client, tenant_a, env_iso)
+    headers = _edge_headers(client, tenant_a, env_iso, "edge-const-1")
+    tasks_resp = client.get("/edge/v1/tasks", headers=headers)
+    assert tasks_resp.status_code == 200, tasks_resp.text
+    tasks = tasks_resp.json()
     task = next(
         t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
     )
@@ -263,12 +301,14 @@ def test_edge_publish_policy_receipt_constant_fail_closed(client, tenant_a, env_
         assert failed_events[-1].payload["payload"]["reason"] == "edge_publish_unsupported"
 
 
-def test_deployment_compiles_with_fake_backend(client, tenant_a, env_a, monkeypatch):
+def test_deployment_compiles_with_fake_backend(client, tenant_a, env_iso, monkeypatch):
     """SIQ_AS_ENFORCEMENT_BACKEND=fake：部署任务携带编译制品 + unsupported 显式列表（§14.1）。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "fake")
-    dep = _approved_deployment(client, tenant_a, env_a)
-    headers = _edge_headers(client, tenant_a, env_a, "edge-compile-1")
-    tasks = client.get("/edge/v1/tasks", headers=headers).json()
+    dep = _approved_deployment(client, tenant_a, env_iso)
+    headers = _edge_headers(client, tenant_a, env_iso, "edge-compile-1")
+    tasks_resp = client.get("/edge/v1/tasks", headers=headers)
+    assert tasks_resp.status_code == 200, tasks_resp.text
+    tasks = tasks_resp.json()
     task = next(
         t for t in tasks if t["task_type"] == "publish_policy" and t["payload"].get("deployment_id") == dep["id"]
     )
@@ -293,6 +333,9 @@ def _fake_cli_backend(monkeypatch, *, revision="1", apply_error=None, verify_err
             import yaml as _yaml
 
             self.active_policy = _yaml.safe_load(REAL_POLICY_GET_FULL.split("---", 1)[1])
+
+        def _invocation_fingerprint(self):
+            return "c" * 64  # Explicit synthetic connection identity, not env.sh fallback.
 
         def _r(self, args):
             if tuple(args[:2]) == ("gateway", "info"):
@@ -334,12 +377,14 @@ def _fake_cli_backend(monkeypatch, *, revision="1", apply_error=None, verify_err
     return fake
 
 
-def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_a, monkeypatch):
+def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_iso, monkeypatch, tmp_path):
     """#2 闭环：审批 → 编译 → 真实 policy set → 读回验证 → effective（不变量 #5）。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     fake = _fake_cli_backend(monkeypatch)
     target = f"siq-as-live-{uuid.uuid4().hex[:8]}"
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli", target=target)
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
     policy = _create_policy(client, tenant_a, enforcement_mode="block", agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -351,7 +396,7 @@ def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_a, monkeypat
 
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert dep.status_code == 201, dep.text
@@ -366,11 +411,13 @@ def test_deployment_openshell_cli_closed_loop(client, tenant_a, env_a, monkeypat
     assert fake.applied[0][2] == target
 
 
-def test_deployment_does_not_invent_conflicting_deny_probe(client, tenant_a, env_a, monkeypatch):
+def test_deployment_does_not_invent_conflicting_deny_probe(client, tenant_a, env_iso, monkeypatch, tmp_path):
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     fake = _fake_cli_backend(monkeypatch)
     target = f"siq-as-probe-{uuid.uuid4().hex[:8]}"
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli", target=target)
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
     policy = _create_policy(
         client,
         tenant_a,
@@ -394,7 +441,7 @@ def test_deployment_does_not_invent_conflicting_deny_probe(client, tenant_a, env
 
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert dep.status_code == 201, dep.text
@@ -402,11 +449,15 @@ def test_deployment_does_not_invent_conflicting_deny_probe(client, tenant_a, env
     assert fake.applied
 
 
-def test_post_apply_verification_failure_preserves_safe_rollback_binding(client, tenant_a, env_a, monkeypatch):
+def test_post_apply_verification_failure_preserves_safe_rollback_binding(
+    client, tenant_a, env_iso, monkeypatch, tmp_path,
+):
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
-    _fake_cli_backend(monkeypatch, verify_error=True)
+    fake = _fake_cli_backend(monkeypatch, verify_error=True)
     target = f"siq-as-verify-fail-{uuid.uuid4().hex[:8]}"
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli", target=target)
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
     policy = _create_policy(client, tenant_a, enforcement_mode="block", agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -418,7 +469,7 @@ def test_post_apply_verification_failure_preserves_safe_rollback_binding(client,
 
     failed = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert failed.status_code == 502
@@ -436,12 +487,12 @@ def test_post_apply_verification_failure_preserves_safe_rollback_binding(client,
     assert rollback.json()["status"] == "rolled_back"
 
 
-def test_deployment_openshell_cli_rejects_non_block_mode_422(client, tenant_a, env_a, monkeypatch):
+def test_deployment_openshell_cli_rejects_non_block_mode_422(client, tenant_a, env_iso, monkeypatch):
     """P1-11：openshell-cli 能力文档仅支持 enforcement_mode.block；
     audit_only/warn 部署 422，detail 引用能力文档结论。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     _fake_cli_backend(monkeypatch)
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli")
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli")
     for mode in ("audit_only", "warn"):
         policy = _create_policy(client, tenant_a, enforcement_mode=mode, agent_ids=[asset_id])
         cr = client.post(
@@ -453,18 +504,22 @@ def test_deployment_openshell_cli_rejects_non_block_mode_422(client, tenant_a, e
         client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
         dep = client.post(
             "/api/v1/deployments",
-            json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+            json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
             headers=tenant_a,
         )
         assert dep.status_code == 422, dep.text
         assert f"capability_unsupported: enforcement_mode.{mode}" in dep.json()["detail"]
 
 
-def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a, monkeypatch):
+def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_iso, monkeypatch, tmp_path):
     """网关拒绝（如静态段不一致）→ 502 + deployment failed，绝不伪装 effective。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
-    _fake_cli_backend(monkeypatch, apply_error="Error: filesystem include_workdir cannot be changed on a live sandbox")
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli")
+    fake = _fake_cli_backend(
+        monkeypatch, apply_error="Error: filesystem include_workdir cannot be changed on a live sandbox",
+    )
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli")
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
     policy = _create_policy(client, tenant_a, enforcement_mode="block", agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -476,7 +531,7 @@ def test_deployment_openshell_apply_failure_fails_closed(client, tenant_a, env_a
 
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert dep.status_code == 502
@@ -520,7 +575,7 @@ def test_list_endpoints_tenant_isolated(client, tenant_a, tenant_b):
     assert all(c["id"] != cr["id"] for c in crs_b)
 
 
-def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_a, monkeypatch):
+def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_iso, monkeypatch, tmp_path):
     """§14.4：回滚传递完整操作绑定，并执行当前授权重验。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     from app.adapters.openshell.cli_backend import OpenShellCliBackend
@@ -539,7 +594,10 @@ def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_a, monke
             self.rollbacks: list[str] = []
 
         def probe(self):
-            return BackendCapabilities(backend="openshell", schema_version="v1", dynamic_network_update=True)
+            return BackendCapabilities(
+                backend="openshell", schema_version="v1", dynamic_network_update=True,
+                handshake_verified=True, handshake_gateway="fixture", endpoint_fingerprint="d" * 64,
+            )
 
         def read_effective_policy(self, target):
             return PolicySnapshot(target=target, revision="1", network=[])
@@ -588,7 +646,9 @@ def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_a, monke
     monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: fake)
 
     target = f"s-rollback-{uuid.uuid4().hex[:8]}"
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli", target=target)
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
     policy = _create_policy(client, tenant_a, enforcement_mode="block", agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -599,7 +659,7 @@ def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_a, monke
     client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     ).json()
     assert dep["status"] == "effective", dep
@@ -612,12 +672,14 @@ def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_a, monke
     assert fake.rollbacks == [target]
 
 
-def test_rollback_rejects_revoked_runtime_binding(client, tenant_a, env_a, monkeypatch):
+def test_rollback_rejects_revoked_runtime_binding(client, tenant_a, env_iso, monkeypatch, tmp_path):
     """回滚写前必须重查 RuntimeBinding；撤销后零后端写入拒绝。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     fake = _fake_cli_backend(monkeypatch)
     target = f"s-revoked-{uuid.uuid4().hex[:8]}"
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli", target=target)
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli", target=target)
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
     policy = _create_policy(client, tenant_a, enforcement_mode="block", agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -632,7 +694,7 @@ def test_rollback_rejects_revoked_runtime_binding(client, tenant_a, env_a, monke
     client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     ).json()
     assert dep["status"] == "effective"
@@ -652,6 +714,99 @@ def test_rollback_rejects_revoked_runtime_binding(client, tenant_a, env_a, monke
         from app.models import Deployment
 
         assert session.get(Deployment, dep["id"]).status == "effective"
+
+
+def _sent_deployment_with_fake_backend(client, tenant_a, env_iso):
+    """`fake` 后端走完 提出→批准→部署，停在 `deployment.status == "sent"`。
+
+    默认（非 openshell-cli）后端没有真实后端可撤，回滚是**账面状态迁移**——正因如此它
+    必须自己证明授权链仍然活着（D-1(b) / R05.4）。
+    """
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"])
+    policy = _create_policy(client, tenant_a, agent_ids=[asset_id])
+    cr = client.post(
+        "/api/v1/change-requests",
+        json={"policy_id": policy["id"], "idempotency_key": f"ik-{uuid.uuid4().hex}"},
+        headers=tenant_a,
+    ).json()
+    approver = {"X-Dev-Tenant-Id": "tnt-A", "X-Dev-User-Id": "user-approver", "X-Dev-Roles": "reviewer"}
+    approved = client.post(f"/api/v1/change-requests/{cr['id']}/approve", json={}, headers=approver)
+    assert approved.status_code == 200, approved.text
+    dep = client.post(
+        "/api/v1/deployments",
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
+        headers=tenant_a,
+    ).json()
+    assert dep["status"] == "sent", dep
+    return binding, policy, cr, dep
+
+
+@pytest.mark.parametrize(
+    ("broken", "case"),
+    [
+        ("binding", "runtime_binding_revoked"),
+        ("policy", "policy_superseded"),
+        ("change_request", "change_request_rejected"),
+    ],
+)
+def test_rollback_refuses_dead_authorization_chain_without_writing_state(
+    client, tenant_a, env_iso, broken, case
+):
+    """D-1(b) / R05.4：账面回滚也必须先证明授权链仍活着。
+
+    此前非 openshell-cli 分支**没有**这套判定：绑定已吊销、策略已被取代、变更单已失效时
+    仍写下 `rolled_back`，还会把 `superseded` 的变更单改写成 `rolled_back`（不可还原）——
+    等于声明一件没有发生的事。此处按三条断链逐条固定为：409 + 拒审计 + 零状态写入。
+    """
+    from sqlalchemy import select
+
+    from app.models import AuditEvent, ChangeRequest, Deployment, DesiredPolicy, RuntimeBinding
+
+    binding, policy, cr, dep = _sent_deployment_with_fake_backend(client, tenant_a, env_iso)
+    with session_scope() as session:
+        if broken == "binding":
+            session.get(RuntimeBinding, binding["id"]).status = "revoked"
+        elif broken == "policy":
+            session.get(DesiredPolicy, policy["id"]).status = "superseded"
+        else:
+            session.get(ChangeRequest, cr["id"]).status = "rejected"
+        session.commit()
+
+    response = client.post(f"/api/v1/deployments/{dep['id']}/rollback", json={}, headers=tenant_a)
+    assert response.status_code == 409, f"{case}: {response.text}"
+    assert response.json()["detail"] == "rollback_authorization_expired"
+
+    with session_scope() as session:
+        assert session.get(Deployment, dep["id"]).status == "sent"  # 未写状态
+        assert session.get(ChangeRequest, cr["id"]).status != "rolled_back"
+        refused = session.scalars(
+            select(AuditEvent).where(
+                AuditEvent.action == "deployment.rollback_refused",
+                AuditEvent.resource_id == dep["id"],
+            )
+        ).all()
+        assert len(refused) == 1
+        assert refused[0].summary["detail"] == "rollback_authorization_expired"
+
+
+def test_rollback_still_allowed_when_change_request_is_in_flight(client, tenant_a, env_iso):
+    """反例守卫：`deploying` 是**在途**而非死亡态，回滚照样必须成功。
+
+    `fake`/`none` 后端下应用不会被回执确认，变更单停在 `deploying`、部署停在 `sent`，
+    而本路由自身允许回滚 `sent` 部署。若把 `deploying` 一并拒掉，"允许回滚 sent 部署"
+    这条既有语义在默认配置下将永不成立（正是本用例要钉住的边界）。
+    """
+    from app.models import ChangeRequest
+
+    _binding, _policy, cr, dep = _sent_deployment_with_fake_backend(client, tenant_a, env_iso)
+    with session_scope() as session:
+        assert session.get(ChangeRequest, cr["id"]).status == "deploying"
+
+    response = client.post(f"/api/v1/deployments/{dep['id']}/rollback", json={}, headers=tenant_a)
+    assert response.status_code == 200, response.text
+    assert response.json()["status"] == "rolled_back"
+    with session_scope() as session:
+        assert session.get(ChangeRequest, cr["id"]).status == "rolled_back"
 
 
 def test_enforcement_mode_downgrade_requires_high_risk(client, tenant_a):
@@ -730,9 +885,9 @@ def test_break_glass_sod_applies_same_person_rejected(client, tenant_a):
     assert resp.json()["detail"] == "segregation_of_duties"
 
 
-def test_break_glass_cross_person_emergency_approval(client, tenant_a, env_a):
+def test_break_glass_cross_person_emergency_approval(client, tenant_a, env_iso):
     """§19.3：持 change:break_glass 的提出者 + 跨人批准 → emergency_applied 并可部署。"""
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"])
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"])
     policy = _create_policy(client, tenant_a, agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -752,13 +907,13 @@ def test_break_glass_cross_person_emergency_approval(client, tenant_a, env_a):
     # emergency_applied 允许部署
     dep = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert dep.status_code == 201
 
 
-def test_break_glass_review_due_preserves_business_status(client, tenant_a, env_a):
+def test_break_glass_review_due_preserves_business_status(client, tenant_a, env_iso):
     """DEV12-A / M-P4：到期只推进 review_status=due，不改写 effective/deploying 等业务终态。"""
     from datetime import timedelta
 
@@ -766,7 +921,7 @@ def test_break_glass_review_due_preserves_business_status(client, tenant_a, env_
     from app.models import ChangeRequest, OutboxEvent
     from app.worker import once, reap_break_glass_reviews
 
-    binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"])
+    binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"])
     policy = _create_policy(client, tenant_a, agent_ids=[asset_id])
     cr = client.post(
         "/api/v1/change-requests",
@@ -790,7 +945,7 @@ def test_break_glass_review_due_preserves_business_status(client, tenant_a, env_
 
     deployed = client.post(
         "/api/v1/deployments",
-        json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding["id"]},
+        json={"change_request_id": cr["id"], "environment_id": env_iso["id"], "binding_id": binding["id"]},
         headers=tenant_a,
     )
     assert deployed.status_code == 201
