@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq-release-verification/v1",
+  "version": "0.4.0",
+  "expected_source_sha": "2cd61160849f50794c2dc632771a6e6ed6149eef",
+  "source_identity_scope": "descriptive metadata matched; publisher signature binds Skill and binary pins, not source attestation",
+  "official_signature_and_skill_content": "passed",
+  "four_binary_pins": "passed",
+  "asset_inventory_and_checksums": "passed",
+  "bundle_skill_zip_and_flat_binaries": "passed",
+  "trusted_installation_instructions": "passed",
+  "native_installation": {
+    "host": "linux/arm64",
+    "fresh_state_start_status_pair_console_stop": "passed"
+  },
+  "published": "not_checked",
+  "assets": [
+    {
+      "name": "SHA256SUMS",
+      "sha256": "496c546636c24f286b9d85ee7dd5df1d0f67a028210567f56017f51e96199413",
+      "bytes": 681
+    },
+    {
+      "name": "SOURCE-INFO.json",
+      "sha256": "382300e8bad8d4b90a6453e9a35d5739a7f97234005e4fc1b0f08f2603c2f4fe",
+      "bytes": 25586
+    },
+    {
+      "name": "siq-agent-security-0.4.0-bundle.zip",
+      "sha256": "2c62f3999a0c0d0cb0801b1f17c8fb3dbbf2219718d3f5385fd4a1ea27e373ef",
+      "bytes": 47466097
+    },
+    {
+      "name": "siq-agent-security-darwin-arm64",
+      "sha256": "767e3b0093c71fb7cf8abd3f13189a203fca0596a5e698a2ce4c8e44dca5928d",
+      "bytes": 19434946
+    },
+    {
+      "name": "siq-agent-security-linux-amd64",
+      "sha256": "34c215ebac565662ebe891e3b88b34d1ccab9b6efc1c6901cbd8a74272069d0e",
+      "bytes": 20447394
+    },
+    {
+      "name": "siq-agent-security-linux-arm64",
+      "sha256": "3f94011395a1d01f7e99037efe71f1e5939b400d22d2ad60c0a8649b6e3fea70",
+      "bytes": 19202210
+    },
+    {
+      "name": "siq-agent-security-skill-0.4.0.zip",
+      "sha256": "0599ff40616e5d94ad7e34500332e7c07712f700c049e124c1181e2bde08a3c2",
+      "bytes": 34432
+    },
+    {
+      "name": "siq-agent-security-windows-amd64.exe",
+      "sha256": "55bcac2c7577a07011db0b4eacfb59f2656574b4d7b32e3d946d028976e83025",
+      "bytes": 21025280
+    }
+  ]
+}

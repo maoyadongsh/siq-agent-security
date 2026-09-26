@@ -1,6 +1,6 @@
 # Windows
 
-当前宿主范围为 OpenClaw、Hermes、WorkBuddy。0.3.1 提供 amd64 程序和已签名 Skill，Windows junction 源码修复已经随 #90 合入并进入新包；本版仍只有构建/验签，本版原生安装、升级及完整宿主验收未运行。当前 `main` 的后续合并没有新的 Windows 签名候选；项目签名不等于 Authenticode，交叉编译也不等于 Windows 原生验收。
+当前宿主范围为 OpenClaw、Hermes、WorkBuddy。0.4.0 正式包提供 amd64 程序和已签名 Skill，完成固定源码构建、项目清单验签与 pin 核对；本版 Windows 原生安装、升级/回滚及完整宿主验收未运行。项目签名不等于 Authenticode，交叉编译也不等于 Windows 原生验收。
 
 - 安装入口：[签名包 PowerShell 步骤](../../docs/signed-release-packaging.md)，选择 windows-amd64.exe；依次验签、初始化启动、浏览器配对。沿用系统正常脚本策略，不降低签名或路径检查。
 - 操作与恢复：[个人手册](../../docs/personal-client-operation-guide-20260916.md)、[任务生命周期 CLI](../../AGENTSHIELD.md)。核对 SID、任务 XML、DACL、实例目录与实际程序；未知归属、迁移状态或锁不得手动删除来推进。
@@ -14,4 +14,4 @@
 
 [运行时模块](../../apps/agentshield/README.md)、[Web](../../apps/web/README.md)与[宿主适配器](../../adapters/runtime/README.md)分别维护共享核心、界面和协议边界。平台生命周期按本页手册执行，不复制另一套实现到 platforms 目录。
 
-[四目标源码原生检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)已有本平台自建程序的准入与基础启动/配对/控制台/停止记录。它与 0.3.1 正式包使用不同候选，不等于系统服务、升级回滚、通知或完整宿主验收；后续验收仍需固定同一程序、UI、适配器、宿主版本和状态格式，再记录允许、拒绝、撤销与恢复的实际结果。
+[四目标源码原生检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)已有本平台历史自建程序的准入与基础启动/配对/控制台/停止记录。它与 0.4.0 正式包使用不同候选，不等于本版系统服务、升级回滚、通知或完整宿主验收；后续验收仍需固定 0.4.0 程序、UI、适配器、宿主版本和状态格式，再记录允许、拒绝、撤销与恢复的实际结果。

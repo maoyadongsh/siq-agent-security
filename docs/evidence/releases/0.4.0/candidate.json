@@ -1,0 +1,18 @@
+{
+  "schema_version": "siq-release-candidate-record/v1",
+  "version": "0.4.0",
+  "source_sha": "2cd61160849f50794c2dc632771a6e6ed6149eef",
+  "publisher_manifest_verified": true,
+  "published": true,
+  "release_url": "https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.0",
+  "reviewed_source_inventory_sha256": "3061fb0fee9da4fad64d868f4ccdba0ed7698c9921130a49003ffe9f8b5cac66",
+  "evidence": [
+    "SOURCE-INFO.json",
+    "SHA256SUMS",
+    "source-ci.json",
+    "verification.json",
+    "tamper-rejection.json",
+    "publication.json"
+  ],
+  "acceptance_scope": "linux/arm64 isolated final-package fresh-state startup; other targets build and signed-pin verification only; no cross-platform upgrade or rollback acceptance"
+}

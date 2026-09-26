@@ -9,10 +9,10 @@
 ```bash
 mkdir -p .tmp
 release_dir=$(mktemp -d "${TMPDIR:-/tmp}/siq-release-assets.XXXXXX")
-env -u GITHUB_TOKEN gh release download siq-agent-security-v0.3.1 \
+env -u GITHUB_TOKEN gh release download siq-agent-security-v0.4.0 \
   --repo maoyadongsh/siq-agent-security --dir "$release_dir"
 python3 scripts/release/verify.py --release-dir "$release_dir" \
-  --version 0.3.1 --source-sha f3d9c3f0933f3b08d15b2d3dbc522f409c77a355 \
+  --version 0.4.0 --source-sha 2cd61160849f50794c2dc632771a6e6ed6149eef \
   --report .tmp/release-verification.json
 ```
 
@@ -28,7 +28,7 @@ python3 scripts/release/verify.py --release-dir "$release_dir" \
 
 ```bash
 python3 scripts/release/readback.py --reference-dir "$release_dir" \
-  --version 0.3.1 --source-sha f3d9c3f0933f3b08d15b2d3dbc522f409c77a355 \
+  --version 0.4.0 --source-sha 2cd61160849f50794c2dc632771a6e6ed6149eef \
   --report .tmp/release-readback.json
 ```
 
@@ -44,7 +44,7 @@ ZIP 逐文件回读核对并保留可执行位；外层 SHA256SUMS 同时覆盖 
 不生成 `release.json` 或签名，
 不能交给生产安装器直接安装。参数、清单范围和限制见
 [enterprise-release-candidate/v1](../../packages/contracts/enterprise-release-candidate.v1.md)。
-工作树增量必须先完成评审和源码冻结，不能使用旧提交宣称包含最新开发成果。当前 `main` 已包含 2026-09-26/27 的后续企业收口与 CI 修复，但尚未据此生成、签发或发布新候选；`0.4.0-rc.2` 仍固定在较早的 `7b68c14`，不得重标为当前主线包。
+工作树增量必须先完成评审和源码冻结，不能使用旧提交宣称包含最新开发成果。个人客户端 `0.4.0` 已从固定提交 `2cd6116` 生成、签发、公开回读并设为 Latest，证据见 [0.4.0 发行记录](../../docs/evidence/releases/0.4.0/README.md)；后续 `main` 增量不能重标为该包。企业 Edge/Connector 继续使用独立候选与签后组包流程，个人客户端 Release 不替代企业签发。
 
 企业候选还包含 `publisher-signing-input.json`：原发行公钥、源码提交与二进制 pin
 组成的精确规范化 Ed25519 待签名字节，不是签名包。受控环境经授权签发后，可用独立
@@ -72,10 +72,10 @@ python3 -m unittest discover -s scripts/release -p 'test_*.py' -v
 python3 -m ruff check scripts/release
 ```
 
-[仓库整理阶段复验](../../docs/evidence/repository-reorganization-20260919/README.md)与[0.3.1 发行记录](../../docs/evidence/releases/0.3.1/README.md)分别记账；重复验证不增加独立环境数量。
+[仓库整理阶段复验](../../docs/evidence/repository-reorganization-20260919/README.md)与[0.4.0 发行记录](../../docs/evidence/releases/0.4.0/README.md)分别记账；重复验证不增加独立环境数量。
 
 ## Skill 源码说明的原生检查
 
 `skill_source_smoke.py --binary <self-built-program> --target <os/arch> --report <new-file>` 用自建程序自扫描源码 Skill，确认缺 manifest 的 bootstrap 在创建状态/暂存前拒绝，并在两个独立临时状态目录验证 `start` 和 `init`→`serve` 的 status/pair/控制台/停止链路。日志、状态和配对输出不进入公开报告；不注册宿主钩子、后台系统服务或发布签名包。
 
-[skills-compat 工作流](../../.github/workflows/skills-compat.yml)使用四个原生目标，执行前比较真实 OS/架构以防误用交叉编译冒充原生运行。runner 标签按 [GitHub 官方说明](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)选择；托管主机上的源码检查仍不证明用户桌面、完整宿主验收、发行安装升级或 OS 厂商签名。源码正文变化不改 0.3.1 的签名载荷，后续安装包需要新的候选与签发。
+[skills-compat 工作流](../../.github/workflows/skills-compat.yml)使用四个原生目标，执行前比较真实 OS/架构以防误用交叉编译冒充原生运行。runner 标签按 [GitHub 官方说明](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)选择；托管主机上的源码检查仍不证明用户桌面、完整宿主验收、发行安装升级或 OS 厂商签名。任何已发布版本的签名载荷都是不可变快照；后续源码变化需要新版本候选与重新签发，不能覆盖 0.4.0 或历史资产。
