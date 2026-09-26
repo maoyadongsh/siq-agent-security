@@ -34,6 +34,13 @@
     condition = "AND"
     paths = ['''^connectors/openclaw/native_contract_test\.go$''']
     regexes = ['''^siqcanary123456$''']
+  # The scanner calibration source must name the reviewed values in order to
+  # prove their exceptions are exact. Bind those literals to this file only;
+  # the calibration below verifies that copied paths and other keys still fail.
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^scripts/check_gitleaks_config\.py$''']
+    regexes = ['''^(?:synthetic-fixture-key-at-least-32-bytes|sk-ABCDEFGHIJKLMNOP12|siqcanary123456|sk-proj-secret1234567890123456)$''']
   [[rules.allowlists]]
     condition = "AND"
     paths = ['''(?:apps/agentshield/internal/(?:receipt/session_(?:capacity|idle)_test|server/server_test)\.go|apps/control-api/app/tests/test_(?:e2e_fresh_deploy|threat_analysis)\.py|connectors/(?:process/process|kubernetes/kubernetes|piagent/piagent|systemd/systemd)_test\.go)$''']

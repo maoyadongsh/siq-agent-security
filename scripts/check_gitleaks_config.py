@@ -66,6 +66,55 @@ def check_enterprise_fixture_exceptions(binary, config, _token):
                 f"unexpected={sorted(actual & expected_ignored)}")
 
 
+def check_calibration_source_exceptions(binary, config):
+    """Canaries named by this calibrator remain restricted to this exact path."""
+    lines = [
+        "'SIQ_GW_JWT_SECRET': 'synthetic-fixture-key-at-least-32-bytes'",
+        "provider: key=sk-ABCDEFGHIJKLMNOP12",
+        '"workspace": "/fixture/workspace/token=siqcanary123456",',
+        'api_key = "sk-proj-secret1234567890123456"',
+    ]
+    name = "scripts/check_gitleaks_config.py"
+    with tempfile.TemporaryDirectory(prefix="siq-calibrator-source-scanner-") as directory:
+        root = Path(directory)
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        negative = 'api_key = "sk-livekey' + '123456789"'
+        path.write_text("\n".join(lines + [negative]) + "\n",
+                        encoding="utf-8")
+        copied_name = "copied/" + name
+        copied = root / copied_name
+        copied.parent.mkdir(parents=True, exist_ok=True)
+        copied.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        for arguments in (("init", "-q", "-b", "main"),
+                          ("config", "user.name", "Scanner calibration"),
+                          ("config", "user.email", "scanner@example.invalid"),
+                          ("config", "commit.gpgsign", "false"),
+                          ("add", "."), ("commit", "-qm", "calibrator source fixtures")):
+            subprocess.run(["git", *arguments], cwd=root, capture_output=True,
+                           timeout=30, check=True)
+        report = root / "report.json"
+        result = subprocess.run([
+            str(binary.resolve()), "git", str(root), "--config", str(config.resolve()),
+            "--log-opts=-1 HEAD", "--redact", "--report-format", "json",
+            "--report-path", str(report),
+        ], capture_output=True, timeout=30, check=False)
+        rows = json.loads(report.read_text(encoding="utf-8")) if report.exists() else []
+        actual = {(row["RuleID"], row["File"].replace("\\", "/"), row["StartLine"])
+                  for row in rows}
+        expected_ignored = {("generic-api-key", name, line)
+                            for line in range(1, len(lines) + 1)}
+        expected_detected = {("generic-api-key", name, len(lines) + 1)}
+        expected_detected |= {("generic-api-key", copied_name, line)
+                              for line in range(1, len(lines) + 1)}
+        if (result.returncode != 1 or not expected_detected <= actual
+                or actual & expected_ignored):
+            raise SystemExit(
+                "scanner calibration failed: calibrator source exceptions are not exact; "
+                f"missing={sorted(expected_detected - actual)}; "
+                f"unexpected={sorted(actual & expected_ignored)}")
+
+
 def check_flagship_exceptions(binary, config, token):
     """Reviewed evidence values are allowed only at the exact field and path."""
     settings = tomllib.loads(config.read_text())
@@ -262,6 +311,7 @@ def main():
     check_session_hash_exception(args.binary, args.config, token)
     check_flagship_exceptions(args.binary, args.config, token)
     check_enterprise_fixture_exceptions(args.binary, args.config, token)
+    check_calibration_source_exceptions(args.binary, args.config)
     check_history(args.binary, args.config, token)
     summary = {"status": "passed", "synthetic_only": True, "checks": [
         "ordinary credential detected", "new credential in allowed test path detected",
@@ -273,6 +323,7 @@ def main():
         "new digest and credentials in the same evidence file are detected",
         "same reviewed digest under a prefixed copy of the path is detected",
         "enterprise journey canaries are exact by value and path",
+        "calibrator source canaries are exact by value and path",
         "removed credentials in root, independent history and merge-only additions detected"], "raw_values_retained": False}
     if args.out:
         with args.out.open("x") as output:
