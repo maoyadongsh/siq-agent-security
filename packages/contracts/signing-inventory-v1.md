@@ -13,6 +13,7 @@
 | Desired Policy → OpenShell 制品 | 编译产物 `artifact` + sha256；未知键拒绝 | control-api `compile_policy` | Go `grant.CompilePolicy` | `fixtures/policy_compile_vectors_v1.json` | DEV09-F；known_keys 与 unsupported 文案须对等 |
 | 分享导出 `agentshield.export.v1` | 本地 ASCII canon（`local_canonical/v1`）覆盖**脱敏投影** | agentshield `export.Seal` | `export.Verify` | Go 往返/篡改/跨合同负向（`seal_test.go`） | DEV15-D；`derived_from.kind=agentshield.export.derived/v1`；**禁止**套用回执 hash-chain 签名 |
 | 受管 tip checkpoint | 本地 ASCII canon（`local_canonical/v1`） | `CheckpointStore.Publish`（Append 后） | `CheckpointStore.Load` → `VerifyDetailed` | `checkpoint_test.go` | DEV15-E；路径在 `checkpoints/`，**禁止** `receipts/.../HEAD` |
+| 企业 Edge 凭据轮换 | `edge-credential-rotation/v1` 去除 signature，ASCII 紧凑排序；签名覆盖其余全部字段 | Edge `prepareCredentialRotation`；独立 Python 夹具生成器不导入产品代码 | control-api `credential_rotation.RotateCredential` + 现有 Ed25519 验签器 | `fixtures/credential_rotation_vector_v1.json`，Go/Python 两侧消费；公开测试 seed，禁止用于真实身份 | 另见 `enterprise-edge-credential-rotation.v1.md`；当前只有协议准备/单次 HTTP，私密 journal 与 CLI 尚未接入；同时要求当前 Bearer，不可用作注册恢复或业务授权 |
 
 ## 双读原则
 

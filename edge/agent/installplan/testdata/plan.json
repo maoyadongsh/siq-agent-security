@@ -1,0 +1,22 @@
+{
+  "schema_version": "enterprise-install-plan/v1",
+  "plan_id": "eip-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "tenant_id": "tenant-fixture",
+  "environment_id": "env-fixture",
+  "control_plane_origin": "https://security.example.test:8443",
+  "issued_at": "2026-09-25T01:00:00Z",
+  "expires_at": "2026-09-25T01:15:00Z",
+  "target_os": "linux",
+  "target_arch": "arm64",
+  "service_mode": "user",
+  "release_version": "0.4.0-test",
+  "release_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "connectors": [{
+    "id": "hermes",
+    "version": "0.4.0-test",
+    "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "protocol_version": "connector-protocol.v1",
+    "scope": {"roots": ["~/.hermes/profiles/*"], "include": ["config.yaml", "SOUL.md"]}
+  }],
+  "purpose": "discovery_only"
+}

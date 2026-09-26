@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-admin-session.v2.schema.json",
+  "title": "Local administrator session v2: fixed 24-hour lifetime",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "session", "expires_in", "scope"],
+  "properties": {
+    "schema_version": {"const": "local-admin-session/v2"},
+    "session": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "expires_in": {"type": "integer", "minimum": 1, "maximum": 86400},
+    "scope": {"const": "admin"}
+  }
+}

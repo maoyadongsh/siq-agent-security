@@ -3,7 +3,8 @@
 不变量：
 - audit:read 权限；tenant_id 只从验证身份派生；
 - 只读导出，但导出动作本身写审计（与读操作同事务提交，summary 只含 class/条数/since，不含导出内容）；
-- NDJSON 流式格式，时间正序。
+- NDJSON 流式格式，时间正序；敏感导出响应带 Cache-Control: no-store；
+- 非法参数（含时区换算越界的极端 since）在导出前受控拒绝，拒绝不留导出审计。
 """
 
 from __future__ import annotations
@@ -31,13 +32,18 @@ _EXPORT_CLASSES = {
 
 
 def _parse_since(raw: str) -> datetime:
-    """ISO 8601 → naive UTC（与库内时间戳一致）；非法输入 422。"""
+    """ISO 8601 → naive UTC（与库内时间戳一致）；非法输入 422。
+
+    极端的显式偏移（如 `9999-12-31T23:59:59-14:00`）换算到 UTC 会越过 `datetime` 上下限，
+    `astimezone` 抛 OverflowError——同样按非法输入受控拒绝，不返回 500、不回显输入、
+    也不放宽解析去接受它。
+    """
     try:
         parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
-    except ValueError:
+        if parsed.tzinfo is not None:
+            parsed = parsed.astimezone(UTC).replace(tzinfo=None)
+    except (ValueError, OverflowError):
         raise HTTPException(status_code=422, detail="invalid_since") from None
-    if parsed.tzinfo is not None:
-        parsed = parsed.astimezone(UTC).replace(tzinfo=None)
     return parsed
 
 
@@ -75,4 +81,9 @@ def export_ocsf(
         summary={"class": class_, "count": len(rows), "since": since},
     )
     session.commit()
-    return Response(content=body, media_type="application/x-ndjson")
+    # 敏感导出：禁止任何层级缓存（媒体类型与正文不变）
+    return Response(
+        content=body,
+        media_type="application/x-ndjson",
+        headers={"Cache-Control": "no-store"},
+    )

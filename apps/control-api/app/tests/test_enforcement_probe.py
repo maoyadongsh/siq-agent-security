@@ -19,6 +19,7 @@ import dataclasses
 
 import httpx
 import pytest
+
 from app.adapters.openshell import enforcement_probe as ep
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
 from app.adapters.openshell.client import OpenShellHttpClient
@@ -79,6 +80,7 @@ def _evidence(**overrides) -> ep.EnforcementProbeEvidence:
 
 def _expectation(**overrides) -> ep.EnforcementProbeExpectation:
     base = dict(
+        target="siq-as-canary",
         endpoint_fingerprint="fp-canary", policy_revision="2", applied_policy_digest=DIGEST,
     )
     base.update(overrides)
@@ -455,6 +457,7 @@ def _cli_report(backend, evidence):
 def _cli_evidence(**overrides) -> ep.EnforcementProbeEvidence:
     """按**本次读回**的实际 revision/digest 绑定证据，只翻转调用方指定的字段。"""
     base = dict(
+        target="s1",
         endpoint_fingerprint="fp-canary",
         policy_revision="2",
         applied_policy_digest=_readback_digest(),
@@ -475,11 +478,52 @@ def test_cli_backend_without_probe_evidence_stays_readback():
     assert report.probe_reject_reason == ""
 
 
+def test_cli_rejects_evidence_from_a_different_target():
+    report = _cli_report(_cli_backend(), _cli_evidence(target="another-sandbox"))
+    assert report.level == "readback_verified"
+    assert report.probe_evidence is None
+
+
+def test_same_endpoint_requires_every_deny_observation_to_match():
+    deny = _arm(ep.OUTCOME_REFUSED, path=DENY_PATH)
+    deny[-1] = dataclasses.replace(deny[-1], endpoint=OTHER_ENDPOINT)
+    accepted, _ = _check(_evidence(deny_arm=deny, reachability_controls=[_control(), _control(OTHER_ENDPOINT)]))
+    assert accepted is False
+
+
+def test_channel_does_not_relabel_another_endpoints_report():
+    import json
+
+    from app.adapters.openshell.contracts import AdapterError
+    from app.adapters.openshell.probe_channel import SandboxExecProbeChannel
+
+    payload = {"schema": "siq.openshell.enforcement-probe-agent/v1", "endpoint": OTHER_ENDPOINT,
+               "attempts": [{"outcome": "connection_refused", "elapsed_ms": 1}] * 3}
+    channel = SandboxExecProbeChannel(
+        lambda args: args, runner=lambda _: (0, "SIQ_PROBE_JSON " + json.dumps(payload), ""))
+    with pytest.raises(AdapterError):
+        channel.run_arm("s1", endpoint=ENDPOINT, binary_path=DENY_PATH,
+                        binary_sha256=CONTENT_SHA, attempts=3, timeout_seconds=1)
+
+
 def test_cli_backend_upgrades_only_with_accepted_evidence():
     report = _cli_report(_cli_backend(), _cli_evidence())
     assert report.level == "enforcement_verified"
     assert report.probe_evidence is not None
     assert report.probe_reject_reason == ""
+
+
+def test_cli_rejects_allow_set_fabricated_inside_otherwise_bound_evidence():
+    # Same revision/digest/target, but the evidence invents a permitted binary.
+    # Its internally consistent allow set is not the independently read policy.
+    evidence = _cli_evidence()
+    forged_path = "/sandbox/not-in-policy"
+    evidence = dataclasses.replace(evidence,
+        allow_rule_pairs=[(ENDPOINT, forged_path)],
+        allow_arm=[dataclasses.replace(o, binary_path=forged_path) for o in evidence.allow_arm])
+    report = _cli_report(_cli_backend(), evidence)
+    assert report.level == "readback_verified"
+    assert report.probe_evidence is None
 
 
 def test_cli_backend_keeps_readback_and_records_reject_reason():

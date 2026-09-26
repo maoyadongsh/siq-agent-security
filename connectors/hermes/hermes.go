@@ -30,7 +30,7 @@ import (
 	"siq-agent-security/edge/agent/protocol"
 )
 
-const connectorVersion = "0.1.0"
+var connectorVersion = "0.1.0" // Release builds stamp main.connectorVersion via -ldflags -X.
 
 // defaultProfilesGlob is the default scope (task spec: scope 默认
 // ~/.hermes/profiles/*).
@@ -235,7 +235,21 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		if err != nil {
 			return protocol.EvidenceBatch{}, fmt.Errorf("root %q: %w", raw, err)
 		}
-		dirs = append(dirs, matches...)
+		boundary := root
+		if i := strings.IndexAny(root, "*?["); i >= 0 {
+			boundary = filepath.Dir(root[:i] + "_")
+		}
+		for _, match := range matches {
+			if escaped, err := symlinkEscapes(boundary, match); err != nil || escaped {
+				fmt.Fprintln(os.Stderr, "hermes: skipping unresolved or escaped profile")
+				continue
+			}
+			absolute, err := filepath.Abs(match)
+			if err != nil {
+				return protocol.EvidenceBatch{}, errors.New("profile path normalization failed")
+			}
+			dirs = append(dirs, filepath.Clean(absolute))
+		}
 	}
 	dirs = dedupeStrings(dirs)
 	sort.Strings(dirs)
@@ -250,8 +264,6 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	var scannedDirs []string
 	var readBytes int64
 	profiles := 0
-	// Base of the first root, used for the symlink-escape boundary check.
-	rootBase := strings.TrimSuffix(strings.TrimSpace(protocol.ExpandHome(sc.Roots[0])), "/*")
 
 	for _, dir := range dirs {
 		if int64(profiles) >= limits.MaxFiles {
@@ -264,12 +276,6 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		}
 		base := filepath.Base(dir)
 		if base == "." || base == string(filepath.Separator) {
-			continue
-		}
-		// Contract §4 negative test: symlinks inside the scope pointing
-		// outside it are rejected (skipped + stderr diagnostic).
-		if escaped, _ := symlinkEscapes(rootBase, dir); escaped {
-			fmt.Fprintf(os.Stderr, "hermes: skipping %s: symlink escapes scope\n", dir)
 			continue
 		}
 		entries, err := os.ReadDir(dir)
@@ -295,10 +301,11 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			continue
 		}
 
+		profileKey := protocol.ContentHash([]byte(dir))
 		cand := &protocol.Candidate{
-			CandidateID:   "hermes:" + base,
+			CandidateID:   "hermes:v2:" + profileKey,
 			SourceType:    "hermes_profile",
-			SourceLocator: red.RedactString("hermes://profiles/" + base),
+			SourceLocator: "hermes://profiles/v2/" + profileKey,
 			DiscoveredAt:  now,
 			Name:          truncate(base, 256),
 			Framework:     "hermes",
@@ -307,8 +314,14 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			EvidenceIDs:   []string{},
 		}
 		model, provider, toolsets := "", "", []string{}
-		if data, err := readFileLimited(filepath.Join(dir, "config.yaml"), limits.MaxBytes); err == nil {
-			model, provider, toolsets = extractConfigFacts(data)
+		if includesConfig(sc.Include) {
+			configPath := filepath.Join(dir, "config.yaml")
+			if escaped, err := symlinkEscapes(dir, configPath); err == nil && !escaped {
+				if data, truncated, err := readFileLimitedWithTruncation(configPath, limits.MaxBytes); err == nil {
+					batch.Truncated = batch.Truncated || truncated
+					model, provider, toolsets = extractConfigFacts(data)
+				}
+			}
 		}
 		cand.Attributes["model"] = red.RedactString(model)
 		cand.Attributes["provider"] = red.RedactString(provider)
@@ -342,9 +355,9 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 				continue
 			}
 			ev := &protocol.Evidence{
-				EvidenceID:       "ev:hermes:" + base + ":" + inc,
+				EvidenceID:       "ev:hermes:v2:" + protocol.ContentHash([]byte(dir+"\x00"+inc)),
 				SourceType:       "manifest",
-				SourceLocator:    red.RedactString(base + "/" + inc), // 脱敏相对路径
+				SourceLocator:    red.RedactString(profileKey + "/" + inc),
 				SubjectRef:       strptr(cand.CandidateID),
 				ObservedAt:       now,
 				CollectedAt:      now,
@@ -352,10 +365,14 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 				RedactionProfile: protocol.RedactionProfile,
 				Classification:   classifyManifest(inc),
 			}
-			data, err := readFileLimited(full, limits.MaxBytes)
+			data, truncated, err := readFileLimitedWithTruncation(full, limits.MaxBytes)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "hermes: read %s: %v\n", full, err)
 				continue
+			}
+			if truncated {
+				batch.Truncated = true
+				fmt.Fprintln(os.Stderr, "hermes: file exceeds byte budget; partial content hash, scan truncated")
 			}
 			// Redaction gate: the content must be redactable before we carry
 			// any derived field (content_hash is not reversible, but the gate
@@ -376,6 +393,30 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 				break
 			}
 			ev.ContentHash = protocol.ContentHash(data)
+			if inc == "config.yaml" && !truncated {
+				source, err := json.Marshal(map[string]string{
+					"schema_version": "enterprise-framework-source/v2", "framework": "hermes",
+					"instance_key": profileKey, "config_sha256": ev.ContentHash, "evidence_id": ev.EvidenceID,
+				})
+				if err != nil {
+					return protocol.EvidenceBatch{}, errors.New("hermes source encoding failed")
+				}
+				cand.Attributes["framework_source"] = string(source)
+				// Layout only: do not read or resolve the skills directory, or
+				// confuse this one local root with all runtime loading sources.
+				if filepath.Separator == '/' && filepath.IsAbs(dir) {
+					roots, err := json.Marshal(map[string]any{
+						"schema_version": "enterprise-role-skill-roots/v2",
+						"basis":          "hermes_profile_layout", "status": "layout_candidate",
+						"roots": []map[string]string{{"kind": "profile_skills",
+							"locator_sha256": protocol.ContentHash([]byte(filepath.Join(dir, "skills")))}},
+					})
+					if err != nil {
+						return protocol.EvidenceBatch{}, errors.New("hermes roots encoding failed")
+					}
+					cand.Attributes["skill_source_roots"] = string(roots)
+				}
+			}
 			readBytes += int64(len(data))
 			cand.EvidenceIDs = append(cand.EvidenceIDs, ev.EvidenceID)
 			batch.Evidence = append(batch.Evidence, ev)
@@ -398,9 +439,9 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 				continue
 			}
 			ev := &protocol.Evidence{
-				EvidenceID:       "ev:hermes:" + base + ":" + name,
+				EvidenceID:       "ev:hermes:v2:" + protocol.ContentHash([]byte(dir+"\x00"+name)),
 				SourceType:       "manifest",
-				SourceLocator:    red.RedactString(base + "/" + name),
+				SourceLocator:    red.RedactString(profileKey + "/" + name),
 				SubjectRef:       strptr(cand.CandidateID),
 				ObservedAt:       now,
 				CollectedAt:      now,
@@ -429,7 +470,7 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		profiles++
 	}
 
-	batch.Cursor = computeCursor(scannedDirs)
+	batch.Cursor = computeCursor(scannedDirs, sc.Include)
 	lastCursor = batch.Cursor
 	return batch, nil
 }
@@ -525,19 +566,35 @@ func yamlScalar(v string) string {
 // truncated within the limit). DEV10-H: final path must be a regular file
 // opened without following symlinks (Unix O_NOFOLLOW).
 func readFileLimited(path string, maxBytes int64) ([]byte, error) {
+	data, _, err := readFileLimitedWithTruncation(path, maxBytes)
+	return data, err
+}
+
+// Preserve partial-read information without reading beyond the requested limit.
+// A second stat also detects growth while reading; an exactly-sized file is not
+// truncated. Callers emitting evidence must propagate the flag to the batch.
+func readFileLimitedWithTruncation(path string, maxBytes int64) ([]byte, bool, error) {
 	f, err := openRegular(path)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	defer f.Close()
 	st, err := f.Stat()
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	if !st.Mode().IsRegular() {
-		return nil, fmt.Errorf("non-regular file refused after open")
+		return nil, false, fmt.Errorf("non-regular file refused after open")
 	}
-	return io.ReadAll(io.LimitReader(f, maxBytes))
+	data, err := io.ReadAll(io.LimitReader(f, maxBytes))
+	if err != nil {
+		return nil, false, err
+	}
+	after, err := f.Stat()
+	if err != nil {
+		return nil, false, err
+	}
+	return data, st.Size() > int64(len(data)) || after.Size() > int64(len(data)), nil
 }
 
 // globDirs returns the existing directories matched by pattern (or the plain
@@ -583,13 +640,32 @@ func symlinkEscapes(root, p string) (bool, error) {
 
 // computeCursor builds a deterministic cursor from the scanned profiles
 // (stable per content, not per wall-clock — contract: 增量依据必须稳定).
-func computeCursor(dirs []string) string {
+func includesConfig(includes []string) bool {
+	for _, name := range includes {
+		if name == "config.yaml" {
+			return true
+		}
+	}
+	return false
+}
+
+func computeCursor(dirs []string, includes []string) string {
 	h := sha256.New()
 	for _, d := range dirs {
 		h.Write([]byte(d))
 		h.Write([]byte{0})
-		if data, err := readFileLimited(filepath.Join(d, "config.yaml"), 16*1024*1024); err == nil {
-			h.Write([]byte(protocol.ContentHash(data)))
+		for _, name := range includes {
+			if protocol.IsEnvFile(name) {
+				continue
+			}
+			path := filepath.Join(d, name)
+			if escaped, err := symlinkEscapes(d, path); err == nil && !escaped {
+				if data, err := readFileLimited(path, 16*1024*1024); err == nil {
+					h.Write([]byte(name))
+					h.Write([]byte{0})
+					h.Write([]byte(protocol.ContentHash(data)))
+				}
+			}
 		}
 		h.Write([]byte{0})
 	}

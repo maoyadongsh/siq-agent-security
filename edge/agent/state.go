@@ -19,13 +19,15 @@ var ErrNotRegistered = errors.New("agent is not registered: run 'register' first
 //   - writes are atomic (temp file + rename) so a crashed agent cannot leave
 //     a half-written state file.
 type State struct {
-	ControlPlaneURL       string `json:"control_plane_url"`
-	DeviceIdentity        string `json:"device_identity"`
-	Secret                string `json:"secret"`
-	PublicKeyPEM          string `json:"public_key_pem,omitempty"`
-	ControlPlanePublicKey string `json:"control_plane_public_key,omitempty"` // 任务验签钉住（register 响应）
-	EnvironmentID         string `json:"environment_id,omitempty"`
-	SignerSeed            string `json:"signer_seed,omitempty"` // 证据签名密钥种子（base64，0600 文件保护）
+	ControlPlaneURL       string          `json:"control_plane_url"`
+	DeviceIdentity        string          `json:"device_identity"`
+	Secret                string          `json:"secret"`
+	PublicKeyPEM          string          `json:"public_key_pem,omitempty"`
+	ControlPlanePublicKey string          `json:"control_plane_public_key,omitempty"` // 任务验签钉住（register 响应）
+	EnvironmentID         string          `json:"environment_id,omitempty"`
+	SignerSeed            string          `json:"signer_seed,omitempty"` // 证据签名密钥种子（base64，0600 文件保护）
+	DiscoveryPlan         json.RawMessage `json:"discovery_plan,omitempty"`
+	DiscoveryPlanSHA256   string          `json:"discovery_plan_sha256,omitempty"`
 }
 
 // StateDir returns SIQ_EDGE_STATE_DIR or ~/.siq-edge.
@@ -55,19 +57,19 @@ func LoadState() (*State, error) {
 	if err != nil {
 		return nil, err
 	}
-	data, err := os.ReadFile(p)
+	data, err := readDeviceState(p)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, ErrNotRegistered
 		}
-		return nil, fmt.Errorf("state: read %s: %w", p, err)
+		return nil, errors.New("device_state_unavailable; preserve existing state for review")
 	}
 	var s State
 	if err := json.Unmarshal(data, &s); err != nil {
-		return nil, fmt.Errorf("state: parse %s: %w", p, err)
+		return nil, errors.New("device_state_invalid")
 	}
 	if s.DeviceIdentity == "" || s.Secret == "" {
-		return nil, fmt.Errorf("state: %s is incomplete (device_identity/secret missing)", p)
+		return nil, errors.New("device_state_incomplete")
 	}
 	return &s, nil
 }

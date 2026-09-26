@@ -13,7 +13,7 @@
 同一套绑定校验、同一套投影一致性校验、同样在租户行锁下重读设备凭据哈希。
 `active`/`paused`/`revoked` 不进本列表：前两者继续走既有按 ID 读取，后者不应被当作待办。
 
-尚未接线：本模块目前未在 `app/main.py` 注册（见交接文档 R01 待接线项）。
+已在 `app/main.py` 注册；设备 CLI 自动发现与确认衔接仍需单独验收。
 """
 from datetime import UTC, datetime
 

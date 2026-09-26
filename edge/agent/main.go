@@ -23,6 +23,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"regexp"
 	"strings"
 	"syscall"
 	"time"
@@ -31,7 +32,7 @@ import (
 )
 
 // agentVersion is sent as X-Edge-Version and in register.version.
-const agentVersion = "0.1.0"
+var agentVersion = "0.1.0" // Release builds stamp main.agentVersion via -ldflags -X.
 
 func main() {
 	log.SetFlags(log.LstdFlags)
@@ -44,12 +45,38 @@ func main() {
 
 	var err error
 	switch os.Args[1] {
+	case "inspect-host":
+		err = cmdInspectHost(os.Args[2:])
 	case "register":
 		err = cmdRegister(ctx, os.Args[2:])
 	case "heartbeat":
 		err = cmdHeartbeat(ctx, os.Args[2:])
 	case "tasks":
 		err = cmdTasks(ctx, os.Args[2:])
+	case "serve":
+		err = cmdServe(ctx, os.Args[2:])
+	case "service-unit":
+		err = cmdServiceUnit(os.Args[2:])
+	case "prepare-install":
+		err = cmdPrepareInstall(os.Args[2:])
+	case "verify-enterprise-release":
+		err = cmdVerifyEnterpriseRelease(os.Args[2:])
+	case "recover-registration":
+		err = cmdRecoverRegistration(ctx, os.Args[2:])
+	case "rotate-credential":
+		err = cmdRotateCredential(ctx, os.Args[2:])
+	case "confirm-discovery-plan":
+		err = cmdConfirmDiscovery(os.Args[2:])
+	case "confirm-discovery-schedule":
+		err = cmdConfirmSchedule(ctx, os.Args[2:])
+	case "retire-discovery-schedule":
+		err = cmdRetireSchedule(ctx, os.Args[2:])
+	case "install-user-service":
+		err = cmdInstallUserService(ctx, os.Args[2:])
+	case "user-service-status":
+		err = cmdUserServiceStatus(ctx, os.Args[2:])
+	case "setup-enterprise":
+		err = cmdSetupEnterprise(ctx, os.Args[2:])
 	case "run-once":
 		err = cmdRunOnce(ctx, os.Args[2:])
 	case "help", "-h", "--help":
@@ -68,6 +95,23 @@ func usage() {
 	fmt.Fprintf(os.Stderr, `usage: edge-agent <command> [flags]
 
 commands:
+  rotate-credential --confirm-device ID [--resume]          Linux: explicitly rotate/recover device credential; no business grants
+  inspect-host                                             Linux: read bounded host metadata; no upload or registration
+  setup-enterprise --help                                  Linux: confirmed plan to registered discovery service
+  install-user-service --release FILE --stage DIR [--start]  Linux: install verified discovery user service
+  user-service-status                                     Linux: read user service state; no start or registration
+  confirm-discovery-plan --plan FILE --tenant ID --confirm-plan-sha256 DIGEST
+  confirm-discovery-schedule (--intent FILE | --schedule-id ID | --resume) [--interactive | --confirm-intent-sha256 DIGEST]   Linux: preview or confirm bounded discovery
+                                                           Linux: restrict scans to confirmed plan scope
+  retire-discovery-schedule [--resume] [--interactive | --confirm-retire-intent-sha256 DIGEST]
+                                                           Linux: preview or archive a revoked old schedule; --resume finishes a pending archive
+  recover-registration --control-plane ORIGIN --environment ID
+                                                           Linux: recover a pending initial registration
+  prepare-install --help                                   Linux: validate confirmed plan and stage files only
+  verify-enterprise-release --release FILE [--bundle DIR]   Linux: verify publisher and optionally all artifacts; no install
+  serve                                                    Linux: heartbeat and task polling until stopped
+  service-unit --binary PATH --state-dir PATH --connector-dir PATH
+                                                           print Linux user service; does not install it
   register  --control-plane URL --enrollment-code CODE   enroll this device
   heartbeat                                                beat every 30s (exponential backoff on failure)
   tasks                                                    fetch pending tasks and execute run-scan tasks
@@ -90,10 +134,25 @@ func parseFlags(fs *flag.FlagSet, args []string) error {
 // cmdRegister enrolls the device and persists state (0600). The public key of
 // a local Phase-0 signer is sent so the control plane can later pin it.
 func cmdRegister(ctx context.Context, args []string) error {
+	return registerWithCapabilities(ctx, args, map[string]any{
+		"connectors":       []string{"hermes", "docker", "directory", "openclaw"},
+		"protocol_version": "connector-protocol.v1",
+		"data_categories":  []string{"config_names", "tool_names", "image_names"},
+	})
+}
+
+func registerWithCapabilities(ctx context.Context, args []string, caps map[string]any) error {
+	return registerWithCapabilitiesInput(ctx, args, caps, func(ctx context.Context) (string, error) {
+		return readEnrollmentCodeContext(ctx, os.Stdin)
+	})
+}
+
+func registerWithCapabilitiesInput(ctx context.Context, args []string, caps map[string]any, readCode func(context.Context) (string, error)) error {
 	fs := flag.NewFlagSet("register", flag.ContinueOnError)
 	cp := fs.String("control-plane", "http://127.0.0.1:8600", "control plane base URL")
 	code := fs.String("enrollment-code", "", "enrollment code issued by the control plane (required)")
 	stdinCode := fs.Bool("enrollment-code-stdin", false, "read enrollment code from standard input instead of process arguments")
+	expectedEnvironment := fs.String("environment", "", "expected environment from confirmed installation plan")
 	if err := parseFlags(fs, args); err != nil {
 		return err
 	}
@@ -101,11 +160,14 @@ func cmdRegister(ctx context.Context, args []string) error {
 		if *code != "" {
 			return errors.New("use only one enrollment code input")
 		}
-		value, err := readEnrollmentCode(os.Stdin)
+		value, err := readCode(ctx)
 		if err != nil {
 			return err
 		}
 		*code = value
+	}
+	if *expectedEnvironment != "" && !regexp.MustCompile(`^[A-Za-z0-9_.:-]{1,64}$`).MatchString(*expectedEnvironment) {
+		return errors.New("invalid expected environment")
 	}
 	if *code == "" {
 		return errors.New("--enrollment-code is required")
@@ -116,6 +178,24 @@ func cmdRegister(ctx context.Context, args []string) error {
 	}
 	if _, err := os.Lstat(statePath); !os.IsNotExist(err) {
 		return errors.New("local device state already exists or is unreadable; use its heartbeat/tasks commands")
+	}
+	if _, err := validateControlPlaneURL(*cp); err != nil {
+		return errors.New("invalid registration control plane")
+	}
+	dir, err := StateDir()
+	if err != nil {
+		return errRegistrationPending
+	}
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		return errRegistrationPending
+	}
+	unlock, err := acquireTaskLock()
+	if err != nil {
+		return errRegistrationPending
+	}
+	defer unlock()
+	if _, err := os.Lstat(statePath); !os.IsNotExist(err) {
+		return errRegistrationPending
 	}
 	identity, err := NewUUID()
 	if err != nil {
@@ -129,13 +209,15 @@ func cmdRegister(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
-	caps := map[string]any{
-		"connectors":       []string{"hermes", "docker", "directory", "openclaw"},
-		"protocol_version": "connector-protocol.v1",
-		"data_categories":  []string{"config_names", "tool_names", "image_names"},
+	pending := &State{ControlPlaneURL: *cp, DeviceIdentity: identity, PublicKeyPEM: pubPEM, SignerSeed: signer.SeedB64(), EnvironmentID: *expectedEnvironment}
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	if err := beginRegistration(pending); err != nil {
+		return err
 	}
 	cli := NewClient(ClientConfig{ControlPlaneURL: *cp, Version: agentVersion})
-	resp, err := cli.Register(ctx, *code, identity, pubPEM, caps)
+	resp, err := cli.RegisterBound(ctx, *code, identity, pubPEM, caps, *expectedEnvironment)
 	if err != nil {
 		return err
 	}
@@ -157,6 +239,29 @@ func cmdRegister(ctx context.Context, args []string) error {
 	}
 	log.Printf("registered device %s (state written to %s, mode 0600; secret never logged)", state.DeviceIdentity, path)
 	return nil
+}
+
+// CLI cancellation can return while the stdin reader remains blocked; main then
+// exits. Do not close a caller-owned input stream or reuse this as a daemon loop.
+func readEnrollmentCodeContext(ctx context.Context, input io.Reader) (string, error) {
+	if ctx.Err() != nil {
+		return "", ctx.Err()
+	}
+	type result struct {
+		code string
+		err  error
+	}
+	done := make(chan result, 1)
+	go func() { code, err := readEnrollmentCode(input); done <- result{code, err} }()
+	select {
+	case <-ctx.Done():
+		return "", ctx.Err()
+	case value := <-done:
+		if ctx.Err() != nil {
+			return "", ctx.Err()
+		}
+		return value.code, value.err
+	}
 }
 
 func readEnrollmentCode(input io.Reader) (string, error) {
@@ -209,6 +314,15 @@ func cmdTasks(ctx context.Context, args []string) error {
 		return err
 	}
 	cli := newAuthedClient(state)
+	release, err := acquireTaskLock()
+	if err != nil {
+		return err
+	}
+	defer release()
+	return executePendingTasks(ctx, state, cli)
+}
+
+func executePendingTasks(ctx context.Context, state *State, cli *Client) error {
 	// R04：先冲刷本地 pending receipt，避免 uploaded 卡住无人回执。
 	if n, err := DrainPendingReceipts(ctx, cli); err != nil {
 		log.Printf("drain pending receipts: posted=%d err=%v", n, err)

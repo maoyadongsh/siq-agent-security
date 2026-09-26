@@ -28,8 +28,9 @@ type Task struct {
 
 // ScanRequest is task.payload for type=run-scan tasks.
 type ScanRequest struct {
-	Connector string          `json:"connector"`
-	Scope     json.RawMessage `json:"scope,omitempty"`
+	TargetDeviceIdentity string          `json:"target_device_identity,omitempty"`
+	Connector            string          `json:"connector"`
+	Scope                json.RawMessage `json:"scope,omitempty"`
 }
 
 // VerifyTaskSignature verifies the control-plane Ed25519 signature over the
@@ -156,6 +157,34 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		rcpt.ErrorMessage = err.Error()
 		return rcpt, nil
 	}
+	if !taskMatchesDevice(t, r.State.DeviceIdentity) {
+		rcpt.Status = "failed"
+		rcpt.ErrorCode = "task_device_mismatch"
+		rcpt.ErrorMessage = "task is bound to another device or has an invalid target"
+		return rcpt, nil
+	}
+	if t.TaskType == "skill_scan" {
+		if r.Client == nil {
+			return nil, errSkillExecution
+		}
+		outcome, err := executeSkillUpload(ctx, r.State, t, func(ctx context.Context, scope json.RawMessage) (protocol.SkillCollection, error) {
+			return collectInstalledSkills(ctx, r.State, scope)
+		}, r.Client.UploadSkills)
+		if err != nil {
+			return nil, err
+		}
+		rcpt.Status = "success"
+		rcpt.CompletedAt = time.Now().UTC().Format(time.RFC3339)
+		rcpt.SkillBatchDigest = outcome.Digest
+		rcpt.SkillObservationCount = &outcome.Observations
+		return rcpt, nil
+	}
+	if err := checkDiscoveryConsent(r.State, t); err != nil {
+		rcpt.Status = "failed"
+		rcpt.ErrorCode = "discovery_scope_denied"
+		rcpt.ErrorMessage = "task is outside confirmed discovery scope"
+		return rcpt, nil
+	}
 	if reused, err := LookupExecReuse(t); err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = "task_content_conflict"
@@ -241,6 +270,22 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 	}
 	_ = SaveExecLedgerRecord(t, rcpt)
 	return rcpt, nil
+}
+
+func taskMatchesDevice(t *Task, identity string) bool {
+	var payload map[string]json.RawMessage
+	if len(t.Payload) == 0 {
+		return true
+	}
+	if json.Unmarshal(t.Payload, &payload) != nil {
+		return false
+	}
+	raw, present := payload["target_device_identity"]
+	if !present {
+		return true
+	}
+	var target string
+	return json.Unmarshal(raw, &target) == nil && len(target) >= 8 && len(target) <= 128 && target == identity
 }
 
 type scanOutcome struct {

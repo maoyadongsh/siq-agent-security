@@ -11,12 +11,14 @@ from __future__ import annotations
 import secrets
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy import func, or_, select, update
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from sqlalchemy import and_, func, or_, select, true, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.edge_capabilities import can_claim_skills, claimable_connectors
+from app.list_meta import apply_list_meta, take_page
 from app.models import (
     AuditEvent,
     Deployment,
@@ -121,14 +123,34 @@ def create_environment(
 
 @router.get("/api/v1/environments", response_model=list[EnvironmentOut])
 def list_environments(
+    response: Response,
     session: Session = Depends(get_session),
     identity: Identity = Depends(require_permission("env:read")),
+    limit: int | None = Query(default=None, ge=1, le=200),
+    cursor: str | None = Query(default=None, min_length=1, max_length=64),
+    include_total: bool = False,
 ):
-    return list(
-        session.scalars(
-            select(Environment).where(Environment.tenant_id == identity.tenant_id).order_by(Environment.name)
-        )
+    filters = [Environment.tenant_id == identity.tenant_id]
+    query = select(Environment).where(*filters).order_by(Environment.name, Environment.id)
+    if cursor is not None:
+        if limit is None:
+            raise HTTPException(422, "environment_list_cursor_unavailable")
+        anchor = session.scalar(select(Environment).where(*filters, Environment.id == cursor))
+        if anchor is None:
+            raise HTTPException(422, "environment_list_cursor_unavailable")
+        query = query.where(or_(
+            Environment.name > anchor.name,
+            and_(Environment.name == anchor.name, Environment.id > anchor.id),
+        ))
+    total = session.scalar(select(func.count()).select_from(Environment).where(*filters)) if include_total else None
+    rows = list(session.scalars(query.limit(limit + 1) if limit is not None else query))
+    items, truncated = take_page(rows, limit=limit) if limit is not None else (rows, False)
+    response.headers["Cache-Control"] = "no-store"
+    apply_list_meta(
+        response, limit=limit if limit is not None else len(items), returned=len(items),
+        truncated=truncated, next_cursor=items[-1].id if truncated else None, total=total,
     )
+    return items
 
 
 @router.get("/api/v1/environments/access", response_model=OnboardingAccess)
@@ -319,6 +341,8 @@ def register_edge(body: EdgeRegisterRequest, session: Session = Depends(get_sess
     env = session.get(Environment, token.environment_id)
     if env is None:
         raise HTTPException(status_code=401, detail="enrollment_invalid")
+    if body.expected_environment_id is not None and body.expected_environment_id != env.id:
+        raise HTTPException(status_code=401, detail="enrollment_invalid")
 
     # 预检：避免唯一约束冲突变成 500，并在失败路径上不标记 used_at
     if session.scalar(select(EdgeAgent.id).where(EdgeAgent.device_identity == body.device_identity)):
@@ -371,9 +395,21 @@ def edge_heartbeat(
         raise HTTPException(status_code=401, detail="missing_edge_identity")
     edge = verify_edge_secret(request, device_identity, session)
     now = utcnow()
+    env = session.get(Environment, edge.environment_id)
+    if env is None:
+        raise HTTPException(status_code=401, detail="edge_environment_missing")
+    if body.capabilities is not None:
+        capabilities = body.capabilities.model_dump(exclude_none=True)
+        if capabilities != edge.capabilities:
+            edge.capabilities = capabilities
+            audit(
+                session, env.tenant_id, "edge", edge.device_identity,
+                "edge.capabilities.update", "edge_agent", resource_id=edge.id,
+                summary={"connector_count": len(capabilities["connectors"]),
+                         "inventory_schema": capabilities["inventory_schema"]},
+            )
     edge.last_seen_at = now
     edge.version = body.version or edge.version
-    env = session.get(Environment, edge.environment_id)
     if env is not None:
         env.last_heartbeat_at = now
     session.commit()
@@ -406,6 +442,29 @@ def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
     # 租约 TTL 复用心跳失活阈值：持有者宕机后至多一个 TTL 即可被接管
     lease_ttl_seconds = load_settings().heartbeat_stale_seconds
     lease_cutoff = now - timedelta(seconds=lease_ttl_seconds)
+    connectors = claimable_connectors(edge.capabilities, edge.last_seen_at, now, lease_cutoff)
+    device_filter = or_(
+        EdgeTask.payload["target_device_identity"].as_string().is_(None),
+        EdgeTask.payload["target_device_identity"].as_string() == device_identity,
+    )
+    capability_filter = true() if connectors is None else or_(
+        EdgeTask.task_type != "scan",
+        EdgeTask.payload["connector"].as_string().in_(connectors),
+        and_(EdgeTask.status == "uploaded", EdgeTask.lease_owner == device_identity),
+    )
+    skill_capable = can_claim_skills(edge.capabilities, edge.last_seen_at, now, lease_cutoff)
+    capability_filter = and_(capability_filter, or_(
+        EdgeTask.task_type != "skill_scan",
+        and_(
+            EdgeTask.payload["connector"].as_string() == "directory",
+            EdgeTask.payload["inventory_kind"].as_string() == "skills",
+            EdgeTask.payload["target_device_identity"].as_string() == device_identity,
+            or_(
+                and_(EdgeTask.status == "pending", skill_capable),
+                and_(EdgeTask.status == "uploaded", EdgeTask.lease_owner == device_identity),
+            ),
+        ),
+    ))
     # 过期任务顺带标记 expired（惰性清扫）：含 pending 与 uploaded（R04）
     session.query(EdgeTask).filter(
         EdgeTask.environment_id == edge.environment_id,
@@ -427,6 +486,8 @@ def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
                 EdgeTask.environment_id == edge.environment_id,
                 EdgeTask.status.in_(("pending", "uploaded")),
                 claimable,
+                capability_filter,
+                device_filter,
             )
             .order_by(EdgeTask.created_at)
             .limit(10)
@@ -439,8 +500,11 @@ def edge_fetch_tasks(request: Request, session: Session = Depends(get_session)):
             update(EdgeTask)
             .where(
                 EdgeTask.id == task_id,
+                EdgeTask.environment_id == edge.environment_id,
                 EdgeTask.status.in_(("pending", "uploaded")),
                 claimable,
+                capability_filter,
+                device_filter,
             )
             .values(
                 leased_at=now,
@@ -482,10 +546,18 @@ def edge_post_receipt(
     )
     if task is None:
         raise HTTPException(status_code=404, detail="not_found")
+    if task.payload.get("target_device_identity") not in (None, device_identity):
+        raise HTTPException(status_code=409, detail="receipt_task_device_mismatch")
     if body.task_id is not None and body.task_id != task.id:
         raise HTTPException(status_code=409, detail="receipt_task_mismatch")
     if body.device_identity is not None and body.device_identity != device_identity:
         raise HTTPException(status_code=409, detail="receipt_device_mismatch")
+    if task.task_type == "skill_scan":
+        from app.skill_receipt import complete_skill_task
+
+        return complete_skill_task(session, edge, task, body)
+    if body.skill_batch_digest is not None or body.skill_observation_count is not None:
+        raise HTTPException(status_code=422, detail="skill_receipt_fields_not_allowed")
     terminal_status = "delivered" if body.status == "success" else "failed"
     if task.status in ("delivered", "failed"):
         if task.status != terminal_status:

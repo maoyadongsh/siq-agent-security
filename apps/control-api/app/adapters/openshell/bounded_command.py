@@ -22,7 +22,10 @@ def clean_env() -> dict[str, str]:
     return env
 
 
-def run_bounded(argv: list[str], *, timeout: float = 30, limit: int = MAX_OUTPUT) -> tuple[int, str, str]:
+def run_bounded(
+    argv: list[str], *, timeout: float = 30, limit: int = MAX_OUTPUT,
+    environment: dict[str, str] | None = None,
+) -> tuple[int, str, str]:
     """Poll nonblocking pipes (Python >=3.12), charging one combined byte limit.
 
     No reader threads can remain stuck on a descendant's inherited handle.
@@ -30,9 +33,12 @@ def run_bounded(argv: list[str], *, timeout: float = 30, limit: int = MAX_OUTPUT
     """
     if not argv or timeout <= 0 or limit <= 0:
         raise AdapterError("openshell_command_failed")
+    child_env = clean_env() if environment is None else {
+        key: value for key, value in environment.items() if key in SAFE_ENV_KEYS
+    }
     try:
         proc = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE, env=clean_env(), bufsize=0)
+                                stderr=subprocess.PIPE, env=child_env, bufsize=0)
     except OSError:
         raise AdapterError("openshell_command_failed") from None
     deadline = time.monotonic() + timeout

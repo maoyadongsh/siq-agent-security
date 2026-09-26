@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "enterprise-install-plan/v1",
+  "title": "Enterprise installation plan (not an enrollment or business credential)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "tenant_id", "environment_id", "control_plane_origin", "issued_at", "expires_at", "target_os", "target_arch", "service_mode", "release_version", "release_manifest_sha256", "connectors", "purpose"],
+  "properties": {
+    "schema_version": {"const": "enterprise-install-plan/v1"},
+    "plan_id": {"type": "string", "pattern": "^eip-[a-f0-9]{32}$"},
+    "tenant_id": {"$ref": "#/$defs/id"},
+    "environment_id": {"$ref": "#/$defs/id"},
+    "control_plane_origin": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^(https://[^/?#@\\s]+|http://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:[0-9]+)?)$"},
+    "issued_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "expires_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "target_os": {"const": "linux"},
+    "target_arch": {"enum": ["arm64", "amd64"]},
+    "service_mode": {"enum": ["user", "system"]},
+    "release_version": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9][A-Za-z0-9.+_-]*$"},
+    "release_manifest_sha256": {"$ref": "#/$defs/digest"},
+    "connectors": {"type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true, "items": {"$ref": "#/$defs/connector"}},
+    "purpose": {"const": "discovery_only"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "connector": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "version", "artifact_sha256", "protocol_version", "scope"],
+      "properties": {
+        "id": {"enum": ["hermes", "openclaw", "directory", "docker", "process", "systemd", "kubernetes", "mcp", "piagent", "workbuddy", "dify", "siq"]},
+        "version": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9][A-Za-z0-9.+_-]*$"},
+        "artifact_sha256": {"$ref": "#/$defs/digest"},
+        "protocol_version": {"const": "connector-protocol.v1"},
+        "scope": {
+          "type": "object", "additionalProperties": false,
+          "required": ["roots", "include"],
+          "properties": {
+            "roots": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "minLength": 3, "maxLength": 4096}},
+            "include": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 128}}
+          }
+        }
+      }
+    }
+  }
+}

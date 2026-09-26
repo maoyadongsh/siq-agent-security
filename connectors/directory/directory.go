@@ -30,7 +30,7 @@ import (
 	"siq-agent-security/edge/agent/protocol"
 )
 
-const connectorVersion = "0.1.0"
+var connectorVersion = "0.1.0" // Release builds stamp main.connectorVersion via -ldflags -X.
 
 var defaultIncludes = []string{"SOUL.md", "agent.yaml", "agent.yml", "agent.json", "profile.yaml"}
 
@@ -141,6 +141,17 @@ func dispatch(req *protocol.Request) protocol.Response {
 		}
 	case protocol.OpCheckpoint:
 		result = map[string]string{"cursor": lastCursor}
+	case protocol.OpCollectSkills, protocol.OpCollectSkillsV2:
+		var p collectParams
+		if !supportsSkillCollection {
+			perr = &protocol.ProtocolError{Code: protocol.CodeUnsupported, Message: "skill collection unsupported"}
+		} else if err := json.Unmarshal(req.Params, &p); err != nil {
+			perr = badRequest(err)
+		} else if batch, err := collectSkillsVersion(p.Plan, req.Op == protocol.OpCollectSkillsV2); err != nil {
+			perr = &protocol.ProtocolError{Code: protocol.CodeScopeInvalid, Message: "skill scope invalid"}
+		} else {
+			result = batch
+		}
 	case protocol.OpHealth:
 		result = healthOp()
 	default:
@@ -156,18 +167,26 @@ func dispatch(req *protocol.Request) protocol.Response {
 }
 
 func capabilities() protocol.ConnectorCapabilities {
+	objects := []string{"agent_manifest"}
+	categories := []string{"manifest_names", "file_hashes"}
+	if supportsSkillCollection {
+		objects = append(objects, "skill_manifest")
+		objects = append(objects, "skill_manifest_ancestry_v2")
+		categories = append(categories, "tool_names")
+	}
 	return protocol.ConnectorCapabilities{
 		Version:             connectorVersion,
-		Objects:             []string{"agent_manifest"},
+		Objects:             objects,
 		RequiredPermissions: []string{"read:<explicit scope required>"},
-		DataCategories:      []string{"manifest_names", "file_hashes"},
+		DataCategories:      categories,
 		MaxOutputBytes:      protocol.DefaultOutputLimitBytes,
 		NetworkAccess:       false,
 	}
 }
 
 func validateScopeOp(scope *protocol.Scope) protocol.ValidationResult {
-	return protocol.ValidationResult{Valid: true, Errors: validateScope(scope)}
+	errs := validateScope(scope)
+	return protocol.ValidationResult{Valid: len(errs) == 0, Errors: errs}
 }
 
 func validateScope(scope *protocol.Scope) []string {

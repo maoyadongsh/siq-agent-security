@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
@@ -12,9 +11,9 @@ from sqlalchemy import engine_from_config, pool
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from app import models  # noqa: E402,F401  确保模型注册到 metadata
 from app.config import load_settings  # noqa: E402
 from app.db import Base  # noqa: E402
-from app import models  # noqa: E402,F401  确保模型注册到 metadata
 
 config = context.config
 if config.config_file_name is not None:

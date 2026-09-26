@@ -273,14 +273,16 @@ def test_deploy_selector_matches_instance_id(client, tenant_a, env_a):
     assert resp.json()["runtime_binding_id"] == binding["id"]
 
 
-def test_static_policy_openshell_cli_rejected_422(client, tenant_a, env_a, monkeypatch):
+def test_static_policy_openshell_cli_rejected_422(client, tenant_a, env_a, monkeypatch, tmp_path):
     """P0-2：静态策略（filesystem → needs_generation）在 generation 路径修复前不得部署。
 
     拒绝时不创建 Deployment 行、不改变 CR 状态（编译 gate 先于任何 flush）。
     """
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
-    _fake_cli_backend(monkeypatch)
+    fake = _fake_cli_backend(monkeypatch)
     binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli")
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
 
     name = f"static-policy-{uuid.uuid4().hex[:8]}"
     resp = client.post(
@@ -319,11 +321,13 @@ def test_static_policy_openshell_cli_rejected_422(client, tenant_a, env_a, monke
         assert row.status == "approved"  # CR 状态不被副作用改变
 
 
-def test_static_policy_equal_to_live_state_uses_dynamic_update(client, tenant_a, env_a, monkeypatch):
+def test_static_policy_equal_to_live_state_uses_dynamic_update(client, tenant_a, env_a, monkeypatch, tmp_path):
     """静态字段存在但与 live 值相同，不得仅因字段存在要求 generation。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     fake = _fake_cli_backend(monkeypatch)
     binding, asset_id, _ = make_binding(client, tenant_a, env_a["id"], backend="openshell-cli")
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding["id"], fake)
     response = client.post(
         "/api/v1/policies",
         json={

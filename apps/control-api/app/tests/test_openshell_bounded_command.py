@@ -46,6 +46,16 @@ def test_environment_and_error_privacy(monkeypatch):
     assert "CANARY" not in str(failure.value)
 
 
+def test_explicit_environment_is_filtered_and_not_reloaded(monkeypatch):
+    monkeypatch.setenv("XDG_CONFIG_HOME", "/fixture/later")
+    supplied = {"XDG_CONFIG_HOME": "/fixture/frozen", "BASH_ENV": "private", "PRIVATE_TOKEN": "private"}
+    source = ("import os; print(os.getenv('XDG_CONFIG_HOME')); "
+              "print('BASH_ENV' in os.environ or 'PRIVATE_TOKEN' in os.environ)")
+    rc, out, err = run_bounded([sys.executable, "-c", source], environment=supplied)
+    assert rc == 0 and err == "" and out.splitlines() == ["/fixture/frozen", "False"]
+    assert supplied["BASH_ENV"] == "private"  # caller snapshot not mutated
+
+
 @pytest.mark.parametrize("case", json.loads(
     (Path(__file__).resolve().parents[4] / "testdata/openshell-command-budget.v1.json").read_text()
 ), ids=lambda case: case["name"])

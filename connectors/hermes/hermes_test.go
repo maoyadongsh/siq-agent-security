@@ -121,7 +121,7 @@ func TestCollectProfiles(t *testing.T) {
 	for _, ev := range batch.Evidence {
 		byID[ev.EvidenceID] = ev
 	}
-	envEv := byID["ev:hermes:siq_legal_advisor:.env"]
+	envEv := byID["ev:hermes:v2:"+protocol.ContentHash([]byte(profileDir+"\x00.env"))]
 	if envEv == nil {
 		t.Fatal("missing .env secret_ref evidence")
 	}

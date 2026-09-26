@@ -16,7 +16,7 @@ from app.db import get_session
 from app.models import AgentAsset, AgentInstance, Environment, RuntimeBinding, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import RuntimeBindingCreate, RuntimeBindingOut
-from app.security import Identity, ensure_permission, get_identity, require_permission
+from app.security import Identity, ensure_permission, get_identity
 
 router = APIRouter(tags=["runtime-bindings"])
 
@@ -25,7 +25,7 @@ router = APIRouter(tags=["runtime-bindings"])
 def create_runtime_binding(
     body: RuntimeBindingCreate,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("policy:manage")),
+    identity: Identity = Depends(get_identity),
 ):
     # 跨租户/不存在统一 404（隐藏存在性，§21.1 不变量 #1）
     instance = session.scalar(
@@ -47,6 +47,11 @@ def create_runtime_binding(
     )
     if env is None:
         raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "policy:manage")
+    if instance.environment_id is None:
+        raise HTTPException(status_code=409, detail="binding_instance_environment_unverified")
+    if instance.environment_id != env.id:
+        raise HTTPException(status_code=409, detail="binding_instance_environment_mismatch")
 
     binding = RuntimeBinding(
         tenant_id=identity.tenant_id,

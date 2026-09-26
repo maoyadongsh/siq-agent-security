@@ -27,11 +27,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 
 	"siq-agent-security/edge/agent/protocol"
 )
 
-const connectorVersion = "0.1.0"
+var connectorVersion = "0.1.0" // Release builds stamp main.connectorVersion via -ldflags -X.
 
 var defaultIncludes = []string{"openclaw.json"}
 
@@ -109,7 +111,10 @@ func dispatch(req *protocol.Request) protocol.Response {
 		if err := json.Unmarshal(req.Params, &p); err != nil {
 			perr = badRequest(err)
 		} else {
-			result = protocol.ValidationResult{Valid: true, Errors: validateScope(p.Scope)}
+			errs := validateScope(p.Scope)
+			// valid 必须与 errors 一致（合同 §4：空 scope 等必须表现为拒绝），
+			// 不能恒真——Edge/调用方按 valid 判定，errors 只是原因说明。
+			result = protocol.ValidationResult{Valid: len(errs) == 0, Errors: errs}
 		}
 	case protocol.OpPlanScan:
 		var p planScanParams
@@ -170,6 +175,18 @@ func validateScope(scope *protocol.Scope) []string {
 	if err := protocol.ValidateScopeSafety(scope); err != nil {
 		return []string{err.Error()}
 	}
+	if len(scope.Include) > 0 {
+		included := false
+		for _, name := range scope.Include {
+			included = included || name == "openclaw.json"
+		}
+		if !included {
+			return []string{"openclaw.json is outside the requested include scope"}
+		}
+	}
+	if len(scope.Exclude) > 0 {
+		return []string{"exclude scope is not supported"}
+	}
 	return nil
 }
 
@@ -180,13 +197,13 @@ func defaultLimits() protocol.CollectLimits {
 // openclawConfig mirrors the subset of openclaw.json we read (declared facts only).
 type openclawConfig struct {
 	Agents struct {
-		List []struct {
-			ID        string `json:"id"`
-			Name      string `json:"name"`
-			Workspace string `json:"workspace"`
-			AgentDir  string `json:"agentDir"`
-			Model     any    `json:"model"`
-		} `json:"list"`
+		List     []openclawAgent           `json:"list"`
+		Entries  map[string]*openclawAgent `json:"entries"`
+		Defaults struct {
+			Skills    json.RawMessage `json:"skills"`
+			Workspace string          `json:"workspace"`
+			Model     any             `json:"model"`
+		} `json:"defaults"`
 	} `json:"agents"`
 }
 
@@ -194,6 +211,9 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 	sc := plan.Scope
 	if sc == nil || len(sc.Roots) == 0 {
 		return protocol.EvidenceBatch{}, fmt.Errorf("empty scope: no roots")
+	}
+	if errs := validateScope(sc); len(errs) > 0 {
+		return protocol.EvidenceBatch{}, errors.New("invalid openclaw collection scope")
 	}
 	limits := plan.Limits
 	if limits.MaxFiles <= 0 {
@@ -211,8 +231,18 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 		PermissionFacts: []*protocol.PermissionFact{},
 	}
 	var readBytes int64
+	seenRoots := map[string]bool{}
 	for _, raw := range sc.Roots {
 		root := strings.TrimSpace(protocol.ExpandHome(raw))
+		absolute, err := filepath.Abs(root)
+		if err != nil {
+			return protocol.EvidenceBatch{}, errors.New("openclaw root normalization failed")
+		}
+		root = filepath.Clean(absolute)
+		if seenRoots[root] {
+			continue
+		}
+		seenRoots[root] = true
 		cfgPath := filepath.Join(root, "openclaw.json")
 		remaining := limits.MaxBytes - readBytes
 		if remaining <= 0 {
@@ -226,22 +256,32 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			break
 		}
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "openclaw-connector: read %s: %v\n", cfgPath, err)
-			continue
+			return protocol.EvidenceBatch{}, collectionReadError(err)
 		}
 		readBytes += int64(len(data))
-		// 配置被预算截断：解析结果不完整，显式标注而非静默继续（P1-6）
-		if fi, statErr := os.Stat(cfgPath); statErr == nil && fi.Size() > int64(len(data)) {
-			fmt.Fprintf(os.Stderr, "openclaw-connector: %s truncated by byte budget (%d/%d bytes)\n", cfgPath, len(data), fi.Size())
-			batch.Truncated = true
+		if !utf8.Valid(data) {
+			return protocol.EvidenceBatch{}, errors.New("openclaw config encoding invalid")
 		}
-		var cfg openclawConfig
-		if err := json.Unmarshal(data, &cfg); err != nil {
-			return protocol.EvidenceBatch{}, fmt.Errorf("openclaw.json 解析失败: %w", err)
+		cfg, err := parseOpenClawConfig(data)
+		if err != nil {
+			return protocol.EvidenceBatch{}, errors.New("openclaw_config_invalid")
 		}
 
 		cfgHash := protocol.ContentHash(data)
-		for _, agent := range cfg.Agents.List {
+		agents, err := configuredAgents(cfg)
+		if err != nil {
+			return protocol.EvidenceBatch{}, err
+		}
+		seenIDs := map[string]bool{}
+		for _, agent := range agents {
+			if agent.ID == "" || len(agent.ID) > 128 || strings.TrimSpace(agent.ID) != agent.ID || seenIDs[agent.ID] ||
+				strings.IndexFunc(agent.ID, unicode.IsControl) >= 0 {
+				return protocol.EvidenceBatch{}, errors.New("openclaw agent identity missing or ambiguous")
+			}
+			seenIDs[agent.ID] = true
+		}
+		rootStart := len(batch.Candidates)
+		for _, agent := range agents {
 			name := agent.Name
 			if name == "" {
 				name = agent.ID
@@ -249,11 +289,14 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 			if name == "" {
 				continue
 			}
-			evidenceID := "ev:openclaw:" + hex.EncodeToString([]byte(agent.ID + cfgHash))[:16]
+			identityBytes, _ := json.Marshal([]string{root, agent.ID})
+			roleKey := protocol.ContentHash(identityBytes)
+			evidenceBytes, _ := json.Marshal([]string{roleKey, cfgHash})
+			evidenceID := "ev:openclaw:v2:" + protocol.ContentHash(evidenceBytes)
 			cand := &protocol.Candidate{
-				CandidateID:   "openclaw:" + name,
+				CandidateID:   "openclaw:v2:" + roleKey,
 				SourceType:    "openclaw_agent",
-				SourceLocator: red.RedactString("openclaw://agents/" + name),
+				SourceLocator: "openclaw://agents/v2/" + roleKey,
 				DiscoveredAt:  now,
 				Name:          truncate(red.RedactString(name), 256),
 				Framework:     "openclaw",
@@ -261,6 +304,13 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 				EvidenceIDs:   []string{evidenceID},
 			}
 			attrs := map[string]string{}
+			attrs["framework_source"] = frameworkSource(root, cfgHash, evidenceID)
+			attrs["role_identity_basis"] = "explicit_config"
+			if agent.InferredDefault {
+				attrs["role_identity_basis"] = "config_default"
+			}
+			attrs["skill_selection"] = declaredSkillSelection(agent.Skills, cfg.Agents.Defaults.Skills)
+			attrs["skill_source_roots"] = declaredSkillRoots(agent)
 			if agent.Workspace != "" {
 				attrs["workspace"] = red.RedactString(agent.Workspace)
 			}
@@ -315,9 +365,13 @@ func collectOp(plan protocol.ScanPlan) (protocol.EvidenceBatch, error) {
 
 		// auth-profiles.json 等敏感文件：secret_ref 证据（只记名字+大小，永不读内容）
 		authProfile := filepath.Join(root, "agents", "auth-profiles.json")
-		if fi, err := os.Stat(authProfile); err == nil {
+		if fi, err := os.Stat(authProfile); err == nil && len(batch.Candidates) > rootStart {
+			authID := "ev:openclaw:auth-profiles:v2:" + protocol.ContentHash([]byte(root))
+			for _, candidate := range batch.Candidates[rootStart:] {
+				candidate.EvidenceIDs = append(candidate.EvidenceIDs, authID)
+			}
 			batch.Evidence = append(batch.Evidence, &protocol.Evidence{
-				EvidenceID:       "ev:openclaw:auth-profiles",
+				EvidenceID:       authID,
 				SourceType:       "manifest",
 				SourceLocator:    "agents/auth-profiles.json",
 				ObservedAt:       now,
@@ -386,7 +440,21 @@ func readFileLimited(path string, maxBytes int64) ([]byte, error) {
 	if !st.Mode().IsRegular() {
 		return nil, errors.New("non-regular file refused after open")
 	}
-	return io.ReadAll(io.LimitReader(f, maxBytes))
+	if st.Size() > maxBytes {
+		return nil, errBudgetExhausted
+	}
+	data, err := io.ReadAll(io.LimitReader(f, maxBytes))
+	if err != nil {
+		return nil, err
+	}
+	after, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(data)) != st.Size() || after.Size() != st.Size() || !after.ModTime().Equal(st.ModTime()) {
+		return nil, errors.New("openclaw config changed during read")
+	}
+	return data, nil
 }
 
 func strPtr(s string) *string { return &s }

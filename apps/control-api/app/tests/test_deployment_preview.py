@@ -151,13 +151,15 @@ def cli_scope(client, tenant_a):
     return headers, response.json()
 
 
-def test_cli_revision_recheck_and_only_confirmed_plan_applied(client, cli_scope, monkeypatch):
+def test_cli_revision_recheck_and_only_confirmed_plan_applied(client, cli_scope, monkeypatch, tmp_path):
     tenant_a, env_a = cli_scope
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
     runner = StatefulRunner()
     backend = OpenShellCliBackend(runner=runner, env_script="", operation_registry=PolicyOperationRegistry())
     monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: backend)
     body, _ = setup(client, tenant_a, env_a, backend="openshell-cli", target="s1")
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, body["binding_id"], backend)
     value = preview(client, tenant_a, body)
     assert value["action"] == "dynamic_update" and value["base_revision"] == "4"
     assert runner.set_calls == 0
@@ -185,7 +187,44 @@ def test_unstable_gateway_scope_cannot_be_previewed(client, cli_scope, monkeypat
     assert runner.set_calls == 0
 
 
-def test_project_tls_context_change_rejects_preview_without_apply(client, cli_scope, monkeypatch):
+@pytest.mark.parametrize("mutation", ["missing", "deleted", "tenant", "expired", "renewed"])
+def test_target_authority_change_blocks_apply(client, cli_scope, monkeypatch, tmp_path, mutation):
+    from app.tests.binding_helpers import assign_target_authority
+
+    headers, environment = cli_scope
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    monkeypatch.delenv("SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE", raising=False)
+    runner = StatefulRunner()
+    backend = OpenShellCliBackend(runner=runner, env_script="", operation_registry=PolicyOperationRegistry())
+    monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: backend)
+    body, _ = setup(client, headers, environment, backend="openshell-cli", target="s1")
+    before = counts()
+    if mutation == "missing":
+        response = client.post("/api/v1/deployment-preview", headers=headers, json=body)
+    else:
+        path = assign_target_authority(monkeypatch, tmp_path, body["binding_id"], backend)
+        value = preview(client, headers, body)
+        if mutation == "deleted":
+            path.unlink()
+        else:
+            catalog = json.loads(path.read_text())
+            if mutation == "tenant":
+                catalog["assignments"][0]["tenant_id"] = "another-tenant"
+            elif mutation == "expired":
+                catalog["issued_at"] = "2020-01-01T00:00:00Z"
+                catalog["expires_at"] = "2020-01-02T00:00:00Z"
+            else:
+                # Still valid, but it is not the administrator document previewed.
+                catalog["expires_at"] = "2099-01-01T00:00:00Z"
+            path.write_text(json.dumps(catalog))
+        response = submit(client, headers, body, value)
+    assert response.status_code == 409, response.text
+    expected = "deployment_preview_changed" if mutation == "renewed" else "deployment_target_authority_unverified"
+    assert response.json()["detail"] == expected
+    assert runner.set_calls == 0 and counts() == before
+
+
+def test_project_tls_context_change_rejects_preview_without_apply(client, cli_scope, monkeypatch, tmp_path):
     headers, environment = cli_scope
     monkeypatch.setenv('SIQ_AS_ENFORCEMENT_BACKEND', 'openshell-cli')
     monkeypatch.setenv('SIQ_AS_OPENSHELL_CLI_BIN', '/fixture/openshell')
@@ -195,11 +234,68 @@ def test_project_tls_context_change_rejects_preview_without_apply(client, cli_sc
     backend = OpenShellCliBackend(runner=runner, env_script='')
     monkeypatch.setattr('app.routers.policies.OpenShellCliBackend', lambda: backend)
     body, _ = setup(client, headers, environment, backend='openshell-cli', target='s1')
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, body["binding_id"], backend)
     value = preview(client, headers, body)
     before = counts()
     # Identical endpoint/version/target cannot authorize another TLS context.
     monkeypatch.setenv('XDG_STATE_HOME', '/fixture/project-b/state')
     response = submit(client, headers, body, value)
     assert response.status_code == 409
-    assert response.json()['detail'] == 'deployment_preview_changed'
+    assert response.json()['detail'] == 'deployment_target_authority_unverified'
     assert runner.set_calls == 0 and counts() == before
+
+
+def test_authority_changed_after_prepare_cannot_execute(client, cli_scope, monkeypatch, tmp_path):
+    from app.routers import policies
+    from app.tests.binding_helpers import assign_target_authority
+
+    headers, environment = cli_scope
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    runner = StatefulRunner()
+    backend = OpenShellCliBackend(runner=runner, env_script="", operation_registry=PolicyOperationRegistry())
+    monkeypatch.setattr(policies, "OpenShellCliBackend", lambda: backend)
+    body, _ = setup(client, headers, environment, backend="openshell-cli", target="s1")
+    path = assign_target_authority(monkeypatch, tmp_path, body["binding_id"], backend)
+    original = policies.prepare_deployment
+
+    def prepare_then_change(*args, **kwargs):
+        prepared = original(*args, **kwargs)
+        catalog = json.loads(path.read_text())
+        catalog["expires_at"] = "2099-01-01T00:00:00Z"
+        path.write_text(json.dumps(catalog))
+        return prepared
+
+    monkeypatch.setattr(policies, "prepare_deployment", prepare_then_change)
+    before = counts()
+    response = client.post(
+        "/api/v1/deployments", headers=headers,
+        json={key: value for key, value in body.items() if key != "schema_version"},
+    )
+    assert response.status_code == 409, response.text
+    assert response.json()["detail"] == "deployment_target_authority_changed"
+    assert runner.set_calls == 0 and counts() == before
+
+
+def test_rollback_requires_current_target_authority(client, cli_scope, monkeypatch, tmp_path):
+    from app.tests.binding_helpers import assign_target_authority
+
+    headers, environment = cli_scope
+    monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
+    runner = StatefulRunner()
+    backend = OpenShellCliBackend(runner=runner, env_script="", operation_registry=PolicyOperationRegistry())
+    monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: backend)
+    body, _ = setup(client, headers, environment, backend="openshell-cli", target="s1")
+    path = assign_target_authority(monkeypatch, tmp_path, body["binding_id"], backend)
+    result = submit(client, headers, body, preview(client, headers, body))
+    assert result.status_code == 201, result.text
+    deployment_id = result.json()["id"]
+    with session_scope() as session:
+        receipt = session.get(Deployment, deployment_id).receipt
+        assert receipt["target_authority"]["assignment_id"] == "fixture-assignment"
+        assert len(receipt["endpoint_fingerprint"]) == len(receipt["gateway_name_sha256"]) == 64
+    path.unlink()
+    before = runner.set_calls
+    response = client.post(f"/api/v1/deployments/{deployment_id}/rollback", headers=headers, json={})
+    assert response.status_code != 200
+    assert runner.set_calls == before

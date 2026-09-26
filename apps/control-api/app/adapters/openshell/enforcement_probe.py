@@ -72,6 +72,7 @@ REASON_OK = "probe_evidence_accepted"
 R_SCHEMA = "probe_evidence_schema_unsupported"
 R_ORIGIN = "probe_origin_not_accepted"
 R_FINGERPRINT = "probe_binding_fingerprint_mismatch"
+R_TARGET = "probe_binding_target_mismatch"
 R_REVISION = "probe_binding_revision_mismatch"
 R_DIGEST = "probe_binding_digest_mismatch"
 R_MODE = "probe_enforcement_mode_not_block"
@@ -114,8 +115,8 @@ class ProbeObservation:
 class EnforcementProbeEvidence:
     """一次行为探针运行的完整事实（不含判定）。
 
-    绑定对象 = (endpoint_fingerprint, policy_revision, applied_policy_digest)：
-    这三项任一变化，证据即失效（与 D-4「不设 TTL、以绑定对象为准」一致）。
+    绑定对象 = (target, endpoint_fingerprint, policy_revision, applied_policy_digest)：
+    这四项任一变化，证据即失效（与 D-4「不设 TTL、以绑定对象为准」一致）。
     """
 
     schema: str
@@ -169,6 +170,7 @@ class EnforcementProbeExpectation:
     endpoint_fingerprint: str
     policy_revision: str
     applied_policy_digest: str
+    target: str
 
 
 def validate_enforcement_probe_evidence(
@@ -186,8 +188,10 @@ def validate_enforcement_probe_evidence(
         return False, R_SCHEMA
     if not evidence.observed_at:
         return False, R_OBSERVED_AT
+    if not isinstance(evidence.target, str) or not evidence.target or evidence.target != expected.target:
+        return False, R_TARGET
 
-    # --- 绑定：三项全等，且不允许空值蒙混 ---
+    # --- 绑定：目标已核对；其余三项全等，且不允许空值蒙混 ---
     if not evidence.endpoint_fingerprint or evidence.endpoint_fingerprint != expected.endpoint_fingerprint:
         return False, R_FINGERPRINT
     if not evidence.policy_revision or evidence.policy_revision != expected.policy_revision:
@@ -261,7 +265,7 @@ def validate_enforcement_probe_evidence(
     # --- 差分一致性 ---
     allow_endpoints = {o.endpoint for o in evidence.allow_arm}
     deny_endpoint = evidence.deny_arm[0].endpoint
-    if len(allow_endpoints) != 1:
+    if len(allow_endpoints) != 1 or len(deny_endpoints) != 1:
         return False, R_DENY_INCONSISTENT
     allow_endpoint = next(iter(allow_endpoints))
     if evidence.differential not in DIFFERENTIAL_KINDS:

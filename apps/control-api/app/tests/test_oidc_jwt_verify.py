@@ -161,3 +161,13 @@ def test_new_kid_accepted_after_refresh(oidc_env):
     oidc_env["clock"]["t"] += 5.0  # allow unknown_kid refresh
     claims = security._verify_jwt(oidc_env["mint"](kid="kid-b", key=priv_b))
     assert claims["sub"] == "user-1"
+
+
+@pytest.mark.parametrize("claims", [
+    {"permissions": "*"}, {"permissions": {"*": False}}, {"role_codes": {"admin": False}},
+])
+def test_signed_malformed_authorization_claims_rejected_at_http_boundary(client, oidc_env, claims):
+    token = oidc_env["mint"](**claims)
+    response = client.get("/api/v1/console-context", headers={"Authorization": "Bearer " + token})
+    assert response.status_code == 401
+    assert response.json() == {"detail": "invalid_token"}

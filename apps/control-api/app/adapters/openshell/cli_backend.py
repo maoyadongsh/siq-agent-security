@@ -808,11 +808,22 @@ class OpenShellCliBackend(EnforcementAdapter):
             accepted, reject_reason = validate_enforcement_probe_evidence(
                 probe_evidence,
                 EnforcementProbeExpectation(
+                    target=target,
                     endpoint_fingerprint=self._detected_fingerprint,
                     policy_revision=snapshot.revision,
                     applied_policy_digest=snapshot.policy_digest,
                 ),
             )
+            # Digest equality alone does not bind the caller's projected allow set.
+            # Cross-check every pair against the independently parsed readback.
+            actual_pairs = {
+                (rule["endpoint"], path)
+                for rule in snapshot.network if rule.get("effect") == "allow"
+                for path in rule["binary_paths"]
+            }
+            if accepted and set(probe_evidence.allow_rule_pairs) != actual_pairs:
+                accepted = False
+                reject_reason = "probe_binding_allow_set_mismatch"
             # 执行模式取自**读回快照**而非证据自述；此处只否决"读回明确说了不拦截"的情形。
             # 不能要求 == "block"：本路径 read_effective_policy 恒填 unknown（P1-11），
             # 那样写这道门在真实路径上永远打不开（校验器里有同样的一段说明）。

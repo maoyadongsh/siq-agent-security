@@ -65,7 +65,24 @@ def test_e2e_fresh_deployment_and_governance(client: TestClient, tenant_a: dict)
     instance_id = instances[0]["id"]
     assert instances[0]["runtime"] == "openclaw"
 
-    # 6. 登记 RuntimeBinding
+    # 直接插入的旧候选没有环境证据，自动观察实例不可凭绑定请求猜测环境。
+    assert instances[0]["environment_id"] is None
+    unresolved = client.post(
+        "/api/v1/runtime-bindings", headers=tenant_a,
+        json={"environment_id": env["id"], "agent_instance_id": instance_id,
+              "backend": "fake", "backend_target_id": "sandbox-finance-01"},
+    )
+    assert unresolved.status_code == 409
+    assert unresolved.json()["detail"] == "binding_instance_environment_unverified"
+    # 用真实受控 API 显式登记本测试环境的实例；不改变原观察实例。
+    declared = client.post(
+        f"/api/v1/assets/{asset_id}/instances", headers=tenant_a,
+        json={"environment_id": env["id"], "runtime": "openclaw", "status": "observed"},
+    )
+    assert declared.status_code == 201, declared.text
+    instance_id = declared.json()["id"]
+
+    # 6. 登记 RuntimeBinding（仍是人工声明，不是实际沙箱身份核验）
     binding_resp = client.post(
         "/api/v1/runtime-bindings",
         json={

@@ -115,3 +115,17 @@ def test_missing_tenant_is_unauthorized():
 def test_identity_star_is_wildcard_without_claim_mapping():
     identity = Identity("user", "u1", "default", frozenset(), frozenset({"*"}))
     assert identity.has_permission("finding:manage")
+
+
+@pytest.mark.parametrize("patch", [
+    {"permissions": "*"}, {"permissions": {"*": False}},
+    {"role_codes": {"admin": False}}, {"permissions": [1]},
+    {"role_codes": [False]}, {"tenant_id": ["default"]},
+    {"tenant_id": 123}, {"sub": None}, {"sub": ["user-1"]},
+])
+def test_malformed_verified_claim_shapes_are_rejected(patch):
+    # Signature verification does not validate application claim shapes.
+    claims = {"sub": "user-1", "tenant_id": "default", "permissions": [], "role_codes": []}
+    with pytest.raises(HTTPException) as error:
+        _identity_from_claims({**claims, **patch})
+    assert error.value.status_code == 401

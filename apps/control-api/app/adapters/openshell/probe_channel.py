@@ -87,7 +87,7 @@ def build_upload_args(target: str, source: str, destination: str) -> list[str]:
 # ------------------------------------------------------------ 探针输出解析（严格）
 
 
-def parse_agent_report(stdout: str, *, require_attempts: int) -> list[dict]:
+def parse_agent_report(stdout: str, *, require_attempts: int, expected_endpoint: str) -> list[dict]:
     """从探针 stdout 里取出报告行并逐字段校验。
 
     只接受**恰好一行**带前缀的报告；attempts 条数必须够、形态必须在词表内。
@@ -102,18 +102,20 @@ def parse_agent_report(stdout: str, *, require_attempts: int) -> list[dict]:
         raise AdapterError("enforcement_probe_report_not_json") from None
     if not isinstance(report, dict) or report.get("schema") != AGENT_REPORT_SCHEMA:
         raise AdapterError("enforcement_probe_report_schema_unsupported")
+    if set(report) != {"schema", "endpoint", "attempts"} or report["endpoint"] != expected_endpoint:
+        raise AdapterError("enforcement_probe_report_endpoint_invalid")
     attempts = report.get("attempts")
-    if not isinstance(attempts, list) or len(attempts) < require_attempts:
+    if not isinstance(attempts, list) or len(attempts) != require_attempts:
         raise AdapterError("enforcement_probe_report_attempts_insufficient")
     parsed: list[dict] = []
     for attempt in attempts:
-        if not isinstance(attempt, dict) or set(attempt) - {"outcome", "elapsed_ms"}:
+        if not isinstance(attempt, dict) or set(attempt) != {"outcome", "elapsed_ms"}:
             raise AdapterError("enforcement_probe_report_attempt_invalid")
         outcome = attempt.get("outcome")
         if not isinstance(outcome, str):
             raise AdapterError("enforcement_probe_report_attempt_invalid")
         elapsed = attempt.get("elapsed_ms", 0)
-        if not isinstance(elapsed, int) or elapsed < 0:
+        if type(elapsed) is not int or elapsed < 0:
             raise AdapterError("enforcement_probe_report_attempt_invalid")
         parsed.append({"outcome": outcome, "elapsed_ms": elapsed})
     return parsed
@@ -233,7 +235,7 @@ class SandboxExecProbeChannel:
         result = ProbeCommandResult(argv=argv, exit_code=exit_code, stdout=stdout, stderr=stderr)
         if exit_code != 0:
             raise AdapterError("enforcement_probe_command_failed")
-        parsed = parse_agent_report(stdout, require_attempts=attempts)
+        parsed = parse_agent_report(stdout, require_attempts=attempts, expected_endpoint=endpoint)
         return observations_from_report(
             parsed, endpoint=endpoint, binary_path=binary_path, binary_sha256=binary_sha256,
         ), result
