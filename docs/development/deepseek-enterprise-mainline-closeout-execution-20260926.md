@@ -1820,6 +1820,8 @@ git log --oneline -3 -- apps/control-api/app/main.py → 6ba1f7c / 4a4bcd0 / 977
 
 **对 P1-pre 的影响**：若要真正取得执行面证据，仍需**写入型**行为探针（`sandbox upload` + `sandbox exec`），即 P1-pre 的最小形式，**需单独一次许可**；届时应带上本次的结构知识（规则真实形状是 `{name, endpoints, binaries}`、内部服务走 `host.openshell.internal` + 固定端口）来设计两臂，而不是按早期猜测的形状。
 
+**收尾（提交与第 15 次 preflight）**：允许清单 **62 → 63**（新增 `10-`），清单内 63 条**逐条复核在 HEAD 树中**（`git ls-tree -r HEAD` / `git cat-file -e HEAD:<path>` 命中 **63/63、0 缺失**，且对这 63 条 `git status --porcelain --untracked-files=all` 输出为空 ⇒ R08.8 那一类"清单里有、分支上却没有"的缺陷在本单元**再次排除**）。提交 **`a4a1630`**（父 `4ea5d30`，**7 条路径**：`10-` 新增证据 + `05-` 勘误 + 证据 README §六/§七/§十 + 执行记录 R09.19 + 交接[R09.14 行 / D-9 门槛行 / §7 引言 / R08 行] + 方案 §7 + 清单），`git diff --cached --stat` 与清单**逐条一致、无清单外路径**；工作树中并作者线的 `docs/development/current.md` **已排除**。提交数 **29**（`git rev-list --count ebaaf3b..HEAD` = **29**，`main` = `origin/main` = `ebaaf3b`，**未推送**）。提交后跑第 15 次 preflight（`2026-09-26T14:14:24Z` / `--out /tmp/preflight-r0919-20260926T141424Z.json`）：`requested=63 / verified=63`、`unverified/excluded/missing` 全 0、`scan_stable=true`、`conflicts=0`、`head_commit=a4a1630`、`worktree: 100 tracked / 704 untracked`、`status_entries=804`、`unreviewed=804`、`signed=installable=published=false`、`conclusion=blocked`（唯一原因仍是 `unreviewed_paths:804`，全部是并行作者线产物，**不可由执行者代为判断**）。**同口径逐条相减（对第 14 次）= 新增 0 / 消失 0**，`status_entries` 逐条相同，但 `head` 由 `59bbfbc` 前移 3 个提交、`checked−status` 由 62 增至 63 ⇒ **标量再一次骗人**（804/100/704 与第 14 次逐字相同，实际发生了 3 次提交）；归属结论只能由"同口径逐条相减 + `head` 前移"得出。
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
