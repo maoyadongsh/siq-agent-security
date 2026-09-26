@@ -10,10 +10,16 @@
   （`apps/agentshield/.tmp/fx01/refcalc.go` 未跟踪）；
 - **不带自定义 vitest reporter**：`--reporter=basic` 在 vitest 4 已被移除，直接崩溃并掩盖真实结果；
 - **不可跑项一律记为 skipped/blocked 并带原因，绝不计入通过**；任何 skipped 存在时
-  `conclusion` 不可能是绿色。
+  `conclusion` 不可能是绿色；
+- **消耗资源的门禁必须显式启用**：`migration_replay_postgres` 需要一次性 PostgreSQL 容器，
+  默认**连探测都不做**，只有显式传 `--enable-ephemeral-postgres-gate` 才会先只读探测
+  docker 与镜像、再决定是"跑"还是"记为跳过（带**实测**原因，而非泛泛的'环境不支持'）"。
 
-安全边界：只读源码 + 临时构建；**不安装依赖、不提交、不签名、不发布、不启动服务、不连数据库、
-不读 `.env`/私钥/种子**。正式构建显式 `VITE_DEV_MODE=false` 且输出到临时目录，与模拟身份构建分离。
+安全边界：只读源码 + 临时构建；**不安装依赖、不提交、不签名、不发布、不读 `.env`/私钥/种子**。
+默认**不启动服务、不连数据库**；唯一例外是显式 `--enable-ephemeral-postgres-gate`：此时启动的是
+**一次性回环 PostgreSQL 容器**（镜像须已存在、**不自动拉取**、无卷挂载、`--rm` + `finally` 双保险回收），
+容器销毁即数据消失，且该例外需按任务书 §3.2 先取得对应许可。正式构建显式 `VITE_DEV_MODE=false`
+且输出到临时目录，与模拟身份构建分离。
 报告 `conclusion` 只描述**本机这一份工作树**的门禁状态：不是生产效果证据，不是已签候选，
 也不是源码冻结结论。退出码 0 只表示"本次运行中没有 failed 且没有 skipped/blocked"。
 """
@@ -63,6 +69,12 @@ GO_MODULES = (
 
 RULEPACK_PYTHON = "apps/control-api/app/data/threat_rules.v1.json"
 RULEPACK_GO = "apps/agentshield/internal/rulepack/data/threat_rules.v1.json"
+
+# 资源消耗型门禁（默认不跑，显式启用时才探测/执行）。
+POSTGRES_UNAVAILABLE_ID = "migration_replay_postgres"
+POSTGRES_IMAGE = "postgres:17-alpine"
+POSTGRES_CHECK_TOOL = "scripts/enterprise-experience/deployment-postgres-check.py"
+POSTGRES_GATE_ID = "migration_replay_postgres_ephemeral"
 
 # 正式产物中**不得**出现的开发身份字面量。命中即失败（这是断言，不是观察）。
 DEV_IDENTITY_LITERALS = ("X-Dev-Tenant-Id", "X-Dev-User-Id", "X-Dev-Roles", "VITE_DEV_MODE")
@@ -265,6 +277,103 @@ def check_prod_bundle_has_no_dev_identity(out_dir: Path) -> dict:
             "evidence": {"files_scanned": files, "literals_absent": list(DEV_IDENTITY_LITERALS)}}
 
 
+def docker_probe(repo: Path, runner=subprocess.run) -> dict:
+    """只读探测 `migration_replay_postgres` 能否跑：docker 客户端 → 守护进程 → 镜像。
+
+    **本函数绝不拉取镜像、绝不启动容器**（`runner` 只被喂 `version` / `image inspect`）；
+    镜像缺失时返回不可跑，而不是替使用者 `docker pull`——拉取等于引入新依赖，需单独授权。
+    """
+    evidence = {"image": POSTGRES_IMAGE}
+
+    def probe(argv: list[str]) -> dict:
+        try:
+            result = runner(argv, capture_output=True, text=True, timeout=60, check=False)
+        except (OSError, subprocess.SubprocessError) as exc:
+            return {"ok": False, "detail": f"docker_probe_error:{type(exc).__name__}"}
+        if result.returncode != 0:
+            return {"ok": False, "detail": (result.stderr or "").strip()[:200] or "exit_nonzero"}
+        return {"ok": True, "stdout": result.stdout.strip()}
+
+    client = probe(["docker", "version", "--format", "{{.Server.Version}}"])
+    if not client["ok"]:
+        return {"runnable": False, "reason": "docker_daemon_or_client_unavailable",
+                "evidence": {**evidence, "detail": client["detail"]}}
+    evidence["server_version"] = client["stdout"]
+    image = probe(["docker", "image", "inspect", POSTGRES_IMAGE, "--format", "{{.Id}}"])
+    if not image["ok"]:
+        return {"runnable": False, "reason": "postgres_image_absent_and_auto_pull_forbidden",
+                "evidence": {**evidence, "detail": image["detail"]}}
+    evidence["image_id"] = image["stdout"]
+    return {"runnable": True, "reason": None, "evidence": evidence}
+
+
+def check_postgres_evidence(evidence_dir: Path, script_path: Path) -> dict:
+    """断言 A1 留证确实来自**本次一次性库**，而不是"跑过一次就算过"。
+
+    逐条要求：`passed`、`ephemeral_database` 为真、**未声称测过真实身份**、
+    `checks` 非空，且 `script_sha256` 与当前脚本字节一致（防止用旧脚本的结果充当本次证据）。
+    """
+    result_path = evidence_dir / "result.json"
+    if not result_path.is_file():
+        return {"status": "blocked", "detail": "postgres_evidence_missing"}
+    try:
+        proof = json.loads(result_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"status": "blocked", "detail": "postgres_evidence_unreadable"}
+    if proof.get("passed") is not True:
+        return {"status": "failed", "detail": "postgres_evidence_not_passed"}
+    if proof.get("ephemeral_database") is not True:
+        return {"status": "failed", "detail": "postgres_evidence_not_ephemeral"}
+    if proof.get("production_identity_tested") is not False:
+        return {"status": "failed", "detail": "postgres_evidence_claims_production_identity"}
+    checks = proof.get("checks")
+    if not isinstance(checks, dict) or not checks:
+        return {"status": "failed", "detail": "postgres_evidence_has_no_checks"}
+    if proof.get("script_sha256") != sha256_bytes(script_path.read_bytes()):
+        return {"status": "failed", "detail": "postgres_evidence_script_digest_mismatch"}
+    return {"status": "passed", "evidence": {
+        "checks": sorted(checks),
+        "checks_count": len(checks),
+        "database_image_id": proof.get("database_image_id"),
+        "migrated_head": proof.get("migrated_head"),
+        "script_sha256": proof["script_sha256"],
+        "result_path": str(result_path),
+    }}
+
+
+def postgres_gate_decision(repo: Path, *, enabled: bool, runner=subprocess.run) -> dict:
+    """决定本次运行里 `migration_replay_postgres` 是"跑"还是"跳过"，以及**为什么**。
+
+    未启用时**不触碰 docker**（连只读探测都不做）——"没启用"与"探测后确实没法跑"
+    是两种不同的诚实，报告必须能区分。跳过项永远留在 `skipped_gates` 里，因此
+    `conclusion` 不可能因"没跑"而变绿。
+    """
+    declaration = next(item for item in DECLARED_UNAVAILABLE
+                       if item["id"] == POSTGRES_UNAVAILABLE_ID)
+    if not enabled:
+        return {"action": "skipped", "reason": declaration["reason"],
+                "note": declaration["note"] + "；本次未显式启用 --enable-ephemeral-postgres-gate"}
+    probe = docker_probe(repo, runner)
+    if not probe["runnable"]:
+        return {"action": "skipped", "reason": probe["reason"],
+                "note": "已启用但只读探测判定不可跑；不自动拉取镜像、不以 SQLite 代跑",
+                "measured": True, "evidence": probe["evidence"]}
+    return {"action": "run", "reason": None, "measured": True, "evidence": probe["evidence"]}
+
+
+def postgres_gate(repo: Path, evidence_dir: Path) -> dict:
+    """A1 门禁本体：一次性回环 PostgreSQL 的迁移回放 + 部署竞态，附证据断言。"""
+    return {
+        "id": POSTGRES_GATE_ID,
+        "kind": "command",
+        "cwd": ".",
+        "argv": [str(repo / "apps/control-api/.venv/bin/python"),
+                 str(repo / POSTGRES_CHECK_TOOL), str(evidence_dir)],
+        "post": lambda _outcome: check_postgres_evidence(evidence_dir, repo / POSTGRES_CHECK_TOOL),
+        "why": "SQLite 不能替代 PostgreSQL 的行锁/迁移语义；留证须来自本次一次性库",
+    }
+
+
 def build_gates(repo: Path, build_dir: Path) -> list[dict]:
     """固定顺序的门禁清单。`post` 为命令之后必须成立的断言。"""
     python = str(repo / "apps/control-api/.venv/bin/python")
@@ -346,10 +455,21 @@ def run_gate(repo: Path, gate: dict) -> dict:
     return record
 
 
-def run_gates(repo: Path, gates: list[dict], build_dir: Path) -> dict:
+def run_gates(repo: Path, gates: list[dict], build_dir: Path, *,
+              postgres_decision: dict | None = None) -> dict:
     started = utc_now()
     records = [run_gate(repo, gate) for gate in gates]
-    skipped = [dict(item, status="skipped") for item in DECLARED_UNAVAILABLE]
+    attempted = POSTGRES_GATE_ID in {r["id"] for r in records}
+    skipped = []
+    for item in DECLARED_UNAVAILABLE:
+        if item["id"] == POSTGRES_UNAVAILABLE_ID and postgres_decision is not None:
+            if postgres_decision["action"] == "run" and attempted:
+                # 真的跑了就不该再登记为"不可跑"；跑成什么样由门禁记录本身说明。
+                continue
+            item = {**item, "reason": postgres_decision["reason"],
+                    "note": postgres_decision.get("note") or item["note"],
+                    "measured": bool(postgres_decision.get("measured"))}
+        skipped.append(dict(item, status="skipped"))
     statuses = [r["status"] for r in records]
     if "failed" in statuses:
         conclusion = "gates_failed"
@@ -416,6 +536,8 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
     parser.add_argument("--out", required=True, help="报告 JSON 输出路径（必须位于仓库外，独占创建）")
     parser.add_argument("--only", help="只跑指定 id（逗号分隔）；使用后结论恒为 partial_run_not_a_gate")
     parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT_SECONDS, help="单门禁超时秒数")
+    parser.add_argument("--enable-ephemeral-postgres-gate", action="store_true",
+                        help="显式启用一次性回环 PostgreSQL 门禁（会启动容器）；按 §3.2 需先取得许可")
     args = parser.parse_args(argv)
 
     repo = Path(args.repo).resolve()
@@ -438,10 +560,27 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
         if not gates:
             parser.exit(EXIT_USAGE, "no gate matched --only\n")
 
+    # 只有本次**确实要跑**它时才探测 docker：`--only` 把它排除掉时连只读探测都不做。
+    postgres_enabled = args.enable_ephemeral_postgres_gate and (
+        selected is None or POSTGRES_GATE_ID in selected)
+    postgres_decision = postgres_gate_decision(repo, enabled=postgres_enabled)
+    if args.enable_ephemeral_postgres_gate and not postgres_enabled:
+        # 说清是"本次没轮到它"，不是"没启用"，更不是"探测后不可跑"。
+        postgres_decision["note"] = ("已显式启用，但本次被 --only 排除，"
+                                     "未探测 docker、未启动容器；仍登记为不可跑")
+        postgres_decision["excluded_by_only"] = True
+    if postgres_decision["action"] == "run":
+        evidence_dir = Path(tempfile.mkdtemp(prefix="siq-gate-postgres-evidence-"))
+        postgres_decision["evidence_dir"] = str(evidence_dir)
+        gates = gates + [postgres_gate(repo, evidence_dir)]
+        gates[-1]["timeout"] = args.timeout
+
     try:
-        report = run_gates(repo, gates, build_dir)
+        report = run_gates(repo, gates, build_dir, postgres_decision=postgres_decision)
     except KeyboardInterrupt:
         return EXIT_NOT_GREEN
+    report["optional_gate_decisions"] = [
+        {"id": POSTGRES_UNAVAILABLE_ID, **postgres_decision}]
     if selected is not None:
         # 子集运行不得被读作"门禁通过"：结论与通过集合都明确标注为部分运行。
         report["conclusion"] = "partial_run_not_a_gate"

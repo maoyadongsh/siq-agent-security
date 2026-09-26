@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -14,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("enterprise-gate-run.py")
@@ -252,6 +254,169 @@ class GateRunTest(unittest.TestCase):
             record = tool.run_gate(repo, gate)
             self.assertEqual(record["status"], "passed")
             self.assertEqual(seen, [0])
+
+    def test_postgres_gate_is_not_even_probed_until_explicitly_enabled(self):
+        """默认必须**连 docker 都不碰**："没启用"不是"探测后不可跑"，两者证据不同。"""
+        calls = []
+
+        def runner(argv, **_kwargs):  # pragma: no cover - 被调用即失败
+            calls.append(argv)
+            raise AssertionError("未启用时不得触碰 docker")
+
+        decision = tool.postgres_gate_decision(Path("."), enabled=False, runner=runner)
+        self.assertEqual(decision["action"], "skipped")
+        self.assertEqual(decision["reason"], "requires_database_container")
+        self.assertFalse(decision.get("measured"))
+        self.assertEqual(calls, [])
+
+    def test_postgres_probe_never_pulls_and_names_the_measured_reason(self):
+        class Fake:
+            def __init__(self, code, out=""):
+                self.returncode, self.stdout, self.stderr = code, out, "boom"
+
+        def make(codes):
+            seen = []
+
+            def runner(argv, **_kwargs):
+                seen.append(argv)
+                return Fake(*codes[len(seen) - 1])
+
+            return runner, seen
+
+        # 客户端/守护进程不可用
+        runner, seen = make([(1, "")])
+        self.assertEqual(tool.docker_probe(Path("."), runner)["reason"],
+                         "docker_daemon_or_client_unavailable")
+        # 镜像缺失：不得自动拉取
+        runner, seen = make([(0, "29.1.3"), (1, "")])
+        probe = tool.docker_probe(Path("."), runner)
+        self.assertEqual(probe["reason"], "postgres_image_absent_and_auto_pull_forbidden")
+        self.assertFalse(probe["runnable"])
+        # 全部就绪
+        runner, seen = make([(0, "29.1.3"), (0, "sha256:deadbeef")])
+        probe = tool.docker_probe(Path("."), runner)
+        self.assertTrue(probe["runnable"])
+        self.assertEqual(probe["evidence"]["image_id"], "sha256:deadbeef")
+        for argv in seen:
+            self.assertNotIn("pull", argv)
+            self.assertEqual(argv[0], "docker")
+
+    def test_postgres_evidence_claims_are_asserted_not_observed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            evidence = Path(tmp)
+            script = Path(tmp) / "check.py"
+            script.write_text("# tool\n", encoding="utf-8")
+            digest = hashlib.sha256(script.read_bytes()).hexdigest()
+
+            def proof(**overrides):
+                body = {"passed": True, "ephemeral_database": True,
+                        "production_identity_tested": False,
+                        "checks": {"postgres_submit_replay_and_audit": True},
+                        "script_sha256": digest, "database_image_id": "sha256:x",
+                        "migrated_head": "0031"}
+                body.update(overrides)
+                return body
+
+            def write(body):
+                (evidence / "result.json").write_text(
+                    "not json" if body is None else json.dumps(body), encoding="utf-8")
+                return tool.check_postgres_evidence(evidence, script)
+
+            self.assertEqual(write(proof())["status"], "passed")
+            self.assertEqual(write(proof(production_identity_tested=True))["detail"],
+                             "postgres_evidence_claims_production_identity")
+            self.assertEqual(write(proof(ephemeral_database=False))["detail"],
+                             "postgres_evidence_not_ephemeral")
+            self.assertEqual(write(proof(passed=False))["detail"],
+                             "postgres_evidence_not_passed")
+            self.assertEqual(write(proof(checks={}))["detail"],
+                             "postgres_evidence_has_no_checks")
+            self.assertEqual(write(proof(script_sha256="0" * 64))["detail"],
+                             "postgres_evidence_script_digest_mismatch")
+            self.assertEqual(write(None)["status"], "blocked")
+            (evidence / "result.json").unlink()
+            self.assertEqual(tool.check_postgres_evidence(evidence, script)["detail"],
+                             "postgres_evidence_missing")
+
+    def test_enabled_but_unrunnable_postgres_gate_records_measured_skip_off_green(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            build = Path(tmp) / "build"
+            build.mkdir()
+
+            def runner(_argv, **_kwargs):
+                class R:
+                    returncode, stdout, stderr = 1, "", "cannot connect"
+                return R()
+
+            decision = tool.postgres_gate_decision(repo, enabled=True, runner=runner)
+            self.assertEqual(decision["action"], "skipped")
+            self.assertTrue(decision["measured"])
+            self.assertEqual(decision["reason"], "docker_daemon_or_client_unavailable")
+            report = tool.run_gates(repo, synthetic_gates({"ok": "passed"}), build,
+                                    postgres_decision=decision)
+            entry = [s for s in report["skipped_gates"] if s["id"] == tool.POSTGRES_UNAVAILABLE_ID]
+            self.assertEqual(len(entry), 1)
+            self.assertEqual(entry[0]["reason"], "docker_daemon_or_client_unavailable")
+            self.assertTrue(entry[0]["measured"])
+            self.assertEqual(report["conclusion"], "gates_incomplete")
+
+    def test_an_attempted_postgres_gate_retires_the_unavailable_declaration(self):
+        """只有**真的跑了**才撤下"不可跑"登记；跑成什么样由门禁记录自己说明。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            build = Path(tmp) / "build"
+            build.mkdir()
+            gates = synthetic_gates({"ok": "passed"})
+            gates.append({"id": tool.POSTGRES_GATE_ID, "kind": "command",
+                          "argv": ["git", "rev-parse", "HEAD"]})
+            report = tool.run_gates(repo, gates, build, postgres_decision={
+                "action": "run", "reason": None, "measured": True,
+                "evidence": {"image_id": "sha256:x"}})
+            self.assertNotIn(tool.POSTGRES_UNAVAILABLE_ID, report["skipped_gate_ids"])
+            by_id = {r["id"]: r for r in report["gates"]}
+            self.assertEqual(by_id[tool.POSTGRES_GATE_ID]["status"], "passed")
+            self.assertTrue(report["skipped_gate_ids"])  # 其余两项仍登记在案
+            self.assertEqual(report["conclusion"], "gates_incomplete")
+
+    def test_main_records_the_optional_gate_decision(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            out = Path(tmp) / "report.json"
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
+
+            code = tool.main(["--repo", str(repo), "--out", str(out)], gate_builder=builder)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            decision = report["optional_gate_decisions"][0]
+            self.assertEqual(decision["id"], tool.POSTGRES_UNAVAILABLE_ID)
+            self.assertEqual(decision["action"], "skipped")
+            self.assertFalse(decision.get("measured"))
+            self.assertIn(tool.POSTGRES_UNAVAILABLE_ID, report["skipped_gate_ids"])
+
+    def test_enabled_but_only_excluded_postgres_gate_never_probes_docker(self):
+        """启用了但本次被 `--only` 排除：连只读探测都不做，登记项照旧留在 skipped 里。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            out = Path(tmp) / "report.json"
+
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
+
+            def boom(*_args, **_kwargs):  # pragma: no cover - 被调用即失败
+                raise AssertionError("被 --only 排除时不得探测 docker")
+
+            with unittest.mock.patch.object(tool, "docker_probe", boom):
+                code = tool.main(["--repo", str(repo), "--out", str(out), "--only", "ok",
+                                  "--enable-ephemeral-postgres-gate"], gate_builder=builder)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            decision = report["optional_gate_decisions"][0]
+            self.assertTrue(decision["excluded_by_only"])
+            self.assertEqual(decision["action"], "skipped")
+            self.assertIn(tool.POSTGRES_UNAVAILABLE_ID, report["skipped_gate_ids"])
+            self.assertNotIn(tool.POSTGRES_GATE_ID, [r["id"] for r in report["gates"]])
 
     def test_post_check_failure_downgrades_a_passing_command(self):
         with tempfile.TemporaryDirectory() as tmp:

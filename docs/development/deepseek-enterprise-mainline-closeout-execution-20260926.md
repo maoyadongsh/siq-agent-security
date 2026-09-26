@@ -856,6 +856,40 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . --out /tmp
 
 报告为**独占创建**（路径已存在则拒绝覆盖），三份报告（A/B/C）全部原样保留在仓库外 `/tmp`，未纳入版本控制。
 
+### R07.10 把恒 `skipped` 的 `migration_replay_postgres` 改成**显式启用**的资源门禁（2026-09-26）
+
+R07.2 缺口 1 是"该门禁在任何机器上都恒 `skipped`"——等于**写死了一条永远不成立的判据**。本轮把"能不能跑"从**静态声明**改成**运行期判定**，但**不改变默认行为**：
+
+| 设计点 | 做法 | 为什么必须这样 |
+| --- | --- | --- |
+| 默认不触碰 docker | 未传 `--enable-ephemeral-postgres-gate` 时**连只读探测都不做** | 门禁工具的默认语义是"只读 + 临时构建"；默认探测等于把 docker socket 变成隐式依赖 |
+| 三种"没跑"必须可区分 | `requires_database_container`（未启用）／`docker_daemon_or_client_unavailable`、`postgres_image_absent_and_auto_pull_forbidden`（**实测**原因）／被 `--only` 排除 | "没启用"和"探测后确实不可跑"是两种不同的诚实；后者带 `measured: true` 与探测证据 |
+| 绝不自动拉镜像 | 探测只用 `docker version` / `docker image inspect`；镜像缺失即判不可跑 | 拉取 = 引入新依赖，须单独授权（§3.2） |
+| 只读探测也不越界 | 探测 `argv` 被测试断言**不含 `pull`**、首参数恒为 `docker` | 防回归成"顺手拉一个" |
+| 只有**真的跑了**才撤登记 | `run_gates` 仅当记录里出现该门禁 id 时才从 `skipped_gates` 移除声明 | 否则"启用但没跑成"会被读成"不可跑项消失" |
+| 留证必须能被断言 | `check_postgres_evidence` 要求 `passed`、`ephemeral_database=true`、`production_identity_tested=false`、`checks` 非空、`script_sha256` 与当前脚本一致 | 防"用旧脚本的结果充当本次证据"，防"临时库被说成真实环境" |
+| 记录不是绿的 | 跳过项仍留 `skipped`，故 `conclusion` 仍只可能 `gates_incomplete` | 见 R07.9 第 1 条 |
+
+**新增代码**（`scripts/enterprise-experience/enterprise-gate-run.py`）：`docker_probe`、`check_postgres_evidence`、`postgres_gate_decision`、`postgres_gate`，`run_gates(..., postgres_decision=)`，`main` 增 `--enable-ephemeral-postgres-gate`，报告增 `optional_gate_decisions`。**`build_gates` 签名未改**（`gate_builder` 注入契约保持兼容）。模块 docstring 的安全边界已同步改写：默认不启动服务、不连数据库，唯一例外是显式开关下的**一次性回环容器**，而该例外本身需先取得 §3.2 许可。
+
+**命令与结果（本轮全部为只读/无容器运行）**：
+
+```bash
+python3 -m unittest test_enterprise_gate_run                                    # 23 tests OK（原 15，新增 8）
+python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . --out /tmp/gate-optin-D-20260926T162452.json --only contract_version_chain
+python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . --out /tmp/gate-optin-E2-20260926T162533.json --only contract_version_chain --enable-ephemeral-postgres-gate
+docker ps -a --filter name=siq-deployment-check-                                # 0 行
+```
+
+| 实跑 | `optional_gate_decisions[0]` | `skipped_gate_ids` 含 `migration_replay_postgres` | 容器 |
+| --- | --- | --- | --- |
+| D（未启用） | `action=skipped`、`reason=requires_database_container`、`measured` 缺席 | **是** | 未创建 |
+| E2（启用但被 `--only` 排除） | `action=skipped`、`excluded_by_only=true`、`measured` 缺席 | **是** | 未创建 |
+
+两条实跑证明"没轮到它"与"没启用"都会**如实地**留在 skipped 里，且都不会去碰 docker。**`action=run` 分支至今未真实执行过**：它要等 A1 拿到 §3.2 许可（R09.4）——本节的诚实结论是"分支已就位并被合成用例覆盖，尚未产生真实证据"，**不是**"门禁已经能跑了"。
+
+**遗留**：（a）`enterprise-gate-run.py` 仍有 1 条**既有** `UP017`（`utc_now` 用 `timezone.utc`），本轮 hunk 未触碰该行，按最小改动原则不动它；（b）测试文件仍有 4 条**既有** `E731`（`builder = lambda …`），本轮新增用例按 `def` 写法，未新增错误。
+
 ---
 
 ## R08：源码冻结、签名制品与文档准备
@@ -1008,6 +1042,67 @@ git commit -F -    # 正文写明"共享工作树快照、非独立成果切片"
 2. **A3/A5/A7 要的是"授权身份"，不只是"机器"**：真实安装（A3）、真实强制点（A5）、行为核验（A7）都要在真实身份/真实目标上操作，并涉及设备侧状态与宿主服务；§3.2 明确禁止执行者自行注册真实设备、执行真实权限变更或操作宿主真实 systemd。
 
 **因此 A1–A10 的状态一行未变，仍全部 `blocked`。**"可用"只解除了"有没有这台机器/这个容器"，**没有**解除"能不能现在动它"。下一动作：按 §3.2 对**第一项**（A1 数据库容器）写出隔离/目标/回收方案并请求该次许可，取得后逐项推进，每一步仍按 A1–A10 自己的判据验收。
+
+### R09.4 A1 的隔离／目标／回收方案（§3.2 要求的前置说明；**尚未执行，待许可**）
+
+本节即 §3.2 要求"先说明隔离方式、目标与回收方案"的那份说明。**许可未取得前不启动任何容器**；R07.10 已经把"启用了才探测、探测不过就记跳过（带实测原因）"的代码准备好，因此许可一到即可一次跑完并留证。
+
+#### （1）隔离方式：一次性回环实例，与宿主既有服务无交集
+
+| 隔离维度 | 具体做法（均为脚本内既有实现，非本轮新增） |
+| --- | --- |
+| 镜像 | `postgres:17-alpine`，**本机已存在**（实测 `sha256:ff80089083d7365046af7f03d949a2defa14e0b09e14bd5b8f08a242291be8b2`）→ **无需拉取**；脚本以 `docker image inspect` 断言，缺镜像直接拒绝（不 pull） |
+| 网络 | `--publish 127.0.0.1::5432`：**只绑回环 + 由内核分配随机端口**；端口只能经 `docker port <本容器名>` 读回，**不可能**落到既有库上 |
+| 存储 | `--tmpfs /var/lib/postgresql/data:rw,size=256m`：**无卷、无宿主持久化**，容器销毁即数据消失 |
+| 资源 | `--memory 512m --cpus 1` |
+| 身份 | 仅 `X-Dev-*` 开发身份头 + `SIQ_AS_DEV=1`；**不注册真实设备、不执行真实权限变更、不写真实元数据** |
+| 凭据 | 口令每次随机 24 字节，只经环境变量注入容器；日志落盘前 `replace(password,"[REDACTED]")` |
+| 环境 | 子进程环境**白名单**（`PATH`/`HOME`/`LANG`）+ 指向本容器的 `SIQ_AS_DATABASE_URL` + 临时 `SIQ_AS_SIGNING_KEY_FILE`；**不读真实 `.env`／私钥／种子**（§8.7） |
+| 容器命名 | `siq-deployment-check-<12 位随机十六进制>`，与既有容器名（`siq-platform-*`、`siq-org-iam-postgres` 等）**无交集**；回收时按**精确名字**删除 |
+
+#### （2）宿主上正在运行的真实服务（**只读盘点，本方案一律不触碰**）
+
+`docker ps` 实测（同机还跑着整条 SIQ 栈与多个无关项目）：`siq-platform-agent-security-api-1`／`-web-1`、`siq-platform-postgres-1`（`127.0.0.1:55432`）、`siq-org-iam-postgres`（`0.0.0.0:5434`）、`siq-platform-gateway-1`、`siq-platform-iam-1`、`siq-platform-hub-1`、`siq-platform-workbench-1`、`siq-platform-flow-1`、`milvus-*`、`minio`、`pgadmin`、`gpcapital-*`、`hrsight-postgres`、`docker-postgres-1`（`0.0.0.0:15432`）、`postgres:16`（`0.0.0.0:5432`）、`qwen38-*`、`qwen3-vl-*` 等。
+
+因此本方案明确**不做**：不停止／重启／进入任何既有容器；不连接任何既有数据库（尤其 `siq-platform-postgres-1`、`siq-org-iam-postgres`）；不执行 `docker system prune`／`rmi`；不改宿主 systemd；不动兄弟仓源码/配置。已占用的回环端口为 `8005／54431／55432／59100／59101／63871`，与本实例的随机端口由内核互斥分配。
+
+#### （3）目标：证明什么、**不**证明什么
+
+证明：迁移在**真实 PostgreSQL**（非 SQLite）上可前滚/回滚（`upgrade 0017 → downgrade 0016 → upgrade head → downgrade 0020 → upgrade head`）；有数据的**破坏性回滚被拒绝**（`device-scoped discovery cannot be merged`、`discovery schedule history must be preserved`）且 head 与保留行数不变；部署竞态下**真实行锁**可被 `pg_stat_activity` 观测（`wait_event_type='Lock'`）、两请求得到同一 `deployment_id` 且 `execute` 恰一次；调度器 PostgreSQL worker 的真实锁竞争／跨租户唯一约束／审计失败原子回滚；并让 R07 的门禁 `migration_replay_postgres` **实际执行并留证**。
+
+**不**证明：不是生产效果、不是真实身份验证（证据里 `production_identity_tested: false`）、**不产生 `enforcement_verified`**（R09.2 第 1 条：该值只能由 A7 受控探针产生）、不改变 `signed/installable/published`（恒 `false`）。
+
+#### （4）回收方案：失败路径也必须删干净
+
+1. 脚本 `try/finally`：无论断言成功失败，`docker rm -f <精确容器名>` 并**断言返回码为 0**；容器本身另带 `--rm`；tmpfs 与 `TemporaryDirectory` 随进程销毁。
+2. 收尾只读核验（三项全过才算回收完成）：`docker ps -a --filter name=siq-deployment-check-` **为空**；`docker image ls postgres:17-alpine` 镜像 id **与盘点一致**；既有容器的 `Up`/端口映射**与（2）的盘点逐条一致**。
+3. 证据保留：本次新建的独占输出目录（`0700`；拟用 `/tmp/a1-evidence-<时间戳>` 与统一报告的 `/tmp/gate-run-A1-<时间戳>.json`）——**均在仓库外、不入版本控制**，含 `result.json` 与已脱敏日志。
+4. 预算：单次约 1–3 分钟；峰值 ≤512MiB 内存 + 256MiB tmpfs + 1 CPU。
+
+#### （5）获准后要跑的命令（原样照抄，可复核）
+
+```bash
+# ① A1 本体（一次性实例，留证目录须为**不存在**的新目录）
+python3 scripts/enterprise-experience/deployment-postgres-check.py /tmp/a1-evidence-$(date +%Y%m%dT%H%M%S)
+
+# ② 并入统一门禁报告（会跑全部可离线门禁约 5 分钟；不用 --only，因为它会强制结论为 partial_run_not_a_gate）
+python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
+  --out /tmp/gate-run-A1-$(date +%Y%m%dT%H%M%S).json --enable-ephemeral-postgres-gate
+```
+
+#### （6）A1 依赖的脚本**不在本轮允许清单里**（归属未确认，必须说清）
+
+实测：`scripts/enterprise-experience/deployment-postgres-check.py` 在 Git 中**已被跟踪**，但工作树版本与 HEAD 版本**不同**（`git diff --stat` = 96 insertions / 15 deletions），且该路径**不在本轮 26 条允许清单内**。本轮对它的全部动作只有**读取**（`Read`），**没有写入一个字**。差异内容属并行作者线，例如：就绪探测由 `docker exec pg_isready` 改为直连**已发布 TCP 端点**、迁移序列由 3 步扩到 5 步（含 `downgrade 0020`）、新增 `0017` 的破坏性降级守卫用例、日志同时收 stdout+stderr。
+
+这对 A1 有三个直接后果，获准前必须先讲清：
+
+1. **A1 的证据将引用一个"未确认归属、未入允许清单"的脚本**——本节的方案与事实全部基于**工作树当前版本**（含上述并行改动），不是 HEAD 版本。若并作者在 A1 运行前后再改它，`check_postgres_evidence` 的 `script_sha256` 断言会**明确失败**（这是设计使然：证据必须对应实际执行的那份脚本）。
+2. **它使"同候选"多一个待决项**：R09.2 第 2 条要求同一候选，而 A1 的取证工具本身不在候选清单里——要让 A1 成为**同一候选**下的验收，需并作者确认该脚本的归属并把它并入清单，或明确接受"工具未入候选"这一偏差。
+3. **本轮不把它加进允许清单、不提交它**：那属于并作者对其改动的处置（D-7.3）。
+
+#### （7）A2 的目标问题（一并提出，因为宿主上的控制面**不是本候选**）
+
+`docker inspect` 实测：`siq-platform-agent-security-api-1` 的镜像是 `sha256:24a03ceb4b48…`、**启动于 2026-09-24**，无对外发布端口（仅 `siq_platform_backend`/`siq_platform_data` 网络内可达），未设 `SIQ_AS_DEV=1`。它**不是**本工作树（`ebaaf3b` + 本轮改动）的构建产物，用它跑 30 个浏览器验收**违反 R09.2 第 2 条"同一候选"**，只能算诊断、不算 A2 验收。因此 A2 需要单独答复目标（见交接 §7）。
 
 ---
 
