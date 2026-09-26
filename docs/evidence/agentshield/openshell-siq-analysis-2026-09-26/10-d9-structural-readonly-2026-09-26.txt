@@ -1,0 +1,164 @@
+D-9 只读结构核查：网关的网络策略模型**支持**按 binary 路径归因，且目标自身在用
+时间：2026-09-26（本地）；目标：siq-analysis-canary-27d1289f98fa 与 siq-analysis-canary-d4a890ec23d3
+授权依据：使用者 2026-09-26 就 D-9 选定「先只读结构核查」——只做只读查询判定一个结构性问题：
+        网关的策略模型**是否支持**按 binary 路径限定网络规则。**不** upload、**不** exec、
+        **不** policy set、**不**启停服务、**不**建删沙箱。
+
+================================================================================
+§0 边界与回收
+--------------------------------------------------------------------------------
+隔离方式：无需隔离——本次**全部**动作都是对已指定 dev 网关的只读查询，加上本地读取
+          （CLI 帮助文本、本仓源码、姊妹仓 `scripts/openshell/README.md`）。
+目标：上面两个 canary（使用者早已指定）；dev 网关 `siq-openshell-dev` @ 127.0.0.1:17671。
+回收方案：**不需要**——本次不产生任何状态变更，无写入、无上传、无 exec、无沙箱增删。
+          网关修订号在本次前后均为 `Active: 4`（未变；见 §5 的核对命令）。
+对目标做过的**全部**动作（逐条，无遗漏）：
+  1. `openshell --help` / `policy --help` / `logs --help` / `policy get --help` /
+     `settings --help`                                   —— 本地帮助文本，不接触网关
+  2. `openshell logs siq-analysis-canary-27d1289f98fa -n 200 --source gateway`   —— 只读，且**失败**（见 §3）
+  3. `openshell policy get siq-analysis-canary-27d1289f98fa --rev 2 --full`      —— 只读
+  4. `openshell policy get siq-analysis-canary-27d1289f98fa --rev 1 --full`      —— 只读
+  5. `openshell policy get --global --full`                                     —— 只读，且**失败**（见 §3）
+  6. `openshell policy get siq-analysis-canary-d4a890ec23d3 --full`             —— 只读
+调用形态沿用 R09.15 已验证过的那一条（`env.sh` 把 openshell 定义成壳函数）：
+    ENVSH=/home/maoyd/siq-research-engine/scripts/openshell/env.sh
+    bash -c 'source "$1" && shift && exec openshell "$@"' openshell-env "$ENVSH" <子命令…>
+凭据与隐私：对取回的每一份载荷都做了凭据形状计数（`Bearer `/`sk-`/`token`/`api_key`/
+    `PRIVATE KEY`/`password`/`secret`）——**全部 0 命中**，故本文件可以引用其结构。
+    对 `logs` 只取**聚合计数**（行数/字节/关键词命中数），**未阅读任何日志正文**；
+    实测该查询本身失败，未取得任何日志内容。
+
+================================================================================
+§1 结构性结论（本文件的主要答案）
+--------------------------------------------------------------------------------
+**网关的网络策略模型把「允许哪些二进制」作为规则的**必填一等字段**，而且目标自身的
+策略**正在使用**它。** 这不是"我们写进去它才回显"，而是既有载荷里本来就有。
+
+两个 canary 的 `--full` 载荷结构**逐项相同**：
+
+  顶层段：version / filesystem_policy / landlock / process / network_policies
+  network_policies 下的规则**只有三个键**：`name` / `endpoints` / `binaries`
+    （endpoint 内为 `host` / `port`）
+
+  ┌──────────────────────────┬───────────┬──────────┐
+  │ 规则条目                  │ endpoints │ binaries │  二进制路径
+  ├──────────────────────────┼───────────┼──────────┼───────────────────────────────
+  │ siq_agentshield_relay    │     1     │    1     │ /opt/siq/hermes/venv/bin/python
+  │ siq_data_broker          │     1     │    1     │ /opt/siq/hermes/venv/bin/python
+  │ siq_egress_guard         │     1     │    **4** │ /opt/siq/hermes/venv/bin/python
+  │                          │           │          │ /usr/bin/curl
+  │                          │           │          │ /usr/bin/git
+  │                          │           │          │ /usr/local/node/bin/node
+  │ siq_internal_services    │     4     │    1     │ /opt/siq/hermes/venv/bin/python
+  └──────────────────────────┴───────────┴──────────┴───────────────────────────────
+  合计：规则 4 条 / endpoints 7 个 / binaries 7 条；**缺 binaries 的规则：0 条**。
+
+三条要点：
+  ① **必填性**：4/4 条规则都带 `binaries`，无一条缺省。结合本仓适配器
+     `policy_safety.gateway_network_to_rules`（`policy_safety.py:217`：`binaries` 为空即
+     `openshell_gateway_network_unsupported`）与 R09.15 实测该读回**解析成功**（§4），
+     可交叉确认：**这个网关的每一条网络规则都绑定到具体二进制路径**。
+  ② **粒度**：`siq_egress_guard` 一条规则同时列了 4 个二进制（python / curl / git / node），
+     而 `siq_internal_services` 一条规则覆盖 4 个 endpoint、只列 1 个二进制 ——
+     两个维度（endpoint 集合 × binary 集合）是**独立的**，这正是"按 binary 归因"的形态。
+     若网关不按 binary 区分，这两条规则的写法没有意义。
+  ③ **后果**：行为 fixture P0 的**主方案**（同一 endpoint、同一份内容、两个不同 binary 路径
+     的副本，看是否一个通、一个被拦）**在结构上是有意义的**——它测的正是这个模型被声明
+     出来要多做的事。**P0 的方案不是因为"模型根本不支持"而作废的那一类。**
+
+================================================================================
+§2 仍然**没有**回答的部分（本文件最重要的限度）
+--------------------------------------------------------------------------------
+**"schema 里有、且被使用" ≠ "运行期真的按它判定"。** 本次拿到的是**声明面**。
+决定性的一步是**执行面**：某个 binary 真的去连那个 endpoint 时，网关是否**按 binary**
+放行/拒绝。本次**没有**任何执行面证据。
+
+而且：本候选上**唯一可能承载执行面证据的只读通道被已知缺陷封死了。**
+
+================================================================================
+§3 只读通道的实际可达性（两条硬结果）
+--------------------------------------------------------------------------------
+（a）`logs` —— **不可用**，被冻结的既有缺陷挡住：
+    $ openshell logs siq-analysis-canary-27d1289f98fa -n 200 --source gateway
+    rc=1，370 字节，全部是错误：
+      Error: status: Internal, message: "failed to decode Protobuf message: Sandbox.id:
+      SandboxResponse.sandbox: invalid string value: data is not UTF-8 encoded"
+    → 与兼容矩阵里 `sandbox_list_decodable: 期望 False / 实际 False` 是**同一条**缺陷，
+      并已由 `06-` §四在 `sandbox get` 上复现过。也就是说：**这个网关版本上，
+      "查运行期日志/沙箱状态"这条只读路是不通的**，在它修好之前，
+      执行面证据**只能**靠行为探针（upload/exec）产生。
+      另注：`logs` 的客户端退出码映射本身也不可靠——同一命令在通过管道读取时出现过
+      `rc=0`（错误正文照旧），故**不得**以退出码单独判定"读到了日志"。本文件没有
+      取得任何日志正文。
+
+（b）`policy get --global --full` —— **不存在全局策略修订**：
+    rc=1，`NotFound: "no global policy revision found"`。
+    → 该网关未设全局策略锁（与 `policy delete --global` 的语义对应）；
+      故"全局层是否另有按 binary 的规则"这个问题在本候选上**不适用**，
+      策略面**只有沙箱级**，已由 (a) 之外的两份 `--full` 完整覆盖。
+
+================================================================================
+§4 交叉验证：本次读数与我方适配器当年的读数**逐条吻合**
+--------------------------------------------------------------------------------
+R09.15 的同一次实测中，隔离核查脚本输出 `[read-only] 现存 network_policies 条数 = 7`
+（见 `05-live-prereq-blocked.txt:48`）。它与我方适配器 `gateway_network_to_rules` 的
+归一化口径一致 —— 该函数把每条 (规则 × endpoint) 展开成一条，故
+`siq_internal_services` 的 4 个 endpoint 被拆成 4 条、其余各 1 条：**1+1+1+4 = 7**。
+
+本次独立解析同一份载荷得到 **endpoints 合计 = 7**（§1 表格）。两条互不相同的解析路径
+（当年跑的是仓内适配器，本次是另写的结构清点脚本）**给出同一个数**，互为佐证。
+
+================================================================================
+§5 一处**必须更正**的既有记录
+--------------------------------------------------------------------------------
+`05-live-prereq-blocked.txt:24-27` 记有「该 canary 的 network_policies **条目名**（8 条）：
+`_provider_siq_kimi_coding` / `_provider_siq_minimax_cn_pool` / `_provider_siq_stepfun` /
+`_provider_siq_tavily_search` / `siq_agentshield_relay` / `siq_data_broker` /
+`siq_egress_guard` / `siq_internal_services`」，并注"正文见 03 与本轮记录"。
+
+**本次实测：该名单在网关当前的任何可达读回里都不存在。** 证据：
+  - `--rev 1 --full` 与 `--rev 2 --full`（该 canary 的两个修订，`policy list` 显示只有这两个）：
+    规则条目 **4 条**，`_provider_` 字面命中 **0 次**；
+  - 另一个 canary `siq-analysis-canary-d4a890ec23d3` 的 `--full`：同样 4 条、`_provider_` **0 次**；
+  - `03-canary-policy-readonly.txt` 里其实**只有** `-o json` 的元数据，**没有** `--full` 正文，
+    所以"正文见 03"这个指引当时就指不到东西。
+
+**更正**：该 8 条名单**不是**这两个 canary 的策略内容，其出处需重新确认（最可能是姊妹仓
+策略生成器的**意图/模板**，而非网关实况）。**本文件不再把它当事实引用**；凡引用"该 canary
+原有 8 条 provider/内部服务策略"的地方（`05-` §二、`06-` §四、证据 README），
+都应改读为"**4 条规则 / 7 个 endpoint**"。
+**注意这不影响 R09.14/R09.15 的结论**：那两条结论依赖的是"`apply_dynamic` 对
+`network_policies` 是**整段替换**"这一代码事实，以及 `--rev 3` 读回的实测确认
+（写入窗口内原有条目**全部**缺席）——**替换语义与原有条目是 4 条还是 8 条无关**。
+但"写坏的范围有多大"这一描述口径，按实测应更正为 4 条规则 / 7 个 endpoint。
+
+§5b 顺带核对：本次三个只读查询**未改变**任何网关状态 —— `policy list` 前后一致，
+      `Active: 4`、哈希 `fed6cc8072d1`（与 R09.15 回滚后的终态相同）。
+
+================================================================================
+§6 对 D-9 / P1-pre 的影响（本次唯一要下结论的地方）
+--------------------------------------------------------------------------------
+结构性问题**已答**：模型支持按 binary 归因，且目标自身在用它（4/4 规则带 binaries，
+`siq_egress_guard` 一条规则区分 4 个二进制）。
+⇒ **风险档次下调**：主方案**不再**属于"可能因模型不支持而整体作废"的那一类；
+   它测的是这个模型**被声明出来要多做的那件事**。
+
+执行面问题**仍未答**，且**不可能**靠只读答：本候选上唯一相关的只读通道 `logs`
+被既有 Protobuf 缺陷封死（§3a），`policy get` 系列只给声明面。
+⇒ 若要**真正**得到 `enforcement_verified` 级的证据，仍需要**写入型**行为探针
+   （`sandbox upload` + `sandbox exec`），也就是原 P1-pre 的最小形式——
+   **但需要单独一次许可**，且届时应带上 §1 的结构知识（规则真实的形状是
+   `{name, endpoints, binaries}`、内部服务走 `host.openshell.internal` + 固定端口）
+   来设计两臂，而不是按早期猜测的形状。
+
+================================================================================
+§7 本文件不证明什么（天花板）
+--------------------------------------------------------------------------------
+1. **不产生** `enforcement_verified`，也不产生任何"强制点真的拦住"的证据。
+2. **未**证明网关在运行期按 binary 判定；只证明了策略**模型**如此声明且被使用。
+3. **未**证明其它沙箱/租户/策略形态的行为；样本是两个 dev canary。
+4. **未**做任何 deny 观测；**未**做任何 upload/exec/policy set。
+5. 结论**绑定**本次读到的修订与哈希：`siq-analysis-canary-27d1289f98fa` rev1/rev2、
+   `Active: 4`、`hash=fed6cc8072d1`；策略一旦被改，本结论只对**当时**载荷成立。
+6. §5 的更正只说明"那个名单在这两个 canary 上不存在"，**不**说明姊妹仓的策略生成器
+   在任何地方都产不出那些名字；该问题已如实标为待重新确认，没有替对方下判断。

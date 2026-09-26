@@ -160,6 +160,14 @@ scripts/enterprise-experience/test_openshell_enforcement_probe.py
 # （纸面门禁 / 计划与实际 argv 分叉 / 拒绝路径上的多余 upload）、以及**未实测的前提**
 # （网关是否按 binary 路径归因网络规则）。不产生 enforcement_verified。
 docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/09-p0-enforcement-probe-2026-09-26.txt
+# 10 为 D-9「先只读结构核查」的留痕（使用者 2026-09-26 选定该档）：**纯读回**，6 个动作逐条
+# 列出（`policy list` / `policy get <name> --full` ×2 / `sandbox list` / `logs` ×2 / `--help`），
+# 未启停网关、未 policy set、未 upload/exec；凭据形状计数全 0，日志只记**条数不读正文**。
+# 结论：网关策略模型**支持**按 binary 归因（4 条规则 / 7 个 endpoint / 7 条 binaries，
+# 缺 binaries 的 0 条；`siq_egress_guard` 一条规则区分 4 个二进制）。并**更正** `05-` 中
+# 「8 条含 `_provider_siq_*`」的旧口径（三处独立读回均为 4 条、`_provider_` 字面命中 0）。
+# 运行期是否真按 binary 判定**只读答不了**（`logs` 被冻结的 Protobuf 缺陷封死）。不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/10-d9-structural-readonly-2026-09-26.txt
 
 # --- 既有已跟踪件被修改：行为 fixture 通道的**合同改动**（需复核；本轮 P0 增量约 25 行） ---
 # 这五个是**已跟踪**文件（HEAD 中存在）。P0 增量：contracts.py 加能力位 CAP_ENFORCEMENT_PROBE

@@ -7,6 +7,9 @@
 **§八 是把 §五 那条结构性失败修掉的工具改动，全部在合成件上验证**（不碰任何真实网关），原始留痕见 `07-`。
 **§九 与本目录主题不同**：它是 R09.17b 的**只读导入闭包核验**（`import-closure-check.py`）留痕——那条线
 本来不属本目录，但被 §五 的工具改造过程撞出来后，原始留痕就一起放在这里，见 `08-`。
+**§十 是 D-9 的只读结构核查**（只判定"策略模型是否支持按 binary 路径归因"）：全部只读，
+零状态变更，**不** upload/exec/policy set，原始留痕见 `10-`；它同时**更正**了 §六/§七 里
+原记的"8 条含 `_provider_siq_*`"口径（实测为 **4 条规则 / 7 个 endpoint**）。
 **本分支 HEAD 检出无法 `import app.main`**（§九 / 执行记录 R09.17）。
 
 链接方式沿用仓库既定契约（`AGENTSHIELD.md:76`）：设
@@ -133,7 +136,7 @@ if network:
     merged["network_policies"] = network   # 整段替换
 ```
 
-`_live_check` 的 `desired` 只含 1 条 `example.com:443` 的 allow 规则，因此写入后该沙箱的 `network_policies` 段**只剩这一条**——该 canary 现有的 **8 条** provider/内部服务策略（`_provider_siq_kimi_coding`、`_provider_siq_minimax_cn_pool`、`_provider_siq_stepfun`、`_provider_siq_tavily_search`、`siq_agentshield_relay`、`siq_data_broker`、`siq_egress_guard`、`siq_internal_services`，读回见 `03-` 与本目录 `05-`）在变更窗口内**全部消失**。若分析助手此刻正在该沙箱内运行，其模型调用（Kimi/MiniMax/StepFun）、Tavily 检索、内部服务与 egress guard 会被一并阻断。
+`_live_check` 的 `desired` 只含 1 条 `example.com:443` 的 allow 规则，因此写入后该沙箱的 `network_policies` 段**只剩这一条**——该 canary 现有的 **4 条**内部服务网络规则（`siq_agentshield_relay`、`siq_data_broker`、`siq_egress_guard`、`siq_internal_services`，共 **7 个 endpoint / 7 条 binaries**；**口径已由 `10-` §5 更正**，原写的"8 条含 `_provider_siq_*`"在实测读回里不存在）在变更窗口内**全部消失**。若分析助手此刻正在该沙箱内运行，其内部服务（relay / data-broker / egress-guard / internal-services）调用会被一并阻断。
 
 **缺陷 2：脚本自己没有回滚能力。**（因此"同一 run 内回滚"作为回收手段**不成立**）
 
@@ -188,7 +191,8 @@ if authorizer is None:
 **顺带得到两个实测确认**：
 
 1. §六 缺陷 1 的「**整段替换**」判定由**读代码**升级为**实测**：`--rev 3 --full` 的 `network_policies` 段**只剩写入的那一条**，
-   全文搜不到任何原有 `_provider_siq_*` / `siq_egress_guard` / `siq_data_broker` 条目；
+   全文搜不到原有 `siq_agentshield_relay` / `siq_data_broker` / `siq_egress_guard` / `siq_internal_services` 条目
+   （原写的 `_provider_siq_*` 属误记，**已由 `10-` §5 更正**：该名单在本目标任何可达读回里都不存在）；
 2. 兼容矩阵里冻结的 `sandbox_list_decodable: false` 在本次被独立复现（`sandbox get` 报 `Sandbox.id … not UTF-8 encoded`）。
 
 **边界（不要越读）**：本次**未**产生 `enforcement_verified`，天花板仍是 `readback_verified`；
@@ -236,3 +240,36 @@ if authorizer is None:
 - **天花板**：只说明「该 ref 的导入面是否自足」；**未**证明补入后控制面能启动/迁移能过/测试能收集，
   **未**证明这 25 条「应该」并入（它们是并作者在飞的工作），不使任何门禁变绿，不产生 `enforcement_verified`；
   结论**绑定 ref sha**，分支再提交必须重跑。原始留痕见 `08-import-closure-check-2026-09-26.txt`。
+
+## 十、D-9 只读结构核查：模型**支持**按 binary 归因，且目标自身在用（2026-09-26 追加）
+
+**授权依据**：使用者选定 D-9 的「先只读结构核查」——只判定一个结构性问题：网关的策略模型
+**是否支持**按 binary 路径限定网络规则。**不** upload、**不** exec、**不** policy set。
+
+**结论（声明面）**：两个 canary 的 `--full` 载荷**逐项相同**——`network_policies` 下规则只有
+`name`/`endpoints`/`binaries` 三个键，实测 **4 条规则 / 7 个 endpoint / 7 条 binaries，
+缺 binaries 的规则 0 条**。其中 `siq_egress_guard` 是 **1 个 endpoint × 4 个二进制**
+（python/curl/git/node），`siq_internal_services` 是 **4 个 endpoint × 1 个二进制**——
+**endpoint 集合与 binary 集合是两个独立维度**，这正是"按 binary 归因"的形态。
+⇒ 行为 fixture 的**主方案在结构上是有意义的**，不属于"可能因模型不支持而整体作废"那一类。
+
+**交叉验证**：R09.15 当年实测"现存条数 = 7"（与适配器展开口径一致），本次另写的结构清点脚本
+独立得到 `endpoints 合计 = 7`——两条不同解析路径同值。
+
+**两条硬结果（只读路走死了）**：① `logs` 报
+`failed to decode Protobuf message: Sandbox.id … not UTF-8 encoded`，即兼容矩阵里
+`sandbox_list_decodable: false` 的**同一条**冻结缺陷 ⇒ **该版本上网关的"运行期日志/沙箱状态"
+只读通道不通**，且该命令在管道下出现过 `rc=0` 而错误正文照旧 ⇒ **退出码不可单独作判据**；
+② `policy get --global --full` 返回 `NotFound: no global policy revision found` ⇒ 策略面**只有沙箱级**。
+故**执行面**（运行期是否真的按 binary 判定）**不可能**靠只读回答，仍需写入型探针。
+
+**一处更正**：原记的「network_policies 条目名 8 条（含 4 条 `_provider_siq_*`）」在 rev1/rev2 与
+另一个 canary 三方读回里**都不存在**（`_provider_` 命中 0 次），且它指向的 `03-` 里只有 `-o json`
+元数据、没有 `--full` 正文。已在 `05-` 顶部、本文件 §六/§七、交接文档 R09.14 行、
+行为 fixture 方案 §7 逐处更正为 **4 条规则 / 7 个 endpoint**；**R09.14/R09.15 的结论不变**
+（依赖"整段替换"这一代码事实与 `--rev 3` 实测，与原有条目计数无关）。
+
+**没有做什么**：未 upload、未 exec、未 policy set、未启停网关、未建删沙箱、未改对方仓库；
+本次零状态变更。**天花板**：拿到的是**声明面**——"schema 里有且被使用" **≠** "运行期真的按它判定"；
+不产生 `enforcement_verified`；结论**绑定**本次读到的修订与哈希（rev1/rev2、`Active: 4`、
+`hash=fed6cc8072d1`）。原始留痕见 `10-d9-structural-readonly-2026-09-26.txt`。

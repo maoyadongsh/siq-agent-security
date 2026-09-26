@@ -2,6 +2,15 @@ A7 前置核查：--live 在当前候选上会写成功但**无法回滚**（因
 时间：2026-09-26（本地）；目标：siq-analysis-canary-27d1289f98fa
 本轮对目标碰触的命令只有一条只读的 policy get --full，未执行任何 policy set。
 
+【勘误 2026-09-26，见 `10-d9-structural-readonly-2026-09-26.txt` §5】§一 列出的
+「network_policies 条目名（8 条，含 4 条 `_provider_siq_*`）」**在该 canary 的任何
+可达读回里都不存在**：rev1/rev2 的 `--full` 与另一个 canary 的 `--full` 都是
+**4 条规则 / 7 个 endpoint / 7 条 binaries**，`_provider_` 字面命中 **0 次**，
+且 §一 指向的 `03-` 里其实只有 `-o json` 元数据、**没有** `--full` 正文。
+**正确口径：4 条规则 / 7 个 endpoint。** 该名单出处待重新确认。
+本文件的**结论不变**（写面判定依赖的是"整段替换"这一代码事实，与原有条目是 4 条还是 8 条无关），
+但"写坏的范围"应按 4 条规则 / 7 个 endpoint 计。
+
 === 一、目标现状（只读读回，BEFORE）===
 --- sandbox list
 siq-analysis-canary-27d1289f98fa  2026-09-21 17:47:46  Ready
