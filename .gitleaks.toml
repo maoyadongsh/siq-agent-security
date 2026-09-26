@@ -19,6 +19,21 @@
 
 [[rules]]
   id = "generic-api-key"
+  # Exact canaries used to prove that isolated enterprise/native journeys do
+  # not leak or execute credential-shaped input. Each value is bound to its
+  # reviewed test path; changed values and copied paths remain detectable.
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^scripts/enterprise-experience/gateway-edge-smoke\.py$''']
+    regexes = ['''^synthetic-fixture-key-at-least-32-bytes$''']
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^connectors/hermes/native_protocol_test\.go$''']
+    regexes = ['''^sk-ABCDEFGHIJKLMNOP12$''']
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^connectors/openclaw/native_contract_test\.go$''']
+    regexes = ['''^siqcanary123456$''']
   [[rules.allowlists]]
     condition = "AND"
     paths = ['''(?:apps/agentshield/internal/(?:receipt/session_(?:capacity|idle)_test|server/server_test)\.go|apps/control-api/app/tests/test_(?:e2e_fresh_deploy|threat_analysis)\.py|connectors/(?:process/process|kubernetes/kubernetes|piagent/piagent|systemd/systemd)_test\.go)$''']

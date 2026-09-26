@@ -15,6 +15,57 @@ import tomllib
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def check_enterprise_fixture_exceptions(binary, config, _token):
+    """Enterprise journey canaries are excepted only by exact value and path."""
+    fixtures = {
+        "scripts/enterprise-experience/gateway-edge-smoke.py": (
+            "'SIQ_GW_JWT_SECRET': 'synthetic-fixture-key-at-least-32-bytes'"),
+        "connectors/hermes/native_protocol_test.go": (
+            "provider: key=sk-ABCDEFGHIJKLMNOP12"),
+        "connectors/openclaw/native_contract_test.go": (
+            '"workspace": "/fixture/workspace/token=siqcanary123456",'),
+    }
+    with tempfile.TemporaryDirectory(prefix="siq-enterprise-fixture-scanner-") as directory:
+        root = Path(directory)
+        expected_detected = set()
+        expected_ignored = set()
+        for name, line in fixtures.items():
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(
+                line + '\napi_key = "sk-proj-secret1234567890123456"\n',
+                encoding="utf-8",
+            )
+            expected_ignored.add(("generic-api-key", name, 1))
+            expected_detected.add(("generic-api-key", name, 2))
+            copied = root / "copied" / name
+            copied.parent.mkdir(parents=True, exist_ok=True)
+            copied.write_text(line + "\n", encoding="utf-8")
+            expected_detected.add(("generic-api-key", "copied/" + name, 1))
+        for arguments in (("init", "-q", "-b", "main"),
+                          ("config", "user.name", "Scanner calibration"),
+                          ("config", "user.email", "scanner@example.invalid"),
+                          ("config", "commit.gpgsign", "false"),
+                          ("add", "."), ("commit", "-qm", "synthetic journey fixtures")):
+            subprocess.run(["git", *arguments], cwd=root, capture_output=True,
+                           timeout=30, check=True)
+        report = root / "report.json"
+        result = subprocess.run([
+            str(binary.resolve()), "git", str(root), "--config", str(config.resolve()),
+            "--log-opts=-1 HEAD", "--redact", "--report-format", "json",
+            "--report-path", str(report),
+        ], capture_output=True, timeout=30, check=False)
+        rows = json.loads(report.read_text(encoding="utf-8")) if report.exists() else []
+        actual = {(row["RuleID"], row["File"].replace("\\", "/"), row["StartLine"])
+                  for row in rows}
+        if (result.returncode != 1 or not expected_detected <= actual
+                or actual & expected_ignored):
+            raise SystemExit(
+                "scanner calibration failed: enterprise fixture exceptions are not exact; "
+                f"missing={sorted(expected_detected - actual)}; "
+                f"unexpected={sorted(actual & expected_ignored)}")
+
+
 def check_flagship_exceptions(binary, config, token):
     """Reviewed evidence values are allowed only at the exact field and path."""
     settings = tomllib.loads(config.read_text())
@@ -210,6 +261,7 @@ def main():
             raise SystemExit("scanner calibration failed: historical test exception is not exact")
     check_session_hash_exception(args.binary, args.config, token)
     check_flagship_exceptions(args.binary, args.config, token)
+    check_enterprise_fixture_exceptions(args.binary, args.config, token)
     check_history(args.binary, args.config, token)
     summary = {"status": "passed", "synthetic_only": True, "checks": [
         "ordinary credential detected", "new credential in allowed test path detected",
@@ -220,6 +272,7 @@ def main():
         "flagship digest and invocation exceptions reject changed values, fields and paths",
         "new digest and credentials in the same evidence file are detected",
         "same reviewed digest under a prefixed copy of the path is detected",
+        "enterprise journey canaries are exact by value and path",
         "removed credentials in root, independent history and merge-only additions detected"], "raw_values_retained": False}
     if args.out:
         with args.out.open("x") as output:
