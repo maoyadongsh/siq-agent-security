@@ -118,12 +118,17 @@ DECLARED_UNAVAILABLE = (
         "id": "browser_acceptance",
         "reason": "requires_frontend_simulated_build_and_playwright",
         # 2026-09-26 实测更正：原记为 requires_running_services，不准确。
-        # 28/30 自带隔离环境（VITE_DEV_MODE 模拟构建 + 127.0.0.1 静态服务 + 路由 mock，其中 3 个自带隔离 dev API），
-        # 不需要任何运行中的控制面；另 2 个需原生 Edge 与框架连接器二进制。实跑 25/30 通过，5 项失败均为 UI
-        # 可见性/文本断言，归因于并作者未提交的 apps/web 改动（本轮提交路径不含 apps/web）。见执行记录 R09.5。
+        # 全部 30 个都自带隔离环境，**不需要任何预先运行的控制面**；但并非"全都不碰真实后端"——
+        # 其中 8 个（2026-09-26 实测，非硬编码：套件按 SIQ_AS_DEV 标记逐个判定并写入 real_dev_api_scripts）
+        # 会**自己起来**一个回环 dev 控制面进程（真实 socket + 真实 HTTP + 合成 X-Dev 身份，非真实 IAM），
+        # 其余走路由 mock。另 2 个需原生 Edge 与框架连接器二进制（不提供即记 blocked）。
+        # 实跑 25/30 通过，5 项失败**全部落在那 8 个真实后端脚本内**，且为 UI 可见性/文本断言
+        # （留存证据里含服务端生成的 cr_/pol_ 等 id，说明 HTTP 往返已经成功），归因于并作者未提交的
+        # apps/web 改动（本轮提交路径不含 apps/web）。见执行记录 R09.5 / R07.11。
         "note": "30 个 *-browser-smoke.py 需前端模拟身份构建 + Playwright（2 个另需原生 Edge/连接器），"
-        "不需要运行中的控制面；实测 25/30 通过，5 项失败已归因；"
-        "自述 scope 为 mocked browser only，非真实 HTTP 契约证据",
+        "不需要预先运行的控制面；实测 25/30 通过，5 项失败已归因；"
+        "共享夹具为 mocked browser only，但其中 8 个脚本会自起回环 dev 控制面（真实 HTTP、合成身份）；"
+        "套件本身不做契约级断言（状态码/JSON 形状/隔离序），故不是契约验收证据",
         "tool": "scripts/enterprise-experience/*-browser-smoke.py",
     },
     {
@@ -442,10 +447,16 @@ def check_browser_evidence(evidence_dir: Path, suite_path: Path) -> dict:
         return {"status": "failed", "detail": "browser_evidence_has_no_scripts"}
     if proof.get("suite_sha256") != sha256_bytes(suite_path.read_bytes()):
         return {"status": "failed", "detail": "browser_evidence_suite_digest_mismatch"}
+    # 新增自述字段的类型必须核对：套件把"哪些脚本起了真实后端"作为证据的一部分度量输出，
+    # 门禁只有真的读到它，报告里的范围描述才算有据（而不是读一句范围声明）。
+    if not isinstance(proof.get("real_dev_api_scripts"), list):
+        return {"status": "failed", "detail": "browser_evidence_missing_real_dev_api_measurement"}
     return {"status": "passed", "evidence": {
         "counts": counts,
         "failed_scripts": proof.get("failed_scripts"),
         "blocked_scripts": proof.get("blocked_scripts"),
+        "real_dev_api_scripts": proof.get("real_dev_api_scripts"),
+        "failed_are_subset_of_real_dev_api": proof.get("failed_are_subset_of_real_dev_api"),
         "playwright_version": proof.get("playwright_version"),
         "scope_note": proof.get("scope_note"),
         "suite_sha256": proof["suite_sha256"],
@@ -493,7 +504,10 @@ def browser_gate(repo: Path, evidence_dir: Path, python: Path, *,
         "cwd": ".",
         "argv": argv,
         "post": lambda _outcome: check_browser_evidence(evidence_dir, repo / BROWSER_SUITE_TOOL),
-        "why": "脚本自述 mocked browser only：证明的是模拟条件下的前端交互，不是真实 HTTP 契约",
+        # 范围措辞必须与实测一致：不是"全都不碰真实后端"（8/30 会自起回环 dev 控制面），
+        # 也不是"真实 HTTP 契约验收"（套件只断言脚本通过/失败，不核对状态码/JSON 形状/隔离序）。
+        "why": "共享夹具为模拟身份构建 + 路由 mock，其中部分脚本自起回环 dev 控制面（真实 HTTP、"
+               "合成 X-Dev 身份）；套件只断言脚本通过/失败，不做契约级断言，故不构成契约验收证据",
     }
 
 

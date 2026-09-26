@@ -1150,7 +1150,9 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 ### R09.5 A2（30 个浏览器验收）实跑结果：**25/30 通过，5 项按 UI 断言归因**
 
-**先纠正一处我自己提出的错误前提**：我在 R09.4（7）把 A2 描述为"需要运行中的控制面"，并据此请了"一次性服务实例"的许可。实测**不成立**：30 个脚本里 **28 个自带隔离环境**（`VITE_DEV_MODE=true` 模拟身份构建 + `127.0.0.1` 静态服务 + Playwright 路由 mock；其中 3 个还自带隔离 dev API），**不需要任何外部控制面、不需要容器**，因此**不需要那份许可**；另 **2 个需要原生 Edge 与框架连接器二进制**（临时 `go build` 即可，也不需要控制面实例）。该许可**未被使用**。
+**先纠正一处我自己提出的错误前提**：我在 R09.4（7）把 A2 描述为"需要运行中的控制面"，并据此请了"一次性服务实例"的许可。实测**不成立**：30 个脚本**全部自带隔离环境**，**不需要任何外部控制面、不需要容器**，因此**不需要那份许可**；另 **2 个需要原生 Edge 与框架连接器二进制**（临时 `go build` 即可，也不需要控制面实例）。该许可**未被使用**。
+
+**一处被 R07.11 更正的范围描述（重要，方向是"我原来低估了这批脚本"）**：本节初稿写的是"28 个自带隔离环境 … 其中 **3 个**还自带隔离 dev API"，把这一类别笼统称作 "dev API"。R07.11 逐脚本核对后**实测为 8 个**，而且它们做的不是 mock：每个都先 `sock.bind(('127.0.0.1', 0))` 取空端口，再以子进程 `uvicorn.run(app.main:app, host="127.0.0.1", port=…)` 起**真实控制面进程**（`SIQ_AS_DEV=1` + `SIQ_AS_ALLOW_SQLITE=1` + 临时 `sqlite:///…/api.db` + `X-Dev-*` 合成身份），即**真实 socket 上的真实 HTTP**。名单（由套件按 `SIQ_AS_DEV` 标记逐个判定并写入 `result.json` 的 `real_dev_api_scripts`，**不是硬编码**）：`business-navigation`、`candidate-review`、`change-execution`、`change-review`、`deployment-preview`、`deployment-recovery`、`onboarding`、`workspace`。**A2 的 5 个失败项全部落在这 8 个之内**——见下条。
 
 | 项 | 实测 |
 | --- | --- |
@@ -1173,7 +1175,9 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **为什么可以判断"不是本轮引入"**（三条可复核证据）：① 本轮三个提交（`6ba1f7c`/`1f50a16`/`7209a76`）的路径清单里 **`apps/web` 一条都没有**；② `apps/web` 在工作树里有 **122 条未提交改动**（`git status --porcelain -- apps/web`），其中恰好包含失败点所在的组件：`ChangeExecutionDialog.tsx`、`ChangesPage.tsx`、`Layout.tsx`、`EnvironmentSetup.tsx`（后者 `+47/−18`）；③ 25 个通过项与这 5 个失败项用的是**同一份** dev 构建与同一套 mock。**结论**：这 5 项应交给前端作者线复核（"脚本期望过时"还是"组件可见条件真的变了"需他们裁决），**本轮不改这些文件、不加 skip、不记为通过**。
 
-**A2 证明了什么、没证明什么**：证明的是"当前候选的**前端在模拟身份 + mock API + 隔离 dev API** 条件下的交互行为有 25 个脚本通过"；**不**证明真实后端 HTTP 契约、**不**证明真实 IAM（脚本自述 `scope: mocked browser only`、`production_deployed: false`）。因此 R09.1 里 A2 的"证明什么"一栏（"前端—后端真实 HTTP 契约"）**表述过宽**，真实契约验收需要另立方案（那才是一开始请的"一次性实例"许可的正当用途）。
+**A2 证明了什么、没证明什么**：证明的是"当前候选的**前端在模拟身份条件下的交互行为有 25 个脚本通过**，且其中 8 个脚本的断言链路**穿过了真实控制面进程与真实 HTTP**"；**不**证明**契约级**性质，**不**证明真实 IAM（`production_deployed: false`、身份为合成的 `X-Dev-*`）。因此 R09.1 里 A2 的"证明什么"一栏（"前端—后端真实 HTTP 契约"）**表述过宽**。
+
+**这 8 个脚本的真实性有独立证据，不是我读了源码就下的结论**：E1 保留下来的逐脚本证据目录 `/tmp/siq-gate-browser-evidence-7b8qd7p5/` 里，失败脚本 `change-execution` 与 `deployment-preview` 各自写出了 `target-labels.json`，其内容是**服务端生成的标识符**（`cr_6f5601a2…`、`pol_ee861253…`、`env…` 等）——**只有真的完成了 HTTP 往返、并从真实响应里读到数据，才可能出现这些 id**。也就是说：这 5 项失败**发生在真实 HTTP 往返之后**，不是"连不上后端"或"契约不符"。**注意这仍不等于契约验收**：失败/通过都是**脚本自述**的 UI 断言结论，套件并不独立核对状态码、JSON 形状、404-先于-403 的隔离序、错误码与响应头——**这些正是"真实 HTTP 契约验收"要另立方案去补的**，也正是一开始请的"一次性实例"许可的正当用途。
 
 **本轮自己踩的坑（都已修）**：① 先按 `--output` 一刀切调用 30 个脚本 → 26 个 `exit=2`；② 改用"检测 `"--web"`"时用了双引号模式，漏掉脚本里的单引号写法 → 仍是 26 个 `exit=2`。两次都是**我的调用方式错，不是脚本失败**——若不看 stderr 就会把"参数不对"误记成"26 项失败"。另：8 个脚本用 `--out` 而非 `--out-dir`。③ **ruff 误报绿**：仓库根没有 `pyproject.toml`/`ruff.toml`，直接 `ruff check scripts/...` **不带配置**会退回默认规则并打印 `All checks passed!`，而仓库基线是 `--config apps/control-api/pyproject.toml`（`line-length=120`，select `E,F,W,I,UP,B`）。按基线复跑后确实抓到**我自己新引入的 1 条 E501**（已改用相邻字符串拼接修掉）。**正确调用**：`apps/control-api/.venv/bin/ruff check --no-cache --config apps/control-api/pyproject.toml <files>`；本次残余 = **5 条既存**（1 条 `UP017` 在 `utc_now`、4 条 `E731` 测试内 lambda），**均不在我改动的行上**。
 
@@ -1200,6 +1204,46 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 **提交与工作树账目**：本轮 4 条路径已提交为 **`34722e8`**（`git show --name-only` 与该 4 条逐条一致，无清单外路径），分支 `deepseek/enterprise-mainline-closeout-20260926`，父 `7209a76`，**未推送**，`main` 仍 `ebaaf3b`。**账目可复核**（用 `--untracked-files=no` / `=all` 两个**同口径**指标，而不是会折叠未跟踪目录的默认 `git status --porcelain`）：提交前 preflight 记 `tracked_changes=106`、`untracked=704`；提交后实测 `tracked-changed=102`、`untracked=704` —— **差恰好 4**，等于本次提交路径数，并作者线一条未动。（此前文档里"656 条状态项"用的是默认折叠口径，与 preflight 的 810/806 不同源，**不宜跨口径比较**，此处改用同口径数字。）
 
 **未做（刻意）**：没有把 30 个浏览器脚本接成可执行门禁。理由：整批约 4 分钟、需先做一次模拟身份前端构建、且当前有 5 项失败——把它塞进统一报告会让"门禁红"变成前端线的既有状态而非本轮可判定的信号。（**本条在 R07.10 时点成立，现已由 R07.11 取代**：该决策当时的顾虑之一正是"失败会污染统一报告"，R07.11 的解法是**默认关闭**（不传开关就仍是本节的形态与结论），只有显式 `--enable-browser-smoke-gate` 时才如实报红。**下面 R07.11 的记录是本条的后续，不是矛盾。**）
+
+### R09.7 「真实 HTTP 契约验收」的 §3.2 前置方案（**状态：待批，尚未执行**）
+
+**为什么需要独立做**：A2 的 8 个脚本已经走真实进程与真实 HTTP（见 R09.5 更正），但它们只输出**脚本自述的 UI 断言**结论；套件不独立核对状态码、JSON 形状、隔离序、错误码族与响应头。本次要补的正是这一层——**不是**再跑一遍浏览器，也**不是**要一个"生产环境"。
+
+**目标（target）**：在本机起**一次性**控制面进程，只绑回环，进程与数据全部落在临时目录，跑完回收。
+
+| 项 | 取值 |
+| --- | --- |
+| 解释器 / 服务 | `apps/control-api/.venv/bin/python`（已含 `uvicorn 0.52.2`，**不安装任何依赖**）；`uvicorn.run(app.main:app, host="127.0.0.1", port=<bind(0) 取到的空端口>)` |
+| 模式 | `SIQ_AS_DEV=1`、`SIQ_AS_ALLOW_SQLITE=1`、`SIQ_AS_DATABASE_URL=sqlite:///<mktemp>/api.db`；**非生产模式**，因此不触碰任何真实数据库 |
+| 身份 | `X-Dev-Tenant-Id` / `X-Dev-User-Id` / `X-Dev-Roles` 合成身份（`app/security.py:180-188` 仅在 dev 模式采纳）。**明确：这不是真实 IAM 身份** |
+| 环境 | 白名单构造的 `env`（只含上述变量与临时 `HOME`），**不读取真实 `.env`、不继承运行环境里的秘密**；签名种子写在临时目录内，**不是真实秘密** |
+| HTTP 客户端 | 标准库 `urllib.request`（**不新增依赖**） |
+| 容器/宿主 | **零容器**；**不启动/不触碰**任何宿主真实服务、数据库或 systemd；只监听 `127.0.0.1` |
+
+**要核对的判据（逐条写清，任一不符即非零退出，不降级为 skip）**：
+
+1. **启动即健康**：`GET /health` → 200 且 JSON 形状与合同一致（字段名与类型，不只是"能连上"）。
+2. **租户隔离序（404 先于 403）**：用租户 A 的身份取租户 B 的对象 → **404**；取本租户但**不存在**的对象 → 404；取存在但**无权限**的对象 → **403**。三者顺序不能颠倒（"先 403 后 404"会把对象存在性泄漏给无权者）。
+3. **错误码族与形状**：至少覆盖 401/403/404/409/422 各一次，核对状态码与其在合同文档中声明的响应体字段。
+4. **响应与审计中无秘密**：把临时签名种子的字节串、身份头的原始值作为**哨兵串**，断言**不出现在**任何响应体、审计查询结果或服务端 stdout/stderr 里。
+5. **审计与状态同事务**：发一个会改写状态的请求，随后查询审计：要么"状态变了且审计有对应条目"，要么"都没变"，**不接受**两者不一致。
+6. **fail-closed 启动拒绝（最容易被忽略、也最值得核）**：**不带** `SIQ_AS_DEV` 且**不给** PostgreSQL/JWKS 配置时启动，进程必须**拒绝启动并非零退出**（`app/config.py:73-96,119-136` 的校验），且错误输出里**不含**秘密。这条不验证"能跑"，验证的是"配置不全时不肯跑"。
+7. **分页/一致性类**：按合同文档声明的分页与计数语义核对一个列表端点的返回（若有声明的计数头/字段，则核对它；**只核对已声明的**，不发明新合同）。
+
+**隔离与回收方案（§3.2 要求逐项说清）**：
+
+- **隔离方式**：`mktemp -d` 独立目录承载 SQLite 与签名种子；只绑 `127.0.0.1`；`env` 白名单；不读真实 `.env`/私钥/种子；不联网（除本机回环）。
+- **目标**：仅本机回环进程；宿主上的既有服务、容器、数据库一律**不碰**。
+- **回收**：`finally` 中终止**进程组**并等待退出、断言端口已释放（`ss -ltn` 不含该端口）、断言临时目录已删除且不存在、断言无残留 `.db`/`.db-wal`；异常路径同样执行回收并如实记录失败原因。
+- **失败面与超时**：每一步都有超时（启动等待、请求、回收），超时即失败退出，**不挂住**、不留孤儿进程。
+
+**证据（独占创建，已存在即拒绝覆盖，exit 3；不覆盖任何既往报告）**：工具版本、`app/` 源码 sha256、进程 PID 与端口、每条判据的实测值（状态码/字段/命中与否）、退出码、回收核验结果，以及一句范围自述（**合成身份、非生产、非真实设备、不产生 `enforcement_verified`**）。
+
+**本方案不证明什么（防止被下游误读）**：不是真实 IAM、不是生产模式、不是真实设备、不是签发/部署依据；`enforcement_verified` 仍**只**能由 A7 的受控探针产生（R09.2 第 1 条）。
+
+**所需许可（§3.2 逐次许可）**：**启动一个一次性本地服务进程**（回环、临时目录、跑完回收）。不涉及容器、真实数据库、真实身份、宿主服务。
+
+**待批状态**：本节**只是方案**，**尚未执行任何一步**。批准后我按本节执行，并把实测结果（逐条判据 + 回收核验）追加为 R09.8；未批准则保持 blocked 并在此登记。
 
 ### R07.11 可选浏览器验收门禁（把 `browser_acceptance` 从"恒登记"变成"可执行"）
 
@@ -1230,6 +1274,10 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 | E2 定向 | 同上（修复后） | 门禁 `failed`、`exit_code=1`、**25 passed / 5 failed / 0 blocked（of 30）**、`real 4m24s`；stderr 尾部即计数行。与 A2 **独立测得同一组数字**（25/5）——这是"套件不是随机通过"的证据 |
 | **E3 全跑** | `--out /tmp/gate-F3-browser-20260926T170755.json --enable-browser-smoke-gate`（在 E2 修复后、含全部 48 个基础门禁） | **49 个门禁记录：48 passed / 1 failed / 0 blocked**，结论 `gates_failed`；唯一失败项即 `browser_acceptance_simulated`（`exit_code=1`，stderr 尾部同一计数行 **25 / 5 / 0（of 30）**，并列出 5 个失败脚本名：`candidate-review` / `change-execution` / `deployment-preview` / `onboarding` / `workspace`-browser-smoke）。**这 5 个名字与 A2 独立测得的失败集合、以及 E1 从各脚本自身 JSON 反推出的 `?` 集合三方一致**。其余：`backend_full_suite` **2164 passed / 1 skipped / 1 warning in 113.75s**、`web_unit_suite` 与 `web_prod_build_bundle` 均 passed；**`skipped` 仅剩两条且都是声明级**：`migration_replay_postgres`（本轮**刻意不启用**——再跑一次数据库容器需按 §3.2 重新取得该次许可，故以静态原因记 `skipped`、`measured=None`）与 `real_device_native_evidence`。整体 `real 9m11s`，`head=f1709cd515fe`，分支 `deepseek/enterprise-mainline-closeout-20260926` |
 
+| **E4 定向（R07.11b 之后）** | `--only browser_acceptance_simulated --enable-browser-smoke-gate --browser-smoke-python …`（沿用同一批临时原生二进制） | 门禁 `failed`、`exit_code=1`、**25 passed / 5 failed / 0 blocked（of 30）**、`duration_seconds=264.011`，结论 `partial_run_not_a_gate`，报告 `/tmp/gate-E4-browser-20260926T173911.json`。**第四次独立复现同一失败集合**（与 A2、E1 反推、F3 一致）。新增的范围度量在**真实语料**上落地：`real_dev_api_scripts` = **8 条**（名单与 R09.5 所列一致）、`failed_are_subset_of_real_dev_api` = **`true`** —— 即"5 项失败全部发生在真实后端脚本内"这句话是**结果文件自述**，不是我的推断 |
+
+**一处必须写清的限度（E4 暴露的、容易误读的设计事实）**：门禁的 `post` 校验**只在命令 `status == "passed"` 时才执行**（[`enterprise-gate-run.py:583`]，与 PostgreSQL 门禁同一处逻辑）。浏览器门禁**当前恒红**，所以它的 6 项证据摘要断言在 E4（以及 E2/F3）里**根本没有被执行**——用真实 `result.json` 单独调用校验器，返回的是 `browser_evidence_not_passed`（第一条就拦下），走不到新增的 `real_dev_api_scripts` 断言。**因此**：新增断言的**真实数据**演练**尚未发生**，目前只有 21 条合成用例覆盖（含缺字段与类型错两个失败分支）；要真正演练，须等那 5 项 UI 失败被前端作者线裁决后再跑一次**通过**的门禁。**这不是缺陷，但要如实登记**：门禁红时，"证据是否合格"这条链是**没被检验过**的，不能写成"证据断言已验证"。
+
 **E3 的结论读法（重要，避免误读为"回退"）**：F3 是本候选**第一次把可选浏览器门禁接进全跑**，因此它相对 R07.9 的 C 轮（48 passed / 0 failed / 3 skipped，结论 `gates_incomplete`）**不是能力回退，而是"把一个此前恒登记为不可用的声明换成了真实可执行门禁"**。换来的代价是：该门禁**实测就是红的**（5 个 UI 断言失败），于是全跑结论从"不全"变成"失败"。两条都是诚实的对外表述：**默认（不传开关）仍是 C 轮的形态**；**启用后如实报红**，不因"这是新加的门禁"而给它豁免或降级成 skip。
 
 **本轮自己踩的两个坑（都已修，且都写成了回归用例）**：
@@ -1240,6 +1288,24 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 **测试与静态检查**：`scripts/enterprise-experience/` 全部 **73 passed**（本轮 **18 + 9 = 27** 条为新增；该目录逐文件为 `contract_version_chain_audit` 12 + `enterprise_gate_run` 33 + `run_browser_smoke_suite` 18 + `source_freeze_preflight` 10 = 73，用 `pytest --collect-only` 实测，不是估算）。**一处与不可变记录的差异需说明**：提交 `52cb855` 的**提交信息**里写的是"回归用例 17 + 9 条"——17 是落笔时的记忆数字、**不准确**，实测为 18；提交信息无法追改（改写历史属 §3.2 禁止的破坏性操作），故在此**如实标注**：**以本节实测的 18 为准**。ruff 按仓库基线（`--config apps/control-api/pyproject.toml`）对四个文件检查：新增/改动的行**零告警**，全仓该目录仍只余 5 条既存项（1 `UP017` + 4 `E731`）。
 
 **落盘与提交**：7 条路径提交为 `52cb855`（父 `f1709cd`，分支 `deepseek/enterprise-mainline-closeout-20260926`，**未推送**，`main` 仍 `ebaaf3b`）；同口径账目 `107 tracked / 706 untracked → 102 / 704`（差 7 = 5 个已跟踪改动 + 2 个新增）。清单因此由 26 条增至 **28 条**，复核报告 `/tmp/preflight-r0711-20260926T171754.json`（`requested=28 / verified=28`、`head=f1709cd`）。**E3 全跑报告**：`/tmp/gate-F3-browser-20260926T170755.json`。
+
+### R07.11b 范围声明按实测改精确（原声明**低估**了这批脚本）
+
+**触发**：R09.7 的方案调研时逐脚本核对，发现套件与门禁里那句"`mocked browser only`、不是真实后端 HTTP 契约"对**一部分脚本不成立**——30 个里有 **8 个会自起真实回环 dev 控制面**（真实 socket + 真实 HTTP + 合成 `X-Dev-*` 身份）。这不是措辞小疵：它同时**低估**了这批脚本（说成全是 mock）又**高估**不了契约层（套件确实不做契约断言），两个方向都会让下游读者判错。
+
+**改法（都是"让证据自述"而不是"换一句更漂亮的话"）**：
+
+| 改动 | 内容 |
+| --- | --- |
+| `run-browser-smoke-suite.py` | 新增 `real_dev_api_scripts()`：按 `SIQ_AS_DEV` 标记（which：只有它置位，`X-Dev-*` 才被 `app/security.py` 采纳）**逐个内容判定**，把名单与 `failed_are_subset_of_real_dev_api` 写进 `result.json`。**不硬编码数字**——30/8 会随脚本增删腐坏 |
+| `SCOPE_NOTE` | 改为："共享夹具是 mocked browser only … **但按 `real_dev_api_scripts` 列出的脚本会额外自起回环 dev 控制面**（真实 socket、真实 HTTP、合成 X-Dev 身份，非真实 IAM）；套件本身只断言各脚本通过/失败，**不做契约级断言**" |
+| `enterprise-gate-run.py` 登记 | `note` 与 `why` 同步改写（同时避开两个方向的失真）；旧措辞"不是真实 HTTP 契约"删除 |
+| 门禁证据校验 | 新增断言：证据里必须有 `real_dev_api_scripts` 且为 **list**，否则门禁 `failed`（`browser_evidence_missing_real_dev_api_measurement`）——**报告里的范围描述必须有结果文件背书**，不能只是转述一句声明 |
+| 用例 | 套件侧新增 `ScopeMeasurementTests`（3 条：度量为真、失败落在该子集内会被标出、范围声明不宣称契约级证据）；门禁侧新增 3 条断言（缺字段/类型错均失败、字段被带进 `evidence`）。合计 **73 → 76 passed** |
+
+**真实语料演练（E4，见上表）**：定向复跑实测 `real_dev_api_scripts` = **8**、`failed_are_subset_of_real_dev_api` = **`true`**，与只读度量结果一致；同时发现门禁的 `post` 校验只在通过路径执行，故这 6 项断言在门禁红时**不被演练**——如实登记，不写成"已验证"。
+
+**这个字段顺手给出的一条交叉线索**：`failed_are_subset_of_real_dev_api` 实测为 `true`——A2 的 5 项失败**全部**落在真实后端脚本内，与 E1 留存证据里出现的服务端生成 id（`cr_…`/`pol_…`）互相印证：失败发生在**真实 HTTP 往返之后**的 UI 断言层。（**这不等于契约验收**，理由见 R09.5 与 R09.7。）
 
 ## 本轮决策门槛汇总
 

@@ -88,7 +88,13 @@ class GateRunTest(unittest.TestCase):
                 self.assertTrue(item["reason"])
 
     def test_browser_acceptance_declaration_carries_the_measured_reason(self):
-        """登记原因必须是实测事实，不是猜测：2026-09-26 实测 28/30 不需要运行中的控制面。"""
+        """登记原因必须是实测事实，不是猜测。
+
+        2026-09-26 实测：30 个脚本**都不需要预先运行的控制面**（所以不是 `requires_running_services`），
+        但**也不是"全都不碰真实后端"**——其中 8 个会自起回环 dev 控制面（真实 socket + 真实 HTTP）。
+        措辞必须同时避开这两个方向的失真：既不夸大（不许说成真实 HTTP 契约验收），
+        也不缩小（不许说成全部都是 mocked）。
+        """
         by_id = {item["id"]: item for item in tool.DECLARED_UNAVAILABLE}
         self.assertEqual(
             sorted(by_id),
@@ -98,6 +104,8 @@ class GateRunTest(unittest.TestCase):
         self.assertNotEqual(browser["reason"], "requires_running_services")
         self.assertEqual(browser["reason"], "requires_frontend_simulated_build_and_playwright")
         self.assertIn("mocked browser only", browser["note"])
+        self.assertIn("自起回环 dev 控制面", browser["note"])
+        self.assertIn("不做契约级断言", browser["note"])
         self.assertTrue(browser["tool"])
         for item in tool.DECLARED_UNAVAILABLE:
             self.assertTrue(item["reason"])
@@ -531,6 +539,8 @@ class GateRunTest(unittest.TestCase):
                         "production_identity_tested": False,
                         "counts": {"passed": 25, "failed": 5, "blocked": 0, "total": 30},
                         "failed_scripts": ["workspace-browser-smoke"],
+                        "real_dev_api_scripts": ["workspace-browser-smoke"],
+                        "failed_are_subset_of_real_dev_api": True,
                         "suite_sha256": digest, "playwright_version": "1.55.0",
                         "scope_note": "scope: mocked browser only"}
                 body.update(overrides)
@@ -553,6 +563,15 @@ class GateRunTest(unittest.TestCase):
                              "browser_evidence_has_no_scripts")
             self.assertEqual(write(proof(suite_sha256="0" * 64))["detail"],
                              "browser_evidence_suite_digest_mismatch")
+            # 范围自述必须有文件背书：套件把"哪些脚本起了真实后端"作为度量写入结果，
+            # 门禁读不到该字段就必须失败，而不是照抄一句范围声明进报告。
+            self.assertEqual(write(proof(real_dev_api_scripts=None))["detail"],
+                             "browser_evidence_missing_real_dev_api_measurement")
+            self.assertEqual(write(proof(real_dev_api_scripts="workspace"))["detail"],
+                             "browser_evidence_missing_real_dev_api_measurement")
+            carried = write(proof())["evidence"]
+            self.assertEqual(carried["real_dev_api_scripts"], ["workspace-browser-smoke"])
+            self.assertIs(carried["failed_are_subset_of_real_dev_api"], True)
             self.assertEqual(write(None)["status"], "blocked")
             (evidence / "result.json").unlink()
             self.assertEqual(tool.check_browser_evidence(evidence, suite)["detail"],

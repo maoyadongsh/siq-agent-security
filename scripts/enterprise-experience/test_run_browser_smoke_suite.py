@@ -193,6 +193,51 @@ class SuiteSemanticsTests(unittest.TestCase):
         self.assertEqual(result["suite_sha256"], tool.sha256_file(HERE / "run-browser-smoke-suite.py"))
 
 
+class ScopeMeasurementTests(unittest.TestCase):
+    """范围必须**度量**出来，而不是写死在范围声明里。
+
+    这批脚本不是"全都不碰真实后端"：其中一部分会自起回环 dev 控制面（真实 socket + 真实 HTTP）。
+    套件按 `SIQ_AS_DEV` 逐个判定并把结果写进结果文件，读的人不必相信一句范围声明。
+    """
+
+    def _run(self, bodies: dict, run_map=None):
+        tmp = tempfile.mkdtemp(prefix="siq-suite-scope-")
+        repo = make_repo(Path(tmp), sorted(bodies))
+        for stem, body in bodies.items():
+            (repo / "scripts" / "enterprise-experience" / f"{stem}.py").write_text(body, encoding="utf-8")
+        result = tool.run_suite(repo, Path(tmp) / "evidence", python=Path("/python"), edge=None,
+                                connector_dir=None, only=None, timeout=5,
+                                runner=fake_runner({s: HELP_PLAIN for s in bodies}, run_map or {}),
+                                build_result={"ok": True, "web_build_dir": str(Path(tmp) / "build")})
+        return result
+
+    REAL_API = "import os\nos.environ['SIQ_AS_DEV'] = '1'\n"
+    MOCKED = "page.route('**/x', handler)\n"
+
+    def test_real_dev_api_scripts_are_measured_not_assumed(self):
+        result = self._run({"a-browser-smoke": self.REAL_API, "b-browser-smoke": self.MOCKED})
+        self.assertEqual(result["real_dev_api_scripts"], ["a-browser-smoke"])
+        self.assertIn("real_dev_api_scripts", result["scope_note"])
+
+    def test_failures_inside_the_real_backend_subset_are_flagged_as_such(self):
+        """失败是否全落在真实后端脚本内，是一条可核对线索（而不是对失败原因的断言）。"""
+        in_real = self._run({"a-browser-smoke": self.REAL_API},
+                            {"a-browser-smoke": FakeResult(1, "", "AssertionError\n")})
+        self.assertEqual(in_real["failed_scripts"], ["a-browser-smoke"])
+        self.assertIs(in_real["failed_are_subset_of_real_dev_api"], True)
+
+        outside = self._run({"a-browser-smoke": self.REAL_API, "b-browser-smoke": self.MOCKED},
+                            {"b-browser-smoke": FakeResult(1, "", "AssertionError\n")})
+        self.assertEqual(outside["failed_scripts"], ["b-browser-smoke"])
+        self.assertIs(outside["failed_are_subset_of_real_dev_api"], False)
+
+    def test_scope_note_does_not_claim_contract_level_evidence(self):
+        note = tool.SCOPE_NOTE
+        self.assertIn("mocked browser only", note)
+        self.assertIn("自起回环 dev 控制面", note)
+        self.assertIn("不做契约级断言", note)
+
+
 class EvidenceDirTests(unittest.TestCase):
     def test_claim_refuses_to_overwrite_prior_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:

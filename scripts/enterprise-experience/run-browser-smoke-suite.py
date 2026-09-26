@@ -48,8 +48,31 @@ WEB_APP_DIR = "apps/web"
 # 探测用的是**发行版元数据**而不是 `playwright.__version__`——后者根本不存在，
 # 会让"装了 playwright 的解释器"被误判为没装（这是把"不可跑"记错的典型写法）。
 PLAYWRIGHT_PROBE = "from importlib.metadata import version; print(version('playwright'))"
-SCOPE_NOTE = ("scope: mocked browser only —— 模拟身份构建 + 本地静态服务 + Playwright 路由 mock；"
-              "不是真实后端 HTTP 契约，不是真实 IAM，构建产物不可发布")
+# 哪些脚本会自起**真实**回环控制面进程？判据是 dev 开关 `SIQ_AS_DEV`——只有它置位，
+# X-Dev-* 合成身份头才会被 app/security.py 采纳。**这是运行时度量，不是写死的数字**：
+# 30 个脚本里 8 个属于这一类（2026-09-26 实测），硬编码会随脚本增删腐坏。
+REAL_DEV_API_MARKER = "SIQ_AS_DEV"
+SCOPE_NOTE = ("scope: mocked browser only —— 共享夹具是模拟身份构建 + 本地静态服务 + Playwright 路由 mock；"
+              "**但按 real_dev_api_scripts 列出的脚本会额外自起回环 dev 控制面**"
+              "（真实 socket、真实 HTTP、合成 X-Dev 身份，非真实 IAM）；"
+              "套件本身只断言各脚本通过/失败，**不做契约级断言**（状态码/JSON 形状/隔离序不做独立核对）；"
+              "构建产物为模拟身份构建，不可发布")
+
+
+def real_dev_api_scripts(script_paths) -> list[str]:
+    """列出会自起回环 dev 控制面的脚本名（按内容判定，读不到就跳过，不猜）。
+
+    结果进 result.json，让"这批脚本证明什么"**由证据自述**，而不是靠读者相信一句范围声明。
+    """
+    names: list[str] = []
+    for path in script_paths:
+        try:
+            text = Path(path).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if REAL_DEV_API_MARKER in text:
+            names.append(Path(path).stem)
+    return sorted(names)
 
 
 def utc_now() -> str:
@@ -204,6 +227,8 @@ def run_suite(repo: Path, evidence_root: Path, *, python: Path, edge: Path | Non
               for name in ("passed", "failed", "blocked")}
     counts["total"] = len(records)
     passed = bool(records) and counts["failed"] == 0 and counts["blocked"] == 0
+    real_api = real_dev_api_scripts(script_paths)
+    failed_names = sorted(n for n, r in records.items() if r["status"] == "failed")
     result = {
         "schema_version": SCHEMA_VERSION,
         "tool_version": TOOL_VERSION,
@@ -221,8 +246,12 @@ def run_suite(repo: Path, evidence_root: Path, *, python: Path, edge: Path | Non
         "connector_dir": str(connector_dir) if connector_dir else None,
         "scripts": records,
         "counts": counts,
-        "failed_scripts": sorted(n for n, r in records.items() if r["status"] == "failed"),
+        "failed_scripts": failed_names,
         "blocked_scripts": sorted(n for n, r in records.items() if r["status"] == "blocked"),
+        # 度量而非声明：哪些脚本真的起了回环控制面进程（真实 socket + 真实 HTTP），
+        # 以及失败项是否**全部**落在该子集内——后者是"失败发生在真实往返之后吗"的可核对线索。
+        "real_dev_api_scripts": real_api,
+        "failed_are_subset_of_real_dev_api": set(failed_names) <= set(real_api),
         "suite_sha256": sha256_file(Path(__file__)),
         "scope_note": SCOPE_NOTE,
     }
