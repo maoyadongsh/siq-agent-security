@@ -4,7 +4,7 @@
 
 ## 先选择验证对象
 
-- 当前任务、候选和未闭合项从[开发导航](../../docs/development/current.md)进入，不把脚本存在视为已验收。
+- 当前任务、候选和未闭合项从[开发导航](../../docs/development/current.md)进入；已合入主线的范围与剩余门禁另见[主线整合](../../docs/development/main-branch-integration-20260926.md)和[全面验收](../../docs/development/enterprise-comprehensive-acceptance-review-20260926.md)，不把脚本存在或 CI 通过视为正式发行/原生验收。
 - Linux 双宿主按 [LX00–LX10 任务书](../../docs/linux-dual-host-integration-development-taskbook-20260918-205119.md)选择脚本；第六代功能与第八代 UI 分开记账。
 - 个人生命周期与浏览器场景查[工具索引](../../docs/development/tools.md)；正式包验签和原生启动改用[发行工具](../release/README.md)，自建候选不继承正式签名身份。
 

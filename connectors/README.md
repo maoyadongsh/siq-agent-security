@@ -19,7 +19,7 @@
 | [systemd](systemd/) | systemd 服务线索 | Linux 服务可见性与扫描 scope 限定 |
 | [kubernetes](kubernetes/) | Kubernetes 工作负载线索 | 受命名空间与访问凭据约束，不扩大集群权限 |
 
-详细输入、平台限制和既有验证见[兼容说明](../docs/compatibility.md)与各模块源码。各模块均有本地测试；测试存在不代表每种负向或真实部署均已覆盖。Docker 已有候选分类测试，不能继续写为“仅 build/vet”，也不能据此宣称恶意输出/超时等负向全部闭合。
+详细输入、平台限制和既有验证见[兼容说明](../docs/compatibility.md)与各模块源码。各模块均有本地测试；Hermes 与 OpenClaw 另有从当前工作树构建临时二进制、经 `--serve` 驱动 NDJSON 的 Linux 原生合同测试，覆盖范围拒绝、秘密边界、符号链接与预算/截断等场景。该证据不自动迁移到 macOS/Windows、正式安装包或真实用户目录。Docker 已有候选分类测试，也不能据此宣称恶意输出/超时等负向全部闭合。
 
 ## 数据链与安全要求
 

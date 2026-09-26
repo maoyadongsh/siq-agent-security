@@ -4,7 +4,7 @@ Edge 是企业环境侧的 Go 命令行代理，连接 [Control API](../../apps/
 
 ## 协议与执行链
 
-企业 `setup-enterprise` 在验签暂存后，先探测所选采集器的版本与范围兼容性，再按实测结果注册；失败在设备身份操作前停止。预检只调用 describe/validate_scope，不扫描配置。启动 `serve` 后会周期复核能力，并在非空能力心跳成功后按已确认、已签发计划申请一次指定设备首扫；原计划重试由控制面去重。首扫失败独立退避（30 秒起、最多 15 分钟），不连带降低正常心跳频率，也不标记首扫成功。首扫签发不等于发现完成或运行时权限生效。独立 `register`/`heartbeat` 仍保留历史行为，不能据此声称全部安装方式已迁移。服务端需配套 API 和迁移 0019；正式签名包全链路仍待验收。合同见 [企业已安装能力](../../packages/contracts/enterprise-installed-capabilities.v1.md)与[首次扫描](../../packages/contracts/edge-initial-scan.v1.md)。
+企业 `setup-enterprise` 在验签暂存后，先探测所选采集器的版本与范围兼容性，再按实测结果注册；失败在设备身份操作前停止。预检只调用 describe/validate_scope，不扫描配置。启动 `serve` 后会周期复核能力，并在非空能力心跳成功后按已确认、已签发计划申请一次指定设备首扫；原计划重试由控制面去重。首扫失败独立退避（30 秒起、最多 15 分钟），不连带降低正常心跳频率，也不标记首扫成功。当前主线还支持组织创建有界周期计划、设备独立确认、tick 领取与旧计划退役；发现、确认、心跳、领取和完成仍是不同事实。独立 `register`/`heartbeat` 保留历史行为，不能据此声称全部安装方式已迁移。服务端部署须执行全部 Alembic 迁移至当前 head（现为 0028）；正式签名包和真实设备全链仍待验收。合同见 [企业已安装能力](../../packages/contracts/enterprise-installed-capabilities.v1.md)、[首次扫描](../../packages/contracts/edge-initial-scan.v1.md)与[周期计划](../../packages/contracts/enterprise-discovery-schedule.v1.md)。
 
 ```text
 控制面注册 → 固定设备身份/公钥 → 获取签名采集任务
@@ -36,6 +36,9 @@ go -C edge/agent build -o "$PWD/.tmp/bin/edge-agent" .
 | `heartbeat` | 30 秒心跳，失败退避 | 已注册状态；持续进程 |
 | `tasks` | 获取待处理任务、执行扫描并提交回执 | 已注册且凭据有效；先补交本地 pending receipts |
 | `run-once --connector NAME --scope JSON --connector-bin PATH` | 一次本地采集并输出 NDJSON | 可信 Connector 二进制与受控范围；不自动纳管或上传 |
+| `confirm-discovery-schedule (--intent FILE \| --schedule-id ID \| --discover \| --resume)` | Linux 预览或明确确认有界周期计划；`--discover` 只读查找本设备待办 | 四种来源严格互斥；查询不授权，多项不自动选择；确认需真实终端 yes 或精确摘要 |
+| `retire-discovery-schedule [--resume]` | Linux 预览或归档已在线复验为 revoked 的旧周期计划 | 不撤销业务权限、不停止服务、不取消已派发任务；历史和恢复记录保留 |
+| `setup-enterprise --help` | Linux 串联计划确认、发行验签暂存、注册/恢复与用户服务配置 | 默认只配置；显式 `--start` 才启动发现服务；新设备的组织周期计划仍需另行创建和确认 |
 
 Linux 后台服务、心跳和任务命令读取设备身份时要求绝对、私有状态目录及安全父目录，
 拒绝符号链接、硬链接、组/其他用户可访问的状态文件、超大或歧义 JSON。
@@ -69,7 +72,7 @@ unset siq_enrollment
 
 Linux 用户服务安装开发入口：`install-user-service --release FILE --stage DIR [--start]`。要求本机已注册并确认仍在安装期限内的 user 模式计划，重新验签和核对暂存文件后写入当前用户 systemd 单元；相同内容可重试，不覆盖不同配置。默认只写配置，显式 --start 才执行用户级 reload/enable/start 和 active 检查，不提权、不启用 linger。失败保留状态和制品，可能留下已启用但未运行的单元；完整升级/回滚及真实登录退出/重启验收待完成。命令使用中的 Edge 排他锁会拒绝并发安装，测试仅使用模拟服务管理器，当前不承诺部署即开机自启。
 
-Linux 范围确认开发入口：`confirm-discovery-plan --plan FILE --tenant ID --confirm-plan-sha256 DIGEST`。核对已注册状态、当前计划与明确确认后，仅保存本机扫描限制；不注册、不扫描、不授权业务。需先停止 serve/tasks 以取得排他锁，确认后重新启动服务。已确认设备的签名任务仍必须使用明确采集器及允许的 roots/include 子集，超范围返回 discovery_scope_denied；旧设备未保存计划时仍属 legacy，不能声称已验证范围。此入口尚未整合到最终安装引导，制品信任验证仍为独立步骤。
+Linux 范围确认底层入口：`confirm-discovery-plan --plan FILE --tenant ID --confirm-plan-sha256 DIGEST`。核对已注册状态、当前计划与明确确认后，仅保存本机扫描限制；不注册、不扫描、不授权业务。需先停止 serve/tasks 以取得排他锁，确认后重新启动服务。已确认设备的签名任务仍必须使用明确采集器及允许的 roots/include 子集，超范围返回 discovery_scope_denied；旧设备未保存计划时仍属 legacy，不能声称已验证范围。统一安装入口已复用该确认阶段，但制品信任、设备注册和周期计划仍保持独立核验。
 
 注册失败注意：首次请求发送前会保存私密 `registration-pending.json`，含设备签名种子，切勿上传、提交或在聊天中粘贴。注册不会自动重试；若结果不确定，再次注册会停在 `registration_pending`。请保留该身份，不要删除后盲目重注册。成功身份仍使用 state.json。
 
@@ -91,6 +94,8 @@ go -C edge/agent test ./...
 ```
 
 当前 `run-once` 可选择 12 种 Connector（新增 `siq` 本地业务安全事件投影）；注册请求的 capabilities 仍只声明 hermes、docker、directory、openclaw 四种。模块可构建不能证明所有 Connector 已通过远程任务调度或客户环境验收，部署者须核对实际能力声明。采集到配置/进程只证明对应证据存在，不证明宿主已经受运行时保护。
+
+周期计划入口是当前主线源码能力，尚未包含在公开 `0.3.1` 或较早的本机 `0.4.0-rc.2` 候选中。隔离测试证明零/单/多待办、完整性失败、取消与恢复边界；它不替代真实组织身份、真实 systemd 用户服务、长期轮询、升级恢复或多架构原生安装验收。
 
 Linux 凭据轮换开发入口：`edge-agent rotate-credential --confirm-device DEVICE_ID`，需控制面支持轮换接口及迁移 0026。操作者须先按部署流程停止共用状态目录的服务；命令不会自动停止服务，任务锁占用时拒绝执行。轮换只改变 Edge 控制面凭据，不授予业务权限、不更换设备签名私钥。
 

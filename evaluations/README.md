@@ -30,7 +30,7 @@
 | Windows Hermes 原生 CLI | 5 项记录案例 | `72140795…`；合成模型；无桌面、独立第二轮或吊销后重启验收 |
 | Windows WorkBuddy 5.5.6 桌面 | 2 次原生任务记录，含安装 Skill 读写 | `6841a495…`；不是完整验收率；早期超时保留，审批恢复/桌面升级未验证 |
 
-旧报告“待签”与取消前的任务状态保留原文，现行状态以[当前任务](../docs/development/current.md)及[平台页](../platforms/README.md)解释。一次记录被多处链接不增加独立重复次数。
+旧报告“待签”与取消前的任务状态保留原文，现行状态以[当前任务](../docs/development/current.md)、[主线整合](../docs/development/main-branch-integration-20260926.md)、[全面验收](../docs/development/enterprise-comprehensive-acceptance-review-20260926.md)及[平台页](../platforms/README.md)解释。当前主线 CI 通过仍不改变任何历史候选的原生验收或发行身份；一次记录被多处链接不增加独立重复次数。
 
 各行精确证据路径、SHA-256、候选与未记录字段见 catalog。源提交、证据提交、集成提交和实际程序摘要是不同身份；dirty 候选不得补造 clean SHA。历史 Windows 原生/WSL 与 macOS 协作者记录见[平台页](../platforms/README.md)，其他未纳入机器索引的结果继续留在原台账，目录不声称穷尽全部测试。
 

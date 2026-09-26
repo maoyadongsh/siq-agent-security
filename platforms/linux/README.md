@@ -1,6 +1,6 @@
 # Linux
 
-当前宿主范围为 OpenClaw、Hermes；WorkBuddy 不排期，CodeBuddy 不新增接入。amd64 与 arm64 单独记录。
+当前宿主范围为 OpenClaw、Hermes；WorkBuddy 不排期，CodeBuddy 不新增接入。amd64 与 arm64 单独记录。当前 `main` 已晚于本机 `0.4.0-rc.2` 签名候选，后续源码能力须在新的固定候选上重新做原生安装与宿主验收。
 
 - 安装：从 [0.3.1 Release](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.1)选择完整包，按[统一安装指南](../../docs/signed-release-packaging.md)选择对应架构、验签并首次 `start`。arm64 的这条实际链路已验证，amd64 未做本版原生安装。
 - 日常运行/生命周期：[个人手册](../../docs/personal-client-operation-guide-20260916.md)、[本机 CLI](../../AGENTSHIELD.md)。前台启动、systemd 注册、登录自启、升级/回滚分别确认；沿用原状态目录，未知进程不清理。

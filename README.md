@@ -42,19 +42,19 @@
 
 研究主线是：模型提出的动作如何获得独立授权、参数来源如何约束执行，以及如何用实际效果证据判断任务完成。实现将受信 Intent、参数来源、Skill 执行上下文（SEC）、审批后唯一执行预留与效果核验串联，分别回答“谁授权、执行什么、归属哪个安装、是否实际发生”。根目录 [research/](research/README.md) 连接文献、研究问题、方法、实验、结论与治理；[evaluations/](evaluations/README.md) 区分研究观察、工程验收与外部复现。
 
-项目提供两条使用路线：**个人端**通过本地服务和浏览器控制台管理自己的智能体、Skill 与任务；**企业端**通过控制面、Edge 和 Connector 汇总环境资产、审批策略并核验部署结果。个人客户端已发布 `0.3.1` 签名正式版，最新主线的 `0.4.0-rc.2` 签名候选包已在本机准备完成、尚未公开发布；企业 API / Web 已完成既有平台部署更新，真实业务身份联验与便捷的局域网团队多设备流程仍需继续验收。
+项目提供两条使用路线：**个人端**通过本地服务和浏览器控制台管理自己的智能体、Skill 与任务；**企业端**通过控制面、Edge 和 Connector 汇总环境资产、审批策略并核验部署结果。个人客户端已发布 `0.3.1` 签名正式版，`0.4.0-rc.2` 是从较早主线签发的本机候选、尚未公开发布；2026-09-26/27 合入 `main` 的后续企业治理、周期发现和审计导出增量尚未形成新的签名安装包。企业真实业务身份联验与便捷的局域网团队多设备流程仍需继续验收。
 
 **项目定位：以用户授权为依据、覆盖 Agent 与 Skill 生命周期的安全管理。** Agent 负责规划任务，SIQ 运行时依据受信授权检查具体动作；对已接入效果采集的任务，将调用记录、签名回执与实际观察关联起来，供用户核验结果。项目同时保留来源约束与效果核验的研究链路，并持续适配 **NVIDIA DGX Spark 本地 AI 环境与 NVIDIA OpenShell 执行后端**。研究演示可在普通 Linux 上使用确定性夹具运行，无需模型 API 密钥或 GPU。
 
 > **签名安装包（2026-09-19）**：[0.3.1 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.3.1) 已提供完整离线包、签名 Skill 与四目标二进制，源码固定在 `f3d9c3f`，使用原发行密钥签发。请选择 Release 中的安装资产；GitHub 自动生成的源码压缩包及 `skills/siq-agent-security/` 仍是开发源码。Linux ARM64 已通过最终包首次启动链路和篡改拒绝验证，其他目标本次仅完成构建与签名摘要核对。见[安装说明](docs/signed-release-packaging.md)和[签发与发布验证记录](docs/evidence/releases/0.3.1/README.md)。
 
-> **最新签名候选（2026-09-24）**：`0.4.0-rc.2` 已从主线 `7b68c14` 使用原发行密钥签发，包含最新个人端体验与报告工具增量。四目标构建、官方验签、Linux ARM64 最终包首次启动及 3/3 篡改拒绝通过；尚未公开发布，不替换 Latest，也不代表完整升级/回滚或跨平台验收。完整包位于本机 `.tmp/releases/0.4.0-rc.2-signed/`，见[候选记录与使用说明](docs/evidence/releases/0.4.0-rc.2/README.md)。
+> **最新已签名候选（2026-09-24）**：`0.4.0-rc.2` 已从主线 `7b68c14` 使用原发行密钥签发，包含该源码时点的个人端体验与报告工具增量。四目标构建、官方验签、Linux ARM64 最终包首次启动及 3/3 篡改拒绝通过；尚未公开发布，不替换 Latest，也不包含之后合入 `main` 的增量，更不代表完整升级/回滚或跨平台验收。完整包位于本机 `.tmp/releases/0.4.0-rc.2-signed/`，见[候选记录与使用说明](docs/evidence/releases/0.4.0-rc.2/README.md)。
 
 [应用模块](apps/README.md) · [文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md)
 
 ## 当前产品方向与支持状态
 
-当前产品围绕“**发现与核对 → 准入与授权 → 运行与确认 → 追溯与维护**”组织功能。个人端已补充环境与项目发现、模型连接测试、多 OpenShell 网关检查、只读授权方案、原生保护检查、活动筛选与按任务输出查看；企业端已补充角色工作台、环境接入引导、候选复核、审批读回、部署预览与结果恢复，以及受权限约束的业务运行结果导航。原有 Skill 生命周期、签名回执、多租户资产、风险和审计能力继续保留。当前重点是新客户端签发与同候选原生验收、企业真实身份和跨系统联验，再推进团队多设备协同。
+当前产品围绕“**发现与核对 → 准入与授权 → 运行与确认 → 追溯与维护**”组织功能。个人端已补充环境与项目发现、模型连接测试、多 OpenShell 网关检查、只读授权方案、原生保护检查、活动筛选与按任务输出查看；企业端以资产、权限、安全、审计四个主入口组织框架实例、角色与 Skill 观察、权限事实、风险处置、运行时绑定和精确审计查询，原策略、变更、环境与高级管理能力仍保留。周期计划的控制面、设备确认/轮询/退役与只读发现已合入，真实设备和生产身份旅程仍需验收。当前重点是冻结新发行源码并完成同候选原生验收、企业真实身份和跨系统联验，再推进团队多设备协同。
 
 个人端通过 **Skill 引导、本地程序裁决、宿主钩子接入** 协同工作：
 
@@ -67,7 +67,7 @@
 
 **仅安装 Skill 不会自动安装宿主钩子，也不代表运行时保护已生效。** 需要确认本地服务运行、宿主钩子实际加载，并通过行为验证确定可检查或阻断的范围。“独立本地程序”描述组件分工，不表示当前桌面模式已具备同 UID 强隔离；具体能力以宿主接入与平台证据为准。
 
-**截至 2026-09-24，最新本机开发成果已通过 [PR #107](https://github.com/maoyadongsh/siq-agent-security/pull/107) 合入 `main`（合并提交 `7b68c14`）：** 包含个人客户端、企业治理、报告生成授权与业务导航、OpenClaw 执行复查、DGX 原生 CI 门禁和发行源码校验，见[本机源码整合记录](docs/development/local-source-integration-20260924.md)。**当前 Latest 仍为 `0.3.1`，源码仍固定在 `f3d9c3f`；本次合并不是新版本发布。** 随后从该主线签发的 [0.4.0-rc.2 候选](docs/evidence/releases/0.4.0-rc.2/README.md)已完成四目标构建与 Linux ARM64 最终包首次启动检查，公开发布、签名升级/回滚及完整平台验收仍待完成。既有 macOS / Windows 阶段成果保留，Windows 范围见[整合复核](docs/windows-main-integration-review-20260919.md)；所有历史实机证据继续绑定原候选，不能迁移为最新主线或正式包的完整验收。
+**截至 2026-09-27，经过复核的并行开发成果已分批合入并推送到 `main`，当前主线 CI 通过：** 合并范围和验证边界见[主线整合记录](docs/development/main-branch-integration-20260926.md)、[全面验收记录](docs/development/enterprise-comprehensive-acceptance-review-20260926.md)及[合并后收口交接](docs/development/enterprise-post-merge-remaining-closeout-handoff-20260926.md)。**当前 Latest 仍为 `0.3.1`，发行源码固定在 `f3d9c3f`；源码合并和 CI 通过不是新版本发布。** [0.4.0-rc.2 候选](docs/evidence/releases/0.4.0-rc.2/README.md)仍绑定较早的 `7b68c14`，不能代表后续主线。新主线尚未完成源码冻结、正式签发、同候选跨平台安装/升级/回滚和生产部署验收；历史实机证据继续绑定各自候选，不能迁移为当前主线的完整验收。
 
 | 范围 | 当前可核验状态 | 尚待完成 |
 | --- | --- | --- |
@@ -76,7 +76,7 @@
 | Windows | Writer、迁移恢复、DACL、资源与身份复验、三宿主管理、任务安装升级回滚及 junction 防护已合入；0.3.1 已提供签名清单绑定的 amd64 二进制和 Skill | 新发行候选原生安装/升级及同候选宿主复测；历史 OpenClaw 证据来自 WSL Agent，Hermes 为原生 CLI，WorkBuddy 原生最小读写不等于完整审批恢复、桌面更新和重复稳定性验收 |
 | OpenClaw / Hermes / WorkBuddy | 新增 OpenClaw 2026.9.5 原生组件、会话隔离与输出链路验证；Hermes 0.21 有隔离环境的真实模型报告旅程；受控 OpenClaw 检查点补丁与原版能力分开登记 | Linux 只交付 OpenClaw、Hermes；组件验证不等于 OpenClaw 全模型业务旅程通过；Windows/macOS 三宿主及 WorkBuddy 桌面仍按同候选实机证据验收 |
 | DGX Spark / OpenShell | 已有 GB10 / ARM64、本地推理、真实策略应用/撤销/回滚，以及隔离 Hermes / Qwen 报告执行证据；请求级监督、撤权和清理恢复增量已合入 | 固定 Nemotron 路径、DGX 原生 CI runner 与验收、跨场景停止确认、性能和新发行完整验收；特定请求恢复不代表通用远端停止能力 |
-| 局域网团队多设备管理 | 企业 API / Web 已更新部署，数据库迁移、备份恢复和新旧镜像切换已验证；已有 Control API、Edge / Connector 集中治理基础 | 真实组织账号、独立审批者与业务结果跨系统联验；持续/周期采集调度仍待验收；便捷团队设备接入、统一管控与多设备验收 |
+| 局域网团队多设备管理 | 企业 API / Web、周期计划存储与管理、设备端显式确认/轮询/退役及只读待办发现已合入；已有 Control API、Edge / Connector 集中治理基础 | 真实组织账号、独立审批者与业务结果跨系统联验；真实设备上的持续采集、安装衔接与恢复验收；便捷团队设备接入、统一管控与多设备验收 |
 
 主线已有 OpenShell 受约束任务执行、多网关发现与检查入口：执行前需要显式绑定 CLI 与 endpoint、确认策略加载及实例身份，并再次校验授权。`policy_apply` 响应仍不代表任务实际执行；任务是否启动以执行回执和效果证据判断。新增请求级监督与恢复只覆盖其绑定的请求和已验证路径，不能推定任意远端任务都可安全停止。最新范围见[当前开发](docs/development/current.md)，历史 v6 结果保留在[Linux 进度台账](docs/linux-dual-host-progress-20260918.md)。发现资产不等于已启用保护；保护范围取决于实际接入的工具路径。
 
@@ -84,7 +84,7 @@ OpenClaw 的版本能力分别记账：当前[兼容清单](patches/openclaw/com
 
 2026-09-17 的[平台范围决策](docs/personal-platform-scope-decision-20260917.md)明确本机 Linux 仅支持 Hermes 与 OpenClaw 的后续交付；Linux/WorkBuddy 不再排期，历史探测或矩阵占位不代表验收通过。Linux 控制台、管理 API 与 CLI 同样阻止新的 WorkBuddy 接入，保留既有配置的查看与卸载。各平台条件项、性能及新发行候选完整验收继续单独记账。
 
-当前入口：[当前开发](docs/development/current.md) · [本机源码整合](docs/development/local-source-integration-20260924.md) · [客户端发行交接](docs/development/client-report-release-handoff-20260924.md) · [企业部署记录](docs/development/enterprise-runtime-delivery-20260924.md) · [环境待验项](docs/development/remaining-environment-gates-20260924.md) · [Mac 后续任务](docs/personal-macos-luke-remaining-development-20260917.md) · [Windows 整合复核](docs/windows-main-integration-review-20260919.md) · [当前签名发行记录](docs/evidence/releases/0.3.1/README.md)。历史文档中的“未提交”“未推送”“未部署”是当时快照，当前状态以 Git 历史、整合和后续部署记录为准；任务书本身不构成功能交付承诺。
+当前入口：[当前开发](docs/development/current.md) · [主线整合](docs/development/main-branch-integration-20260926.md) · [全面验收](docs/development/enterprise-comprehensive-acceptance-review-20260926.md) · [合并后收口](docs/development/enterprise-post-merge-remaining-closeout-handoff-20260926.md) · [客户端发行交接](docs/development/client-report-release-handoff-20260924.md) · [企业部署记录](docs/development/enterprise-runtime-delivery-20260924.md) · [环境待验项](docs/development/remaining-environment-gates-20260924.md) · [当前签名发行记录](docs/evidence/releases/0.3.1/README.md)。历史文档中的“未提交”“未推送”“未部署”是当时快照，当前状态以 Git 历史、整合和后续部署记录为准；任务书本身不构成功能交付承诺。
 
 ## 核心价值
 
@@ -256,7 +256,7 @@ edge-agent confirm-discovery-schedule --discover --interactive
 
 企业控制面与个人本地端是两个明确的运行入口。当前不能把个人端的配对会话直接当成企业身份，也不能假设个人端已有的每条 Skill 安装、审批恢复和任务证据路径都已自动接入企业多租户流程。
 
-部署步骤见[企业控制面快速开始](docs/control-plane.md#快速开始)。[9 月 24 日部署记录](docs/development/enterprise-runtime-delivery-20260924.md)已确认企业 API / Web 更新、数据库 `0013→0017` 迁移、备份的隔离恢复、新旧镜像切换，以及既有 Gateway 的桌面/移动登录入口与匿名拒绝检查。**这些检查未使用真实业务账号完成登录和跨系统旅程**；真实组织/角色、独立审批者、可访问的业务站点配置、事件导出、密钥轮换和多设备运行仍需按[生产运行手册](docs/enterprise-production-runbook-v1.md)验收。企业 OpenShell CLI 后端当前只支持 `block` 部署；治理模型包含 `audit_only` / `warn` 不代表后端已支持。周期/持续采集调度的存储、确认与设备端执行仍在收口（见[自动接入收口记录](docs/development/enterprise-auto-onboarding-closeout-20260926.md)）：设备端只读发现子命令 `confirm-discovery-schedule --discover` 已接通（见上文[两步示例](#新注册设备的周期发现接入两步)），它只让设备发现"有一个计划在等我确认"，确认仍需独立一步；该能力目前为源码级与隔离验证级，本文不宣称持续扫描已完整接入或已在真实设备生效。事件导出接口的截断事实声明（`X-SIQ-Export-Truncated`）见[OCSF 导出合同](packages/contracts/enterprise-ocsf-export.v1.md)。常见故障（前端打不开、环境/设备为空、注册后无心跳、采集失败、策略未生效等）的排查顺序与发行包前置条件见该[生产运行手册](docs/enterprise-production-runbook-v1.md)。DGX Spark 与 OpenShell 机制见[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
+部署步骤见[企业控制面快速开始](docs/control-plane.md#快速开始)。[9 月 24 日部署记录](docs/development/enterprise-runtime-delivery-20260924.md)已确认当时的企业 API / Web 更新、数据库 `0013→0017` 迁移、备份的隔离恢复、新旧镜像切换，以及既有 Gateway 的桌面/移动登录入口与匿名拒绝检查；当前主线迁移已继续到 `0028`，部署时始终执行 `alembic upgrade head`，不能停在历史迁移号。**这些检查未使用真实业务账号完成登录和跨系统旅程**；真实组织/角色、独立审批者、可访问的业务站点配置、密钥轮换和多设备运行仍需按[生产运行手册](docs/enterprise-production-runbook-v1.md)验收。企业 OpenShell CLI 后端当前只支持 `block` 部署；治理模型包含 `audit_only` / `warn` 不代表后端已支持。周期计划的存储、确认、管理、设备轮询/退役及只读发现已经合入主线（见[自动接入收口记录](docs/development/enterprise-auto-onboarding-closeout-20260926.md)与[合并后交接](docs/development/enterprise-post-merge-remaining-closeout-handoff-20260926.md)）；设备发现只说明“有计划等待确认”，确认仍需独立一步，现有证据也不等于持续扫描已在真实设备完整生效。事件导出接口会用 `X-SIQ-Export-Truncated` 声明当前响应是否因 `limit` 截断，但它不是完整归档或保留/删除治理，见[OCSF 导出合同](packages/contracts/enterprise-ocsf-export.v1.md)。常见故障与发行包前置条件见该[生产运行手册](docs/enterprise-production-runbook-v1.md)。DGX Spark 与 OpenShell 机制见[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
 
 ## 可以验证什么
 
@@ -396,7 +396,7 @@ flowchart TB
 
 使用已签发版本可直接下载 [0.3.1 完整离线包](https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.3.1/siq-agent-security-0.3.1-bundle.zip)，按[安装说明](docs/signed-release-packaging.md)解压、验签并启动本地服务，无需本地编译 Go/UI。包内 `INSTALL.md` 已包含首次启动步骤：先验签，再使用已验签程序的 `start` 初始化状态并启动。直接调用 bootstrap 仍须先初始化。以下保留源码开发与研究复现步骤；GitHub 自动生成的 Source code 压缩包不是签名安装包。
 
-需要本次最新主线安装包时，使用本机 `.tmp/releases/0.4.0-rc.2-signed/siq-agent-security-0.4.0-rc.2-bundle.zip`，按包内说明在独立状态目录验签、启动。该签名候选尚无公开下载入口，不使用 Skill-only 联网下载，详见[候选记录](docs/evidence/releases/0.4.0-rc.2/README.md)。
+需要较早主线 `7b68c14` 的签名候选时，可使用本机 `.tmp/releases/0.4.0-rc.2-signed/siq-agent-security-0.4.0-rc.2-bundle.zip`，按包内说明在独立状态目录验签、启动。它不包含 2026-09-26/27 后续合入的主线增量，且尚无公开下载入口；不要使用 Skill-only 联网下载，详见[候选记录](docs/evidence/releases/0.4.0-rc.2/README.md)。
 
 ### 个人管理端：Linux 源码体验
 
@@ -518,14 +518,14 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 ### 已归档结果
 
-更新至 **2026-09-24**。以下按近期工程与发行验证、历史研究复现分别列出已归档结果；每项绑定自己的源码或候选、环境和测试范围，不能合并分母或直接迁移到其他版本。
+更新至 **2026-09-27**。以下按近期工程与发行验证、历史研究复现分别列出已归档结果；每项绑定自己的源码或候选、环境和测试范围，不能合并分母或直接迁移到其他版本。
 
-**近期工程与签名发行验证（2026-09-18–24）**
+**近期工程与签名发行验证（2026-09-18–27）**
 
 | 已归档观察 | 结果 | 证据与范围 |
 | --- | --- | --- |
 | 0.4.0-rc.2 签名候选包 | 官方验签、四目标 pin、Linux ARM64 最终包启动通过；**3/3** 篡改拒绝 | [候选记录](docs/evidence/releases/0.4.0-rc.2/README.md)；固定 `7b68c14`，本机已签发、未公开发布；不含升级/回滚或其他目标原生验收 |
-| 最新主线源码整合 | API **1089** 项、Web **299** 项、Go **44** 个测试包通过；四目标构建通过 | [整合记录](docs/development/local-source-integration-20260924.md)、[PR #107](https://github.com/maoyadongsh/siq-agent-security/pull/107)；不同测试口径不合并计数，源码验证不等于正式发行验收 |
+| 当前主线整合与验收 | 合并后 Control API **2257 passed / 1 skipped**；全面验收另行记录 Web **1012 passed**、14 个 Go 模块与隔离浏览器 **30/30**；当前 `main` CI 通过 | [主线整合](docs/development/main-branch-integration-20260926.md)、[全面验收](docs/development/enterprise-comprehensive-acceptance-review-20260926.md)、[合并后交接](docs/development/enterprise-post-merge-remaining-closeout-handoff-20260926.md)；不同运行和计数口径不合并，源码/CI 验证不等于正式发行或生产验收 |
 | 企业 API / Web 部署更新 | 数据迁移、备份恢复、新旧镜像切换及登录入口检查通过 | [部署记录](docs/development/enterprise-runtime-delivery-20260924.md)；既有 Gateway / IAM 入口，未完成真实账号登录、独立审批与跨系统结果旅程 |
 | 新报告工具客户端交接 | 四目标构建、Linux ARM64 原生启动及旧源码清单拒绝通过 | [发行交接](docs/development/client-report-release-handoff-20260924.md)；二进制绑定 E163 加 11 文件增量，未正式签发，不能改标为合并提交构建 |
 | OpenClaw 2026.9.5 原生组件与输出 | 插件/工具包装、会话隔离、输出授权与重启持久化验证通过 | [E155 验证](docs/development/ux-runtime-output-openclaw-e155-validation-20260923.md)；调用后 relay 为夹具，不等于全模型业务旅程或独立效果证明 |

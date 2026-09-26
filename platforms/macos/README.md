@@ -1,6 +1,6 @@
 # macOS
 
-当前宿主范围为 OpenClaw、Hermes、WorkBuddy。0.3.1 包提供 arm64 程序，完成构建/项目清单验签；本版尚未完成原生安装升级与完整同候选宿主验收，也没有以项目签名替代 Apple 签名或公证。
+当前宿主范围为 OpenClaw、Hermes、WorkBuddy。0.3.1 包提供 arm64 程序，完成构建/项目清单验签；本版尚未完成原生安装升级与完整同候选宿主验收，也没有以项目签名替代 Apple 签名或公证。当前 `main` 的后续合并没有新的 macOS 签名候选，交叉构建和 Linux 结果不能作为 macOS 原生通过。
 
 - 安装入口：[统一签名包指南](../../docs/signed-release-packaging.md)。选择 darwin-arm64 程序，先验签再首次启动。不要把 Linux 命令执行成功作为 macOS 实机证据。
 - 操作与诊断：[个人手册](../../docs/personal-client-operation-guide-20260916.md)、[LaunchAgent 原语说明](../../AGENTSHIELD.md)。检查当前 GUI 用户域、程序路径和实例归属；配置生成/注册/加载/启动分别确认，失败保留现场。

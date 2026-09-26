@@ -11,7 +11,7 @@
 
 完整的本仓研究设计、数据口径、技术报告、历史失败与复现记录见下方材料索引；原始文献文件已归入 [research/literature/papers](literature/papers/README.md)，XLSX 历史清单保留在 [literature](literature/README.md)。该目录包含不同来源和发表状态的材料，文件名不构成已同行评审或允许再分发的声明。引用前应核查原文、版本和权属；本仓的软件引用政策见 [citation policy](../docs/research/citation-policy.md)。
 
-当前产品代码合并、组件测试、真实宿主验收与正式发行分别记账。贡献者实验也不自动等同独立第三方测评。[主张—证据表](../docs/research/claims-evidence.md)和各批次原始报告保留候选、语料、失败与限制；没有 DOI、论文接受或普遍安全保证的声明。
+当前产品代码合并、组件测试、真实宿主验收与正式发行分别记账；最新源码整合与深度验收见[主线整合](../docs/development/main-branch-integration-20260926.md)和[全面验收](../docs/development/enterprise-comprehensive-acceptance-review-20260926.md)。这些工程结果不改写研究分母。贡献者实验也不自动等同独立第三方测评。[主张—证据表](../docs/research/claims-evidence.md)和各批次原始报告保留候选、语料、失败与限制；没有 DOI、论文接受或普遍安全保证的声明。
 
 ## 研究路线
 

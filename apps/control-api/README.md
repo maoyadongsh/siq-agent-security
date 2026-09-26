@@ -7,9 +7,9 @@
 ## 证据驱动的治理链
 
 ```text
-已注册 Edge → 签名候选/证据批次 → 资产确认与权限事实
-权限差异 → 策略草稿 → 人工审批 → 执行后端部署 → 读回核验
-状态变更 → 同事务审计 / outbox → 后续同步、漂移检查与到期复核
+环境/周期计划 → 已注册 Edge → 签名候选/证据批次 → 资产与框架/角色/Skill 观察
+权限差异 → 策略草稿 → 人工审批 → 运行时绑定 → 执行后端部署 → 读回核验
+状态变更 → 同事务审计 / outbox → 精确查询/OCSF 导出、漂移检查与到期复核
 ```
 
 权限事实区分 declared、inferred、observed、effective、unknown。模型分类可以辅助提出候选，不能批准策略或将推断写成有效权限。部署请求成功也不等于 effective；后端读回与 authority revision 才能支持相应结论。这一分层为研究“声明与真实执行能力的差距”提供可追踪数据。
@@ -18,10 +18,10 @@
 
 | 实现 | 主要职责 |
 | --- | --- |
-| [routers](app/routers/) | 环境、资产、策略、风险、绑定、审计与导出等 API |
+| [routers](app/routers/) | 环境与周期计划、资产/框架/Skill、策略、风险、绑定、部署、审计与导出等 API |
 | [main.py](app/main.py) | 应用启动、路由与服务配置 |
 | [OpenShell adapter](app/adapters/openshell/) | 期望策略编译、后端交互与读回；能力不支持时显式拒绝 |
-| [worker.py](app/worker.py) | outbox、规则评估、漂移及到期状态处理 |
+| [worker.py](app/worker.py) | outbox、规则评估、发现调度、漂移及到期状态处理 |
 | [migrations](migrations/) | Alembic 数据库迁移；生产不自动建表 |
 | [tests](app/tests/) | 租户/权限负向、合同与规则对等、状态机及后端契约测试 |
 
@@ -34,6 +34,8 @@
 `GET /api/v1/inventory/access` 返回当前身份的候选处理、环境入口和策略创建权限。确认/驳回先定位租户对象再检查权限，驳回仅接受待处理候选；前端写后独立读回，未知结果先核对。详见 [E144 验收](../../docs/development/ux-enterprise-candidate-review-e144-validation-20260923.md)。
 
 `GET /api/v1/console-context` 返回当前验证身份的组织、中文角色及有限访问/操作布尔值，未同步的组织名返回 null，GET 不创建记录。企业工作台与导航消费此合同。`/overview` 同时要求资产、环境和策略读取权限，在线设备仅按有效新鲜心跳计算。详见 [E145 验收](../../docs/development/ux-enterprise-workspace-e145-validation-20260923.md)。
+
+当前主线还提供环境周期计划的创建、只读分页、撤销、Edge 待确认列表、显式确认与 tick 领取。设备端只读发现不会创建或确认计划；`active` 也不证明设备在线、采集成功或防护生效。框架实例/角色来源、Skill 安装观察和五态权限事实分别保留证据边界，缺少运行时加载证据时保持 unknown。审计支持精确条件查询与 OCSF NDJSON 导出；`X-SIQ-Export-Truncated` 仅说明本次响应是否截断，不代表完整归档。
 
 ## 本地开发
 
@@ -83,8 +85,9 @@ uv run pytest
 `GET /api/v1/change-requests/{id}/deployment-submission` 可在刷新或进程重启后读取
 准确的部署标识与状态。pending 表示正在处理或结果待核对，不允许自动超时重发。
 
-上线前须执行 Alembic `upgrade head` 至 **0017**。表中有记录时，降级迁移会拒绝
-删除它。如果要回退到不理解持久请求的旧代码，必须先禁用部署写入口
+`0017` 是持久部署请求首次引入的迁移，不是当前迁移头；当前主线版本目录已到
+`0028_discovery_schedule`。上线前始终执行 Alembic `upgrade head` 并核对实际 head，
+不能按历史部署记录停在 0017。表中有记录时，降级迁移会拒绝删除它。如果要回退到不理解持久请求的旧代码，必须先禁用部署写入口
 （`SIQ_AS_ENFORCEMENT_BACKEND=none`）、保留 0017 表与审计并核对未决请求；不能
 通过删除请求、改请求键或重启服务来重新执行。实际新一次操作需要重新审批变更。
 

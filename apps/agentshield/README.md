@@ -42,7 +42,7 @@ go -C apps/agentshield vet ./...
 go -C apps/agentshield test ./...
 ```
 
-现有 UI 资产随源码提供；修改 Web 后须先按 [Web 构建说明](../web/README.md)运行本地构建、复核嵌入资产，再构建 Go。仅运行 Go 测试不验证新 Web 源码。开发启动、配对和独立状态目录按[本机操作指南](../../AGENTSHIELD.md)操作，不复用日常实例做破坏性实验。
+现有 UI 资产随源码提供；修改 Web 后须先按 [Web 构建说明](../web/README.md)运行本地构建、复核嵌入资产，再构建 Go。仅运行 Go 测试不验证新 Web 源码。当前源码个人端默认进入 `/agents`，可通过 SIQ Skill 辅助确认浏览器连接，也保留手动配对；连接请求有效 5 分钟，管理会话固定 24 小时且刷新不续期。管理会话只允许操作本地控制台，不授予智能体业务权限。开发启动、配对和独立状态目录按[本机操作指南](../../AGENTSHIELD.md)操作，不复用日常实例做破坏性实验。
 
 `skills/siq-agent-security/` 是开发源码，缺少发行清单时 bootstrap 拒绝启动。从源码构建成功不产生官方发行身份；正式安装使用[签名资产](../../docs/signed-release-packaging.md)。
 

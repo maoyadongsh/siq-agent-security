@@ -13,6 +13,9 @@
 | `change-execution.v1.schema.json` | 单份变更的部署与精确审计关联 | policy:read 基础读取、audit:read 独立门禁；有界历史/截断声明、验证枚举、不返回原始回执或异常 | [E147 规格](../../docs/development/enterprise-change-execution-e147-spec.md) |
 | `change-review.v1.schema.json` / `change-review-decision.v1.schema.json` | 企业变更审查及快照约束决策 | 完整有界权限域、身份绑定摘要、旧内容拒绝、内容不完整禁止批准；旧审批接口保持兼容、不自动获得快照门禁 | [E146 规格](../../docs/development/enterprise-change-review-e146-spec.md) |
 | `enterprise-ocsf-export.v1.md` | OCSF 事件导出与截断事实声明 | `audit:read`；租户与 `since` 过滤后按 `limit+1` 探测，正文不超过 `limit` 行；`X-SIQ-Export-Truncated: 0\|1`、no-store、NDJSON、时间升序再按 ID 稳定排序；审计 `count` 只计实际返回条数；探测行不入正文/日志/审计，不是完整归档，不引入 published/verified | 本仓合同 |
+| `enterprise-discovery-schedule.v1.md` / `enterprise-discovery-schedule-pending-list.v1.md` | 企业周期发现计划及设备待确认列表 | 组织创建有界计划；设备列表只读分页，显式确认后才能 tick；发现不自动选择、不授权；active 不证明在线、采集成功或防护生效 | 企业自动接入收口 |
+| `enterprise-framework-role-inventory.v2.md` | 环境/设备下的框架实例与角色来源投影 | 按页核验 v1/v2；OpenClaw/Hermes 来源严格配对；来源不可核对时为 null，不造 Skill 或运行加载事实 | 企业资产发现收口 |
+| `enterprise-runtime-binding-identity.v1.md` / `enterprise-deployment-impact.v1.md` | 运行时绑定身份与部署影响只读投影 | 执行/预览/影响生成前重读身份；未知共享占用、Skill 隔离或执行确认能力不得提升为已核验 | 企业运行时绑定收口 |
 | `local-task-activity-query.v1.schema.json` | 运行列表的时间、裁决筛选与摘要 | 完整验签后筛选再分页；最后回执序号倒序；时间范围左闭右开；观察回执不重复计为调用；不推断业务状态 | 本机规格 §3.10.1 |
 | `local-runtime-check-activity.v1.schema.json` | 自检到可信运行记录的精确引用 | 仅管理会话 GET；全部自检回执唯一且同一完整绑定，完整快照验签；不猜任务 ID、不受首 500 条限制；响应不授予权限 | 本机规格 §3.10.1 |
 | `admission.schema.json` | Skill 安装前准入结论（本机门禁） | 三值 `verdict`；`findings.disposition`（quarantine / declare / info）与 verdict 用 `if/then` 锁定自洽；`declared_facts` 只能 `state=declared`、`effect=allow`；`over_limit` / `symlink_escape` 强制 quarantine；`content_hash` 用于 tool pinning | ADR-011、设计方案 v1 §4.1 |

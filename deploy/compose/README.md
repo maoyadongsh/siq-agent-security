@@ -18,7 +18,7 @@ docker compose -f deploy/compose/compose.yaml logs control-api
 docker compose -f deploy/compose/compose.yaml down
 ```
 
-普通 `down` 保留数据卷。该配置使用公开开发口令与 `SIQ_AS_DEV=1`，不得原样暴露到外网或用作生产配置。Web、Edge 和后台 worker 不在此 Compose 中，分别按 [Web](../../apps/web/README.md)、[Edge](../../edge/agent/README.md)和 [Control API](../../apps/control-api/README.md)配置；不要将“容器已启动”记为完整策略闭环通过。
+普通 `down` 保留数据卷。该配置使用公开开发口令与 `SIQ_AS_DEV=1`，不得原样暴露到外网或用作生产配置。Web、Edge 和后台 worker 不在此 Compose 中，分别按 [Web](../../apps/web/README.md)、[Edge](../../edge/agent/README.md)和 [Control API](../../apps/control-api/README.md)配置；发现周期调度、outbox、漂移与到期处理需要另行运行 worker。容器会执行当前源码的 `alembic upgrade head`，不要把历史迁移号写死，也不要将“容器已启动”记为完整策略闭环通过。
 
 ## 生产与验收边界
 

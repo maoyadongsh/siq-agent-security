@@ -5,8 +5,8 @@ SIQ 把研究问题落实为可独立运行、边界明确的组件：模型负�
 | 应用 | 职责与入口 | 运行依赖与边界 |
 | --- | --- | --- |
 | [AgentShield 本地运行时](agentshield/README.md) | Skill 准入、授权、执行前检查、生命周期、回执与个人管理 API | Go 标准库；内嵌个人 UI；不要求企业 API、数据库或模型 |
-| [Web 控制台](web/README.md) | 同一源码树中的个人与企业两种构建 | React/TypeScript；分别连接本地 daemon 和 Control API，不由浏览器签发权威 |
-| [Control API](control-api/README.md) | 多租户资产、证据、策略审批、部署读回、Edge 协调与审计 | Python/FastAPI，生产 PostgreSQL + OIDC/JWKS；独立部署 |
+| [Web 控制台](web/README.md) | 同一源码树中的个人与企业两种构建；企业端以资产、权限、安全、审计为四主入口并保留高级治理入口 | React/TypeScript；分别连接本地 daemon 和 Control API，不由浏览器签发权威 |
+| [Control API](control-api/README.md) | 多租户资产、框架/角色/Skill 观察、权限事实、策略审批、运行时绑定、周期发现、部署读回与审计导出 | Python/FastAPI，生产 PostgreSQL + OIDC/JWKS；独立部署；可见性和读回不自动构成业务授权或行为证明 |
 | [Secure Agent](secure-agent/README.md) | 研究参考应用：规划、Skill 选择、受约束工具执行与完成核验 | Python 标准库 + 本地运行时；显式 fixture 或已配置模型，不能执行任意 Skill 代码 |
 
 ## 如何选择
