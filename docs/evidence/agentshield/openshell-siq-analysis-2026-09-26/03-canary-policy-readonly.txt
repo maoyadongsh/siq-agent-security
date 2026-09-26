@@ -1,0 +1,31 @@
+--- gateway=siq-openshell-dev
+--- sandbox list
+NAME                              CREATED              PHASE
+siq-analysis-canary-27d1289f98fa  2026-09-21 17:47:46  Ready
+siq-analysis-canary-d4a890ec23d3  2026-09-21 17:48:08  Ready
+--- policy get siq-analysis-canary-27d1289f98fa -o json
+{
+  "active_version": 2,
+  "config_revision": 7131578761778039427,
+  "hash": "d9e0566ba44a24fa7b980833ed55e86e872c2acf02c57bf27ce6cd925f644132",
+  "policy_source": "sandbox",
+  "sandbox": "siq-analysis-canary-27d1289f98fa",
+  "scope": "sandbox",
+  "status": "effective",
+  "version": 2
+}
+--- policy list siq-analysis-canary-27d1289f98fa
+VERSION  HASH           STATUS       CREATED                  ERROR
+2        fed6cc8072d1   Loaded       1790012866828            
+1        3d90c401b3e4   Superseded   1790012866803            
+--- policy get siq-analysis-canary-d4a890ec23d3 -o json
+{
+  "active_version": 2,
+  "config_revision": 13309469541178284199,
+  "hash": "72054e40a6c34e43cbb5bdff6cdd62dac96efbd2dbd103782fade00e6f4391f1",
+  "policy_source": "sandbox",
+  "sandbox": "siq-analysis-canary-d4a890ec23d3",
+  "scope": "sandbox",
+  "status": "effective",
+  "version": 2
+}

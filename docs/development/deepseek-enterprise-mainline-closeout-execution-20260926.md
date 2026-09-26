@@ -478,6 +478,46 @@ cd apps/control-api
 - **未完成（依赖 R09/D-1）**：五维证据的权威生产者；绑定身份快照扩入沙箱 revision 与 Skill 摘要（需改既有文件，D-1 冻结）；共享独占标准（D-3 已决定保持 `unknown`）。
 - **下一可执行动作**：R05 准备（`executeBatchDraft` 接线的前置影响披露）仍受 R04 完整影响披露约束，**不得提前开放执行确认入口**（§4）；因此下一步转入 R07/R08 可做的测试准备与文档/工具核对。
 
+### R04.6 独立回滚审批：**只读合同草案**（2026-09-26，按主开发者答复"先只出只读合同草案"实施）
+
+**交付 4 个新文件**（源码/合同/测试/交接，全部**未接线**、未改任何既有文件）：
+
+| 文件 | 内容 |
+| --- | --- |
+| `packages/contracts/enterprise-rollback-approval.v1.md` | 合同草案：7 条要素、四值状态词表、三条不变量、结论词表**与可达性**、与既有实现的关系 |
+| `apps/control-api/app/rollback_approval_readiness.py` | 内部只读就绪度核对：纯函数 `evaluate(facts)` + 今日快照 `requirements_table()`；`runtime_effect` 恒 `"none"` |
+| `apps/control-api/app/tests/test_rollback_approval_readiness.py` | **11 条**用例，逐条钉住三条不变量 + 纯函数/确定性 + 源码只读边界 |
+| `docs/development/deepseek-r04-rollback-approval-handoff-20260926.md` | 交接：要答的 4 个业务问题（含选项与影响）、若批准实现的最小方案、本层的诚实边界 |
+
+**命令与结果**：
+
+```text
+cd apps/control-api
+.venv/bin/python -m pytest app/tests/test_rollback_approval_readiness.py -p no:randomly   → 11 passed（exit 0）
+.venv/bin/ruff check --no-cache --config pyproject.toml <两个文件>                          → All checks passed!
+```
+
+**今日事实（只读快照）**：7 条要求 **0 成立 / 5 `absent` / 1 `declared_only` / 1 `not_determinable`** → 结论 `rollback_approval_not_ready`。
+唯一"有东西"的两条分别是：要求 6（审批证据不可由请求正文覆盖）**只有声明**（`contracts.py:239-240` 的构造约定）；
+要求 3（审批者 ≠ 申请者 ≠ 操作者）**本层不可观测**。其余 5 条无证据源。
+
+**与既有复验的关系（逐行核对，非印象）**：回滚链**已有**执行前复验 —— `app/routers/policies.py:939`
+`authorize_rollback`（写前重查活体授权链，`:859` `_rollback_live_chain`），它证明"意图未漂移"；
+**不**证明"第二个身份为这次操作担责"。本模块只登记这个缺口，**不**把复验当审批，也**不**复制其判定逻辑。
+
+**两条自查如实留痕**：
+
+1. **一个真缺陷（模块侧修，非放宽测试）**：首版用集合成员判定取值，`1 in {True}` 为真、`0.0 in {False}` 为真，
+   使 JSON 里的数字 `1` 被当成"成立"。已改为**按类型严格**判定（只有布尔 `True` 或 `"present"`/`"verified"` 才可能成立）。
+   由 `test_unrecognized_value_is_never_treated_as_present` 钉住（该用例正是先红后绿）。
+2. **一个不可达结论档**：`rollback_approval_requirements_met_but_not_wired` 因不变量 2 **经本层恒不可达**
+   （第 3 条永不可能 `present`）。这不是缺陷而是设计结果，测试 `test_met_but_not_wired_is_unreachable_through_this_layer`
+   **明写钉住**，模块 docstring 也写明保留该档只为表达上限；**未**伪装成可达。
+
+**未做（硬约束逐条遵守）**：未改 `execution_confirmation_supported`（R04 硬约束）；
+未选审批人、未定义审批凭证、未设有效期（业务决策，交 `...-r04-rollback-approval-handoff-20260926.md` §4 的四个问题）；
+**不产生** `effective`/`enforcement_verified`；未接线；未改回滚语义。
+
 ---
 
 ## R05：批量权限到可核对结果及恢复
@@ -1024,6 +1064,70 @@ git commit -F -    # 正文写明"共享工作树快照、非独立成果切片"
 
 **本轮明确不做**：不提交、不推送、不建分支、不签发、不发布、不覆盖历史制品（§3.2）。上表 D-7.1/D-7.2/D-7.4 是**请求**，未获答复前保持现状。
 
+### R08.7 允许清单第 5 次核验（39 条；R04 只读交付 + R09.13 证据纳入，2026-09-26）
+
+R04.6 与 R09.13 新增 **6 条新文件路径**（4 条 R04 交付 + 5 条证据 = 9 条中已计入清单的 9 条，见下）后重跑同一条命令：
+
+```bash
+python3 scripts/enterprise-experience/source-freeze-preflight.py --repo . \
+  --allowlist docs/development/deepseek-enterprise-mainline-closeout-freeze-allowlist-20260926.txt \
+  --out /tmp/preflight-r0913-20260926T112124.json
+```
+
+| 项 | 值 |
+| --- | --- |
+| `allowlist.requested` → `verified` | **39 → 39**（`unverified=0`、`excluded=0`、`missing=0`） |
+| `unstable.scan_stable` / `conflicts` | `true` / `0` |
+| `head_commit` / `branch` | `0355db0…` / `deepseek/enterprise-mainline-closeout-20260926` |
+| `worktree`（**报告自身字段，同口径**） | `tracked_changes=105`、`untracked_entries=714`、`unresolved_conflicts=0` |
+| `signed` / `installable` / `published` | `false` / `false` / `false` |
+| `conclusion` / `blocking_reasons` | **`blocked`** / `["unreviewed_paths:806"]` |
+
+**逐条归属（与上一份 `r099b` 报告 `status_entries` 逐条相减，不靠印象）**：新增 **12 条、消失 0 条**，与本次改动**逐条对应**：
+
+| 类别 | 条数 | 路径 |
+| --- | --- | --- |
+| `??`（新文件） | **9** | `rollback_approval_readiness.py`、`test_rollback_approval_readiness.py`、`enterprise-rollback-approval.v1.md`、`deepseek-r04-rollback-approval-handoff-20260926.md`、`docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/` 下 5 个文件 |
+| ` M`（改既有件） | **3** | 本执行记录、交接文档、允许清单本身 |
+
+即：`tracked 102 → 105`（**+3**）与 `untracked 705 → 714`（**+9**）**完全由本次改动解释**，并作者线**一条未动、零消失**。清单条数 **30 → 39**（新增 4 条 R04 交付 + 5 条 R09.13 证据）。
+**核验通过仍只表示这批文件的只读快照确定完整**，不是发布授权、不是源码已冻结；`unreviewed_paths:806` 与冻结时刻重跑的要求**照旧**（R08.4 的"不得复用本节数字"同样适用于本小节）。
+
+### R08.8 自查：分支自身不自洽 —— R09.7 的验收工具**从未入库**（2026-09-26）
+
+在提交前逐条核对允许清单时发现：**39 条路径里有 1 条虽然每次都通过了 preflight 核验，却从未进入任何提交** —— `scripts/enterprise-experience/http-contract-acceptance.py`（R09.7/R09.8 的 HTTP 契约级验收工具）。它是 `??`（未跟踪）状态，`git log --all --full-history -- <该路径>` **为空**、`git ls-tree -r HEAD` 命中 **0**。
+
+**后果是分支自身不自洽**：它的合成回归测试 `scripts/enterprise-experience/test_http_contract_acceptance.py` **已在 `6516e58` 入库**（该提交 4 条路径之一），而该测试第 19 行按同目录定位被测脚本：
+
+```python
+SCRIPT = Path(__file__).with_name("http-contract-acceptance.py")
+```
+
+**因此在分支 HEAD 的干净检出上，这条测试连收集都过不去。**
+
+**复现（不改共享工作树，按 §3.2 不用 `checkout` 换回 HEAD）**：用 `git archive` 把 HEAD 的该目录导出到临时目录再跑：
+
+```bash
+TMP=$(mktemp -d /tmp/branch-consistency-XXXXXX)
+git archive HEAD scripts/enterprise-experience | tar -x -C "$TMP"
+apps/control-api/.venv/bin/python -m pytest \
+  "$TMP/scripts/enterprise-experience/test_http_contract_acceptance.py" -p no:randomly -q
+```
+
+实测 **exit 2**，收集期报错：
+
+```text
+E   FileNotFoundError: [Errno 2] No such file or directory:
+    '<TMP>/scripts/enterprise-experience/http-contract-acceptance.py'
+1 error in 0.05s
+```
+
+**根因**：不是 preflight 失效（它如实报了 `verified=39`，因为文件确实在工作树上），而是**我此前按"本轮改动的文件"挑选提交路径时漏选了这一个**——该工具一直只以未跟踪状态存在，工作树内跑测试因而一直是绿的，**只有把分支当独立制品检出时才会暴露**。
+
+**处置**：本条路径在允许清单内、内容无变化，**已并入本次提交**（提交后该目录 20 条路径中工具与测试成对在场）。同时更正交接文档 §7 第 1 项此前"本轮文件不再以未跟踪状态裸放在共享工作树"的表述——**对 39 条路径里的这一条当时并不成立**。
+
+**本轮其余路径未发现同类问题**（逐条比对，非印象）：对允许清单 39 条逐条查 `git ls-tree -r HEAD` 与在盘存在性——**不在 HEAD 的共 10 条**，其中 9 条正是本次提交新增的 R04 交付（4 条）与 R09.13 证据（5 条），**预期如此**；**剩下的第 10 条就是上面这个工具**。39 条**全部在盘存在**，无第二条"本应已入库却仍是未跟踪"的路径。
+
 ---
 
 ## R09：获准真实验收、升级恢复与部署交付
@@ -1425,6 +1529,85 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **这个字段顺手给出的一条交叉线索**：`failed_are_subset_of_real_dev_api` 实测为 `true`——A2 的 5 项失败**全部**落在真实后端脚本内，与 E1 留存证据里出现的服务端生成 id（`cr_…`/`pol_…`）互相印证：失败发生在**真实 HTTP 往返之后**的 UI 断言层。（**这不等于契约验收**，理由见 R09.5 与 R09.7。）
 
+### R09.12 A7「行为核验」的 §3.2 前置方案（**状态：待批，尚未执行任何一步**）
+
+**主开发者 2026-09-26 选择**：下一步优先清 A7（受控 OpenShell 目标 → 行为核验）。本节是执行前的 §3.2 前置说明，**不含任何实测数字**。
+
+**A7 为什么是唯一合法的 `enforcement_verified` 生产者（代码级事实，不是说法）**：
+
+| 事实 | 出处 |
+| --- | --- |
+| `verify()` 契约要求"至少验证预期允许和预期拒绝各一项"，并明写：配置读回类检查只能产出 `readback_verified`；`enforcement_verified` 需要**真实行为 fixture 证据**（当前所有后端均无行为 fixture 通道，**禁止**产出该级别） | `app/adapters/openshell/base.py:52-58` |
+| openshell-cli 路径确实**只**给 `expect_allow`，`expect_deny` **恒为空列表**，代码内写明理由：**不发明可能与策略冲突的固定 deny probe** | `app/routers/policies.py:631` |
+| 存量合同里那个非空 `expect_deny`（`denied.invalid:443`）在**另一个工具**里，是兼容性自检用的**固定样例**，不是"某次策略的真实 deny 目标" | `scripts/openshell_compat_check.py:121` |
+| 三层防伪消费方都只认"非空 `expect_deny` + 行为观测"这条来源 | `fake_backend.py:280`、`app/tests/test_evidence_topology.py:169` |
+
+**结论**：`enforcement_verified` 在当前候选上**没有生产者，而且本来就不该有**。要产生它必须有**真实 deny 观测**，不能靠给 `expect_deny` 填一个好看的值。
+
+**缺的三样（逐项写清"缺什么、为什么执行者不能自备"）**：
+
+| # | 缺什么 | 为什么不能由执行者自备 |
+| --- | --- | --- |
+| 1 | **受控 OpenShell 测试目标**：`--target` 名（`[A-Za-z0-9_.-]{1,128}`）、HTTPS **回环**网关端点、CLI 绝对路径、XDG root（须已含 `config` 与 `state`） | 目标是**真实存在的受控资源**，必须由你指定。既有只读工具已强制"显式 HTTPS 回环网关 + 绝对路径 CLI/XDG"（`openshell-preview-live-check.py:24-31`），我**不会**去试探未授权的网关 |
+| 2 | **真实行为探针通道**（从 `expect_deny` 的**来源**到**观测**）：探针目标必须由**策略里真实存在的 deny 规则**导出，观测必须是**行为**（请求被拒），不是读回 | 这是**代码改动**，落在 `app/adapters/openshell/*` 与 `app/routers/policies.py` —— **都不在本轮允许清单内**，且它正是 `enforcement_verified` 的生产者。**必须**先拿到 D-1 范围的明确授权；且**不得**由测试夹具/mock/"推演"生成该值（R09.2 第 1 条） |
+| 3 | **范围与证据格式**：允许探测的目标集合、超时、失败判据、证据字段（`gateway_version`、`endpoint_fingerprint`、scope digest、deny 观测原文） | 由你定；我按定好的口径写证据，**不自行定义"算通过"** |
+
+**执行步骤（获准后按序，不可换序）**：
+
+1. **只读先行**（用清单内既有工具，不产生任何 enforcement 结论）：`openshell-preview-live-check.py --cli <绝对路径> --endpoint <https 回环> --xdg-root <绝对> --target <名> --out-dir <新目录>`。它**只读、从不 apply**，`--out-dir` 独占创建（已存在即报错）。这一步只证明"能只读探到该网关/目标的策略投影"，**不证明任何强制点生效**。
+2. **行为探针**（需第 2 项授权）：以策略中**真实的 deny 目标**构造 `expect_deny`，在受控目标上观测**真实拒绝**，并与 ≥1 个 `expect_allow` 同时留证。
+3. **同一候选约束**：步骤 1–2 的证据必须绑定**同一个 commit**（与 A3/A4/A5/A6 同规），报告写清 `head_sha`。
+4. **回收核验**：进程退出 / 端口释放 / 临时目录移除三项**独立复核**，另加宿主容器与网关集合 `diff`；不修改宿主 systemd、不碰其它网关。
+
+**通过判据（逐条写进证据，不四舍五入）**：出现**真实 deny 观测**（非 mock、非读回），`expect_deny` 非空且**每一条的来源可追溯到编译产物里的 deny 规则**，并且未通过项如实记为未通过。**只有此时** `verification.level` 才允许被标为 `enforcement_verified`；在此之前该值**保持无生产者**。
+
+**非声明**：本节**不是执行**、不含实测数字；**不**授权执行者自行探测任何网关；**不**关闭任何 ENT。
+
+### R09.13 受控目标被指定：智能分析助手（siq_analysis）OpenShell 链接**只读实跑**（2026-09-26）
+
+使用者 2026-09-26 指定受控目标 = **siq 投研决策引擎 `siq-research-engine` 的智能分析助手**所适配的 OpenShell 网关。
+本轮只做**链接与只读读回**；未启停网关、未创建/删除沙箱、**未 `policy set`**、未改对方仓库。
+证据目录：`docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/`（README + 4 份原始输出）。
+
+**实跑命令与结果**（全部只读，逐条可复验）：
+
+| # | 命令 | 结果 |
+| --- | --- | --- |
+| 1 | `SIQ_AS_OPENSHELL_ENV_SH=/home/maoyd/siq-research-engine/scripts/openshell/env.sh .venv/bin/python scripts/openshell_compat_check.py` | **PASS，exit 0**；探测版本 `v0.0.83`，兼容矩阵 **8/8 一致**（含 `sandbox_list_decodable=false` 与矩阵冻结值一致） |
+| 2 | 对方 `env.sh` 内钉住的 CLI：`sandbox list` / `policy get <target> -o json` / `policy list <target>` | 网关 `siq-openshell-dev` 在 `127.0.0.1:17671`+`172.23.0.1:17671` LISTEN（`ss -ltnp` 证实三个监听同为 pid 3704433，2026-09-22 00:29 启动）；沙箱 `siq-analysis-canary-27d1289f98fa` / `…d4a890ec23d3` 均 `Ready`；两者均 `version=2`、`policy_source=sandbox`，网关**自报** `status:"effective"` |
+| 3 | `openshell status --gateway-endpoint https://127.0.0.1:17671`（**TLS 校验开启**，未用 `--gateway-insecure`） | `Status: Connected`、`Version: 0.0.83`；服务端证书 SAN 含 `IP Address:127.0.0.1`，故回环 HTTPS 端点成立 |
+
+与 2026-09-05 那次（`docs/evidence/agentshield/openshell-siq-research-engine-2026-09-05/`）的差别：
+当时 L3 **只有握手**、明确"无可做读回闭环的分析沙箱"；本轮分析助手侧**已有 2 个 `Ready` 的真实 canary 沙箱**，
+链接面从"握手"推进到"有可读回的真实目标"。**仍然没有**任何强制点生效结论。
+
+**新发现：既有只读预览工具对同一目标**构造性**失败（E149 证据在当前候选不可复现）**：
+
+- 按 `docs/development/ux-openshell-live-preview-e149-validation-20260923.md` 里记载的同一条命令、同一目标运行
+  `scripts/enterprise-experience/openshell-preview-live-check.py` → **rc=1**，第 136 行 `('/deployment-preview', 409)` 断言失败。
+- 探针本身正常（`handshake_verified=True`、`gateway_version=0.0.83`、`endpoint_fingerprint=6225b824…`）。
+  用 `/tmp` 下一次性只读复现脚本拿到正文：`{"detail": "deployment_target_authority_unverified"}`，
+  且**已执行命令列表里没有 `policy get`** —— 失败发生在读目标策略**之前**。
+- 根因（读代码逐行）：`prepare_deployment`（`app/routers/policies.py:436`）在 openshell-cli 分支
+  `:534-536` **无条件**调 `require_target_authority`；该闸（`app/target_authority.py:136-151`）强制读
+  `SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE`，缺则失败关闭为 409。而该工具在 `:58-62` 把 `os.environ` 清成
+  `PATH/HOME/USER/LANG/LC_ALL` 白名单后才设自己的变量，**从不设**该变量 —— **外部无论如何设置都会被清掉**。
+  即：**在当前候选上，该工具不可能通过自己的预览断言**（构造性，非本次配置错误）。
+- 引入该闸的 `app/target_authority.py` 是**未跟踪新文件**（mtime 2026-09-25 16:34），晚于 E149 文档（2026-09-23）。
+  故 E149 记录的 **8 项全通过已陈旧**，属交接文档 §5 要回答的「同候选非退化证据」缺口。
+- **本轮不改**这四条路径（`app/target_authority.py`、`app/routers/deployment_preview.py`、
+  `openshell-preview-live-check.py`、E149 文档）——**逐条比对确认四者均不在冻结允许清单 30 条内**。
+
+**自查更正**：R09.12 前置方案里写"清单内既有工具 `openshell-preview-live-check.py`"**有误**——它**不在**允许清单内。
+该表述按本条更正；R09.12 的"只读先行"因此**不能**按原计划作为"清单内工具"来用。
+
+**未做（仍待许可 / 仍 blocked）**：
+
+- `openshell_compat_check.py --live --sandbox <canary>`：**会真实修改**分析助手 canary 沙箱的网络段（allow `example.com:443`），
+  属真实权限变更，按 §3.2 需**该次**许可；且其产出上限只有 `readback_verified`，其 `expect_deny` 是**固定兼容样例**不是真实拒绝观测。
+- **行为 fork 通道**（`enforcement_verified` 的唯一合法生产者）仍不存在，且实现它要动 `app/adapters/openshell/*` 与
+  `app/routers/policies.py` —— 需 D-1 范围明确授权；**不得**由夹具/mock/推演生成该值。
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
@@ -1436,5 +1619,5 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 | D-3 共享影响 / 运行事实 | R00.6 | **已决策：保持 `unknown` 不猜** |
 | D-4 证据时效 | R04 | **未确认**（未自行设 TTL） |
 | D-5 保留治理 | R00.6 | **已决策：只补齐声明与缺口** |
-| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）与受控 OpenShell 目标（A7）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可 |
+| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**，但 `--live` 真实写入与行为 fixture 通道**仍未获许可/仍不存在**，A5/A7 仍 blocked |
 | D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认** |

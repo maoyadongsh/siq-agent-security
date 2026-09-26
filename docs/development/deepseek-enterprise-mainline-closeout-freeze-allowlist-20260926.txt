@@ -49,6 +49,23 @@ packages/contracts/enterprise-binding-invalidation-surface.v1.md
 # --- 合同：R02 角色—Skill 快照对照 v2（新增） ---
 packages/contracts/enterprise-role-skill-snapshot-comparison.v2.md
 
+# --- 源码：R04 独立回滚审批只读就绪度核对（新增，未接线） ---
+# 只读合同草案 + 纯函数核对层：不新增端点、不写库、不改回滚语义、不产生 effective/enforcement_verified，
+# 不改 execution_confirmation_supported。11 条用例逐条钉住"声明不是证据""自述不得越过不可观测性"。
+apps/control-api/app/rollback_approval_readiness.py
+apps/control-api/app/tests/test_rollback_approval_readiness.py
+packages/contracts/enterprise-rollback-approval.v1.md
+docs/development/deepseek-r04-rollback-approval-handoff-20260926.md
+
+# --- 证据：R09.13 智能分析助手 OpenShell 链接只读实跑（新增；纯读回，未启停网关、未 policy set） ---
+# README 记录事实/边界/天花板；4 份原始输出为只读命令产物（兼容矩阵、CLI 读回、canary 策略、失败尝试）。
+# `status:"effective"` 是网关自报字段，不是我方产出的事实；本组证据不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/README.md
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/01-compat-check-readonly.txt
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/02-cli-readonly.txt
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/03-canary-policy-readonly.txt
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/04-preview-live-readonly-attempt.txt
+
 # --- 工具：R06 版本化引用链审计（新增） ---
 scripts/enterprise-experience/contract-version-chain-audit.py
 scripts/enterprise-experience/contract-version-aliases.json
