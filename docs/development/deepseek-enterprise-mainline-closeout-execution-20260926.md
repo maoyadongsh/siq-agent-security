@@ -1197,6 +1197,8 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 | 报告渲染（真实运行，**默认不碰 docker**） | `enterprise-gate-run.py --repo . --out /tmp/gate-A2record-20260926T165110.json --only rulepack_python_go_identity` | `conclusion=partial_run_not_a_gate`；三行 `skipped_gates` 正确带出**新** `reason` 与新 `note`，`not_evidence_of` 五项齐全 |
 | 冻结前盘点复跑 | `source-freeze-preflight.py --allowlist ... --out /tmp/preflight-r09-20260926T165214.json` | `requested=26 / verified=26`（内容级 sha256）、`unverified=excluded=missing=0`、`scan_stable=true`、`conflicts=0`、`head_commit=7209a76`、`unreviewed=806`、`conclusion=blocked`；**清单仍 26 条**（本轮未新增路径） |
 
+**提交与工作树账目**：本轮 4 条路径已提交为 **`34722e8`**（`git show --name-only` 与该 4 条逐条一致，无清单外路径），分支 `deepseek/enterprise-mainline-closeout-20260926`，父 `7209a76`，**未推送**，`main` 仍 `ebaaf3b`。**账目可复核**（用 `--untracked-files=no` / `=all` 两个**同口径**指标，而不是会折叠未跟踪目录的默认 `git status --porcelain`）：提交前 preflight 记 `tracked_changes=106`、`untracked=704`；提交后实测 `tracked-changed=102`、`untracked=704` —— **差恰好 4**，等于本次提交路径数，并作者线一条未动。（此前文档里"656 条状态项"用的是默认折叠口径，与 preflight 的 810/806 不同源，**不宜跨口径比较**，此处改用同口径数字。）
+
 **未做（刻意）**：没有把 30 个浏览器脚本接成可执行门禁。理由：整批约 4 分钟、需先做一次模拟身份前端构建、且当前有 5 项失败——把它塞进统一报告会让"门禁红"变成前端线的既有状态而非本轮可判定的信号。**是否纳入属 R07 设计决策，留作下一动作。**
 
 ## 本轮决策门槛汇总
