@@ -20,7 +20,7 @@ GET `/edge/v1/discovery-schedules`。仅凭当前设备凭据（Authorization Be
 
 精确字段：schema_version=`enterprise-discovery-schedule-pending-list/v1`、evaluated_at（服务端 UTC Z）、items、integrity_failed、next_cursor。no-store。不接受额外字段。
 
-`items` 每项白名单投影：schedule_id、status、revision、intent（完整 `enterprise-discovery-schedule/v1` 意图结构）、intent_digest。与按 ID 读取使用**完全相同**的绑定与投影一致性校验：`require_binding(设备身份, 原安装计划摘要)`，且 schedule_id/意图摘要/起止时间/间隔/轮数预算与持久行逐项一致。不返回安装计划、目录路径、任务载荷或凭据。
+`items` 每项白名单投影：schedule_id、status、revision、intent（完整 `enterprise-discovery-schedule/v1` 意图结构）、intent_digest。待确认行必须同时满足 `status=pending_confirmation` 与初始 `revision=0`；revision 已推进却仍标待确认属于不一致投影。与按 ID 读取使用**完全相同**的绑定与投影一致性校验：`require_binding(设备身份, 原安装计划摘要)`，且 schedule_id/意图摘要/起止时间/间隔/轮数预算与持久行逐项一致。不返回安装计划、目录路径、任务载荷或凭据。
 
 `integrity_failed` 列出本页中**存在但无法通过上述校验**的 schedule_id。这类行绝不投影其意图内容，也绝不静默当作"没有待办"：显式列出，让设备与审计都能看到"该行存在但无法安全读取"。分页仍正常推进，否则一行损坏会让其后所有待办永久不可达。这是与按 ID 读取唯一的行为差异：按 ID 读取对单行损坏返回 409，因为该请求只针对那一行；本端点必须继续服务其余行。
 
@@ -34,6 +34,6 @@ GET 不创建运行绑定、扫描、任务、预约、权限、审计或其他�
 
 ## 实现与状态
 
-`app/routers/discovery_schedule_pending.py`。**尚未在 `app/main.py` 注册**，因此在接线前该端点对外不可达；隔离测试通过在本测试模块内单独挂载该 router 验证行为，不修改共享应用。接线属 R08 冻结前的待办项，见开发台账。
+`app/routers/discovery_schedule_pending.py`，已随共享应用注册（`app/main.py`）并对外可达。隔离测试仍在本测试模块内单独挂载该 router，以便不依赖共享应用装配；两者行为一致。
 
 本版本为源码级与隔离验证级（合成设备、临时密钥、独立 SQLite）。不代表真实设备已获得周期发现，也不代表组织侧新设备自动绑定已实现。

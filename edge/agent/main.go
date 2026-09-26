@@ -101,8 +101,10 @@ commands:
   install-user-service --release FILE --stage DIR [--start]  Linux: install verified discovery user service
   user-service-status                                     Linux: read user service state; no start or registration
   confirm-discovery-plan --plan FILE --tenant ID --confirm-plan-sha256 DIGEST
-  confirm-discovery-schedule (--intent FILE | --schedule-id ID | --resume) [--interactive | --confirm-intent-sha256 DIGEST]   Linux: preview or confirm bounded discovery
-                                                           Linux: restrict scans to confirmed plan scope
+  confirm-discovery-schedule (--intent FILE | --schedule-id ID | --discover | --resume) [--interactive | --confirm-intent-sha256 DIGEST]
+                                                           Linux: read-only discovery, preview or confirm bounded discovery;
+                                                           scans stay within the confirmed plan scope;
+                                                           the --discover lookup never auto-selects or grants business permissions
   retire-discovery-schedule [--resume] [--interactive | --confirm-retire-intent-sha256 DIGEST]
                                                            Linux: preview or archive a revoked old schedule; --resume finishes a pending archive
   recover-registration --control-plane ORIGIN --environment ID

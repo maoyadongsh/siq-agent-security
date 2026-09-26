@@ -38,7 +38,8 @@ def _pending_item(row, edge) -> dict:
     """白名单投影；与按 ID 读取使用完全相同的绑定与一致性校验，失败即不投影。"""
     intent = DiscoverySchedule.model_validate(row.intent)
     intent.require_binding(edge.device_identity, row.installation_plan_digest)
-    if (intent.schedule_id != row.id or digest(intent.model_dump()) != row.intent_digest
+    if (row.status != PENDING_STATUS or row.revision != 0
+            or intent.schedule_id != row.id or digest(intent.model_dump()) != row.intent_digest
             or row.starts_at != intent.start.replace(tzinfo=None)
             or row.expires_at != intent.end.replace(tzinfo=None)
             or row.interval_seconds != intent.interval_seconds or row.max_runs != intent.max_runs):

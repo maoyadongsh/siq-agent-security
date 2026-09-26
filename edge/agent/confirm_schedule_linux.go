@@ -99,18 +99,19 @@ func confirmSchedule(ctx context.Context, args []string, output io.Writer, now t
 	fs.SetOutput(io.Discard)
 	path := fs.String("intent", "", "")
 	scheduleID := fs.String("schedule-id", "", "")
+	discover := fs.Bool("discover", false, "")
 	resume := fs.Bool("resume", false, "")
 	confirmation := fs.String("confirm-intent-sha256", "", "")
 	interactive := fs.Bool("interactive", false, "")
 	if err := fs.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
-			_, e := io.WriteString(output, "confirm-discovery-schedule (--intent FILE | --schedule-id ID | --resume) [--interactive | --confirm-intent-sha256 DIGEST]\nWithout confirmation option: preview only; --schedule-id makes one authenticated GET. Interactive mode requires a terminal and defaults to cancel. Confirmation never grants business permissions.\n")
+			_, e := io.WriteString(output, "confirm-discovery-schedule (--intent FILE | --schedule-id ID | --discover | --resume) [--interactive | --confirm-intent-sha256 DIGEST]\nWithout confirmation option: preview only; --schedule-id and --discover make authenticated GET requests. Interactive mode requires a terminal and defaults to cancel. Discovery is not authorization: the --discover lookup phase never selects, confirms or writes confirmation material; with more than one pending plan it lists candidates and stops, so choose explicitly with --schedule-id. Only an exact --confirm-intent-sha256 or a terminal yes confirms, and confirmation never grants business permissions.\n")
 			return e
 		}
 		return errDiscoverySchedule
 	}
 	sources := 0
-	for _, selected := range []bool{*resume, *path != "", *scheduleID != ""} {
+	for _, selected := range []bool{*resume, *path != "", *scheduleID != "", *discover} {
 		if selected {
 			sources++
 		}
@@ -146,6 +147,29 @@ func confirmSchedule(ctx context.Context, args []string, output io.Writer, now t
 			return errDiscoverySchedule
 		}
 		raw = journal.Intent
+	} else if *discover {
+		found, err := newAuthedClient(state).discoverPendingSchedules(ctx)
+		if err != nil {
+			return reportPendingScheduleDiscovery(output, found, err)
+		}
+		switch len(found.Candidates) {
+		case 0:
+			// Honest empty result: no confirmation request exists, and periodic
+			// discovery is not enabled by this command. A pure lookup succeeded,
+			// but a caller that explicitly requested confirmation must not receive
+			// a success exit when no confirmation occurred.
+			if _, err = io.WriteString(output, "No pending discovery schedule for this device. Nothing is waiting for local confirmation, so no request was created and no periodic discovery is enabled; ask the organization console to create a plan for this device, then retry with --discover.\n"); err != nil {
+				return errDiscoverySchedule
+			}
+			if *interactive || *confirmation != "" {
+				return errDiscoverySchedule
+			}
+			return nil
+		case 1:
+			raw = found.Candidates[0].Intent
+		default:
+			return listPendingScheduleCandidates(output, found.Candidates)
+		}
 	} else if *scheduleID != "" {
 		raw, err = newAuthedClient(state).fetchDiscoverySchedule(ctx, *scheduleID)
 		if err != nil {
@@ -218,6 +242,38 @@ func confirmSchedule(ctx context.Context, args []string, output io.Writer, now t
 	}
 	_, err = io.WriteString(output, "Confirmation acknowledged; history retained. No scan dispatched by this command; no runtime protection claim.\n")
 	return err
+}
+
+// A discovery failure leaves only the controlled reason. An integrity failure
+// may additionally name the affected schedule IDs — never their intents,
+// upstream bodies, URLs or credentials.
+func reportPendingScheduleDiscovery(output io.Writer, found *pendingScheduleDiscovery, err error) error {
+	if errors.Is(err, errPendingScheduleIntegrity) && found != nil {
+		if _, writeErr := io.WriteString(output, "Pending discovery schedules failed integrity verification; nothing selected, confirmed or written. Report these schedule IDs to the organization console:\n"); writeErr != nil {
+			return errDiscoverySchedule
+		}
+		for _, id := range found.IntegrityFailed {
+			if _, writeErr := fmt.Fprintf(output, "Schedule %s integrity_failed\n", id); writeErr != nil {
+				return errDiscoverySchedule
+			}
+		}
+	}
+	return err
+}
+
+// Discovery never chooses for the operator: more than one pending plan is listed
+// and abandoned so the next step must be an explicit --schedule-id.
+func listPendingScheduleCandidates(output io.Writer, candidates []pendingScheduleCandidate) error {
+	if _, err := io.WriteString(output, "Multiple pending discovery schedules; nothing selected, confirmed or written. Re-run with the exact --schedule-id:\n"); err != nil {
+		return errDiscoverySchedule
+	}
+	for _, candidate := range candidates {
+		if _, err := fmt.Fprintf(output, "Schedule %s status=%s revision=%d window=%s -> %s intent_sha256=%s\n",
+			candidate.ID, candidate.Status, candidate.Revision, candidate.StartsAt, candidate.ExpiresAt, candidate.Digest); err != nil {
+			return errDiscoverySchedule
+		}
+	}
+	return errDiscoverySchedule
 }
 
 // Scope, budget and expiry must have been successfully displayed by the caller.

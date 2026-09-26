@@ -55,6 +55,25 @@ func TestEnterpriseSetupOrderedIdentityBranches(t *testing.T) {
 				if !strings.Contains(out.String(), status) || !strings.Contains(out.String(), "stage_path") {
 					t.Fatal("missing progress")
 				}
+				lines := strings.Split(strings.TrimSpace(out.String()), "\n")
+				if len(lines) != 4 {
+					t.Fatalf("enterprise-setup/v1 progress must end at service, got %d records: %s", len(lines), out.String())
+				}
+				var gotProgress []string
+				for _, line := range lines {
+					var record struct {
+						Phase  string `json:"phase"`
+						Status string `json:"status"`
+					}
+					if json.Unmarshal([]byte(line), &record) != nil {
+						t.Fatalf("invalid progress record: %s", line)
+					}
+					gotProgress = append(gotProgress, record.Phase+"="+record.Status)
+				}
+				wantProgress := []string{"prepare=staged_only", "identity=registered_only", "consent=discovery_scope_saved", "service=" + status}
+				if !reflect.DeepEqual(gotProgress, wantProgress) {
+					t.Fatalf("enterprise-setup/v1 progress changed: %v", gotProgress)
+				}
 			})
 		}
 	}

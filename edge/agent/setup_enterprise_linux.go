@@ -144,6 +144,12 @@ func setupEnterprise(ctx context.Context, args []string, output io.Writer) error
 			if err == nil {
 				_, err = io.WriteString(output, "Optional existing-device schedule: (--schedule-id ID | --resume-schedule) with --confirm-schedule-sha256 DIGEST, or --interactive for a separate periodic consent prompt. Not supported with --review-only. Schedule failure stops before service installation.\n")
 			}
+			if err == nil {
+				// A new device has no schedule to name: the organization must
+				// create one after registration, and the device then discovers
+				// it read-only. Nothing here auto-creates or auto-confirms a plan.
+				_, err = io.WriteString(output, "New device: after registration and service configuration, create a bounded periodic plan for this device in the organization console, then run 'edge-agent confirm-discovery-schedule --discover --interactive' on the device. --discover is a read-only lookup; the periodic plan still needs its own explicit local confirmation.\n")
+			}
 			return err
 		}
 		return errEnterpriseSetup

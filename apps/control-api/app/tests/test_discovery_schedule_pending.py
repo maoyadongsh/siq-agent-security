@@ -103,11 +103,16 @@ def test_pending_list_denials(device_client, pending, fault):
     assert counts() == before
 
 
-def test_pending_list_reports_integrity_failure_without_projection(device_client, pending):
+@pytest.mark.parametrize("fault", ["plan_digest", "advanced_revision"])
+def test_pending_list_reports_integrity_failure_without_projection(device_client, pending, fault):
     _, headers, body = pending
     schedule_id = body["intent"]["schedule_id"]
     with session_scope() as session:
-        session.get(DiscoveryScheduleRecord, schedule_id).installation_plan_digest = "f" * 64
+        row = session.get(DiscoveryScheduleRecord, schedule_id)
+        if fault == "plan_digest":
+            row.installation_plan_digest = "f" * 64
+        else:
+            row.revision = 1
     response = device_client.get(PATH, headers=headers)
     assert response.status_code == 200, response.text
     result = response.json()
