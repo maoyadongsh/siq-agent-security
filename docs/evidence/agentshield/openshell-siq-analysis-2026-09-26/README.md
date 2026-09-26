@@ -5,7 +5,9 @@
 阅读顺序：**§一～§六 全部是只读**（未启动/重启/停止任何网关，未创建/删除沙箱，未 `policy set`）；
 **§七 是使用者逐次许可后的一次受控写入闭环**（`policy set` → 读回 → 回滚），回收结果见该节，原始留痕见 `06-`；
 **§八 是把 §五 那条结构性失败修掉的工具改动，全部在合成件上验证**（不碰任何真实网关），原始留痕见 `07-`。
-另见 R09.17：**本分支 HEAD 检出无法 `import app.main`**，该缺口已单独立项（见执行记录，不属本目录范围）。
+**§九 与本目录主题不同**：它是 R09.17b 的**只读导入闭包核验**（`import-closure-check.py`）留痕——那条线
+本来不属本目录，但被 §五 的工具改造过程撞出来后，原始留痕就一起放在这里，见 `08-`。
+**本分支 HEAD 检出无法 `import app.main`**（§九 / 执行记录 R09.17）。
 
 链接方式沿用仓库既定契约（`AGENTSHIELD.md:76`）：设
 `SIQ_AS_OPENSHELL_ENV_SH=/home/maoyd/siq-research-engine/scripts/openshell/env.sh`，不改对方仓库任何源码/配置/数据库。
@@ -214,3 +216,23 @@ if authorizer is None:
 **这一节仍不构成 E149 的恢复**：合成跑法下 `real_gateway` 只是工具常量；真跑需要**算子签发**一条授权
 条目（由执行者代签 = 自己制造授权，越界）。E149 文档记录的 8/8 即使目录完全正确也**不可逐字复现**
 （断言观测码必为授权闸的码）。天花板不变：无 `enforcement_verified`、无真实 deny 观测。
+
+## 九、顺带撞出来的 R09.17b：本分支的导入闭包缺口（只读核验，2026-09-26 追加）
+
+§八 的**负对照**本想在 `git archive HEAD` 的干净检出里跑改动前的预览工具，结果**那棵树连导入都做不到**：
+`ImportError: cannot import name 'DiscoveryScheduleRecord' from 'app.models'`。由此单独立项 **R09.17**，
+并在使用者就 D-8 选定 **C（只诊断不修）** 后落地为**可重复的只读核验** R09.17b。
+
+- 工具 `scripts/enterprise-experience/import-closure-check.py`（**未接线**、不参与门禁）：
+  `git archive <ref> apps/control-api` 到临时树 → 在只指向该树的白名单环境里试 `import app, app.main`
+  → 缺模块就从**工作树**定位补入再试。**只读**：不写仓库、不切共享工作树、不提交；子进程环境是白名单
+  （含 `SIQ_AS_DEV=1` 合成身份），不读 `.env`/私钥/种子。
+- **逐 ref 实测**：`HEAD`(`033f50d`) / `6ba1f7c` / `ad3116e` → `import_closure_open`，补件 **25** 条且**逐条相同**；
+  负对照 **`ebaaf3b`（父提交 / `main`）→ `import_closure_closed_at_ref`、0 补件、退出码 0**。
+  即：缺口生于分支**第一个**提交，此后每个提交都带着它、从未恶化；工具不是"无论给什么 ref 都报缺口"。
+- **补件构成**：3 条已跟踪被修改（`app/models.py` `+252/-3`、`deployment_preview.py` `+109/-5`、
+  `deployment_submission.py` `+39/-16`）+ 22 条未跟踪。**这更正了首次手工 graft 的目测（「1+24」）**，
+  总数 25 不变——`deployment_preview.py`/`deployment_submission.py` **在 HEAD 里存在**，只是工作树版本更新。
+- **天花板**：只说明「该 ref 的导入面是否自足」；**未**证明补入后控制面能启动/迁移能过/测试能收集，
+  **未**证明这 25 条「应该」并入（它们是并作者在飞的工作），不使任何门禁变绿，不产生 `enforcement_verified`；
+  结论**绑定 ref sha**，分支再提交必须重跑。原始留痕见 `08-import-closure-check-2026-09-26.txt`。

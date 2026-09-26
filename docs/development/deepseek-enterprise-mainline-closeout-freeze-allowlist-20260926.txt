@@ -78,6 +78,19 @@ docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/06-live-readback-rol
 # 以及 5 条"本轮没有证明什么"。**全部在合成件上**：无真实网关、无真实身份、无真实策略写入；
 # `real_gateway: true` 是工具常量而非测出来的。不产生 enforcement_verified。
 docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/07-preview-tool-operator-authority-2026-09-26.txt
+# 08 为 R09.17b 的只读导入闭包核验留痕：逐 ref 表（HEAD/6ba1f7c/ad3116e = open 25 条且逐条相同；
+# 负对照 ebaaf3b = closed_at_ref、0 补件、退出码 0）、25 条补件全清单（含 3 条已跟踪被修改及其
+# git 增删行数）、工具自身三次自伤的留痕、以及 5 条"没有证明什么"。**只读**：git archive 到临时树。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/08-import-closure-check-2026-09-26.txt
+
+# --- 工具：R09.17b 只读导入闭包核验（新增；未接门禁，D-8 选 C 后的可重复检查项） ---
+# 只读：git archive <ref> apps/control-api 到临时树后反复试 import app.main，缺模块即从工作树定位
+# 补入重试。不写仓库路径、不切共享工作树、不提交。子进程环境为白名单（含 SIQ_AS_DEV=1 合成身份）。
+# 四种判别码；退出码 0 只在 "ref 自足" 时出现（"闭包开着" 不是绿）。不产生 enforcement_verified。
+#   - import-closure-check.py    工具（新增未跟踪）
+#   - test_import_closure_check.py  10 条合成用例，每个用例在 tmp_path 现造一次性合成 git 仓
+scripts/enterprise-experience/import-closure-check.py
+scripts/enterprise-experience/test_import_closure_check.py
 
 # --- 工具：R09.16 预览工具改「身份 id 来自算子授权目录」（**既有已跟踪件被修改**，需复核） ---
 # 使用者 2026-09-26 两轮答复：「授权我修预览工具」+「改从算子目录读身份 id」。
