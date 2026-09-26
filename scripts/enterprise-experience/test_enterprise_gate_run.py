@@ -199,7 +199,8 @@ class GateRunTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             repo = make_git_repo(Path(tmp))
             out = Path(tmp) / "report.json"
-            builder = lambda _repo, _build: synthetic_gates({"ok": "passed"})
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
             code = tool.main(["--repo", str(repo), "--out", str(out), "--only", "ok"],
                              gate_builder=builder)
             self.assertEqual(code, tool.EXIT_NOT_GREEN)
@@ -213,7 +214,8 @@ class GateRunTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             repo = make_git_repo(Path(tmp))
             out = Path(tmp) / "report.json"
-            builder = lambda _repo, _build: synthetic_gates({"ok": "passed"})
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
             code = tool.main(["--repo", str(repo), "--out", str(out)], gate_builder=builder)
             self.assertEqual(code, tool.EXIT_NOT_GREEN)
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["conclusion"],
@@ -223,7 +225,8 @@ class GateRunTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             repo = make_git_repo(Path(tmp))
             inside = repo / "report.json"
-            builder = lambda _repo, _build: synthetic_gates({"ok": "passed"})
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
             with self.assertRaises(SystemExit) as ctx:
                 tool.main(["--repo", str(repo), "--out", str(inside)], gate_builder=builder)
             self.assertEqual(ctx.exception.code, tool.EXIT_USAGE)
@@ -241,7 +244,8 @@ class GateRunTest(unittest.TestCase):
             repo = make_git_repo(Path(tmp))
             out = Path(tmp) / "report.json"
             out.write_text("{}", encoding="utf-8")
-            builder = lambda _repo, _build: synthetic_gates({"ok": "passed"})
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
             code = tool.main(["--repo", str(repo), "--out", str(out)], gate_builder=builder)
             self.assertEqual(code, tool.EXIT_REPORT_WRITE_FAILED)
             self.assertEqual(out.read_text(encoding="utf-8"), "{}")

@@ -41,7 +41,7 @@ import subprocess
 import sys
 import tempfile
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 TOOL_VERSION = "enterprise-gate-run/0.1.0"
@@ -141,7 +141,7 @@ DECLARED_UNAVAILABLE = (
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def sha256_bytes(data: bytes) -> str:

@@ -1311,6 +1311,29 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **边界**：这 16 条**只**保证"工具不会把红说成绿"，**不**证明它在生产环境正确、不覆盖任何数据库/网络行为；**不产生 `enforcement_verified`**，不参与任何门禁，不改变 R09.8 那份契约验收证据的效力范围。
 
+### R09.10 本轮工具层的同候选回归与 lint 残留清零（R09.9 的收尾）
+
+**为什么做**：R09.9 收尾时按**仓库口径**（`ruff check --no-cache --config apps/control-api/pyproject.toml`，line-length 120，select `E,F,W,I,UP,B`；裸跑 `ruff` 是**假绿**）对本轮**全部 8 条工具路径**跑了一遍，残留 6 条：**5 条落在本轮路径**（`enterprise-gate-run.py:144` 1 条 `UP017`、`test_enterprise_gate_run.py` 4 条 `E731`）、**1 条在既有件** `source-freeze-preflight.py:291`（`UP017`）。本轮此前登记的"残留 5 条"正是前一组。
+
+**改动（行为等价，无逻辑变更）**：
+
+| 文件 | 改动 | 说明 |
+| --- | --- | --- |
+| `enterprise-gate-run.py` | `from datetime import datetime, timezone` → `from datetime import UTC, datetime`；`datetime.now(timezone.utc)` → `datetime.now(UTC)` | 仅别名现代化（Python ≥3.11） |
+| `test_enterprise_gate_run.py` | 4 处 `builder = lambda _repo, _build: synthetic_gates({...})` → 局部 `def builder(_repo, _build): return ...` | 测试内的桩函数，语义不变 |
+
+**未做（刻意）**：`source-freeze-preflight.py` 的那 1 条既有 `UP017` **没有改**——该文件**不在本轮允许清单内**，属既有件/并作者线，按 §3.2 不擅自扩大改动面。因此**仓库里仍有 1 条 lint 残留，但本轮路径已为 0**。
+
+**验证（三层，全部实测）**：
+
+1. `ruff`（本轮 8 条路径）→ `All checks passed!`（不再有本轮残留）。
+2. `pytest scripts/enterprise-experience -q -p no:randomly` → **92 passed**（本目录 5 个工具测试文件：契约验收 16、门禁 33、浏览器套件 18、契约版本链、源码冻结前置）。
+3. **真实运行一次改过的执行器**（不是只跑单测）：`enterprise-gate-run.py --only rulepack_python_go_identity,contract_version_chain` → 两条 `passed`，报告 `/tmp/gate-R099-rulepack-20260926T175635.json`（`real 0.9s`）。**顺带核到了被改的代码路径**：报告里 `started_at=2026-09-26T09:56:35Z` / `finished_at=…:36Z` 格式正确，`head_sha=b27608a…`，结论 `partial_run_not_a_gate`（按设计，带 `--only` 就永远不能是门禁结论）。
+
+**落盘与账目**：本节改动 = 2 条已跟踪源码路径（`enterprise-gate-run.py`、`test_enterprise_gate_run.py`）+ 2 条滚动文档，合计 **4 条已跟踪路径**，**清单条数不变（30）**。本次提交前的同口径读数（`2026-09-26T09:57:00Z` / `--out /tmp/preflight-r0910-20260926T175700.json`）= **106 tracked / 705 untracked**，相对上一份（`102 / 705`）**差恰好 +4**，与本节改动逐条对应。
+
+**边界（不许被下游读大）**：这是**工具层**的同候选回归——92 条单元/合成用例 + 1 次两门禁真实运行；**不是**纵向"不退化"证明（无改前基线），**不覆盖**后端全量（R07.9 的 `2164 passed / 1 skipped`）与前端全量（R07.5 的 `1003 passed`），**更不覆盖** A2 那 5 项前端 UI 失败。
+
 ### R07.11 可选浏览器验收门禁（把 `browser_acceptance` 从"恒登记"变成"可执行"）
 
 **为什么做**：R09.5 实测推翻了 `browser_acceptance` 原登记的 `requires_running_services`，"恒 `skipped`"就不再是事实描述。按 R07.10 给 `migration_replay_postgres` 的模式（**默认连探测都不做、显式 opt-in 才跑、证据附摘要级断言**）把它做成同构的第二条可选门禁。
