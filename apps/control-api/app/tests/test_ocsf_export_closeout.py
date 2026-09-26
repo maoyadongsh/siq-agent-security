@@ -10,7 +10,9 @@ limit 计数、审计摘要键集已在原文件覆盖，本文件不重复）�
 5. 审计失败 / 提交失败时客户端拿不到 200 内容，且审计与 outbox 无残留；
 6. 导出审计摘要只含既有受控元信息，不含导出正文与 canary；
 7. 敏感导出的缓存控制（no-store），且不改变媒体类型与业务输出；
-8. 导出不改业务状态、不写 outbox；响应不包含本次请求自己刚写的审计行。
+8. 导出不改业务状态、不写 outbox；响应不包含本次请求自己刚写的审计行；
+9. 截断事实声明 `X-SIQ-Export-Truncated`：空 / 少于 / 恰好 limit 为 0，limit+1 起为 1，
+   正文始终只有 limit 行；判定在租户过滤与 since 过滤之后，审计 count 是实际返回条数。
 
 每个用例组用自己的独立租户，因此可以用集合相等断言"只看得到自己的行"，且不受其他文件/用例顺序影响。
 期望值由本文件独立构造（种子数据 + 独立排序），不复制路由实现。失败注入用例用
@@ -20,7 +22,7 @@ limit 计数、审计摘要键集已在原文件覆盖，本文件不重复）�
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
@@ -38,6 +40,9 @@ CLO_REJ, CLO_SINCE, CLO_EXTREME = "tnt-ocsf-clo-rej", "tnt-ocsf-clo-since", "tnt
 CLO_TEXT, CLO_EMPTY, CLO_ORDER = "tnt-ocsf-clo-text", "tnt-ocsf-clo-empty", "tnt-ocsf-clo-order"
 CLO_FAIL, CLO_SUM, CLO_CACHE = "tnt-ocsf-clo-fail", "tnt-ocsf-clo-sum", "tnt-ocsf-clo-cache"
 CLO_RO, CLO_SELF = "tnt-ocsf-clo-ro", "tnt-ocsf-clo-self"
+TRUNC_FIND, TRUNC_EVENT = "tnt-ocsf-trunc-find", "tnt-ocsf-trunc-event"
+TRUNC_SCOPE_A, TRUNC_SCOPE_B = "tnt-ocsf-trunc-scope-a", "tnt-ocsf-trunc-scope-b"
+TRUNC_SINCE, TRUNC_TEXT = "tnt-ocsf-trunc-since", "tnt-ocsf-trunc-text"
 
 T0 = datetime(2024, 6, 1, 11, 59, 59)  # 边界前 1 秒（naive UTC）
 T1 = datetime(2024, 6, 1, 12, 0, 0)
@@ -67,6 +72,13 @@ HEAD_RO = _auditor(CLO_RO, "auditor-ro")
 HEAD_SELF = _auditor(CLO_SELF, "auditor-self")
 # 同租户、无 audit:read 角色（与 test_ocsf_export.py 的 403 用例同构，租户独立）
 HEAD_REJ_NO_PERM = {"X-Dev-Tenant-Id": CLO_REJ, "X-Dev-User-Id": "owner-rej", "X-Dev-Roles": "agent_owner"}
+
+HEAD_TRUNC_FIND = _auditor(TRUNC_FIND, "auditor-trunc-find")
+HEAD_TRUNC_EVENT = _auditor(TRUNC_EVENT, "auditor-trunc-event")
+HEAD_TRUNC_SCOPE_A = _auditor(TRUNC_SCOPE_A, "auditor-trunc-scope-a")
+HEAD_TRUNC_SCOPE_B = _auditor(TRUNC_SCOPE_B, "auditor-trunc-scope-b")
+HEAD_TRUNC_SINCE = _auditor(TRUNC_SINCE, "auditor-trunc-since")
+HEAD_TRUNC_TEXT = _auditor(TRUNC_TEXT, "auditor-trunc-text")
 
 
 @pytest.fixture(scope="module")
@@ -218,6 +230,8 @@ def test_rejected_request_is_refused_without_export_audit(client, label, query, 
 
     assert resp.status_code == expected_status, (label, resp.status_code, resp.text)
     assert b'"class_uid"' not in resp.content  # 拒绝时不得返回任何导出内容
+    # 截断头只描述成功导出；被拒绝的请求不得声称本次结果未截断
+    assert "x-siq-export-truncated" not in resp.headers
     assert _new_export_audits(CLO_REJ, before) == []  # 拒绝不产生"成功导出"审计
 
 
@@ -298,6 +312,7 @@ def test_empty_export_is_empty_body_and_still_audited(client):
     assert resp.status_code == 200
     assert resp.content == b""
     assert resp.headers["content-type"].startswith("application/x-ndjson")
+    assert resp.headers["x-siq-export-truncated"] == "0"  # 空结果也是显式声明
     new = _new_export_audits(CLO_EMPTY, before)
     assert len(new) == 1
     assert new[0].summary["count"] == 0
@@ -342,6 +357,7 @@ def test_audit_failure_delivers_no_content_and_persists_nothing(status_client, m
     assert resp.status_code >= 500, (resp.status_code, resp.text[:200])
     assert CANARY not in resp.text
     assert b'"class_uid"' not in resp.content
+    assert "x-siq-export-truncated" not in resp.headers
     assert _new_export_audits(CLO_FAIL, before_audits) == []
     assert _outbox_count() == before_outbox
 
@@ -373,6 +389,7 @@ def test_commit_failure_delivers_no_content_and_persists_no_audit(status_client,
     assert len(set(flushed_audit_ids) - before_audits) == 1
     assert CANARY not in resp.text
     assert b'"class_uid"' not in resp.content
+    assert "x-siq-export-truncated" not in resp.headers
     assert _new_export_audits(CLO_FAIL, before_audits) == []
     assert _outbox_count() == before_outbox
 
@@ -450,3 +467,116 @@ def test_export_response_excludes_its_own_audit_row(client):
     events = _lines(resp)
     assert any(e["activity_name"] == "clo.self.action" for e in events)
     assert sum(1 for e in events if e["activity_name"] == "export.ocsf") == before
+
+
+# ------------------------------------ 9. 截断事实声明 X-SIQ-Export-Truncated
+
+
+TRUNC_HEADER = "x-siq-export-truncated"
+
+
+def test_truncation_header_tracks_the_probe_row(client):
+    """空 / 少于 / 恰好 limit 为 0；limit+1 起为 1，且正文始终只有 limit 行。"""
+    _ensure_tenant(TRUNC_FIND)
+
+    empty = client.get(f"{EXPORT_URL}?class=detection_finding", headers=HEAD_TRUNC_FIND)
+    assert empty.status_code == 200 and empty.content == b""
+    assert empty.headers[TRUNC_HEADER] == "0"
+
+    seeded = [_seed_finding(TRUNC_FIND, f"trunc-{i}", T1 + timedelta(seconds=i)) for i in range(3)]
+
+    under = client.get(f"{EXPORT_URL}?class=detection_finding&limit=5", headers=HEAD_TRUNC_FIND)
+    assert under.headers[TRUNC_HEADER] == "0"
+    assert _finding_uids(under) == set(seeded)  # 少于 limit：全部返回
+
+    exact = client.get(f"{EXPORT_URL}?class=detection_finding&limit=3", headers=HEAD_TRUNC_FIND)
+    assert exact.headers[TRUNC_HEADER] == "0"  # 恰好 limit：第 limit+1 条不存在
+    assert len(_lines(exact)) == 3
+
+    over = client.get(f"{EXPORT_URL}?class=detection_finding&limit=2", headers=HEAD_TRUNC_FIND)
+    assert over.headers[TRUNC_HEADER] == "1"  # 还有更多匹配记录
+    assert [e["finding_info"]["uid"] for e in _lines(over)] == seeded[:2]
+    # 探测行绝不进入正文、日志或审计
+    assert len(_lines(over)) == 2
+
+
+def test_truncation_audit_counts_returned_rows_only(client):
+    """审计 summary.count 是实际返回条数，不是探测条数，且摘要仍无正文。"""
+    _seed_finding(TRUNC_FIND, "trunc-audit-1", T1)
+    _seed_finding(TRUNC_FIND, "trunc-audit-2", T2)
+    before = {row.id for row in _export_audits(TRUNC_FIND)}
+
+    resp = client.get(f"{EXPORT_URL}?class=detection_finding&limit=1", headers=HEAD_TRUNC_FIND)
+
+    assert resp.status_code == 200
+    assert resp.headers[TRUNC_HEADER] == "1"
+    assert len(_lines(resp)) == 1
+    new = _new_export_audits(TRUNC_FIND, before)
+    assert len(new) == 1
+    assert new[0].summary["count"] == 1  # 不是 2（探测行）
+    assert set(new[0].summary) == {"class", "count", "since"}
+
+
+def test_truncation_applies_to_api_activity_with_stable_ordering(client):
+    """两类导出都声明截断；同时间戳按 ID 升序稳定排序后取前 limit 条。"""
+    pairs = [
+        (_seed_audit(TRUNC_EVENT, f"trunc.evt.{i}", T2, resource_id=f"fnd_trunc_{i}"), f"fnd_trunc_{i}")
+        for i in range(3)
+    ]
+    expected = [resource for _, resource in sorted(pairs)]
+
+    exact = client.get(f"{EXPORT_URL}?class=api_activity&limit=3", headers=HEAD_TRUNC_EVENT)
+    assert exact.headers[TRUNC_HEADER] == "0"
+    assert [e["resources"][0]["uid"] for e in _lines(exact)] == expected
+
+    over = client.get(f"{EXPORT_URL}?class=api_activity&limit=2", headers=HEAD_TRUNC_EVENT)
+    assert over.headers[TRUNC_HEADER] == "1"
+    events = _lines(over)
+    assert [e["resources"][0]["uid"] for e in events] == expected[:2]
+    assert all(e["class_uid"] == 6003 for e in events)
+
+
+def test_truncation_is_tenant_scoped(client):
+    """同规则标识、同时间戳：截断判定只看请求方租户自己的匹配行。"""
+    a = [_seed_finding(TRUNC_SCOPE_A, "trunc-same-rule", T1 + timedelta(seconds=i)) for i in range(3)]
+    b = [_seed_finding(TRUNC_SCOPE_B, "trunc-same-rule", T1)]
+
+    resp_a = client.get(f"{EXPORT_URL}?class=detection_finding&limit=2", headers=HEAD_TRUNC_SCOPE_A)
+    resp_b = client.get(f"{EXPORT_URL}?class=detection_finding&limit=2", headers=HEAD_TRUNC_SCOPE_B)
+
+    assert resp_a.headers[TRUNC_HEADER] == "1"  # A 有 3 条
+    assert resp_b.headers[TRUNC_HEADER] == "0"  # B 只有 1 条，与 A 无关
+    assert _finding_uids(resp_a) == set(a[:2])
+    assert _finding_uids(resp_b) == set(b)
+
+
+def test_truncation_is_decided_after_the_since_filter(client):
+    """探测发生在租户与 since 过滤之后：被 since 排除的行不算"更多匹配"。"""
+    _seed_finding(TRUNC_SINCE, "trunc-since-old", T0)
+    fresh = [_seed_finding(TRUNC_SINCE, f"trunc-since-new-{i}", T1 + timedelta(seconds=i)) for i in range(3)]
+
+    filtered = client.get(
+        f"{EXPORT_URL}?class=detection_finding&since=2024-06-01T12:00:00Z&limit=3",
+        headers=HEAD_TRUNC_SINCE,
+    )
+    assert filtered.headers[TRUNC_HEADER] == "0"  # 过滤后恰好 3 条
+    assert _finding_uids(filtered) == set(fresh)
+
+    unfiltered = client.get(f"{EXPORT_URL}?class=detection_finding&limit=3", headers=HEAD_TRUNC_SINCE)
+    assert unfiltered.headers[TRUNC_HEADER] == "1"  # 同一 limit，多出旧行即截断
+
+
+def test_truncated_response_keeps_the_ndjson_contract(client):
+    """截断只影响条数声明：媒体类型、no-store、逐行完整与末尾换行都不变。"""
+    for i in range(3):
+        _seed_finding(TRUNC_TEXT, f"trunc-text-{i}", T1 + timedelta(seconds=i))
+
+    resp = client.get(f"{EXPORT_URL}?class=detection_finding&limit=2", headers=HEAD_TRUNC_TEXT)
+
+    assert resp.status_code == 200
+    assert resp.headers[TRUNC_HEADER] == "1"
+    assert resp.headers["cache-control"] == "no-store"
+    assert resp.headers["content-type"].startswith("application/x-ndjson")
+    assert resp.content.endswith(b"\n")
+    assert len(resp.content.split(b"\n")) == 3  # 2 行 + 末尾换行
+    assert len(_lines(resp)) == 2

@@ -4,7 +4,10 @@
 - audit:read 权限；tenant_id 只从验证身份派生；
 - 只读导出，但导出动作本身写审计（与读操作同事务提交，summary 只含 class/条数/since，不含导出内容）；
 - NDJSON 流式格式，时间正序；敏感导出响应带 Cache-Control: no-store；
-- 非法参数（含时区换算越界的极端 since）在导出前受控拒绝，拒绝不留导出审计。
+- 非法参数（含时区换算越界的极端 since）在导出前受控拒绝，拒绝不留导出审计；
+- 每次成功响应显式声明是否被 limit 截断（X-SIQ-Export-Truncated: 0|1）。
+  该头只描述"本次结果是否还有更多匹配记录"，本接口不是完整归档：不新增
+  删除、归档、游标或全量导出工作流，也不引入 published/verified 状态。
 """
 
 from __future__ import annotations
@@ -63,12 +66,16 @@ def export_ocsf(
     query = select(model).where(model.tenant_id == identity.tenant_id)
     if since is not None:
         query = query.where(time_column >= _parse_since(since))
-    rows = list(session.scalars(query.order_by(time_column.asc(), model.id).limit(limit)))
+    # 多探测一行以判定截断：该探测行只用于计算响应头，绝不进入正文、审计或错误。
+    probed = list(session.scalars(query.order_by(time_column.asc(), model.id).limit(limit + 1)))
+    rows = probed[:limit]
+    truncated = len(probed) > limit
 
     lines = [json.dumps(mapper(row), ensure_ascii=False) for row in rows]
     body = "\n".join(lines) + ("\n" if lines else "")
 
-    # 导出动作审计：summary 只含 class/条数/since，不含任何导出内容
+    # 导出动作审计：summary 只含 class/条数/since，不含任何导出内容。
+    # count 是实际返回条数，不是探测条数（探测行不得泄漏导出规模假象）。
     audit(
         session,
         identity.tenant_id,
@@ -81,9 +88,11 @@ def export_ocsf(
         summary={"class": class_, "count": len(rows), "since": since},
     )
     session.commit()
-    # 敏感导出：禁止任何层级缓存（媒体类型与正文不变）
+    # 敏感导出：禁止任何层级缓存（媒体类型与正文不变）。
+    # X-SIQ-Export-Truncated 是本次结果面对 limit 的诚实声明（1=还有更多匹配记录），
+    # 不表示接口是完整归档，也不新增 published/verified 之类状态。
     return Response(
         content=body,
         media_type="application/x-ndjson",
-        headers={"Cache-Control": "no-store"},
+        headers={"Cache-Control": "no-store", "X-SIQ-Export-Truncated": "1" if truncated else "0"},
     )
