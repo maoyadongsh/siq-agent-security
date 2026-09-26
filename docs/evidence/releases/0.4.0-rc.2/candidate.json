@@ -1,0 +1,10 @@
+{
+  "schema_version": "siq-release-candidate-record/v1",
+  "version": "0.4.0-rc.2",
+  "source_sha": "7b68c14abeff707777278034f2ccfd19b43ac609",
+  "publisher_manifest_verified": true,
+  "published": false,
+  "reviewed_source_inventory_sha256": "151b081b5ee19c91127a4ee46a97ef731fbe0c58d8259bfe743be169775d05f6",
+  "evidence": ["SOURCE-INFO.json", "SHA256SUMS", "verification.json", "tamper-rejection.json"],
+  "acceptance_scope": "linux/arm64 isolated final-package startup only; no upgrade, rollback or other native target acceptance"
+}

@@ -1,0 +1,149 @@
+# 07 · 预览工具改「身份 id 来自算子授权目录」——合成闭环 + 负对照（2026-09-26）
+
+本文件留痕 R09.16：修 `scripts/enterprise-experience/openshell-preview-live-check.py`，
+使它的身份 id 不再运行期现造、而改从**算子预先声明的授权目录**读取。承接本目录 §五
+（该工具在 `require_target_authority` 生效后**结构性**无法通过预览断言）。
+
+**本文件里没有任何真实网关、真实 CLI、真实沙箱或真实策略。** 全部观测来自一个合成
+`openshell` 可执行文件（只打印固定 `gateway info` / `status` / `policy get` 文本，从不联网）
+与一个合成授权目录。因此：
+
+- 天花板仍是 `readback_verified` 之下——本文件**不产生** `enforcement_verified`；
+- 合成跑法下结果里的 `real_gateway: true` 是**工具里的常量字段，不是检查项**，
+  不得当作"真的连过网关"的证据（工具自身未校验这一点，本轮也没改它）；
+- 本文件不构成 E149 的字面复现：见 §六。
+
+## 一、改动（两条路径，均在允许清单内）
+
+| 路径 | 状态 | 改动 |
+| --- | --- | --- |
+| `scripts/enterprise-experience/openshell-preview-live-check.py` | 既有件被修改（HEAD 中已跟踪） | 新增必填 `--target-authority`、可选 `--assignment-id`；读目录 → 选中唯一条目 → 用条目里的 tenant/environment/asset/agent_instance 落隔离库；把 `SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE` 显式设回子进程环境；无 HIT 时写有界失败记录 |
+| `scripts/enterprise-experience/test_openshell_preview_live_check.py` | **新增未跟踪** | 5 条隔离测试，合成 CLI + 合成目录，不接触任何网关 |
+
+工具侧其余性质未变：只允许 `gateway info` / `status` / `--version` / `policy get <target> --full`
+四条只读命令；不写策略；不落路径、凭据、证书或策略正文。
+
+## 二、为什么必须改（不是"放行一个环境变量"）
+
+`app/target_authority.py:125-133` 对授权目录做**精确元组相等**判定：
+
+```text
+(tenant_id, environment_id, asset_id, agent_instance_id,
+ endpoint_fingerprint, gateway_name_sha256, backend_target_id)
+```
+
+`environment_id` 原先由 `POST /environments` 服务端生成，`asset_id`/`agent_instance_id`
+由工具在运行期 `flush()` 生成——算子**不可能在运行前**写进目录。所以只把变量加进白名单，
+只会从"变量被清掉"变成"目录里找不到这条授权"，预览仍是 409。
+
+## 三、实现要点
+
+1. **读目录**：复用门禁自己的 `_read_authority_bytes` + `_unique_object` + `TargetAuthority`，
+   而不是另写一套——两套判定必然漂移。符号被改名会立刻 `ImportError`（响亮失败）。
+2. **选条目**：`--assignment-id` 精确指定；否则按 `backend_target_id == --target` 取唯一一条。
+   缺条目 → `authority_target_absent`；多条 → `authority_target_ambiguous`（同一沙箱目标在两个
+   XDG 上下文各有一条授权，是真实形态）。
+3. **核对指纹**：`probe()` 后比对 `caps.endpoint_fingerprint` 与
+   `sha256(caps.handshake_gateway)`；不符即以 `authority_endpoint_mismatch` /
+   `authority_gateway_mismatch` 失败，并把**两个观测摘要都写进失败记录**，算子一次就能补齐目录。
+4. **落库**：`Environment` / `AgentAsset` / `AgentInstance` 按条目里的 id **显式主键**直插隔离库
+   （`POST /environments` 不接受算子指定 id）。代价见 §七。
+5. **失败留痕**：`write_failure()` 只写固定判别码与摘要，`production_eligible` /
+   `runtime_policy_mutated` / `enforcement_verified` 恒为 false。
+
+## 四、合成闭环原文
+
+命令（合成 CLI 与合成 XDG 根；`--out-dir` 必须独占）：
+
+```bash
+apps/control-api/.venv/bin/python scripts/enterprise-experience/openshell-preview-live-check.py \
+  --cli <synth>/openshell --endpoint https://127.0.0.1:18443 --xdg-root <synth>/xdg \
+  --target siq-synthetic-preview-target --target-authority <synth>/authority-zero.json \
+  --out-dir <synth>/out-a
+```
+
+**跑 1（目录里指纹/网关名全 0）**：`rc=1`，stdout
+`{"passed": false, "reason": "authority_endpoint_mismatch"}`，`result.json`：
+
+```json
+{
+  "schema_version": "openshell-preview-live-check/v1",
+  "passed": false,
+  "reason": "authority_endpoint_mismatch",
+  "production_eligible": false,
+  "runtime_policy_mutated": false,
+  "enforcement_verified": false,
+  "observed_endpoint_fingerprint": "21a90c60fff78658ccb0dd8b9221cc1885f6042422b4b68983a72a339fb52900",
+  "observed_gateway_name_sha256": "a54c2a0cfb1c14654dee66ba0969e065dd9bc695000db2d96ed87503a8224052"
+}
+```
+
+**跑 2（用跑 1 给出的两个摘要补全目录，同一条命令）**：`rc=0`，stdout
+`{"passed": true, "checks": 10, "runtime_policy_mutated": false}`，`result.json` 关键字段：
+
+```json
+{
+  "passed": true,
+  "identity": "operator_declared_authority",
+  "assignment_id": "iso-preview-assignment",
+  "authority_sha256": "090c046f9e070585a4a16b5c1eaf7a6e7f09b26007d2a9c131b93b692f12bef9",
+  "gateway_version": "0.0.104",
+  "before_revision": "4", "after_revision": "4",
+  "before_policy_digest": "9b5e2def…", "after_policy_digest": "9b5e2def…",
+  "command_count": 12,
+  "changed_context_detail": "deployment_target_authority_unverified",
+  "enforcement_verified": false, "production_eligible": false,
+  "post_preview_counts": {"deployments": 0, "edge_tasks": 0}
+}
+```
+
+十项检查（`checks`）全 true，含新加的 `operator_declared_identity_used` 与
+`authority_tuple_matches_live_gateway`；`counts()` 本轮扩展为
+`Deployment / EdgeTask / AuditEvent / DeploymentSubmission / OutboxEvent` 五表前后相等。
+
+## 五、负对照：同一合成 bench 上，改动前的工具必失败
+
+把 `git show ad3116e:scripts/enterprise-experience/openshell-preview-live-check.py` 放到
+`<repo>/x/y/` 深度（只为让它的 `parents[2]` 解析回仓库根），用**同一合成 CLI、同一 XDG 根、
+同一目标**跑（该版本没有 `--target-authority`）：
+
+```text
+File ".../openshell-preview-live-check.py", line 136, in main
+    value = post('/deployment-preview', body)
+AssertionError: ('/deployment-preview', 409)
+rc=1
+```
+
+即：与 §五记录的真实网关跑法**同一行、同一症状**（409 在预览断言处），仅用合成件即可复现。
+改动后的工具在同一 bench 上跑 2 全绿（§四）。跑完即删该临时目录，未落任何仓库路径。
+
+## 六、新发现：「目录变化拒绝旧预览」的**断面**已经换了
+
+原工具在 `XDG_CACHE_HOME` 变化后提交旧摘要，期望 409 `deployment_preview_changed`。
+在本候选上实测得到的是 **409 `deployment_target_authority_unverified`**：
+
+- 上下文一变 → 调用指纹随之改变 → 授权目录里的条目不再匹配 → `_prepare` 内的
+  `require_target_authority` **先于**摘要比对失败；
+- `deployment_preview_changed` 在 `app/routers/deployment_preview.py:252`，本路径**不可达**。
+
+性质（"上下文变化必须被拒，且零写入"）仍然成立，被拒的**位置更靠前**。因此工具把检查项从
+`changed_context_refuses_old_digest_without_writes` 改名为
+`changed_context_refused_without_writes`，并把实际判别码写进
+`changed_context_detail`，不假装机制还是旧的；隔离测试钉住这一断面。
+
+**对 E149 的影响**：`docs/development/ux-openshell-live-preview-e149-validation-20260923.md`
+记录的 8/8（"目录变化拒绝旧预览"，前后 revision 均为 2）**即使授权目录完全正确，也不可能
+逐字复现**——那条断言的观测码必然是授权闸的码。E149 的**性质**可复现，**字面记录不可复现**。
+
+## 七、本轮**没有**证明什么
+
+1. **没有碰真实网关。** 合成 CLI 之下，`real_gateway` 字段仍是 `true`（工具常量），
+   这正说明该字段不能当证据用。
+2. **没有恢复真实网关上的 E149。** 要真跑，必须有**算子签发**的授权目录条目
+   （含真实的 tenant / environment / asset / agent_instance / 指纹 / 网关名哈希）。
+   由本轮执行者代签等于自己制造一份授权，属于越界——因此停在"工具已就绪 + 需要算子条目"。
+3. **没有**任何 `enforcement_verified`、没有真实 deny 观测；`expect_deny` 仍是固定兼容样例。
+4. **没有**验证 E149 之后**其余**环节在真实网关上的可达性：合成 bench 证明的是这条链路
+   在替身上可达（10/10），真实网关上的 `plan_change` / 读回是否同样通过，仍未实测。
+5. 环境创建这一支不再经过 `POST /environments`（该端点不接受算子指定 id）；
+   若以后要求"必须经由环境创建 API"，需要另想办法让服务端接受预声明 id。

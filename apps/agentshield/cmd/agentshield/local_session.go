@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -95,11 +96,20 @@ func probeLocalInstance(client *http.Client, endpoint string, st *state.Store) (
 func cmdLocalSession(command string, args []string) error {
 	fs := flag.NewFlagSet(command, flag.ContinueOnError)
 	port := fs.Int("port", 0, "local service port (default from config.json, 47611)")
+	var requestID string
+	var confirm bool
+	if command == "connect" {
+		fs.StringVar(&requestID, "request", "", "public request ID explicitly supplied by the user")
+		fs.BoolVar(&confirm, "confirm-connect", false, "confirm this browser may manage the local client")
+	}
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	if fs.NArg() != 0 {
 		return errors.New("unexpected argument")
+	}
+	if command == "connect" && (!confirm || !regexp.MustCompile(`^[a-f0-9]{32}$`).MatchString(requestID)) {
+		return errors.New("connect: requires the user's browser request ID and --confirm-connect; never approve an unsolicited request")
 	}
 	dir, err := state.DefaultDir()
 	if err != nil {
@@ -130,11 +140,49 @@ func cmdLocalSession(command string, args []string) error {
 	if err != nil {
 		return errors.New("local recovery credential unavailable; use the same state directory as serve or upgrade the service")
 	}
+	if command == "connect" {
+		if err := requestBrowserConnect(client, endpoint, credential, requestID); err != nil {
+			return err
+		}
+		fmt.Fprintln(os.Stdout, "已确认本次浏览器连接。请回到管理页面，页面会自动继续；未授予任何智能体业务权限。")
+		return nil
+	}
 	code, err := requestLocalPairing(client, endpoint, credential)
 	if err != nil {
 		return err
 	}
 	fmt.Fprintln(os.Stdout, "Admin pairing code (single use, 5 minutes):", code)
 	fmt.Fprintln(os.Stdout, "Open", endpoint, "to pair. Existing admin sessions remain valid.")
+	return nil
+}
+
+func requestBrowserConnect(client *http.Client, endpoint, credential, id string) error {
+	body, err := json.Marshal(map[string]string{"request_id": id})
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodPost, endpoint+"/v1/session/connect/approve", bytes.NewReader(body))
+	if err != nil {
+		return errors.New("invalid local endpoint")
+	}
+	req.Header.Set("Authorization", "Bearer "+credential)
+	req.Header.Set("X-SIQ-Local-CLI", "1")
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		return errors.New("无法确认连接，请检查本机服务；无需重启")
+	}
+	var result struct {
+		SchemaVersion string `json:"schema_version"`
+		RequestID     string `json:"request_id"`
+		Status        string `json:"status"`
+		ExpiresIn     int    `json:"expires_in"`
+	}
+	if err := decodeLocalResponse(resp, &result); err != nil {
+		return errors.New("连接未确认：请求可能已过期或服务版本不支持。请在浏览器重新发起；旧版可使用手动配对")
+	}
+	if result.SchemaVersion != "local-browser-connect/v1" || result.RequestID != id || result.Status != "approved" || result.ExpiresIn < 0 || result.ExpiresIn > 300 {
+		return errors.New("local service returned an invalid connection response")
+	}
 	return nil
 }

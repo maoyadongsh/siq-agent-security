@@ -1,0 +1,55 @@
+/* 周期发现计划面板专用样式（dsm- 前缀，不覆盖共享类选择器）。 */
+.dsm-panel {
+  overflow-wrap: anywhere;
+}
+
+.dsm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.dsm-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.dsm-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.dsm-label {
+  flex: 0 0 6em;
+  color: var(--text-secondary);
+}
+
+.dsm-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.dsm-panel button:focus-visible {
+  outline: 2px solid var(--siq-primary);
+  outline-offset: 2px;
+}
+
+/* 375px：字段纵向排列，避免横向溢出。 */
+@media (max-width: 480px) {
+  .dsm-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .dsm-label {
+    flex-basis: auto;
+  }
+}

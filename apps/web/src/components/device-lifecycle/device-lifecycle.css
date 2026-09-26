@@ -1,0 +1,4 @@
+.device-lifecycle { min-width: 0; overflow-wrap: anywhere; }
+.device-lifecycle label { display: grid; gap: 0.5rem; margin: 1rem 0; }
+.device-lifecycle input, .device-lifecycle select { width: 100%; min-width: 0; max-width: 100%; }
+.device-lifecycle button { max-width: 100%; white-space: normal; }

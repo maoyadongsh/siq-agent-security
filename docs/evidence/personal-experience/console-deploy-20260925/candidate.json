@@ -1,0 +1,23 @@
+{
+  "schema_version": "personal-console-deployment-candidate/v1",
+  "id": "console-deploy-20260925",
+  "evidence": [
+    "deployment.json",
+    "browser-check.json",
+    "preservation.json"
+  ],
+  "source_candidate": "../console-simplification-20260925/candidate.json",
+  "version": "0.4.0-dev-console",
+  "binary_sha256": "2bcbde4bc46a95b4aa599a94d7ad1aa707f9209823951ddbc438e2dfe5ec7b2e",
+  "status": "deployed_and_verified",
+  "formal_release": false,
+  "live_url": "http://127.0.0.1:47611/agents",
+  "unchanged": [
+    "business grants",
+    "runtime identities",
+    "receipt chain",
+    "enterprise services"
+  ],
+  "private_artifacts": "var/flagship/console-deploy-20260925-r2/",
+  "rollback_tested": false
+}

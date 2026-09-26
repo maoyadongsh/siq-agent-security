@@ -80,10 +80,11 @@ export default function TaskActivitiesPage() {
     setParams(activityQueryParams(view, next));
   };
   return <section>
-    <PageHeader kicker="本机记录" icon="audit" title="运行记录"
+    <PageHeader kicker="本机记录" icon="audit" title="运行审计"
       description="按最近记录排列。调用裁决说明工具是否获准，业务结果请进入详情核对。"
       connection={loading ? 'loading' : current?.error ? 'disconnected' : 'connected'} connectionError={current?.error}
       actions={<button className="btn btn-primary" disabled={loading} onClick={() => { setParams(activityQueryParams(view, filters)); setRetry((v) => v + 1); }}>刷新记录</button>} />
+    <div className="toolbar"><Link to="/bindings">运行时绑定与验证</Link><Link to="/receipts">原始回执与链校验</Link><Link to="/settings#operation-audit">权限变更审计</Link><Link to="/permission-center">查看当前权限</Link></div>
     <div className="card">
       <div className="toolbar">
         <button className={view === 'tasks' ? 'btn btn-primary' : 'btn'} aria-pressed={view === 'tasks'} onClick={() => setParams(activityQueryParams('tasks', filters))}>已归属任务</button>

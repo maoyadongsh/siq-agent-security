@@ -7,6 +7,12 @@ import { api, ApiError, describeApiError } from '@/api/client';
 import { assetStatusLabel, inventoryAccess, type InventoryAccess } from '@/api/inventoryReview';
 import type { AgentAsset, Evidence } from '@/api/types';
 import BusinessRunLinks from '@/components/BusinessRunLinks';
+import DiscoveryOriginPanel from '@/components/inventory/DiscoveryOriginPanel';
+import RoleSkillSelectionPanel from '@/components/inventory/RoleSkillSelectionPanel';
+import FrameworkSourcePanel from '@/components/inventory/FrameworkSourcePanel';
+import RoleSkillSourcesPanel from '@/components/inventory/RoleSkillSourcesPanel';
+import RoleConfigurationHistoryPanel from '@/components/inventory/RoleConfigurationHistoryPanel';
+import { frameworkTreeQuery } from '@/components/framework-tree/frameworkTreeNavigation';
 
 type LoadStatus = 'loading' | 'connected' | 'disconnected';
 
@@ -53,6 +59,11 @@ function InfoRow({ label, value }: { label: string; value: ReactNode }) {
  * 后端未运行时保持"未连接"空态（可重试），不阻塞页面。
  */
 export default function AgentDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  return <AgentDetailContent key={id ?? 'missing'} />;
+}
+
+function AgentDetailContent() {
   const { id } = useParams<{ id: string }>();
   const [params] = useSearchParams();
   const [evidenceError, setEvidenceError] = useState(false);
@@ -145,6 +156,11 @@ export default function AgentDetailPage() {
               <InfoRow label="更新时间" value={agent.updated_at} />
             </dl>
           </div>
+          <DiscoveryOriginPanel assetId={agent.id} />
+          <FrameworkSourcePanel assetId={agent.id} />
+          <RoleConfigurationHistoryPanel assetId={agent.id} />
+          <RoleSkillSelectionPanel assetId={agent.id} />
+          <RoleSkillSourcesPanel assetId={agent.id} />
           <div className="card">
             <h2>关联证据{evidenceError ? '' : `（${evidence.length}）`}</h2>
             {evidenceError ? <p role="alert">关联证据读取失败，不能据此判断没有证据。<button className="btn" onClick={() => setReloadSeq(s => s + 1)}>重试读取证据</button></p> : null}
@@ -160,7 +176,8 @@ export default function AgentDetailPage() {
         </>
       ) : null}
       <p>
-        <Link to={params.get('view') === 'candidates' ? '/agents?view=candidates' : '/agents?view=agents'}>← 返回智能体资产列表</Link>
+        <Link to={params.get('view') === 'framework' ? `/agents?${frameworkTreeQuery(params)}`
+          : params.get('view') === 'candidates' ? '/agents?view=candidates' : '/agents?view=agents'}>← 返回智能体资产列表</Link>
       </p>
     </section>
   );

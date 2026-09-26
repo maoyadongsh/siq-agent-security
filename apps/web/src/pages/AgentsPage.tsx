@@ -4,6 +4,8 @@ import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import CandidateReview from '@/components/inventory/CandidateReview';
+import BulkCandidateReview from '@/components/inventory/BulkCandidateReview';
+import FrameworkTreeView from '@/components/framework-tree/FrameworkTreeView';
 import { useApiList } from '@/hooks/useApiList';
 import { assetStatusLabel, inventoryAccess, inventoryStamp, type InventoryAccess } from '@/api/inventoryReview';
 import type { AgentAsset } from '@/api/types';
@@ -19,7 +21,15 @@ export default function AgentsPage() {
   const [accessError, setAccessError] = useState(false);
   const [retry, setRetry] = useState(0);
   const [message, setMessage] = useState('');
+  const [selected, setSelected] = useState<AgentAsset[]>([]);
+  const [bulk, setBulk] = useState<{ assets: AgentAsset[]; action: 'confirm' | 'dismiss' }>();
   const [target, setTarget] = useState<{ asset: AgentAsset; action: 'confirm' | 'dismiss' }>();
+  // 仅保存视图选择，支持详情返回、刷新及前进后退；旧 view 值行为不变。
+  const frameworkView = params.get('view') === 'framework';
+  const frameworkFilter = {
+    environmentId: params.get('environment_id') ?? '',
+    deviceId: params.get('device_id') ?? '',
+  };
   const active = tab === 'candidates' ? candidates : agents;
   useEffect(() => {
     let live = true;
@@ -27,7 +37,7 @@ export default function AgentsPage() {
       .catch(() => { if (live) { setAccess(undefined); setAccessError(true); } });
     return () => { live = false; };
   }, [retry]);
-  const refresh = () => { agents.refresh(); candidates.refresh(); setAccess(undefined); setRetry(n => n + 1); setMessage(''); };
+  const refresh = () => { setSelected([]); agents.refresh(); candidates.refresh(); setAccess(undefined); setRetry(n => n + 1); setMessage(''); };
   const resolved = (asset: AgentAsset, reconciled: boolean) => {
     setTarget(undefined);
     setMessage(reconciled ? `已核对“${asset.name}”当前为${assetStatusLabel(asset.status)}。这可能包含其他操作者的处理，请按详情核查。`
@@ -43,22 +53,38 @@ export default function AgentsPage() {
     { key: 'source', header: '发现来源', render: a => sourceLabels[a.source_type ?? ''] ?? '其他采集来源' },
     { key: 'updated', header: '更新时间', render: a => inventoryStamp(a.updated_at) },
   ];
+  if (tab === 'candidates' && access?.can_confirm) columns.push({ key: 'select', header: '批量选择', render: asset => {
+    const checked = selected.some(row => row.id === asset.id);
+    return <input type="checkbox" aria-label={`选择候选 ${asset.name} ${asset.id}`} checked={checked}
+      disabled={active.status !== 'connected' || !!target || !!bulk || (!checked && selected.length >= 50)}
+      onChange={event => setSelected(previous => event.target.checked ? [...previous, asset] : previous.filter(row => row.id !== asset.id))} />;
+  } });
   if (tab === 'candidates' && access?.can_confirm) columns.push({ key: 'actions', header: '操作', render: a => <span className="row-actions">
-    <button className="btn btn-sm" disabled={active.status !== 'connected' || !!target} onClick={() => setTarget({ asset: a, action: 'confirm' })}>确认资产</button>
-    <button className="btn btn-sm" disabled={active.status !== 'connected' || !!target} onClick={() => setTarget({ asset: a, action: 'dismiss' })}>驳回</button>
+    <button className="btn btn-sm" disabled={active.status !== 'connected' || !!target || !!bulk} onClick={() => { setSelected([]); setTarget({ asset: a, action: 'confirm' }); }}>确认资产</button>
+    <button className="btn btn-sm" disabled={active.status !== 'connected' || !!target || !!bulk} onClick={() => { setSelected([]); setTarget({ asset: a, action: 'dismiss' }); }}>驳回</button>
   </span> });
   const shownRows = active.status === 'connected' ? active.rows : [];
   return <section>
     <PageHeader icon="agents" title="智能体资产" description="先核对发现的配置与业务用途，再确认资产。确认资产不代表权限已经生效。"
-      connection={active.status} connectionError={active.error} actions={<div className="row-actions">
+      connection={active.status} connectionError={active.error} actions={<>
+        <Link className="btn" to="/agents/skills">查看技能清单</Link>
         {access?.can_discover ? <Link className="btn" to="/environments">接入环境与发现</Link> : null}
         <button className="btn" onClick={refresh}>刷新资产列表</button>
-      </div>} />
+      </>} />
     <div className="tabs" role="tablist" aria-label="资产视图">
-      <button role="tab" aria-selected={tab === 'agents'} className={`tab-btn${tab === 'agents' ? ' active' : ''}`} onClick={() => setParams({ view: 'agents' })}>资产清单{agents.status === 'connected' ? `（已加载 ${agents.rows.length}）` : ''}</button>
-      <button role="tab" aria-selected={tab === 'candidates'} className={`tab-btn${tab === 'candidates' ? ' active' : ''}`} onClick={() => setParams({ view: 'candidates' })}>发现候选{candidates.status === 'connected' ? `（已加载 ${candidates.rows.length}）` : ''}</button>
+      <button role="tab" aria-selected={!frameworkView && tab === 'agents'} className={`tab-btn${!frameworkView && tab === 'agents' ? ' active' : ''}`} onClick={() => setParams({ view: 'agents' })}>资产清单{agents.status === 'connected' ? `（已加载 ${agents.rows.length}）` : ''}</button>
+      <button role="tab" aria-selected={!frameworkView && tab === 'candidates'} className={`tab-btn${!frameworkView && tab === 'candidates' ? ' active' : ''}`} onClick={() => setParams({ view: 'candidates' })}>发现候选{candidates.status === 'connected' ? `（已加载 ${candidates.rows.length}）` : ''}</button>
+      <button role="tab" aria-selected={frameworkView} className={`tab-btn${frameworkView ? ' active' : ''}`} onClick={() => setParams(previous => { const next = new URLSearchParams(previous); next.set('view', 'framework'); return next; })}>框架实例</button>
     </div>
+    {frameworkView ? <FrameworkTreeView environmentId={frameworkFilter.environmentId} deviceId={frameworkFilter.deviceId} /> : <>
     {message ? <p role="status">{message}</p> : null}
+    {tab === 'candidates' && access?.can_confirm ? <div className="row-actions" aria-label="候选批量操作">
+      <span>已选 {selected.length} 个；每批最多 50 个，仅处理明确选中的候选。</span>
+      <button className="btn" disabled={active.status !== 'connected' || !!target || !!bulk || !shownRows.length} onClick={() => setSelected(shownRows.slice(0, 50))}>选择已加载前 50 个</button>
+      <button className="btn" disabled={!!bulk || !!target || !selected.length} onClick={() => setSelected([])}>清除选择</button>
+      <button className="btn btn-primary" disabled={active.status !== 'connected' || !!target || !!bulk || !selected.length} onClick={() => setBulk({ assets: [...selected], action: 'confirm' })}>核对并批量确认</button>
+      <button className="btn btn-danger" disabled={active.status !== 'connected' || !!target || !!bulk || !selected.length} onClick={() => setBulk({ assets: [...selected], action: 'dismiss' })}>核对并批量驳回</button>
+    </div> : null}
     {accessError ? <p role="alert">无法核对操作权限，请刷新资产列表重试。</p> : null}
     {tab === 'candidates' && access && !access.can_confirm ? <p>当前账号仅可查看候选。处理候选需要资产确认权限，请联系组织管理员申请。</p> : null}
     {active.status === 'disconnected' ? <DisconnectedNotice error={active.error} onRetry={refresh} /> : null}
@@ -74,5 +100,8 @@ export default function AgentsPage() {
     {active.hasMore ? <div className="list-more"><button className="btn" disabled={active.loadingMore || active.status !== 'connected'} onClick={active.loadMore}>{active.loadingMore ? '正在加载…' : '加载更多'}</button></div> : null}
     {active.error && active.status === 'connected' ? <p role="alert">{active.error}</p> : null}
     {target && access?.can_confirm ? <CandidateReview key={`${target.asset.id}:${target.action}`} asset={target.asset} action={target.action} onClose={() => setTarget(undefined)} onResolved={resolved} /> : null}
+    {bulk && access?.can_confirm ? <BulkCandidateReview key={bulk.action} assets={bulk.assets} action={bulk.action} onClose={() => { setBulk(undefined); refresh(); }}
+      onResolved={(count, reconciled) => { const label = bulk.action === 'confirm' ? '确认' : '驳回'; setBulk(undefined); refresh(); setMessage(reconciled ? `已读回 ${count} 个资产为已${label}，可能包含其他操作者的处理。权限没有因此改变。` : `已${label} ${count} 个资产。工具权限没有因此改变。`); }} /> : null}
+    </>}
   </section>;
 }

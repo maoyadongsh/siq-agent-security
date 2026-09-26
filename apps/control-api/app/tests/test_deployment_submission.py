@@ -264,7 +264,7 @@ def test_binding_revoked_during_reservation_is_rechecked_before_execute(client, 
 
 
 @pytest.mark.parametrize("outcome", ["success", "adapter_failure", "audit_failure_after_apply"])
-def test_openshell_execution_is_never_replayed_after_effect(client, tenant_a, env_a, monkeypatch, outcome):
+def test_openshell_execution_is_never_replayed_after_effect(client, tenant_a, env_a, monkeypatch, outcome, tmp_path):
     from app.adapters.openshell.cli_backend import OpenShellCliBackend
     from app.adapters.openshell.operation_registry import PolicyOperationRegistry
     from app.routers import policies
@@ -284,6 +284,8 @@ def test_openshell_execution_is_never_replayed_after_effect(client, tenant_a, en
     backend = OpenShellCliBackend(runner=run, env_script="", operation_registry=PolicyOperationRegistry())
     monkeypatch.setattr(policies, "OpenShellCliBackend", lambda: backend)
     body, _ = setup(client, tenant_a, env_a, backend="openshell-cli")
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, body["binding_id"], backend)
     value = preview(client, tenant_a, body)
     request = {
         **body,

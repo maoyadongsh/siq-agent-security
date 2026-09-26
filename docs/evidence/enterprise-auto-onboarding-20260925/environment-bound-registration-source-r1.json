@@ -1,0 +1,19 @@
+{
+  "scope": "expected-environment registration and recovery binding",
+  "checks": {
+    "focused_api": "17 passed",
+    "full_api": "1216 passed, 1 skipped, 1 existing warning; 23.50 seconds",
+    "edge_go_vet_and_race_all": "passed",
+    "isolated_native_chain": "11 passed; environment-bound-registration-r1.json",
+    "ruff_and_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/client.go": "f57ec8aac52c854083550916ea3f7cb58914257c018fef550bf79c0a8011e6f3",
+    "edge/agent/registration_journal.go": "d75ab4e8bcd694f0669682e0e5d6983c1dd9b2fa961bbd0961844971bb6a6ed9",
+    "edge/agent/registration_environment_test.go": "7299aea8244152b921808ba933b82294df19db82ad06476cb7d6b780b0619578",
+    "apps/control-api/app/schemas.py": "72ece8b686623982f08831f1b4e9260dcc28e60a3ab11ad2d3b42813bac302f1",
+    "apps/control-api/app/routers/environments.py": "91e112ae56a9bb591f69c62abcd5e6f348d8c7ac31445a1fc78cb9b425c3e247",
+    "apps/control-api/app/tests/test_registration_environment_binding.py": "55b034f3cd2ede558f2e7c572c37cd8df882737bd7b09fdf617c5e3356a2295c"
+  },
+  "live_deployment_changed": false
+}

@@ -123,7 +123,8 @@ type Server struct {
 	sessMu          sync.Mutex
 	sessions        map[string]time.Time
 	refreshSessions map[[32]byte]refreshSession
-	bootAdmin       string // test harness after RedeemPairing
+	connectRequests map[string]browserConnectRequest // protected by sessMu; never persisted
+	bootAdmin       string                           // test harness after RedeemPairing
 
 	pendingMu    sync.Mutex
 	refreshMu    sync.Mutex
@@ -290,6 +291,8 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/adapter/diagnostics", s.auth(s.adapterDiagnostics, capAdmin))
 	s.mux.HandleFunc("/v1/grant-scenarios", s.auth(s.grantScenarios))
 	s.mux.HandleFunc("/v1/grants", s.auth(s.grants))
+	s.mux.HandleFunc("/v1/grant-batches/preview", s.auth(s.grantBatchPreview, capAdmin))
+	s.mux.HandleFunc("/v1/grant-batches/apply", s.auth(s.grantBatchApply, capAdmin))
 	s.mux.HandleFunc("/v1/grants/instance-drafts", s.auth(s.grantInstanceDraft, capAdmin))
 	s.mux.HandleFunc("/v1/grants/", s.auth(s.grantAction))
 	s.mux.HandleFunc("/v1/config", s.auth(s.config))
@@ -352,6 +355,10 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/session/restore", s.restoreSession)
 	s.mux.HandleFunc("/v1/session/logout", s.auth(s.logoutSession))
 	s.mux.HandleFunc("/v1/session/pairing", s.renewPairing)
+	s.mux.HandleFunc("/v1/session/connect/request", s.createBrowserConnect)
+	s.mux.HandleFunc("/v1/session/connect/approve", s.approveBrowserConnect)
+	s.mux.HandleFunc("/v1/session/connect/poll", s.pollBrowserConnect)
+	s.mux.HandleFunc("/v1/session/connect/cancel", s.cancelBrowserConnect)
 	s.mux.HandleFunc("/ui-config.json", s.uiConfig)
 	if d.UI != nil {
 		s.mux.Handle("/", d.UI)

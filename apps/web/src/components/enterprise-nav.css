@@ -1,0 +1,75 @@
+/* 企业端导航（ENT-018 子任务）专用样式：四主入口 + 默认折叠的"管理与高级功能"。
+ * 仅使用 entnav-* 前缀类名，避免影响个人端或其他页面；复用既有设计变量。 */
+
+/* 主入口与高级区域之间拉开层级 */
+.entnav-advanced {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* 高级区域折叠控件：与导航项同语言（衬线 15px、44px 高度） */
+.entnav-advanced-toggle {
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  color: var(--nav-text);
+  text-align: left;
+  border-radius: var(--radius-ctrl);
+}
+
+.entnav-advanced-toggle:hover {
+  color: var(--siq-primary);
+}
+
+/* 展开指示：chevron 旋转；保持可见焦点样式（继承全局 :focus-visible） */
+.entnav-chev {
+  display: inline-flex;
+  margin-left: auto;
+  color: var(--text-secondary);
+  transition: transform 160ms ease;
+}
+
+.entnav-advanced-toggle.is-open .entnav-chev {
+  transform: rotate(90deg);
+}
+
+/* 高级入口列表：轻微缩进表达次级层级 */
+.entnav-advanced-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.entnav-advanced-items .nav-link {
+  padding-left: 24px;
+  font-size: 14px;
+}
+
+/* 桌面图标态：折叠控件居中、chevron 隐藏（功能不丢失，仅图标 + tooltip） */
+@media (min-width: 768px) {
+  .sidebar.collapsed .entnav-advanced-toggle {
+    justify-content: center;
+    padding: 8px 0;
+  }
+
+  .sidebar.collapsed .entnav-advanced-toggle .entnav-chev {
+    display: none;
+  }
+
+  .sidebar.collapsed .entnav-advanced-items .nav-link {
+    justify-content: center;
+    padding: 8px 0;
+  }
+}
+
+/* 移动端抽屉：高级入口列表限高可滚动，避免遮挡主要按钮 */
+@media (max-width: 767.98px) {
+  .entnav-advanced-items {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+}

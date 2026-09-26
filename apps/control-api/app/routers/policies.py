@@ -7,6 +7,7 @@ Phase 3 之前：策略发布只生成 EdgeTask 占位，真实编译由 OpenShe
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from datetime import timedelta
 
@@ -420,6 +421,7 @@ class PreparedDeployment:
     task_payload: dict
     openshell_preflight: tuple | None
     backend_scope: dict
+    binding_snapshot: dict
 
 
 @router.post("/api/v1/deployments", response_model=DeploymentOut, status_code=201)
@@ -475,6 +477,9 @@ def prepare_deployment(
         raise HTTPException(status_code=409, detail="binding_revoked")
     if binding.environment_id != body.environment_id:
         raise HTTPException(status_code=409, detail="binding_environment_mismatch")
+    from app.binding_identity import require_binding_source_identity, snapshot_binding_identity
+
+    require_binding_source_identity(session, binding, identity.tenant_id)
     # 隔离门禁：若目标资产当前处于隔离状态，禁止部署
     quarantine = session.scalar(
         select(QuarantineCase).where(
@@ -526,7 +531,11 @@ def prepare_deployment(
         try:
             adapter = OpenShellCliBackend()
             caps = adapter.probe()
+            from app.target_authority import require_target_authority
+
+            target_authority = require_target_authority(binding, identity.tenant_id, caps)
             backend_scope = {
+                "target_authority": target_authority,
                 "endpoint_fingerprint": caps.endpoint_fingerprint,
                 "gateway": caps.handshake_gateway,
                 "gateway_version": caps.gateway_version,
@@ -559,7 +568,10 @@ def prepare_deployment(
         # 非 CLI 后端保持原编译接线。CLI 已在上面用真实快照完成编译和计划。
         _compile_for_enforcement(policy, task_payload)
 
-    return PreparedDeployment(cr, env, policy, binding, backend, task_payload, openshell_preflight, backend_scope)
+    return PreparedDeployment(
+        cr, env, policy, binding, backend, task_payload, openshell_preflight, backend_scope,
+        binding_snapshot=snapshot_binding_identity(binding),
+    )
 
 
 def execute_deployment(
@@ -572,6 +584,25 @@ def execute_deployment(
     backend, task_payload, openshell_preflight = prepared.backend, prepared.task_payload, prepared.openshell_preflight
     target = binding.backend_target_id
     preview_audit = {"preview_digest": preview_digest} if preview_digest else {}
+    if backend == "openshell-cli":
+        from app.target_authority import require_target_authority
+
+        assert openshell_preflight is not None
+        adapter = openshell_preflight[0]
+        try:
+            fresh_caps = adapter.probe()
+        except AdapterError:
+            raise HTTPException(502, "deployment_target_recheck_failed") from None
+        fresh_authority = require_target_authority(binding, identity.tenant_id, fresh_caps)
+        if fresh_authority != prepared.backend_scope.get("target_authority"):
+            raise HTTPException(409, "deployment_target_authority_changed")
+        preview_audit["target_authority_sha256"] = fresh_authority["authority_sha256"]
+    # 执行前复验：最后一次外部只读探测之后、任何副作用（Deployment 行、apply_dynamic、
+    # publish_policy 任务）之前，按当前持久状态核对绑定状态与来源身份。ORM identity map
+    # 可能仍持有准备阶段的旧值，复验必须读取持久状态；漂移即拒绝，不采用新值。
+    from app.binding_identity import require_binding_identity_unchanged
+
+    require_binding_identity_unchanged(session, prepared.binding_snapshot, identity.tenant_id)
     deployment = reserved_deployment or Deployment(
         tenant_id=identity.tenant_id,
         environment_id=env.id,
@@ -607,6 +638,9 @@ def execute_deployment(
                 "applied_policy_digest": receipt.applied_policy_digest,
                 "result": receipt.result,
                 "gateway_policy_hash": receipt.evidence.get("gateway_policy_hash", ""),
+                "target_authority": fresh_authority,
+                "endpoint_fingerprint": fresh_caps.endpoint_fingerprint,
+                "gateway_name_sha256": hashlib.sha256(fresh_caps.handshake_gateway.encode()).hexdigest(),
             }
             deployment.from_revision = receipt.base_revision
             report = adapter.verify(target, checks, receipt)
@@ -822,6 +856,56 @@ def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
     }
 
 
+def _rollback_live_chain(session: Session, identity: Identity, deployment: Deployment):
+    """回滚写前的活体授权链判定（与后端无关的数据库部分）。
+
+    返回 `(live_binding, live_cr, live_policy)`；任一条件不满足则返回 `None`：
+    绑定必须仍 `active` 且目标未变、变更单必须仍 `approved|effective|deploying`、
+    目标策略不得是 `rejected|failed|superseded|rolled_back`。
+
+    变更单为什么包含 `deploying`（`routers/policies.py:738` 在应用派发时写入）：它是
+    **审批已授予、应用在途**，不是死亡态。本路由自身就允许回滚 `deployment.status == "sent"`
+    的部署（见上方 `invalid_state` 判定），而 `fake`/`none` 后端下应用不会被回执确认，
+    变更单恰好停在 `deploying`——若在此拒绝，等于"允许回滚 sent 部署"这条既有语义在
+    默认配置下永远无法成立。白名单仍是 fail-closed：`draft`、未批准、`rejected`、
+    `superseded`、`rolled_back` 等一切未列出的状态仍被拒绝。
+
+    抽取成函数的原因：这套规则此前**只在 openshell-cli 分支里写了一遍**，非真实后端
+    分支完全没有，导致绑定已吊销、策略已被取代时仍写下 `rolled_back`，并把 `superseded`
+    的变更单改写成 `rolled_back`（不可还原）。同一个判定只应存在一处。
+    """
+    session.expire_all()
+    live_binding = session.scalar(
+        select(RuntimeBinding).where(
+            RuntimeBinding.id == deployment.runtime_binding_id,
+            RuntimeBinding.tenant_id == identity.tenant_id,
+        )
+    )
+    if (
+        live_binding is None
+        or live_binding.status != "active"
+        or live_binding.backend_target_id != deployment.target
+    ):
+        return None
+    live_cr = session.scalar(
+        select(ChangeRequest).where(
+            ChangeRequest.id == deployment.change_request_id,
+            ChangeRequest.tenant_id == identity.tenant_id,
+        )
+    )
+    if live_cr is None or live_cr.status not in {"approved", "effective", "deploying"}:
+        return None
+    live_policy = session.scalar(
+        select(DesiredPolicy).where(
+            DesiredPolicy.id == live_cr.policy_id,
+            DesiredPolicy.tenant_id == identity.tenant_id,
+        )
+    )
+    if live_policy is None or live_policy.status in {"rejected", "failed", "superseded", "rolled_back"}:
+        return None
+    return live_binding, live_cr, live_policy
+
+
 @router.post("/api/v1/deployments/{deployment_id}/rollback", response_model=DeploymentOut)
 def rollback_deployment(
     deployment_id: str,
@@ -855,44 +939,31 @@ def rollback_deployment(
         def authorize_rollback(_authorization: RollbackAuthorization) -> bool:
             """写前重新查询当前授权链；不使用申请中的 evidence 决定可否回滚。"""
             ensure_permission(identity, "policy:manage")
-            session.expire_all()
-            live_binding = session.scalar(
-                select(RuntimeBinding).where(
-                    RuntimeBinding.id == deployment.runtime_binding_id,
-                    RuntimeBinding.tenant_id == identity.tenant_id,
-                )
-            )
-            if (
-                live_binding is None
-                or live_binding.status != "active"
-                or live_binding.backend != "openshell-cli"
-                or live_binding.backend_target_id != deployment.target
-            ):
+            chain = _rollback_live_chain(session, identity, deployment)
+            if chain is None:
                 return False
-            live_cr = session.scalar(
-                select(ChangeRequest).where(
-                    ChangeRequest.id == deployment.change_request_id,
-                    ChangeRequest.tenant_id == identity.tenant_id,
-                )
-            )
-            if live_cr is None or live_cr.status not in {"approved", "effective"}:
-                return False
-            live_policy = session.scalar(
-                select(DesiredPolicy).where(
-                    DesiredPolicy.id == live_cr.policy_id,
-                    DesiredPolicy.tenant_id == identity.tenant_id,
-                )
-            )
-            if live_policy is None or live_policy.status in {"rejected", "failed", "superseded", "rolled_back"}:
+            live_binding, _live_cr, live_policy = chain
+            if live_binding.backend != "openshell-cli":
                 return False
             try:
                 _ensure_binding_in_selector(session, identity.tenant_id, live_policy, live_binding)
+                from app.binding_identity import require_binding_source_identity
+                from app.target_authority import require_target_authority
+
+                require_binding_source_identity(session, live_binding, identity.tenant_id)
+                caps = rollback_adapter.probe()
+                require_target_authority(live_binding, identity.tenant_id, caps)
+                gateway_hash = hashlib.sha256(caps.handshake_gateway.encode()).hexdigest()
+                if (caps.endpoint_fingerprint != receipt.get("endpoint_fingerprint")
+                    or gateway_hash != receipt.get("gateway_name_sha256")):
+                    return False
             except HTTPException:
                 return False
             return True
 
         try:
-            rollback_receipt = OpenShellCliBackend().rollback(
+            rollback_adapter = OpenShellCliBackend()
+            rollback_receipt = rollback_adapter.rollback(
                 deployment.target,
                 DeploymentReceipt(
                     backend_revision=str(receipt.get("backend_revision", "")),
@@ -935,6 +1006,30 @@ def rollback_deployment(
                 status_code=502,
                 detail=f"openshell_rollback_failed: {error['error_digest']}",
             ) from None
+
+    # 非 openshell-cli 分支（默认 `none`，测试夹具 `fake`）：没有真实后端可撤，回滚是
+    # **账面状态迁移**。即便如此也不得凭空写状态——绑定已吊销、变更单已失效、策略已被
+    # 取代时写 `rolled_back` 等于声明一件没发生的事，且会把 `superseded` 改写成
+    # `rolled_back` 而不可还原。此处与 openshell-cli 分支共用同一套活体授权链判定。
+    #
+    # 必须是 `elif` 而非独立 `if`：openshell-cli 分支在上面已经写过
+    # `deployment.verification`（未提交），而本判定会 `expire_all()` 重新加载——正是它
+    # 要做的"写前重查"。在 openshell 分支之后再跑一次会把那次写入连同未提交状态一起丢弃，
+    # 表现为回滚成功但 `verification.rollback` 消失（openshell 分支则由 `authorize_rollback`
+    # 在写前完成同一判定，无需重复）。
+    elif _rollback_live_chain(session, identity, deployment) is None:
+        audit(
+            session,
+            identity.tenant_id,
+            identity.identity_type,
+            identity.actor_id,
+            "deployment.rollback_refused",
+            "deployment",
+            resource_id=deployment.id,
+            summary={"detail": "rollback_authorization_expired"},
+        )
+        session.commit()
+        raise HTTPException(status_code=409, detail="rollback_authorization_expired")
 
     cr = session.get(ChangeRequest, deployment.change_request_id)
     if cr is not None:

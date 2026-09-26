@@ -1,0 +1,16 @@
+{
+  "scope": "registration identity journal and single-attempt transport; remote recovery pending",
+  "checks": {
+    "edge_go_vet_all": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "isolated_gateway_edge_serve": "8 passed; registration-pending-smoke-r1.json",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/registration_journal.go": "98e987ef9b3c8f66256eedb345de3ccca3f6c1d0e20ead66ff00882a99f4a95a",
+    "edge/agent/registration_journal_test.go": "0cbd0e9aade11706f33369233faad1d0d24cdaf19d1332cc65ef108a6d1d3ec1",
+    "edge/agent/client.go": "71063cb01f6a413bcb40751166f3a98f6d775a7db123f4b4806fc48decd09482",
+    "edge/agent/main.go": "278251a7526829f84c1751a28a7c663a6fb4a16086b177490f86ec97e3c080b1"
+  },
+  "live_deployment_changed": false
+}

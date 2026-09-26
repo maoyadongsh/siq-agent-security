@@ -1,0 +1,20 @@
+{
+  "scope": "verified-plan/stage gated user service install command; temporary filesystem and simulated manager validation",
+  "checks": {
+    "edge_go_vet_all": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "exclusive_unit_and_identical_retry": "passed",
+    "unsafe_target_scenarios": 5,
+    "simulated_manager_sequence_and_failures": "passed",
+    "unconfirmed_identity_no_config_write": "passed",
+    "git_diff_check": "passed",
+    "production_signed_full_command_positive": "not run",
+    "real_systemd_lifecycle": "not run"
+  },
+  "source_sha256": {
+    "edge/agent/install_user_service_linux.go": "785ba4a0b12fcc47e7dad084eaacbeca3f99220af0b1ec004382feb858edce52",
+    "edge/agent/install_user_service_linux_test.go": "9dc4a9e6e57a08d6ea0c7312900526c95207106ce339400725c6536c75f3e6cf",
+    "edge/agent/install_user_service_other.go": "1581fa78932b22bed9f4eabb0aeda056fffa4861908af4441e8261058b5d5ba4"
+  },
+  "live_services_or_user_units_changed": false
+}

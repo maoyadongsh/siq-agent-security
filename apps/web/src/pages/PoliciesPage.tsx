@@ -1,43 +1,38 @@
 /**
- * 策略中心（§20.1）：真实 /policies 列表 + 最小创建表单（selector/网络端点/执行档位）。
- * 创建 → 变更单 → 审批 → 部署 的闭环入口在「变更中心」。
+ * 策略中心（§20.1 + ENT-018-POLICIES-UI）：期望策略只读筛选/详情/分页 + 既有最小创建表单。
+ * - 列表展示「期望策略」，不把 block 档位或 status 字符串解释为已生效；
+ * - 筛选/详情见 components/policy-explorer/；计数只覆盖已加载记录；
+ * - 创建流程（字段、默认档位、必填、载荷、重置/关闭/刷新、失败提示）保持原有语义不变；
+ * - 创建 → 变更单 → 审批 → 部署 的闭环入口在「变更中心」。
  */
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
-import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
+import PolicyExplorerFilters from '@/components/policy-explorer/PolicyExplorerFilters';
+import PolicyExplorerList from '@/components/policy-explorer/PolicyExplorerList';
+import {
+  EMPTY_POLICY_FILTERS,
+  filterPolicies,
+  type PolicyFilters,
+} from '@/components/policy-explorer/policyExplorer';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { PolicyRow } from '@/api/types';
 
 const PLACEHOLDER_POLICIES: PolicyRow[] = [];
 
-const MODE_LABELS: Record<string, string> = {
-  audit_only: '仅审计',
-  warn: '告警',
-  block: '阻断',
-};
-
-const columns: TableColumn<PolicyRow>[] = [
-  { key: 'name', header: '名称', render: (p) => p.name },
-  { key: 'version', header: '版本', render: (p) => `v${p.version}` },
-  {
-    key: 'enforcement_mode',
-    header: '执行档位',
-    render: (p) => <span className={`state-tag ${p.enforcement_mode === 'block' ? 'effective' : ''}`}>{MODE_LABELS[p.enforcement_mode] ?? p.enforcement_mode}</span>,
-  },
-  { key: 'status', header: '状态', render: (p) => p.status },
-  {
-    key: 'unsupported_by_backend',
-    header: '未覆盖项（显式）',
-    render: (p) => (p.unsupported_by_backend.length ? p.unsupported_by_backend.join('；') : '—'),
-  },
-  { key: 'selector', header: '选择器', render: (p) => JSON.stringify(p.selector.agent_ids) },
-  { key: 'updated_at', header: '更新时间', render: (p) => p.updated_at },
-];
-
 export default function PoliciesPage() {
-  const { rows, status, error, refresh } = useApiList<PolicyRow>('/policies', PLACEHOLDER_POLICIES);
+  const {
+    rows,
+    status,
+    error,
+    refresh,
+    coverageText,
+    hasMore,
+    loadingMore,
+    loadMore,
+  } = useApiList<PolicyRow>('/policies', PLACEHOLDER_POLICIES);
+  const [filters, setFilters] = useState<PolicyFilters>({ ...EMPTY_POLICY_FILTERS });
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [agentId, setAgentId] = useState('');
@@ -69,6 +64,8 @@ export default function PoliciesPage() {
       setCreating(false);
     }
   };
+
+  const visible = status === 'connected' ? filterPolicies(rows, filters) : [];
 
   return (
     <div>
@@ -117,8 +114,54 @@ export default function PoliciesPage() {
 
       {status === 'disconnected' ? (
         <DisconnectedNotice error={error} onRetry={refresh} />
+      ) : status === 'loading' ? (
+        <p className="muted-text" role="status">
+          正在加载策略…加载完成前不展示列表或计数。
+        </p>
       ) : (
-        <SimpleTable columns={columns} rows={rows} rowKey={(p) => p.id} />
+        <>
+          <PolicyExplorerFilters rows={rows} filters={filters} onChange={setFilters} />
+          <p className="policy-explorer-match-line" role="status">
+            匹配 {visible.length} 条 / 已加载 {rows.length} 条；筛选仅覆盖已加载记录，不代表组织全量。
+            {hasMore ? '存在更多分页未加载。' : null}
+          </p>
+          {coverageText ? (
+            <p className="list-coverage" role="status">
+              {coverageText}
+            </p>
+          ) : null}
+          {rows.length === 0 ? (
+            <p className="muted-text">
+              后端成功返回空列表：当前没有期望策略记录。可通过「新建策略」创建（仍需变更审批与部署后才可能生效）。
+            </p>
+          ) : visible.length === 0 ? (
+            <p className="muted-text" role="status">
+              当前筛选条件下无匹配项（已加载 {rows.length} 条中 0 条匹配）。
+              <button type="button" className="btn-sm" onClick={() => setFilters({ ...EMPTY_POLICY_FILTERS })}>
+                清除筛选
+              </button>
+            </p>
+          ) : (
+            <PolicyExplorerList rows={visible} />
+          )}
+          {error ? (
+            <p className="sync-err" role="alert">
+              {error}（已保留此前成功加载的数据，不代表全部加载成功）
+            </p>
+          ) : null}
+          {hasMore ? (
+            <div className="list-more">
+              <button
+                type="button"
+                className="btn-sm"
+                disabled={loadingMore}
+                onClick={() => loadMore()}
+              >
+                {loadingMore ? '加载中…' : '加载更多'}
+              </button>
+            </div>
+          ) : null}
+        </>
       )}
     </div>
   );

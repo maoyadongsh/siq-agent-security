@@ -1,49 +1,23 @@
 /** 应用外壳（对齐 SIQ 工作台布局语言：浅色磨砂侧栏 + 顶栏 + 独立滚动内容区）。
  * 桌面端侧边栏支持 展开（图标+文字）/ 收起（仅图标 + tooltip），选择持久化
- * localStorage（非敏感 UI 偏好）；移动端 <768px 为抽屉导航。 */
+ * localStorage（非敏感 UI 偏好）；移动端 <768px 为抽屉导航。
+ * 企业端导航（ENT-018 子任务）：四主入口（资产/权限/安全/审计）+ 默认折叠的
+ * "管理与高级功能"次级区域；位于次级页面时自动展开（不改变浏览器 URL）。 */
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useConsoleContext } from '@/components/ConsoleContext';
 import { canVisit, routeAccessKey } from '@/api/consoleContext';
-import { Icon, type IconName } from '@/components/icons';
-
-/** 侧边导航分组（对齐设计文档 §20.1 信息架构；组名折叠态隐藏） */
-interface NavItem {
-  to: string;
-  label: string;
-  icon: IconName;
-}
-
-const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
-  {
-    label: '监测',
-    items: [
-      { to: '/workspace', label: '工作台', icon: 'overview' },
-      { to: '/overview', label: '总览', icon: 'overview' },
-      { to: '/agents', label: '智能体资产', icon: 'agents' },
-      { to: '/permissions', label: '权限视图', icon: 'permissions' },
-      { to: '/findings', label: '风险中心', icon: 'findings' },
-    ],
-  },
-  {
-    label: '治理',
-    items: [
-      { to: '/policies', label: '策略中心', icon: 'policies' },
-      { to: '/changes', label: '变更中心', icon: 'changes' },
-      { to: '/runtime-bindings', label: '运行时绑定', icon: 'bindings' },
-    ],
-  },
-  {
-    label: '系统',
-    items: [
-      { to: '/environments', label: '环境与设备', icon: 'environments' },
-      { to: '/audit', label: '审计', icon: 'audit' },
-      { to: '/settings', label: '设置', icon: 'settings' },
-    ],
-  },
-];
-
-const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((group) => group.items);
+import { Icon } from '@/components/icons';
+import {
+  ADVANCED_GROUP_LABEL,
+  ADVANCED_NAV_ITEMS,
+  MAIN_NAV_ITEMS,
+  enterpriseTitle,
+  filterByAccess,
+  isAdvancedPath,
+  type EnterpriseNavItem,
+} from '@/components/enterpriseNav';
+import './enterprise-nav.css';
 
 /** 非敏感 UI 偏好：侧边栏收起状态（版本化前缀 siq.as.*） */
 const NAV_COLLAPSED_KEY = 'siq.as.nav-collapsed';
@@ -56,25 +30,37 @@ function readCollapsed(): boolean {
   }
 }
 
-/** 由当前路径推导顶栏标题（详情页回落到所属列表页） */
-function currentTitle(pathname: string): string {
-  const exact = NAV_ITEMS.find((item) => item.to === pathname);
-  if (exact) return exact.label;
-  const prefix = NAV_ITEMS.find(
-    (item) => item.to !== '/overview' && pathname.startsWith(`${item.to}/`),
+function NavEntry({ item, collapsed, onNavigate }: { item: EnterpriseNavItem; collapsed: boolean; onNavigate: () => void }) {
+  return (
+    <NavLink
+      to={item.to}
+      end={item.to !== '/agents'}
+      onClick={onNavigate}
+      className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+      title={collapsed ? item.label : undefined}
+    >
+      <span className="nav-icon" aria-hidden="true">
+        <Icon name={item.icon} />
+      </span>
+      <span className="nav-label">{item.label}</span>
+    </NavLink>
   );
-  return prefix?.label ?? '总览';
 }
 
 export default function Layout() {
   const location = useLocation();
   const context = useConsoleContext();
-  const groups = NAV_GROUPS.map(group => ({ ...group, items: group.items.filter(item => canVisit(context.data, item.to)) })).filter(group => group.items.length > 0);
+  const mainItems = filterByAccess(MAIN_NAV_ITEMS, context.data);
+  const advancedItems = filterByAccess(ADVANCED_NAV_ITEMS, context.data);
   const accessible = !routeAccessKey(location.pathname) || canVisit(context.data, location.pathname);
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(readCollapsed);
+  // null = 跟随路径自动展开；用户手动切换后以用户选择为准，导航变化时恢复自动。
+  const [advancedOverride, setAdvancedOverride] = useState<boolean | null>(null);
+  const advancedOpen = advancedOverride ?? isAdvancedPath(location.pathname);
 
   useEffect(() => setOpen(false), [location.pathname, location.search]);
+  useEffect(() => setAdvancedOverride(null), [location.pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -118,27 +104,38 @@ export default function Layout() {
           </span>
         </div>
         <nav className="nav">
-          {groups.map((group) => (
-            <div className="nav-group" key={group.label}>
-              <span className="nav-group-label" aria-hidden={collapsed}>
-                {group.label}
-              </span>
-              {group.items.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setOpen(false)}
-                  className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <span className="nav-icon" aria-hidden="true">
-                    <Icon name={item.icon} />
-                  </span>
-                  <span className="nav-label">{item.label}</span>
-                </NavLink>
-              ))}
+          <div className="nav-group entnav-main">
+            {mainItems.map((item) => (
+              <NavEntry key={item.to} item={item} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+            ))}
+          </div>
+          {advancedItems.length > 0 ? (
+            <div className="nav-group entnav-advanced">
+              <button
+                type="button"
+                className={`nav-link entnav-advanced-toggle${advancedOpen ? ' is-open' : ''}`}
+                aria-expanded={advancedOpen}
+                aria-controls="entnav-advanced-items"
+                onClick={() => setAdvancedOverride(!advancedOpen)}
+                title={collapsed ? ADVANCED_GROUP_LABEL : undefined}
+              >
+                <span className="nav-icon" aria-hidden="true">
+                  <Icon name="activity" />
+                </span>
+                <span className="nav-label">{ADVANCED_GROUP_LABEL}</span>
+                <span className="entnav-chev" aria-hidden="true">
+                  <Icon name="chevron-right" size={14} />
+                </span>
+              </button>
+              {advancedOpen ? (
+                <div id="entnav-advanced-items" className="entnav-advanced-items">
+                  {advancedItems.map((item) => (
+                    <NavEntry key={item.to} item={item} collapsed={collapsed} onNavigate={() => setOpen(false)} />
+                  ))}
+                </div>
+              ) : null}
             </div>
-          ))}
+          ) : null}
         </nav>
         <div className="sidebar-foot">
           <span className="sidebar-version">Evidence-first control plane</span>
@@ -174,7 +171,7 @@ export default function Layout() {
           >
             <Icon name="menu" size={20} />
           </button>
-          <span className="topbar-title">{currentTitle(location.pathname)}</span>
+          <span className="topbar-title">{enterpriseTitle(location.pathname)}</span>
           <Link className="topbar-phase" to="/workspace">组织与权限</Link>
         </header>
         <main className="content">

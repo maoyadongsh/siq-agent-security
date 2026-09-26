@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -84,11 +85,12 @@ func validateControlPlaneURL(raw string) (string, error) {
 
 // RegisterRequest is the POST /edge/v1/register body.
 type RegisterRequest struct {
-	EnrollmentCode string         `json:"enrollment_code"`
-	DeviceIdentity string         `json:"device_identity"`
-	PublicKeyPEM   string         `json:"public_key_pem"`
-	Version        string         `json:"version"`
-	Capabilities   map[string]any `json:"capabilities"`
+	EnrollmentCode        string         `json:"enrollment_code"`
+	DeviceIdentity        string         `json:"device_identity"`
+	PublicKeyPEM          string         `json:"public_key_pem"`
+	Version               string         `json:"version"`
+	Capabilities          map[string]any `json:"capabilities"`
+	ExpectedEnvironmentID string         `json:"expected_environment_id,omitempty"`
 }
 
 // RegisterResponse is the POST /edge/v1/register response (control-api 实际契约).
@@ -102,26 +104,50 @@ type RegisterResponse struct {
 // Register enrolls the device. The caller persists the returned secret into
 // the local state file (mode 0600).
 func (c *Client) Register(ctx context.Context, code, identity, pubPEM string, caps map[string]any) (*RegisterResponse, error) {
+	return c.RegisterBound(ctx, code, identity, pubPEM, caps, "")
+}
+
+func (c *Client) RegisterBound(ctx context.Context, code, identity, pubPEM string, caps map[string]any, environment string) (*RegisterResponse, error) {
 	body := RegisterRequest{
-		EnrollmentCode: code,
-		DeviceIdentity: identity,
-		PublicKeyPEM:   pubPEM,
-		Version:        c.version,
-		Capabilities:   caps,
+		EnrollmentCode:        code,
+		DeviceIdentity:        identity,
+		PublicKeyPEM:          pubPEM,
+		Version:               c.version,
+		Capabilities:          caps,
+		ExpectedEnvironmentID: environment,
 	}
 	var out RegisterResponse
-	if err := c.do(ctx, http.MethodPost, "/edge/v1/register", body, &out, 3); err != nil {
-		return nil, err
+	// Registration consumes a single-use code. A transport/5xx failure may be
+	// after commit; only an explicit recovery protocol may safely retry it.
+	if err := c.do(ctx, http.MethodPost, "/edge/v1/register", body, &out, 0); err != nil {
+		return nil, errors.New("registration_result_unknown; preserve pending identity for recovery")
+	}
+	if environment != "" && out.EnvironmentID != environment {
+		return nil, errors.New("registration_environment_mismatch; preserve pending identity")
+	}
+	key, err := base64.StdEncoding.DecodeString(out.ControlPlanePublicKey)
+	if out.EdgeAgentID == "" || out.DeviceSecret == "" || out.EnvironmentID == "" || err != nil || len(key) != 32 {
+		return nil, errors.New("registration_response_invalid; preserve pending identity")
 	}
 	return &out, nil
 }
 
 // HeartbeatOnce posts one heartbeat.
 func (c *Client) HeartbeatOnce(ctx context.Context) error {
+	return c.HeartbeatWithCapabilities(ctx, nil)
+}
+
+// nil preserves legacy server inventory; an explicit empty inventory clears it.
+// Callers must measure capabilities before passing them, never use plan choices
+// as proof of installed/compatible binaries.
+func (c *Client) HeartbeatWithCapabilities(ctx context.Context, capabilities map[string]any) error {
 	body := map[string]any{
 		"device_identity": c.identity,
 		"version":         c.version,
 		"sent_at":         time.Now().UTC().Format(time.RFC3339),
+	}
+	if capabilities != nil {
+		body["capabilities"] = capabilities
 	}
 	var out map[string]any
 	return c.do(ctx, http.MethodPost, "/edge/v1/heartbeat", body, &out, 3)
@@ -176,17 +202,19 @@ func (c *Client) FetchTasks(ctx context.Context, deviceIdentity string) ([]*Task
 
 // Receipt is posted after task execution (POST /edge/v1/tasks/{id}/receipt).
 type Receipt struct {
-	TaskID         string   `json:"task_id"`
-	DeviceIdentity string   `json:"device_identity"`
-	Status         string   `json:"status"` // succeeded | failed | unsupported
-	ErrorCode      string   `json:"error_code,omitempty"`
-	ErrorMessage   string   `json:"error_message,omitempty"`
-	CandidateCount int      `json:"candidate_count"`
-	EvidenceCount  int      `json:"evidence_count"`
-	EvidenceIDs    []string `json:"evidence_ids,omitempty"`
-	Cursor         string   `json:"cursor,omitempty"`
-	Truncated      bool     `json:"truncated,omitempty"`
-	CompletedAt    string   `json:"completed_at"`
+	TaskID                string   `json:"task_id"`
+	DeviceIdentity        string   `json:"device_identity"`
+	Status                string   `json:"status"` // succeeded | failed | unsupported
+	ErrorCode             string   `json:"error_code,omitempty"`
+	ErrorMessage          string   `json:"error_message,omitempty"`
+	CandidateCount        int      `json:"candidate_count"`
+	EvidenceCount         int      `json:"evidence_count"`
+	EvidenceIDs           []string `json:"evidence_ids,omitempty"`
+	Cursor                string   `json:"cursor,omitempty"`
+	Truncated             bool     `json:"truncated,omitempty"`
+	CompletedAt           string   `json:"completed_at"`
+	SkillBatchDigest      string   `json:"skill_batch_digest,omitempty"`
+	SkillObservationCount *int     `json:"skill_observation_count,omitempty"`
 }
 
 // PostReceipt reports a task outcome to the control plane.

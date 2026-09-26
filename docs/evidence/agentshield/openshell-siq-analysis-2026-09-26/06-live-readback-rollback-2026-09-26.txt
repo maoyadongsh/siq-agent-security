@@ -1,0 +1,165 @@
+A7 行为核验第一步：--live 真实写入 / 读回 / 回滚闭环（补齐回收能力后执行）
+时间：2026-09-26（本地）；目标：siq-analysis-canary-27d1289f98fa（对方资产，非一次性沙箱）
+前置证据：05-live-prereq-blocked.txt（本轮**拒绝执行**的判定与两条缺陷）
+本次授权：使用者 2026-09-26 就 --live 路径选择「**先补 authorizer 再跑**」（第二轮问询）。
+
+=== 〇、本次产出的是什么、不是什么（先立口径，避免误读）===
+- 产出：一次**真实**的 policy set → readback → rollback 闭环，且**回滚后读到与写入前逐字节相同**的策略载荷。
+- 证据等级上限：**`readback_verified`**。这是后端契约里 `verify()` 能给出的最高级别。
+- **不是** `enforcement_verified`。本文件**不产生**、也**不得**被引作 `enforcement_verified` 的任何依据。
+- 脚本里那条 `expect_deny` 是**固定兼容样例**（比对用常量），**不是**一次真实拒绝（deny）行为观测。
+  本次执行**没有**观测到任何被拒绝的请求，因此也不构成行为验证。
+
+=== 一、执行前对工具做的两处补齐（对应 05 的两条缺陷）===
+改动文件（均在本仓 scripts/，未触碰对方仓库）：
+  1) scripts/openshell_compat_check.py
+  2) scripts/enterprise-experience/test_openshell_compat_live.py   （新增，8 条隔离单测）
+
+缺陷 1（写面）——**保留原语义，只把事实写进工具自身提示**：
+  apply_dynamic 对 network_policies 是**整段替换**（cli_backend.py:584-591 `merged["network_policies"] = network`）。
+  本次不改变该语义（改它就是改产品行为，超出本次范围）；改为在 `--live` 运行时**先打印风险告知**，
+  并要求目标必须是专用 canary。
+
+缺陷 2（回收）——**补齐**：`_live_check` 现在
+  a) 从**私有操作记录**构造 `RollbackAuthorization`，只认本次操作（`operation_id` 与 `target` 都对上）；
+  b) `verify()` 无论成功或抛错，`finally` 里**必定**尝试 `rollback(..., authorizer=...)`；
+  c) 回滚后**重新读回**，其 `policy_digest` 必须等于写入前的 BEFORE，否则整体判 FAIL；
+  d) 若后端私有记录的恢复基线与我方写入前读到的 BEFORE 不一致，**只告警不拒绝回滚**
+     （拒绝就没人把沙箱改回去了，比不一致更糟），并如实打印差异。
+
+隔离负对照：8 条单测全过；把同一组用例指向补齐**之前**的脚本版本，其中 5/7 失败
+（其余 2 条只断言与本次改动无关的性质）——证明这 8 条不是空跑。
+
+=== 二、执行时才暴露的第三条缺陷：fixture 缺 binary_paths（首跑即失败，未写入一个字节）===
+--- 首次执行原始输出（/tmp/a7-live.txt，退出码 1）
+探测版本: v0.0.83
+能力比对:
+  [OK  ] dynamic_network_update: 期望 True / 实际 True
+  [OK  ] static_filesystem: 期望 True / 实际 True
+  [OK  ] static_process: 期望 True / 实际 True
+  [OK  ] landlock: 期望 True / 实际 True
+  [OK  ] interceptor: 期望 False / 实际 False
+  [OK  ] provider_credential_injection: 期望 False / 实际 False
+  [OK  ] revision_support: 期望 True / 实际 True
+  [OK  ] sandbox_list_decodable: 期望 False / 实际 False
+真实部署闭环 fixture（沙箱 siq-analysis-canary-27d1289f98fa）:
+  注意：apply_dynamic 对 network_policies 是整段替换，写入与回滚之间该沙箱原有网络策略会整体缺席；仅用于专用/一次性沙箱。
+  [LIVE] BEFORE: revision=2 网络规则 7 条
+FAIL: live 闭环异常（fail-closed）: openshell_network_binary_required
+
+根因：`policy_safety.validate_network_rules` 要求每条网络规则带**非空绝对** `binary_paths`，
+缺失即 `openshell_network_binary_required`，在 `compile()` 阶段抛错 —— **一个字节都没有写**。
+即：这条 `--live` 路径此前**从未真正写成功过**（这也是为什么 05 的写面风险此前没被实测撞上）。
+修法：fixture 的网络规则补上目标沙箱内既有的解释器路径（与 openshell_compat_matrix.json 针对的网关一致）
+  常量 `_LIVE_FIXTURE_BINARY = "/opt/siq/hermes/venv/bin/python"`。
+修后**先只读复核 canary 未被触碰**，再重跑。
+
+=== 三、成功执行（/tmp/a7-live2.txt，退出码 0）===
+--- 原始输出全文
+探测版本: v0.0.83
+能力比对:
+  [OK  ] dynamic_network_update: 期望 True / 实际 True
+  [OK  ] static_filesystem: 期望 True / 实际 True
+  [OK  ] static_process: 期望 True / 实际 True
+  [OK  ] landlock: 期望 True / 实际 True
+  [OK  ] interceptor: 期望 False / 实际 False
+  [OK  ] provider_credential_injection: 期望 False / 实际 False
+  [OK  ] revision_support: 期望 True / 实际 True
+  [OK  ] sandbox_list_decodable: 期望 False / 实际 False
+真实部署闭环 fixture（沙箱 siq-analysis-canary-27d1289f98fa）:
+  注意：apply_dynamic 对 network_policies 是整段替换，写入与回滚之间该沙箱原有网络策略会整体缺席；仅用于专用/一次性沙箱。
+  [LIVE] BEFORE: revision=2 网络规则 7 条
+  [LIVE] policy set 提交成功: revision 3
+  [LIVE] 读回验证通过（level=readback_verified）
+  [LIVE] 已回滚: revision 4（result=restored）
+  [LIVE] 回滚后读回一致: 网络规则 7 条，digest 与 BEFORE 相同
+  [LIVE] 摘要: {"before_revision": "2", "before_policy_digest": "98e9925deeeffcc840635a4a7739e8e8cc3b5bee259ec3481629a2f77e917094", "applied_revision": "3", "restored_revision": "4", "restored_digest_matches_before": true, "rollback_attempted": true}
+PASS: 全部期望一致
+
+注：`[LIVE] ... 网络规则 7 条` 是**我方适配器 `gateway_network_to_rules` 归一化后**的条数（端点口径），
+与该沙箱策略文档里 network_policies 的**顶层条目名 8 条**不是同一口径（见 05 §一 的同一提醒）。
+
+=== 四、与执行方无关的独立复核（对方 CLI 只读，本次重新跑，可复现）===
+--- 接入方式（沿用仓库既定契约，未改对方仓库任何文件）
+$ ENVSH=/home/maoyd/siq-research-engine/scripts/openshell/env.sh
+$ bash -c 'source "$1" && shift && exec openshell "$@"' openshell-env "$ENVSH" <子命令…>
+（env.sh 把 openshell 定义成壳函数：`openshell () { "$SIQ_OPENSHELL_BIN" "$@"; }`）
+
+--- 身份与可达性
+$ openshell --version                          -> openshell 0.0.83
+$ openshell gateway info                       -> Gateway: siq-openshell-dev / endpoint https://127.0.0.1:17671
+$ openshell status                             -> Gateway: siq-openshell-dev / Server https://127.0.0.1:17671
+                                                  Status: Connected / Version: 0.0.83
+$ sha256sum "$SIQ_OPENSHELL_BIN"
+  04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7
+  /home/maoyd/siq-research-engine/var/openshell/toolchains/v0.0.83/bin/openshell  (36130520 bytes)
+
+--- 修订历史（写入确实发生、且回滚后被新的 Loaded 覆盖）
+$ openshell policy list siq-analysis-canary-27d1289f98fa
+VERSION  HASH           STATUS       CREATED                  ERROR
+4        fed6cc8072d1   Loaded       1790428047186
+3        dfdefc3465ef   Superseded   1790428041680
+2        fed6cc8072d1   Superseded   1790012866828
+1       3d90c401b3e4   Superseded   1790012866803
+
+  - v3（= 本次写入）hash `dfdefc3465ef` 是**全网关此前不存在的新修订** → 写入真实发生。
+  - **v4 的 hash 与 v2 完全相同（都是 `fed6cc8072d1`）** → 回滚到的内容就是写入前的内容。
+  - v2/v1 仍在历史中保留（未删除任何修订）。
+
+--- 逐字节核对：rev2 与 rev4 的 --full 全文（本次重跑，只读，两份都已留档）
+$ openshell policy get siq-analysis-canary-27d1289f98fa --rev 2 --full   > /tmp/v-r2.txt   (rc=0)
+$ openshell policy get siq-analysis-canary-27d1289f98fa --rev 4 --full   > /tmp/v-r4.txt   (rc=0)
+$ diff /tmp/v-r2.txt /tmp/v-r4.txt
+1c1
+< Version:      2
+---
+> Version:      4
+3c3
+< Status:       Superseded
+---
+> Status:       Loaded
+5,6c5,6
+< Created:      1790012866828 ms
+< Loaded:       1790012867131 ms
+---
+> Created:      1790428047186 ms
+> Loaded:       1790428056103 ms
+
+  差异**只有头部 4 个元数据字段**（版本号 / 状态 / Created / Loaded）。
+  删除头部后（`sed -n '7,$p'`）两份载荷摘要**相同**：
+    3126e203441494295b1bba4e38a2a8ddda967aad0f36dae36287e67c3ef33525  （rev2）
+    3126e203441494295b1bba4e38a2a8ddda967aad0f36dae36287e67c3ef33525  （rev4）
+  ⇒ **策略载荷逐字节相同**；`Active: 4` 也印证当前生效的是 v4。
+
+--- 写入窗口内的那一段（rev3 内容，顺带实证了"整段替换"）
+$ openshell policy get siq-analysis-canary-27d1289f98fa --rev 3 --full
+全文的 network_policies 段**只有一条**：
+  siq_as_rule_0 / name: siq-compat-live-check / host: example.com / port: 443 /
+  binaries: /opt/siq/hermes/venv/bin/python
+全文内**搜不到** _provider_siq_* / siq_egress_guard / siq_data_broker 等任何原有条目。
+  ⇒ 05 §二 由**读代码**得出的"整段替换"判定，在本次真实写入中**得到实测确认**：
+     变更窗口内该 canary 原有的**全部** provider/内部服务网络策略都缺席，不只是"多出一条样例 endpoint"。
+     （这正是 05 更正掉的那句旧表述。）
+
+--- 顺带复现了兼容矩阵里冻结的既有缺陷（非本次引入）
+$ openshell sandbox get siq-analysis-canary-27d1289f98fa
+Error: status: Internal, message: "failed to decode Protobuf message: Sandbox.id:
+  SandboxResponse.sandbox: invalid string value: data is not UTF-8 encoded"
+  ⇒ 与兼容矩阵里 `sandbox_list_decodable: 期望 False / 实际 False` 一致（本文件不修它，仅记录）。
+
+=== 五、本次对目标做过的**全部**写操作与回收情况 ===
+写操作：恰好 1 次 policy set，提交 1 条网络 allow 段
+        （rule `siq_as_rule_0` / name `siq-compat-live-check` / example.com:443 /
+          binary /opt/siq/hermes/venv/bin/python），产生网关修订 v3。
+回收：同一次执行内 rollback → v4，回滚后读回 digest == BEFORE（脚本自证，退出码 0）。
+独立复核：v4 的 hash == v2 的 hash；rev2 与 rev4 的 --full 载荷逐字节相同（见 §四）。
+终态：该 canary 的 network_policies 恢复原状；v3 作为**可审计的历史修订**留在网关，未删除。
+未做：未创建/删除任何沙箱；未启停网关；未动对方仓库任何源码/配置/数据库。
+
+=== 六、本次**未**证明的东西（明确边界）===
+1) 未产生 `enforcement_verified`。`verify()` 的上限仍是 `readback_verified`
+   （app/adapters/openshell/base.py:52-58、cli_backend.py:726-732 只做读回比对）。
+2) 未做任何真实 deny 观测。"策略没被绕过"这句话，本次**没有**证据。
+3) 未证明该网关对**其它**沙箱、其它租户、其它策略形态的行为。
+4) `readback_verified` 只说明"网关读回的配置与我方提交的一致"，
+   不说明"运行时真的按它执行了"——这两件事本轮只完成了前者。

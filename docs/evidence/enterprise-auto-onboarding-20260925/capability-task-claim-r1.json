@@ -1,0 +1,19 @@
+{
+  "batch": 28,
+  "scope": "measured capability gate for scan task claim",
+  "verification": {
+    "new_cases": 8,
+    "focused_with_existing_lease_tests": 15,
+    "api_passed": 1243,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "postgres_concurrency": "not_run",
+    "deployed": false
+  },
+  "source_sha256": {
+    "apps/control-api/app/edge_capabilities.py": "6ee1f00ac21ddf05ef061d57f0dc3988412de1879bf6db2109d25d62b0ee23c8",
+    "apps/control-api/app/tests/test_capability_task_claim.py": "07a3b09be4fd1f58aa2802a31a0713c66439dddc33e801199307877b6f4984db"
+  }
+}

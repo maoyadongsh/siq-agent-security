@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "checks": {
+    "deployed_new_entry": true,
+    "mobile_layout": true,
+    "explicit_connection_completed": true,
+    "fixed_24h_session": true,
+    "reload_no_extension": true,
+    "four_primary_entries_and_legacy_redirect": true,
+    "permission_center_read_only": true,
+    "security_and_runtime_audit_pages": true,
+    "legacy_grant_workspace_accessible": true,
+    "test_session_logged_out": true,
+    "no_javascript_errors": true
+  },
+  "scope": "deployed personal daemon; disposable management session only; no grant or business action"
+}

@@ -1,0 +1,25 @@
+{
+  "batch": 44,
+  "scope": "native skill signed payload preparation and HTTP readback client",
+  "verification": {
+    "edge_go_vet": "passed",
+    "edge_go_test_race_count_1": "passed",
+    "wire_signature_verified": true,
+    "unexpected_readback_rejected": true,
+    "local_payload_drift_not_sent": true,
+    "implicit_http_retry": false,
+    "api_passed": 1279,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "api_seconds": 34.59,
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "task_runner_connected": false,
+    "production_deployed": false
+  },
+  "source_sha256": {
+    "edge/agent/skill_upload.go": "25d6dbff77b217f78c4aff3abdead3f34592270dc10997bccc6620304db6ce26",
+    "edge/agent/skill_upload_test.go": "be57e790c99a9e798ee8df322ffafe79ed2f116aa93f64ba86f09b0e3148ba52",
+    "apps/control-api/app/routers/skill_upload.py": "23bb0a768b1fbd76bd649300e609b2c7a63c0d5f244d32f36955e321be173c8d"
+  }
+}

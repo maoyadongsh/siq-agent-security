@@ -1,0 +1,18 @@
+{
+  "schema_version": "siq.enterprise-contract-validation/v1",
+  "scope": "Schema and Python semantic model only; no issuer route, Go consumer, device enrollment or deployment",
+  "passed": true,
+  "source_sha256": {
+    "packages/contracts/enterprise-install-plan.v1.schema.json": "971ee45eb803d219252d31263e4c9621e791dd03a815a2c268c3f55da7e06712",
+    "apps/control-api/app/install_plan.py": "2af19a7aa482dbcbed44f65c6d920e9b551265f1733e466671e95b347681b3c9",
+    "apps/control-api/app/tests/test_enterprise_install_plan.py": "9ad71595d68b3a4c9973f37fc279d7cfaaf5ea9b3fac4fb8c635f6032ee31727"
+  },
+  "command": "uv run pytest -o addopts='' -q app/tests/test_enterprise_install_plan.py app/tests/test_schema_contracts.py app/tests/test_environment_onboarding.py app/tests/test_enrollment_flow.py",
+  "cwd": "apps/control-api",
+  "passed_tests": 378,
+  "warnings": 1,
+  "ruff": "passed",
+  "diff_check": "passed",
+  "online_services_changed": false,
+  "new_business_authority": false
+}

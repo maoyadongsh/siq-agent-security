@@ -1,0 +1,19 @@
+{
+  "batch": 24,
+  "scope": "enterprise environment install-plan UI source and API boundary",
+  "verification": {
+    "targeted_tests_passed": 25,
+    "web_test_files_passed": 58,
+    "web_tests_passed": 332,
+    "typescript_vite_build": "passed",
+    "git_diff_check": "passed",
+    "browser_interaction_e2e": "not_run",
+    "deployed": false,
+    "signed_release_published": false
+  },
+  "source_sha256": {
+    "apps/web/src/api/installPlan.ts": "d7c7e3d267a5d186b73dd263109593e7db5ba24022a70c444ebff4fb18277828",
+    "apps/web/src/api/installPlan.test.ts": "2642dcebc926ec3b8400fd4b2fec4c8e48c2e2fc58d76d32914b3b6d439cb9f9",
+    "apps/web/src/components/onboarding/InstallPlanSetup.tsx": "dc84d71eca11c64262585e58a4628e8bd121ad30dd599c8d8cd73a47ec98abc8"
+  }
+}

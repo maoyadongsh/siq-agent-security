@@ -1,0 +1,17 @@
+{
+  "scope": "ENT-004 Linux read-only bundle preflight; not secure staging or activation",
+  "checks": {
+    "bundle_fixture_scenarios": 13,
+    "edge_go_vet_all": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/installplan/bundle_linux.go": "5cdc15c897954aa0de468ef9b37a5d1eabc95c89b408074d54734cbe46dd1ba3",
+    "edge/agent/installplan/bundle_linux_test.go": "382b1631829fa824b8ea59b06dbe2e8e1e2912b93768057f3ff9638a9db4b34e",
+    "edge/agent/installplan/bundle_other.go": "9365b2be42fc8c00d2e1931b1f63e438f3544d9bbe4d0e03097461d0303743cd"
+  },
+  "fixture_artifacts_executed": false,
+  "production_private_key_read": false,
+  "live_deployment_changed": false
+}

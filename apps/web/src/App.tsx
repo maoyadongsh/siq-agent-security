@@ -5,6 +5,7 @@ import { ConsoleContextProvider } from '@/components/ConsoleContext';
 import WorkspacePage from '@/pages/WorkspacePage';
 import OverviewPage from '@/pages/OverviewPage';
 import AgentsPage from '@/pages/AgentsPage';
+import SkillsPage from '@/pages/SkillsPage';
 import AgentDetailPage from '@/pages/AgentDetailPage';
 import PermissionsPage from '@/pages/PermissionsPage';
 import FindingsPage from '@/pages/FindingsPage';
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/workspace" element={<WorkspacePage />} />
           <Route path="/overview" element={<OverviewPage />} />
           <Route path="/agents" element={<AgentsPage />} />
+          <Route path="/agents/skills" element={<SkillsPage />} />
           <Route path="/agents/:id" element={<AgentDetailPage />} />
           <Route path="/permissions" element={<PermissionsPage />} />
           <Route path="/findings" element={<FindingsPage />} />

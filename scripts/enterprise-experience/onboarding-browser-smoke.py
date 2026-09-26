@@ -101,6 +101,13 @@ def main():
                 with sync_playwright() as pw:
                     browser = pw.chromium.launch(headless=True)
                     page = browser.new_page(viewport={'width': 1440, 'height': 1000}, locale='zh-CN')
+                    # Use the same least-privilege synthetic operator in the browser
+                    # and HTTP assertions; the bundle's default roles lack edge:manage.
+                    def browser_identity(route):
+                        clean = {k: v for k, v in route.request.headers.items()
+                                 if not k.lower().startswith('x-dev-')}
+                        route.continue_(headers={**clean, **headers})
+                    page.route('**/api/v1/**', browser_identity)
                     errors = []
                     page.on('pageerror', lambda _: errors.append('pageerror'))
                     page.goto(endpoint + '/environments')
@@ -112,6 +119,7 @@ def main():
                     expect(page.get_by_role('region', name='环境接入引导')).to_be_visible()
                     assert any(e['id'] == environment['id'] and e['mode'] == 'discovery' for e in api('/api/v1/environments'))
                     checks['browser_create_environment_persisted_discovery'] = True
+                    page.get_by_text('高级：手动接入、补扫与详细记录', exact=True).click()
                     page.get_by_label('设备可访问的控制面根地址', exact=True).fill(endpoint)
                     page.get_by_label('我已确认目标设备可访问此地址，并已准备好 Edge 与所选 Connector', exact=True).check()
                     with page.expect_response(lambda r: r.url.endswith('/edge-enrollment')) as enrolled:
@@ -159,6 +167,7 @@ def main():
                     page.get_by_role('button', name='刷新接入进度', exact=True).click()
                     expect(page.get_by_text('最近心跳正常', exact=True)).to_be_visible()
                     page.get_by_label('发现框架', exact=True).select_option(args.framework)
+                    page.get_by_label('目标设备', exact=True).select_option(status['devices'][0]['device_identity'])
                     expect(page.get_by_role('button', name='提交发现任务', exact=True)).to_be_enabled()
                     checks['native_heartbeat_independent_readback'] = True
                     with page.expect_response(lambda r: r.url.endswith('/api/v1/scans')) as scan:
@@ -180,6 +189,7 @@ def main():
                     expect(page.get_by_text('扫描已完成', exact=True)).to_be_visible()
                     checks['native_connector_signed_upload_receipt_readback'] = True
                     page.reload()
+                    page.get_by_text('高级：手动接入、补扫与详细记录', exact=True).click()
                     expect(page.get_by_text('扫描已完成', exact=True)).to_be_visible()
                     expect(page.get_by_label('一次性注册码', exact=True)).to_have_count(0)
                     assert environment['id'] in page.url
@@ -208,6 +218,7 @@ def main():
                     expect(page.get_by_role('link', name=candidates[0]['name'], exact=True)).to_be_visible()
                     checks['actual_asset_list_link'] = True
                     page.goto(endpoint + '/environments?environment=' + environment['id'])
+                    page.get_by_text('高级：手动接入、补扫与详细记录', exact=True).click()
                     expect(page.get_by_text('扫描已完成', exact=True)).to_be_visible()
                     page.set_viewport_size({'width': 375, 'height': 900})
                     region = page.get_by_role('region', name='环境接入引导')

@@ -20,6 +20,8 @@ import ConfirmationsPage from './pages/ConfirmationsPage';
 import ReceiptsPage from './pages/ReceiptsPage';
 import BindingsPage from './pages/BindingsPage';
 import SettingsPage from './pages/SettingsPage';
+import BrowserConnect from './components/BrowserConnect';
+const PermissionCenterPage = lazy(() => import('./pages/PermissionCenterPage'));
 
 const DemoPage = lazy(() => import('./pages/DemoPage'));
 
@@ -182,10 +184,13 @@ function LocalAdminApp() {
             </p>
             <h1>连接你的本地管理台</h1>
             <p className="login-desc">
-              输入启动服务时显示的配对码，或运行 <span className="mono">siq-agent-security pair</span> 获取新码。
-              配对码 5 分钟内单次有效。配对后可在 12 小时内刷新页面继续使用；服务重启后需重新配对。
+              选择通过智能体连接，或使用备用配对码。新版管理会话固定 24 小时有效，刷新不会续期；服务重启或退出后需重新连接，旧版服务沿用原有效期。
             </p>
           </div>
+          <BrowserConnect onConnected={() => { setNeedsPairing(false); setError(null); reload(); }} />
+          <details className="login-desc"><summary>手动配对 / 旧版本连接</summary>
+          <p>配对码在启动服务的本机终端中显示，5 分钟内单次有效。若找不到，可让已安装 Skill 的智能体帮助打开本机终端操作指引；不要把配对码或恢复凭据发送到聊天。</p>
+          <p>高级用户：在与服务相同的状态目录环境中，用已安装程序执行 <code>siq-agent-security pair</code>。自定义端口需加 <code>--port N</code>；命令不存在时请使用安装时返回的完整程序路径。</p>
           <form className="login-form" onSubmit={submitPairing}>
             <label className="login-field">
               配对码
@@ -206,6 +211,7 @@ function LocalAdminApp() {
               {pairingBusy ? '配对中…' : '建立管理会话'}
             </button>
           </form>
+          </details>
           <details className="login-desc"><summary>本机安全边界</summary>
             同一系统用户下的进程可能读取本地状态或执行 CLI。管理配对隔离浏览器访问与智能体决策接口；更强的进程隔离需相应运行环境支持。
           </details>
@@ -218,11 +224,13 @@ function LocalAdminApp() {
     <LocalSessionContext.Provider value={session}>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/overview" replace />} />
-          <Route path="/overview" element={<OverviewPage />} />
+          <Route path="/" element={<Navigate to="/agents" replace />} />
+          <Route path="/overview" element={<Navigate to="/agents" replace />} />
+          <Route path="/diagnostics" element={<OverviewPage />} />
           <Route path="/agents" element={<AgentsPage />} />
           <Route path="/agents/:id" element={<AgentDetailPage />} />
           <Route path="/permissions" element={<PermissionsPage />} />
+          <Route path="/permission-center" element={<Suspense fallback={<p role="status">正在打开权限管理…</p>}><PermissionCenterPage /></Suspense>} />
           <Route path="/findings" element={<FindingsPage />} />
           <Route path="/confirmations" element={<ConfirmationsPage />} />
           <Route path="/skill-updates" element={<Suspense fallback={<p role="status">正在打开 Skill 更新…</p>}><SkillUpdatesPage /></Suspense>} />
@@ -236,7 +244,7 @@ function LocalAdminApp() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/inventory" element={<Navigate to="/agents" replace />} />
           <Route path="/admissions" element={<Navigate to="/agents" replace />} />
-          <Route path="*" element={<Navigate to="/overview" replace />} />
+          <Route path="*" element={<Navigate to="/agents" replace />} />
         </Route>
       </Routes>
     </LocalSessionContext.Provider>

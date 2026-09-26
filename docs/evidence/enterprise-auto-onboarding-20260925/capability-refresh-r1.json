@@ -1,0 +1,21 @@
+{
+  "batch": 27,
+  "scope": "Linux serve periodic verified capability measurement",
+  "verification": {
+    "lifecycle_cases": 6,
+    "trust_gate_cases": 8,
+    "go_vet_all": "passed",
+    "go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed",
+    "positive_verifier": "injected test callback",
+    "unsigned_manifest_rejection": "production pinned verifier",
+    "formal_signed_install_e2e": "not_run",
+    "production_started": false
+  },
+  "source_sha256": {
+    "edge/agent/capability_refresh.go": "1474ccb43be1719ba5229eee3035156b156c17c45f8a5fe4549643b001170c91",
+    "edge/agent/capability_refresh_linux.go": "d1a216e253003909f6f23fa02d46651bb2e1e00b0c70a01a22775a8bdb4e7b20",
+    "edge/agent/capability_refresh_linux_test.go": "98bb43c336b9750b6dac4a54a0b697ee2b771ed6b91c6046f9f0366db1b8d546",
+    "edge/agent/capability_refresh_test.go": "bef2b68a7fcf5b4bf241eeb6ddbebb9129577c1dc61fe639d04800dca8f53248"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "batch": 47,
+  "scope": "skill task final receipt bound to persisted signed upload",
+  "verification": {
+    "api_passed": 1292,
+    "api_skipped": 1,
+    "api_existing_warnings": 1,
+    "api_seconds": 35.08,
+    "targeted_upload_and_receipt_passed": 32,
+    "edge_go_vet": "passed",
+    "edge_go_test_race_count_1": "passed",
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "success_without_upload": "rejected",
+    "changed_terminal_replay": "rejected",
+    "audit_failure": "uploaded state preserved",
+    "runner_connected": false,
+    "production_deployed": false
+  },
+  "source_sha256": {
+    "apps/control-api/app/skill_receipt.py": "24a42c8e1e081c2466bffedabae16a7a3a510f562f4119de1b842e1bccb5ac3e",
+    "apps/control-api/app/tests/test_skill_upload.py": "f529ef8e7d067453b2150e98a7e422168e0f8fcebb6bd73f3050818844e0dc7e"
+  }
+}

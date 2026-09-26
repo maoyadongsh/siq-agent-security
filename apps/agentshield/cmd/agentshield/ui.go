@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"runtime"
 	"siq-agent-security/apps/agentshield/internal/state"
@@ -42,8 +43,15 @@ func localUI(args []string, out io.Writer, open func(string) error) error {
 	if printOnly {
 		return nil
 	}
+	if err := writeConsoleAccessGuide(out, cfg.Port); err != nil {
+		return err
+	}
+	if !consoleBrowserAvailable(runtime.GOOS, os.Getenv) {
+		_, err := fmt.Fprintln(out, "当前为 SSH 或无图形桌面环境，未尝试启动服务机器的浏览器；请按上方指引从你的电脑访问。")
+		return err
+	}
 	if err := open(address); err != nil {
-		return errors.New("无法打开浏览器；本机服务未停止，请手动打开上方管理地址")
+		return errors.New("无法打开浏览器；本机服务未停止，请按上方同机或远程访问指引操作")
 	}
 	return nil
 }

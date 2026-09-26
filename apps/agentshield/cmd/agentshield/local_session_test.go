@@ -50,6 +50,60 @@ func TestLocalInstanceRejectsWrongDirectoryBeforePairing(t *testing.T) {
 				if err := cmdLocalSession("pair", []string{"--port", port}); err == nil {
 					t.Fatal("mismatched instance allowed pairing")
 				}
+				if err := cmdLocalSession("connect", []string{"--port", port, "--request", strings.Repeat("b", 32), "--confirm-connect"}); err == nil {
+					t.Fatal("mismatched instance allowed connection")
+				}
+			}
+		})
+	}
+}
+
+func TestBrowserConnectCommandRequiresExplicitConsent(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "must-not-create")
+	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", dir)
+	for _, args := range [][]string{nil, {"--request", strings.Repeat("b", 32)}, {"--request", "invalid", "--confirm-connect"}} {
+		if cmdLocalSession("connect", args) == nil {
+			t.Fatal("unconfirmed request accepted")
+		}
+	}
+	if _, err := os.Stat(dir); !os.IsNotExist(err) {
+		t.Fatal("invalid request wrote state")
+	}
+}
+
+func TestBrowserConnectResponseValidationAndRedirectRefusal(t *testing.T) {
+	id := strings.Repeat("b", 32)
+	for _, mode := range []string{"good", "wrong-id", "html", "redirect", "denied"} {
+		t.Run(mode, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != "POST" || r.URL.Path != "/v1/session/connect/approve" || r.Header.Get("X-SIQ-Local-CLI") != "1" || r.Header.Get("Authorization") != "Bearer test-recovery" {
+					t.Error("invalid CLI envelope")
+				}
+				if mode == "redirect" {
+					http.Redirect(w, r, "https://example.invalid", 302)
+					return
+				}
+				if mode == "html" {
+					w.Header().Set("Content-Type", "text/html")
+					_, _ = w.Write([]byte("legacy"))
+					return
+				}
+				if mode == "denied" {
+					w.WriteHeader(410)
+					return
+				}
+				responseID := id
+				if mode == "wrong-id" {
+					responseID = strings.Repeat("c", 32)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				_ = json.NewEncoder(w).Encode(map[string]any{"schema_version": "local-browser-connect/v1", "request_id": responseID, "status": "approved", "expires_in": 299})
+			}))
+			defer srv.Close()
+			client := localClient()
+			defer client.CloseIdleConnections()
+			if err := requestBrowserConnect(client, srv.URL, "test-recovery", id); (err == nil) != (mode == "good") {
+				t.Fatal("unexpected result", mode, err)
 			}
 		})
 	}

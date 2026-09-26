@@ -117,13 +117,13 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	if health.Version != version {
 		return errors.New("client-install: running version differs from verified release")
 	}
-	if _, err = fmt.Fprintf(out, "已安装并启动本机管理服务。\n程序：%s\n管理页面：%s/\n首次连接请使用已安装程序的 pair 命令。\n", staged, endpoint); err != nil {
+	if _, err = fmt.Fprintf(out, "已安装并启动本机管理服务。\n程序：%s\n管理页面：%s/\n首次连接可在页面选择“通过智能体连接”，将连接请求交给已安装的 SIQ Skill；也可使用已安装程序和同一状态目录的 pair 命令手动配对。管理会话有效期为 24 小时。\n", staged, endpoint); err != nil {
 		return err
 	}
 	if *openUI {
 		return cmdUI(nil, out)
 	}
-	return nil
+	return writeConsoleAccessGuide(out, cfg.Port)
 }
 
 func bootstrapClientIdentity(dir string) error {

@@ -8,6 +8,7 @@ import type { LedgerAsset } from '../types';
 import { useLocalSession } from '../session';
 import DiscoveryPanel from '../components/DiscoveryPanel';
 import { assetKind, assetKinds, frameworkGroups, type FrameworkGroup } from '../assetKinds';
+import { assetRelationships } from '../assetRelationships';
 import {
   assetStatusLabel,
   assetSourceLabel,
@@ -22,12 +23,15 @@ import {
 export default function AgentsPage() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const selectedKind = assetKinds.find((item) => item.key === params.get('kind')) ?? assetKinds[1];
+  const selectedKind = assetKinds.find((item) => item.key === params.get('kind')) ?? assetKinds[0];
   const { reload: reloadStatus } = useLocalSession();
   const [rows, setRows] = useState<LedgerAsset[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const framework = params.get('framework') ?? '';
+  const sourceId = params.get('source') ?? '';
+  const onlyUnlinked = params.get('unlinked') === '1';
+  const relationships = useMemo(() => assetRelationships(rows), [rows]);
   const setFramework = (value: string) => setParams((current) => {
     const next = new URLSearchParams(current);
     if (value) next.set('framework', value); else next.delete('framework');
@@ -91,6 +95,8 @@ export default function AgentsPage() {
     if (assetKind(r.source_type) !== selectedKind.key) return false;
     if (framework && r.framework !== framework) return false;
     if (statusFilter && r.status !== statusFilter) return false;
+    if (selectedKind.key === 'skills' && sourceId && !relationships.skillsBySource.get(sourceId)?.has(r.id)) return false;
+    if (selectedKind.key === 'skills' && onlyUnlinked && relationships.sourcesBySkill.has(r.id)) return false;
     return true;
   });
   const groups = frameworkGroups(rows);
@@ -127,8 +133,10 @@ export default function AgentsPage() {
     },
     { key: 'type', header: '来源', render: (r) => <span className="cell-nowrap">{assetSourceLabel(r.source_type)}</span> },
     { key: 'relationships', header: '配置关联', render: (r) => {
-      const linked = new Set((r.relationships ?? []).map((relation) => r.source_type === 'skill_dir' ? relation.source_id : relation.skill_id));
-      return linked.size ? `${linked.size} ${r.source_type === 'skill_dir' ? '个配置来源' : '个 Skill'}（未核验调用）` : '未发现关联';
+      const linked = (r.source_type === 'skill_dir' ? relationships.sourcesBySkill : relationships.skillsBySource).get(r.id);
+      if (!linked?.size) return '未发现明确关联';
+      if (r.source_type === 'skill_dir') return <span>{linked.size > 1 ? '共享：' : ''}{linked.size} 个配置来源（未核验调用）</span>;
+      return <button className="btn btn-sm" onClick={(event) => { event.stopPropagation(); setStatusFilter(''); setParams({ kind: 'skills', source: r.id }); }}>查看 {linked.size} 个关联 Skill</button>;
     } },
     {
       key: 'status',
@@ -194,12 +202,14 @@ export default function AgentsPage() {
       <PageHeader
         kicker="AGENTSHIELD"
         icon="agents"
-        title="智能体与 Skill"
-        description="分别查看框架、智能体角色和 Skill，选择具体对象后管理权限和接入。"
+        title="我的智能体"
+        description="先选择框架，再查看角色及其关联 Skill。管理的是服务所在设备；浏览器可能运行在另一台设备上。"
         connection={loading ? 'loading' : error ? 'disconnected' : 'connected'}
         connectionError={error}
         actions={<>
           <Link className="btn btn-sm btn-primary" to="/skill-imports">导入 Skill</Link>
+          <Link className="btn btn-sm" to="/installed-skills">安装与更新</Link>
+          <Link className="btn btn-sm" to="/permission-center">批量管理权限</Link>
           <button type="button" className="btn btn-sm" onClick={load}>
             <Icon name="refresh" size={14} /> 刷新列表
           </button>
@@ -210,12 +220,17 @@ export default function AgentsPage() {
         {assetKinds.map((item) => <button type="button" key={item.key}
           className={selectedKind.key === item.key ? 'btn btn-primary' : 'btn'}
           aria-pressed={selectedKind.key === item.key} onClick={() => setParams((current) => {
-            const next = new URLSearchParams(current); next.set('kind', item.key); return next;
+            const next = new URLSearchParams(current); next.set('kind', item.key); next.delete('source'); next.delete('unlinked'); return next;
           })}>
           {item.label}（{item.key === 'frameworks' ? groups.length : rows.filter((row) => assetKind(row.source_type) === item.key).length}）
         </button>)}
       </div>
       <p className="page-desc">{selectedKind.description}</p>
+      {selectedKind.key === 'skills' ? <div className="toolbar">
+        {sourceId ? <span>当前来源：{rows.find((r) => r.id === sourceId)?.name ?? sourceId}。这是配置关联，不是已验证的执行归属。</span> : null}
+        <button className="btn" aria-pressed={!sourceId && !onlyUnlinked} onClick={() => { setStatusFilter(''); setParams({ kind: 'skills' }); }}>全部 Skill</button>
+        <button className="btn" aria-pressed={onlyUnlinked} onClick={() => { setStatusFilter(''); setParams({ kind: 'skills', unlinked: '1' }); }}>未关联 Skill</button>
+      </div> : null}
       <div className="toolbar">
         <div className="field field-flush">
           <label htmlFor="fw-filter">所属框架</label>

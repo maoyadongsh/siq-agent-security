@@ -70,6 +70,7 @@ export function useApiList<T>(
         setRows((prev) => (append ? [...prev, ...items] : items));
         setListMeta(meta);
         setStatus('connected');
+        setError(null);
         setLoadingMore(false);
       })
       .catch((err: unknown) => {

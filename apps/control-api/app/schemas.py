@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.edge_capabilities import InstalledCapabilities
+
 StrictModelConfig = ConfigDict(extra="forbid")
 
 
@@ -79,6 +81,7 @@ class EdgeRegisterRequest(BaseModel):
     public_key_pem: str = Field(min_length=1, max_length=8192)  # 注册路由会进一步校验为 Ed25519 PEM
     version: str = Field(max_length=32)
     capabilities: dict = Field(default_factory=dict)
+    expected_environment_id: str | None = Field(default=None, pattern=r"^[A-Za-z0-9_.:-]{1,64}$")
 
 
 class EdgeRegisterOut(BaseModel):
@@ -92,6 +95,7 @@ class EdgeRegisterOut(BaseModel):
 class EdgeHeartbeatRequest(BaseModel):
     version: str = Field(max_length=32)
     metrics: dict = Field(default_factory=dict)
+    capabilities: InstalledCapabilities | None = None
 
 
 class EdgeTaskOut(BaseModel):
@@ -132,6 +136,8 @@ class EdgeReceiptRequest(BaseModel):
     cursor: str | None = Field(default=None, max_length=512)
     truncated: bool = False
     completed_at: datetime | None = None
+    skill_batch_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    skill_observation_count: int | None = Field(default=None, ge=0, le=200, strict=True)
     # 旧版 publish_policy 回执字段仅保留到 Edge 发布协议正式上线；当前不能使部署 effective。
     summary: EdgeReceiptSummary = Field(default_factory=EdgeReceiptSummary)
     # 回执必须含可机器校验证据（设计文档 §21.1 不变量 #5）：如后端 revision、快照哈希
@@ -229,6 +235,7 @@ class ScanCreate(BaseModel):
     environment_id: str
     scope: dict = Field(default_factory=dict)
     connector: ConnectorName | None = None
+    target_device_identity: str | None = Field(default=None, min_length=8, max_length=128)
 
 
 class ScanOut(BaseModel):

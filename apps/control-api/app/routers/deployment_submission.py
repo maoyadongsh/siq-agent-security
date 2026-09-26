@@ -3,7 +3,7 @@
 import hashlib
 import hmac
 import json
-from datetime import UTC
+from datetime import UTC, datetime
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Response
@@ -108,6 +108,13 @@ def read_submission(
     return _result(session, identity, row)
 
 
+def submission_request_digest(body: SubmissionCreate, identity: Identity) -> str:
+    return hashlib.sha256(json.dumps({
+        "actor": identity.actor_id, "actor_type": identity.identity_type,
+        "tenant": identity.tenant_id, "request": body.model_dump(),
+    }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
 @router.post("/api/v1/deployment-submissions", response_model=SubmissionOut, status_code=201)
 def create_submission(
     body: SubmissionCreate,
@@ -122,18 +129,7 @@ def create_submission(
     for permission in ("policy:read", "policy:manage", "env:read"):
         ensure_permission(identity, permission)
     response.headers["Cache-Control"] = "no-store"
-    digest = hashlib.sha256(
-        json.dumps(
-            {
-                "actor": identity.actor_id,
-                "actor_type": identity.identity_type,
-                "tenant": identity.tenant_id,
-                "request": body.model_dump(),
-            },
-            sort_keys=True,
-            separators=(",", ":"),
-        ).encode()
-    ).hexdigest()
+    digest = submission_request_digest(body, identity)
     prior = _existing(session, identity, body.request_key, digest)
     if prior is not None:
         response.status_code = 200
@@ -203,14 +199,37 @@ def create_submission(
             response.status_code = 200
             return prior
         raise HTTPException(409, "deployment_submission_exists") from None
+    return _execute_new_reservation(body, session, identity, row, deployment)
+
+
+def _execute_new_reservation(
+    body: SubmissionCreate,
+    session: Session,
+    identity: Identity,
+    row: DeploymentSubmission,
+    deployment: Deployment,
+    *,
+    deadline: datetime | None = None,
+) -> SubmissionOut:
+    """Only the creator of a newly committed reservation may enter this stage.
+
+    This is not a resume/retry API. Existing reservations, including pending ones,
+    must be returned via _result instead. Future batch orchestration must preserve
+    the same durable claim-before-effect boundary and must not reconstruct an
+    execution call from a pending row after process loss.
+    """
     # The committed pending row survives process loss before/during/after apply.
     # It is never expired or replayed, even when no external effect is known.
     submission_id = row.id
+    # The request digest was matched to the fresh snapshot before the commit.
+    preview_digest = body.preview_digest
     session.expire_all()
     try:
         prepared = _prepare(body, session, identity, allowed_submission_id=submission_id)
         fresh = _snapshot(prepared, identity)
-        if not hmac.compare_digest(fresh.preview_digest, current.preview_digest):
+        if deadline is not None and _execution_now() >= deadline:
+            raise HTTPException(409, "batch_draft_expired")
+        if not hmac.compare_digest(fresh.preview_digest, preview_digest):
             raise HTTPException(409, "deployment_preview_changed")
     except HTTPException:
         # This reservation has not crossed the execution boundary yet.
@@ -227,7 +246,7 @@ def create_submission(
             summary={
                 "submission_id": submission_id,
                 "reason": "submission_recheck_refused",
-                "preview_digest": current.preview_digest,
+                "preview_digest": preview_digest,
             },
         )
         session.commit()
@@ -237,7 +256,7 @@ def create_submission(
         raise HTTPException(502, "deployment_submission_unconfirmed") from None
     try:
         execute_deployment(
-            prepared, session, identity, preview_digest=current.preview_digest, reserved_deployment=deployment
+            prepared, session, identity, preview_digest=preview_digest, reserved_deployment=deployment
         )
     except Exception:
         session.rollback()
@@ -247,3 +266,7 @@ def create_submission(
         if session.get(Deployment, deployment.id).status != "failed":
             raise HTTPException(502, "deployment_submission_unconfirmed") from None
     return _result(session, identity, row)
+
+
+def _execution_now() -> datetime:
+    return datetime.now(UTC)

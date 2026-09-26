@@ -1,0 +1,175 @@
+/* ENT-019-AUDIT-SEARCH-UI：审计精确查询专用样式（audit-search- 前缀，不修改共享全局样式）。
+ * 复用既有设计变量（米白底 / 墨蓝文字 / 金色强调）与 .card/.field/.btn 语言。 */
+
+/* 查询表单卡片：沿用 .card 视觉，仅收紧下边距 */
+.audit-search-card {
+  margin-bottom: 14px;
+}
+
+.audit-search-card h2 {
+  margin-top: 0;
+}
+
+/* 主查询字段：桌面双列，窄屏单列 */
+.audit-search-primary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 0 16px;
+}
+
+/* 更多查询条件：原生 details/summary，默认折叠；summary 焦点由全局 :focus-visible 承担 */
+.audit-search-more {
+  margin: 2px 0 12px;
+}
+
+.audit-search-more > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--siq-primary);
+  border-radius: var(--radius-ctrl);
+  width: fit-content;
+  padding: 4px 2px;
+}
+
+.audit-search-more-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 0 16px;
+  margin-top: 10px;
+}
+
+/* 字段容器内换行保护：长 label 不挤压控件 */
+.audit-search-field {
+  min-width: 0;
+}
+
+.audit-search-field input {
+  max-width: 100%;
+}
+
+.audit-search-field-error {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--reject);
+}
+
+/* 校验错误汇总：与 .action-error 同语义族（红边 + 浅红底），配合 role="alert" */
+.audit-search-errors {
+  border: 1px solid rgb(168 16 24 / 0.25);
+  border-left: 2px solid var(--reject);
+  border-radius: var(--radius-ctrl);
+  background: rgb(168 16 24 / 0.06);
+  color: var(--reject);
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+
+.audit-search-errors p {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.audit-search-errors ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.audit-search-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 表单脚注与结果说明：muted 小号 */
+.audit-search-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* 当前已应用条件与草稿差异提示 */
+.audit-search-applied {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.audit-search-draft-hint {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--caution);
+}
+
+/* 证明边界说明：常驻可见 */
+.audit-search-proof-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* 结果区：长 ID / 动作名 / 操作者编号可换行，不截断关键信息 */
+.audit-search-results .table-wrap {
+  overflow-x: auto;
+}
+
+.audit-search-results .table td {
+  overflow-wrap: anywhere;
+}
+
+.audit-search-break {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.audit-search-missing {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.audit-search-results .tag {
+  white-space: normal;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.audit-search-more-note {
+  margin-left: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* CL-06：关联查询操作列（audit-correlation- 前缀，仅本任务局部规则） */
+.audit-correlation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.audit-correlation-btn {
+  flex: 0 1 auto;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* 375px：按钮组纵向排列避免横向溢出 */
+@media (max-width: 480px) {
+  .audit-search-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .audit-correlation-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .audit-correlation-btn {
+    width: 100%;
+  }
+}

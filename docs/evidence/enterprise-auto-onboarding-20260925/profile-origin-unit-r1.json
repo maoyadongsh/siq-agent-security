@@ -1,0 +1,18 @@
+{
+  "batch": 38,
+  "scope": "Hermes multiple-root same-name profile identity and boundary validation",
+  "verification": {
+    "go_vet": "passed",
+    "go_test_race_count_1": "passed",
+    "git_diff_check": "passed",
+    "native_integration_checks": 11,
+    "native_evidence": "profile-origin-native-r1.json",
+    "historical_assets_rewritten": false,
+    "production_deployed": false,
+    "skill_discovery_complete": false
+  },
+  "source_sha256": {
+    "connectors/hermes/hermes.go": "9778c9da873dc192ae53f701112e414f84ca56979e19182e5f9cf5f98b993983",
+    "connectors/hermes/profile_identity_test.go": "20f3ca18c22cee51eb325709f8dc0a01c844471f7446a56a1f944accdd76923c"
+  }
+}

@@ -112,21 +112,31 @@ def _identity_from_claims(claims: dict) -> Identity:
     - type=access|user → identity_type=user
     - type=service → identity_type=service（权限仍只从 claims 派生，不因 type 放宽）
     """
-    tenant_id = str(claims.get("tenant_id") or "")
-    if not tenant_id:
+    tenant_id = claims.get("tenant_id")
+    if not isinstance(tenant_id, str) or not tenant_id:
         raise HTTPException(status_code=401, detail="missing_tenant")
-    raw_type = str(claims.get("type") or "user")
-    if raw_type not in RESOURCE_TOKEN_TYPES:
+    actor_id = claims.get("sub")
+    if not isinstance(actor_id, str) or not actor_id:
+        raise HTTPException(status_code=401, detail="invalid_token")
+    raw_type = claims.get("type", "user")
+    if not isinstance(raw_type, str) or raw_type not in RESOURCE_TOKEN_TYPES:
         raise HTTPException(status_code=401, detail="token_type_rejected")
     id_type = "service" if raw_type == "service" else "user"
-    role_codes = frozenset(str(item) for item in (claims.get("role_codes") or []) if item)
-    perms: set[str] = {str(item) for item in (claims.get("permissions") or []) if item}
+    # A verified signature does not make strings/dict keys into permission lists.
+    # In particular, iterating {"*": false} must never grant a wildcard.
+    raw_roles = claims.get("role_codes", [])
+    raw_permissions = claims.get("permissions", [])
+    for values in (raw_roles, raw_permissions):
+        if not isinstance(values, list) or any(not isinstance(item, str) or not item for item in values):
+            raise HTTPException(status_code=401, detail="invalid_token")
+    role_codes = frozenset(raw_roles)
+    perms: set[str] = set(raw_permissions)
     for code in role_codes:
         perms |= ROLE_PERMISSIONS.get(code, set())
     if claims.get("admin") is True or "*" in perms or "admin" in role_codes:
         perms |= set(_ALL_ROLE_PERMISSIONS)
         perms.add("*")
-    return Identity(id_type, str(claims.get("sub")), tenant_id, role_codes, frozenset(perms))
+    return Identity(id_type, actor_id, tenant_id, role_codes, frozenset(perms))
 
 
 @lru_cache(maxsize=1)

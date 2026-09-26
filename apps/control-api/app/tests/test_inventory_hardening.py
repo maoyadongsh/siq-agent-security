@@ -29,6 +29,7 @@ def _upload_candidate(
     attributes: dict | None = None,
     source_locator: str | None = None,
     evidence_id: str | None = None,
+    edge_credentials: tuple | None = None,
 ) -> dict:
     """经 Edge 批次上传一个候选（可带 artifact_digest/attributes），返回资产 JSON。"""
     if env_id is None:
@@ -37,7 +38,7 @@ def _upload_candidate(
         env_id = env_resp.json()["id"]
     identity = edge_identity or f"edge-p1-{name}"
     evidence_id = evidence_id or f"ev-p1-{name}-{datetime.now(UTC).timestamp()}"
-    edge_headers, private_key = register_edge(client, headers, env_id, identity)
+    edge_headers, private_key = edge_credentials or register_edge(client, headers, env_id, identity)
     task_id = create_scan_task(client, headers, env_id)
     evidence = signed_evidence(
         private_key,
@@ -156,6 +157,7 @@ def test_redigest_on_same_source_locator_updates_with_trace(client, tenant_a):
     env_resp = client.post("/api/v1/environments", json={"name": "env-p1-redigest"}, headers=tenant_a)
     env_id = env_resp.json()["id"]
     locator = "hermes_profile://p1-redigest"
+    credentials = register_edge(client, tenant_a, env_id, "edge-p1-redigest")
     asset = _upload_candidate(
         client,
         tenant_a,
@@ -164,16 +166,19 @@ def test_redigest_on_same_source_locator_updates_with_trace(client, tenant_a):
         artifact_digest="sha256:" + "a" * 64,
         source_locator=locator,
         evidence_id="ev-p1-redigest-1",
+        edge_identity="edge-p1-redigest",
+        edge_credentials=credentials,
     )
     updated = _upload_candidate(
         client,
         tenant_a,
-        "p1-redigest",  # 同名同 locator：命中 uq_asset_source 去重合并路径
+        "p1-redigest",  # 同设备同 locator：摘要漂移复用资产并保留历史
         env_id=env_id,
-        edge_identity="edge-p1-redigest-2",
+        edge_identity="edge-p1-redigest",
         artifact_digest="sha256:" + "b" * 64,
         source_locator=locator,
         evidence_id="ev-p1-redigest-2",
+        edge_credentials=credentials,
     )
     assert updated["id"] == asset["id"]  # 合并到既有资产而非新建
     row = _get_asset_row(asset["id"])

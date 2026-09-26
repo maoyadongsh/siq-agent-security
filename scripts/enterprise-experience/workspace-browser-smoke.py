@@ -108,12 +108,12 @@ def main():
                     checks['default_workspace_verified_organization_and_dev_label'] = True
                     page.screenshot(path=str(args.out_dir/'workspace-default-desktop.png'), animations='disabled')
                     cases = [
-                        ('viewer', {'工作台', '智能体资产', '权限视图', '风险中心', '策略中心', '变更中心', '运行时绑定', '设置'}),
+                        ('viewer', {'工作台', '资产', '权限', '安全', '策略中心', '变更中心', '运行时绑定', '设置'}),
                         ('platform_operator', {'工作台', '环境与设备', '设置'}),
-                        ('agent_owner', {'工作台', '智能体资产', '权限视图', '风险中心', '设置'}),
-                        ('auditor', {'工作台', '智能体资产', '权限视图', '风险中心', '策略中心', '变更中心', '运行时绑定', '审计', '设置'}),
+                        ('agent_owner', {'工作台', '资产', '权限', '安全', '设置'}),
+                        ('auditor', {'工作台', '资产', '权限', '安全', '策略中心', '变更中心', '运行时绑定', '审计', '设置'}),
                         ('reviewer', {'工作台', '设置'}),
-                        ('security_admin', {'工作台', '总览', '智能体资产', '权限视图', '风险中心', '策略中心', '变更中心', '运行时绑定', '环境与设备', '设置'}),
+                        ('security_admin', {'工作台', '总览', '资产', '权限', '安全', '策略中心', '变更中心', '运行时绑定', '环境与设备', '设置'}),
                     ]
                     for role, labels in cases:
                         current = {**base_headers, 'X-Dev-Roles': role}
@@ -145,7 +145,7 @@ def main():
                     page.get_by_role('button', name='刷新组织与权限', exact=True).click()
                     expect(page.get_by_role('alert')).to_contain_text('旧入口已撤下')
                     expect(page.get_by_role('heading', name='验收组织甲', exact=True)).to_have_count(0)
-                    expect(page.get_by_role('navigation').get_by_role('link', name='智能体资产', exact=True)).to_have_count(0)
+                    expect(page.get_by_role('navigation').get_by_role('link', name='资产', exact=True)).to_have_count(0)
                     page.unroute('**/console-context')
                     page.get_by_role('button', name='刷新组织与权限', exact=True).click()
                     expect(page.get_by_role('heading', name='验收组织甲', exact=True)).to_be_visible()

@@ -134,5 +134,5 @@ export const PERMISSION_STATE_LABELS: Record<string, string> = {
 };
 
 export function permissionStateLabel(state: string): string {
-  return PERMISSION_STATE_LABELS[state] ?? state;
+  return Object.hasOwn(PERMISSION_STATE_LABELS, state) ? PERMISSION_STATE_LABELS[state] : state;
 }

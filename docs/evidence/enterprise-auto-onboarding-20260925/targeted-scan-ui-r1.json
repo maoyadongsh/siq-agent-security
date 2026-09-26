@@ -1,0 +1,17 @@
+{
+  "batch": 30,
+  "scope": "enterprise explicit device selection for discovery scan",
+  "verification": {
+    "web_test_files_passed": 58,
+    "web_tests_passed": 336,
+    "typescript_vite_build": "passed",
+    "git_diff_check": "passed",
+    "browser_interaction_e2e": "not_run",
+    "deployed": false
+  },
+  "source_sha256": {
+    "apps/web/src/api/onboarding.ts": "223b8232a35646ba33a971d267e7102723aef9d91f2eeebf3d454e0aef09233c",
+    "apps/web/src/api/onboarding.test.ts": "91f8e3c137f50adc53fd357b81ad8a8c468266d780a276db6c95f1671dcab502",
+    "apps/web/src/components/onboarding/EnvironmentSetup.tsx": "b297d8f0b7a460aad38bc9680f70078b75f218bda61ee5c8b14b7deb10f475bd"
+  }
+}

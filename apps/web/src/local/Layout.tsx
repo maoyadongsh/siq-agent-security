@@ -1,4 +1,4 @@
-/** 本地模式外壳：复用企业控制台 Layout 语言，导航对齐规格 §3.10 八项。 */
+/** Personal console: four primary workflows, legacy capabilities under advanced navigation. */
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Icon, type IconName } from '@/components/icons';
@@ -16,29 +16,27 @@ interface NavItem {
 
 const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
-    label: '监测',
+    label: '个人管理',
     items: [
-      { to: '/overview', label: '总览', icon: 'overview' },
-      { to: '/agents', label: '智能体与 Skill', icon: 'agents' },
-      { to: '/permissions', label: '权限视图', icon: 'permissions' },
-      { to: '/findings', label: '风险中心', icon: 'findings' },
+      { to: '/agents', label: '我的智能体', icon: 'agents' },
+      { to: '/permission-center', label: '权限管理', icon: 'permissions' },
+      { to: '/findings', label: '安全中心', icon: 'findings' },
+      { to: '/activities', label: '运行审计', icon: 'audit' },
     ],
   },
   {
-    label: '治理',
+    label: '高级与设置',
     items: [
       { to: '/confirmations', label: '确认待办', icon: 'shield' },
       { to: '/skill-imports', label: '导入 Skill', icon: 'shield' },
       { to: '/installed-skills', label: '已安装 Skill', icon: 'shield' },
-      { to: '/grants', label: '签发', icon: 'policies' },
-      { to: '/activities', label: '运行记录', icon: 'audit' },
+      { to: '/grants', label: '完整授权工作台', icon: 'policies' },
+      { to: '/permissions', label: '技术权限事实', icon: 'permissions' },
       { to: '/receipts', label: '回执', icon: 'audit' },
       { to: '/bindings', label: '运行时绑定', icon: 'bindings' },
+      { to: '/diagnostics', label: '系统诊断总览', icon: 'overview' },
+      { to: '/settings', label: '设置', icon: 'settings' },
     ],
-  },
-  {
-    label: '系统',
-    items: [{ to: '/settings', label: '设置', icon: 'settings' }],
   },
 ];
 
@@ -123,12 +121,8 @@ function LocalLayout() {
           </span>
         </div>
         <nav className="nav">
-          {NAV_GROUPS.map((group) => (
-            <div className="nav-group" key={group.label}>
-              <span className="nav-group-label" aria-hidden={collapsed}>
-                {group.label}
-              </span>
-              {group.items.map((item) => (
+          {NAV_GROUPS.map((group, index) => {
+            const links = group.items.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
@@ -139,11 +133,12 @@ function LocalLayout() {
                   <span className="nav-icon" aria-hidden="true">
                     <Icon name={item.icon} />
                   </span>
-                  <span className="nav-label">{item.label}{item.to === '/confirmations' && pendingCount !== null && pendingCount > 0 ? `（${pendingCount}）` : ''}</span>
+                  <span className="nav-label">{item.label}{['/confirmations', '/findings'].includes(item.to) && pendingCount !== null && pendingCount > 0 ? `（${pendingCount} 待办）` : ''}</span>
                 </NavLink>
-              ))}
-            </div>
-          ))}
+              ));
+            return index === 0 ? <div className="nav-group" key={group.label}><span className="nav-group-label" aria-hidden={collapsed}>{group.label}</span>{links}</div>
+              : <details className="nav-group" key={group.label}><summary className="nav-link" title={group.label}>{collapsed ? '更多' : group.label}</summary>{links}</details>;
+          })}
         </nav>
         <div className="sidebar-foot">
           <span className="sidebar-version">

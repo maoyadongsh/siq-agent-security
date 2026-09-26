@@ -1,0 +1,192 @@
+/* ENT-018-FINDINGS-UI：风险中心专用样式（finding-explorer- 前缀，不修改共享样式）。 */
+
+.finding-explorer-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.finding-explorer-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.finding-explorer-field-search {
+  flex: 1 1 220px;
+}
+
+.finding-explorer-field select,
+.finding-explorer-field input {
+  min-width: 0;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.finding-explorer-field select:focus-visible,
+.finding-explorer-field input:focus-visible,
+.finding-explorer-filters button:focus-visible,
+.finding-explorer-summary:focus-visible {
+  outline: 2px solid var(--siq-primary);
+  outline-offset: 2px;
+}
+
+.finding-explorer-match-line {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.finding-explorer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.finding-explorer-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 1.8fr) minmax(0, 1fr) 4.5rem;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.finding-explorer-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.finding-explorer-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 1.8fr) minmax(0, 1fr) 4.5rem;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+}
+
+.finding-explorer-summary::-webkit-details-marker {
+  display: none;
+}
+
+.finding-explorer-summary:hover {
+  background: var(--table-row-hover);
+}
+
+.finding-explorer-cell {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.finding-explorer-cell-toggle {
+  color: var(--siq-primary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.finding-explorer-disclosure[open] .finding-explorer-cell-toggle {
+  text-decoration: underline;
+}
+
+.finding-explorer-detail {
+  border-top: 1px dashed var(--border);
+  padding: 12px;
+}
+
+.finding-explorer-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 10px 16px;
+  margin: 0;
+}
+
+.finding-explorer-detail-grid dt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.finding-explorer-detail-grid dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.finding-explorer-detail-grid > div {
+  min-width: 0;
+}
+
+.finding-explorer-break {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.finding-explorer-evidence-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.finding-explorer-evidence-list code {
+  font-size: 12px;
+}
+
+.finding-explorer-detail-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.finding-explorer-actions {
+  border-top: 1px dashed var(--border);
+  padding: 8px 12px;
+}
+
+.finding-explorer-cell .tag {
+  white-space: normal;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1024px) {
+  .finding-explorer-head {
+    display: none;
+  }
+
+  .finding-explorer-summary {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'severity status'
+      'rule rule'
+      'asset asset'
+      'impact impact'
+      'toggle toggle';
+    row-gap: 6px;
+  }
+
+  .finding-explorer-cell-severity { grid-area: severity; }
+  .finding-explorer-cell-rule { grid-area: rule; }
+  .finding-explorer-cell-asset { grid-area: asset; }
+  .finding-explorer-cell-impact { grid-area: impact; }
+  .finding-explorer-cell-status { grid-area: status; justify-self: end; }
+  .finding-explorer-cell-toggle { grid-area: toggle; }
+}

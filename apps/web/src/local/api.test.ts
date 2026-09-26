@@ -68,6 +68,19 @@ describe('local session recovery', () => {
     }
   });
 
+  it('accepts 24-hour v2 sessions but never expands the legacy v1 bound', async () => {
+    const { restoreSession } = await import('./api');
+    vi.mocked(fetch).mockResolvedValueOnce(response({ ...sessionResponse, schema_version: 'local-admin-session/v2', expires_in: 86400 }));
+    await expect(restoreSession()).resolves.toBe(true);
+    for (const value of [
+      { ...sessionResponse, expires_in: 86400 },
+      { ...sessionResponse, schema_version: 'local-admin-session/v2', expires_in: 86401 },
+    ]) {
+      vi.mocked(fetch).mockResolvedValueOnce(response(value));
+      await expect(restoreSession()).rejects.toThrow('不兼容');
+    }
+  });
+
   it('does not restore an in-flight bearer after logout', async () => {
     const { pair, restoreSession, logout, localApi } = await import('./api');
     vi.mocked(fetch).mockResolvedValueOnce(response(sessionResponse));

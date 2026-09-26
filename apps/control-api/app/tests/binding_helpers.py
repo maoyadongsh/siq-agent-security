@@ -8,6 +8,34 @@ from __future__ import annotations
 import uuid
 
 
+def assign_target_authority(monkeypatch, tmp_path, binding_id, adapter):
+    """Explicit synthetic operator assignment; exercises the real file authorizer."""
+    import hashlib
+    import json
+    from datetime import UTC, datetime, timedelta
+
+    from app.db import session_scope
+    from app.models import RuntimeBinding
+
+    caps = adapter.probe()
+    with session_scope() as session:
+        binding = session.get(RuntimeBinding, binding_id)
+        item = {field: getattr(binding, field) for field in (
+            "tenant_id", "environment_id", "asset_id", "agent_instance_id", "backend_target_id",
+        )}
+    item.update(id="fixture-assignment", endpoint_fingerprint=caps.endpoint_fingerprint,
+                gateway_name_sha256=hashlib.sha256(caps.handshake_gateway.encode()).hexdigest())
+    now = datetime.now(UTC)
+    catalog = {"schema_version": "enterprise-runtime-target-authority/v1",
+               "issued_at": (now - timedelta(minutes=1)).isoformat(),
+               "expires_at": (now + timedelta(hours=1)).isoformat(), "assignments": [item]}
+    path = tmp_path / "target-authority.json"
+    path.write_text(json.dumps(catalog))
+    path.chmod(0o600)
+    monkeypatch.setenv("SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE", str(path))
+    return path
+
+
 def make_instance(
     tenant_id: str,
     env_id: str,

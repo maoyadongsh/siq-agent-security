@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq-release-verification/v1",
+  "version": "0.4.0-rc.2",
+  "expected_source_sha": "7b68c14abeff707777278034f2ccfd19b43ac609",
+  "source_identity_scope": "descriptive metadata matched; publisher signature binds Skill and binary pins, not source attestation",
+  "official_signature_and_skill_content": "passed",
+  "four_binary_pins": "passed",
+  "asset_inventory_and_checksums": "passed",
+  "bundle_skill_zip_and_flat_binaries": "passed",
+  "trusted_installation_instructions": "passed",
+  "native_installation": {
+    "host": "linux/arm64",
+    "fresh_state_start_status_pair_console_stop": "passed"
+  },
+  "published": "not_checked",
+  "assets": [
+    {
+      "name": "SHA256SUMS",
+      "sha256": "f8afee390148ca066a8e32ac652cd75bb6091ac1deb1d3890dc41911a315c016",
+      "bytes": 691
+    },
+    {
+      "name": "SOURCE-INFO.json",
+      "sha256": "628c389898813f310b40a511d65dd44b1837669b099242fe973f16e149afdf98",
+      "bytes": 25590
+    },
+    {
+      "name": "siq-agent-security-0.4.0-rc.2-bundle.zip",
+      "sha256": "aaf5c5d20fce30022b427b0aeb237c0a41b58b425166ab6a8b949a54c07b881e",
+      "bytes": 47359866
+    },
+    {
+      "name": "siq-agent-security-darwin-arm64",
+      "sha256": "a7df2ed1e3f5e927fcf1a96bf6299fb71700ded1f9f9add58fc717eefad6b3c5",
+      "bytes": 19367762
+    },
+    {
+      "name": "siq-agent-security-linux-amd64",
+      "sha256": "6ae58e4322c355bb72f1bb021fa20429ba80aa9304da268b1fef078a66bbbcd4",
+      "bytes": 20373666
+    },
+    {
+      "name": "siq-agent-security-linux-arm64",
+      "sha256": "94924058ed5c2cc80e74d285609142f21fea174210fd293b3402355c7afcf8c5",
+      "bytes": 19136674
+    },
+    {
+      "name": "siq-agent-security-skill-0.4.0-rc.2.zip",
+      "sha256": "aa7108017eadd9ebddab9adcbe899c0fd822b7f8dd7bdb31a10af73e008ac783",
+      "bytes": 32668
+    },
+    {
+      "name": "siq-agent-security-windows-amd64.exe",
+      "sha256": "f1b7386ab5ef5fa966c0c0d2ee9fb4f5a3b139f3d9fc7b4a0e0bf17bcbb72525",
+      "bytes": 20951040
+    }
+  ]
+}

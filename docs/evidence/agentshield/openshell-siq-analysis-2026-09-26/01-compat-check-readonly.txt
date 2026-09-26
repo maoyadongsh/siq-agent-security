@@ -1,0 +1,11 @@
+探测版本: v0.0.83
+能力比对:
+  [OK  ] dynamic_network_update: 期望 True / 实际 True
+  [OK  ] static_filesystem: 期望 True / 实际 True
+  [OK  ] static_process: 期望 True / 实际 True
+  [OK  ] landlock: 期望 True / 实际 True
+  [OK  ] interceptor: 期望 False / 实际 False
+  [OK  ] provider_credential_injection: 期望 False / 实际 False
+  [OK  ] revision_support: 期望 True / 实际 True
+  [OK  ] sandbox_list_decodable: 期望 False / 实际 False
+PASS: 全部期望一致

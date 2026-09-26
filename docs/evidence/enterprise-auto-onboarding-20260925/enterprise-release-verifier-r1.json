@@ -1,0 +1,18 @@
+{
+  "scope": "ENT-004 manifest verification library, not installation or release",
+  "checks": {
+    "edge_go_vet": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "python_install_plan_and_issuer": "110 passed; one existing deprecation warning",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/installplan/release.go": "530f0fbc8755c3c97a5a2b9253a1247d806e33457a1e6870a4e28a0ad4f09912",
+    "edge/agent/installplan/release_test.go": "0b18e2b7de524c4c549f95faa3acc42f9ade4951def50baad895699a07b66f92",
+    "edge/agent/installplan/plan.go": "7574657eda034f09d45adf1be13f59031034d37a3cd8fabf41c5eda2584176e6",
+    "packages/contracts/enterprise-release.v1.md": "5f391ee3aad25f77432db406f12a851d813fbf436049effa755ebd430c323885"
+  },
+  "production_private_key_read": false,
+  "release_signed_or_published": false,
+  "live_deployment_changed": false
+}

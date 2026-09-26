@@ -1,0 +1,20 @@
+{
+  "scope": "local consent task gate and Hermes include/symlink correction",
+  "checks": {
+    "edge_go_vet_and_race_all": "passed",
+    "hermes_go_vet_and_race_all": "passed",
+    "signed_out_of_scope_task_denied": "passed",
+    "consent_persistence_and_expiry": "passed",
+    "hermes_excluded_config_and_symlink_negative_tests": "passed",
+    "git_diff_check": "passed",
+    "new_end_to_end_consent_flow": "not run",
+    "all_connector_scope_conformance": "pending"
+  },
+  "source_sha256": {
+    "edge/agent/discovery_consent.go": "63799b3309cde1840b03be65a89fd91adf1e27be14cd2ced1c94d6f1bae7e7f8",
+    "edge/agent/confirm_discovery_linux.go": "9fdc65363212731e690c9855f772a6009a30947f8d2ac6a4c0c935667a261d4f",
+    "connectors/hermes/hermes.go": "683d1e192c6c7448aaf0229ef7555e648e6c07844bca575df8b1ae3f9544cead",
+    "connectors/hermes/consent_scope_test.go": "7e3803f80cfdd1883596aa23eaaf07ac5d0e2b68e155f894140d44aff8465fe4"
+  },
+  "live_deployment_changed": false
+}

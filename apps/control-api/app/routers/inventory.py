@@ -14,15 +14,31 @@ from datetime import UTC, datetime, timedelta
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from pydantic import BaseModel, ConfigDict, ValidationError
-from sqlalchemy import select
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.discovery_identity import asset_evidence_device_filter
 from app.evidence_signing import batch_signed_bytes, verify_evidence_signature, verify_hex_signature
+from app.framework_source import parse_framework_source, validate_framework_sources
 from app.list_meta import apply_list_meta, clamp_limit, take_page
-from app.models import AgentAsset, AgentInstance, EdgeTask, Environment, Evidence, PermissionFact, System, utcnow
+from app.models import (
+    AgentAsset,
+    AgentInstance,
+    EdgeAgent,
+    EdgeTask,
+    Environment,
+    Evidence,
+    PermissionFact,
+    RoleConfigurationObservation,
+    RoleSkillSelectionObservation,
+    System,
+    utcnow,
+)
 from app.outbox import audit, emit_event
+from app.role_skill_roots import parse_role_skill_roots, validate_role_skill_roots
+from app.role_skill_selection import selections_for_batch
 from app.schemas import (
     AgentAssetOut,
     AgentInstanceCreate,
@@ -54,6 +70,14 @@ def create_scan(
     )
     if env is None:
         raise HTTPException(status_code=404, detail="not_found")
+    if body.target_device_identity is not None:
+        target = session.scalar(select(EdgeAgent).where(
+            EdgeAgent.environment_id == env.id, EdgeAgent.device_identity == body.target_device_identity,
+        ))
+        if target is None:
+            raise HTTPException(status_code=404, detail="not_found")
+        if target.revoked_at is not None:
+            raise HTTPException(status_code=409, detail="scan_target_revoked")
     # 租户级扫描配额（威胁 T19：扫描风暴 DoS）
     from sqlalchemy import func
 
@@ -66,7 +90,7 @@ def create_scan(
     pending_scans = session.scalar(
         select(func.count(EdgeTask.id)).where(
             EdgeTask.environment_id.in_(pending_env_ids),
-            EdgeTask.task_type == "scan",
+            EdgeTask.task_type.in_(("scan", "skill_scan")),
             EdgeTask.status == "pending",
         )
     )
@@ -79,6 +103,8 @@ def create_scan(
     payload: dict = {"scope": body.scope}
     if body.connector:
         payload["connector"] = body.connector
+    if body.target_device_identity is not None:
+        payload["target_device_identity"] = body.target_device_identity
     task = EdgeTask(
         environment_id=env.id,
         task_type="scan",
@@ -148,7 +174,7 @@ def smart_scan(
     pending = session.scalar(
         select(func.count(EdgeTask.id)).where(
             EdgeTask.environment_id.in_(env_ids),
-            EdgeTask.task_type == "scan",
+            EdgeTask.task_type.in_(("scan", "skill_scan")),
             EdgeTask.status == "pending",
         )
     )
@@ -261,6 +287,8 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
     )
     if task is None or task.expires_at < utcnow():
         raise HTTPException(status_code=409, detail="batch_task_binding_invalid")
+    if task.payload.get("target_device_identity") not in (None, device_identity):
+        raise HTTPException(status_code=409, detail="batch_task_device_mismatch")
     result_digest = hashlib.sha256(batch_signed_bytes(raw_body)).hexdigest()
     if task.status == "uploaded":
         if task.result_digest != result_digest:
@@ -314,12 +342,18 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
     if env is None:
         raise HTTPException(status_code=404, detail="environment_gone")
     tenant_id = env.tenant_id
+    validate_framework_sources(candidates, evidence, task)
+    validate_role_skill_roots(candidates)
+    role_selections = selections_for_batch(candidates, task)
+    if role_selections and len(evidence_ids) != len(evidence):
+        raise HTTPException(status_code=422, detail="role_skill_ambiguous_evidence")
     inserted_evidence = 0
     for ev in evidence:
         existing_ev = session.scalar(
             select(Evidence).where(
                 Evidence.tenant_id == tenant_id,
                 Evidence.environment_id == env.id,
+                Evidence.collector_id == edge.device_identity,
                 Evidence.evidence_id == ev.evidence_id,
                 Evidence.content_hash == ev.content_hash,
             )
@@ -354,6 +388,7 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
         existing = session.scalar(
             select(AgentAsset).where(
                 AgentAsset.tenant_id == tenant_id,
+                AgentAsset.discovery_scope == edge.id,
                 AgentAsset.source_type == cand.source_type,
                 AgentAsset.source_locator == cand.source_locator,
             )
@@ -383,6 +418,7 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
             continue
         asset = AgentAsset(
             tenant_id=tenant_id,
+            discovery_scope=edge.id,
             name=cand.name,
             framework=cand.framework,
             status="candidate",
@@ -396,6 +432,39 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
         session.flush()
         candidate_asset_ids[cand.candidate_id] = asset.id
         inserted_candidates += 1
+
+    evidence_by_id = {ev.evidence_id: ev for ev in evidence}
+    for cand in candidates:
+        attrs = cand.attributes or {}
+        if 'framework_source' not in attrs:
+            continue
+        config_source = parse_framework_source(attrs['framework_source'])
+        session.add(RoleConfigurationObservation(
+            tenant_id=tenant_id, asset_id=candidate_asset_ids[cand.candidate_id],
+            edge_agent_id=edge.id, task_id=task.id, batch_digest=result_digest,
+            framework_source=config_source,
+            skill_source_roots=parse_role_skill_roots(attrs['skill_source_roots'])
+            if 'skill_source_roots' in attrs else None,
+            observed_at=_parse_dt(evidence_by_id[config_source['evidence_id']].observed_at), received_at=now,
+        ))
+    for cand in candidates:
+        if cand.candidate_id not in role_selections:
+            continue
+        session.add(RoleSkillSelectionObservation(
+            tenant_id=tenant_id,
+            asset_id=candidate_asset_ids[cand.candidate_id],
+            edge_agent_id=edge.id,
+            task_id=task.id,
+            batch_digest=result_digest,
+            selection=role_selections[cand.candidate_id],
+            source_evidence=[{
+                "evidence_id": ref,
+                "content_hash": evidence_by_id[ref].content_hash,
+                "observed_at": _parse_dt(evidence_by_id[ref].observed_at).isoformat() + "Z",
+            } for ref in sorted(set(cand.evidence_ids))],
+            observed_at=_parse_dt(cand.discovered_at),
+            received_at=now,
+        ))
 
     inserted_permissions = 0
     for pf in permission_facts:
@@ -458,6 +527,7 @@ async def edge_upload_batch(request: Request, session: Session = Depends(get_ses
             "candidates": inserted_candidates,
             "evidence": inserted_evidence,
             "permission_facts": inserted_permissions,
+            "role_skill_observations": len(role_selections),
         },
     )
     task.status = "uploaded"
@@ -766,6 +836,13 @@ def confirm_candidate(
 ):
     asset = _asset_or_404(session, identity.tenant_id, asset_id)
     ensure_permission(identity, "agent:confirm")
+    _confirm_candidate_in_transaction(session, identity, asset, body)
+    session.commit()
+    session.refresh(asset)
+    return asset
+
+
+def _confirm_candidate_in_transaction(session: Session, identity: Identity, asset: AgentAsset, body: CandidateConfirm):
     if asset.status not in ("candidate", "needs_review"):
         raise HTTPException(status_code=409, detail="invalid_state")
     # P1-7：body 里的外键引用必须解析到本租户对象。system_id 是请求体引用而非路径定位，
@@ -776,6 +853,14 @@ def confirm_candidate(
         )
         if system is None:
             raise HTTPException(status_code=422, detail="invalid_system_ref")
+    claimed = session.execute(
+        update(AgentAsset).where(
+            AgentAsset.id == asset.id, AgentAsset.tenant_id == identity.tenant_id,
+            AgentAsset.status.in_(("candidate", "needs_review")), AgentAsset.updated_at == asset.updated_at,
+        ).values(status="confirmed", updated_at=utcnow()).execution_options(synchronize_session=False)
+    )
+    if claimed.rowcount != 1:
+        raise HTTPException(status_code=409, detail="candidate_changed")
     asset.status = "confirmed"
     asset.role = body.role or asset.role
     asset.system_id = body.system_id or asset.system_id
@@ -797,6 +882,7 @@ def confirm_candidate(
                     Evidence.tenant_id == identity.tenant_id,
                     Evidence.evidence_id.in_(asset.evidence_ids),
                     Evidence.environment_id.isnot(None),
+                    asset_evidence_device_filter(asset),
                 ).limit(1)
             )
             if ev_obj:
@@ -828,9 +914,89 @@ def confirm_candidate(
         {"agent_asset_id": asset.id, "role": asset.role},
         resource_ref=asset.id,
     )
+
+
+class BulkCandidateItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    asset_id: str = Field(min_length=1, max_length=64)
+    expected_updated_at: datetime
+
+
+class BulkCandidateSelection(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    items: list[BulkCandidateItem] = Field(min_length=1, max_length=50)
+
+    @model_validator(mode="after")
+    def unique_assets(self):
+        if len({item.asset_id for item in self.items}) != len(self.items):
+            raise ValueError("duplicate_asset")
+        return self
+
+
+class BulkCandidateConfirm(BulkCandidateSelection):
+    schema_version: Literal["enterprise-candidate-bulk-confirm/v1"]
+
+
+class BulkCandidateDismiss(BulkCandidateSelection):
+    schema_version: Literal["enterprise-candidate-bulk-dismiss/v1"]
+    reason_code: Literal["duplicate", "out_of_scope", "not_agent"]
+
+
+@router.post("/api/v1/candidates/bulk-confirm")
+def bulk_confirm_candidates(
+    body: BulkCandidateConfirm,
+    response: Response,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    assets = _bulk_assets_for_review(session, identity, body.items)
+    for asset in assets:
+        _confirm_candidate_in_transaction(session, identity, asset, CandidateConfirm())
+    return _bulk_review_result(session, response, assets, body.items, "confirm")
+
+
+def _bulk_assets_for_review(session: Session, identity: Identity, items: list[BulkCandidateItem]):
+    ids = [item.asset_id for item in items]
+    assets = list(session.scalars(select(AgentAsset).where(
+        AgentAsset.tenant_id == identity.tenant_id, AgentAsset.id.in_(ids),
+    ).order_by(AgentAsset.id)))
+    if len(assets) != len(ids):
+        raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "agent:confirm")
+    expected = {item.asset_id: item.expected_updated_at for item in items}
+    for asset in assets:
+        stamp = expected[asset.id]
+        if stamp.tzinfo is not None:
+            stamp = stamp.astimezone(UTC).replace(tzinfo=None)
+        if stamp != asset.updated_at or asset.status not in ("candidate", "needs_review"):
+            raise HTTPException(status_code=409, detail="candidate_changed")
+    return assets
+
+
+def _bulk_review_result(session: Session, response: Response, assets, items, action: str):
     session.commit()
-    session.refresh(asset)
-    return asset
+    by_id = {}
+    for asset in assets:
+        session.refresh(asset)
+        by_id[asset.id] = AgentAssetOut.model_validate(asset).model_dump(mode="json")
+    response.headers["Cache-Control"] = "no-store"
+    return {"schema_version": f"enterprise-candidate-bulk-{action}-result/v1",
+            "items": [by_id[item.asset_id] for item in items]}
+
+
+@router.post("/api/v1/candidates/bulk-dismiss")
+def bulk_dismiss_candidates(
+    body: BulkCandidateDismiss,
+    response: Response,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    assets = _bulk_assets_for_review(session, identity, body.items)
+    reasons = {"duplicate": "重复配置", "out_of_scope": "不属于本次管理范围", "not_agent": "不是智能体配置"}
+    reason = reasons[body.reason_code]
+    for asset in assets:
+        _dismiss_candidate_in_transaction(session, identity, asset, CandidateDismiss(reason=reason))
+    return _bulk_review_result(session, response, assets, body.items, "dismiss")
 
 
 @router.post("/api/v1/candidates/{asset_id}/dismiss", response_model=AgentAssetOut)
@@ -842,8 +1008,23 @@ def dismiss_candidate(
 ):
     asset = _asset_or_404(session, identity.tenant_id, asset_id)
     ensure_permission(identity, "agent:confirm")
+    _dismiss_candidate_in_transaction(session, identity, asset, body)
+    session.commit()
+    session.refresh(asset)
+    return asset
+
+
+def _dismiss_candidate_in_transaction(session: Session, identity: Identity, asset: AgentAsset, body: CandidateDismiss):
     if asset.status not in ("candidate", "needs_review"):
         raise HTTPException(status_code=409, detail="invalid_state")
+    claimed = session.execute(
+        update(AgentAsset).where(
+            AgentAsset.id == asset.id, AgentAsset.tenant_id == identity.tenant_id,
+            AgentAsset.status.in_(("candidate", "needs_review")), AgentAsset.updated_at == asset.updated_at,
+        ).values(status="dismissed", updated_at=utcnow()).execution_options(synchronize_session=False)
+    )
+    if claimed.rowcount != 1:
+        raise HTTPException(status_code=409, detail="candidate_changed")
     asset.status = "dismissed"
     asset.dismissed_reason = body.reason
     asset.dismissed_expires_at = body.expires_at
@@ -855,11 +1036,11 @@ def dismiss_candidate(
         "agent.dismiss",
         "agent_asset",
         resource_id=asset.id,
-        summary={"reason": body.reason},
+        summary={"reason_sha256": hashlib.sha256(body.reason.encode()).hexdigest()},
     )
-    session.commit()
-    session.refresh(asset)
-    return asset
+    emit_event(
+        session, identity.tenant_id, "agent.asset.dismissed.v1", {"agent_asset_id": asset.id}, resource_ref=asset.id,
+    )
 
 
 @router.post("/api/v1/candidates/{asset_id}/classify")
@@ -986,6 +1167,7 @@ def get_agent_evidence(
             .where(
                 Evidence.tenant_id == identity.tenant_id,
                 Evidence.evidence_id.in_(linked) | (Evidence.subject_ref == asset_id),
+                asset_evidence_device_filter(asset),
             )
             .order_by(Evidence.observed_at.desc())
             .limit(200)
@@ -1065,6 +1247,7 @@ def create_asset_instance(
         status=body.status,
     )
     session.add(inst)
+    session.flush()  # Audit/outbox must reference the actual generated instance ID.
     audit(
         session,
         identity.tenant_id,

@@ -22,6 +22,7 @@ from app.adapters.openshell.contracts import (
     ChangePlan,
     CompiledPolicy,
     DeploymentReceipt,
+    EnforcementProbeEvidence,
     EventBatch,
     PolicySnapshot,
     RevisionConflict,
@@ -66,6 +67,12 @@ def _fake_capability_document(dynamic_network_update: bool, interceptor: bool) -
         "resources": CapabilityItem(status="unknown", semantics="none", basis="资源配额未模拟"),
         "audit_events": CapabilityItem(
             status="supported", semantics="observe", basis="内存事件日志（记录型事件，非真实行为事件流）"
+        ),
+        # 行为 fixture 通道：内存后端没有、也不可能有边界内观测通道。
+        # 显式标 unsupported（而不是不报告）——让"它不能产出 enforcement_verified"
+        # 成为一条写下来的能力事实，能被测试逐条钉住。
+        "enforcement_probe": CapabilityItem(
+            status="unsupported", semantics="none", basis="内存后端无边界内观测通道，不存在行为执行可观测面"
         ),
         "enforcement_mode.block": CapabilityItem(status="supported", semantics="enforce", basis="内存模拟拦截语义"),
         "enforcement_mode.warn": CapabilityItem(status="supported", semantics="observe", basis="内存模拟记录模式"),
@@ -244,11 +251,22 @@ class FakeOpenShellBackend(EnforcementAdapter):
                 applied_at=self._now(),
             )
 
-    def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
+    def verify(
+        self,
+        target: str,
+        checks: dict,
+        receipt: DeploymentReceipt,
+        *,
+        probe_evidence: EnforcementProbeEvidence | None = None,
+    ) -> VerificationReport:
         """正负向验证各至少一项：allow 项必须命中网络规则，deny 项必须被拒绝。
 
         P1-2：Fake 同样只有状态读回（内存快照比对），无行为 fixture 通道，
         通过时 level=readback_verified，失败 → failed；不产出 enforcement_verified。
+
+        `probe_evidence` **被明确忽略**：Fake 的能力文档里 `CAP_ENFORCEMENT_PROBE`
+        为 unsupported，它没有、也不可能有边界内观测通道。收到一份证据不构成
+        "观测发生过"——这正是不能让该级别退化成夹具产物的地方。
         """
         failures: list[str] = []
         snapshot = self.read_effective_policy(target)

@@ -1,0 +1,13 @@
+{
+  "schema": "siq-local-candidate/v1",
+  "name": "personal-skill-connect-live-20260925",
+  "base_commit": "7b68c14abeff707777278034f2ccfd19b43ac609",
+  "source_status": "uncommitted working-tree increment, same tested binary as skill-connect-20260925",
+  "binary_sha256": "02acea34b368e7dfa693826f17e0133309609c0bcf940da6559f55689a8916e2",
+  "binary_platform": "linux/arm64",
+  "release_signed": false,
+  "deployment": "existing local personal daemon on 127.0.0.1:47611",
+  "evidence": ["../../../development/personal-skill-connect-deployment-20260925.md"],
+  "checks": {"deployment": true, "browser_checks_passed": 7, "existing_runtime_identities": 12, "original_state_files": 372},
+  "excluded": ["enterprise changes", "public release", "signed install", "native macOS/Windows", "business grant approval"]
+}

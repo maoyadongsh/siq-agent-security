@@ -1,0 +1,205 @@
+/* ENT-018-BINDINGS-UI：运行时绑定专用样式（rb-explorer- 前缀，不修改共享样式）。 */
+
+/* 对话框通过 portal 渲染；用专用类限定，不影响其他确认弹窗。 */
+.rb-explorer-revoke-dialog .modal-title {
+  overflow-wrap: anywhere;
+}
+
+.rb-explorer-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rb-explorer-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.rb-explorer-field-search {
+  flex: 1 1 220px;
+}
+
+.rb-explorer-field select,
+.rb-explorer-field input {
+  min-width: 0;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.rb-explorer-field select:focus-visible,
+.rb-explorer-field input:focus-visible,
+.rb-explorer-filters button:focus-visible,
+.rb-explorer-summary:focus-visible {
+  outline: 2px solid var(--siq-primary);
+  outline-offset: 2px;
+}
+
+.rb-explorer-match-line {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.rb-explorer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rb-explorer-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 0.7fr) 4.5rem;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.rb-explorer-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.rb-explorer-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 0.7fr) 4.5rem;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+}
+
+.rb-explorer-summary::-webkit-details-marker {
+  display: none;
+}
+
+.rb-explorer-summary:hover {
+  background: var(--table-row-hover);
+}
+
+.rb-explorer-cell {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rb-explorer-cell-toggle {
+  color: var(--siq-primary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rb-explorer-disclosure[open] .rb-explorer-cell-toggle {
+  text-decoration: underline;
+}
+
+.rb-explorer-detail {
+  border-top: 1px dashed var(--border);
+  padding: 12px;
+}
+
+.rb-explorer-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 10px 16px;
+  margin: 0;
+}
+
+.rb-explorer-detail-grid dt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.rb-explorer-detail-grid dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.rb-explorer-detail-grid > div {
+  min-width: 0;
+}
+
+.rb-explorer-break {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.rb-explorer-detail-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.rb-explorer-actions {
+  border-top: 1px dashed var(--border);
+  padding: 8px 12px;
+}
+
+.rb-explorer-cell .tag {
+  white-space: normal;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* 登记表单：选项状态提示（失败/加载/空） */
+.rb-explorer-form-note {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+.rb-explorer-form-err {
+  font-size: 12px;
+  color: var(--tone-err);
+  margin: 4px 0 0;
+}
+
+@media (max-width: 1024px) {
+  .rb-explorer-head {
+    display: none;
+  }
+
+  .rb-explorer-summary {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'id status'
+      'asset asset'
+      'instance instance'
+      'env env'
+      'backend backend'
+      'target target'
+      'toggle toggle';
+    row-gap: 6px;
+  }
+
+  .rb-explorer-cell-id { grid-area: id; }
+  .rb-explorer-cell-asset { grid-area: asset; }
+  .rb-explorer-cell-instance { grid-area: instance; }
+  .rb-explorer-cell-env { grid-area: env; }
+  .rb-explorer-cell-backend { grid-area: backend; }
+  .rb-explorer-cell-target { grid-area: target; }
+  .rb-explorer-cell-status { grid-area: status; justify-self: end; }
+  .rb-explorer-cell-toggle { grid-area: toggle; }
+}

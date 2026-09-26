@@ -1,0 +1,17 @@
+{
+  "batch": 32,
+  "scope": "serve measured-heartbeat then idempotent initial scan request",
+  "verification": {
+    "sequence_cases": 6,
+    "http_contract_cases": 7,
+    "go_vet_all": "passed",
+    "go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed",
+    "formal_signed_native_e2e": "not_run",
+    "production_started": false
+  },
+  "source_sha256": {
+    "edge/agent/initial_scan.go": "bcec0680f9ceb0eb2cf72213c2df2ae1e47619a2167b603b53117f28df2d37e8",
+    "edge/agent/initial_scan_test.go": "e0a339a75372c2eff9698106a06493684e8a24641c1985e37b9030537d228921"
+  }
+}

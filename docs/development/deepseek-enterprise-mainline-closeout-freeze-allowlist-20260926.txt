@@ -1,0 +1,197 @@
+# R08 冻结前允许清单（草案，待主开发者复核）
+#
+# 用途：作为 scripts/enterprise-experience/source-freeze-preflight.py --allowlist 的输入，
+# 对下列路径做只读快照核验（逐段 lstat 拒符号链接，敏感路径只标记不读取）。
+#
+# 范围声明：本清单**只列本轮（R00–R09）由执行者创建或修改的路径**，不包含任何并行
+# 作者线的产物，也不构成对这些路径"应当进入发行候选"的判断。允许清单是**审阅输入**，
+# 不是发布授权，不是源码已冻结的结论。
+#
+# 已知边界偏差（需复核）：标着「既有件被追加"版本导航"段」的那三个合同文件在本轮 R02 开工时**已存在于工作树**，
+# 本轮只在其末尾追加了"版本导航"段（仓储既有约定）。**精确表述**：这三个路径在 HEAD 中
+# **不存在**（`git ls-files` 无记录、`git cat-file -e HEAD:<path>` 失败），即它们是本未提交
+# 时期内的产物、**未纳入版本控制**；因此严格说这不是"修改已跟踪文件"，而是"**追加到工作树内
+# 既存、但归属未确认的未跟踪合同件**"。追加段是纯文档、无实现逻辑。
+# 请复核后保留或回退；如需回退，删除这三个路径对应文件的末尾追加段即可。
+#
+# 末尾「经 D-1 例外授权（全部放开）」一节是本轮修改的五个文件
+# （主开发者 2026-09-26 答复：D-1 = 全部放开）。逐条对应关系：
+#   - routers/policies.py            R05.5 非 openshell-cli 回滚分支补活体授权链重查
+#   - app/main.py                    R01.5 接线本 router（两行纯追加）
+#   - tests/test_policy_flow.py      R05.5 新增 4 条用例（含反例守卫）
+#   - tests/test_deployment_preview_consistency.py  R07.8 缺陷 1（读不存在的列）
+#   - tests/test_enrollment_flow.py  R07.8 缺陷 2（共享环境被 10 条上限截断）
+# **版本控制状态不统一（重要）**：前四项中 policies.py / main.py / test_policy_flow.py /
+# test_enrollment_flow.py 是**已跟踪**文件（HEAD 中存在，本轮只改其中一部分 hunk，
+# 其余 hunk 属并行作者线或本未提交时期的其它产物）；test_deployment_preview_consistency.py
+# 则是**未跟踪**的新文件（HEAD 中不存在）。因此"提交本清单"在 Git 的**文件粒度**上会把
+# 三个已跟踪文件里**非本轮**的 hunk、以及若干未跟踪文件里**非本轮**的正文一并纳入快照——
+# 见交接文档 §7 的提交说明。**冻结前请与并行作者线逐条对照**。
+#
+# 本清单中不含 .env / 私钥 / 种子 / 凭据；上游工具同样对 .env、.env.*、
+# *.private、*.seed、*.pem、*.key、*.p12、*.pfx、*.kdbx 做"只标记不读取"处理。
+
+# --- 源码：R01 设备侧待确认周期计划只读枚举（新增；已于 R01.5 接入 app/main.py） ---
+apps/control-api/app/routers/discovery_schedule_pending.py
+apps/control-api/app/tests/test_discovery_schedule_pending.py
+packages/contracts/enterprise-discovery-schedule-pending-list.v1.md
+
+# --- 源码：R03 证据拓扑（视角与来源边界）只读投影（新增，未接线） ---
+apps/control-api/app/evidence_topology.py
+apps/control-api/app/tests/test_evidence_topology.py
+packages/contracts/enterprise-evidence-topology.v1.md
+
+# --- 源码：R04 绑定失效联动只读投影（新增，未接线） ---
+apps/control-api/app/binding_invalidation_surface.py
+apps/control-api/app/tests/test_binding_invalidation_surface.py
+packages/contracts/enterprise-binding-invalidation-surface.v1.md
+
+# --- 合同：R02 角色—Skill 快照对照 v2（新增） ---
+packages/contracts/enterprise-role-skill-snapshot-comparison.v2.md
+
+# --- 源码：R04 独立回滚审批只读就绪度核对（新增，未接线） ---
+# 只读合同草案 + 纯函数核对层：不新增端点、不写库、不改回滚语义、不产生 effective/enforcement_verified，
+# 不改 execution_confirmation_supported。11 条用例逐条钉住"声明不是证据""自述不得越过不可观测性"。
+apps/control-api/app/rollback_approval_readiness.py
+apps/control-api/app/tests/test_rollback_approval_readiness.py
+packages/contracts/enterprise-rollback-approval.v1.md
+docs/development/deepseek-r04-rollback-approval-handoff-20260926.md
+
+# --- 证据：R09.13 智能分析助手 OpenShell 链接只读实跑（新增；纯读回，未启停网关、未 policy set） ---
+# README 记录事实/边界/天花板；4 份原始输出为只读命令产物（兼容矩阵、CLI 读回、canary 策略、失败尝试）。
+# `status:"effective"` 是网关自报字段，不是我方产出的事实；本组证据不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/README.md
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/01-compat-check-readonly.txt
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/02-cli-readonly.txt
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/03-canary-policy-readonly.txt
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/04-preview-live-readonly-attempt.txt
+# 05 为 `--live` 的**前置核查**产物：证明该动作在当前候选上写面是整段替换、且脚本自身无回滚能力，
+# 故本轮**拒绝执行** --live（不是执行失败）。附录含核查脚本全文，便于离线复算。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/05-live-prereq-blocked.txt
+# 06 为**补齐回收能力后**的真实写入闭环留痕（policy set → 读回 → 回滚），含首跑失败（fixture 缺
+# binary_paths，一个字节未写）、成功运行原文、以及对方 CLI 的只读独立复核（v4 hash == v2 hash；
+# rev2 与 rev4 的 --full 载荷逐字节相同）。**天花板是 readback_verified，不是 enforcement_verified**；
+# 未做任何真实 deny 观测。执行经使用者逐次许可（「先补 authorizer 再跑」）。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/06-live-readback-rollback-2026-09-26.txt
+# 07 为 R09.16 的预览工具修复留痕：含**实跑①失败**（错指纹目录 → rc=1 / authority_endpoint_mismatch，
+# 两个摘要都打出来）与**实跑②通过**（rc=0、10 条 checks）、改动前版本的**负对照**（同一行同一 409）、
+# 以及 5 条"本轮没有证明什么"。**全部在合成件上**：无真实网关、无真实身份、无真实策略写入；
+# `real_gateway: true` 是工具常量而非测出来的。不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/07-preview-tool-operator-authority-2026-09-26.txt
+# 08 为 R09.17b 的只读导入闭包核验留痕：逐 ref 表（HEAD/6ba1f7c/ad3116e = open 25 条且逐条相同；
+# 负对照 ebaaf3b = closed_at_ref、0 补件、退出码 0）、25 条补件全清单（含 3 条已跟踪被修改及其
+# git 增删行数）、工具自身三次自伤的留痕、以及 5 条"没有证明什么"。**只读**：git archive 到临时树。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/08-import-closure-check-2026-09-26.txt
+
+# --- 工具：R09.17b 只读导入闭包核验（新增；未接门禁，D-8 选 C 后的可重复检查项） ---
+# 只读：git archive <ref> apps/control-api 到临时树后反复试 import app.main，缺模块即从工作树定位
+# 补入重试。不写仓库路径、不切共享工作树、不提交。子进程环境为白名单（含 SIQ_AS_DEV=1 合成身份）。
+# 四种判别码；退出码 0 只在 "ref 自足" 时出现（"闭包开着" 不是绿）。不产生 enforcement_verified。
+#   - import-closure-check.py    工具（新增未跟踪）
+#   - test_import_closure_check.py  10 条合成用例，每个用例在 tmp_path 现造一次性合成 git 仓
+scripts/enterprise-experience/import-closure-check.py
+scripts/enterprise-experience/test_import_closure_check.py
+
+# --- 工具：R09.16 预览工具改「身份 id 来自算子授权目录」（**既有已跟踪件被修改**，需复核） ---
+# 使用者 2026-09-26 两轮答复：「授权我修预览工具」+「改从算子目录读身份 id」。
+#   - openshell-preview-live-check.py 是**已跟踪**文件（HEAD 中存在），本轮改动集中在：新增**必填**
+#     `--target-authority`（绝对路径/非符号链接/常规文件）与 `--assignment-id`、子进程注入
+#     SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE、探测后对授权目录做**精确元组比对**、
+#     身份 id 全部取自目录条目、新增 write_failure() 有界失败留痕（只写固定判别码+实测摘要）。
+#     安全读取与重复键判定**复用门禁自己的** _read_authority_bytes/_unique_object/TargetAuthority，
+#     不另写一套（符号改名即 ImportError，不会静默放宽）。
+#   - test_openshell_preview_live_check.py 为**新增未跟踪**文件（5 条隔离用例，合成 openshell CLI）。
+# 两者都不产生 enforcement_verified；E149 的 8/8 仍不可逐字复现（checks 8→10、拒绝提前到授权层）。
+scripts/enterprise-experience/openshell-preview-live-check.py
+scripts/enterprise-experience/test_openshell_preview_live_check.py
+
+# --- 工具：A7 --live 兼容闭环（**既有已跟踪件被修改**，超出原清单范围，需复核） ---
+# source-freeze-preflight 之前对这两个路径只做只读标记；本轮在使用者选定「先补 authorizer 再跑」后修改/新增：
+#   - openshell_compat_check.py 是**已跟踪**文件（HEAD 中存在），改动集中在 _live_check 与模块 docstring；
+#     该改动使其**先具备回滚能力**（作者只从私有操作记录构造、finally 必回滚、回滚后 digest 必须等于 BEFORE）。
+#   - test_openshell_compat_live.py 为**新增未跟踪**文件（8 条隔离单测；负对照指向改动前版本时 5/7 失败）。
+# 两者都不产生 enforcement_verified，也不改变 apply_dynamic 的整段替换语义。
+scripts/openshell_compat_check.py
+scripts/enterprise-experience/test_openshell_compat_live.py
+
+# --- 工具：R06 版本化引用链审计（新增） ---
+scripts/enterprise-experience/contract-version-chain-audit.py
+scripts/enterprise-experience/contract-version-aliases.json
+scripts/enterprise-experience/test_contract_version_chain_audit.py
+
+# --- 工具：R07 统一防御门禁执行器（新增） ---
+scripts/enterprise-experience/enterprise-gate-run.py
+scripts/enterprise-experience/test_enterprise_gate_run.py
+
+# --- 工具：R07.11 浏览器验收套件（新增；`--enable-browser-smoke-gate` 的探测/执行体） ---
+scripts/enterprise-experience/run-browser-smoke-suite.py
+scripts/enterprise-experience/test_run_browser_smoke_suite.py
+
+# --- 工具：R09.7 真实 HTTP 契约级验收（新增；一次性回环 dev 控制面，零容器，未接门禁） ---
+# 它**不是**门禁：没有 `--enable-*` 开关、不参与 enterprise-gate-run.py 的 8 类门禁，
+# 只按 §3.2 逐次许可运行一次并出货 report.json。合成身份，不产生 enforcement_verified。
+# 其合成回归测试同样不启服务、不发真实 HTTP（16 条用例），防止工具自身"报假绿"。
+scripts/enterprise-experience/http-contract-acceptance.py
+scripts/enterprise-experience/test_http_contract_acceptance.py
+
+# --- 文档：本轮收口执行记录与交接（新增） ---
+docs/development/deepseek-enterprise-mainline-closeout-execution-20260926.md
+docs/development/deepseek-enterprise-mainline-closeout-handoff-20260926.md
+docs/development/deepseek-enterprise-mainline-closeout-freeze-allowlist-20260926.txt
+# 行为 fixture 通道的**先提交后实施**方案（§7 要求）：含四问与裁决、三臂差分、六条
+# 机械防降级规则、P1-pre 的边界说明、以及"实施期更正"（纸面门禁一处）。纯文档。
+docs/development/deepseek-enterprise-mainline-closeout-behaviour-fixture-plan-20260926.md
+
+# --- 源码：R09.18 行为 fixture 通道 P0（新增 6 件；**未接线**，结论档=隔离验证通过） ---
+# 使用者四轮答复：F-1 批准 P0 / F-2 暂不申请 P1-pre / F-3 我方固定摘要上传 / F-4 由 P1-pre 实测自动选。
+# 全部为新增或最小合同改动；工具**只在计划模式跑过**，从未联系任何网关、未 upload/exec/policy set。
+#   - enforcement_probe.py   证据结构 + 校验器（纯逻辑无 IO；原点白名单为**拒绝式**）
+#   - probe_channel.py       边界内观测通道（固定子命令模板；异常→词表为**闭合**映射；fail-closed 解析）
+#   - enforcement_probe_agent.py  边界内探针（**只报事实**，无 --expect；判定不在夹具里）
+#   - openshell-enforcement-probe.py  一次性工具（默认计划模式；执行需 --execute + --confirm-behaviour-probe + 算子授权）
+#   - test_enforcement_probe.py（59 用例）/ test_openshell_enforcement_probe.py（27 用例）
+apps/control-api/app/adapters/openshell/enforcement_probe.py
+apps/control-api/app/adapters/openshell/probe_channel.py
+apps/control-api/app/tests/test_enforcement_probe.py
+scripts/enterprise-experience/probe/enforcement_probe_agent.py
+scripts/enterprise-experience/openshell-enforcement-probe.py
+scripts/enterprise-experience/test_openshell_enforcement_probe.py
+# 09 为 P0 的隔离验证留痕：59+27 用例、计划模式冒烟（不触网）、实施期自纠的三个缺陷
+# （纸面门禁 / 计划与实际 argv 分叉 / 拒绝路径上的多余 upload）、以及**未实测的前提**
+# （网关是否按 binary 路径归因网络规则）。不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/09-p0-enforcement-probe-2026-09-26.txt
+# 10 为 D-9「先只读结构核查」的留痕（使用者 2026-09-26 选定该档）：**纯读回**，6 个动作逐条
+# 列出（`policy list` / `policy get <name> --full` ×2 / `sandbox list` / `logs` ×2 / `--help`），
+# 未启停网关、未 policy set、未 upload/exec；凭据形状计数全 0，日志只记**条数不读正文**。
+# 结论：网关策略模型**支持**按 binary 归因（4 条规则 / 7 个 endpoint / 7 条 binaries，
+# 缺 binaries 的 0 条；`siq_egress_guard` 一条规则区分 4 个二进制）。并**更正** `05-` 中
+# 「8 条含 `_provider_siq_*`」的旧口径（三处独立读回均为 4 条、`_provider_` 字面命中 0）。
+# 运行期是否真按 binary 判定**只读答不了**（`logs` 被冻结的 Protobuf 缺陷封死）。不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/10-d9-structural-readonly-2026-09-26.txt
+
+# --- 既有已跟踪件被修改：行为 fixture 通道的**合同改动**（需复核；本轮 P0 增量约 25 行） ---
+# 这五个是**已跟踪**文件（HEAD 中存在）。P0 增量：contracts.py 加能力位 CAP_ENFORCEMENT_PROBE
+# 与 VerificationReport 两个字段；base.py 抽象 verify() 加**关键字**参数 probe_evidence=None；
+# cli_backend.py 加升级分支（唯一能把级别提到 enforcement_verified 的地方）与能力文档如实记 unknown；
+# fake_backend.py / client.py 签名补齐并**明确忽略**该参数（收到证据 ≠ 观测发生过）。
+# **重要的归属偏差**：这五个路径的 diff **不全是 P0 的**——其中还含本未提交时期既有的改动
+# （如 cli_backend.py 的 env_script 指纹作用域、能力文档项）。`git diff HEAD --stat` 合计
+# 123 插入 / 12 删除，其中 P0 只占约 25 行。**提交本清单会按文件粒度把这些既有 hunk 一并纳入**，
+# 冻结前必须与并行作者线逐条对照；如需回退 P0，只撤上面列出的那几处即可。
+apps/control-api/app/adapters/openshell/contracts.py
+apps/control-api/app/adapters/openshell/base.py
+apps/control-api/app/adapters/openshell/cli_backend.py
+apps/control-api/app/adapters/openshell/fake_backend.py
+apps/control-api/app/adapters/openshell/client.py
+
+# --- 既有件被追加"版本导航"段（超出 D-1 字面范围，需复核） ---
+packages/contracts/enterprise-discovery-schedule.v1.md
+packages/contracts/enterprise-skill-upload.v1.md
+packages/contracts/enterprise-skill-collection.v1.md
+
+# --- 既有件：经 D-1 例外授权（全部放开）的改动，逐条见上方第 24–30 行说明 ---
+apps/control-api/app/routers/policies.py
+apps/control-api/app/main.py
+apps/control-api/app/tests/test_policy_flow.py
+apps/control-api/app/tests/test_deployment_preview_consistency.py
+apps/control-api/app/tests/test_enrollment_flow.py

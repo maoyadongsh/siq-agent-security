@@ -1,0 +1,100 @@
+/* 企业总览（ENT-018-OVERVIEW）专用样式：仅 entoverview-* 前缀，复用既有
+ * stat-card / quick-tile / 设计变量；不修改共享全局样式。 */
+
+/* 统计数值：未知/未提供（缺失或异常值，不冒充 0） */
+.entoverview-value-unknown {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+/* 统计数值：加载中（不显示伪造的 0） */
+.entoverview-value-loading {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* 响应异常提示（存在缺失/非法字段） */
+.entoverview-stat-note {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: rgb(180 83 9 / 0.05);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+/* 边界说明（心跳/零值语义） */
+.entoverview-boundary {
+  margin: 10px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* 次级"管理与高级功能"：原生 details/summary，默认折叠 */
+.entoverview-secondary {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.entoverview-secondary summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: var(--radius-ctrl);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.entoverview-secondary summary::-webkit-details-marker {
+  display: none;
+}
+
+.entoverview-secondary summary:hover {
+  color: var(--siq-primary);
+  background: rgb(181 138 36 / 0.05);
+}
+
+.entoverview-secondary-chevron {
+  display: inline-flex;
+  color: var(--text-secondary);
+  transition: transform 160ms ease;
+}
+
+.entoverview-secondary[open] .entoverview-secondary-chevron {
+  transform: rotate(90deg);
+}
+
+/* 次级入口网格：复用 quick-tile 视觉，缩进表达次级层级 */
+.entoverview-secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.entoverview-secondary-grid .quick-tile {
+  padding: 12px 14px;
+}
+
+/* 窄内容区（侧栏占用后）：说明文字换行，不遮挡按钮 */
+@media (max-width: 767px) {
+  .entoverview-secondary-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -25,7 +25,7 @@ const (
 const (
 	pairingTTL         = 5 * time.Minute
 	pairingMaxAttempts = 5
-	adminSessionTTL    = 12 * time.Hour
+	adminSessionTTL    = 24 * time.Hour
 	testPairingCode    = "test-pair-0001"
 )
 
@@ -293,7 +293,7 @@ func (s *Server) pair(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Cache-Control", "no-store")
 	writeJSON(w, 200, map[string]any{
-		"schema_version": "local-admin-session/v1",
+		"schema_version": "local-admin-session/v2",
 		"session":        session,
 		"expires_in":     int(adminSessionTTL.Seconds()),
 		"scope":          "admin",

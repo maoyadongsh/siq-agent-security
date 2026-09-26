@@ -267,6 +267,27 @@ def test_local_client_session_go_fixtures(kind: str) -> None:
             assert list(validator.iter_errors({**data, **invalid}))
 
 
+@pytest.mark.parametrize("schema_name,fixture_name", [
+    ("local-admin-session.v2", "local-session-v2"),
+    ("local-browser-connect.v1", "local-browser-connect"),
+])
+def test_browser_connection_and_session_v2_contracts(schema_name: str, fixture_name: str) -> None:
+    schema = json.loads((CONTRACTS / f"{schema_name}.schema.json").read_text(encoding="utf-8"))
+    Draft7Validator.check_schema(schema)
+    validator = Draft7Validator(schema)
+    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / f"{fixture_name}.json"
+    data = json.loads(fixture.read_text(encoding="utf-8"))
+    validator.validate(data)
+    for extra in [{"token": "must-not-leak"}, {"expires_in": 86401}, {"schema_version": "unknown/v99"}]:
+        assert list(validator.iter_errors({**data, **extra}))
+    if fixture_name == "local-session-v2":
+        validator.validate({**data, "expires_in": 86400})
+        assert list(validator.iter_errors({**data, "scope": "decision"}))
+    else:
+        for extra in [{"request_id": "bad"}, {"expires_in": 301}, {"status": "effective"}]:
+            assert list(validator.iter_errors({**data, **extra}))
+
+
 @pytest.mark.parametrize("kind", ["local-instance", "local-initialization"])
 def test_local_initialization_go_fixtures(kind: str) -> None:
     schema = json.loads((CONTRACTS / "local-client-initialization.v1.schema.json").read_text(encoding="utf-8"))

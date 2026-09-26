@@ -1,0 +1,631 @@
+{
+  "meta": {
+    "task": "CL-05-PERMISSION-COVERAGE-CLOSEOUT",
+    "date": "2026-09-26",
+    "head": "ebaaf3b60cc554ae67f4553aa1cfd0575a5d7ec0",
+    "branch": "main",
+    "snapshot_note": "基于阅读时工作树（639 条未提交/未跟踪条目，含他人在途修改），非原子快照；行号以阅读时为准。本轮未执行任何测试，test_references 均为历史记录。",
+    "schema_note": "复查材料，非新公共合同。implementation_status 枚举: full_code_path|partial|view_only|unsupported_explicit|pending_confirm; evidence_level 枚举: source_read|historical_tests|this_round_execution|real_environment",
+    "companion_doc": "docs/development/enterprise-permission-coverage-closeout.md",
+    "review_note": "主开发者复核：16 行是审阅条目，不是完整域×操作分母；本轮只读核查，不运行产品测试。完整影响确认与实际行为证据尚未闭合，不能先开放执行按钮。"
+  },
+  "matrix": [
+    {
+      "requirement_id": "ENT-014",
+      "permission_domain": "网络",
+      "operation": "查看权限事实",
+      "target_granularity": "按策略条目（allow host/port/方法路径）",
+      "backend": "fake 与 openshell-cli 均可产出",
+      "implementation_status": "view_only",
+      "frontend_entry": "pages/PermissionsPage.tsx + components/permission-facts/（GET /permissions, ui/verification.ts 五态）",
+      "request_and_approval_path": "只读，无需申请审批",
+      "compiler_and_executor": "不适用",
+      "verification_path": "effective 事实仅由 openshell_sync.py:51,71-83 在 read_effective_policy 通过后写入，限定部署目标",
+      "audit_path": "读操作不产生变更审计；展示来源/时间/有效期",
+      "source_references": [
+        "apps/control-api/app/routers/inventory.py:578",
+        "apps/control-api/app/openshell_sync.py:51-83",
+        "apps/web/src/pages/PermissionsPage.tsx",
+        "apps/web/src/components/permission-facts/PermissionFactItem.tsx:31-131",
+        "apps/control-api/app/models.py:356-380"
+      ],
+      "test_references": [
+        "test_policy_flow.py"
+      ],
+      "evidence_level": "source_read",
+      "missing_link": "外部沙箱导入的显式归属验证（任务书 ENT-014 原文要求，当前仅部署目标域）",
+      "owner_files": [
+        "apps/control-api/app/openshell_sync.py"
+      ],
+      "next_action": "并入 S4 绑定身份收口时补充归属验证"
+    },
+    {
+      "requirement_id": "ENT-015",
+      "permission_domain": "网络",
+      "operation": "收窄/撤销（单策略）",
+      "target_granularity": "单条策略",
+      "backend": "openshell-cli 为真实路径；fake 仅组件证据",
+      "implementation_status": "partial",
+      "frontend_entry": "NetworkRevokePanel.tsx + api/networkRevoke.ts:30,45（NetworkPolicyGovernance.tsx:27-28,60 canManageNetwork）",
+      "request_and_approval_path": "network_revoke_proposals.py:111 requires_independent_approval → ChangeRequest → change_review.py:188-205 独立复核（own_proposal blocker）",
+      "compiler_and_executor": "policy_compiler → deployment submission → cli_backend apply_dynamic",
+      "verification_path": "deployment_verify.py:101-176 独立读回 verified/unreachable/mismatch/no_receipt；effective 仅读回通过（policies.py:651-660）",
+      "audit_path": "change_review + deployment.verify 审计事件",
+      "source_references": [
+        "apps/control-api/app/routers/network_revoke_proposals.py:111",
+        "apps/control-api/app/routers/change_review.py:188-205",
+        "apps/control-api/app/routers/policies.py:651-660",
+        "apps/control-api/app/deployment_verify.py:101-176"
+      ],
+      "test_references": [
+        "test_network_revoke_lifecycle.py",
+        "test_network_revoke_proposals.py",
+        "test_change_review.py",
+        "test_deployment_verify.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "完整共享影响、Skill 隔离与真实正负行为未闭合；不能称端到端全部就绪",
+      "owner_files": [],
+      "next_action": "先满足 S4 证据与影响前置，再安排授权真实验收"
+    },
+    {
+      "requirement_id": "ENT-015",
+      "permission_domain": "网络",
+      "operation": "收窄/撤销（跨策略批量）",
+      "target_granularity": "多策略多选择（≤20 策略 / ≤512 选择）",
+      "backend": "openshell-cli；执行协议 confirm_execution",
+      "implementation_status": "partial",
+      "frontend_entry": "NetworkBatchRevoke.tsx:120 + networkRevokeBatch.ts:63,68 可创建批次与草稿；执行无入口",
+      "request_and_approval_path": "network_revoke_batches.py:72 → CR 独立审批；幂等键 ordinal；review_digest CAS（change_review.py）",
+      "compiler_and_executor": "batch_reservation.py:26-104 原子预留（preview_digest compare_digest）→ deployment_batch_execute.py confirm_execution → batch_execution.py 截止顺序执行，unconfirmed 停止后项",
+      "verification_path": "deployment_batch_result.py:57-76 逐项重验 change_id/env/binding/target+双摘要；unconfirmed-first 聚合",
+      "audit_path": "批次与逐项同事务审计",
+      "source_references": [
+        "apps/control-api/app/routers/network_revoke_batches.py:72",
+        "apps/control-api/app/batch_reservation.py:26-104",
+        "apps/control-api/app/routers/deployment_batch_execute.py",
+        "apps/control-api/app/batch_execution.py",
+        "apps/control-api/app/routers/deployment_batch_result.py:57-76",
+        "apps/web/src/api/deploymentBatch.ts:126-135",
+        "apps/web/src/components/batch-deployment/BatchDraftPanel.tsx"
+      ],
+      "test_references": [
+        "test_network_revoke_batches.py",
+        "test_batch_reservation.py",
+        "test_batch_execute_api.py",
+        "test_batch_execution.py",
+        "test_batch_result.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "executeBatchDraft 无页面调用，但 BatchDraftPanel 已通过 readBatchResult 展示逐项与 unconfirmed 结果；开放执行还依赖完整影响确认",
+      "owner_files": [
+        "apps/web/src/api/deploymentBatch.ts",
+        "apps/web/src/components/batch-deployment/NetworkBatchRevoke.tsx",
+        "apps/web/src/pages/ChangesPage.tsx"
+      ],
+      "next_action": "S4 前置满足后推进 S1，不重建已有结果查询"
+    },
+    {
+      "requirement_id": "ENT-015",
+      "permission_domain": "网络",
+      "operation": "扩大/授予",
+      "target_granularity": "策略级 allow 规则（host/port/二进制路径）",
+      "backend": "openshell-cli 编译仅接受 allow host/port+绝对路径（openshell-policy-safety.v2 O01）",
+      "implementation_status": "partial",
+      "frontend_entry": "AgentDetailPage.tsx:240-260 策略表单（fsRO/fsRW/network/tools/models）→ POST /policies",
+      "request_and_approval_path": "标准 ChangeRequest 独立审批；提出者自批 409 segregation_of_duties（policies.py:310）；break_glass 不豁免",
+      "compiler_and_executor": "同单策略链；needs_generation 项 422 static_generation_unavailable（policies.py:558-560）",
+      "verification_path": "独立读回同上",
+      "audit_path": "审批与执行审计事件",
+      "source_references": [
+        "apps/web/src/pages/AgentDetailPage.tsx:240-260",
+        "apps/control-api/app/routers/policies.py:310,558-560"
+      ],
+      "test_references": [
+        "test_change_review.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "专门扩大授权旅程与策略模板未交付（任务书：先收窄再扩大与模板）；审查界面未突出 unsupported/needs_generation 项",
+      "owner_files": [
+        "apps/web/src/pages/ChangesPage.tsx",
+        "apps/web/src/components/ChangeReviewDialog.tsx",
+        "apps/web/src/pages/AgentDetailPage.tsx"
+      ],
+      "next_action": "S2：扩大旅程与模板（模板范围需业务输入）"
+    },
+    {
+      "requirement_id": "ENT-014",
+      "permission_domain": "文件系统/路径",
+      "operation": "查看权限事实",
+      "target_granularity": "路径集合（fs.read/fs.write）",
+      "backend": "openshell-cli read_effective_policy",
+      "implementation_status": "view_only",
+      "frontend_entry": "PermissionsPage 权限事实列表",
+      "request_and_approval_path": "只读",
+      "compiler_and_executor": "不适用",
+      "verification_path": "state=effective 仅在读回通过后写入",
+      "audit_path": "展示来源/时间",
+      "source_references": [
+        "apps/control-api/app/openshell_sync.py:71-83"
+      ],
+      "test_references": [
+        "test_policy_flow.py"
+      ],
+      "evidence_level": "source_read",
+      "missing_link": "无",
+      "owner_files": [],
+      "next_action": "保持现状"
+    },
+    {
+      "requirement_id": "ENT-013/ENT-016",
+      "permission_domain": "文件系统/路径",
+      "operation": "收窄/撤销/扩大（修改已表达限制）",
+      "target_granularity": "静态路径边界",
+      "backend": "编译可表达但需生成制品（needs_generation）",
+      "implementation_status": "unsupported_explicit",
+      "frontend_entry": "AgentDetailPage 表单可提交 fsRW 意图，但部署准备必然 422",
+      "request_and_approval_path": "CR 可建，prepare 阶段 fail-closed",
+      "compiler_and_executor": "cli_backend.py:552 kind=generation → policies.py:558-560 422 static_generation_unavailable；create_generation 经 CLI 拒绝（cli_backend.py:161）；fake_backend.py:173 apply_dynamic 拒绝 needs_generation",
+      "verification_path": "无执行即无验证",
+      "audit_path": "422 失败进审计（backend_mutated=false）",
+      "source_references": [
+        "apps/control-api/app/adapters/openshell/cli_backend.py:552,161",
+        "apps/control-api/app/adapters/openshell/fake_backend.py:173",
+        "apps/control-api/app/routers/policies.py:527-560"
+      ],
+      "test_references": [
+        "test_openshell_policy_safety_vectors.py"
+      ],
+      "evidence_level": "source_read",
+      "missing_link": "静态边界（文件系统/进程）修改链路未实现且当前后端明确拒绝——企业内无可用收窄通道，须以生成通道或 CLI 侧能力为前提",
+      "owner_files": [
+        "apps/control-api/app/adapters/openshell/cli_backend.py"
+      ],
+      "next_action": "列为能力待决：是否投入生成通道（真实 CLI 版本与受控验收，资源门禁）"
+    },
+    {
+      "requirement_id": "ENT-014",
+      "permission_domain": "进程/命令执行",
+      "operation": "查看权限事实",
+      "target_granularity": "run_as 用户/组",
+      "backend": "openshell-cli read_effective_policy",
+      "implementation_status": "view_only",
+      "frontend_entry": "PermissionsPage 权限事实列表",
+      "request_and_approval_path": "只读",
+      "compiler_and_executor": "不适用",
+      "verification_path": "state=effective 读回投影",
+      "audit_path": "展示来源/时间",
+      "source_references": [
+        "apps/control-api/app/openshell_sync.py:105"
+      ],
+      "test_references": [
+        "test_policy_flow.py"
+      ],
+      "evidence_level": "source_read",
+      "missing_link": "无",
+      "owner_files": [],
+      "next_action": "保持现状"
+    },
+    {
+      "requirement_id": "ENT-013/ENT-016",
+      "permission_domain": "进程/命令执行",
+      "operation": "收窄/撤销/扩大（修改已表达限制）",
+      "target_granularity": "run_as 静态边界",
+      "backend": "同文件系统：needs_generation",
+      "implementation_status": "unsupported_explicit",
+      "frontend_entry": "无前端创建入口（仅权限事实展示与审查章节）",
+      "request_and_approval_path": "不适用（无入口）",
+      "compiler_and_executor": "同行 6 fail-closed，无静默丢弃",
+      "verification_path": "无执行即无验证",
+      "audit_path": "不适用",
+      "source_references": [
+        "apps/control-api/app/routers/policies.py:558-560",
+        "apps/control-api/app/adapters/openshell/policy_compiler.py:98,104"
+      ],
+      "test_references": [
+        "test_openshell_policy_safety_vectors.py"
+      ],
+      "evidence_level": "source_read",
+      "missing_link": "同行 6",
+      "owner_files": [
+        "apps/control-api/app/adapters/openshell/cli_backend.py"
+      ],
+      "next_action": "并入文件系统静态边界待决项"
+    },
+    {
+      "requirement_id": "ENT-014",
+      "permission_domain": "凭据/秘密",
+      "operation": "查看权限事实",
+      "target_granularity": "findings 级（非权限事实）",
+      "backend": "无凭据域 facts 来源",
+      "implementation_status": "partial",
+      "frontend_entry": "FindingsPage.tsx:41",
+      "request_and_approval_path": "只读",
+      "compiler_and_executor": "不适用",
+      "verification_path": "不适用",
+      "audit_path": "不适用",
+      "source_references": [
+        "apps/web/src/pages/FindingsPage.tsx:41"
+      ],
+      "test_references": [],
+      "evidence_level": "source_read",
+      "missing_link": "credential 风险展示不是凭据权限事实或独立读回；该权限域事实覆盖未完成",
+      "owner_files": [
+        "apps/control-api/app/openshell_sync.py"
+      ],
+      "next_action": "随 S4 一并评估是否纳入事实模型"
+    },
+    {
+      "requirement_id": "ENT-016",
+      "permission_domain": "凭据/秘密",
+      "operation": "授予/注入或修改",
+      "target_granularity": "引用（secret reference）",
+      "backend": "fail-closed：secrets 域编译进 unsupported 列表；明文 422 拒绝",
+      "implementation_status": "unsupported_explicit",
+      "frontend_entry": "无",
+      "request_and_approval_path": "不适用",
+      "compiler_and_executor": "policy_compiler.py:123-140 fail-closed",
+      "verification_path": "不适用",
+      "audit_path": "不适用",
+      "source_references": [
+        "apps/control-api/app/adapters/openshell/policy_compiler.py:123-140"
+      ],
+      "test_references": [
+        "test_openshell_policy_safety_vectors.py"
+      ],
+      "evidence_level": "source_read",
+      "missing_link": "显式不支持是安全边界，不代表原任务要求已完成；仍需既定权限域/粒度能力收口",
+      "owner_files": [],
+      "next_action": "保留不支持语义；由 S4 证据与隔离约束及原需求决定后续实现，不猜测授权"
+    },
+    {
+      "requirement_id": "ENT-014",
+      "permission_domain": "工具/技能",
+      "operation": "查看权限事实",
+      "target_granularity": "skill 安装/选择/观察记录",
+      "backend": "inventory 只读",
+      "implementation_status": "view_only",
+      "frontend_entry": "SkillsPage.tsx、SkillHistory.tsx、skillInventory.ts:54、skillHistory.ts:29",
+      "request_and_approval_path": "只读",
+      "compiler_and_executor": "不适用",
+      "verification_path": "effective_permissions 如实为 null（roleSkillSelections.ts:24,69）",
+      "audit_path": "展示",
+      "source_references": [
+        "apps/web/src/api/skillInventory.ts:54",
+        "apps/web/src/api/skillHistory.ts:29",
+        "apps/web/src/api/roleSkillSelections.ts:24,69"
+      ],
+      "test_references": [],
+      "evidence_level": "source_read",
+      "missing_link": "技能级有效权限无来源（无法建立证明）",
+      "owner_files": [],
+      "next_action": "保持如实 null 展示"
+    },
+    {
+      "requirement_id": "ENT-013",
+      "permission_domain": "工具/技能",
+      "operation": "技能级独立限制（收窄/扩大）",
+      "target_granularity": "单 Skill",
+      "backend": "skill_isolation=not_established 恒定；tools_mcp → unsupported_by_backend",
+      "implementation_status": "unsupported_explicit",
+      "frontend_entry": "BatchItemReview.tsx:47 明示\"单个 Skill 独立隔离：尚未建立证明，不能确认执行\"",
+      "request_and_approval_path": "不适用",
+      "compiler_and_executor": "deployment_impact.py:46-48 恒定常量；shared_runtime_occupants=unknown、execution_confirmation_supported=false 保持",
+      "verification_path": "不适用",
+      "audit_path": "不适用",
+      "source_references": [
+        "apps/control-api/app/routers/deployment_impact.py:46-48",
+        "apps/web/src/components/batch-deployment/BatchItemReview.tsx:47"
+      ],
+      "test_references": [
+        "test_deployment_impact.py",
+        "test_deployment_impact_consistency.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "显式不支持是安全边界，不代表原任务要求已完成；仍需既定权限域/粒度能力收口",
+      "owner_files": [],
+      "next_action": "保留不支持语义；由 S4 证据与隔离约束及原需求决定后续实现，不猜测授权"
+    },
+    {
+      "requirement_id": "ENT-016",
+      "permission_domain": "跨域",
+      "operation": "生效验证（独立读回+行为核验）",
+      "target_granularity": "每次部署/回执",
+      "backend": "openshell-cli 真实读回；fake 仅组件",
+      "implementation_status": "partial",
+      "frontend_entry": "ChangeExecutionDialog.tsx:20 + changeExecution.ts:6-7,30,33-46（verification_level failed/stale/unknown；independent_result mismatch/unreachable/no_receipt）",
+      "request_and_approval_path": "verify 独立于审批",
+      "compiler_and_executor": "deployment_verify.py:101-176 无标识符归一化；收据-验证端点 policies.py:762",
+      "verification_path": "verified/unreachable/mismatch/no_receipt 四态；enforcement_verified 无生产者",
+      "audit_path": "deployment.verify 审计事件 + policy.deployment.verified.v1 outbox",
+      "source_references": [
+        "apps/control-api/app/deployment_verify.py:101-176",
+        "apps/control-api/app/routers/policies.py:649-659,631,762",
+        "apps/web/src/components/ChangeExecutionDialog.tsx:20"
+      ],
+      "test_references": [
+        "test_deployment_verify.py",
+        "test_deployment_verify_boundaries.py",
+        "test_audit_outbox.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "独立配置读回不等于行为核验；expect_allow 和 expect_deny 都是配置检查，需获准目标上的正负行为证据",
+      "owner_files": [
+        "apps/control-api/app/deployment_verify.py",
+        "apps/control-api/app/adapters/openshell/contracts.py",
+        "apps/control-api/app/routers/policies.py"
+      ],
+      "next_action": "S3：行为核验通道（真实平台部分进资源门禁）"
+    },
+    {
+      "requirement_id": "ENT-016",
+      "permission_domain": "跨域",
+      "operation": "恢复/回滚",
+      "target_granularity": "单部署",
+      "backend": "openshell-cli；活体授权复验",
+      "implementation_status": "partial",
+      "frontend_entry": "无任何 API 客户端或页面触发（仅 changeExecution.ts:48 审计标签）",
+      "request_and_approval_path": "authorize_rollback（policies.py:889-936）活体重查权限/绑定/CR/策略终态/选择器包含/来源身份/目标授权/网关指纹",
+      "compiler_and_executor": "仅恢复本操作精确前置快照；不能自动复活过期授权",
+      "verification_path": "回滚后走同一独立读回",
+      "audit_path": "回滚审计事件",
+      "source_references": [
+        "apps/control-api/app/routers/policies.py:860-999,889-936",
+        "apps/web/src/api/changeExecution.ts:48"
+      ],
+      "test_references": [
+        "test_change_execution.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "前端回滚入口缺失；现有活体复验不证明旧快照所有授权未过期或独立回滚审批闭环；失败且具 operation_id 的恢复资格也需保留",
+      "owner_files": [
+        "apps/web/src/api/changeExecution.ts",
+        "apps/web/src/pages/ChangesPage.tsx",
+        "apps/control-api/app/routers/policies.py"
+      ],
+      "next_action": "S1：回滚触发 UI（仅 effective 且 openshell-cli 可见）"
+    },
+    {
+      "requirement_id": "ENT-013",
+      "permission_domain": "绑定/运行身份",
+      "operation": "撤销/漂移联动与执行期复验",
+      "target_granularity": "绑定记录（列级）",
+      "backend": "openshell-cli；enterprise-runtime-binding-identity.v1",
+      "implementation_status": "partial",
+      "frontend_entry": "绑定登记 UI 已有（BINDINGS-UI 已收口）",
+      "request_and_approval_path": "登记为人工声明，非归属证明",
+      "compiler_and_executor": "执行前列级复验（binding_identity.py）；409 binding_revoked / binding_source_identity_changed；回滚授权器含绑定校验",
+      "verification_path": "复验失败→保守 unconfirmed",
+      "audit_path": "复验事件审计",
+      "source_references": [
+        "apps/control-api/app/binding_identity.py",
+        "packages/contracts/enterprise-runtime-binding-identity.v1.md",
+        "apps/control-api/app/routers/policies.py:889-936"
+      ],
+      "test_references": [
+        "test_binding_execution_recheck.py",
+        "test_binding_source_identity.py",
+        "test_runtime_binding.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "沙箱 revision、设备/Skill 摘要未进绑定身份；共享影响确认未绑定执行（registered_binding_only≠执行确认）",
+      "owner_files": [
+        "apps/control-api/app/binding_identity.py",
+        "apps/control-api/app/routers/bindings.py",
+        "apps/control-api/app/models.py"
+      ],
+      "next_action": "S4（须待 DeepSeek 部署影响预检一致性线收口后接续）"
+    },
+    {
+      "requirement_id": "ENT-019/CL-06",
+      "permission_domain": "审计",
+      "operation": "追溯与保留/删除/导出治理",
+      "target_granularity": "事件级精确查询；批次同事务逐项审计",
+      "backend": "audit outbox + 精确过滤器",
+      "implementation_status": "partial",
+      "frontend_entry": "AuditPage 查询",
+      "request_and_approval_path": "不适用",
+      "compiler_and_executor": "不适用",
+      "verification_path": "查询结果可与事件对照（test_audit_exact_filters/query_wire）",
+      "audit_path": "本身即审计",
+      "source_references": [
+        "apps/control-api/app/outbox.py",
+        "apps/control-api/app/routers/audit.py"
+      ],
+      "test_references": [
+        "test_audit_exact_filters.py",
+        "test_audit_query_wire.py",
+        "test_audit_outbox.py"
+      ],
+      "evidence_level": "historical_tests",
+      "missing_link": "完整设备→角色/Skill 版本→运行身份→执行→效果链未闭合；保留期限/删除/导出治理待做（用户决策项）",
+      "owner_files": [
+        "apps/control-api/app/outbox.py"
+      ],
+      "next_action": "随 S4 补链；保留/删除规则为用户决策项"
+    }
+  ],
+  "security_semantics": [
+    {
+      "id": 1,
+      "claim": "effective 必须来自独立读回证据",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "policies.py:651-660",
+        "deployment_verify.py:101-176",
+        "environments.py:60-74,605"
+      ]
+    },
+    {
+      "id": 2,
+      "claim": "desired/declared/observed 不冒充 effective",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "models.py:375",
+        "openshell_sync.py:51-83"
+      ]
+    },
+    {
+      "id": 3,
+      "claim": "不支持的能力显式拒绝而非静默丢弃",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "policy_compiler.py:80-82,123-140",
+        "policies.py:558-560",
+        "cli_backend.py:552",
+        "fake_backend.py:173"
+      ]
+    },
+    {
+      "id": 4,
+      "claim": "技能级无法建立证明时诚实表述为沙箱级影响",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "deployment_impact.py:46-48",
+        "BatchItemReview.tsx:47"
+      ]
+    },
+    {
+      "id": 5,
+      "claim": "shared_runtime_occupants=unknown 与 execution_confirmation_supported=false 保持",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "deployment_impact.py:46-48"
+      ]
+    },
+    {
+      "id": 6,
+      "claim": "提出者不能自批覆盖相关写通道",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "policies.py:310",
+        "change_review.py:188-205"
+      ]
+    },
+    {
+      "id": 7,
+      "claim": "批量逐项绑定目标/版本/结果",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "batch_reservation.py:26-104",
+        "deployment_batch_result.py:57-76"
+      ]
+    },
+    {
+      "id": 8,
+      "claim": "离线/超时/丢响应区分失败/未确认/已生效",
+      "conclusion": "在所列路径有静态实现依据；不是全系统或真实环境证明",
+      "references": [
+        "environments.py:60-74",
+        "batch_execution.py",
+        "deployment_verify.py:101-176"
+      ]
+    },
+    {
+      "id": 9,
+      "claim": "回滚活体复验授权且不复活过期授权",
+      "conclusion": "活体复验及精确前置快照回滚已有；不复活任何过期授权与完整回滚审批仍待核实，不能据此判定完成",
+      "references": [
+        "policies.py:889-936"
+      ]
+    },
+    {
+      "id": 10,
+      "claim": "审计查询能力不冒充完整业务追溯",
+      "conclusion": "成立（当前确为精确查询，完整链未闭合且未被宣称）",
+      "references": [
+        "test_audit_exact_filters.py",
+        "closeout CL-06"
+      ]
+    }
+  ],
+  "suspected_defects": [],
+  "slices": [
+    {
+      "id": "S1",
+      "title": "批量执行与恢复的前端闭环（依赖 S4）",
+      "requirements": [
+        "ENT-015",
+        "ENT-018"
+      ],
+      "owner_files": [
+        "apps/web/src/api/deploymentBatch.ts",
+        "apps/web/src/components/batch-deployment/NetworkBatchRevoke.tsx",
+        "apps/web/src/pages/ChangesPage.tsx",
+        "apps/web/src/api/changeExecution.ts"
+      ],
+      "scope": "完整影响披露与执行绑定前置满足后接显式执行；复用已有结果查询；回滚按后端操作证据资格处理，不仅限 effective",
+      "security_boundaries": "confirm_execution 不承载审批；自批拦截保持；unconfirmed 不渲染为成功",
+      "acceptance": "合成浏览器冒烟全链 + 既有 batch 测试不回归",
+      "user_decision": "前置未满足保持只读；本清单不授权开放执行",
+      "dependencies": [
+        "S4 证据绑定与完整影响确认",
+        "回滚审批及授权期限语义核清"
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "扩大授权与策略模板的独立审批旅程",
+      "requirements": [
+        "ENT-015"
+      ],
+      "owner_files": [
+        "apps/web/src/pages/ChangesPage.tsx",
+        "apps/web/src/components/ChangeReviewDialog.tsx",
+        "apps/web/src/pages/AgentDetailPage.tsx"
+      ],
+      "scope": "扩大专门旅程 + 审查界面突出 unsupported/needs_generation + 策略模板（必经 CR 与 preview_digest 绑定）",
+      "security_boundaries": "扩大与收窄同一独立审批与 SoD；模板不得绕过 CR",
+      "acceptance": "自批负例（既有 test_change_review）+ 合成旅程正向",
+      "user_decision": "策略模板初始范围清单需业务方提供"
+    },
+    {
+      "id": "S3",
+      "title": "行为核验通道（allow/deny 实证）",
+      "requirements": [
+        "ENT-016"
+      ],
+      "owner_files": [
+        "apps/control-api/app/deployment_verify.py",
+        "apps/control-api/app/adapters/openshell/contracts.py",
+        "apps/control-api/app/routers/policies.py"
+      ],
+      "scope": "隔离范围内 deny 探测通道，产出 level=enforcement_verified（仅真实通道可标）",
+      "security_boundaries": "配置读回与行为验证等级分离；不把 expect_deny 配置检查冒充行为探针；不擅自改变 effective/readback_verified 合同；真实探针须授权",
+      "acceptance": "真实 OpenShell 正负行为对照（deny 实测）——需受控真实目标",
+      "user_decision": "提供获准测试的 OpenShell 目标与范围（资源门禁）"
+    },
+    {
+      "id": "S4",
+      "title": "绑定失效联动与共享影响确认收口",
+      "requirements": [
+        "ENT-013"
+      ],
+      "owner_files": [
+        "apps/control-api/app/binding_identity.py",
+        "apps/control-api/app/routers/bindings.py",
+        "apps/control-api/app/models.py"
+      ],
+      "scope": "沙箱 revision/设备/Skill 摘要进绑定身份；共享影响确认绑定执行复验",
+      "security_boundaries": "人工登记不升格归属证明；unknown 保持 unknown；复验失败不释放既有 pending 语义",
+      "acceptance": "revision 变化/吊销/Skill 摘要变化正负测试；共享影响明示后禁止自动部署",
+      "user_decision": "共享沙箱独占性判定标准需业务确认",
+      "coordination": "影响预检与单/批预览一致性子项已验收；仅复验登记身份，不关闭本切片"
+    }
+  ],
+  "resource_gates": [
+    "受控真实 OpenShell 目标与授权范围（S3 验收、S2 部分验收）",
+    "真实设备/双架构原生验收（CL-07）",
+    "审计保留期限/删除/导出规则（CL-06，用户决策）",
+    "共享沙箱独占性判定标准（用户决策）"
+  ],
+  "personal_side_exclusions": [
+    "apps/agentshield/internal/server/grant_batch.go 与 grant-batch-revoke.v1：个人端（Go 内嵌 UI）批量撤权，不属企业控制面",
+    "docs/development/business-grant-revoke-e166-20260923.md：个人端 ML-02 在途撤权（真实模型验收），不计入企业覆盖"
+  ],
+  "recommended_order": [
+    "先 S4：证据与共享影响前置",
+    "前置满足后 S1；S2 受同样约束及模板决策约束",
+    "S3 合同准备可并行，真实探针须获准目标"
+  ]
+}

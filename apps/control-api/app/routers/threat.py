@@ -17,6 +17,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.discovery_identity import asset_evidence_device_filter
 from app.models import AgentAsset, Evidence, Finding, QuarantineCase, RuntimeBinding, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import (
@@ -95,6 +96,16 @@ def threat_scan(
     # _ensure_scan_permission），覆盖"个人开发者自查自己接的 Agent"场景。
     _ensure_scan_permission(identity, asset)
 
+    if asset.discovery_scope != "legacy" and body.evidence_ids:
+        bound = set(session.scalars(select(Evidence.evidence_id).where(
+            Evidence.tenant_id == identity.tenant_id,
+            Evidence.evidence_id.in_(body.evidence_ids),
+            Evidence.evidence_id.in_(asset.evidence_ids or []) | (Evidence.subject_ref == asset.id),
+            asset_evidence_device_filter(asset),
+        )))
+        if bound != set(body.evidence_ids):
+            raise HTTPException(status_code=422, detail="evidence_not_bound_to_asset")
+
     if body.encoding == "base64":
         try:
             raw = base64.b64decode(body.content, validate=True)
@@ -114,6 +125,7 @@ def threat_scan(
                     Evidence.tenant_id == identity.tenant_id,
                     Evidence.evidence_id.in_(body.evidence_ids),
                     Evidence.content_hash == raw_hash,
+                    asset_evidence_device_filter(asset),
                 ).limit(1)
             )
             if ev_match:

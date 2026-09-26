@@ -1,0 +1,22 @@
+# 04 — 既有只读预览工具对真实目标的实跑（含复现正文）
+# 命令（工具自身文档记载的同一条，目标 = siq-analysis-canary-27d1289f98fa）
+# apps/control-api/.venv/bin/python scripts/enterprise-experience/openshell-preview-live-check.py \
+#   --cli /home/maoyd/siq-research-engine/var/openshell/toolchains/v0.0.83/bin/openshell \
+#   --endpoint https://127.0.0.1:17671 \
+#   --xdg-root /home/maoyd/siq-research-engine/var/openshell/xdg \
+#   --target siq-analysis-canary-27d1289f98fa --out-dir <新建目录>
+
+rc=1  AssertionError: ('/deployment-preview', 409)    # 工具第 136 行，期望 200
+out-dir 为空（工具在断言前未产出 result.json）
+
+# 同序列只读复现（/tmp/openshell-link-20260926/repro-preview-409.py，不落仓、不改文件）
+probe: True 0.0.83 6225b82461864302b7d091108c12b4ef6c35c2dfd5cfd1e6ba77a38605528441
+POST /environments -> 201
+POST /runtime-bindings -> 201
+POST /policies -> 201
+POST /change-requests -> 201
+POST /change-requests/cr_451605e84a344626aa08/review-decision -> 200
+PREVIEW status: 409
+PREVIEW body: {"detail": "deployment_target_authority_unverified"}
+commands executed: ['gateway', 'status', '--version', 'gateway', 'status', '--version']
+# 注意：命令列表中没有 policy get —— 失败发生在读取目标策略之前

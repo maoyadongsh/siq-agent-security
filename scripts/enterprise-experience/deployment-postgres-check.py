@@ -2,6 +2,7 @@
 """Ephemeral loopback PostgreSQL migration and durable deployment race checks."""
 
 import hashlib
+import importlib.util
 import json
 import os
 import secrets
@@ -20,6 +21,8 @@ ROOT = Path(__file__).resolve().parents[2]
 def worker():
     sys.path.insert(0, str(ROOT / "apps/control-api"))
     import pytest
+    from alembic.migration import MigrationContext
+    from alembic.operations import Operations
     from app.db import get_engine
     from app.main import app
     from app.routers import deployment_submission as route
@@ -51,9 +54,12 @@ def worker():
                 getattr(tests, name)(client, headers, env, patch)
             checks[name] = True
         for outcome in ("success", "adapter_failure", "audit_failure_after_apply"):
-            with pytest.MonkeyPatch.context() as patch:
+            with (
+                tempfile.TemporaryDirectory(prefix="siq-pg-authority-") as authority_dir,
+                pytest.MonkeyPatch.context() as patch,
+            ):
                 tests.test_openshell_execution_is_never_replayed_after_effect(
-                    client, headers, env, patch, outcome
+                    client, headers, env, patch, outcome, Path(authority_dir)
                 )
             checks["postgres_openshell_" + outcome] = True
         # Two independent transactions arrive before reservation commit.
@@ -104,6 +110,25 @@ def worker():
         assert results[0].json()["deployment_id"] == results[1].json()["deployment_id"]
         assert executions == [1]
         checks["postgres_row_lock_serializes_precommit_duplicate"] = True
+        # Exercise this older guard directly: revision 0020 deliberately stops
+        # a normal downgrade before Alembic can reach revision 0017.
+        spec = importlib.util.spec_from_file_location(
+            "submission_migration",
+            ROOT / "apps/control-api/migrations/versions/0017_deployment_submission.py",
+        )
+        migration = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(migration)
+        with get_engine().connect() as connection:
+            before = connection.scalar(text("SELECT count(*) FROM deployment_submission"))
+            assert before > 0
+            with (
+                Operations.context(MigrationContext.configure(connection)),
+                pytest.raises(RuntimeError, match="refusing destructive downgrade"),
+            ):
+                migration.downgrade()
+            assert connection.scalar(text("SELECT count(*) FROM deployment_submission")) == before
+            connection.rollback()
+        checks["populated_reservations_direct_migration_guard"] = True
     print(json.dumps({"passed": True, "checks": checks}))
 
 
@@ -158,13 +183,21 @@ def main():
         port = (
             run(["docker", "port", name, "5432/tcp"]).stdout.strip().rsplit(":", 1)[1]
         )
-        for _ in range(100):
-            if (
-                run(["docker", "exec", name, "pg_isready", "-U", "postgres"]).returncode
-                == 0
-            ):
+        # Probe the same published TCP endpoint used by Alembic. The image's
+        # bootstrap Unix-socket server can report ready before final startup.
+        import psycopg
+
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline:
+            try:
+                with psycopg.connect(
+                    host="127.0.0.1", port=int(port), dbname="postgres",
+                    user="postgres", password=password, connect_timeout=2,
+                ) as connection:
+                    assert connection.execute("SELECT 1").fetchone() == (1,)
                 break
-            time.sleep(0.1)
+            except psycopg.OperationalError:
+                time.sleep(0.1)
         else:
             raise RuntimeError("isolated PostgreSQL readiness timeout")
         with tempfile.TemporaryDirectory(prefix="siq-pg-submission-") as temporary:
@@ -181,15 +214,26 @@ def main():
             )
             api = ROOT / "apps/control-api"
             for index, command in enumerate(
-                [["upgrade", "head"], ["downgrade", "0016"], ["upgrade", "head"]]
+                [
+                    ["upgrade", "0017"], ["downgrade", "0016"],
+                    ["upgrade", "head"], ["downgrade", "0020"],
+                    ["upgrade", "head"],
+                ]
             ):
                 result = run(
                     [str(api / ".venv/bin/alembic"), *command], cwd=api, env=settings
                 )
-                assert result.returncode == 0, "isolated migration failed"
                 (out / f"migration-{index}.log").write_text(
-                    result.stderr.replace(password, "[REDACTED]")
+                    (result.stdout + result.stderr).replace(password, "[REDACTED]")
                 )
+                assert result.returncode == 0, (
+                    "isolated migration failed; inspect redacted migration log"
+                )
+            with psycopg.connect(
+                host="127.0.0.1", port=int(port), dbname="postgres",
+                user="postgres", password=password, connect_timeout=2,
+            ) as connection:
+                migrated_head = connection.execute("SELECT version_num FROM alembic_version").fetchone()
             result = run(
                 [sys.executable, str(Path(__file__).resolve()), "--worker"],
                 cwd=api,
@@ -207,19 +251,56 @@ def main():
                 cwd=api,
                 env=settings,
             )
+            (out / "refused-downgrade.log").write_text(
+                (down.stdout + down.stderr).replace(password, "[REDACTED]")
+            )
             assert (
-                down.returncode != 0 and "refusing destructive downgrade" in down.stderr
+                down.returncode != 0
+                and "device-scoped discovery cannot be merged" in down.stderr
             )
-            proof["checks"]["populated_reservations_cannot_be_dropped_by_downgrade"] = (
-                True
+            proof["checks"]["device_scope_automatic_downgrade_refused"] = True
+            with psycopg.connect(
+                host="127.0.0.1", port=int(port), dbname="postgres",
+                user="postgres", password=password, connect_timeout=2,
+            ) as connection:
+                assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == migrated_head
+                assert connection.execute("SELECT count(*) FROM deployment_submission").fetchone()[0] > 0
+            proof["checks"]["refused_downgrade_keeps_head_and_reservations"] = True
+            proof["checks"]["empty_supported_intervals_downgrade_and_reupgrade"] = True
+            scheduler_worker = ROOT / "scripts/enterprise-experience/discovery-schedule-postgres-worker.py"
+            scheduler_result = run(
+                [sys.executable, str(scheduler_worker)], cwd=api,
+                env={**settings, "SIQ_SCHEDULE_PG_FIXTURE": "ephemeral-harness-only"},
             )
-            proof["checks"]["fresh_upgrade_empty_downgrade_and_reupgrade"] = True
+            (out / "scheduler-worker.log").write_text(
+                (scheduler_result.stdout + scheduler_result.stderr).replace(password, "[REDACTED]")
+            )
+            assert scheduler_result.returncode == 0, "scheduler PostgreSQL check failed; inspect redacted log"
+            scheduler_proof = json.loads(scheduler_result.stdout)
+            assert scheduler_proof["passed"] is True
+            proof["checks"].update(scheduler_proof["checks"])
+            proof["scheduler_worker_sha256"] = hashlib.sha256(scheduler_worker.read_bytes()).hexdigest()
+            scheduler_down = run(
+                [str(api / ".venv/bin/alembic"), "downgrade", "0027"], cwd=api, env=settings,
+            )
+            (out / "scheduler-refused-downgrade.log").write_text(
+                (scheduler_down.stdout + scheduler_down.stderr).replace(password, "[REDACTED]")
+            )
+            assert scheduler_down.returncode != 0 and "discovery schedule history must be preserved" in scheduler_down.stderr
+            with psycopg.connect(
+                host="127.0.0.1", port=int(port), dbname="postgres",
+                user="postgres", password=password, connect_timeout=2,
+            ) as connection:
+                assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == migrated_head
+                assert connection.execute("SELECT count(*) FROM discovery_schedule_run").fetchone()[0] == 1
+            proof["checks"]["scheduler_postgres_populated_downgrade_refused"] = True
             proof.update(
                 {
                     "schema_version": "deployment-postgres-check/v1",
                     "database_image_id": image_id.stdout.strip(),
                     "ephemeral_database": True,
                     "production_identity_tested": False,
+                    "migrated_head": migrated_head[0],
                     "script_sha256": hashlib.sha256(
                         Path(__file__).read_bytes()
                     ).hexdigest(),

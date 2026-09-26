@@ -7,6 +7,11 @@ const sample = {
   can_approve: true, can_reject: true, approve_blockers: [], reject_blockers: [],
 };
 describe('exact change review before decisions', () => {
+  it('rejects non-string approval and enforcement enums', () => {
+    for (const patch of [{ approval_policy: ['standard'] }, { enforcement_mode: ['block'] }]) {
+      expect(() => parseChangeReview({ ...sample, ...patch }, 'cr-1')).toThrow();
+    }
+  });
   it('accepts a complete snapshot but rejects another change or hidden/missing sections', () => {
     expect(parseChangeReview(sample, 'cr-1').can_approve).toBe(true);
     expect(() => parseChangeReview(sample, 'cr-2')).toThrow();

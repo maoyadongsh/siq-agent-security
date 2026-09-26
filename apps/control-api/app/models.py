@@ -11,7 +11,19 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    Float,
+    ForeignKey,
+    ForeignKeyConstraint,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db import Base
@@ -36,6 +48,107 @@ class Tenant(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
+class SkillUploadReceipt(Base):
+    """One validated canonical signature input per task, for later verification."""
+
+    __tablename__ = "skill_upload_receipt"
+    task_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_task.id"), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    edge_agent_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_agent.id"))
+    batch_digest: Mapped[str] = mapped_column(String(64))
+    signed_payload: Mapped[str] = mapped_column(Text)
+    signature: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class SkillInstallation(Base):
+    """Discovery location only; never an agent role or permission grant."""
+
+    __tablename__ = "skill_installation"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("ski"))
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    edge_agent_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_agent.id"), index=True)
+    locator_sha256: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "edge_agent_id", "locator_sha256", name="uq_skill_installation_location"),
+        UniqueConstraint("tenant_id", "id", name="uq_skill_installation_tenant_id"),
+    )
+
+
+class RoleConfigurationObservation(Base):
+    """Append-only validated config provenance, not independently replayable batch proof."""
+
+    __tablename__ = "role_configuration_observation"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("rco"))
+    tenant_id: Mapped[str] = mapped_column(String(64), index=True)
+    asset_id: Mapped[str] = mapped_column(String(64), index=True)
+    edge_agent_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_agent.id"))
+    task_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_task.id"))
+    batch_digest: Mapped[str] = mapped_column(String(64))
+    framework_source: Mapped[dict] = mapped_column(JSON)
+    skill_source_roots: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    observed_at: Mapped[datetime] = mapped_column(DateTime)
+    received_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    __table_args__ = (
+        ForeignKeyConstraint(["tenant_id", "asset_id"], ["agent_asset.tenant_id", "agent_asset.id"],
+                             name="fk_role_config_asset_tenant"),
+        UniqueConstraint("asset_id", "task_id", name="uq_role_config_asset_task"),
+    )
+
+
+class RoleSkillSelectionObservation(Base):
+    """Append-only declared visibility scope; no installed-skill or grant inference."""
+
+    __tablename__ = "role_skill_selection_observation"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("rso"))
+    tenant_id: Mapped[str] = mapped_column(String(64), index=True)
+    asset_id: Mapped[str] = mapped_column(String(64), index=True)
+    edge_agent_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_agent.id"))
+    task_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_task.id"))
+    batch_digest: Mapped[str] = mapped_column(String(64))
+    selection: Mapped[dict] = mapped_column(JSON)
+    source_evidence: Mapped[list] = mapped_column(JSON)
+    observed_at: Mapped[datetime] = mapped_column(DateTime)
+    received_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["tenant_id", "asset_id"], ["agent_asset.tenant_id", "agent_asset.id"],
+            name="fk_role_skill_asset_tenant",
+        ),
+        UniqueConstraint("asset_id", "task_id", name="uq_role_skill_asset_task"),
+    )
+
+
+class SkillManifestObservation(Base):
+    """Append-only observation of a manifest, not a complete package digest."""
+
+    __tablename__ = "skill_manifest_observation"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("smo"))
+    tenant_id: Mapped[str] = mapped_column(String(64), index=True)
+    installation_id: Mapped[str] = mapped_column(String(64), index=True)
+    manifest_sha256: Mapped[str] = mapped_column(String(64))
+    parser_version: Mapped[str] = mapped_column(String(64))
+    parse_status: Mapped[str] = mapped_column(String(32))
+    name: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    allowed_tools_present: Mapped[bool] = mapped_column(Boolean, default=False)
+    declared_tools: Mapped[list] = mapped_column(JSON, default=list)
+    observed_at: Mapped[datetime] = mapped_column(DateTime)
+    batch_digest: Mapped[str] = mapped_column(String(64))
+    batch_signature: Mapped[str] = mapped_column(String(128))
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["tenant_id", "installation_id"], ["skill_installation.tenant_id", "skill_installation.id"],
+            name="fk_skill_observation_installation_tenant",
+        ),
+        UniqueConstraint("installation_id", "batch_digest", name="uq_skill_observation_batch"),
+        CheckConstraint(
+            "parse_status IN ('parsed', 'missing_frontmatter', 'unsupported', 'invalid_utf8')",
+            name="ck_skill_observation_parse_status",
+        ),
+    )
+
+
 class Environment(Base):
     __tablename__ = "environment"
 
@@ -50,7 +163,10 @@ class Environment(Base):
     last_heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
-    __table_args__ = (UniqueConstraint("tenant_id", "name", name="uq_environment_tenant_name"),)
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "name", name="uq_environment_tenant_name"),
+        UniqueConstraint("tenant_id", "id", name="uq_environment_tenant_id"),
+    )
 
 
 class EdgeAgent(Base):
@@ -68,6 +184,31 @@ class EdgeAgent(Base):
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     registered_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+    __table_args__ = (UniqueConstraint("environment_id", "id", name="uq_edge_environment_id"),)
+
+
+class EdgeCredentialRotation(Base):
+    """Credential verifier history; not exposed through audit or device projections."""
+
+    __tablename__ = "edge_credential_rotation"
+    edge_agent_id: Mapped[str] = mapped_column(String(64), ForeignKey("edge_agent.id"), primary_key=True)
+    rotation_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    request_digest: Mapped[str] = mapped_column(String(64))
+    old_secret_hash: Mapped[str] = mapped_column(String(64))
+    new_secret_hash: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    __table_args__ = (UniqueConstraint("edge_agent_id", "new_secret_hash", name="uq_edge_rotation_new_hash"),)
+
+
+class EdgeRegistrationRecovery(Base):
+    __tablename__ = "edge_registration_recovery"
+
+    edge_agent_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("edge_agent.id", ondelete="CASCADE"), primary_key=True
+    )
+    request_digest: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
 class EnrollmentToken(Base):
@@ -105,6 +246,7 @@ class AgentAsset(Base):
     name: Mapped[str] = mapped_column(String(256))
     role: Mapped[str | None] = mapped_column(String(128), nullable=True)
     framework: Mapped[str] = mapped_column(String(32), default="unknown")
+    discovery_scope: Mapped[str] = mapped_column(String(64), default="legacy", server_default="legacy")
     # system 引用的租户一致性无法用纯 FK 表达（复合约束需引用 system(tenant_id, id)），
     # 由应用层在写入路径校验（confirm 端点：system 必须存在且同租户，见 routers/inventory.py）。
     system_id: Mapped[str | None] = mapped_column(String(64), ForeignKey("system.id"), nullable=True)
@@ -124,7 +266,10 @@ class AgentAsset(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow)
 
-    __table_args__ = (UniqueConstraint("tenant_id", "source_type", "source_locator", name="uq_asset_source"),)
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "discovery_scope", "source_type", "source_locator", name="uq_asset_source"),
+        UniqueConstraint("tenant_id", "id", name="uq_agent_asset_tenant_id"),
+    )
 
 
 class AgentInstance(Base):
@@ -171,6 +316,7 @@ class Evidence(Base):
         UniqueConstraint(
             "tenant_id",
             "environment_id",
+            "collector_id",
             "evidence_id",
             "content_hash",
             name="uq_evidence_observation",
@@ -343,6 +489,7 @@ class RuntimeBinding(Base):
 
     部署目标不再接受客户端自由文本，只允许来自本表登记且 active 的绑定；
     backend_target_id 登记后不可变（变更 = 吊销重建），防止部署被重定向到未登记运行时。
+    当前登记是人工声明；active/attestation 不等同后端核验的运行身份、沙箱归属或执行效果。
     """
 
     __tablename__ = "runtime_binding"
@@ -414,6 +561,74 @@ class EdgeTask(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
+class EdgeInitialScan(Base):
+    __tablename__ = "edge_initial_scan"
+
+    edge_agent_id: Mapped[str] = mapped_column(
+        String(64), ForeignKey("edge_agent.id", ondelete="CASCADE"), primary_key=True,
+    )
+    plan_digest: Mapped[str] = mapped_column(String(64))
+    task_ids: Mapped[list] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class DiscoveryScheduleRecord(Base):
+    __tablename__ = "discovery_schedule"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(64), index=True)
+    environment_id: Mapped[str] = mapped_column(String(64))
+    edge_agent_id: Mapped[str] = mapped_column(String(64), index=True)
+    intent: Mapped[dict] = mapped_column(JSON)
+    intent_digest: Mapped[str] = mapped_column(String(64))
+    installation_plan: Mapped[dict] = mapped_column(JSON)
+    installation_plan_digest: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(32), default="pending_confirmation")
+    starts_at: Mapped[datetime] = mapped_column(DateTime)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    interval_seconds: Mapped[int] = mapped_column(Integer)
+    max_runs: Mapped[int] = mapped_column(Integer)
+    reserved_runs: Mapped[int] = mapped_column(Integer, default=0)
+    last_reserved_slot: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    revision: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "id", name="uq_discovery_schedule_tenant_id"),
+        ForeignKeyConstraint(["tenant_id", "environment_id"], ["environment.tenant_id", "environment.id"],
+                             name="fk_discovery_schedule_environment"),
+        ForeignKeyConstraint(["environment_id", "edge_agent_id"], ["edge_agent.environment_id", "edge_agent.id"],
+                             name="fk_discovery_schedule_device"),
+        CheckConstraint("status IN ('pending_confirmation', 'active', 'paused', 'revoked')",
+                        name="ck_discovery_schedule_status"),
+        CheckConstraint("interval_seconds >= 900 AND interval_seconds <= 86400",
+                        name="ck_discovery_schedule_interval"),
+        CheckConstraint("max_runs >= 1 AND max_runs <= 2880 AND reserved_runs >= 0 AND reserved_runs <= max_runs",
+                        name="ck_discovery_schedule_budget"),
+        CheckConstraint("expires_at > starts_at AND revision >= 0", name="ck_discovery_schedule_window"),
+        CheckConstraint("(reserved_runs = 0 AND last_reserved_slot IS NULL) OR "
+                        "(reserved_runs > 0 AND last_reserved_slot IS NOT NULL AND "
+                        "last_reserved_slot >= 0 AND reserved_runs <= last_reserved_slot + 1)",
+                        name="ck_discovery_schedule_progress"),
+    )
+
+
+class DiscoveryScheduleRun(Base):
+    __tablename__ = "discovery_schedule_run"
+
+    schedule_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    slot: Mapped[int] = mapped_column(Integer, primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(64), index=True)
+    task_ids: Mapped[list] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+    __table_args__ = (
+        ForeignKeyConstraint(["tenant_id", "schedule_id"], ["discovery_schedule.tenant_id", "discovery_schedule.id"],
+                             name="fk_discovery_run_schedule"),
+        CheckConstraint("slot >= 0", name="ck_discovery_run_slot"),
+    )
+
+
 class AuditEvent(Base):
     __tablename__ = "audit_event"
 
@@ -448,6 +663,40 @@ class OutboxEvent(Base):
     attempt: Mapped[int] = mapped_column(Integer, default=0)
     next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     dead_lettered_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class DeploymentBatchDraft(Base):
+    """Persisted preview only; never an execution reservation."""
+
+    __tablename__ = "deployment_batch_draft"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("bdraft"))
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    actor_id: Mapped[str] = mapped_column(String(128))
+    actor_type: Mapped[str] = mapped_column(String(32))
+    request_key: Mapped[str] = mapped_column(String(36))
+    request_digest: Mapped[str] = mapped_column(String(64))
+    preview: Mapped[dict] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "request_key", name="uq_deployment_batch_draft_key"),
+        UniqueConstraint("tenant_id", "id", name="uq_deployment_batch_draft_tenant_id"),
+    )
+
+
+class DeploymentBatchReservation(Base):
+    """Atomic batch-to-item claims; existing claims never confer replay authority."""
+
+    __tablename__ = "deployment_batch_reservation"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("bres"))
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    draft_id: Mapped[str] = mapped_column(String(64), unique=True)
+    submission_ids: Mapped[list] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    __table_args__ = (ForeignKeyConstraint(
+        ["tenant_id", "draft_id"], ["deployment_batch_draft.tenant_id", "deployment_batch_draft.id"],
+        name="fk_batch_reservation_draft_tenant",
+    ),)
 
 
 class DeploymentSubmission(Base):

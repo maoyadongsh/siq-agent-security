@@ -1,0 +1,142 @@
+P0 行为 fixture 通道：源码完成 + 隔离验证通过（**未在真实目标上运行过**）
+================================================================================
+时间：2026-09-26T14:00Z 前后
+执行者：DeepSeek（仅本仓源码、合成回归测试与本机回环套接字；未接触任何网关）
+
+§0 这份留痕的边界（先读）
+--------------------------------------------------------------------------------
+本文件回答一个问题：**「`enforcement_verified` 这个级别，能不能只由边界内的真实
+行为观测产生，而不是由任何夹具的自述产生」**——以及这个性质能否被测试**否证**。
+
+- 本轮的结论档是 **隔离验证通过**，不是「实际交付」。工具**从未**在真实目标上运行过；
+  全程**未**联系任何网关、**未**执行 `sandbox upload` / `sandbox exec` / `policy set`、
+  **未**新建或删除沙箱、**未**读写任何真实策略。
+- 唯一的真实 IO 是两个本机 127.0.0.1 回环套接字（一个监听、一个已关闭端口），
+  用于让"可达性对照"与"探针形态词表"成为**实测**而不是声明。
+- 本轮**不产生**任何 `enforcement_verified` 事实：所有证据都是合成的；
+  校验器接受它们，只说明**判定逻辑正确**，不说明任何真实策略在拦人。
+- 未接线：没有任何门禁/接口调用新通道；`verify(probe_evidence=...)` 的调用方仍为 0。
+
+§1 交付物（新增 5 个文件 + 5 个最小改动）
+--------------------------------------------------------------------------------
+新增：
+  apps/control-api/app/adapters/openshell/enforcement_probe.py
+      证据结构（`ProbeObservation` / `EnforcementProbeEvidence` /
+      `EnforcementProbeExpectation`）+ 校验器 `validate_enforcement_probe_evidence`
+      + 25 个固定判别码。纯逻辑，无 IO。
+  apps/control-api/app/adapters/openshell/probe_channel.py
+      边界内观测通道：`sandbox exec` / `sandbox upload` 的**固定**子命令模板、
+      探针输出的严格解析（fail-closed）、异常 → 固定词表的**闭合**映射、
+      边界外可达性对照 `reachability_control`。
+  scripts/enterprise-experience/probe/enforcement_probe_agent.py
+      被上传进边界的探针：**只报告事实**，没有 `--expect`，不做任何判定。
+  scripts/enterprise-experience/openshell-enforcement-probe.py
+      一次性执行工具：默认**计划模式**（不触网）；执行需 `--execute`
+      + `--confirm-behaviour-probe` + 算子授权目录里匹配本目标的条目。
+  apps/control-api/app/tests/test_enforcement_probe.py（59 用例）
+  scripts/enterprise-experience/test_openshell_enforcement_probe.py（27 用例）
+
+最小改动（合同兼容，非破坏性）：
+  contracts.py   ：新增能力位 `CAP_ENFORCEMENT_PROBE="enforcement_probe"`；
+                   `VerificationReport` 增 `probe_evidence` / `probe_reject_reason`。
+  base.py        ：抽象 `verify()` 增**关键字**参数 `probe_evidence=None`（默认值
+                   保证既有调用方不改；三后端签名一致由既有合同测试钉住）。
+  cli_backend.py ：`verify()` 增升级分支（唯一能把级别提到 `enforcement_verified`
+                   的地方）；能力文档如实记 `unknown`。
+  fake_backend.py / client.py：签名补齐并**明确忽略**该参数；Fake 能力位记 `unsupported`。
+
+§2 三条设计不变量（逐条落成可测事实）
+--------------------------------------------------------------------------------
+1. **观测必须在边界内发起**：`ALLOWED_PROBE_ORIGINS = {sandbox_exec}`，且是
+   **拒绝式**白名单——不在集合内的一切原点（`fixture` / `simulated` / `self_report` /
+   `script_self_report` / `config_readback` / `gateway_self_report`）逐个点名拒绝。
+2. **判定不在夹具里**：边界内探针只报告形态与耗时；`self_report` 形态一律拒绝。
+   探针**没有**"预期"输入（实测：`--expect blocked` 直接报错退出）。
+3. **不确定就不升级**：三臂不齐、臂内形态矛盾、绑定不匹配、读回**明确**说
+   warn/audit_only —— 全部落到固定判别码，绝不产生该级别。
+
+§3 差分结构（主方案 = 同 endpoint / 双 binary 路径 / 同一份内容）
+--------------------------------------------------------------------------------
+  允许臂（边界内，路径 A）→ 必须 `connected`
+  拒绝臂（边界内，路径 B，**同一个** endpoint）→ 必须是"被拦"形态
+  可达性对照（**边界外**，控制面主机）→ 必须 `connected`
+A 与 B 是**同一份脚本**的两个副本（摘要相同），因此唯一变量是策略按 binary 路径的归因。
+"被拦"必须是签名而非"没连上"：`timeout` 形态**不能单独成立**（也可能是路由黑洞），
+只有该 endpoint 在同一 run 内被对照臂证明是活的才接受。
+
+§4 实跑一：校验器与工具层测试（真实退出码 0）
+--------------------------------------------------------------------------------
+命令（逐字）：
+    apps/control-api/.venv/bin/python -m pytest \
+        apps/control-api/app/tests/test_enforcement_probe.py -q
+结果： 59 passed
+
+    apps/control-api/.venv/bin/python -m pytest \
+        scripts/enterprise-experience/test_openshell_enforcement_probe.py -q
+结果： 27 passed
+
+    apps/control-api/.venv/bin/python -m pytest scripts/enterprise-experience -q
+结果： 150 passed（本轮之前为 123；+27 即本文件新增的工具层守卫）
+
+    apps/control-api/.venv/bin/python -m pytest apps/control-api/app/tests \
+        -q --tb=line --junitxml=/tmp/p0-junit.xml
+结果： tests= 2235 failures= 0 errors= 0 skipped= 1 （exit 0）
+计数说明：本环境下 `-q` 的末行汇总在 stdout 被捕获时会丢失（`--collect-only` 同样），
+因此以后端 pytest 自己的 `--junitxml` 计数为准，而不是解析 stdout。
+可比性说明：与 R07.8 记录的 `2164 passed` **不是同一次测量**；本工作树含并作者
+未提交的测试，差值 71 不可逐项归因到本次加法（本次在后端仅新增
+`test_enforcement_probe.py` 一处 59 例）。
+
+    apps/control-api/.venv/bin/ruff check --no-cache \
+        --config apps/control-api/pyproject.toml <11 个新增/改动文件>
+结果： All checks passed!（仓库口径；根目录无 `pyproject.toml`，裸跑 `ruff check` 是假绿）
+
+覆盖到的**否证**，逐条为可执行断言（不是声明）：
+  - 六个非法原点逐个拒绝；对照臂必须来自边界外；
+  - 指纹 / revision / digest / 探针脚本摘要 逐项绑定不符即拒绝；
+  - 允许臂非 `connected`、拒绝臂 `connected`、拒绝臂形态混合、词表外形态
+    （含 `probe_error`）全部不接受；
+  - 拒绝臂 `timeout` 且**无对应对照** → `probe_deny_timeout_without_reachability_control`；
+  - 两臂路径相同、两臂内容摘要不同 → 均拒绝（差分不成立）；
+  - 写面自洽：允许臂的 (endpoint, path) 必须在本次读回的网络允许集里，
+    拒绝臂的 (endpoint, path) 必须不在；
+  - **Fake / HTTP 收到一份完美证据仍必须退回 `readback_verified`**，
+    且 `probe_evidence is None`（收到证据 ≠ 观测发生过）。
+
+§5 实跑二：计划模式冒烟（合成的，**不触网**）
+--------------------------------------------------------------------------------
+命令（逐字，`--cli` 与 `--agent` 都指向临时目录里的探针副本）：
+    python3 scripts/enterprise-experience/openshell-enforcement-probe.py \
+      --cli "$TMP/agent.py" --endpoint http://127.0.0.1:17671 --xdg-root "$TMP/xdg" \
+      --target siq-analysis-canary-27d1289f98fa --endpoint-address api.example.com:443 \
+      --allow-path /sandbox/siq-probe-a.py --deny-path /sandbox/siq-probe-b.py \
+      --operator-authority "$TMP/authority.json" --agent "$TMP/agent.py" \
+      --attempts 3 --timeout 5.0 --out-dir "$TMP/evidence"
+结果：rc=0，report.json 的结论为 `probe_plan_only`，`executed=false`、
+`enforcement_verified=false`、`production_eligible=false`、`runtime_policy_mutated=false`。
+测试同时断言：计划模式下**握手 0 次、读回 0 次、dispatch 0 条**。
+
+§6 实施期自纠的三个缺陷（都写出来，不藏）
+--------------------------------------------------------------------------------
+(a) **纸面门禁（最严重）**：初稿要求"读回的执行模式必须是 block"，否则不升级。
+    但 CLI 路径的 `read_effective_policy` 刻意恒填 `unknown`（`cli_backend.py:542-544`，
+    P1-11：`policy get --full` 输出里根本没有模式字段）——这道门在**真实路径上永远打不开**。
+    改为**矛盾时从严**：只在读回**明确**为 `warn`/`audit_only` 时拒绝；`unknown` 不作为
+    否决理由（边界内拒绝臂真的被拦住，是比读回更强的直接事实），并在证据里如实保留。
+(b) **计划与实际分叉**：计划模式打印的 `exec` 写死 `--timeout 0`，而通道实际发的是
+    `int(timeout*attempts)+60`。已改为复用通道的 argv 构建器（单一事实源），
+    并新增"计划 argv 逐字等于 dispatch argv"的断言。
+(c) **拒绝路径上的多余动作**：工具原先先 `upload` 再校验允许规则，导致拒绝时已发生
+    两次跨边界写入。已把全部只读前提（握手/指纹/读回/允许集）前置，
+    拒绝路径上**一个跨边界动作都不发生**（测试断言 dispatch 表为空）。
+
+§7 天花板（写进结论，不藏）
+--------------------------------------------------------------------------------
+- 工具 P0 阶段**从未在真实目标上跑过**；能给出的最强结论是"在本机合成件上，
+  检测器能区分**被拦 / 目标已死 / 夹具撒谎**"。
+- **前提未实测**：网关是否真的**按 binary 路径**归因网络规则，本仓
+  `scripts/openshell_compat_matrix.json`（v0.0.83）里**没有任何一条**记录说它被实测过
+  （`interceptor: false`；schema 里有 `binaries` 字段 ≠ 运行期按它判定）。
+  这正是方案 §3.2 的 P1-pre，**需要单独一次许可**（含 `sandbox upload` / `sandbox exec`
+  两类本轮从未做过的动作）。在 P1-pre 通过前，主方案与退路**都不能**被当作已成立。
+- 本文件**不**授权部署、**不**授权推送/签发，**不**表示"源码已冻结"。

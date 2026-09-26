@@ -74,11 +74,13 @@ def _utc(value: datetime) -> datetime:
 def _deployment(row: Deployment, names: dict[str, str]) -> DeploymentHistory:
     verification = _dict(row.verification)
     level = verification.get("level", verification.get("verification_level"))
+    # 映射部署合同值及既有历史别名；enforcement_verified 是合法保留值，尚无生产者。
+    # `behavior_verified` 是 OpenShell 诊断合同的保留态、无生产者，
+    # 不得据此升级为行为证据；未知 level 一律归 unknown。
     aliases = {
         "readback_verified": "config_readback",
         "config_readback": "config_readback",
         "enforcement_verified": "behavior_enforced",
-        "behavior_verified": "behavior_enforced",
         "failed": "failed",
         "error": "failed",
         "stale": "stale",
@@ -87,15 +89,16 @@ def _deployment(row: Deployment, names: dict[str, str]) -> DeploymentHistory:
     projected_level = aliases.get(level, "unknown") if isinstance(level, str) and level else "none"
     if verification.get("stale") is True or verification.get("expired") is True:
         projected_level = "stale"
-    attestation = _dict(verification.get("independent_attestation"))
+    attestation_raw = verification.get("independent_attestation")
+    attestation = _dict(attestation_raw)
     result = attestation.get("result")
-    independent = (
-        result
-        if result in ("verified", "mismatch", "unreachable", "no_receipt")
-        else "unknown"
-        if attestation
-        else "not_checked"
-    )
+    if result in ("verified", "mismatch", "unreachable", "no_receipt"):
+        independent = result
+    elif attestation_raw is None:
+        independent = "not_checked"
+    else:
+        # 存在但读不出结果的证据（非对象或非合同 result）不是“没有做过独立读回”。
+        independent = "unknown"
     changed = verification.get("backend_mutated")
     return DeploymentHistory(
         id=row.id,

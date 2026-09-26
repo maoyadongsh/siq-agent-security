@@ -15,6 +15,10 @@ import (
 )
 
 func TestLocalUIRequiresMatchingHealthAndKeepsCredentialsOut(t *testing.T) {
+	for _, name := range []string{"SSH_CONNECTION", "SSH_CLIENT", "SSH_TTY"} {
+		t.Setenv(name, "")
+	}
+	t.Setenv("DISPLAY", ":test")
 	dir := t.TempDir()
 	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", dir)
 	st := &state.Store{Dir: dir}
@@ -78,11 +82,20 @@ func TestLocalUIRequiresMatchingHealthAndKeepsCredentialsOut(t *testing.T) {
 	}
 	failOpen = true
 	out.Reset()
-	if err := localUI(nil, &out, opener); err == nil || strings.Contains(err.Error(), "secret") || out.String() != srv.URL+"/\n" {
+	if err := localUI(nil, &out, opener); err == nil || strings.Contains(err.Error(), "secret") || !strings.HasPrefix(out.String(), srv.URL+"/\n") {
 		t.Fatal("browser failure did not preserve manual fallback", err)
 	}
 	if err := localUI([]string{"https://example.invalid"}, &out, opener); err == nil || calls != 2 {
 		t.Fatal("arbitrary URL accepted")
+	}
+	t.Setenv("SSH_CONNECTION", "untrusted-shell-value; do-not-execute")
+	out.Reset()
+	if err := localUI(nil, &out, opener); err != nil || calls != 2 || strings.Contains(out.String(), "untrusted-shell-value") {
+		t.Fatal("SSH must return guidance without launching a browser or echoing environment", err)
+	}
+	out.Reset()
+	if err := localUI([]string{"--print"}, &out, opener); err != nil || out.String() != srv.URL+"/\n" || calls != 2 {
+		t.Fatal("SSH print-only compatibility", err)
 	}
 }
 func TestBrowserCommandUsesDirectArgumentVector(t *testing.T) {

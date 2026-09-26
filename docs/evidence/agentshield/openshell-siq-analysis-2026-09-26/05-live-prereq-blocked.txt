@@ -1,0 +1,132 @@
+A7 前置核查：--live 在当前候选上会写成功但**无法回滚**（因此本轮**未执行** --live）
+时间：2026-09-26（本地）；目标：siq-analysis-canary-27d1289f98fa
+本轮对目标碰触的命令只有一条只读的 policy get --full，未执行任何 policy set。
+
+【勘误 2026-09-26，见 `10-d9-structural-readonly-2026-09-26.txt` §5】§一 列出的
+「network_policies 条目名（8 条，含 4 条 `_provider_siq_*`）」**在该 canary 的任何
+可达读回里都不存在**：rev1/rev2 的 `--full` 与另一个 canary 的 `--full` 都是
+**4 条规则 / 7 个 endpoint / 7 条 binaries**，`_provider_` 字面命中 **0 次**，
+且 §一 指向的 `03-` 里其实只有 `-o json` 元数据、**没有** `--full` 正文。
+**正确口径：4 条规则 / 7 个 endpoint。** 该名单出处待重新确认。
+本文件的**结论不变**（写面判定依赖的是"整段替换"这一代码事实，与原有条目是 4 条还是 8 条无关），
+但"写坏的范围"应按 4 条规则 / 7 个 endpoint 计。
+
+=== 一、目标现状（只读读回，BEFORE）===
+--- sandbox list
+siq-analysis-canary-27d1289f98fa  2026-09-21 17:47:46  Ready
+siq-analysis-canary-d4a890ec23d3  2026-09-21 17:48:08  Ready
+--- policy get siq-analysis-canary-27d1289f98fa -o json
+{
+  "active_version": 2,
+  "config_revision": 7131578761778039427,
+  "hash": "d9e0566ba44a24fa7b980833ed55e86e872c2acf02c57bf27ce6cd925f644132",
+  "policy_source": "sandbox",
+  "sandbox": "siq-analysis-canary-27d1289f98fa",
+  "scope": "sandbox",
+  "status": "effective",
+  "version": 2
+}
+--- policy list siq-analysis-canary-27d1289f98fa
+VERSION  HASH           STATUS       CREATED                  ERROR
+2        fed6cc8072d1   Loaded       1790012866828
+1        3d90c401b3e4   Superseded   1790012866803
+--- 该 canary 的 network_policies **条目名**（8 条，来自 policy get --full，正文见 03 与本轮记录）
+_provider_siq_kimi_coding / _provider_siq_minimax_cn_pool / _provider_siq_stepfun /
+_provider_siq_tavily_search / siq_agentshield_relay / siq_data_broker / siq_egress_guard /
+siq_internal_services
+（我方适配器 gateway_network_to_rules 归一化后计数为 7 条网络规则；两者口径不同，见下）
+
+=== 二、写面判定（读代码，非跑）===
+apps/control-api/app/adapters/openshell/cli_backend.py:584-591 apply_dynamic：
+    merged = clone_policy(current.policy)
+    network = network_rules_to_gateway(compiled.artifact["network_policies"])
+    if network:
+        merged["network_policies"] = network        # <-- 整段**替换**，不是合并
+  => _live_check 的 desired 只含 1 条 allow(example.com:443) 规则，
+     写入后该沙箱 network_policies 段**只剩这一条**，上面 8 条 provider/internal 策略全部消失。
+
+=== 三、回滚可达性判定（隔离执行，只读接触网关）===
+脚本 scripts/openshell_compat_check.py:139 的调用形态：
+    rolled = backend.rollback(sandbox, receipt)        # 不传 authorizer
+而 cli_backend.py:807-808：
+    if authorizer is None:
+        raise VerificationFailed("openshell_rollback_authorizer_required")
+
+隔离核查脚本 /tmp/a7-precheck/rollback_reachability.py 的实测输出（仅一次 policy get --full 为真实网络调用）：
+[read-only] target=siq-analysis-canary-27d1289f98fa revision=2 digest=98e9925deeeffcc8…
+[read-only] 现存 network_policies 条数 = 7
+[call] backend.rollback(target, receipt)  # 与脚本 _live_check:139 完全同形：不传 authorizer
+[result] VerificationFailed: openshell_rollback_authorizer_required
+
+=== 四、结论 ===
+1) 若执行 --live：policy set 会真实发生（替换整段 network_policies），
+   随后 rollback 必然抛 openshell_rollback_authorizer_required，
+   被 _live_check 的 except Exception 捕获、打印『FAIL: 回滚失败』、ok=False、退出码 1。
+2) 即：**『同一 run 内回滚作为恢复手段』在当前候选上不成立**——脚本自己没有回滚能力。
+   沙箱会被留在『网络策略只剩 example.com:443』的状态，直到有人手工 policy set 恢复。
+3) 因此本轮**未执行** --live；这是拒绝执行，不是失败留痕。
+
+=== 五、若要继续，可用的恢复材料（本轮已捕获，未使用）===
+- BEFORE 全文（policy get --full，version 2）已在本轮完整读回；
+- 网关侧 version 1/2 均在 policy list 中保留（1=Superseded, 2=Loaded）；
+- 手工恢复 = 用 BEFORE 文档 policy set 回该沙箱（**这本身也是一次真实权限变更，需该次授权**）。
+
+=== 六、口径提醒 ===
+- policy get -o json 的 hash(d9e0566b…) 是网关自报哈希；我方 policy_digest(98e9925d…) 是对解析后文档的重算，
+  两者算法不同、**不可互相校验**，本文件不作等值结论。
+- 网关自报 status:"effective" 仍是网关侧字段，不是我方产出的事实；本文件不产 enforcement_verified。
+
+=== 附录：核查脚本全文（当时位于 /tmp/a7-precheck/rollback_reachability.py，非仓库路径）===
+"""A7 前置核查（只读）：证明 --live 在当前候选上无法完成回滚。
+
+只做一次 `policy get --full`（只读），其余全是进程内对象；不写任何策略。
+"""
+from __future__ import annotations
+
+import os
+import sys
+
+sys.path.insert(0, "/home/maoyd/siq/siq-agent-security/apps/control-api")
+
+from app.adapters.openshell.cli_backend import OpenShellCliBackend
+from app.adapters.openshell.contracts import VerificationFailed
+from app.adapters.openshell.operation_registry import PolicyOperation, PolicyOperationRegistry
+
+TARGET = "siq-analysis-canary-27d1289f98fa"
+backend = OpenShellCliBackend(operation_registry=PolicyOperationRegistry())
+
+base = backend.read_effective_policy(TARGET)          # 只读：policy get --full
+print(f"[read-only] target={TARGET} revision={base.revision} digest={base.policy_digest[:16]}…")
+print(f"[read-only] 现存 network_policies 条数 = {len(base.network)}")
+
+record = PolicyOperation(
+    operation_id="opo-a7-precheck-readonly",
+    target=TARGET,
+    base=base,
+    applied_revision=base.revision,
+    applied_digest=base.policy_digest,
+    no_op=False,
+)
+backend._operations.remember(record)  # noqa: SLF001
+receipt = backend._deployment_receipt(  # noqa: SLF001
+    operation_id=record.operation_id,
+    target=TARGET,
+    base=base,
+    applied_revision=base.revision,
+    applied_digest=base.policy_digest,
+    result="applied",
+)
+
+print("\n[call] backend.rollback(target, receipt)  # 与脚本 _live_check:139 完全同形：不传 authorizer")
+try:
+    backend.rollback(TARGET, receipt)
+    print("[result] 未抛异常 —— 与本核查预期不符，需重新判定（未写入任何策略）")
+    sys.exit(3)
+except VerificationFailed as exc:
+    print(f"[result] VerificationFailed: {exc}")
+    print("[meaning] 回滚在**写之前**就失败：脚本 _live_check 的 except Exception 会打印"
+          "『FAIL: 回滚失败』并把 ok 置 False，退出码 1 —— 而 policy set **已经发生**。")
+    sys.exit(0)
+except Exception as exc:  # noqa: BLE001
+    print(f"[result] 其它异常 {type(exc).__name__}: {exc}")
+    sys.exit(4)

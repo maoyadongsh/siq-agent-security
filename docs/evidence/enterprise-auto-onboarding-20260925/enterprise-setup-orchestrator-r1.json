@@ -1,0 +1,21 @@
+{
+  "scope": "unified Linux setup orchestration; production signed full run pending",
+  "checks": {
+    "identity_and_start_branches": 6,
+    "phase_failure_boundaries": 5,
+    "progress_output_failure_stops_registration": "passed",
+    "native_cli_unsigned_release_no_identity_write": "passed",
+    "incomplete_register_response_denied": "passed",
+    "edge_go_vet_and_race_all": "passed",
+    "native_help": "passed",
+    "git_diff_check": "passed",
+    "production_signed_full_command_systemd": "not run"
+  },
+  "source_sha256": {
+    "edge/agent/setup_enterprise_linux.go": "c3f67a8935f06656adcf66b5c90bbc89be3d9b7b1cd04f52cb7f16a0e0a3bdf5",
+    "edge/agent/setup_enterprise_linux_test.go": "c33dd66b96e365f887c6fc4ba28be3f67297b7df70c86def26bcd81dffc51844",
+    "edge/agent/client.go": "dd0bee47c497e568e5ee31a0e01ed3a9e3b58fdeb4985fbf022381bfb212bd8e",
+    "edge/agent/registration_environment_test.go": "680faedf8f944c690215da2fa32f9ff0d862b8e7692b38732c580b348f5dca18"
+  },
+  "live_deployment_changed": false
+}

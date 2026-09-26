@@ -1,0 +1,26 @@
+{
+  "batch": 34,
+  "verification": {
+    "go_vet_all": "passed",
+    "go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed",
+    "native_read_only_cli": "passed"
+  },
+  "observed_host_metadata": {
+    "os": "linux",
+    "process_arch": "arm64",
+    "kernel_machine": "aarch64",
+    "distribution": "ubuntu",
+    "distribution_version": "24.04",
+    "dmi_product_label": "NVIDIA_DGX_Spark",
+    "device_tree_model": "missing",
+    "hardware_attested": false,
+    "uploaded": false
+  },
+  "source_sha256": {
+    "edge/agent/host_inspection.go": "14aa1746328d11c33cedb5cf1485b5519e9d435f719140a0d46f48814be1de82",
+    "edge/agent/host_inspection_linux.go": "fdbea5e235eca8aa84f7911ed846d8fe8b5edc2a002f5e181eaf0040a4958a28",
+    "edge/agent/host_inspection_test.go": "3ec76caef779d8a4ee4723a3c3a6062e3bf1114e642119a36eaeea2d33a9f65c",
+    "edge/agent/host_inspection_linux_test.go": "46d53dce8a97a8e4e36857ad290ecfee99c82a6cb607f9854a0e1ae150d1b444"
+  }
+}

@@ -46,6 +46,7 @@ import yaml
 from app.adapters.openshell.base import EnforcementAdapter
 from app.adapters.openshell.bounded_command import MAX_OUTPUT, run_bounded
 from app.adapters.openshell.contracts import (
+    VERIFY_LEVEL_ENFORCEMENT,
     VERIFY_LEVEL_FAILED,
     VERIFY_LEVEL_READBACK,
     AdapterError,
@@ -64,6 +65,12 @@ from app.adapters.openshell.contracts import (
     VerificationFailed,
     VerificationReport,
 )
+from app.adapters.openshell.enforcement_probe import (
+    EnforcementProbeEvidence,
+    EnforcementProbeExpectation,
+    validate_enforcement_probe_evidence,
+)
+from app.adapters.openshell.network_change import assess_network_change
 from app.adapters.openshell.operation_registry import (
     PROCESS_POLICY_OPERATIONS,
     PolicyOperation,
@@ -186,6 +193,14 @@ def _cli_capability_document() -> dict[str, CapabilityItem]:
         # 网关无已实测行为事件流；stream_events 仅能回读 policy list 文本（非行为事件）
         "audit_events": CapabilityItem(
             status="unknown", semantics="none", basis="无已实测事件流；stream_events 仅 policy list 回读（非行为事件）"
+        ),
+        # 行为 fixture 通道：代码路径已实现（probe_channel），但**尚未在真实目标上实测**
+        # 「边界是否真的按 binary 路径归因」这一前提，故如实 unknown、不上调。
+        # 注意：verify() 的升级门禁是**证据校验器**而不是这项自述状态——
+        # 自述是声明，校验器要的是边界内观测事实，两者不可互替。
+        "enforcement_probe": CapabilityItem(
+            status="unknown", semantics="observe",
+            basis="通道已实现（sandbox exec 三臂差分），但 binary 归因前提未在真实目标上实测",
         ),
         # P1-11：openshell-cli 当前只支持 block；warn/audit_only 无实测执行语义
         "enforcement_mode.block": CapabilityItem(
@@ -556,6 +571,9 @@ class OpenShellCliBackend(EnforcementAdapter):
             artifact_hash=compiled.artifact_hash,
             base_policy_digest=current.policy_digest,
             base_static_digest=current.static_digest,
+            network_change=assess_network_change(current.network, compiled.artifact["network_policies"])
+            if kind == "dynamic" and "network_policies" in compiled.artifact
+            else "unknown",
             steps=[f"policy set {target}（动态）" if kind == "dynamic" else f"sandbox create {target}（重建）"],
         )
 
@@ -719,13 +737,26 @@ class OpenShellCliBackend(EnforcementAdapter):
             "请通过受控生命周期创建，或升级到已修复的 OpenShell 版本后启用"
         )
 
-    def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
+    def verify(
+        self,
+        target: str,
+        checks: dict,
+        receipt: DeploymentReceipt,
+        *,
+        probe_evidence: EnforcementProbeEvidence | None = None,
+    ) -> VerificationReport:
         """配置读回验证（readback）：Active 会短暂滞后于提交（实测 Loaded→Active
         异步传播），以 1s 间隔轮询至多 10 次；最终不一致才判失败（§21.1 不变量 #5）。
 
-        P1-2 分级语义：本方法只比对读回配置（revision + 网络允许集），没有任何
-        行为 fixture 通道，因此通过时 level 只能是 readback_verified，
+        P1-2 分级语义：本方法**自己**只比对读回配置（revision + 网络允许集）。
+        默认（`probe_evidence=None`）通过时 level 只能是 readback_verified，
         绝不产出 enforcement_verified；任一失败 → failed。
+
+        只有在传入 `probe_evidence` **且**它通过
+        `validate_enforcement_probe_evidence`（边界内真实行为观测 + 与本次读回
+        的 revision/digest/指纹/执行模式逐项绑定）时，才升级为 enforcement_verified。
+        判定由校验器做，不由调用方声明；证据不合格时**照常**退回 readback_verified
+        并在 `probe_reject_reason` 里留下固定判别码，绝不"因为看起来像"而放行。
         """
         import time
 
@@ -770,12 +801,44 @@ class OpenShellCliBackend(EnforcementAdapter):
             if check["endpoint"] in allowed:
                 failures.append(f"deny check failed: {check['endpoint']}")
         passed = not failures
+        level = VERIFY_LEVEL_READBACK if passed else VERIFY_LEVEL_FAILED
+        evidence = None
+        reject_reason = ""
+        if passed and probe_evidence is not None:
+            accepted, reject_reason = validate_enforcement_probe_evidence(
+                probe_evidence,
+                EnforcementProbeExpectation(
+                    target=target,
+                    endpoint_fingerprint=self._detected_fingerprint,
+                    policy_revision=snapshot.revision,
+                    applied_policy_digest=snapshot.policy_digest,
+                ),
+            )
+            # Digest equality alone does not bind the caller's projected allow set.
+            # Cross-check every pair against the independently parsed readback.
+            actual_pairs = {
+                (rule["endpoint"], path)
+                for rule in snapshot.network if rule.get("effect") == "allow"
+                for path in rule["binary_paths"]
+            }
+            if accepted and set(probe_evidence.allow_rule_pairs) != actual_pairs:
+                accepted = False
+                reject_reason = "probe_binding_allow_set_mismatch"
+            # 执行模式取自**读回快照**而非证据自述；此处只否决"读回明确说了不拦截"的情形。
+            # 不能要求 == "block"：本路径 read_effective_policy 恒填 unknown（P1-11），
+            # 那样写这道门在真实路径上永远打不开（校验器里有同样的一段说明）。
+            if accepted and snapshot.enforcement_mode not in {"warn", "audit_only"}:
+                level = VERIFY_LEVEL_ENFORCEMENT
+                evidence = probe_evidence
+                reject_reason = ""
         return VerificationReport(
             passed=passed,
-            level=VERIFY_LEVEL_READBACK if passed else VERIFY_LEVEL_FAILED,
+            level=level,
             allow_checks=allow_checks,
             deny_checks=deny_checks,
             failures=failures,
+            probe_evidence=evidence,
+            probe_reject_reason=reject_reason,
         )
 
     def rollback(

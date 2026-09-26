@@ -933,7 +933,7 @@ def test_get_scan_task_status(client, tenant_a, tenant_b, env_a):
     assert cross.status_code == 404
 
 
-def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypatch):
+def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypatch, tmp_path):
     """agent→policy/enforcement 绑定（诚实边界 §6.5）：未部署=declared_only，effective 部署=enforced。"""
     # 造一个 confirmed 资产
     agent = _make_named_candidate(client, tenant_a, "bind-agent")
@@ -959,7 +959,10 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
             super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
 
         def probe(self):
-            return BackendCapabilities(backend="openshell", schema_version="v1", dynamic_network_update=True)
+            return BackendCapabilities(
+                backend="openshell", schema_version="v1", dynamic_network_update=True,
+                handshake_verified=True, handshake_gateway="fixture", endpoint_fingerprint="e" * 64,
+            )
 
         def read_effective_policy(self, target):
             return PolicySnapshot(target=target, revision="1", network=[])
@@ -1028,6 +1031,8 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
         headers=tenant_a,
     )
     assert binding.status_code == 201, binding.text
+    from app.tests.binding_helpers import assign_target_authority
+    assign_target_authority(monkeypatch, tmp_path, binding.json()["id"], FakeCli())
     dep = client.post(
         "/api/v1/deployments",
         json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding.json()["id"]},

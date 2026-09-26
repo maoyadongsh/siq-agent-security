@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { localApi } from '../api';
@@ -23,6 +24,8 @@ interface AuditEvent {
 }
 
 export default function SettingsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const auditBatch = searchParams.get('batch') ?? '';
   const { status, error, actorId, setActorId, reload } = useLocalSession();
   const [mode, setMode] = useState(status?.enforcement_mode ?? 'block');
   const [msg, setMsg] = useState<string | null>(null);
@@ -40,6 +43,10 @@ export default function SettingsPage() {
     return () => window.clearInterval(timer);
   }, [osDiagnosis]);
   const [audit, setAudit] = useState<AuditEvent[]>([]);
+  const [auditError, setAuditError] = useState('');
+  useEffect(() => {
+    if (window.location.hash === '#operation-audit') document.getElementById('operation-audit')?.scrollIntoView({ block: 'start' });
+  }, []);
 
   useEffect(() => {
     if (status?.enforcement_mode) setMode(status.enforcement_mode);
@@ -50,9 +57,9 @@ export default function SettingsPage() {
   useEffect(() => {
     guard(() => localApi.audit())
       .then((res) => {
-        if (res !== undefined) setAudit(res.events ?? []); // undefined = superseded
+        if (res !== undefined) { setAudit(res.events ?? []); setAuditError(''); } // undefined = superseded
       })
-      .catch(() => setAudit([]));
+      .catch(() => { setAudit([]); setAuditError('操作审计暂时不可读，不能据此判断操作未发生。'); });
   }, [msg, status?.enforcement_mode, guard]);
 
   const report = (text: string, isErr = false) => {
@@ -352,15 +359,17 @@ export default function SettingsPage() {
         </button>
       </div>
       <div className="card">
-        <h2>操作审计</h2>
+        <h2 id="operation-audit">操作审计</h2>
         <p className="page-desc">
-          来自 <span className="mono">audit.jsonl</span> 的最近记录。不含密钥、不含参数原文。
+          最近最多 200 条操作记录。不含密钥、不含参数原文；此视图不是完整历史查询。
         </p>
+        <label className="field">筛选批次标识<input value={auditBatch} placeholder="gb-…（留空显示最近记录）" onChange={(event) => setSearchParams(event.target.value ? { batch: event.target.value } : {})} /></label>
+        {auditError ? <p className="action-error" role="alert">{auditError}</p> : null}
         <SimpleTable
           columns={auditCols}
-          rows={[...audit].reverse().slice(0, 40).map((ev, i) => ({ ...ev, idx: i }))}
+          rows={[...audit].reverse().filter((ev) => !auditBatch || ev.note === `batch=${auditBatch}`).map((ev, i) => ({ ...ev, idx: i }))}
           rowKey={(ev) => `${ev.idx}-${ev.at}-${ev.event}`}
-          emptyText="暂无审计事件。安装适配器、批准签发、改模式都会写这里。"
+          emptyText={auditError || (auditBatch ? '最近 200 条中没有此批次；不代表历史中不存在。' : '暂无最近审计事件。安装适配器、批准签发、改模式都会写这里。')}
         />
       </div>
       <div className="card">

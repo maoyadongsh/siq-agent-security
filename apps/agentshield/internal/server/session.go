@@ -84,7 +84,7 @@ func (s *Server) restoreSession(w http.ResponseWriter, r *http.Request) {
 	}
 	// Fixed lifetime: opening another tab or reloading never extends authorization.
 	writeJSON(w, 200, map[string]any{
-		"schema_version": "local-admin-session/v1", "session": refresh.Access,
+		"schema_version": "local-admin-session/v2", "session": refresh.Access,
 		"expires_in": remaining, "scope": "admin",
 	})
 }
@@ -107,22 +107,7 @@ func (s *Server) logoutSession(w http.ResponseWriter, r *http.Request) {
 // Only a same-user local CLI may mint another one-time code. It cannot mint a
 // Grant or obtain a bearer session without a separate pairing exchange.
 func (s *Server) renewPairing(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Cache-Control", "no-store")
-	if r.Method != http.MethodPost {
-		writeJSON(w, 405, map[string]any{"error": "POST required"})
-		return
-	}
-	if r.Header.Get("X-SIQ-Local-CLI") != "1" || r.Header.Get("Origin") != "" ||
-		r.Header.Get("Sec-Fetch-Site") != "" || r.Header.Get("Sec-Fetch-Mode") != "" ||
-		r.Header.Get("Sec-Fetch-Dest") != "" || r.Header.Get("Sec-Fetch-User") != "" {
-		writeJSON(w, 403, map[string]any{"error": "local CLI required"})
-		return
-	}
-	presented := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-	if len(s.d.RecoveryToken) != 64 || s.d.RecoveryToken == s.d.Token ||
-		!strings.HasPrefix(r.Header.Get("Authorization"), "Bearer ") ||
-		subtle.ConstantTimeCompare([]byte(presented), []byte(s.d.RecoveryToken)) != 1 {
-		writeJSON(w, 401, map[string]any{"error": "recovery credential required"})
+	if !s.requireRecoveryCLI(w, r) {
 		return
 	}
 	code, err := newPairingCode()
@@ -141,6 +126,28 @@ func (s *Server) renewPairing(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, map[string]any{
 		"schema_version": "local-pairing/v1", "code": code, "expires_in": int(pairingTTL.Seconds()),
 	})
+}
+
+func (s *Server) requireRecoveryCLI(w http.ResponseWriter, r *http.Request) bool {
+	w.Header().Set("Cache-Control", "no-store")
+	if r.Method != http.MethodPost {
+		writeJSON(w, 405, map[string]any{"error": "POST required"})
+		return false
+	}
+	if r.Header.Get("X-SIQ-Local-CLI") != "1" || r.Header.Get("Origin") != "" ||
+		r.Header.Get("Sec-Fetch-Site") != "" || r.Header.Get("Sec-Fetch-Mode") != "" ||
+		r.Header.Get("Sec-Fetch-Dest") != "" || r.Header.Get("Sec-Fetch-User") != "" {
+		writeJSON(w, 403, map[string]any{"error": "local CLI required"})
+		return false
+	}
+	presented := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	if len(s.d.RecoveryToken) != 64 || s.d.RecoveryToken == s.d.Token ||
+		!strings.HasPrefix(r.Header.Get("Authorization"), "Bearer ") ||
+		subtle.ConstantTimeCompare([]byte(presented), []byte(s.d.RecoveryToken)) != 1 {
+		writeJSON(w, 401, map[string]any{"error": "recovery credential required"})
+		return false
+	}
+	return true
 }
 
 func (s *Server) health(w http.ResponseWriter, r *http.Request) {

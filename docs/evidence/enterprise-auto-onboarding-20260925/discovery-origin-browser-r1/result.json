@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "scope": "browser UI with mocked API; not backend E2E",
+  "checks": {
+    "bound_revoked_source_not_protection": true,
+    "permission_denied_and_retry": true,
+    "wrong_asset_response_rejected": true,
+    "mobile_legacy_no_guessed_source": true,
+    "no_browser_errors": true
+  },
+  "fixture_server_stopped": true,
+  "production_deployed": false
+}

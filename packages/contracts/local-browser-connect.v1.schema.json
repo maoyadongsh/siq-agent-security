@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq.dev/contracts/local-browser-connect.v1.schema.json",
+  "title": "Local browser connection request v1 (public locator, not a credential)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "status", "expires_in"],
+  "properties": {
+    "schema_version": {"const": "local-browser-connect/v1"},
+    "request_id": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+    "status": {"enum": ["pending", "approved", "cancelled"]},
+    "expires_in": {"type": "integer", "minimum": 0, "maximum": 300}
+  },
+  "definitions": {
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_id"],
+      "properties": {"request_id": {"type": "string", "pattern": "^[a-f0-9]{32}$"}}
+    }
+  }
+}

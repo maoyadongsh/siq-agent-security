@@ -1,0 +1,148 @@
+R09.17 只读复现：本分支的导入闭包缺口（`import-closure-check.py` 首次实跑）
+================================================================================
+时间：2026-09-26T13:37Z 前后
+执行者：DeepSeek（本仓 `scripts/` 内新增工具 + 合成回归测试；对真实仓库只读）
+
+本文件回答一个问题：**「本分支 HEAD 的干净检出能不能自己 `import app.main`」**——
+以及这个结论能否被**重复**、能否被**否证**。
+
+§0 这份留痕的边界（先读）
+--------------------------------------------------------------------------------
+- 本工具与 `enforcement_verified` **无关**：它不碰强制点、不产生行为证据、不使任何门禁变绿。
+- 它对**真实仓库只读**：`git archive <ref> apps/control-api | tar -x` 到**临时目录**，在临时目录里
+  反复试导入；不写仓库内任何路径、不切换共享工作树、不提交、不改分支。
+- 子进程环境是**白名单**（`PATH/HOME/LANG/LC_ALL/TZ` + `PYTHONDONTWRITEBYTECODE=1` +
+  `SIQ_AS_DEV=1` 合成 dev 身份 + `PYTHONPATH` 指向临时树）；不读 `.env`、私钥、种子、凭据。
+- 结论只说明「这个 ref 的导入面是否自足」，**不是**发布授权、**不是**「源码已冻结」、
+  **不是**「该 ref 安全/可部署」。
+
+§1 工具做了什么（`scripts/enterprise-experience/import-closure-check.py`）
+--------------------------------------------------------------------------------
+1. 解析 `--ref`（默认 HEAD）为 commit sha；
+2. `git archive <sha> apps/control-api` 导出到临时目录；
+3. 在只指向该临时目录的解释器环境里 `import app, app.main`；
+4. 失败则从异常里判出「下一个要补的模块」，去**工作树**里定位该模块文件，拷进临时树，重试；
+5. 直到导入成功 / 轮次耗尽 / 工作树也定位不到 / 判定"无进展"。
+
+判别码刻意分成四种，**不许把不同原因混成一个"失败"**：
+  - `import_closure_closed_at_ref`：该 ref 自身即可导入，**零补件**（最健康）；
+  - `import_closure_open`：需补入若干**工作树**路径 → 这些就是「清单没覆盖到的闭包缺口」；
+  - `import_closure_unresolvable`：缺的模块连工作树里都没有（补工作树文件也解决不了）；
+  - `probe_environment_unsafe`：解析到的 `app` 不在临时树内（路径泄漏）→ 本次结论作废。
+
+§2 实跑一：HEAD（本分支第 22 个提交）
+--------------------------------------------------------------------------------
+命令（逐字）：
+    apps/control-api/.venv/bin/python scripts/enterprise-experience/import-closure-check.py \
+        --repo . --ref HEAD --out /tmp/r0917-rc-HEAD-133742
+
+结果（真实退出码 **1**；「闭包开着」不是绿）：
+    {"conclusion": "import_closure_open",
+     "ref_sha": "033f50da3ff87c9af92354928159cba93507266e",
+     "grafted_count": 25}
+    rounds = 26（25 轮补件 + 1 轮导入成功）
+
+25 条补件全清单（路径为**仓库根相对**；`[已跟踪被改 +增/-删]` 标注来自 `git diff --numstat`）：
+
+     1. apps/control-api/app/models.py                          [已跟踪被改 +252/-3]
+     2. apps/control-api/app/routers/discovery_schedules.py
+     3. apps/control-api/app/routers/credential_rotation.py
+     4. apps/control-api/app/routers/deployment_batch_draft.py
+     5. apps/control-api/app/routers/deployment_preview.py       [已跟踪被改 +109/-5]
+     6. apps/control-api/app/routers/deployment_batch_execute.py
+     7. apps/control-api/app/routers/deployment_submission.py    [已跟踪被改 +39/-16]
+     8. apps/control-api/app/routers/deployment_batch_result.py
+     9. apps/control-api/app/routers/deployment_impact.py
+    10. apps/control-api/app/routers/discovery_origin.py
+    11. apps/control-api/app/routers/discovery_schedule_confirmation.py
+    12. apps/control-api/app/routers/framework_inventory.py
+    13. apps/control-api/app/routers/device_lifecycle.py
+    14. apps/control-api/app/routers/enterprise_connection.py
+    15. apps/control-api/app/adapters/openshell/enterprise_connection.py
+    16. apps/control-api/app/routers/initial_scan.py
+    17. apps/control-api/app/routers/install_plans.py
+    18. apps/control-api/app/routers/network_revoke_proposals.py
+    19. apps/control-api/app/adapters/openshell/network_change.py
+    20. apps/control-api/app/routers/network_revoke_batches.py
+    21. apps/control-api/app/routers/registration_recovery.py
+    22. apps/control-api/app/routers/role_configuration_history.py
+    23. apps/control-api/app/routers/role_skill_sources.py
+    24. apps/control-api/app/routers/skill_inventory.py
+    25. apps/control-api/app/routers/skill_upload.py
+
+**对自己早先记录的更正（重要）**：R09.17 首次落盘时我写的是「1 条已跟踪被修改 + 24 条未跟踪」，
+那是**手工 graft 时的目测**。工具按 `git status --porcelain` 逐条判定后的准确构成是
+**3 条已跟踪被修改 + 22 条未跟踪**——`deployment_preview.py` 与 `deployment_submission.py`
+**在 HEAD 里存在**（`git cat-file -e HEAD:…` 命中；HEAD 的 `app/routers/` 共 15 个文件），
+只是**工作树版本更新**，所以 ref 上那两份是**旧版**、缺 `app/main.py` 需要的东西。
+`deployment_impact.py` 则确实**不在** HEAD（`??` 未跟踪）。**总数 25 没变，构成写法以本节为准。**
+
+§3 实跑二（负对照）：父提交 `ebaaf3b`（`main` 当前所指）
+--------------------------------------------------------------------------------
+命令（逐字）：
+    apps/control-api/.venv/bin/python scripts/enterprise-experience/import-closure-check.py \
+        --repo . --ref ebaaf3b --out /tmp/r0917-rc-ebaaf3b-133754
+
+结果（真实退出码 **0**）：
+    {"conclusion": "import_closure_closed_at_ref",
+     "ref_sha": "ebaaf3b60cc554ae67f4553aa1cfd0575a5d7ec0",
+     "grafted_count": 0}
+
+**这条负对照的作用**：证明该工具不是「无论给什么 ref 都报缺口」的假探针。同一个仓库、同一套
+命令，`ebaaf3b` 自足（0 补件），HEAD 不自足（25 补件）——**差别来自提交内容，不来自工具**。
+
+§4 缺口是什么时候进来的：逐提交对照
+--------------------------------------------------------------------------------
+同样命令换 `--ref`，三次结果：
+
+    --ref 6ba1f7c  → import_closure_open，25 补件，补件集合与 HEAD **逐条相同**
+    --ref ad3116e  → import_closure_open，25 补件，补件集合与 HEAD **逐条相同**
+    --ref HEAD     → import_closure_open，25 补件
+
+`6ba1f7c` 是本分支的**第一个**提交（父 `ebaaf3b`，26 条路径，+4811/-91），它把 `app/main.py`
+改成「导入六个路由」，却只入库了 `discovery_schedule_pending.py`。**结论**：导入闭包缺口是在
+分支的第一个提交上产生的，此后**每一个**分支提交（含 `ad3116e`、含 HEAD）都带着它，
+补件集合**一字不变**——即它从未被修复，也从未恶化。
+
+§5 构建这个工具时，它自己先错三次（如实留痕，不掩盖）
+--------------------------------------------------------------------------------
+1. **`from 包 import 名` 的两义性**：`cannot import name 'credential_rotation' from 'app.routers'`
+   既可能是「包缺该符号」，也可能是「**该子模块文件没被提交**」。首版一律当成前者去补包的
+   `__init__.py` → 补了也不解决问题 → 下一轮又判成同一件事 → **空转到轮次耗尽、补件数为 0**
+   （首次实跑就是这样，结论 `rounds_exhausted`，且把 `rounds` 字段写成了整数）。
+   修法：候选列表改为先试 `包.名`、再试 `包`，命中哪个补哪个。
+2. **无进展必须立刻停**：同一份工作树文件再拷一次不可能改变结果。补入后若下一轮判定又要补
+   **同一个路径**，立即以 `no_progress` 有界结束（带 `repeated_path` 与最后一行失败摘要），
+   不许空转。
+3. **独占目录的退出码**：`--out` 已存在时首版直接抛 `FileExistsError` 回溯（退出码 1，
+   和"闭包开着"撞车）。改为固定 `out_dir_exists` + 退出码 **2**，并**不触碰**原目录。
+
+另有一处**真实撞到过的坑**被做成守卫：探针解析到的 `app` 必须落在临时树内。构建期间有一次
+命令因 cwd 未切过去，`python` 从 **cwd 下另一个可导入的 `app`** 里导入成功并打印 `IMPORT_OK`
+——那是一次**假绿**。现在 `app.__file__` 在 `import app` 之后**立刻打印**（因此导入后续失败也
+拿到它），不在临时树内即 `probe_environment_unsafe`、结论作废。
+
+§6 验证与合成回归
+--------------------------------------------------------------------------------
+- `ruff --config apps/control-api/pyproject.toml import-closure-check.py test_import_closure_check.py`
+  → `All checks passed!`
+- `pytest scripts/enterprise-experience/test_import_closure_check.py` → **10 passed**（0.86s）。
+  每个用例在 `tmp_path` 里现造一个**一次性合成 git 仓**（迷你 `apps/control-api`），
+  不碰真实仓库。覆盖：ref 自足（0 补件、退出码 0）/ 已跟踪被改文件的补件与增删行数 /
+  **包下未提交子模块必须补子模块而不是重拷包的 `__init__`（第 5 节缺陷 1 的回归守卫）** /
+  **无进展即停（第 5 节缺陷 2 的回归守卫）** / 工作树也定位不到 / 独占目录拒绝且不写一个字 /
+  留痕不含绝对路径 / `writes_to_repo=false`、`production_eligible=false`、`enforcement_verified=false` /
+  临时目录跑完即删 / 路径泄漏守卫函数本身 / 同一 ref 两种写法解析一致。
+
+§7 本文件没有证明什么
+--------------------------------------------------------------------------------
+1. **没有**证明「补入这 25 条之后本分支就能启动并跑测试」——补件只是让**导入**成功；
+   控制面能不能起来、迁移能不能过、测试能不能收集，都还没跑（那需要在独立检出上实跑，
+   属 A1/A2 那一类需要逐次许可的动作）。
+2. **没有**证明这 25 条「应该」被并入本分支——它们是**并作者在飞的工作**，
+   `app/models.py` 的 +252/-3 含**既有表约束变更**。归属判断不在执行者范围内（D-7.3 / D-8）。
+3. **没有**把这件事做成门禁：工具**未接线**到 `enterprise-gate-run.py`，不参与 8 类门禁，
+   不使任何结论变绿；是否接成第三条显式 opt-in 门禁属 D 门槛决定。
+4. **没有**产生 `enforcement_verified`，与强制点、运行时行为、真实 deny 无关。
+5. 结论**绑定 ref sha**：`--ref HEAD` 的结论只对 `033f50d` 成立；分支再提交一次，
+   必须重跑（工具本身会打印 `ref_sha`，报告里也有）。

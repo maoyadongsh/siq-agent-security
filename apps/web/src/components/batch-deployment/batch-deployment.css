@@ -1,0 +1,18 @@
+.batch-deployment { margin-block: 16px; overflow-wrap: anywhere; }
+.batch-deployment select { max-width: 100%; min-width: 0; display: block; }
+.batch-deployment li { margin-block: 10px; }
+.batch-deployment button { margin: 4px; }
+.batch-item-review pre { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+.batch-item-review summary { cursor: pointer; }
+.network-revoke-panel { margin-block: 16px; border-top: 1px solid var(--border); padding-top: 12px; }
+.network-revoke-panel > label { display: block; margin-block: 12px; }
+.network-revoke-panel input[type="search"] { display: block; box-sizing: border-box; width: 100%; max-width: 420px; min-width: 0; padding: 8px 10px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--card); color: var(--text); font: inherit; }
+.network-revoke-panel input[type="checkbox"] { accent-color: var(--siq-primary); }
+.network-revoke-panel input:focus-visible { outline: 2px solid var(--siq-primary); outline-offset: 2px; }
+.network-policy-governance { margin-block: 16px; overflow-wrap: anywhere; }
+.network-batch-revoke fieldset { min-width: 0; max-width: 100%; margin-block: 12px; border: 1px solid var(--border); border-radius: 8px; }
+.network-batch-revoke legend { max-width: 100%; overflow-wrap: anywhere; }
+.network-batch-revoke li, .network-batch-recovery li { margin-block: 8px; overflow-wrap: anywhere; }
+.network-policy-picker > label { display: block; margin-block: 12px; }
+.network-policy-picker > label > input, .network-policy-picker > label > select { display: block; box-sizing: border-box; width: 100%; max-width: 480px; min-width: 0; padding: 8px 10px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--card); color: var(--text); font: inherit; }
+.network-policy-picker > label > input:focus-visible, .network-policy-picker > label > select:focus-visible { outline: 2px solid var(--siq-primary); outline-offset: 2px; }

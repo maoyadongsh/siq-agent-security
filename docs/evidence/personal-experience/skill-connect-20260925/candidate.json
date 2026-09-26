@@ -1,0 +1,11 @@
+{
+  "schema": "siq-local-candidate/v1",
+  "name": "personal-skill-connect-24h-20260925",
+  "base_commit": "7b68c14abeff707777278034f2ccfd19b43ac609",
+  "source_status": "uncommitted working-tree increment; base commit is not the complete candidate source",
+  "binary_sha256": "02acea34b368e7dfa693826f17e0133309609c0bcf940da6559f55689a8916e2",
+  "binary_platform": "linux/arm64",
+  "release_signed": false,
+  "evidence": ["browser-report.json", "../../../development/personal-skill-connect-20260925.md"],
+  "evidence_scope": "isolated local daemon and Chromium; no production replacement, signed installation, native macOS/Windows acceptance, or 24-hour wall-clock soak"
+}

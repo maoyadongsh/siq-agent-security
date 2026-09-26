@@ -1,0 +1,19 @@
+{
+  "scope": "ENT-004 private staging library; not registration, activation or service install",
+  "checks": {
+    "staging_scenarios": 5,
+    "previous_bundle_preflight_scenarios": 13,
+    "edge_go_vet_all": "passed",
+    "edge_go_test_race_count_1_all": "passed",
+    "git_diff_check": "passed"
+  },
+  "source_sha256": {
+    "edge/agent/installplan/stage_linux.go": "428e6aeec00315facad267a4c164c994d4dd3a78cfa706017f0e4ef9032f287b",
+    "edge/agent/installplan/stage_linux_test.go": "ccb97cace22b3d5a444caaf8187f7422366bb600a0839a0f349764d72e90684f",
+    "edge/agent/installplan/bundle_linux.go": "13ecfc0320d457f7b0a5606c0b19ad2b08da60b0cba9a38d8b4884e55ed3cfb2",
+    "edge/agent/installplan/bundle_other.go": "91fb47ac2d8d816e6bbbbedc6daac80fb7f5228a84bcfcb66bfbb8c5b9103d09"
+  },
+  "fixture_artifacts_executed": false,
+  "production_private_key_read": false,
+  "live_deployment_changed": false
+}

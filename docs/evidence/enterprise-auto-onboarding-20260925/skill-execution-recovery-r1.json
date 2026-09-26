@@ -1,0 +1,20 @@
+{
+  "batch": 46,
+  "scope": "consent-bound skill upload execution with isolated journal and injected callbacks",
+  "verification": {
+    "go_vet": "passed",
+    "go_test_race_count_1": "passed",
+    "git_diff_check": "passed",
+    "lost_ack_retry_same_signed_bytes": true,
+    "collector_calls_across_retry": 1,
+    "legacy_unconfirmed_skills": "rejected before collection",
+    "invalid_consent_or_journal": "rejected before collection or upload",
+    "partial_or_cancelled_collection": "not journaled or uploaded",
+    "runner_connected": false,
+    "production_deployed": false
+  },
+  "source_sha256": {
+    "edge/agent/skill_execution.go": "0c7cb9adff1d9a1d5bbf210e9dab888a4044b590353c42e9a80c22bb52bcae64",
+    "edge/agent/skill_execution_linux_test.go": "3319f005d2f1d960ec8946ffff06234ad5b00c2e7e379d81707d05e9ab1af922"
+  }
+}
