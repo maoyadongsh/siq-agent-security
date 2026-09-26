@@ -1205,7 +1205,7 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **未做（刻意）**：没有把 30 个浏览器脚本接成可执行门禁。理由：整批约 4 分钟、需先做一次模拟身份前端构建、且当前有 5 项失败——把它塞进统一报告会让"门禁红"变成前端线的既有状态而非本轮可判定的信号。（**本条在 R07.10 时点成立，现已由 R07.11 取代**：该决策当时的顾虑之一正是"失败会污染统一报告"，R07.11 的解法是**默认关闭**（不传开关就仍是本节的形态与结论），只有显式 `--enable-browser-smoke-gate` 时才如实报红。**下面 R07.11 的记录是本条的后续，不是矛盾。**）
 
-### R09.7 「真实 HTTP 契约验收」的 §3.2 前置方案（**状态：待批，尚未执行**）
+### R09.7 「真实 HTTP 契约验收」的 §3.2 前置方案（**状态：已批准并执行，结果见 R09.8**）
 
 **为什么需要独立做**：A2 的 8 个脚本已经走真实进程与真实 HTTP（见 R09.5 更正），但它们只输出**脚本自述的 UI 断言**结论；套件不独立核对状态码、JSON 形状、隔离序、错误码族与响应头。本次要补的正是这一层——**不是**再跑一遍浏览器，也**不是**要一个"生产环境"。
 
@@ -1243,7 +1243,73 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **所需许可（§3.2 逐次许可）**：**启动一个一次性本地服务进程**（回环、临时目录、跑完回收）。不涉及容器、真实数据库、真实身份、宿主服务。
 
-**待批状态**：本节**只是方案**，**尚未执行任何一步**。批准后我按本节执行，并把实测结果（逐条判据 + 回收核验）追加为 R09.8；未批准则保持 blocked 并在此登记。
+**状态变更（2026-09-26，保留上文以免读者失去方案原文）**：本节上文是**执行前的方案**。主开发者当日答复该次许可为**"批准并执行完整 R09.7"**（即 7 类判据全跑；状态写入只允许发生在那一份一次性临时 SQLite 内），我随后执行，实测结果见 **R09.8**。方案与实现的两处差异（都是实现时的收紧或更正，已在下文逐条写明）：① 判据 2 的"跨租户取对象 → 404"实测改用**对象级写端点**并用**同正文**判定不可区分；② 判据 6 的探针前提写错过一次（见 R09.8 的"首次红"）。
+
+### R09.8 真实 HTTP 契约验收实跑（R09.7 方案的执行结果）
+
+**授权依据**：§3.2 逐次许可——主开发者 2026-09-26 从四个候选项中选定本项并**批准完整执行**（7 类判据全跑；状态写入仅限一次性临时 SQLite）。未新增依赖、未起容器、未碰宿主服务/数据库/systemd。
+
+**交付物**：`scripts/enterprise-experience/http-contract-acceptance.py`（新增，sha256 `34b4840b…`，32441 字节；允许清单第 29 条）。**它不是门禁**：没有 `--enable-*` 开关、不参与 `enterprise-gate-run.py` 的 8 类门禁、默认不会被任何既有流程触发——只按 §3.2 逐次许可运行并出货报告。是否接成第三条显式 opt-in 门禁，留作下一动作（属 D 门槛决定，我不擅自接）。
+
+**两次运行（都保留，不做覆盖）**：
+
+| 运行 | 证据目录 | 判据 | 不成立 | 退出码 | 结论 |
+| --- | --- | --- | --- | --- | --- |
+| ① 首次 | `/tmp/r09-contract-20260926T175013/report.json` | 83 | **2** | 1 | `contracts_failed` |
+| ② 更正探针前提后 | `/tmp/r09-contract-20260926T175026/report.json` | 83 | **0** | 0 | `contracts_held` |
+
+**首次那两条红是"我的探针写错"，不是产品缺陷（必须留在记录里，因为它正是这类验收最容易造出的假信号）**：我把 `SIQ_AS_ALLOW_SQLITE` 写成了"dev 模式下不显式置 1 就拒绝"，而 `app/config.py:78` 的真实语义是 `allow_sqlite = _bool("SIQ_AS_ALLOW_SQLITE", dev_mode)`——**默认值就是 `dev_mode` 本身**，即 dev 模式**默认允许** SQLite；被声明的拒绝条件是"**显式否认**"（`SIQ_AS_ALLOW_SQLITE=0`）。按代码行更正探针后，该条如声明般拒绝（`returncode=1`，报出"SQLite 仅显式开发模式允许"）。教训直接写进工具注释（`http-contract-acceptance.py` 的 `judge_fail_closed_startup`）：**探针要对着代码行写，不要对着印象写**。
+
+**逐组实测（第二次运行，8 组 83 条全成立）**：
+
+| 判据组 | 条数 | 关键实测值 |
+| --- | --- | --- |
+| `health_json_shape` | 4 | `/health` 与 `/api/v1/health` 均 200 且体为 `{"status":"ok"}` |
+| `locate_before_permission` | 9 | 同租户无 `env:manage` → **403** `forbidden`；同租户不存在的 id + 无权限 → **404**（不是 403）；跨租户 id + 有权限 → **404**；两者**正文逐字节相同**（`{"detail":"not_found"}`，即存在性不可区分）；跨租户 404 后对象 mode 仍为 `discovery` |
+| `error_code_family` | 11 | 401 `missing_credentials` / 403 `forbidden` / 404 `not_found` / 409 `environment_name_conflict` / 422（非法枚举、缺必填、空串过滤、超长过滤）各中；**角色矩阵实测**：`tenant_admin` 无 `audit:read` → 403，`auditor` → 200 |
+| `audit_state_same_transaction` | 11 | 建对象留下**恰 1 条** `environment.create`（`actor_id`/`actor_type` 为合成身份）；`summary` 实测为 `{}`（不落内部字段）；成功改 mode 产生**成对**的 `mode.update`；**409 回滚后审计总数 1→1**、**404 定位失败同样 1→1**（失败不写审计）；租户乙按同一 `resource_id` 查询返回 **0 行** |
+| `declared_pagination` | 23 | `X-SIQ-List-Limit/Returned/Truncated` 与 `X-SIQ-Next-Cursor` 均按 `enterprise-audit-query.v1.md §5` 出现；`include_total` 全量口径 **4**（3 建 + 1 改），**翻页后仍为 4**（不受 cursor 影响）；`limit=999` → 钳到 **200**；租户乙同过滤条件 total = **1**（租户谓词内、不并甲）；`enterprise-environment-list.v1.md` 全条：未给 `limit` 时全量 3 条且 `Truncated=0`、`Cache-Control: no-store`、`limit=1` 时给环境 id 游标、**逐页走完 3 条不重不漏**、cursor 不带 limit → 422 `environment_list_cursor_unavailable`、**跨租户 cursor 同 422 同 detail**、超 64 字符 → 422 |
+| `no_secret_echo` | 13 | 三类**真秘密材料**（dev JWT 共享密钥 47 字符、签名种子 base64 44 字符、合成 bearer 32 字符）在 **4 个面**全部未命中：HTTP 响应/响应头、审计事件正文、服务 stdout/stderr（实测 392 字节、**非空**）、临时工作目录内文件（含一次性 SQLite 库，`hits=[]`） |
+| `fail_closed_startup` | 9 | 4 类拒绝全部 `returncode=1` 且报出原因：生产模式缺 DB URL、生产模式给 SQLite、生产模式缺 JWKS、dev 模式**显式否认** SQLite；**均为配置期静态判定**（探针只调 `load_settings()`，未起服务、未连数据库） |
+| `teardown` | 3 | 进程已退出 / 回环端口已释放（重新 bind 成功）/ 临时目录已移除，全 `true` |
+
+**回收的独立复核（不只信工具自述）**：运行后另行核对 —— `ls -d /tmp/siq-http-acceptance-*` **无残留**；工具自报 `head=66aae3d`、`branch=deepseek/enterprise-mainline-closeout-20260926`、工作树 `102 / 807`。**口径警告（沿用本轮纪律）**：该 807 是 `git status --porcelain --untracked-files=all` 的**逐文件**计数，与 preflight 报告里的 `untracked=705` **不同源**（preflight 自有一层目录归并/排除口径），**两者不可相减、不可跨口径比较**；同口径对比才是"变没变"的依据。服务日志全文（392 字节）只含 uvicorn 启动/关闭行与 `app.main:75` 的 dev 模式告警，**无秘密**。
+
+**方案→实现的第三处差异（回收核验手法）**：R09.7 方案写的是用 `ss -ltn` 断言端口已释放；实现改为**对该端口重新 `bind()` 成功**来判定。等价、少一个外部命令依赖，且失败面更窄（绑得上就是没人监听）。
+
+**这份证据证明什么、不证明什么**：
+
+- **证明**：在当前工作树候选上，上述**已声明**的契约条目在真实 HTTP 往返下成立（合成身份、dev 模式、临时 SQLite、回环 socket，零容器）。
+- **不证明**：不是真实 IAM、不是生产模式、不是真实设备、不是签发/部署依据；**不产生 `enforcement_verified`**（仍只能由 A7 的受控探针产生，R09.2 第 1 条）；**不能用来给 A2 判绿**——A2 的 5 项失败落在**前端 UI 断言层**，本工具根本不驱动浏览器，两者不重叠，83 条全绿**不表示**那 5 项已修复。
+- **只核对已声明项**：两侧分页语义均取自 `packages/contracts/enterprise-audit-query.v1.md` 与 `enterprise-environment-list.v1.md` 的原文；未声明的行为（例如未给 `limit` 时 `X-SIQ-List-Limit` 该取什么值）**没有断言**，也没有发明新合同。
+
+**允许清单与冻结核验**：清单 28 → **29 条**（本节新增上述工具）→ **30 条**（R09.9 再新增其合成回归测试，README 头部的范围声明未变）。两次 preflight 均为 `requested=verified`、`missing=0 / unverified=0 / excluded=0 / conflicts=0`、`scan_stable=true`、`unreviewed=806`（并行作者线，同前）、`conclusion=blocked` 不变：
+
+| 次序 | 报告（`/tmp/`） | 清单 | 工作树（preflight **自身**口径） | 相对上一份的**已归属**差异 |
+| --- | --- | --- | --- | --- |
+| 第 3 次 | `preflight-r097-20260926T175046.json` | `29 / 29` | `103 / 705` | 相对第 2 次（`108 / 704`）：**−6 条已跟踪**＝并行作者线提交了 6 个已跟踪文件（两份滚动文档、`enterprise-gate-run.py`、`run-browser-smoke-suite.py` 及其两个测试；`head` 同期由 `b4586c1` 前移到 `66aae3d`）、**+1 未跟踪**＝本节的新工具、清单文件自身由干净回到 ` M` |
+| 第 4 次 | `preflight-r098-20260926T175326.json` | `30 / 30` | `105 / 706` | 相对第 3 次：**+2 条已跟踪**＝我在两次核验之间写的这两份滚动文档（mtime `17:51:22` / `17:52:20`，均在 r097 之后）+ **+1 未跟踪**＝R09.9 的测试文件 |
+
+**订正（上一版本节的一句话说错了，按四份报告逐条对照后定论）**：上一版这里写「`tracked 102→103` 的 +1 不是本轮…未做归属判定，属 D-7.3」。把本轮四份 preflight 报告的 `worktree.status_entries` 逐条相减后可以**确定**：那个 +1 **就是我自己**对允许清单文件的那次编辑（该文件在 r0711 提交后是干净的，r097 时回到 ` M`）——**不是**并行作者线的产物；同期减少的 6 条已跟踪项才是并行作者线的提交（`head` 同时前移可独立佐证）。因此**本轮账目里已不再有"未归属的已跟踪改动"**。口径纪律照旧：**只做同口径相减**（四份都是 preflight 报告自身字段）；工具自报的 `--untracked-files=all` 逐文件计数与它不同源，**不可相减**。
+
+### R09.9 验收工具自身的合成回归守卫（防"工具自己报假绿"）
+
+**为什么做**：R09.8 的结论完全建立在"工具自己说 83 条成立"之上——而一个只会打印成功的工具，和一份真结论，在报告形态上**无法区分**。因此按 §3.2 允许的隔离合成测试，给工具配一组**不启动任何服务、不发任何真实 HTTP、不依赖 playwright** 的用例，钉死它最可能造假的几个面。
+
+**文件**：`scripts/enterprise-experience/test_http_contract_acceptance.py`（新增，允许清单第 30 条）。**没有为了测试通过而改动被测工具**。
+
+| 钉死的假绿面 | 条数 | 具体钉什么 |
+| --- | --- | --- |
+| 判定聚合 | 3 | 任一条判据不成立 → 该组 `failed` 且整体必须 `contracts_failed`；全部成立是通往 `contracts_held` 的**唯一**路径；`run_error` 压过一切绿判据 |
+| 回收核验不许"没测到当成立" | 1 | `process_exited=None`、`port_released=False` 时判据必须**判红**（把 `None`/`False` 写成成立 = 假绿），`temp_dir_removed=True` 才成立 |
+| 秘密扫描必须能**抓到** | 4 | 把哨兵串植入工作目录文件 / 一次性 SQLite 库 / 日志 → **必须命中**（只在干净输入上返回空集 = 空集的另一种说法）；`signing.seed` 是**输入材料**、排除在扫描对象外，否则判据永远红；日志在删目录前必须已拷出 |
+| 隔离与退出码 | 8 | 启动环境是**白名单**（只放行 `PATH/LANG/LC_ALL/TZ` + 6 个 `SIQ_AS_*` + `HOME`），不继承调用方的任何其它变量；`SIQ_AS_DATABASE_URL` 指向临时目录；响应辅助函数对非 JSON/缺头健壮；结论→退出码映射稳定；证据目录**已存在时拒绝覆盖且不触碰原目录** |
+
+**实测**：`16 passed`（0.16s，无网络、无服务进程、无浏览器），`ruff check --no-cache --config apps/control-api/pyproject.toml` → `All checks passed!`（仓库根无配置，裸跑 `ruff` 是**假绿**，见本轮纪律）。
+
+**如实留痕：测试自己先后红过两次，都修在测试侧**——① `UP037`（注解上多余的引号）；② `importlib` 动态加载未登记 `sys.modules`，导致被加载文件的 `@dataclass` 在**装饰那一刻**抛 `AttributeError: 'NoneType' object has no attribute '__dict__'`（`http-contract-acceptance.py:92` 起）。修法是在 `exec_module` 前登记 `sys.modules[_SPEC.name] = tool`，并把原因写进测试注释（`enterprise-gate-run.py` 无 `@dataclass` 所以同样写法能过，属"踩到才知道"的差异）。
+
+**边界**：这 16 条**只**保证"工具不会把红说成绿"，**不**证明它在生产环境正确、不覆盖任何数据库/网络行为；**不产生 `enforcement_verified`**，不参与任何门禁，不改变 R09.8 那份契约验收证据的效力范围。
 
 ### R07.11 可选浏览器验收门禁（把 `browser_acceptance` 从"恒登记"变成"可执行"）
 

@@ -62,6 +62,13 @@ scripts/enterprise-experience/test_enterprise_gate_run.py
 scripts/enterprise-experience/run-browser-smoke-suite.py
 scripts/enterprise-experience/test_run_browser_smoke_suite.py
 
+# --- 工具：R09.7 真实 HTTP 契约级验收（新增；一次性回环 dev 控制面，零容器，未接门禁） ---
+# 它**不是**门禁：没有 `--enable-*` 开关、不参与 enterprise-gate-run.py 的 8 类门禁，
+# 只按 §3.2 逐次许可运行一次并出货 report.json。合成身份，不产生 enforcement_verified。
+# 其合成回归测试同样不启服务、不发真实 HTTP（16 条用例），防止工具自身"报假绿"。
+scripts/enterprise-experience/http-contract-acceptance.py
+scripts/enterprise-experience/test_http_contract_acceptance.py
+
 # --- 文档：本轮收口执行记录与交接（新增） ---
 docs/development/deepseek-enterprise-mainline-closeout-execution-20260926.md
 docs/development/deepseek-enterprise-mainline-closeout-handoff-20260926.md
