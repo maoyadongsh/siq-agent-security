@@ -1,7 +1,9 @@
 # OpenShell 链接：siq-research-engine 智能分析助手（siq_analysis）隔离网关，2026-09-26
 
 本轮由使用者指定受控目标：**siq 投研决策引擎（`siq-research-engine`）的智能分析助手**所适配的 OpenShell 网关。
-本次只做**链接与只读读回**；未启动、未重启、未停止任何网关，未创建/删除沙箱，未 `policy set`。
+
+阅读顺序：**§一～§六 全部是只读**（未启动/重启/停止任何网关，未创建/删除沙箱，未 `policy set`）；
+**§七 是使用者逐次许可后的一次受控写入闭环**（`policy set` → 读回 → 回滚），回收结果见该节，原始留痕见 `06-`。
 
 链接方式沿用仓库既定契约（`AGENTSHIELD.md:76`）：设
 `SIQ_AS_OPENSHELL_ENV_SH=/home/maoyd/siq-research-engine/scripts/openshell/env.sh`，不改对方仓库任何源码/配置/数据库。
@@ -158,3 +160,33 @@ if authorizer is None:
 3. **停在只读**：链接层维持现状，`--live` 保持未执行。
 
 **产出上限仍然是 `readback_verified`**：即便走 1 或 2，`verify()` 只比对读回配置，**不产生 `enforcement_verified`**，其 `expect_deny` 也是**固定兼容样例**（"拒绝"结论来自*不在允许集里*），**不是**一次真实拒绝行为观测。
+
+## 七、走路径 1：补 authorizer 后的真实闭环**已执行**（2026-09-26 追加，原始留痕见 `06-`）
+
+使用者在第二轮问询中选定**路径 1（先补 authorizer 再跑）**。补齐内容：
+
+- `scripts/openshell_compat_check.py` 的 `_live_check`：从**私有操作记录**构造 `RollbackAuthorization`（只认本次 `operation_id` + `target`），
+  `finally` 里**必定**尝试回滚，回滚后**重新读回**并要求 digest 等于写入前 BEFORE；后端私有基线与我方 BEFORE 不一致时**只告警不拒绝回滚**。
+- 新增 `scripts/enterprise-experience/test_openshell_compat_live.py`（8 条隔离单测，全过；负对照指向补齐前的脚本版本时 5/7 失败）。
+
+**执行中才暴露的第三条缺陷**：fixture 的网络规则缺 `binary_paths`，`policy_safety.validate_network_rules` 在 `compile()` 阶段即抛
+`openshell_network_binary_required`——首跑**一个字节都没写**。这条 `--live` 路径此前**从未真正写成功过**，
+也正因如此 §六 的写面风险此前没被实测撞上。补上 `_LIVE_FIXTURE_BINARY` 后重跑成功。
+
+**执行结果**（退出码 0）：`BEFORE revision=2（7 条归一化网络规则）` → `policy set 成功 revision 3` →
+`读回验证通过（level=readback_verified）` → `已回滚 revision 4（result=restored）` → `回滚后读回 digest 与 BEFORE 相同`。
+
+**独立复核**（对方 CLI，只读，可复现）：网关 `siq-openshell-dev` `Status: Connected` / `Version: 0.0.83`；
+`policy list` 显示 v4 `fed6cc8072d1` **Loaded**，v3 `dfdefc3465ef` Superseded（= 本次写入，此前不存在的修订），
+**v4 的 hash 与 v2 完全相同**；`policy get --rev 2 --full` 与 `--rev 4 --full` 的差异**只有头部 4 个元数据字段**
+（Version / Status / Created / Loaded），去掉头部后两份载荷 SHA-256 相同（`3126e203…`）⇒ **策略载荷逐字节相同**。
+
+**顺带得到两个实测确认**：
+
+1. §六 缺陷 1 的「**整段替换**」判定由**读代码**升级为**实测**：`--rev 3 --full` 的 `network_policies` 段**只剩写入的那一条**，
+   全文搜不到任何原有 `_provider_siq_*` / `siq_egress_guard` / `siq_data_broker` 条目；
+2. 兼容矩阵里冻结的 `sandbox_list_decodable: false` 在本次被独立复现（`sandbox get` 报 `Sandbox.id … not UTF-8 encoded`）。
+
+**边界（不要越读）**：本次**未**产生 `enforcement_verified`，天花板仍是 `readback_verified`；
+**未**做任何真实 deny 观测；`expect_deny` 仍是固定兼容样例。`readback_verified` 只说明"网关读回的配置与我方提交的一致"，
+**不**说明"运行时真的按它执行了"。终态：canary 网络策略恢复原状，v3 作为**可审计历史修订**留在网关，未删除。

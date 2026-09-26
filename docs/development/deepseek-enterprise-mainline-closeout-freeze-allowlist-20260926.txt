@@ -7,14 +7,14 @@
 # 作者线的产物，也不构成对这些路径"应当进入发行候选"的判断。允许清单是**审阅输入**，
 # 不是发布授权，不是源码已冻结的结论。
 #
-# 已知边界偏差（需复核）：第 59–61 行的三个合同文件在本轮 R02 开工时**已存在于工作树**，
+# 已知边界偏差（需复核）：标着「既有件被追加"版本导航"段」的那三个合同文件在本轮 R02 开工时**已存在于工作树**，
 # 本轮只在其末尾追加了"版本导航"段（仓储既有约定）。**精确表述**：这三个路径在 HEAD 中
 # **不存在**（`git ls-files` 无记录、`git cat-file -e HEAD:<path>` 失败），即它们是本未提交
 # 时期内的产物、**未纳入版本控制**；因此严格说这不是"修改已跟踪文件"，而是"**追加到工作树内
 # 既存、但归属未确认的未跟踪合同件**"。追加段是纯文档、无实现逻辑。
 # 请复核后保留或回退；如需回退，删除这三个路径对应文件的末尾追加段即可。
 #
-# 第四节（第 64–68 行）是本轮经 D-1 例外授权后修改的五个文件
+# 末尾「经 D-1 例外授权（全部放开）」一节是本轮修改的五个文件
 # （主开发者 2026-09-26 答复：D-1 = 全部放开）。逐条对应关系：
 #   - routers/policies.py            R05.5 非 openshell-cli 回滚分支补活体授权链重查
 #   - app/main.py                    R01.5 接线本 router（两行纯追加）
@@ -68,6 +68,20 @@ docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/04-preview-live-read
 # 05 为 `--live` 的**前置核查**产物：证明该动作在当前候选上写面是整段替换、且脚本自身无回滚能力，
 # 故本轮**拒绝执行** --live（不是执行失败）。附录含核查脚本全文，便于离线复算。
 docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/05-live-prereq-blocked.txt
+# 06 为**补齐回收能力后**的真实写入闭环留痕（policy set → 读回 → 回滚），含首跑失败（fixture 缺
+# binary_paths，一个字节未写）、成功运行原文、以及对方 CLI 的只读独立复核（v4 hash == v2 hash；
+# rev2 与 rev4 的 --full 载荷逐字节相同）。**天花板是 readback_verified，不是 enforcement_verified**；
+# 未做任何真实 deny 观测。执行经使用者逐次许可（「先补 authorizer 再跑」）。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/06-live-readback-rollback-2026-09-26.txt
+
+# --- 工具：A7 --live 兼容闭环（**既有已跟踪件被修改**，超出原清单范围，需复核） ---
+# source-freeze-preflight 之前对这两个路径只做只读标记；本轮在使用者选定「先补 authorizer 再跑」后修改/新增：
+#   - openshell_compat_check.py 是**已跟踪**文件（HEAD 中存在），改动集中在 _live_check 与模块 docstring；
+#     该改动使其**先具备回滚能力**（作者只从私有操作记录构造、finally 必回滚、回滚后 digest 必须等于 BEFORE）。
+#   - test_openshell_compat_live.py 为**新增未跟踪**文件（8 条隔离单测；负对照指向改动前版本时 5/7 失败）。
+# 两者都不产生 enforcement_verified，也不改变 apply_dynamic 的整段替换语义。
+scripts/openshell_compat_check.py
+scripts/enterprise-experience/test_openshell_compat_live.py
 
 # --- 工具：R06 版本化引用链审计（新增） ---
 scripts/enterprise-experience/contract-version-chain-audit.py

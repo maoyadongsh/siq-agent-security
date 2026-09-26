@@ -1404,10 +1404,10 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 | 次序 | 报告（`/tmp/`） | 清单 | 工作树（preflight **自身**口径） | 相对上一份的**已归属**差异 |
 | --- | --- | --- | --- | --- |
-| 第 3 次 | `preflight-r097-20260926T175046.json` | `29 / 29` | `103 / 705` | 相对第 2 次（`108 / 704`）：**−6 条已跟踪**＝并行作者线提交了 6 个已跟踪文件（两份滚动文档、`enterprise-gate-run.py`、`run-browser-smoke-suite.py` 及其两个测试；`head` 同期由 `b4586c1` 前移到 `66aae3d`）、**+1 未跟踪**＝本节的新工具、清单文件自身由干净回到 ` M` |
+| 第 3 次 | `preflight-r097-20260926T175046.json` | `29 / 29` | `103 / 705` | 相对第 2 次（`108 / 704`）：**−6 条已跟踪**＝并行作者线提交了 6 个已跟踪文件（两份滚动文档、`enterprise-gate-run.py`、`run-browser-smoke-suite.py` 及其两个测试；`head` 同期由 `b4586c1` 前移到 `66aae3d`）、**+1 未跟踪**＝本节的新工具、清单文件自身由干净回到未暂存修改状态（状态码 M 带前导空格） |
 | 第 4 次 | `preflight-r098-20260926T175326.json` | `30 / 30` | `105 / 706` | 相对第 3 次：**+2 条已跟踪**＝我在两次核验之间写的这两份滚动文档（mtime `17:51:22` / `17:52:20`，均在 r097 之后）+ **+1 未跟踪**＝R09.9 的测试文件 |
 
-**订正（上一版本节的一句话说错了，按四份报告逐条对照后定论）**：上一版这里写「`tracked 102→103` 的 +1 不是本轮…未做归属判定，属 D-7.3」。把本轮四份 preflight 报告的 `worktree.status_entries` 逐条相减后可以**确定**：那个 +1 **就是我自己**对允许清单文件的那次编辑（该文件在 r0711 提交后是干净的，r097 时回到 ` M`）——**不是**并行作者线的产物；同期减少的 6 条已跟踪项才是并行作者线的提交（`head` 同时前移可独立佐证）。因此**本轮账目里已不再有"未归属的已跟踪改动"**。口径纪律照旧：**只做同口径相减**（四份都是 preflight 报告自身字段）；工具自报的 `--untracked-files=all` 逐文件计数与它不同源，**不可相减**。
+**订正（上一版本节的一句话说错了，按四份报告逐条对照后定论）**：上一版这里写「`tracked 102→103` 的 +1 不是本轮…未做归属判定，属 D-7.3」。把本轮四份 preflight 报告的 `worktree.status_entries` 逐条相减后可以**确定**：那个 +1 **就是我自己**对允许清单文件的那次编辑（该文件在 r0711 提交后是干净的，r097 时回到未暂存修改状态）——**不是**并行作者线的产物；同期减少的 6 条已跟踪项才是并行作者线的提交（`head` 同时前移可独立佐证）。因此**本轮账目里已不再有"未归属的已跟踪改动"**。口径纪律照旧：**只做同口径相减**（四份都是 preflight 报告自身字段）；工具自报的 `--untracked-files=all` 逐文件计数与它不同源，**不可相减**。
 
 ### R09.9 验收工具自身的合成回归守卫（防"工具自己报假绿"）
 
@@ -1664,6 +1664,50 @@ rolled = backend.rollback(sandbox, receipt)   # 不传 authorizer
 
 **顺带更正（同一次深挖）**：E149 预览工具"只放行一个环境变量就能恢复"是**不够的**——`authorize_runtime_target`（`target_authority.py:125-133`）对授权目录做**精确元组相等**匹配，而工具的三个身份 id 都是运行期生成的，算子无法预先声明；要恢复必须让工具的身份 id 改为算子可预声明的输入。**本轮未动任何代码。**
 
+### R09.15 走路径①：补齐 authorizer 后 `--live` **真实闭环已执行**（2026-09-26）
+
+使用者第二轮答复选定 R09.14 的**路径①（先补 authorizer 再跑）**。本轮据此改工具、执行、并做独立复核。
+原始留痕：`docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/06-live-readback-rollback-2026-09-26.txt`。
+
+**改了什么**（2 个路径，均在本仓 `scripts/`，未触碰对方仓库）：
+
+| 路径 | 状态 | 改动 |
+| --- | --- | --- |
+| `scripts/openshell_compat_check.py` | **已跟踪，被修改** | `_live_check` 补 `RollbackAuthorization`（**只从私有操作记录构造**，只认本次 `operation_id` + `target`）；`finally` 里**必定**回滚；回滚后**重新读回**并要求 digest 等于 BEFORE；后端私有基线与我方 BEFORE 不一致时**只告警不拒绝回滚** |
+| `scripts/enterprise-experience/test_openshell_compat_live.py` | **新增未跟踪** | 8 条隔离单测（不碰网关）。**负对照**：同一组用例指向补齐前的脚本版本时 **5/7 失败**（另 2 条只断言与本次改动无关的性质），证明这 8 条不是空跑 |
+
+**`apply_dynamic` 的整段替换语义未改**——那是产品行为，不在本次范围。改为在 `--live` 运行时**先打印风险告知**。
+
+**执行中才暴露的第三条缺陷（首跑即失败，一个字节都没写）**：fixture 的网络规则缺 `binary_paths`，`policy_safety.validate_network_rules` 在 `compile()` 阶段即抛 `openshell_network_binary_required`。
+
+```text
+[LIVE] BEFORE: revision=2 网络规则 7 条
+FAIL: live 闭环异常（fail-closed）: openshell_network_binary_required
+```
+
+**这条 `--live` 路径此前从未真正写成功过**——正因如此 R09.14 更正 1 的写面风险此前没被实测撞上（当时是从代码推出来的，结论正确）。补 `_LIVE_FIXTURE_BINARY`（目标沙箱内既有解释器路径）后重跑成功。
+
+**成功执行**（退出码 0）：
+
+```text
+[LIVE] BEFORE: revision=2 网络规则 7 条
+[LIVE] policy set 提交成功: revision 3
+[LIVE] 读回验证通过（level=readback_verified）
+[LIVE] 已回滚: revision 4（result=restored）
+[LIVE] 回滚后读回一致: 网络规则 7 条，digest 与 BEFORE 相同
+PASS: 全部期望一致
+```
+
+**独立复核（对方 CLI 只读，本轮重新跑过，可复现）**：网关 `siq-openshell-dev` `https://127.0.0.1:17671`、`Status: Connected`、`Version 0.0.83`；`policy list` 显示 v4 `fed6cc8072d1` **Loaded**、v3 `dfdefc3465ef` Superseded（= 本次写入，此前不存在的修订）、v2 `fed6cc8072d1`、v1 `3d90c401b3e4`。**v4 的 hash 与 v2 完全相同**；`policy get --rev 2 --full` 与 `--rev 4 --full` 的差异**只有头部 4 个元数据字段**（Version / Status / Created / Loaded），去掉头部后两份载荷 SHA-256 同为 `3126e203…` ⇒ **策略载荷逐字节相同**。
+
+**顺带把 R09.14 更正 1 由"读代码"升级为"实测"**：`--rev 3 --full` 的 `network_policies` 段**只剩写入的那一条**（`siq_as_rule_0` / `siq-compat-live-check` / `example.com:443`），全文搜不到任何原有 `_provider_siq_*` / `siq_egress_guard` / `siq_data_broker` 条目。**整段替换被真实写入确认。**另独立复现了兼容矩阵里冻结的 `sandbox_list_decodable: false`（`sandbox get` 报 `Sandbox.id … not UTF-8 encoded`）。
+
+**天花板（不得越读）**：本次只到 **`readback_verified`**，**未**产生 `enforcement_verified`；**未**做任何真实 deny 观测，`expect_deny` 仍是**固定兼容样例**。`readback_verified` 只说明"网关读回的配置与我方提交的一致"，**不**说明"运行时真的按它执行了"。终态：canary 网络策略恢复原状，v3 作为**可审计历史修订**留在网关、未删除；未创建/删除沙箱、未启停网关、未动对方仓库。
+
+**允许清单第 7 次核验（43 条）**：新增上表 2 条工具路径 + `06-…txt`，共 40 → **43**。重跑 `source-freeze-preflight.py --repo .`：`requested=43 / verified=43 / unverified=0 / missing=0 / excluded=0`、`scan_stable=true`、`conflicts=0`、`head=6f04c15`、`tracked=105`、`untracked=706`、`status_entries=811`、`conclusion=blocked`（`unreviewed_paths:806`）。对第 6 次报告（40 条 / head `d214e00` / 809 / 104 / 705）逐条相减 = **新增 3 / 消失 1**：新增 `06-…txt`、`test_openshell_compat_live.py`、`openshell_compat_check.py`；消失 `05-live-prereq-blocked.txt`（它已被 `6f04c15` 提交，故不再出现在工作树状态里）。三项计数闭合：**809 − 1 + 3 = 811**（条目数）、tracked **104 + 1 = 105**（`openshell_compat_check.py` 变为已跟踪改动）、untracked **705 − 1 + 2 = 706**（05 入库、06 与测试文件新增）。
+
+**仍未决**：`--live` 到此为止——它**不**把任何门禁变绿，也**不**关闭 A7。A7 仍只差**行为 fixture 通道**（使用者已授权"隔离环境内建"，**具体方案待提交后实施**）；路径③（换一次性专用沙箱）未使用。**预览工具修复（"改从算子目录读身份 id"）仍未开工。**
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
@@ -1675,5 +1719,5 @@ rolled = backend.rollback(sandbox, receipt)   # 不传 authorizer
 | D-3 共享影响 / 运行事实 | R00.6 | **已决策：保持 `unknown` 不猜** |
 | D-4 证据时效 | R04 | **未确认**（未自行设 TTL） |
 | D-5 保留治理 | R00.6 | **已决策：只补齐声明与缺口** |
-| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**；**`--live` 虽获批准，但前置核查证明该动作会整段替换 canary 网络策略、且脚本自身无回滚能力，故本轮拒绝执行**（R09.14，三条备选路径待定）；行为 fixture 通道使用者已授权**在隔离环境内建**，具体方案待提交后实施。**A5/A7 仍 blocked** |
+| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**；**`--live` 经使用者选定路径①（先补 authorizer 再跑）后已真实执行闭环**（R09.15：`policy set` → `readback_verified` → 回滚，回滚后载荷逐字节复原，对方 CLI 独立复核），**天花板仍是 `readback_verified`，未产生 `enforcement_verified`**；行为 fixture 通道使用者已授权**在隔离环境内建**，具体方案待提交后实施。**A5/A7 仍 blocked** |
 | D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认** |
