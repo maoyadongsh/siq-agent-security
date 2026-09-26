@@ -1,0 +1,172 @@
+/* ENT-018-POLICIES-UI：策略中心专用样式（policy-explorer- 前缀，不修改共享样式）。 */
+
+.policy-explorer-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.policy-explorer-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.policy-explorer-field-search {
+  flex: 1 1 220px;
+}
+
+.policy-explorer-field select,
+.policy-explorer-field input {
+  padding: 6px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.policy-explorer-field select:focus-visible,
+.policy-explorer-field input:focus-visible,
+.policy-explorer-filters button:focus-visible,
+.policy-explorer-summary:focus-visible {
+  outline: 2px solid var(--siq-primary);
+  outline-offset: 2px;
+}
+
+.policy-explorer-match-line {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.policy-explorer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.policy-explorer-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) 3rem minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 0.7fr) 4.5rem;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.policy-explorer-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.policy-explorer-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) 3rem minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 0.7fr) 4.5rem;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+}
+
+.policy-explorer-summary::-webkit-details-marker {
+  display: none;
+}
+
+.policy-explorer-summary:hover {
+  background: var(--table-row-hover);
+}
+
+.policy-explorer-cell {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.policy-explorer-cell-toggle {
+  color: var(--siq-primary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.policy-explorer-item[open] .policy-explorer-cell-toggle {
+  text-decoration: underline;
+}
+
+.policy-explorer-detail {
+  border-top: 1px dashed var(--border);
+  padding: 12px;
+}
+
+.policy-explorer-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px 16px;
+  margin: 0;
+}
+
+.policy-explorer-detail-grid dt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.policy-explorer-detail-grid dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.policy-explorer-break {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.policy-explorer-id-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.policy-explorer-id-list code {
+  font-size: 12px;
+}
+
+.policy-explorer-detail-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+@media (max-width: 1024px) {
+  .policy-explorer-head {
+    display: none;
+  }
+
+  .policy-explorer-summary {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'name mode'
+      'version status'
+      'unsupported targets'
+      'toggle toggle';
+    row-gap: 6px;
+  }
+
+  .policy-explorer-cell-name { grid-area: name; font-weight: 600; }
+  .policy-explorer-cell-version { grid-area: version; }
+  .policy-explorer-cell-mode { grid-area: mode; justify-self: end; }
+  .policy-explorer-cell-status { grid-area: status; justify-self: end; }
+  .policy-explorer-cell-unsupported { grid-area: unsupported; }
+  .policy-explorer-cell-targets { grid-area: targets; justify-self: end; }
+  .policy-explorer-cell-toggle { grid-area: toggle; }
+}

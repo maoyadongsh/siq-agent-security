@@ -1,4 +1,5 @@
 import { isSkillUpdateCheckResult, isSkillUpdateScheduleView, type SkillUpdateCheckRequest, type SkillUpdateSourceDisableRequest, type SkillUpdateSourceRequest } from './skillUpdateCheck';
+import { validBatchPlan, validBatchResult, type GrantBatchPlan } from './grantBatch';
 import { isActivitySources } from './taskSources';
 import { isRawContentActivation, isRawContentPurgeResult, isRawContentStatus } from './rawTaskContent';
 import { parseTaskOutputs, parseTaskOutputContent } from './taskOutputs';
@@ -150,10 +151,11 @@ async function readObject(resp: Response): Promise<Record<string, unknown>> {
 }
 
 function acceptSession(data: Record<string, unknown>): string {
-  if (data.schema_version !== 'local-admin-session/v1' || data.scope !== 'admin' ||
+  const maximum = data.schema_version === 'local-admin-session/v2' ? 86400 : data.schema_version === 'local-admin-session/v1' ? 43200 : 0;
+  if (!maximum || data.scope !== 'admin' ||
       typeof data.session !== 'string' || !/^[0-9a-f]{64}$/.test(data.session) ||
       typeof data.expires_in !== 'number' || !Number.isInteger(data.expires_in) ||
-      data.expires_in < 1 || data.expires_in > 43200) {
+      data.expires_in < 1 || data.expires_in > maximum) {
     throw new LocalApiError(502, '管理会话响应不兼容，请更新本地服务后重试。');
   }
   return data.session;
@@ -237,6 +239,60 @@ export async function pair(code: string): Promise<void> {
   } finally {
     endSessionTransition(epoch);
   }
+}
+
+export type BrowserConnection = { requestId: string; expiresIn: number; poll: () => Promise<boolean>; cancel: () => Promise<void> };
+let browserConnectionGeneration = 0;
+
+function connectionReply(data: Record<string, unknown>, id?: string, status = 'pending') {
+  if (data.schema_version !== 'local-browser-connect/v1' || typeof data.request_id !== 'string' ||
+      !/^[a-f0-9]{32}$/.test(data.request_id) || (id !== undefined && data.request_id !== id) ||
+      data.status !== status || typeof data.expires_in !== 'number' || !Number.isInteger(data.expires_in) ||
+      data.expires_in < 0 || data.expires_in > 300) {
+    throw new LocalApiError(502, '连接响应不兼容，请更新服务或使用手动配对。');
+  }
+  return { requestId: data.request_id, expiresIn: data.expires_in };
+}
+
+export async function beginBrowserConnection(): Promise<BrowserConnection> {
+  const generation = ++browserConnectionGeneration;
+  const epoch = sessionEpoch;
+  const response = await fetchLocal('/v1/session/connect/request', { method: 'POST', headers: { 'X-SIQ-Session': '1' } });
+  if (!response.ok) throw new LocalApiError(response.status, '无法发起连接，请稍后重试；旧版本请使用手动配对。');
+  const info = connectionReply(await readObject(response));
+  let active = true;
+  const current = () => {
+    requireSessionEpoch(epoch);
+    if (!active || generation !== browserConnectionGeneration) throw new LocalSessionChangedError();
+  };
+  const options = () => ({ method: 'POST', headers: { 'X-SIQ-Session': '1', 'Content-Type': 'application/json' }, body: JSON.stringify({ request_id: info.requestId }) });
+  return {
+    ...info,
+    async poll() {
+      current();
+      const response = await fetchLocal('/v1/session/connect/poll', options());
+      current();
+      if (!response.ok) throw new LocalApiError(response.status, response.status === 410
+        ? '连接请求已过期或取消，请重新发起。' : '无法确认连接，请重试或使用手动配对。');
+      const data = await readObject(response);
+      current();
+      if (data.schema_version === 'local-browser-connect/v1') { connectionReply(data, info.requestId); return false; }
+      const next = acceptSession(data);
+      current();
+      session = next;
+      ++sessionEpoch;
+      active = false;
+      return true;
+    },
+    async cancel() {
+      if (!active) return;
+      active = false; // invalidate in-flight polls before sending cancellation
+      const response = await fetchLocal('/v1/session/connect/cancel', options());
+      if (response.status === 410) return;
+      if (!response.ok) throw new LocalApiError(response.status, '取消尚未确认；请求会在五分钟内失效。');
+      connectionReply(await readObject(response), info.requestId, 'cancelled');
+    },
+  };
 }
 
 export function restoreSession(): Promise<boolean> {
@@ -659,6 +715,20 @@ export const localApi = {
         })),
       };
     }),
+  previewGrantBatch: async (targets: { grant_id: string; expected_revision: number }[], actorId: string) => {
+    const result: unknown = await request('/v1/grant-batches/preview', { method: 'POST', body: JSON.stringify({
+      schema_version: 'grant-batch-revoke-request/v1', actor_id: actorId, targets,
+    }) });
+    if (!validBatchPlan(result, targets, actorId)) throw new LocalApiError(502, '撤权预览响应不匹配，请刷新后重试。');
+    return result;
+  },
+  applyGrantBatch: async (plan: GrantBatchPlan) => {
+    const result: unknown = await request('/v1/grant-batches/apply', { method: 'POST', body: JSON.stringify({
+      schema_version: 'grant-batch-revoke-apply/v1', confirmed: true, plan,
+    }) });
+    if (!validBatchResult(result, plan)) throw new LocalApiError(502, '批次结果无法核验，请查看当前授权及审计；不要假定全部成功。');
+    return result;
+  },
   createGrant: (body: {
     admission_id: string;
     platform: string;

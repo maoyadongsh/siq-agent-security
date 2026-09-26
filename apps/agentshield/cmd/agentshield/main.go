@@ -158,6 +158,8 @@ func main() {
 		err = cmdLocalSession("status", os.Args[2:])
 	case "pair":
 		err = cmdLocalSession("pair", os.Args[2:])
+	case "connect":
+		err = cmdLocalSession("connect", os.Args[2:])
 	case "inventory":
 		err = cmdInventory(os.Args[2:])
 	case "export":
@@ -268,6 +270,8 @@ func usage() {
                                   # loopback console; adapters use <state>/token; UI requires pairing code
   %[1]s status [--port N]   # verify the local service identity and readiness (JSON)
   %[1]s pair [--port N]     # print a new one-time admin pairing code without restarting serve
+  %[1]s connect --request ID --confirm-connect [--port N]
+                                  # confirm the user's browser request; never prints a session credential
   %[1]s release-manifest [--build] [--bin-dir DIR] [--skill-dir DIR]
                                   # sign skill-manifest.json (requires SIQ_AGENT_SECURITY_RELEASE_SEED)
   %[1]s manifest-verify [path]
@@ -687,6 +691,9 @@ func cmdServe(args []string) error {
 		return err
 	}
 	fmt.Fprintf(os.Stderr, "%s %s serving on http://%s  mode=%s  state=%s\n", product.Name, Version, addr, cfg.EnforcementMode, dir)
+	if err := writeConsoleAccessGuide(os.Stderr, cfg.Port); err != nil {
+		return err
+	}
 	fmt.Fprintf(os.Stderr, "adapters: decision token file %s (not accepted on admin endpoints)\n", filepath.Join(dir, "token"))
 	if code := srv.PairingDisplay(); code != "" {
 		fmt.Fprintf(os.Stderr, "admin pairing code (single use, 5 min): %s\n", code)

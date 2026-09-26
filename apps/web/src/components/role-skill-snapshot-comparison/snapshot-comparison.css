@@ -1,0 +1,51 @@
+/* CL-03-SNAPSHOT-COMPARISON-UI：独立前缀，不改动共享全局样式 */
+.role-skill-snapshot-panel {
+  margin-top: 16px;
+}
+.role-skill-snapshot-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 10px;
+}
+.role-skill-snapshot-head h3 {
+  margin: 0;
+}
+.role-skill-snapshot-note {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--border);
+  background: var(--table-row-hover);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+}
+.role-skill-snapshot-panel .kv-list {
+  grid-template-columns: 140px minmax(0, 1fr);
+  margin: 12px 0;
+}
+.role-skill-snapshot-items {
+  margin: 12px 0;
+}
+.role-skill-snapshot-items details {
+  margin-bottom: 8px;
+}
+.role-skill-snapshot-range {
+  margin: 8px 0;
+  font-size: 0.92em;
+}
+.role-skill-snapshot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+@media (max-width: 640px) {
+  .role-skill-snapshot-panel .kv-list {
+    display: block;
+  }
+  .role-skill-snapshot-panel .kv-list dd {
+    margin-bottom: 12px;
+  }
+}

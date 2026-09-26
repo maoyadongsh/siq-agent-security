@@ -56,7 +56,7 @@ func rememberPair(t *testing.T, s *Server, code string) (string, *http.Cookie) {
 	}
 	c := cookies[0]
 	if c.Value == access || len(c.Value) != 64 || !c.HttpOnly || c.SameSite != http.SameSiteStrictMode ||
-		c.Path != "/v1/session" || c.Domain != "" || c.MaxAge != 43200 {
+		c.Path != "/v1/session" || c.Domain != "" || c.MaxAge != 86400 {
 		t.Fatal("invalid cookie scope")
 	}
 	return access, c
@@ -225,7 +225,7 @@ func TestLocalSessionContractFixtures(t *testing.T) {
 	s.d.RecoveryToken = strings.Repeat("d", 64)
 	renew := sessionBody(t, sessionRequest(t, s, "POST", "/v1/session/pairing", nil, s.d.RecoveryToken, nil, map[string]string{"X-SIQ-Local-CLI": "1"}))
 	renew["code"] = "aaaa-bbbb-cccc-dddd"
-	for name, body := range map[string]map[string]any{"health": health, "session": session, "logout": logout, "pairing": renew, "ui-config": uiConfig} {
+	for name, body := range map[string]map[string]any{"health": health, "session-v2": session, "logout": logout, "pairing": renew, "ui-config": uiConfig} {
 		raw, err := os.ReadFile(filepath.Join("..", "..", "testdata", "contracts", "local-"+name+".json"))
 		if err != nil {
 			t.Fatal(err)

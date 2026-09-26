@@ -1543,8 +1543,17 @@ a,
   word-break: break-all;
 }
 
-/* ---------------- 登录页 / 会话恢复 ---------------- */
+/* ---------------- 角色技能声明 ---------------- */
+.role-skill-panel { min-width: 0; overflow-wrap: anywhere; }
+.role-skill-panel .kv-list { grid-template-columns: 140px minmax(0, 1fr); margin: 16px 0; }
+.role-skill-panel .field { display: block; margin: 16px 0; }
+.role-skill-panel details { margin-top: 16px; }
+@media (max-width: 600px) {
+  .role-skill-panel .kv-list { display: block; }
+  .role-skill-panel .kv-list dd { margin-bottom: 12px; }
+}
 
+/* ---------------- 登录页 / 会话恢复 ---------------- */
 .login-shell,
 .auth-boot {
   min-height: 100dvh;

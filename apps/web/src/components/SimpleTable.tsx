@@ -6,7 +6,7 @@ import { Icon } from '@/components/icons';
  */
 export interface TableColumn<T> {
   key: string;
-  header: string;
+  header: ReactNode;
   render: (row: T) => ReactNode;
 }
 

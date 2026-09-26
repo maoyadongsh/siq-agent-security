@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import { Icon } from '@/components/icons';
@@ -145,7 +146,7 @@ export default function FindingsPage() {
       <PageHeader
         kicker="AGENTSHIELD"
         icon="findings"
-        title="风险中心"
+        title="安全中心"
         description="准入扫描与漂移 finding。接受须填写原因和到期；到期后下次刷新视为 open。"
         connection={loading ? 'loading' : error ? 'disconnected' : 'connected'}
         connectionError={error}
@@ -155,6 +156,8 @@ export default function FindingsPage() {
           </button>
         }
       />
+      <div className="toolbar"><Link className="btn btn-primary" to="/confirmations">处理安全确认待办</Link><Link to="/bindings">检查运行时接入</Link><Link to="/diagnostics">查看防护模式与诊断</Link></div>
+      <p className="notice">这里集中展示风险与待办。隐藏高级入口不会关闭防御；提示注入、外传、污点、可信来源校验与执行审批仍由后端按现有规则裁决。</p>
       {error ? (
         <div className="notice" role="status">
           <p className="notice-title">加载失败</p>

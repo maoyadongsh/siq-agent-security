@@ -1,71 +1,28 @@
 /**
- * 权限视图（§20.2）：按权限域展示真实 PermissionFact，权威源/状态分色。
- * - 默认展示全部；提供 authority 过滤（含 openshell 真实有效权限）；
- * - 「同步 OpenShell」按钮拉取真实网关有效策略（fail-closed：网关不可达显示错误）；
- * - 模型推断（inferred）与未知（unknown）醒目样式，绝不显示成已生效。
+ * 权限视图（§20.2 + ENT-014-UI）：既有权限事实的只读可视化与组合筛选。
+ * - 五态概览/筛选/详情/有效期提示见 components/permission-facts/；
+ * - 计数只统计已加载记录，不冒充组织全量；加载与断连时不展示伪零值；
+ * - effective 仅是后端事实层级，不宣称阻断已验证；
+ * - 期望网络权限申请为独立管理区，按实际权限显示；申请不改变事实、不代表已撤权；
+ * - 保留既有 OpenShell 同步 / 漂移检查 / 声明与有效 Diff 操作（不改其语义，本页只读流程不产生写请求）。
  */
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
-import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
+import PermissionFactsOverview from '@/components/permission-facts/PermissionFactsOverview';
+import PermissionFactsFilters from '@/components/permission-facts/PermissionFactsFilters';
+import PermissionFactsList from '@/components/permission-facts/PermissionFactsList';
+import NetworkPolicyGovernance from '@/components/batch-deployment/NetworkPolicyGovernance';
+import {
+  EMPTY_FILTERS,
+  filterPermissionFacts,
+  type PermissionFactFilters,
+} from '@/components/permission-facts/permissionFacts';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
 import type { Environment, PermissionFactRow } from '@/api/types';
-import { permissionStateLabel } from '@/ui/verification';
 
 const PLACEHOLDER_PERMISSIONS: PermissionFactRow[] = [];
-
-const DOMAIN_LABELS: Record<string, string> = {
-  filesystem: '文件',
-  network: '网络',
-  process: '进程',
-  model: '模型',
-  credential: '凭据',
-  data_scope: '数据范围',
-  tool: '工具',
-  business: '业务',
-  resource: '资源',
-  control_plane: '控制面',
-};
-
-const columns: TableColumn<PermissionFactRow>[] = [
-  {
-    key: 'domain',
-    header: '权限域',
-    render: (row) => DOMAIN_LABELS[row.domain] ?? row.domain,
-  },
-  { key: 'action', header: '动作', render: (row) => row.action },
-  {
-    key: 'resource_value',
-    header: '资源',
-    render: (row) => <code className="resource-cell" title={row.resource_value}>{row.resource_value}</code>,
-  },
-  { key: 'effect', header: '效果', render: (row) => <span className="cell-nowrap">{row.effect}</span> },
-  {
-    key: 'state',
-    header: '状态',
-    render: (row) => (
-      <span className={`state-tag ${row.state}`} title={row.state}>
-        {permissionStateLabel(row.state)}
-      </span>
-    ),
-  },
-  {
-    key: 'authority',
-    header: '权威来源',
-    render: (row) => (
-      <span className={`cell-nowrap${row.authority === 'openshell' ? ' authority-openshell' : ''}`}>{row.authority}</span>
-    ),
-  },
-  { key: 'authority_revision', header: 'Revision', render: (row) => row.authority_revision ?? '—' },
-  {
-    key: 'subject_id',
-    header: '主体',
-    render: (row) => (
-      <span className="mono cell-ellipsis" title={row.subject_id}>{row.subject_id}</span>
-    ),
-  },
-];
 
 export default function PermissionsPage() {
   const {
@@ -83,7 +40,7 @@ export default function PermissionsPage() {
   );
   const environments = useApiList<Environment>('/environments', []);
   const [environmentId, setEnvironmentId] = useState('');
-  const [authorityFilter, setAuthorityFilter] = useState<string>('');
+  const [filters, setFilters] = useState<PermissionFactFilters>({ ...EMPTY_FILTERS });
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -93,8 +50,7 @@ export default function PermissionsPage() {
   const [diffMessage, setDiffMessage] = useState<string | null>(null);
   const [diffDetail, setDiffDetail] = useState<Awaited<ReturnType<typeof api.permissionsDiff>> | null>(null);
 
-  const authorities = Array.from(new Set(rows.map((r) => r.authority))).sort();
-  const visible = authorityFilter ? rows.filter((r) => r.authority === authorityFilter) : rows;
+  const visible = status === 'connected' ? filterPermissionFacts(rows, filters) : [];
 
   const onDrift = async () => {
     setDriftChecking(true);
@@ -163,20 +119,6 @@ export default function PermissionsPage() {
       />
 
       <div className="permissions-toolbar">
-        <div className="filter-group">
-          <button className={`btn-sm ${authorityFilter === '' ? 'btn-active' : 'btn-ghost'}`} onClick={() => setAuthorityFilter('')}>
-            全部（{rows.length}）
-          </button>
-          {authorities.map((a) => (
-            <button
-              key={a}
-              className={`btn-sm ${authorityFilter === a ? 'btn-active' : 'btn-ghost'}`}
-              onClick={() => setAuthorityFilter(a)}
-            >
-              {a}（{rows.filter((r) => r.authority === a).length}）
-            </button>
-          ))}
-        </div>
         <div className="sync-group">
           <select
             aria-label="OpenShell 同步环境"
@@ -216,21 +158,47 @@ export default function PermissionsPage() {
         </div>
       )}
 
+      <NetworkPolicyGovernance />
+
       {status === 'disconnected' ? (
         <DisconnectedNotice error={error} onRetry={refresh} />
+      ) : status === 'loading' ? (
+        <p className="muted-text" role="status">
+          正在加载权限事实…加载完成前不展示计数或列表。
+        </p>
       ) : (
         <>
+          <PermissionFactsOverview rows={rows} />
+          <PermissionFactsFilters rows={rows} filters={filters} onChange={setFilters} />
+          <p className="pf-match-line" role="status">
+            匹配 {visible.length} 条 / 已加载 {rows.length} 条。
+            {hasMore ? '存在更多分页未加载，统计与筛选仅覆盖已加载数据。' : null}
+          </p>
           {coverageText ? (
             <p className="list-coverage" role="status">
               {coverageText}
             </p>
           ) : null}
-          <SimpleTable columns={columns} rows={visible} rowKey={(row) => row.id} />
-          {status === 'connected' && visible.length === 0 && (
+          {rows.length === 0 ? (
             <p className="muted-text">
-              暂无权限事实。点击「同步 OpenShell 有效策略」从真实网关拉取（网关不可达时 fail-closed，不会显示空权限冒充安全状态）。
+              后端成功返回空列表：当前没有权限事实记录。可点击「同步 OpenShell
+              有效策略」从真实网关拉取（网关不可达时 fail-closed，不会显示空权限冒充安全状态）。
             </p>
+          ) : visible.length === 0 ? (
+            <p className="muted-text" role="status">
+              当前筛选条件下无匹配项（已加载 {rows.length} 条中 0 条匹配）。
+              <button type="button" className="btn-sm" onClick={() => setFilters({ ...EMPTY_FILTERS })}>
+                清除筛选
+              </button>
+            </p>
+          ) : (
+            <PermissionFactsList rows={visible} />
           )}
+          {error ? (
+            <p className="sync-err" role="alert">
+              {error}（已保留此前成功加载的数据，不代表全部加载成功）
+            </p>
+          ) : null}
           {hasMore ? (
             <div className="list-more">
               <button

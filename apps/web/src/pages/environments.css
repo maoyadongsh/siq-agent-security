@@ -1,0 +1,47 @@
+.environment-mobile-list {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .environment-desktop-list {
+    display: none;
+  }
+
+  .environment-mobile-list {
+    display: grid;
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .environment-mobile-list > li {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* 环境清单覆盖说明与加载更多（CL-02 环境列表收口；桌面与移动共用） */
+.environment-list-footer {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.environment-list-footer > p {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.environment-list-coverage,
+.environment-list-note {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.environment-list-error {
+  color: var(--reject);
+  font-size: 13px;
+}

@@ -1,61 +1,97 @@
 /**
  * 总览（§20.1）：真实 /overview 统计 + 快速入口。
- * 断连保持空态降级，不阻塞其余页面。
- * 布局：核心指标卡片（图标徽章 + 语义色调）+ 快捷路径磁贴网格。
+ * ENT-018-OVERVIEW：四主入口（资产/权限/安全/审计）顺序固定；策略/变更收进
+ * 默认折叠的"管理与高级功能"；统计区分 加载中/真实 0/失败/缺失异常值，
+ * 缺失或异常数值不冒充 0。断连保持空态降级，不阻塞其余页面。
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
 import { Icon, type IconName } from '@/components/icons';
 import { api, ApiError } from '@/api/client';
 import { useConsoleContext } from '@/components/ConsoleContext';
-import { canVisit } from '@/api/consoleContext';
 import type { OverviewStats } from '@/api/types';
+import {
+  HEARTBEAT_BOUNDARY_NOTE,
+  OVERVIEW_STAT_KEYS,
+  hasInvalidStat,
+  isSafeCount,
+  statDisplayValue,
+  type OverviewStatKey,
+} from '@/components/enterprise-overview/overviewStats';
+import {
+  MAIN_ENTRIES,
+  SECONDARY_ENTRIES,
+  SECONDARY_GROUP_LABEL,
+  filterEntries,
+  type OverviewEntry,
+} from '@/components/enterprise-overview/overviewEntries';
+import '@/components/enterprise-overview/overview.css';
 
 /** 指标卡色调：neutral 常规；ok/warn/err 语义强调（风险类指标为 0 时保持安静的中性色） */
 type StatTone = 'neutral' | 'primary' | 'ok' | 'warn' | 'err';
 
 interface StatCardDef {
-  key: string;
+  key: OverviewStatKey;
   label: string;
   icon: IconName;
-  value: number | undefined;
-  tone: StatTone;
+  tone: (value: number | undefined) => StatTone;
 }
 
-interface QuickTile {
-  to: string;
-  title: string;
-  desc: string;
-  icon: IconName;
-}
-
-const QUICK_TILES: QuickTile[] = [
-  { to: '/agents', title: '智能体资产', desc: '候选确认 · 资产纳管', icon: 'agents' },
-  { to: '/permissions', title: '权限视图', desc: '同步 OpenShell 有效策略', icon: 'permissions' },
-  { to: '/findings', title: '风险中心', desc: '风险确认与处置', icon: 'findings' },
-  { to: '/policies', title: '策略中心', desc: '期望策略管理', icon: 'policies' },
-  { to: '/changes', title: '变更中心', desc: '审批 → 部署 OpenShell', icon: 'changes' },
-  { to: '/audit', title: '审计', desc: '事件只读溯源', icon: 'audit' },
+const STAT_CARDS: StatCardDef[] = [
+  { key: 'agents', label: '已确认及纳管资产', icon: 'agents', tone: () => 'primary' },
+  { key: 'candidates', label: '待评审候选', icon: 'scan', tone: (v) => (v !== undefined && v > 0 ? 'warn' : 'neutral') },
+  { key: 'open_findings', label: '未处置风险', icon: 'findings', tone: (v) => (v !== undefined && v > 0 ? 'warn' : 'neutral') },
+  { key: 'critical_findings', label: '高危风险', icon: 'shield-alert', tone: (v) => (v !== undefined && v > 0 ? 'err' : 'neutral') },
+  { key: 'environments', label: '环境', icon: 'environments', tone: () => 'neutral' },
+  { key: 'edges_online', label: '心跳正常的设备', icon: 'activity', tone: (v) => (v !== undefined && v > 0 ? 'ok' : 'neutral') },
+  { key: 'policies', label: '策略', icon: 'policies', tone: () => 'neutral' },
 ];
+
+function QuickTileLink({ entry }: { entry: OverviewEntry }) {
+  return (
+    <Link to={entry.to} className="quick-tile">
+      <span className="quick-tile-icon">
+        <Icon name={entry.icon} size={18} />
+      </span>
+      <span className="quick-tile-text">
+        <span className="quick-tile-title">{entry.title}</span>
+        <span className="quick-tile-desc" title={entry.desc}>{entry.desc}</span>
+      </span>
+      <span className="quick-tile-arrow">
+        <Icon name="chevron-right" size={16} />
+      </span>
+    </Link>
+  );
+}
 
 export default function OverviewPage() {
   const { data: context } = useConsoleContext();
   const [stats, setStats] = useState<OverviewStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const requestSeq = useRef(0);
 
   const load = () => {
+    const seq = ++requestSeq.current;
     setLoading(true);
     setError(null);
     api
       .overview()
       .then((data) => {
+        if (seq !== requestSeq.current) return;
+        if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+          setStats(null);
+          setError('统计响应格式异常，请重试');
+          setLoading(false);
+          return;
+        }
         setStats(data);
         setLoading(false);
       })
       .catch((err: unknown) => {
+        if (seq !== requestSeq.current) return;
         setStats(null);
         setError(err instanceof ApiError ? err.message : '加载失败');
         setLoading(false);
@@ -64,67 +100,89 @@ export default function OverviewPage() {
 
   useEffect(() => {
     load();
+    return () => {
+      requestSeq.current += 1;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const connected = stats !== null;
-  const cards: StatCardDef[] = [
-    { key: 'agents', label: '已确认及纳管资产', icon: 'agents', value: stats?.agents, tone: 'primary' },
-    { key: 'candidates', label: '待评审候选', icon: 'scan', value: stats?.candidates, tone: (stats?.candidates ?? 0) > 0 ? 'warn' : 'neutral' },
-    { key: 'open_findings', label: '未处置风险', icon: 'findings', value: stats?.open_findings, tone: (stats?.open_findings ?? 0) > 0 ? 'warn' : 'neutral' },
-    { key: 'critical_findings', label: '高危风险', icon: 'shield-alert', value: stats?.critical_findings, tone: (stats?.critical_findings ?? 0) > 0 ? 'err' : 'neutral' },
-    { key: 'environments', label: '环境', icon: 'environments', value: stats?.environments, tone: 'neutral' },
-    { key: 'edges_online', label: '心跳正常的设备', icon: 'activity', value: stats?.edges_online, tone: (stats?.edges_online ?? 0) > 0 ? 'ok' : 'neutral' },
-    { key: 'policies', label: '策略', icon: 'policies', value: stats?.policies, tone: 'neutral' },
-  ];
+  const failed = error !== null;
+  const invalid = hasInvalidStat(stats);
+  const mainEntries = filterEntries(MAIN_ENTRIES, context);
+  const secondaryEntries = filterEntries(SECONDARY_ENTRIES, context);
 
   return (
     <section>
       <PageHeader
         icon="overview"
         title="总览"
-        description="智能体资产、权限、风险、策略、变更与审计的统一安全入口。"
-        connection={loading ? 'loading' : connected ? 'connected' : 'disconnected'}
+        description="资产、权限、安全与审计的统一入口；策略与变更在下方高级区域。"
+        connection={loading ? 'loading' : failed ? 'disconnected' : 'connected'}
         connectionError={error}
       />
 
-      {!connected && !loading ? (
+      {failed ? (
         <DisconnectedNotice error={error} onRetry={load} />
       ) : (
-        <div className="stats-grid">
-          {cards.map((c) => (
-            <div className="stat-card" key={c.key}>
-              <div className="stat-head">
-                <span className={`stat-icon tone-${c.tone}`}>
-                  <Icon name={c.icon} size={16} />
-                </span>
-                <span className="stat-label">{c.label}</span>
-              </div>
-              <div className={`stat-value tone-${c.tone}`}>
-                {loading ? '…' : String(c.value ?? 0)}
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="stats-grid">
+            {STAT_CARDS.map((c) => {
+              const value = statDisplayValue(stats, c.key);
+              return (
+                <div className="stat-card" key={c.key}>
+                  <div className="stat-head">
+                    <span className={`stat-icon tone-${c.tone(value)}`}>
+                      <Icon name={c.icon} size={16} />
+                    </span>
+                    <span className="stat-label">{c.label}</span>
+                  </div>
+                  <div className={`stat-value tone-${c.tone(value)}`}>
+                    {loading ? (
+                      <span className="entoverview-value-loading" role="status">加载中…</span>
+                    ) : value === undefined ? (
+                      <span className="entoverview-value-unknown" title="响应未提供有效数值">未知/未提供</span>
+                    ) : (
+                      String(value)
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {invalid ? (
+            <p className="entoverview-stat-note" role="alert">
+              部分统计数值缺失或异常（{OVERVIEW_STAT_KEYS.filter((k) => !isSafeCount(stats?.[k])).join('、')}），
+              已显示为"未知/未提供"，不代表真实零值。
+            </p>
+          ) : null}
+          <p className="entoverview-boundary">{HEARTBEAT_BOUNDARY_NOTE}</p>
+        </>
       )}
 
       <div className="card">
         <h2>快速入口</h2>
-        <div className="quick-grid">
-          {QUICK_TILES.filter(tile => canVisit(context, tile.to)).map((tile) => (
-            <Link key={tile.to} to={tile.to} className="quick-tile">
-              <span className="quick-tile-icon">
-                <Icon name={tile.icon} size={18} />
+        {mainEntries.length > 0 ? (
+          <div className="quick-grid">
+            {mainEntries.map((entry) => (
+              <QuickTileLink key={entry.to} entry={entry} />
+            ))}
+          </div>
+        ) : null}
+        {secondaryEntries.length > 0 ? (
+          <details className="entoverview-secondary">
+            <summary>
+              <span className="entoverview-secondary-chevron" aria-hidden="true">
+                <Icon name="chevron-right" size={14} />
               </span>
-              <span className="quick-tile-text">
-                <span className="quick-tile-title">{tile.title}</span>
-                <span className="quick-tile-desc" title={tile.desc}>{tile.desc}</span>
-              </span>
-              <span className="quick-tile-arrow">
-                <Icon name="chevron-right" size={16} />
-              </span>
-            </Link>
-          ))}
-        </div>
+              {SECONDARY_GROUP_LABEL}
+            </summary>
+            <div className="entoverview-secondary-grid">
+              {secondaryEntries.map((entry) => (
+                <QuickTileLink key={entry.to} entry={entry} />
+              ))}
+            </div>
+          </details>
+        ) : null}
       </div>
     </section>
   );

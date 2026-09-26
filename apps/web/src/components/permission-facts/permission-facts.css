@@ -1,0 +1,252 @@
+/* ENT-014-UI：权限事实可视化专用样式（pf- 前缀，不修改共享样式）。 */
+
+.pf-overview {
+  margin-bottom: 16px;
+}
+
+.pf-overview-note {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.pf-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-state-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.pf-state-count {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-state-expl {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.pf-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pf-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.pf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pf-field-search {
+  flex: 1 1 220px;
+}
+
+.pf-field select,
+.pf-field input {
+  padding: 6px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.pf-field select:focus-visible,
+.pf-field input:focus-visible,
+.pf-filters button:focus-visible,
+.pf-item-summary:focus-visible {
+  outline: 2px solid var(--siq-primary);
+  outline-offset: 2px;
+}
+
+.pf-match-line {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.pf-list {
+  container-type: inline-size;
+  container-name: permission-facts;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pf-list-head {
+  display: grid;
+  grid-template-columns: 6rem minmax(7rem, 0.9fr) minmax(10rem, 1.6fr) 3.5rem 5.5rem minmax(6rem, 0.8fr) minmax(12rem, 1.4fr) 4.5rem;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pf-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.pf-item-expired {
+  border-color: rgb(168 16 24 / 0.35);
+  background: rgb(168 16 24 / 0.03);
+}
+
+.pf-item-summary {
+  display: grid;
+  grid-template-columns: 6rem minmax(7rem, 0.9fr) minmax(10rem, 1.6fr) 3.5rem 5.5rem minmax(6rem, 0.8fr) minmax(12rem, 1.4fr) 4.5rem;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+}
+
+.pf-item-summary::-webkit-details-marker {
+  display: none;
+}
+
+.pf-item-summary:hover {
+  background: var(--table-row-hover);
+}
+
+.pf-cell {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pf-cell code {
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.pf-cell-toggle {
+  color: var(--siq-primary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pf-item[open] .pf-cell-toggle {
+  text-decoration: underline;
+}
+
+.pf-validity-pending,
+.pf-validity-unbounded {
+  color: var(--caution);
+}
+
+.pf-validity-expired,
+.pf-validity-invalid {
+  color: var(--reject);
+  font-weight: 600;
+}
+
+.pf-validity-within {
+  color: var(--text-secondary);
+}
+
+.pf-detail {
+  border-top: 1px dashed var(--border);
+  padding: 12px;
+}
+
+.pf-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 10px 16px;
+  margin: 0;
+}
+
+.pf-detail-grid dt {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.pf-detail-grid dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.pf-break {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.pf-evidence-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.pf-evidence-list code {
+  font-size: 12px;
+}
+
+.pf-detail-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Actual list width accounts for both expanded and icon-only sidebars. */
+@container permission-facts (max-width: 60rem) {
+  .pf-list-head {
+    display: none;
+  }
+
+  .pf-item-summary {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'domain state'
+      'action action'
+      'resource resource'
+      'effect authority'
+      'validity validity'
+      'toggle toggle';
+    row-gap: 6px;
+  }
+
+  .pf-cell-domain { grid-area: domain; font-weight: 600; }
+  .pf-cell-action { grid-area: action; }
+  .pf-cell-resource { grid-area: resource; }
+  .pf-cell-effect { grid-area: effect; }
+  .pf-cell-state { grid-area: state; justify-self: end; }
+  .pf-cell-authority { grid-area: authority; justify-self: end; }
+  .pf-cell-validity { grid-area: validity; }
+  .pf-cell-toggle { grid-area: toggle; }
+}

@@ -98,11 +98,11 @@ func setupUserService(port int, explicit, openUI bool, out io.Writer, actions us
 	if err := actions.health(); err != nil {
 		return fmt.Errorf("setup: 当前实例健康未确认: %w", err)
 	}
-	if _, err := fmt.Fprintf(out, "本机管理服务已就绪：http://127.0.0.1:%d/\n首次连接请运行 siq-agent-security pair 获取配对码，智能体权限请在管理页面确认。\n", currentPort); err != nil {
+	if _, err := fmt.Fprintf(out, "本机管理服务已就绪：http://127.0.0.1:%d/\n首次连接可在页面选择“通过智能体连接”，将连接请求交给已安装的 SIQ Skill；也可使用同一实例的 pair 命令手动配对。管理会话有效期为 24 小时；智能体权限请在管理页面确认。\n", currentPort); err != nil {
 		return err
 	}
 	if openUI {
 		return actions.open(out)
 	}
-	return nil
+	return writeConsoleAccessGuide(out, currentPort)
 }

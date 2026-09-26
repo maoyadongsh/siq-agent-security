@@ -1,0 +1,144 @@
+/* ENT-018-FRAMEWORK-TREE-UI：框架配置实例树专用样式（framework-tree- 前缀，不改共享全局样式）。 */
+
+.framework-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.framework-tree details {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  min-width: 0;
+}
+
+.framework-tree summary {
+  cursor: pointer;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.framework-tree summary:hover {
+  background: var(--table-row-hover);
+}
+
+.framework-tree summary:focus-visible,
+.framework-tree button:focus-visible,
+.framework-tree a:focus-visible {
+  outline: 2px solid var(--siq-primary);
+  outline-offset: 2px;
+}
+
+.framework-tree details details {
+  margin: 0 12px 10px;
+  background: var(--bg);
+}
+
+.framework-tree .framework-tree-evidence {
+  border-style: dashed;
+}
+
+.framework-tree-role > .framework-tree-evidence {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.framework-tree-count {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.framework-tree-note {
+  margin: 0 12px 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.framework-tree-roles {
+  list-style: none;
+  margin: 0;
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.framework-tree-role {
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.framework-tree-role-name {
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.framework-tree-role-id {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.framework-tree-role .tag {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.framework-tree-pending {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-card);
+  padding: 12px;
+  min-width: 0;
+}
+
+.framework-tree-pending h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.framework-tree-pending .framework-tree-note {
+  margin: 0 0 10px;
+}
+
+.framework-tree .kv-list {
+  padding: 0 12px 12px;
+}
+
+.framework-tree .kv-list dd {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .framework-tree summary {
+    padding: 10px;
+  }
+
+  .framework-tree details details {
+    margin: 0 8px 8px;
+  }
+
+  .framework-tree-roles {
+    padding: 0 10px 10px;
+  }
+}

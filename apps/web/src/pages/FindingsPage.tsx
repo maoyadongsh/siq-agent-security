@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
-import SimpleTable, { type TableColumn } from '@/components/SimpleTable';
 import FormDialog from '@/components/FormDialog';
+import FindingExplorerFilters from '@/components/finding-explorer/FindingExplorerFilters';
+import FindingExplorerList from '@/components/finding-explorer/FindingExplorerList';
+import {
+  EMPTY_FINDING_FILTERS,
+  filterFindings,
+  isFinalStatus,
+  type FindingFilters,
+} from '@/components/finding-explorer/findingExplorer';
 import { useApiList } from '@/hooks/useApiList';
 import { api, ApiError } from '@/api/client';
-import type { Finding, FindingSeverity, FindingStatus } from '@/api/types';
+import type { Finding } from '@/api/types';
 
 /** 控制面不可达时的安全示例数据；已连接时由 GET /findings 覆盖 */
 const PLACEHOLDER_FINDINGS: Finding[] = [
@@ -62,27 +69,9 @@ const PLACEHOLDER_FINDINGS: Finding[] = [
   },
 ];
 
-const sevTag: Record<FindingSeverity, string> = {
-  critical: 'tag-err',
-  high: 'tag-err',
-  medium: 'tag-warn',
-  low: 'tag-info',
-  info: '',
-};
-
-const statusTag: Record<FindingStatus, string> = {
-  open: 'tag-err',
-  acknowledged: 'tag-warn',
-  resolved: 'tag-ok',
-  risk_accepted: 'tag-info',
-};
-
-/** 已终态（不可再 acknowledge/resolve） */
-const isFinal = (f: Finding) =>
-  f.status === 'resolved' || f.status === 'risk_accepted';
-
 export default function FindingsPage() {
   const findings = useApiList<Finding>('/findings', PLACEHOLDER_FINDINGS);
+  const [filters, setFilters] = useState<FindingFilters>({ ...EMPTY_FINDING_FILTERS });
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   /** 解决模态目标（替代原生 prompt + confirm 两步） */
@@ -118,64 +107,37 @@ export default function FindingsPage() {
     if (ok) setResolveTarget(null);
   };
 
-  const columns: TableColumn<Finding>[] = [
-    {
-      key: 'severity',
-      header: '级别',
-      render: (f) => <span className={`tag ${sevTag[f.severity]}`}>{f.severity}</span>,
-    },
-    {
-      key: 'rule_id',
-      header: '规则',
-      render: (f) => (
-        <span className="mono" title={`v${f.rule_version}`}>
-          {f.rule_id}
-        </span>
-      ),
-    },
-    { key: 'asset_id', header: '关联资产', render: (f) => f.asset_id ?? '—' },
-    { key: 'impact', header: '风险', render: (f) => f.impact ?? '—' },
-    {
-      key: 'status',
-      header: '状态',
-      render: (f) => (
-        <span className={`tag ${statusTag[f.status]}`}>
-          {f.status}
-          {f.owner_user_id ? ` · ${f.owner_user_id}` : ''}
-        </span>
-      ),
-    },
-    { key: 'first_seen_at', header: '首次发现', render: (f) => f.first_seen_at },
-    {
-      key: 'actions',
-      header: '操作',
-      render: (f) => (
-        <span className="row-actions">
-          {f.status === 'open' ? (
-            <button
-              type="button"
-              className="btn btn-sm btn-ghost"
-              disabled={busyId === f.id}
-              onClick={() => void handleAcknowledge(f)}
-            >
-              确认
-            </button>
-          ) : null}
-          {!isFinal(f) ? (
-            <button
-              type="button"
-              className="btn btn-sm"
-              disabled={busyId === f.id}
-              onClick={() => setResolveTarget(f)}
-            >
-              解决
-            </button>
-          ) : null}
-          {isFinal(f) ? <span className="muted-text">已终态</span> : null}
-        </span>
-      ),
-    },
-  ];
+  /** 处置操作注入列表；业务逻辑留在本页。断连/演示态不注入。 */
+  const renderActions = (f: Finding) => (
+    <span className="row-actions">
+      {f.status === 'open' ? (
+        <button
+          type="button"
+          className="btn btn-sm btn-ghost"
+          disabled={busyId === f.id}
+          onClick={() => void handleAcknowledge(f)}
+        >
+          确认
+        </button>
+      ) : null}
+      {!isFinalStatus(f.status) ? (
+        <button
+          type="button"
+          className="btn btn-sm"
+          disabled={busyId === f.id}
+          onClick={() => setResolveTarget(f)}
+        >
+          解决
+        </button>
+      ) : null}
+      {isFinalStatus(f.status) ? <span className="muted-text">已终态</span> : null}
+    </span>
+  );
+
+  const connected = findings.status === 'connected';
+  const visible = connected ? filterFindings(findings.rows, filters) : [];
+  /** 断连且演示占位开关开启时，rows 为示例：只读标注展示，不可处置 */
+  const demoRows = findings.status === 'disconnected' ? findings.rows : [];
 
   return (
     <section>
@@ -192,30 +154,70 @@ export default function FindingsPage() {
         </p>
       ) : null}
       {findings.status === 'disconnected' ? (
-        <DisconnectedNotice error={findings.error} onRetry={findings.reload} />
-      ) : null}
-      {findings.coverageText ? (
-        <p className="list-coverage" role="status">
-          {findings.coverageText}
+        <>
+          <DisconnectedNotice error={findings.error} onRetry={findings.reload} />
+          {demoRows.length > 0 ? (
+            <>
+              <p className="finding-explorer-match-line" role="status">
+                以下为显式演示占位数据（非真实已发现风险），不提供确认/解决操作。
+              </p>
+              <FindingExplorerList rows={demoRows} />
+            </>
+          ) : null}
+        </>
+      ) : findings.status === 'loading' ? (
+        <p className="muted-text" role="status">
+          正在加载风险记录…加载完成前不展示列表或计数。零条风险不代表当前系统安全。
         </p>
-      ) : null}
-      <SimpleTable
-        columns={columns}
-        rows={findings.rows}
-        rowKey={(f) => f.id}
-      />
-      {findings.hasMore ? (
-        <div className="list-more">
-          <button
-            type="button"
-            className="btn-sm"
-            disabled={findings.loadingMore}
-            onClick={() => findings.loadMore()}
-          >
-            {findings.loadingMore ? '加载中…' : '加载更多'}
-          </button>
-        </div>
-      ) : null}
+      ) : (
+        <>
+          <FindingExplorerFilters rows={findings.rows} filters={filters} onChange={setFilters} />
+          <p className="finding-explorer-match-line" role="status">
+            匹配 {visible.length} 条 / 已加载 {findings.rows.length} 条；筛选仅覆盖已加载记录，不代表组织全量。
+            {findings.hasMore ? '存在更多分页未加载。' : null}
+          </p>
+          {findings.coverageText ? (
+            <p className="list-coverage" role="status">
+              {findings.coverageText}
+            </p>
+          ) : null}
+          {findings.rows.length === 0 ? (
+            <p className="muted-text">
+              后端成功返回空列表：当前没有已发现风险记录。零条风险不等于当前系统安全。
+            </p>
+          ) : visible.length === 0 ? (
+            <p className="muted-text" role="status">
+              当前筛选条件下无匹配项（已加载 {findings.rows.length} 条中 0 条匹配）。
+              <button
+                type="button"
+                className="btn-sm"
+                onClick={() => setFilters({ ...EMPTY_FINDING_FILTERS })}
+              >
+                清除筛选
+              </button>
+            </p>
+          ) : (
+            <FindingExplorerList rows={visible} renderActions={renderActions} />
+          )}
+          {findings.error ? (
+            <p className="action-error" role="alert">
+              {findings.error}（已保留此前成功加载的数据，不代表全部加载成功）
+            </p>
+          ) : null}
+          {findings.hasMore ? (
+            <div className="list-more">
+              <button
+                type="button"
+                className="btn-sm"
+                disabled={findings.loadingMore}
+                onClick={() => findings.loadMore()}
+              >
+                {findings.loadingMore ? '加载中…' : '加载更多'}
+              </button>
+            </div>
+          ) : null}
+        </>
+      )}
 
       <FormDialog
         open={resolveTarget !== null}

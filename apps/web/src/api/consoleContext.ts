@@ -16,8 +16,8 @@ const text = (v: unknown, max = 256): v is string => typeof v === 'string' && v.
 export function isConsoleContext(v: unknown): v is ConsoleContext {
   return object(v) && exact(v, ['schema_version', 'evaluated_at', 'tenant', 'actor', 'authentication', 'roles', 'custom_role_count', 'access', 'actions']) && v.schema_version === 'console-context/v1' && text(v.evaluated_at) && v.evaluated_at.endsWith('Z') && Number.isFinite(Date.parse(v.evaluated_at))
     && object(v.tenant) && exact(v.tenant, ['id', 'name']) && text(v.tenant.id) && (v.tenant.name === null || typeof v.tenant.name === 'string' && v.tenant.name.length <= 128)
-    && object(v.actor) && exact(v.actor, ['id', 'type']) && text(v.actor.id) && ['user', 'service'].includes(String(v.actor.type))
-    && ['development_headers', 'verified_token'].includes(String(v.authentication))
+    && object(v.actor) && exact(v.actor, ['id', 'type']) && text(v.actor.id) && typeof v.actor.type === 'string' && ['user', 'service'].includes(v.actor.type)
+    && typeof v.authentication === 'string' && ['development_headers', 'verified_token'].includes(v.authentication)
     && Array.isArray(v.roles) && v.roles.length <= 8 && v.roles.every(r => object(r) && exact(r, ['code', 'label', 'description']) && text(r.code) && text(r.label) && typeof r.description === 'string' && r.description.length <= 256)
     && new Set(v.roles.map(r => r.code)).size === v.roles.length
     && typeof v.custom_role_count === 'number' && Number.isSafeInteger(v.custom_role_count) && v.custom_role_count >= 0

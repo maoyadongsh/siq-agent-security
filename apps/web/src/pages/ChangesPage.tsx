@@ -9,6 +9,8 @@ import { useConsoleContext } from '@/components/ConsoleContext';
 import ChangeReviewDialog from '@/components/ChangeReviewDialog';
 import ChangeExecutionDialog from '@/components/ChangeExecutionDialog';
 import DeploymentPreviewDialog from '@/components/DeploymentPreviewDialog';
+import BatchDraftPanel from '@/components/batch-deployment/BatchDraftPanel';
+import NetworkRevokeRecovery from '@/components/batch-deployment/NetworkRevokeRecovery';
 import type { DeploymentSelection } from '@/api/deploymentPreview';
 import PageHeader from '@/components/PageHeader';
 import DisconnectedNotice from '@/components/DisconnectedNotice';
@@ -121,6 +123,8 @@ export default function ChangesPage() {
         connectionError={error}
       />
       {allowDeployment ? <DeploymentTargets onSelect={setSelectedBinding} /> : <p className="list-coverage">当前账号可按权限查看或审批变更；部署需要策略管理及环境读取权限。</p>}
+      {context?.actions.manage_policy && context.actions.propose_change && context.access.policies && query.get('revoke_policy') && query.get('revoke_request') ? <NetworkRevokeRecovery key={`${context.tenant.id}:${context.actor.type}:${context.actor.id}:${query.get('revoke_policy')}:${query.get('revoke_request')}`} policyId={query.get('revoke_policy')!} requestKey={query.get('revoke_request')!} /> : null}
+      {allowDeployment && status === 'connected' ? <BatchDraftPanel key={`${context.tenant.id}:${context.actor.type}:${context.actor.id}`} changes={rows} binding={selectedBinding} /> : null}
       {deploymentSelection ? <DeploymentPreviewDialog key={`${deploymentSelection.change_request_id}:${deploymentSelection.binding_id}`} selection={deploymentSelection} onClose={() => setDeploymentSelection(null)}
         onStarting={() => openExecution(deploymentSelection.change_request_id, undefined, true)}
         onRejected={closeReview}

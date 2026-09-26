@@ -107,12 +107,12 @@ func cmdSetup(args []string, out io.Writer) error {
 		}
 		endpoint = fmt.Sprintf("http://127.0.0.1:%d", cfg.Port)
 	}
-	_, err = fmt.Fprintf(out, "本机管理服务已就绪：%s/\n首次连接请运行 siq-agent-security pair 获取配对码。登录自启可用 service-login 管理；智能体权限请在管理页面确认。\n", endpoint)
+	_, err = fmt.Fprintf(out, "本机管理服务已就绪：%s/\n首次连接可在页面选择“通过智能体连接”，将连接请求交给已安装的 SIQ Skill；也可使用同一实例的 pair 命令手动配对。管理会话有效期为 24 小时。登录自启可用 service-login 管理；智能体权限请在管理页面确认。\n", endpoint)
 	if err != nil {
 		return err
 	}
 	if *openUI {
 		return cmdUI(nil, out)
 	}
-	return nil
+	return writeConsoleAccessGuide(out, cfg.Port)
 }

@@ -43,9 +43,18 @@ export const onboardingApi = {
     if (!value || !/^enr-[A-Za-z0-9_-]{20,100}$/.test(value.code) || !Number.isFinite(Date.parse(value.expires_at))) throw new Error('注册码响应无效，请刷新进度后再处理');
     return value;
   },
-  scan: (id: string, connector: 'hermes' | 'openclaw') => post<{task_id: string}>('/scans', { environment_id: id, connector, scope: connector === 'hermes'
-    ? { roots: ['~/.hermes/profiles/*'], include: ['config.yaml', 'SOUL.md'] } : { roots: ['~/.openclaw'] } }),
+  scan: async (id: string, connector: 'hermes' | 'openclaw', target: string) => {
+    if (target.length < 8 || target.length > 128) throw new Error('请选择目标设备');
+    const value = await post<{task_id: string}>('/scans', { environment_id: id, connector, target_device_identity: target, scope: connector === 'hermes'
+      ? { roots: ['~/.hermes/profiles/*'], include: ['config.yaml', 'SOUL.md'] } : { roots: ['~/.openclaw'], include: ['openclaw.json'] } });
+    if (!value || typeof value.task_id !== 'string' || !value.task_id) throw new Error('无法核验扫描任务');
+    return value;
+  },
 };
+
+export function eligibleScanDevices(progress: OnboardingStatus | undefined, connector: string): OnboardingDevice[] {
+  return progress?.devices.filter(device => device.status === 'online' && device.connectors.includes(connector)) ?? [];
+}
 
 export function controlPlaneURL(raw: string): string | null {
   if (/[\u0000-\u0020\u007f]/.test(raw)) return null;
