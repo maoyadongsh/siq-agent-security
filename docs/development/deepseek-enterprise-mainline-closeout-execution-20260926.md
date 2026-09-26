@@ -1784,6 +1784,20 @@ git log --oneline -3 -- apps/control-api/app/main.py → 6ba1f7c / 4a4bcd0 / 977
 
 **提交与提交后收口**：本单元 7 条路径已提交为 **`7891f7e`**（父 `033f50d`；`main` 仍 `ebaaf3b`、**未推送**、**未签发**、**未部署**），现场 `git rev-list --count ebaaf3b..HEAD` = **23**，`git show --name-only` 与该 7 条逐条一致、无清单外路径。提交后同一条命令再跑一次（第 11 次，`2026-09-26T13:40:57Z`，`--out /tmp/preflight-r0917bb-20260926T134057.json`）→ `requested=49 / verified=49`、`head=7891f7e`、`102 tracked / 704 untracked`、`status_entries=806`、`conclusion=blocked`（`unreviewed_paths:806`）；**同口径逐条相减 = 新增 0 / 消失 7，逐条等于本次提交路径**，三项计数闭合（`813 − 7 = 806`、`106 − 4 = 102`、`707 − 3 = 704`）。**此处第三次出现同值不同源**：第 11 次 `806 = 806 − 0`，第 10 次 `806 = 813 − 7` —— 三次 `806` 分属三种来源，**只可同口径相减，不可比标量**。
 
+### R09.18 行为 fixture 通道 **P0**：先提交方案、后实施（F-1 批准，2026-09-26）
+
+**决策**：使用者 2026-09-26 就方案 §7 的四问答复 **F-1 批准 P0 / F-2 暂不申请 P1-pre / F-3 我方固定摘要上传 / F-4 由 P1-pre 实测自动选**。§7 的"先提交方案再实施"要求由 `docs/development/deepseek-enterprise-mainline-closeout-behaviour-fixture-plan-20260926.md` 满足。
+
+**新增 6 条路径（未接线）**：`enforcement_probe.py`（证据结构 + 校验器，纯逻辑无 IO，25 个固定判别码）、`probe_channel.py`（边界内观测通道：固定子命令模板、fail-closed 解析、异常→词表的**闭合**映射）、`probe/enforcement_probe_agent.py`（边界内探针，**只报事实**）、`openshell-enforcement-probe.py`（一次性工具，默认计划模式）、`test_enforcement_probe.py`（**59** 用例）、`test_openshell_enforcement_probe.py`（**27** 用例）。另加合同最小改动 5 个**已跟踪**文件（见允许清单"既有已跟踪件被修改"节）：新增能力位 `CAP_ENFORCEMENT_PROBE`、`VerificationReport` 两个字段、抽象 `verify()` 的**关键字**参数 `probe_evidence=None`、`cli_backend` 的升级分支；Fake/HTTP **明确忽略**该参数。
+
+**三条不变量落成可测事实**：① 观测原点白名单是**拒绝式**的（`fixture`/`simulated`/`self_report`/`script_self_report`/`config_readback`/`gateway_self_report` 逐个点名拒绝）；② 判定不在夹具里（探针**无** `--expect`，实测该参数直接报错退出）；③ 不确定就不升级（臂不齐、臂内矛盾、绑定不符、读回**明确** warn/audit_only 一律落到固定码）。
+
+**实施期自纠的三个缺陷**（都改在提交前）：① **纸面门禁**——初稿要求"读回模式必须 == block"，但 `cli_backend.read_effective_policy` 刻意恒填 `unknown`（`cli_backend.py:542-544`，P1-11：`policy get --full` 无模式字段），该门**在真实路径上永远打不开**；改为**矛盾时从严**（只在读回明确为 warn/audit_only 时拒绝），并在证据里如实保留 `unknown`。② **计划与实际分叉**——计划模式打印的 exec 写死 `--timeout 0`，通道实际发 `int(timeout*attempts)+60`；改为复用通道的 argv 构建器（单一事实源），并新增"计划 argv 逐字等于 dispatch argv"的断言。③ **拒绝路径上的多余动作**——原先先 `upload` 再校验允许规则，拒绝时已发生两次跨边界写入；改为全部只读前提前置，拒绝路径上**一个跨边界动作都不发生**（断言 dispatch 表为空）。
+
+**验证**：`ruff`（仓库口径 `--config apps/control-api/pyproject.toml`）对全部 11 个新增/改动文件 → `All checks passed!`；**后端全量**（本工作树）→ `2235 用例 / 0 failed / 0 errors / 1 skipped`（exit 0；计数取自 `--junitxml`，因本环境的 `-q` 汇总行在捕获时缺失，故用 XML 权威计数。**与 R07.8 的 `2164 passed` 不是同一次测量，差值含并作者未提交测试，不构成逐项对比**）；`pytest apps/control-api/app/tests/test_enforcement_probe.py` → **59 passed**；`pytest scripts/enterprise-experience` → **150 passed**（本轮之前为 123，+27）；计划模式冒烟实跑 → `conclusion=probe_plan_only`、`executed=false`、`enforcement_verified=false`，且断言计划模式下**握手 0 次 / 读回 0 次 / dispatch 0 条**（逐字原文见 `docs/evidence/.../09-p0-enforcement-probe-2026-09-26.txt`）。
+
+**结论档 = 隔离验证通过，不是实际交付**：工具**从未**在真实目标上运行过，全程未联系任何网关、未 `upload`/`exec`/`policy set`；业务结论只到"在本机合成件上，检测器能区分**被拦 / 目标已死 / 夹具撒谎**"。**未实测的前提**：网关是否真的**按 binary 路径**归因网络规则——兼容矩阵（v0.0.83）里**没有一条**记录说它被实测过（`interceptor: false`），这正是 P1-pre，**需单独许可**（含 `sandbox upload` / `sandbox exec` 两类本轮从未做过的动作）。在 P1-pre 通过前，主方案与退路**都不能**当作已成立。
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
@@ -1798,3 +1812,4 @@ git log --oneline -3 -- apps/control-api/app/main.py → 6ba1f7c / 4a4bcd0 / 977
 | D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**；**`--live` 经使用者选定路径①（先补 authorizer 再跑）后已真实执行闭环**（R09.15：`policy set` → `readback_verified` → 回滚，回滚后载荷逐字节复原，对方 CLI 独立复核），**天花板仍是 `readback_verified`，未产生 `enforcement_verified`**；行为 fixture 通道使用者已授权**在隔离环境内建**，具体方案待提交后实施。**A5/A7 仍 blocked**；**预览工具修复（R09.16）已实现并合成验证 10/10**（见下） |
 | D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认**。**新增阻断（R09.17）**：本分支 HEAD 干净检出**无法 `import app.main`**（闭包需再补 25 条），故 **D-7.6 在此之前不可能成立**，D-7.3 的"并作者归属"也从"文档噪声"升级为"缺的就是必需代码" |
 | D-8 冻结闭包与可启动性 | R09.17 | **已决策 2026-09-26：C（只诊断不修 + 只读闭包核验）**——执行者建议项被采纳。**已实施**（R09.17b）：新增只读 `import-closure-check.py` 与 10 条合成回归用例，对真实仓库实跑出一张逐 ref 表（HEAD/`6ba1f7c`/`ad3116e` 均 `import_closure_open` 25 条补件且逐条相同；`ebaaf3b` **自足、0 补件**为负对照），并把首次记录的构成更正为 **3 条已跟踪被修改 + 22 条未跟踪**。**未做**：不补这 25 条、不接线成门禁、不签发不部署。**重新开闸条件**：并作者确认归属后可转 (A)/(B)。三选项都不等于"可发布" |
+| D-9 行为 fixture 的 P1-pre 真实前置测量 | R09.18（§7 四问） | **使用者 2026-09-26 答复**：F-1 **批准 P0**（已实施）、F-2 **暂不申请 P1-pre（先要 P0 结果）**、F-3 边界内探针**我方固定摘要上传**、F-4 主方案/退路**由 P1-pre 实测自动选择**。**P0 结果已出**（R09.18，隔离验证通过），故本门槛**现在可重新提出**：需要单独一次许可，含 `sandbox upload` / `sandbox exec` 两类本轮从未做过的动作。**未确认时行为**：主方案与退路**均不得**采信，级别停留 `readback_verified`；不擅自把任何报告调成绿 |

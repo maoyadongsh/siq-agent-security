@@ -30,6 +30,7 @@ from app.adapters.openshell.contracts import (
     ChangePlan,
     CompiledPolicy,
     DeploymentReceipt,
+    EnforcementProbeEvidence,
     EventBatch,
     PolicySnapshot,
     RevisionConflict,
@@ -65,6 +66,7 @@ _CAPABILITY_KEYS = (
     "secrets",
     "resources",
     "audit_events",
+    "enforcement_probe",
     "enforcement_mode.block",
     "enforcement_mode.warn",
     "enforcement_mode.audit_only",
@@ -230,11 +232,21 @@ class OpenShellHttpClient(EnforcementAdapter):
         """联调前无法证明 HTTP 端安全创建与完整回执，因此零写入拒绝。"""
         raise AdapterError("openshell_http_generation_unavailable: use the verified CLI transport")
 
-    def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
+    def verify(
+        self,
+        target: str,
+        checks: dict,
+        receipt: DeploymentReceipt,
+        *,
+        probe_evidence: EnforcementProbeEvidence | None = None,
+    ) -> VerificationReport:
         """正负向验证：allow 项读回策略确认命中；deny 项确认不在允许集（block 模式）。
 
         P1-2：本方法同为配置读回验证（HTTP GET 比对），无行为 fixture 通道，
         通过时 level=readback_verified，失败 → failed；不产出 enforcement_verified。
+
+        `probe_evidence` **被明确忽略**：HTTP transport 没有边界内观测通道，
+        收到证据不构成"观测发生过"（与 Fake 后端同理）。
         """
         failures: list[str] = []
         snapshot = self.read_effective_policy(target)

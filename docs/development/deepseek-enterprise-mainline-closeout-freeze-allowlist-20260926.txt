@@ -138,6 +138,43 @@ scripts/enterprise-experience/test_http_contract_acceptance.py
 docs/development/deepseek-enterprise-mainline-closeout-execution-20260926.md
 docs/development/deepseek-enterprise-mainline-closeout-handoff-20260926.md
 docs/development/deepseek-enterprise-mainline-closeout-freeze-allowlist-20260926.txt
+# 行为 fixture 通道的**先提交后实施**方案（§7 要求）：含四问与裁决、三臂差分、六条
+# 机械防降级规则、P1-pre 的边界说明、以及"实施期更正"（纸面门禁一处）。纯文档。
+docs/development/deepseek-enterprise-mainline-closeout-behaviour-fixture-plan-20260926.md
+
+# --- 源码：R09.18 行为 fixture 通道 P0（新增 6 件；**未接线**，结论档=隔离验证通过） ---
+# 使用者四轮答复：F-1 批准 P0 / F-2 暂不申请 P1-pre / F-3 我方固定摘要上传 / F-4 由 P1-pre 实测自动选。
+# 全部为新增或最小合同改动；工具**只在计划模式跑过**，从未联系任何网关、未 upload/exec/policy set。
+#   - enforcement_probe.py   证据结构 + 校验器（纯逻辑无 IO；原点白名单为**拒绝式**）
+#   - probe_channel.py       边界内观测通道（固定子命令模板；异常→词表为**闭合**映射；fail-closed 解析）
+#   - enforcement_probe_agent.py  边界内探针（**只报事实**，无 --expect；判定不在夹具里）
+#   - openshell-enforcement-probe.py  一次性工具（默认计划模式；执行需 --execute + --confirm-behaviour-probe + 算子授权）
+#   - test_enforcement_probe.py（59 用例）/ test_openshell_enforcement_probe.py（27 用例）
+apps/control-api/app/adapters/openshell/enforcement_probe.py
+apps/control-api/app/adapters/openshell/probe_channel.py
+apps/control-api/app/tests/test_enforcement_probe.py
+scripts/enterprise-experience/probe/enforcement_probe_agent.py
+scripts/enterprise-experience/openshell-enforcement-probe.py
+scripts/enterprise-experience/test_openshell_enforcement_probe.py
+# 09 为 P0 的隔离验证留痕：59+27 用例、计划模式冒烟（不触网）、实施期自纠的三个缺陷
+# （纸面门禁 / 计划与实际 argv 分叉 / 拒绝路径上的多余 upload）、以及**未实测的前提**
+# （网关是否按 binary 路径归因网络规则）。不产生 enforcement_verified。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/09-p0-enforcement-probe-2026-09-26.txt
+
+# --- 既有已跟踪件被修改：行为 fixture 通道的**合同改动**（需复核；本轮 P0 增量约 25 行） ---
+# 这五个是**已跟踪**文件（HEAD 中存在）。P0 增量：contracts.py 加能力位 CAP_ENFORCEMENT_PROBE
+# 与 VerificationReport 两个字段；base.py 抽象 verify() 加**关键字**参数 probe_evidence=None；
+# cli_backend.py 加升级分支（唯一能把级别提到 enforcement_verified 的地方）与能力文档如实记 unknown；
+# fake_backend.py / client.py 签名补齐并**明确忽略**该参数（收到证据 ≠ 观测发生过）。
+# **重要的归属偏差**：这五个路径的 diff **不全是 P0 的**——其中还含本未提交时期既有的改动
+# （如 cli_backend.py 的 env_script 指纹作用域、能力文档项）。`git diff HEAD --stat` 合计
+# 123 插入 / 12 删除，其中 P0 只占约 25 行。**提交本清单会按文件粒度把这些既有 hunk 一并纳入**，
+# 冻结前必须与并行作者线逐条对照；如需回退 P0，只撤上面列出的那几处即可。
+apps/control-api/app/adapters/openshell/contracts.py
+apps/control-api/app/adapters/openshell/base.py
+apps/control-api/app/adapters/openshell/cli_backend.py
+apps/control-api/app/adapters/openshell/fake_backend.py
+apps/control-api/app/adapters/openshell/client.py
 
 # --- 既有件被追加"版本导航"段（超出 D-1 字面范围，需复核） ---
 packages/contracts/enterprise-discovery-schedule.v1.md

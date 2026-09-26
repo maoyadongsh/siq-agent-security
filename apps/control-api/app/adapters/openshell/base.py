@@ -9,6 +9,7 @@ from app.adapters.openshell.contracts import (
     ChangePlan,
     CompiledPolicy,
     DeploymentReceipt,
+    EnforcementProbeEvidence,
     EventBatch,
     PolicySnapshot,
     RollbackAuthorizer,
@@ -50,12 +51,24 @@ class EnforcementAdapter(ABC):
         """静态边界变化：生成新实例，验证通过后才能切流。"""
 
     @abstractmethod
-    def verify(self, target: str, checks: dict, receipt: DeploymentReceipt) -> VerificationReport:
+    def verify(
+        self,
+        target: str,
+        checks: dict,
+        receipt: DeploymentReceipt,
+        *,
+        probe_evidence: EnforcementProbeEvidence | None = None,
+    ) -> VerificationReport:
         """至少验证预期允许和预期拒绝各一项。
 
         实现必须在 report.level 如实标注验证强度：配置读回类检查只能产出
-        readback_verified；enforcement_verified 需要真实行为 fixture 证据
-        （当前所有后端实现均无行为 fixture 通道，禁止产出该级别）。
+        readback_verified；enforcement_verified 需要真实行为 fixture 证据，
+        即 `probe_evidence` 通过 `enforcement_probe` 的校验器。
+
+        `probe_evidence` 是**合同参数**（三个后端签名一致），但**不是每个后端都能用**：
+        只有具备 `CAP_ENFORCEMENT_PROBE` 边界内观测通道的后端才可能据此升级；
+        无该通道的后端（Fake / HTTP）必须**明确忽略**该参数并如实退回
+        readback_verified，绝不因为"收到了一份证据"就上调级别。
         """
 
     @abstractmethod

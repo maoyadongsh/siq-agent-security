@@ -9,7 +9,7 @@
 - verify 至少验证预期允许和预期拒绝各一项；
 - verify 结果必须如实分级（VerificationReport.level）：配置读回类检查只能产出
   readback_verified；enforcement_verified 需要真实行为 fixture 证据，
-  当前 CLI 后端没有行为 fixture 通道，禁止产出该级别；
+  且该证据必须通过 enforcement_probe 的校验器（见 VerificationReport 注释）；
 - 能力报告按能力域逐项标注（CapabilityItem）：未实测的能力一律 unknown 或
   unsupported，不得猜 supported；
 - 日志和回执必须脱敏，不能包含 Provider Key、Sandbox Token 或业务正文。
@@ -20,6 +20,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
+
+from app.adapters.openshell.enforcement_probe import EnforcementProbeEvidence
 
 # ------------------------------------------------------------ 能力文档（P1-1）
 
@@ -39,6 +41,9 @@ CAP_MODEL_ROUTING = "model_routing"
 CAP_SECRETS = "secrets"  # 凭据注入
 CAP_RESOURCES = "resources"  # 资源配额
 CAP_AUDIT_EVENTS = "audit_events"  # 审计/行为事件流
+# 行为 fixture 通道：能否在**边界内**取回"该拦的拦了"的观测（enforcement_verified 的前置）。
+# 未报告该能力项的后端按 capability() 的 fail-closed 语义得 unknown ⇒ 结构上走不到升级分支。
+CAP_ENFORCEMENT_PROBE = "enforcement_probe"
 CAP_MODE_BLOCK = "enforcement_mode.block"
 CAP_MODE_WARN = "enforcement_mode.warn"
 CAP_MODE_AUDIT_ONLY = "enforcement_mode.audit_only"
@@ -186,6 +191,8 @@ class ChangePlan:
     base_static_digest: str = ""
     steps: list[str] = field(default_factory=list)
     requires_verification: bool = True
+    # Network allow-set assessment only; never an approval or whole-policy verdict.
+    network_change: str = "unknown"
 
 
 @dataclass(frozen=True)
@@ -209,8 +216,11 @@ class VerificationReport:
 
     level 如实标注验证强度：
     - readback_verified：仅配置读回一致（不证明行为执行）；
-    - enforcement_verified：有真实行为 fixture 证据（当前 CLI/HTTP/Fake 后端
-      均无行为 fixture 通道，禁止产出该级别）；
+    - enforcement_verified：**只有在** `probe_evidence` 通过
+      `enforcement_probe.validate_enforcement_probe_evidence` 时才允许产出——
+      它要求边界内的真实行为观测（允许臂连上 + 拒绝臂被拦 + 边界外可达性对照），
+      且绑定的 revision/digest/指纹必须与本次读回一致。默认 `probe_evidence=None`
+      ⇒ 所有既有调用路径逐字保持 readback_verified（Fake/HTTP 后端无该通道）；
     - failed：任一检查失败。
     checks 中的每项必须携带 request/expected/actual/revision，便于审计复核。
     """
@@ -220,6 +230,12 @@ class VerificationReport:
     allow_checks: list[dict[str, Any]] = field(default_factory=list)
     deny_checks: list[dict[str, Any]] = field(default_factory=list)
     failures: list[str] = field(default_factory=list)
+    # 行为 fixture 证据（默认 None）。是否采信由校验器决定，不由调用方声明。
+    probe_evidence: EnforcementProbeEvidence | None = None
+    # 证据被拒绝时的**固定判别码**（空串 = 未要求行为验证，或证据已被接受）。
+    # 单独成字段是为了不污染 failures：readback 通过但行为证据不合格时，
+    # 事实是"只验到了读回层"，不是"验证失败"。
+    probe_reject_reason: str = ""
 
 
 @dataclass(frozen=True)
