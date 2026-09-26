@@ -87,7 +87,7 @@ Main includes constrained OpenShell execution, multiple-gateway discovery/checks
 
 The current OpenClaw [compatibility manifest](patches/openclaw/compatibility.v1.json) pins **2026.9.5**. Stock plugin approval/events still lack SIQ's final post-approval parameter recheck and unique execution reservation, so SIQ holds fail closed before platform approval. Controlled patches bind exact source, patch and adapter digests; they do not establish stock or formal-release support. [Native component/output checks](docs/development/ux-runtime-output-openclaw-e155-validation-20260923.md) cover plugin loading, tool wrappers, session isolation and output persistence with a fixture after-call relay, not a complete model-driven OpenClaw/OpenShell business journey. Historical 2026.9.4 results remain in the [controlled-start record](docs/openclaw-controlled-start-linux-20260919.md).
 
-The [September 24 enterprise deployment](docs/development/enterprise-runtime-delivery-20260924.md) verified migration `0013→0017`, isolated backup restoration, old/new image switching and desktop/mobile Gateway login entry points, including anonymous rejection. It did not complete real-account login or cross-system authorization journeys. Business navigation is tenant-scoped and restricted to configured origins; the business application must independently authorize result access. Periodic/continuous discovery scheduling — storage, confirmation and device-side execution — is still in closeout (see the [auto-onboarding closeout record](docs/development/enterprise-auto-onboarding-closeout-20260926.md)); this README does not claim that continuous scanning is fully integrated or proven on real devices. Troubleshooting order for common failures (console unreachable, empty environment/device, no heartbeat after registration, collection failures, policies not taking effect) and release-package prerequisites are in the [production runbook](docs/enterprise-production-runbook-v1.md). Historical “uncommitted/unpublished/undeployed” notes describe their original snapshots; use later integration/deployment records for current status.
+The [September 24 enterprise deployment](docs/development/enterprise-runtime-delivery-20260924.md) verified migration `0013→0017`, isolated backup restoration, old/new image switching and desktop/mobile Gateway login entry points, including anonymous rejection. It did not complete real-account login or cross-system authorization journeys. Business navigation is tenant-scoped and restricted to configured origins; the business application must independently authorize result access. Periodic/continuous discovery scheduling — storage, confirmation and device-side execution — is still in closeout (see the [auto-onboarding closeout record](docs/development/enterprise-auto-onboarding-closeout-20260926.md)): the device-side read-only discovery subcommand `confirm-discovery-schedule --discover` is wired up (see the [two-step example](#enterprise-edge-new-device-periodic-discovery-two-steps) above), but it only lets a device find that a plan is waiting for confirmation, and confirmation remains a separate step; the capability is source-level and isolation-verified only, and this README does not claim that continuous scanning is fully integrated or proven on real devices. The event-export truncation declaration (`X-SIQ-Export-Truncated`) is specified in the [OCSF export contract](packages/contracts/enterprise-ocsf-export.v1.md). Troubleshooting order for common failures (console unreachable, empty environment/device, no heartbeat after registration, collection failures, policies not taking effect) and release-package prerequisites are in the [production runbook](docs/enterprise-production-runbook-v1.md). Historical “uncommitted/unpublished/undeployed” notes describe their original snapshots; use later integration/deployment records for current status.
 
 ## Core value
 
@@ -285,6 +285,27 @@ npm --prefix apps/web run dev:local
 Open the address printed by Vite. The development proxy targets `http://127.0.0.1:47611`; `dev:local` starts only the frontend. If the console reports a disconnected or unreachable decision API, check the local Go service and port, then pair the browser. The enterprise frontend uses separate Control API configuration. The embedded UI is served directly by Go and does not require Vite.
 
 </details>
+
+### Enterprise Edge: new device periodic discovery (two steps)
+
+A newly registered device does not need to know the periodic schedule ID in advance. The device-side `edge-agent` provides a read-only discovery phase that only answers "does a plan exist that is waiting for this device". **Confirmation is still a separate, independent second step**: the read-only invocation alone never confirms anything, while the second invocation below proceeds only after a real-terminal `yes`:
+
+```bash
+# Step 1: read-only discovery. Authenticated GET only: nothing is selected or
+# confirmed, and no confirmation journal or receipt is written. The command may
+# create/reuse the existing tasks.lock for local mutual exclusion; it is not
+# business state. Exactly one pending plan shows the full binding;
+# zero says so honestly; more than one only lists bounded candidates and asks
+# for an explicit --schedule-id. Nothing is ever auto-selected.
+edge-agent confirm-discovery-schedule --discover
+
+# Step 2: an independent, explicit confirmation on a real terminal, against the
+# intent already displayed. Interactive confirmation (default cancel; piped
+# input is not consent) or the exact --confirm-intent-sha256 is still required.
+edge-agent confirm-discovery-schedule --discover --interactive
+```
+
+`--discover` is strictly mutually exclusive with `--intent`, `--schedule-id` and `--resume`. Discovery is not authorization: it never grants business permissions and never weakens confirmation. The organization console still has to create the plan for the device. The older visible paths (copying the digest, fetching by a known ID) keep working unchanged.
 
 ### 1. Run the research demonstration without model keys
 

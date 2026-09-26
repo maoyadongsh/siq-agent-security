@@ -218,6 +218,24 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 7. **持续处理变化与异常。** 通过定期采集、风险评估、策略漂移检测、变更记录和审计定位带外修改与过期风险；需要恢复时，按权限和后端能力执行回滚。设备退出、凭据吊销和异常恢复都应保留记录。
 8. **以试点证据扩展部署。** 先选定宿主、环境与执行后端，验证“发现 → 归属 → 审批 → 部署 → 读回 → 行为测试 → 恢复”的闭环，再增加环境。身份提供方、数据库恢复、密钥轮换、运维监控与跨设备场景须在实际部署中验收。
 
+### 新注册设备的周期发现接入（两步）
+
+新注册的设备不需要预先知道周期计划 ID。设备端 `edge-agent` 提供只读的发现子命令，负责“找到等本机确认的计划”，**确认仍是独立的第二步**，不因发现而自动完成：
+
+```bash
+# 第一步：只读发现。只发认证 GET，不选择、不确认，不写确认日志或回执。
+# 命令会创建或复用既有 tasks.lock 作为本机并发互斥，但它不是业务状态。
+# 恰好一个待确认计划时才显示完整绑定信息；0 个时明确说明无待办；
+# 多于一个时只列出候选并要求改用 --schedule-id 指定，绝不自动挑选。
+edge-agent confirm-discovery-schedule --discover
+
+# 第二步：在真实终端上，对已显示的意图做独立明确确认。
+# 仍要求终端交互（默认取消，管道输入不构成同意）或精确 --confirm-intent-sha256。
+edge-agent confirm-discovery-schedule --discover --interactive
+```
+
+`--discover` 与 `--intent`/`--schedule-id`/`--resume` 严格互斥；发现结果只是“本机有活干”的事实，不构成授权，也不降低确认强度。周期计划仍需由组织控制台为该设备创建。可见的旧做法（复制摘要、按已知 ID 获取）仍然有效，行为不变。
+
 ### 企业端有什么功能
 
 | 治理需求 | 已有功能基础 | 实际用途与范围 |
@@ -238,7 +256,7 @@ SIQ 的差异化集中在把**授权依据、真实调用与可核验结果连�
 
 企业控制面与个人本地端是两个明确的运行入口。当前不能把个人端的配对会话直接当成企业身份，也不能假设个人端已有的每条 Skill 安装、审批恢复和任务证据路径都已自动接入企业多租户流程。
 
-部署步骤见[企业控制面快速开始](docs/control-plane.md#快速开始)。[9 月 24 日部署记录](docs/development/enterprise-runtime-delivery-20260924.md)已确认企业 API / Web 更新、数据库 `0013→0017` 迁移、备份的隔离恢复、新旧镜像切换，以及既有 Gateway 的桌面/移动登录入口与匿名拒绝检查。**这些检查未使用真实业务账号完成登录和跨系统旅程**；真实组织/角色、独立审批者、可访问的业务站点配置、事件导出、密钥轮换和多设备运行仍需按[生产运行手册](docs/enterprise-production-runbook-v1.md)验收。企业 OpenShell CLI 后端当前只支持 `block` 部署；治理模型包含 `audit_only` / `warn` 不代表后端已支持。周期/持续采集调度的存储、确认与设备端执行仍在收口（见[自动接入收口记录](docs/development/enterprise-auto-onboarding-closeout-20260926.md)），本文不宣称持续扫描已完整接入或已在真实设备生效。常见故障（前端打不开、环境/设备为空、注册后无心跳、采集失败、策略未生效等）的排查顺序与发行包前置条件见该[生产运行手册](docs/enterprise-production-runbook-v1.md)。DGX Spark 与 OpenShell 机制见[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
+部署步骤见[企业控制面快速开始](docs/control-plane.md#快速开始)。[9 月 24 日部署记录](docs/development/enterprise-runtime-delivery-20260924.md)已确认企业 API / Web 更新、数据库 `0013→0017` 迁移、备份的隔离恢复、新旧镜像切换，以及既有 Gateway 的桌面/移动登录入口与匿名拒绝检查。**这些检查未使用真实业务账号完成登录和跨系统旅程**；真实组织/角色、独立审批者、可访问的业务站点配置、事件导出、密钥轮换和多设备运行仍需按[生产运行手册](docs/enterprise-production-runbook-v1.md)验收。企业 OpenShell CLI 后端当前只支持 `block` 部署；治理模型包含 `audit_only` / `warn` 不代表后端已支持。周期/持续采集调度的存储、确认与设备端执行仍在收口（见[自动接入收口记录](docs/development/enterprise-auto-onboarding-closeout-20260926.md)）：设备端只读发现子命令 `confirm-discovery-schedule --discover` 已接通（见上文[两步示例](#新注册设备的周期发现接入两步)），它只让设备发现"有一个计划在等我确认"，确认仍需独立一步；该能力目前为源码级与隔离验证级，本文不宣称持续扫描已完整接入或已在真实设备生效。事件导出接口的截断事实声明（`X-SIQ-Export-Truncated`）见[OCSF 导出合同](packages/contracts/enterprise-ocsf-export.v1.md)。常见故障（前端打不开、环境/设备为空、注册后无心跳、采集失败、策略未生效等）的排查顺序与发行包前置条件见该[生产运行手册](docs/enterprise-production-runbook-v1.md)。DGX Spark 与 OpenShell 机制见[深度适配说明](#dgx-spark-与-nvidia-openshell-深度适配)。
 
 ## 可以验证什么
 
