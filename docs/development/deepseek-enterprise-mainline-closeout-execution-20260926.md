@@ -1210,7 +1210,7 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 | 文件 | 作用 |
 | --- | --- |
 | `scripts/enterprise-experience/run-browser-smoke-suite.py` | 套件本体：模拟身份前端构建 + 遍历全部 `*-browser-smoke.py` + 写 `result.json`（**独占创建**）。参数**从每个脚本自己的 `--help` 读出**，不硬编码参数家族 |
-| `scripts/enterprise-experience/test_run_browser_smoke_suite.py` | 15 条合成用例（不启浏览器、不构建前端、不依赖 playwright） |
+| `scripts/enterprise-experience/test_run_browser_smoke_suite.py` | **18** 条合成用例（不启浏览器、不构建前端、不依赖 playwright） |
 
 `enterprise-gate-run.py` 侧新增：`--enable-browser-smoke-gate`、`--browser-smoke-python`、`--browser-smoke-edge`、`--browser-smoke-connector-dir`；`browser_probe`/`check_browser_evidence`/`browser_gate_decision`/`browser_gate`；`run_gates` 的声明覆盖改为**按 id 分派**（两条可选门禁各自只撤自己那条登记）。新增 9 条合成分支用例。
 
@@ -1237,7 +1237,7 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 - **缺陷 1（最严重）**：我把证据目录交给套件创建，套件**等到最后**写结果时才 `mkdtemp`+独占创建。但每个脚本用 `mkdir(parents=True, exist_ok=False)` 建自己的输出目录，**顺手把父目录（也就是证据根）一起建了出来**，于是最后一步必然 `FileExistsError` → 退出 2。后果是**一次 4 分 24 秒的真实运行结果全丢**。修法：改为**开跑前先 `os.mkdir(out_dir, 0o700)` 占位**，结果文件再用 `O_EXCL` 写。回归用例 `test_evidence_dir_is_claimed_before_scripts_run`（断言脚本被调用时根目录**已经存在**）。**注意这与 R07.10 缺陷 1 是镜像关系**：那次是我**预建**了脚本要求"必须不存在"的目录；这次是我**没有**预建脚本会连带创建的目录。两次的教训是同一条：**必须读清对方对目录生命周期的约定，而不是照搬上一次的模式**。
 - **缺陷 2**：探针写成了 `import playwright; print(playwright.__version__)` —— `playwright` **没有** `__version__` 属性，于是**装了 playwright 的解释器被判成没装**（实测 `/home/maoyd/miniconda3/bin/python` 有 playwright 1.58.0，却被记为 `playwright_not_importable`）。这正是"把可跑误记为不可跑"的典型写法。修法：改用发行版元数据 `from importlib.metadata import version; print(version('playwright'))`，并在两处（套件与门禁）用同一个常量；回归用例断言探针命令含 `importlib.metadata`、**不含** `__version__`。
 
-**测试与静态检查**：`scripts/enterprise-experience/` 全部 **73 passed**（本轮 15+9 条为新增）；ruff 按仓库基线（`--config apps/control-api/pyproject.toml`）对四个文件检查：新增/改动的行**零告警**，全仓该目录仍只余 5 条既存项（1 `UP017` + 4 `E731`）。
+**测试与静态检查**：`scripts/enterprise-experience/` 全部 **73 passed**（本轮 **18 + 9 = 27** 条为新增；该目录逐文件为 `contract_version_chain_audit` 12 + `enterprise_gate_run` 33 + `run_browser_smoke_suite` 18 + `source_freeze_preflight` 10 = 73，用 `pytest --collect-only` 实测，不是估算）。**一处与不可变记录的差异需说明**：提交 `52cb855` 的**提交信息**里写的是"回归用例 17 + 9 条"——17 是落笔时的记忆数字、**不准确**，实测为 18；提交信息无法追改（改写历史属 §3.2 禁止的破坏性操作），故在此**如实标注**：**以本节实测的 18 为准**。ruff 按仓库基线（`--config apps/control-api/pyproject.toml`）对四个文件检查：新增/改动的行**零告警**，全仓该目录仍只余 5 条既存项（1 `UP017` + 4 `E731`）。
 
 **落盘与提交**：7 条路径提交为 `52cb855`（父 `f1709cd`，分支 `deepseek/enterprise-mainline-closeout-20260926`，**未推送**，`main` 仍 `ebaaf3b`）；同口径账目 `107 tracked / 706 untracked → 102 / 704`（差 7 = 5 个已跟踪改动 + 2 个新增）。清单因此由 26 条增至 **28 条**，复核报告 `/tmp/preflight-r0711-20260926T171754.json`（`requested=28 / verified=28`、`head=f1709cd`）。**E3 全跑报告**：`/tmp/gate-F3-browser-20260926T170755.json`。
 
