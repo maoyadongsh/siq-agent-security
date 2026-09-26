@@ -65,6 +65,9 @@ docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/01-compat-check-read
 docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/02-cli-readonly.txt
 docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/03-canary-policy-readonly.txt
 docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/04-preview-live-readonly-attempt.txt
+# 05 为 `--live` 的**前置核查**产物：证明该动作在当前候选上写面是整段替换、且脚本自身无回滚能力，
+# 故本轮**拒绝执行** --live（不是执行失败）。附录含核查脚本全文，便于离线复算。
+docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/05-live-prereq-blocked.txt
 
 # --- 工具：R06 版本化引用链审计（新增） ---
 scripts/enterprise-experience/contract-version-chain-audit.py

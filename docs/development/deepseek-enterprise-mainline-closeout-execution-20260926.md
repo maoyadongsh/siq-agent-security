@@ -1088,10 +1088,21 @@ python3 scripts/enterprise-experience/source-freeze-preflight.py --repo . \
 | 类别 | 条数 | 路径 |
 | --- | --- | --- |
 | `??`（新文件） | **9** | `rollback_approval_readiness.py`、`test_rollback_approval_readiness.py`、`enterprise-rollback-approval.v1.md`、`deepseek-r04-rollback-approval-handoff-20260926.md`、`docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/` 下 5 个文件 |
-| ` M`（改既有件） | **3** | 本执行记录、交接文档、允许清单本身 |
+| 已跟踪改动（工作树状态以空格起头 = modified） | **3** | 本执行记录、交接文档、允许清单本身 |
 
 即：`tracked 102 → 105`（**+3**）与 `untracked 705 → 714`（**+9**）**完全由本次改动解释**，并作者线**一条未动、零消失**。清单条数 **30 → 39**（新增 4 条 R04 交付 + 5 条 R09.13 证据）。
 **核验通过仍只表示这批文件的只读快照确定完整**，不是发布授权、不是源码已冻结；`unreviewed_paths:806` 与冻结时刻重跑的要求**照旧**（R08.4 的"不得复用本节数字"同样适用于本小节）。
+
+**第 6 次核验（`2026-09-26T12:32:27Z` / 本地 `20260926T123227`，`--out /tmp/preflight-r0913b-20260926T123227.json`）**：R09.13 证据新增 1 条 `05-live-prereq-blocked.txt` 后复跑 —— `requested=40 / verified=40`、`unverified=0 / excluded=0 / missing=0`、`scan_stable=true`、`conflicts=0`、`head_commit=d214e00`、`worktree: 104 tracked changes / 705 untracked / 0 conflicts`，`conclusion=blocked`（唯一原因仍是 `unreviewed_paths:806`）。
+
+**逐条归属（对第 5 次报告 `status_entries` 逐条相减，仍是唯一一处下归属结论的方式）**：**新增 1 / 消失 11**，全部可解释、并作者线一条未动：
+
+| 类别 | 条数 | 说明 |
+| --- | --- | --- |
+| `+` 新增 | **1** | 就是本次新写的 `05-live-prereq-blocked.txt` |
+| `−` 消失 | **11** | `d223ad8` 的 13 条路径中，除 `README.md` 与允许清单**仍处于已跟踪改动状态**外，其余 **9 条新文件**（R04 模块/测试/合同/交接、证据 01–04、`http-contract-acceptance.py`）**转为已跟踪且干净**；再加 `d223ad8` 提交的执行记录与交接文档（两者亦转为干净），共 11 条 |
+
+**算术自洽**：条目数 `819 − 11 + 1 = 809`；`tracked_changes 105 → 104`（三份滚动文档中执行记录与交接转干净 −2，`README.md` 转为已跟踪改动 +1）；`untracked 714 → 705`（10 条新文件转为已跟踪 −10，新增证据 +1）。**三项独立计数互相闭合，且与 `d223ad8`/`d214e00` 的路径集合逐条对应。**
 
 ### R08.8 自查：分支自身不自洽 —— R09.7 的验收工具**从未入库**（2026-09-26）
 
@@ -1610,6 +1621,49 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 - **行为 fork 通道**（`enforcement_verified` 的唯一合法生产者）仍不存在，且实现它要动 `app/adapters/openshell/*` 与
   `app/routers/policies.py` —— 需 D-1 范围明确授权；**不得**由夹具/mock/推演生成该值。
 
+### R09.14 A7 前置核查：`--live` **已获批但本轮拒绝执行**（2026-09-26）
+
+使用者当轮对"是否批准对 canary 做一次 `--live` 真实写入"的答复是**批准**。我在动手**之前**先做前置核查，
+结果两条被批准所依据的描述**都不成立**，因此**没有执行**（是拒绝执行，不是执行失败）。全部判定落盘在
+`docs/evidence/agentshield/openshell-siq-analysis-2026-09-26/05-live-prereq-blocked.txt`（含核查脚本全文）。
+
+**更正 1 —— 写面是整段替换，比我原先说的大得多。** 我原先在本记录与证据 README 里写的是"变更期间其网络允许集会短暂**多出**一条样例 endpoint"。读代码后否证：`cli_backend.py:584-591`
+
+```python
+merged = clone_policy(current.policy)
+network = network_rules_to_gateway(compiled.artifact["network_policies"])
+if network:
+    merged["network_policies"] = network   # 整段替换
+```
+
+`_live_check` 的 `desired` 只含 1 条规则，所以写入后该沙箱 **8 条** provider/内部服务策略（`_provider_siq_kimi_coding`、`_provider_siq_minimax_cn_pool`、`_provider_siq_stepfun`、`_provider_siq_tavily_search`、`siq_agentshield_relay`、`siq_data_broker`、`siq_egress_guard`、`siq_internal_services`，读回见 `03-` / `05-`）在窗口内**全部消失**。若分析助手此刻在该沙箱内运行，其模型调用与检索会被一并阻断。
+
+**更正 2 —— 我给出的"回收手段"在当前候选上根本不存在。** 脚本 `openshell_compat_check.py:139`：
+
+```python
+rolled = backend.rollback(sandbox, receipt)   # 不传 authorizer
+```
+
+而 `cli_backend.py:807-808`：`if authorizer is None: raise VerificationFailed("openshell_rollback_authorizer_required")`。
+隔离核查脚本（对网关**只有一条只读 `policy get --full`**，其余全在进程内）实测：
+
+```text
+[read-only] target=siq-analysis-canary-27d1289f98fa revision=2 digest=98e9925deeeffcc8…
+[read-only] 现存 network_policies 条数 = 7
+[call] backend.rollback(target, receipt)   # 与 _live_check:139 完全同形
+[result] VerificationFailed: openshell_rollback_authorizer_required
+```
+
+回滚在**写之前**就抛错，被 `_live_check` 的 `except Exception` 吞成"FAIL: 回滚失败"并把 `ok` 置 `False`（退出码 1）——**而 `policy set` 已经发生**。所以执行 `--live` 的结果是：把该 canary 留在"网络策略只剩 `example.com:443`"的状态，直到有人手工恢复。**"同一 run 内回滚"不成立。**
+
+**本轮对目标碰触的全部命令 = 只读的 `policy get --full` / `policy list` / `sandbox list`**；未执行任何 `policy set`。BEFORE 全文已完整读回并留档（`05-`），网关侧 version 1/2 亦仍在 `policy list` 中——这是**未使用**的恢复材料。
+
+**对使用者的两条更正**：① 本记录与证据 README 中"短暂多出一条 endpoint"的旧表述**已按上面更正**；② 当轮提问里"同一 run 内回滚到前一修订作为恢复"这句是**我写错了**，据它作出的批准不足以覆盖修正后的风险，故**停下来重问**，不按原批准执行。
+
+**三条备选路径（本轮答复均为待定）**：① 先给脚本补 `authorizer`（从私有操作记录构造、拒绝请求正文覆盖）与"写后必回滚"断言，**使其先具备回收能力**再跑；② 由目标侧提供一个与生产隔离的**一次性专用沙箱**再跑；③ 停在只读。**产出上限不变**：`verify()` 只比对读回配置，仍只能是 `readback_verified`。
+
+**顺带更正（同一次深挖）**：E149 预览工具"只放行一个环境变量就能恢复"是**不够的**——`authorize_runtime_target`（`target_authority.py:125-133`）对授权目录做**精确元组相等**匹配，而工具的三个身份 id 都是运行期生成的，算子无法预先声明；要恢复必须让工具的身份 id 改为算子可预声明的输入。**本轮未动任何代码。**
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
@@ -1621,5 +1675,5 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 | D-3 共享影响 / 运行事实 | R00.6 | **已决策：保持 `unknown` 不猜** |
 | D-4 证据时效 | R04 | **未确认**（未自行设 TTL） |
 | D-5 保留治理 | R00.6 | **已决策：只补齐声明与缺口** |
-| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**，但 `--live` 真实写入与行为 fixture 通道**仍未获许可/仍不存在**，A5/A7 仍 blocked |
+| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可；**受控 OpenShell 目标已于 2026-09-26 由使用者指定**（= 智能分析助手网关，见 R09.13），**只读链接已实跑成立**；**`--live` 虽获批准，但前置核查证明该动作会整段替换 canary 网络策略、且脚本自身无回滚能力，故本轮拒绝执行**（R09.14，三条备选路径待定）；行为 fixture 通道使用者已授权**在隔离环境内建**，具体方案待提交后实施。**A5/A7 仍 blocked** |
 | D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认** |
