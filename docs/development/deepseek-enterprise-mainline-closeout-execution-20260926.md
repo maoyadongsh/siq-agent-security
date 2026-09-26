@@ -1798,6 +1798,10 @@ git log --oneline -3 -- apps/control-api/app/main.py → 6ba1f7c / 4a4bcd0 / 977
 
 **结论档 = 隔离验证通过，不是实际交付**：工具**从未**在真实目标上运行过，全程未联系任何网关、未 `upload`/`exec`/`policy set`；业务结论只到"在本机合成件上，检测器能区分**被拦 / 目标已死 / 夹具撒谎**"。**未实测的前提**：网关是否真的**按 binary 路径**归因网络规则——兼容矩阵（v0.0.83）里**没有一条**记录说它被实测过（`interceptor: false`），这正是 P1-pre，**需单独许可**（含 `sandbox upload` / `sandbox exec` 两类本轮从未做过的动作）。在 P1-pre 通过前，主方案与退路**都不能**当作已成立。
 
+**收尾（P0-e，2026-09-26）**：提交 **`743a745`**（父 `108fb29`，**16 条路径** = 上述 6 条新增源码/测试 + `09-` 留痕 + 方案文档 + 8 条**已跟踪**〔5 条适配器合同件 + 执行记录 + 交接 + 允许清单〕；`git show --name-only` 与清单逐条一致、无清单外路径）。分支 `deepseek/enterprise-mainline-closeout-20260926`，`git rev-list --count ebaaf3b..HEAD` = **25**；`main` 仍为 `ebaaf3b`；**未推送、未签发、未部署**。`apps/control-api/app/adapters/openshell/bounded_command.py` 与 `scripts/enterprise-experience/deployment-postgres-check.py` 在本工作树中亦有修改，**非本次作者**，**已排除**在本提交之外（其归属仍待 D-7.3）。
+
+**提交后复跑 preflight（第 13 次，`2026-09-26T14:07:17Z`，`--out /tmp/preflight-r0918b-20260926T140717Z.json`）**：`requested=62 / verified=62`（含内容级 sha256）、`unverified/excluded/missing` 全 0、`scan_stable=true`、`conflicts=0`、`head_commit=743a745`、`worktree: 100 tracked / 704 untracked`、`status_entries=804`、`signed=installable=published=false`、`conclusion=blocked`（唯一原因 `unreviewed_paths:804`，全部是并行作者线产物）。**同口径逐条相减（对第 12 次）= 新增 0 / 消失 16**，消失的 16 条逐条等于本次提交的路径；三项计数闭合：`820 − 16 = 804`、`tracked 108 − 8 = 100`、`untracked 712 − 8 = 704`；`head` 由 `108fb29` 前移到 `743a745` 可独立佐证是提交而非删除。**并作者线在本窗口内一条未动**（"新增 0"即其实测形式）。**同值不同源的第五处**：`unreviewed` 两次都是 `804`，但第 12 次为 `status 820 − checked∩status 16`、第 13 次为 `status 804 − checked∩status 0`；这次相等恰好证明被提交的 16 条**正是**当时被清单覆盖的那 16 条。**并已逐条复核：允许清单 62 条 `git ls-tree -r HEAD` 命中 62/62、0 缺失，且对它们 `git status --porcelain --untracked-files=all` 输出为空** —— 即本轮清单内每一条都已入库（R08.8 那类"清单里有、分支上却没有"的缺陷在本轮已排除）。**核验通过仍只是"只读快照完整"，不是冻结、不是发布授权、不是发行来源清单。**
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
