@@ -1201,6 +1201,44 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **未做（刻意）**：没有把 30 个浏览器脚本接成可执行门禁。理由：整批约 4 分钟、需先做一次模拟身份前端构建、且当前有 5 项失败——把它塞进统一报告会让"门禁红"变成前端线的既有状态而非本轮可判定的信号。**是否纳入属 R07 设计决策，留作下一动作。**
 
+### R07.11 可选浏览器验收门禁（把 `browser_acceptance` 从"恒登记"变成"可执行"）
+
+**为什么做**：R09.5 实测推翻了 `browser_acceptance` 原登记的 `requires_running_services`，"恒 `skipped`"就不再是事实描述。按 R07.10 给 `migration_replay_postgres` 的模式（**默认连探测都不做、显式 opt-in 才跑、证据附摘要级断言**）把它做成同构的第二条可选门禁。
+
+**新增两个文件**（都属于本轮成果，非改动既有文件）：
+
+| 文件 | 作用 |
+| --- | --- |
+| `scripts/enterprise-experience/run-browser-smoke-suite.py` | 套件本体：模拟身份前端构建 + 遍历全部 `*-browser-smoke.py` + 写 `result.json`（**独占创建**）。参数**从每个脚本自己的 `--help` 读出**，不硬编码参数家族 |
+| `scripts/enterprise-experience/test_run_browser_smoke_suite.py` | 15 条合成用例（不启浏览器、不构建前端、不依赖 playwright） |
+
+`enterprise-gate-run.py` 侧新增：`--enable-browser-smoke-gate`、`--browser-smoke-python`、`--browser-smoke-edge`、`--browser-smoke-connector-dir`；`browser_probe`/`check_browser_evidence`/`browser_gate_decision`/`browser_gate`；`run_gates` 的声明覆盖改为**按 id 分派**（两条可选门禁各自只撤自己那条登记）。新增 9 条合成分支用例。
+
+**设计要点（都是"不制造事实"的取向）**：
+
+1. **默认连探测都不做**：未传 `--enable-browser-smoke-gate` 时不探解释器、不构建、不跑脚本；被 `--only` 排除时同理（`excluded_by_only` 明记）。
+2. **不安装依赖**：解释器缺 playwright 时**不代跑**，记为实测原因 `playwright_not_importable` 并保持非绿。
+3. **缺原生二进制 → `blocked`**，不替脚本造参数；套件因此不可能"通过"。
+4. **证据摘要级断言**：`passed is True` / `simulated_build is True` / `production_deployed is False` / `production_identity_tested is False` / `counts.total > 0` / `suite_sha256` 与当前套件字节一致。
+5. **失败即失败**：5 项 UI 断言失败**不加 skip**，门禁 `failed`；结论 `partial_run_not_a_gate`（定向）或 `gates_incomplete`（全跑）。
+
+**实跑记录**：
+
+| 轮次 | 命令要点 | 结果 |
+| --- | --- | --- |
+| E1 定向 | `--only browser_acceptance_simulated --enable-browser-smoke-gate` | 门禁 `failed`、`exit_code=2`、**耗时 0 秒**而 `real 4m24s` —— 即**整批 30 个脚本真跑完了，却在最后一步失败**（缺陷 1）。**证据未丢**：30 个脚本各自的留证目录仍在 `/tmp/siq-gate-browser-evidence-7b8qd7p5/`，逐个读其自身 JSON：17 个显式 `passed: true`，其余为 `?`（无 `passed` 键或未生成）——**与 A2 独立测得的失败集合完全一致**（change-execution / deployment-preview / workspace / onboarding / candidate-review 全为 `?`） |
+| E2 定向 | 同上（修复后） | 门禁 `failed`、`exit_code=1`、**25 passed / 5 failed / 0 blocked（of 30）**、`real 4m24s`；stderr 尾部即计数行。与 A2 **独立测得同一组数字**（25/5）——这是"套件不是随机通过"的证据 |
+| **E3 全跑** | `--out /tmp/gate-F3-browser-20260926T170755.json --enable-browser-smoke-gate`（在 E2 修复后、含全部 48 个基础门禁） | **49 个门禁记录：48 passed / 1 failed / 0 blocked**，结论 `gates_failed`；唯一失败项即 `browser_acceptance_simulated`（`exit_code=1`，stderr 尾部同一计数行 **25 / 5 / 0（of 30）**，并列出 5 个失败脚本名：`candidate-review` / `change-execution` / `deployment-preview` / `onboarding` / `workspace`-browser-smoke）。**这 5 个名字与 A2 独立测得的失败集合、以及 E1 从各脚本自身 JSON 反推出的 `?` 集合三方一致**。其余：`backend_full_suite` **2164 passed / 1 skipped / 1 warning in 113.75s**、`web_unit_suite` 与 `web_prod_build_bundle` 均 passed；**`skipped` 仅剩两条且都是声明级**：`migration_replay_postgres`（本轮**刻意不启用**——再跑一次数据库容器需按 §3.2 重新取得该次许可，故以静态原因记 `skipped`、`measured=None`）与 `real_device_native_evidence`。整体 `real 9m11s`，`head=f1709cd515fe`，分支 `deepseek/enterprise-mainline-closeout-20260926` |
+
+**E3 的结论读法（重要，避免误读为"回退"）**：F3 是本候选**第一次把可选浏览器门禁接进全跑**，因此它相对 R07.9 的 C 轮（48 passed / 0 failed / 3 skipped，结论 `gates_incomplete`）**不是能力回退，而是"把一个此前恒登记为不可用的声明换成了真实可执行门禁"**。换来的代价是：该门禁**实测就是红的**（5 个 UI 断言失败），于是全跑结论从"不全"变成"失败"。两条都是诚实的对外表述：**默认（不传开关）仍是 C 轮的形态**；**启用后如实报红**，不因"这是新加的门禁"而给它豁免或降级成 skip。
+
+**本轮自己踩的两个坑（都已修，且都写成了回归用例）**：
+
+- **缺陷 1（最严重）**：我把证据目录交给套件创建，套件**等到最后**写结果时才 `mkdtemp`+独占创建。但每个脚本用 `mkdir(parents=True, exist_ok=False)` 建自己的输出目录，**顺手把父目录（也就是证据根）一起建了出来**，于是最后一步必然 `FileExistsError` → 退出 2。后果是**一次 4 分 24 秒的真实运行结果全丢**。修法：改为**开跑前先 `os.mkdir(out_dir, 0o700)` 占位**，结果文件再用 `O_EXCL` 写。回归用例 `test_evidence_dir_is_claimed_before_scripts_run`（断言脚本被调用时根目录**已经存在**）。**注意这与 R07.10 缺陷 1 是镜像关系**：那次是我**预建**了脚本要求"必须不存在"的目录；这次是我**没有**预建脚本会连带创建的目录。两次的教训是同一条：**必须读清对方对目录生命周期的约定，而不是照搬上一次的模式**。
+- **缺陷 2**：探针写成了 `import playwright; print(playwright.__version__)` —— `playwright` **没有** `__version__` 属性，于是**装了 playwright 的解释器被判成没装**（实测 `/home/maoyd/miniconda3/bin/python` 有 playwright 1.58.0，却被记为 `playwright_not_importable`）。这正是"把可跑误记为不可跑"的典型写法。修法：改用发行版元数据 `from importlib.metadata import version; print(version('playwright'))`，并在两处（套件与门禁）用同一个常量；回归用例断言探针命令含 `importlib.metadata`、**不含** `__version__`。
+
+**测试与静态检查**：`scripts/enterprise-experience/` 全部 **73 passed**（本轮 15+9 条为新增）；ruff 按仓库基线（`--config apps/control-api/pyproject.toml`）对四个文件检查：新增/改动的行**零告警**，全仓该目录仍只余 5 条既存项（1 `UP017` + 4 `E731`）。
+
 ## 本轮决策门槛汇总
 
 见 R00.6（提出）与 R00.6a / R00.6b（答复）。
@@ -1212,5 +1250,5 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 | D-3 共享影响 / 运行事实 | R00.6 | **已决策：保持 `unknown` 不猜** |
 | D-4 证据时效 | R04 | **未确认**（未自行设 TTL） |
 | D-5 保留治理 | R00.6 | **已决策：只补齐声明与缺口** |
-| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）。真实 Linux 实机（A3+）与受控 OpenShell 目标（A7）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可 |
+| D-6 原生验证与受控目标 | R09 | **部分**：**A1 已获批并执行完毕**（§3.2 前置说明写在 R09.4，许可 = "批准并执行完整 A1"）：`migration_replay_postgres` 由恒 `skipped` 变为**真实执行且通过**，宿主容器集合 `diff` 为空（45 项）、零残留（R09.4(8) / R07.10b）；**A2 已执行**、实测**不需要运行中的控制面**，故"一次性服务实例"许可**未使用**（R09.5）；**A2 的 30 个脚本已被 R07.11 收拢为一个显式 opt-in 门禁**（默认不探测；接入后全跑 F3 = 48 passed / 1 failed / 0 blocked / 2 skipped，唯一失败项即该门禁，见 R07.11 的 E3）。真实 Linux 实机（A3+）与受控 OpenShell 目标（A7）**可用但未启用**（R09.3），启用前仍须按 §3.2 写出隔离/目标/回收方案并取得该次许可 |
 | D-7 发行与部署 | R08 | **部分**：D-7.1 提交到新分支、D-7.4 保留追加段**已答复**；D-7.2 推送、D-7.3 并作者归属、D-7.5 签发、D-7.6 部署**未确认** |

@@ -13,13 +13,18 @@
   `conclusion` 不可能是绿色；
 - **消耗资源的门禁必须显式启用**：`migration_replay_postgres` 需要一次性 PostgreSQL 容器，
   默认**连探测都不做**，只有显式传 `--enable-ephemeral-postgres-gate` 才会先只读探测
-  docker 与镜像、再决定是"跑"还是"记为跳过（带**实测**原因，而非泛泛的'环境不支持'）"。
+  docker 与镜像、再决定是"跑"还是"记为跳过（带**实测**原因，而非泛泛的'环境不支持'）"；
+  `browser_acceptance` 同理，需 `--enable-browser-smoke-gate`，会做一次**模拟身份**前端构建
+  （独立临时目录、不可发布）并跑 `run-browser-smoke-suite.py`。
+  两者的证据都附带**摘要级断言**（`post`）：证据必须来自本次运行、且不得声称测过生产身份/生产部署。
 
 安全边界：只读源码 + 临时构建；**不安装依赖、不提交、不签名、不发布、不读 `.env`/私钥/种子**。
 默认**不启动服务、不连数据库**；唯一例外是显式 `--enable-ephemeral-postgres-gate`：此时启动的是
 **一次性回环 PostgreSQL 容器**（镜像须已存在、**不自动拉取**、无卷挂载、`--rm` + `finally` 双保险回收），
 容器销毁即数据消失，且该例外需按任务书 §3.2 先取得对应许可。正式构建显式 `VITE_DEV_MODE=false`
-且输出到临时目录，与模拟身份构建分离。
+且输出到临时目录，与模拟身份构建分离；`--enable-browser-smoke-gate` **不启动**任何控制面服务——
+被测脚本各自在本机 `127.0.0.1` 起临时静态服务并用路由 mock，构建同样落在独立临时目录
+（目录名自带 `NOT-RELEASABLE`）。
 报告 `conclusion` 只描述**本机这一份工作树**的门禁状态：不是生产效果证据，不是已签候选，
 也不是源码冻结结论。退出码 0 只表示"本次运行中没有 failed 且没有 skipped/blocked"。
 """
@@ -75,6 +80,16 @@ POSTGRES_UNAVAILABLE_ID = "migration_replay_postgres"
 POSTGRES_IMAGE = "postgres:17-alpine"
 POSTGRES_CHECK_TOOL = "scripts/enterprise-experience/deployment-postgres-check.py"
 POSTGRES_GATE_ID = "migration_replay_postgres_ephemeral"
+
+# 浏览器验收（同样默认不跑）：需要带 playwright 的解释器 + 一次模拟身份前端构建。
+# 实测（执行记录 R09.5）**不需要运行中的控制面**——脚本自带 127.0.0.1 静态服务与路由 mock。
+BROWSER_UNAVAILABLE_ID = "browser_acceptance"
+BROWSER_SUITE_TOOL = "scripts/enterprise-experience/run-browser-smoke-suite.py"
+BROWSER_GATE_ID = "browser_acceptance_simulated"
+
+# 用**发行版元数据**探测，而不是 `playwright.__version__`——后者不存在，会把装了
+# playwright 的解释器误判成没装（"不可跑"记错的典型写法）。
+PLAYWRIGHT_PROBE = "from importlib.metadata import version; print(version('playwright'))"
 
 # 正式产物中**不得**出现的开发身份字面量。命中即失败（这是断言，不是观察）。
 DEV_IDENTITY_LITERALS = ("X-Dev-Tenant-Id", "X-Dev-User-Id", "X-Dev-Roles", "VITE_DEV_MODE")
@@ -383,6 +398,105 @@ def postgres_gate(repo: Path, evidence_dir: Path) -> dict:
     }
 
 
+def browser_probe(repo: Path, python: Path, runner=subprocess.run) -> dict:
+    """只读探测：这个解释器能不能跑浏览器验收、仓库里有没有可跑的脚本。**不安装任何依赖**。"""
+    evidence: dict = {"python": str(python)}
+    evidence["scripts"] = len(sorted((repo / "scripts/enterprise-experience").glob("*-browser-smoke.py")))
+    if evidence["scripts"] == 0:
+        return {"runnable": False, "reason": "no_browser_smoke_scripts_found", "evidence": evidence}
+    if not python.is_file():
+        return {"runnable": False, "reason": "browser_python_not_found", "evidence": evidence}
+    try:
+        result = runner([str(python), "-c", PLAYWRIGHT_PROBE],
+                        capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {"runnable": False, "reason": "playwright_probe_failed",
+                "evidence": {**evidence, "detail": type(exc).__name__}}
+    if result.returncode != 0:
+        # 缺 playwright 的解释器**不能**代跑：装依赖不在本工具边界内，如实记为不可跑。
+        return {"runnable": False, "reason": "playwright_not_importable",
+                "evidence": {**evidence, "detail": (result.stderr or "").strip()[:200]}}
+    evidence["playwright_version"] = (result.stdout or "").strip()
+    return {"runnable": True, "reason": None, "evidence": evidence}
+
+
+def check_browser_evidence(evidence_dir: Path, suite_path: Path) -> dict:
+    """断言浏览器验收留证确实来自**本次模拟身份套件**，且没有冒充生产结论。"""
+    result_path = evidence_dir / "result.json"
+    if not result_path.is_file():
+        return {"status": "blocked", "detail": "browser_evidence_missing"}
+    try:
+        proof = json.loads(result_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"status": "blocked", "detail": "browser_evidence_unreadable"}
+    if proof.get("passed") is not True:
+        return {"status": "failed", "detail": "browser_evidence_not_passed"}
+    if proof.get("simulated_build") is not True:
+        return {"status": "failed", "detail": "browser_evidence_not_a_simulated_build"}
+    if proof.get("production_deployed") is not False:
+        return {"status": "failed", "detail": "browser_evidence_claims_production_deploy"}
+    if proof.get("production_identity_tested") is not False:
+        return {"status": "failed", "detail": "browser_evidence_claims_production_identity"}
+    counts = proof.get("counts")
+    if not isinstance(counts, dict) or not counts.get("total"):
+        return {"status": "failed", "detail": "browser_evidence_has_no_scripts"}
+    if proof.get("suite_sha256") != sha256_bytes(suite_path.read_bytes()):
+        return {"status": "failed", "detail": "browser_evidence_suite_digest_mismatch"}
+    return {"status": "passed", "evidence": {
+        "counts": counts,
+        "failed_scripts": proof.get("failed_scripts"),
+        "blocked_scripts": proof.get("blocked_scripts"),
+        "playwright_version": proof.get("playwright_version"),
+        "scope_note": proof.get("scope_note"),
+        "suite_sha256": proof["suite_sha256"],
+        "result_path": str(result_path),
+    }}
+
+
+def browser_gate_decision(repo: Path, *, enabled: bool, python: Path | None,
+                          runner=subprocess.run) -> dict:
+    """决定本次运行里 `browser_acceptance` 是"跑"还是"跳过"，以及**为什么**。
+
+    未启用时**不触碰任何东西**（不探解释器、不构建前端）。
+    """
+    declaration = next(item for item in DECLARED_UNAVAILABLE
+                       if item["id"] == BROWSER_UNAVAILABLE_ID)
+    if not enabled:
+        return {"action": "skipped", "reason": declaration["reason"],
+                "note": declaration["note"] + "；本次未显式启用 --enable-browser-smoke-gate"}
+    resolved = python or Path(sys.executable)
+    probe = browser_probe(repo, resolved, runner)
+    if not probe["runnable"]:
+        return {"action": "skipped", "reason": probe["reason"],
+                "note": ("已启用但只读探测判定不可跑；不安装依赖、不用缺 playwright 的解释器代跑"
+                         "（可用 --browser-smoke-python 指定）"),
+                "measured": True, "evidence": probe["evidence"]}
+    return {"action": "run", "reason": None, "measured": True,
+            "python": str(resolved), "evidence": probe["evidence"]}
+
+
+def browser_gate(repo: Path, evidence_dir: Path, python: Path, *,
+                 edge: Path | None = None, connector_dir: Path | None = None) -> dict:
+    """浏览器验收门禁本体：模拟身份构建 + 全部 `*-browser-smoke.py`，附证据断言。
+
+    需要原生 Edge/连接器的脚本由 `--browser-smoke-edge` / `--browser-smoke-connector-dir` 提供；
+    **不提供时它们记为 `blocked`**（套件不会替它们造假参数），套件因此不可能"通过"。
+    """
+    argv = [str(python), str(repo / BROWSER_SUITE_TOOL), "--repo", str(repo), "--out", str(evidence_dir)]
+    if edge is not None:
+        argv += ["--edge", str(edge)]
+    if connector_dir is not None:
+        argv += ["--connector-dir", str(connector_dir)]
+    return {
+        "id": BROWSER_GATE_ID,
+        "kind": "command",
+        "cwd": ".",
+        "argv": argv,
+        "post": lambda _outcome: check_browser_evidence(evidence_dir, repo / BROWSER_SUITE_TOOL),
+        "why": "脚本自述 mocked browser only：证明的是模拟条件下的前端交互，不是真实 HTTP 契约",
+    }
+
+
 def build_gates(repo: Path, build_dir: Path) -> list[dict]:
     """固定顺序的门禁清单。`post` 为命令之后必须成立的断言。"""
     python = str(repo / "apps/control-api/.venv/bin/python")
@@ -465,19 +579,26 @@ def run_gate(repo: Path, gate: dict) -> dict:
 
 
 def run_gates(repo: Path, gates: list[dict], build_dir: Path, *,
-              postgres_decision: dict | None = None) -> dict:
+              postgres_decision: dict | None = None,
+              browser_decision: dict | None = None) -> dict:
     started = utc_now()
     records = [run_gate(repo, gate) for gate in gates]
-    attempted = POSTGRES_GATE_ID in {r["id"] for r in records}
+    attempted_ids = {r["id"] for r in records}
+    # 每条声明只可能被一个可选门禁覆盖；覆盖时用**本次实测**的原因替换静态原因。
+    overrides = {
+        POSTGRES_UNAVAILABLE_ID: (POSTGRES_GATE_ID, postgres_decision),
+        BROWSER_UNAVAILABLE_ID: (BROWSER_GATE_ID, browser_decision),
+    }
     skipped = []
     for item in DECLARED_UNAVAILABLE:
-        if item["id"] == POSTGRES_UNAVAILABLE_ID and postgres_decision is not None:
-            if postgres_decision["action"] == "run" and attempted:
+        gate_id, decision = overrides.get(item["id"], (None, None))
+        if decision is not None:
+            if decision["action"] == "run" and gate_id in attempted_ids:
                 # 真的跑了就不该再登记为"不可跑"；跑成什么样由门禁记录本身说明。
                 continue
-            item = {**item, "reason": postgres_decision["reason"],
-                    "note": postgres_decision.get("note") or item["note"],
-                    "measured": bool(postgres_decision.get("measured"))}
+            item = {**item, "reason": decision["reason"],
+                    "note": decision.get("note") or item["note"],
+                    "measured": bool(decision.get("measured"))}
         skipped.append(dict(item, status="skipped"))
     statuses = [r["status"] for r in records]
     if "failed" in statuses:
@@ -547,6 +668,12 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
     parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT_SECONDS, help="单门禁超时秒数")
     parser.add_argument("--enable-ephemeral-postgres-gate", action="store_true",
                         help="显式启用一次性回环 PostgreSQL 门禁（会启动容器）；按 §3.2 需先取得许可")
+    parser.add_argument("--enable-browser-smoke-gate", action="store_true",
+                        help="显式启用浏览器验收门禁（会做一次模拟身份前端构建并跑 30 个脚本）")
+    parser.add_argument("--browser-smoke-python",
+                        help="带 playwright 的解释器路径；默认用当前解释器（缺 playwright 时记为不可跑）")
+    parser.add_argument("--browser-smoke-edge", help="原生 Edge 二进制（仅需要它的脚本用得到）")
+    parser.add_argument("--browser-smoke-connector-dir", help="框架连接器二进制目录")
     args = parser.parse_args(argv)
 
     repo = Path(args.repo).resolve()
@@ -577,6 +704,23 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
         postgres_decision["note"] = ("已显式启用，但本次被 --only 排除，"
                                      "未探测 docker、未启动容器；仍登记为不可跑")
         postgres_decision["excluded_by_only"] = True
+    browser_enabled = args.enable_browser_smoke_gate and (
+        selected is None or BROWSER_GATE_ID in selected)
+    browser_python = Path(args.browser_smoke_python).resolve() if args.browser_smoke_python else None
+    browser_edge = Path(args.browser_smoke_edge).resolve() if args.browser_smoke_edge else None
+    browser_connector_dir = (Path(args.browser_smoke_connector_dir).resolve()
+                             if args.browser_smoke_connector_dir else None)
+    for flag, path in (("--browser-smoke-edge", browser_edge),
+                       ("--browser-smoke-connector-dir", browser_connector_dir)):
+        # 路径给错了就当用法错误处理：不让"文件不存在"变成一条看不懂的 blocked 记录。
+        if path is not None and not path.exists():
+            parser.exit(EXIT_USAGE, f"{flag}: no such path: {path}\n")
+    browser_decision = browser_gate_decision(repo, enabled=browser_enabled, python=browser_python)
+    if args.enable_browser_smoke_gate and not browser_enabled:
+        browser_decision["note"] = ("已显式启用，但本次被 --only 排除，"
+                                    "未探测解释器、未构建前端；仍登记为不可跑")
+        browser_decision["excluded_by_only"] = True
+
     if postgres_decision["action"] == "run":
         # **不预建**该目录：A1 脚本要求传入一个**不存在**的新目录（`mkdir(exist_ok=False)`），
         # 正是为了不可能覆盖上一次的留证。`mkdtemp` 只为取一个不会撞名的路径，随后立即移除；
@@ -586,17 +730,28 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
         postgres_decision["evidence_dir"] = str(evidence_dir)
         gates = gates + [postgres_gate(repo, evidence_dir)]
         gates[-1]["timeout"] = args.timeout
+    if browser_decision["action"] == "run":
+        # 同样**不预建**：套件自己 `mkdir(0o700)` 独占创建证据目录，已存在即拒绝。
+        browser_evidence_dir = Path(tempfile.mkdtemp(prefix="siq-gate-browser-evidence-"))
+        os.rmdir(browser_evidence_dir)
+        browser_decision["evidence_dir"] = str(browser_evidence_dir)
+        gates = gates + [browser_gate(repo, browser_evidence_dir,
+                                      Path(browser_decision["python"]),
+                                      edge=browser_edge, connector_dir=browser_connector_dir)]
+        gates[-1]["timeout"] = args.timeout
     if selected is not None:
         gates = [gate for gate in gates if gate["id"] in selected]
         if not gates:
             parser.exit(EXIT_USAGE, "no gate matched --only\n")
 
     try:
-        report = run_gates(repo, gates, build_dir, postgres_decision=postgres_decision)
+        report = run_gates(repo, gates, build_dir, postgres_decision=postgres_decision,
+                           browser_decision=browser_decision)
     except KeyboardInterrupt:
         return EXIT_NOT_GREEN
     report["optional_gate_decisions"] = [
-        {"id": POSTGRES_UNAVAILABLE_ID, **postgres_decision}]
+        {"id": POSTGRES_UNAVAILABLE_ID, **postgres_decision},
+        {"id": BROWSER_UNAVAILABLE_ID, **browser_decision}]
     if selected is not None:
         # 子集运行不得被读作"门禁通过"：结论与通过集合都明确标注为部分运行。
         report["conclusion"] = "partial_run_not_a_gate"

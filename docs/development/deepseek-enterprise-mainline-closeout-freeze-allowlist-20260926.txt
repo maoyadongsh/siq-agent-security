@@ -3,7 +3,7 @@
 # 用途：作为 scripts/enterprise-experience/source-freeze-preflight.py --allowlist 的输入，
 # 对下列路径做只读快照核验（逐段 lstat 拒符号链接，敏感路径只标记不读取）。
 #
-# 范围声明：本清单**只列本轮（R00–R08）由执行者创建或修改的路径**，不包含任何并行
+# 范围声明：本清单**只列本轮（R00–R09）由执行者创建或修改的路径**，不包含任何并行
 # 作者线的产物，也不构成对这些路径"应当进入发行候选"的判断。允许清单是**审阅输入**，
 # 不是发布授权，不是源码已冻结的结论。
 #
@@ -57,6 +57,10 @@ scripts/enterprise-experience/test_contract_version_chain_audit.py
 # --- 工具：R07 统一防御门禁执行器（新增） ---
 scripts/enterprise-experience/enterprise-gate-run.py
 scripts/enterprise-experience/test_enterprise_gate_run.py
+
+# --- 工具：R07.11 浏览器验收套件（新增；`--enable-browser-smoke-gate` 的探测/执行体） ---
+scripts/enterprise-experience/run-browser-smoke-suite.py
+scripts/enterprise-experience/test_run_browser_smoke_suite.py
 
 # --- 文档：本轮收口执行记录与交接（新增） ---
 docs/development/deepseek-enterprise-mainline-closeout-execution-20260926.md

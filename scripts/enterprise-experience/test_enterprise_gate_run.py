@@ -462,6 +462,203 @@ class GateRunTest(unittest.TestCase):
                              str(seen["dir"]))
             self.assertEqual(report["conclusion"], "gates_incomplete")
 
+    def test_browser_gate_is_not_even_probed_until_explicitly_enabled(self):
+        """默认必须**连解释器都不探**；"没启用"与"探测后不可跑"是两种不同的诚实。"""
+        calls = []
+
+        def runner(argv, **_kwargs):  # pragma: no cover - 被调用即失败
+            calls.append(argv)
+            raise AssertionError("未启用时不得探测解释器")
+
+        decision = tool.browser_gate_decision(Path("."), enabled=False, python=None, runner=runner)
+        self.assertEqual(decision["action"], "skipped")
+        self.assertEqual(decision["reason"], "requires_frontend_simulated_build_and_playwright")
+        self.assertFalse(decision.get("measured"))
+        self.assertEqual(calls, [])
+
+    def test_browser_probe_never_installs_and_names_the_measured_reason(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            scripts = repo / "scripts" / "enterprise-experience"
+            python = Path(tmp) / "python"
+
+            # 一个脚本都没有：不可跑（而不是"空套件算通过"）。
+            self.assertEqual(tool.browser_probe(repo, python, runner=lambda *_a, **_k: None)["reason"],
+                             "no_browser_smoke_scripts_found")
+
+            scripts.mkdir(parents=True, exist_ok=True)
+            (scripts / "demo-browser-smoke.py").write_text("# synthetic\n", encoding="utf-8")
+            # 解释器不存在
+            self.assertEqual(tool.browser_probe(repo, python, runner=lambda *_a, **_k: None)["reason"],
+                             "browser_python_not_found")
+
+            python.write_text("#!/bin/sh\n", encoding="utf-8")
+
+            class Fake:
+                def __init__(self, code, out="", err=""):
+                    self.returncode, self.stdout, self.stderr = code, out, err
+
+            seen = []
+
+            def runner(argv, **_kwargs):
+                seen.append(argv)
+                return Fake(1, "", "ModuleNotFoundError: No module named 'playwright'")
+
+            probe = tool.browser_probe(repo, python, runner=runner)
+            self.assertFalse(probe["runnable"])
+            self.assertEqual(probe["reason"], "playwright_not_importable")
+            self.assertEqual(seen, [[str(python), "-c", tool.PLAYWRIGHT_PROBE]])
+            # 探测命令必须查**发行版元数据**：`playwright.__version__` 不存在，
+            # 用它会把装了 playwright 的解释器误判成没装。
+            self.assertIn("importlib.metadata", seen[0][2])
+            self.assertNotIn("__version__", seen[0][2])
+            self.assertNotIn("install", " ".join(seen[0]))  # 不装依赖
+
+            probe = tool.browser_probe(repo, python, runner=lambda *_a, **_k: Fake(0, "1.55.0\n"))
+            self.assertTrue(probe["runnable"])
+            self.assertEqual(probe["evidence"]["playwright_version"], "1.55.0")
+            self.assertEqual(probe["evidence"]["scripts"], 1)
+
+    def test_browser_evidence_claims_are_asserted_not_observed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            evidence = Path(tmp)
+            suite = Path(tmp) / "suite.py"
+            suite.write_text("# suite\n", encoding="utf-8")
+            digest = hashlib.sha256(suite.read_bytes()).hexdigest()
+
+            def proof(**overrides):
+                body = {"passed": True, "simulated_build": True, "production_deployed": False,
+                        "production_identity_tested": False,
+                        "counts": {"passed": 25, "failed": 5, "blocked": 0, "total": 30},
+                        "failed_scripts": ["workspace-browser-smoke"],
+                        "suite_sha256": digest, "playwright_version": "1.55.0",
+                        "scope_note": "scope: mocked browser only"}
+                body.update(overrides)
+                return body
+
+            def write(body):
+                (evidence / "result.json").write_text(
+                    "not json" if body is None else json.dumps(body), encoding="utf-8")
+                return tool.check_browser_evidence(evidence, suite)
+
+            self.assertEqual(write(proof())["status"], "passed")
+            self.assertEqual(write(proof(passed=False))["detail"], "browser_evidence_not_passed")
+            self.assertEqual(write(proof(simulated_build=False))["detail"],
+                             "browser_evidence_not_a_simulated_build")
+            self.assertEqual(write(proof(production_deployed=True))["detail"],
+                             "browser_evidence_claims_production_deploy")
+            self.assertEqual(write(proof(production_identity_tested=True))["detail"],
+                             "browser_evidence_claims_production_identity")
+            self.assertEqual(write(proof(counts={"total": 0}))["detail"],
+                             "browser_evidence_has_no_scripts")
+            self.assertEqual(write(proof(suite_sha256="0" * 64))["detail"],
+                             "browser_evidence_suite_digest_mismatch")
+            self.assertEqual(write(None)["status"], "blocked")
+            (evidence / "result.json").unlink()
+            self.assertEqual(tool.check_browser_evidence(evidence, suite)["detail"],
+                             "browser_evidence_missing")
+
+    def test_enabled_but_unrunnable_browser_gate_records_measured_skip_off_green(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            build = Path(tmp) / "build"
+            build.mkdir()
+
+            decision = tool.browser_gate_decision(repo, enabled=True, python=None,
+                                                  runner=lambda *_a, **_k: None)
+            self.assertEqual(decision["action"], "skipped")
+            self.assertTrue(decision["measured"])
+            self.assertEqual(decision["reason"], "no_browser_smoke_scripts_found")
+            report = tool.run_gates(repo, synthetic_gates({"ok": "passed"}), build,
+                                    browser_decision=decision)
+            entry = [s for s in report["skipped_gates"] if s["id"] == tool.BROWSER_UNAVAILABLE_ID]
+            self.assertEqual(len(entry), 1)
+            self.assertEqual(entry[0]["reason"], "no_browser_smoke_scripts_found")
+            self.assertTrue(entry[0]["measured"])
+            # 另一条声明（postgres）不受影响，仍用静态原因。
+            other = [s for s in report["skipped_gates"] if s["id"] == tool.POSTGRES_UNAVAILABLE_ID]
+            self.assertEqual(other[0]["reason"], "requires_database_container")
+            self.assertFalse(other[0].get("measured"))
+            self.assertEqual(report["conclusion"], "gates_incomplete")
+
+    def test_an_attempted_browser_gate_retires_only_its_own_declaration(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            build = Path(tmp) / "build"
+            build.mkdir()
+            gates = synthetic_gates({"ok": "passed"})
+            gates.append({"id": tool.BROWSER_GATE_ID, "kind": "command",
+                          "argv": ["git", "rev-parse", "HEAD"]})
+            report = tool.run_gates(repo, gates, build, browser_decision={
+                "action": "run", "reason": None, "measured": True, "python": "/python"})
+            self.assertNotIn(tool.BROWSER_UNAVAILABLE_ID, report["skipped_gate_ids"])
+            self.assertIn(tool.POSTGRES_UNAVAILABLE_ID, report["skipped_gate_ids"])
+            self.assertEqual(report["conclusion"], "gates_incomplete")
+
+    def test_main_records_both_optional_gate_decisions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            out = Path(tmp) / "report.json"
+
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
+
+            code = tool.main(["--repo", str(repo), "--out", str(out)], gate_builder=builder)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            ids = [d["id"] for d in report["optional_gate_decisions"]]
+            self.assertEqual(ids, [tool.POSTGRES_UNAVAILABLE_ID, tool.BROWSER_UNAVAILABLE_ID])
+            for decision in report["optional_gate_decisions"]:
+                self.assertEqual(decision["action"], "skipped")
+                self.assertFalse(decision.get("measured"))
+
+    def test_enabled_but_only_excluded_browser_gate_never_probes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            out = Path(tmp) / "report.json"
+
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
+
+            def boom(*_args, **_kwargs):  # pragma: no cover - 被调用即失败
+                raise AssertionError("被 --only 排除时不得探测解释器")
+
+            with unittest.mock.patch.object(tool, "browser_probe", boom):
+                code = tool.main(["--repo", str(repo), "--out", str(out), "--only", "ok",
+                                  "--enable-browser-smoke-gate"], gate_builder=builder)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            decision = report["optional_gate_decisions"][1]
+            self.assertTrue(decision["excluded_by_only"])
+            self.assertEqual(decision["action"], "skipped")
+            self.assertIn(tool.BROWSER_UNAVAILABLE_ID, report["skipped_gate_ids"])
+            self.assertNotIn(tool.BROWSER_GATE_ID, [r["id"] for r in report["gates"]])
+
+    def test_browser_evidence_dir_is_handed_over_not_pre_created(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_git_repo(Path(tmp))
+            out = Path(tmp) / "report.json"
+            seen = {}
+
+            def builder(_repo, _build):
+                return synthetic_gates({"ok": "passed"})
+
+            def gate(_repo, evidence_dir, _python, **_kwargs):
+                seen["dir"] = evidence_dir
+                return {"id": tool.BROWSER_GATE_ID, "kind": "command",
+                        "argv": ["git", "rev-parse", "HEAD"]}
+
+            with unittest.mock.patch.object(
+                    tool, "browser_gate_decision",
+                    lambda _repo, **_kw: {"action": "run", "reason": None, "python": "/python"}), \
+                    unittest.mock.patch.object(tool, "browser_gate", gate):
+                code = tool.main(["--repo", str(repo), "--out", str(out),
+                                  "--enable-browser-smoke-gate"], gate_builder=builder)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            self.assertFalse(seen["dir"].exists())
+            report = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(report["optional_gate_decisions"][1]["evidence_dir"], str(seen["dir"]))
+
     def test_post_check_failure_downgrades_a_passing_command(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = make_git_repo(Path(tmp))
