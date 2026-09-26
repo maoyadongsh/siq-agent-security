@@ -464,6 +464,64 @@ def check_browser_evidence(evidence_dir: Path, suite_path: Path) -> dict:
     }}
 
 
+def audit_browser_evidence(result_path: Path, suite_path: Path) -> list[dict]:
+    """逐条核对一份既有留证的证据断言，**不短路**：全部列出，便于在真实语料上演练每一条。
+
+    与 `check_browser_evidence` 的关系：后者是**门禁**（任一断言不成立即整条门禁失败，因此
+    第一条不成立之后的断言在真实数据上永远不会被求值）。本函数是**只读审计**，把每条都算出来。
+    它**不是门禁**，也不写任何报告；返回的 verdict 只能读作"这份留证自述是否自洽"。
+    """
+    findings: list[dict] = []
+
+    def add(name: str, ok: bool, detail: str = "") -> None:
+        findings.append({"assertion": name, "ok": bool(ok), "detail": detail})
+
+    if not result_path.is_file():
+        add("evidence_result_exists", False, "browser_evidence_missing")
+        return findings
+    add("evidence_result_exists", True, str(result_path))
+    try:
+        proof = json.loads(result_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        add("evidence_result_readable", False, f"browser_evidence_unreadable: {exc}")
+        return findings
+    if not isinstance(proof, dict):
+        add("evidence_result_readable", False, "browser_evidence_not_an_object")
+        return findings
+    add("evidence_result_readable", True)
+
+    add("suite_passed", proof.get("passed") is True, f"passed={proof.get('passed')!r}")
+    add("simulated_build", proof.get("simulated_build") is True,
+        f"simulated_build={proof.get('simulated_build')!r}")
+    add("not_production_deployed", proof.get("production_deployed") is False,
+        f"production_deployed={proof.get('production_deployed')!r}")
+    add("not_production_identity", proof.get("production_identity_tested") is False,
+        f"production_identity_tested={proof.get('production_identity_tested')!r}")
+    counts = proof.get("counts")
+    add("has_scripts", isinstance(counts, dict) and bool(counts.get("total")),
+        f"counts={counts!r}")
+    if suite_path.is_file():
+        recorded = proof.get("suite_sha256")
+        add("suite_digest_matches", recorded == sha256_bytes(suite_path.read_bytes()),
+            f"recorded={recorded!r}")
+    else:
+        add("suite_digest_matches", False, f"suite_missing: {suite_path}")
+    add("real_dev_api_measured", isinstance(proof.get("real_dev_api_scripts"), list),
+        f"real_dev_api_scripts={type(proof.get('real_dev_api_scripts')).__name__}")
+    return findings
+
+
+def validate_browser_evidence_mode(repo: Path, result_path: Path) -> int:
+    """只读核对既有留证；**不启动任何服务、不构建、不写报告**。退出码 0 仅表示"断言全成立"。"""
+    findings = audit_browser_evidence(result_path, repo / BROWSER_SUITE_TOOL)
+    for item in findings:
+        sys.stderr.write(f"{'ok  ' if item['ok'] else 'FAIL'}  {item['assertion']}  {item['detail']}\n")
+    held = sum(1 for item in findings if item["ok"])
+    verdict = "evidence_assertions_held" if held == len(findings) else "evidence_assertions_failed"
+    sys.stderr.write(f"assertions={len(findings)} held={held} verdict={verdict}\n")
+    return EXIT_PASS if held == len(findings) else EXIT_NOT_GREEN
+
+
 def browser_gate_decision(repo: Path, *, enabled: bool, python: Path | None,
                           runner=subprocess.run) -> dict:
     """决定本次运行里 `browser_acceptance` 是"跑"还是"跳过"，以及**为什么**。
@@ -677,7 +735,7 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
     """`gate_builder` 仅供测试注入合成门禁；生产调用不传，恒用 `build_gates`。"""
     parser = argparse.ArgumentParser(description="R07 统一防御门禁执行器（只读 + 临时构建）")
     parser.add_argument("--repo", required=True, help="仓库根路径")
-    parser.add_argument("--out", required=True, help="报告 JSON 输出路径（必须位于仓库外，独占创建）")
+    parser.add_argument("--out", help="报告 JSON 输出路径（必须位于仓库外，独占创建）；纯核对模式下不需要")
     parser.add_argument("--only", help="只跑指定 id（逗号分隔）；使用后结论恒为 partial_run_not_a_gate")
     parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT_SECONDS, help="单门禁超时秒数")
     parser.add_argument("--enable-ephemeral-postgres-gate", action="store_true",
@@ -688,12 +746,24 @@ def main(argv: list[str] | None = None, gate_builder=None) -> int:
                         help="带 playwright 的解释器路径；默认用当前解释器（缺 playwright 时记为不可跑）")
     parser.add_argument("--browser-smoke-edge", help="原生 Edge 二进制（仅需要它的脚本用得到）")
     parser.add_argument("--browser-smoke-connector-dir", help="框架连接器二进制目录")
+    parser.add_argument("--validate-browser-evidence", metavar="RESULT_JSON",
+                        help="只读核对一份既有留证 result.json 的证据断言；"
+                             "不跑套件、不写报告、不启动服务（不是门禁）")
     args = parser.parse_args(argv)
 
     repo = Path(args.repo).resolve()
-    out_path = Path(args.out)
     if not repo.is_dir():
         return EXIT_USAGE
+    if args.validate_browser_evidence:
+        # 先于任何临时目录/探测：这是纯读模式，连 build_dir 都不创建，绝不跑套件。
+        result_path = Path(args.validate_browser_evidence)
+        if not result_path.is_file():
+            parser.exit(EXIT_USAGE,
+                        f"--validate-browser-evidence: no such file: {result_path}\n")
+        return validate_browser_evidence_mode(repo, result_path)
+    if not args.out:
+        parser.exit(EXIT_USAGE, "--out is required unless --validate-browser-evidence is used\n")
+    out_path = Path(args.out)
     if out_path.absolute().is_relative_to(repo):
         parser.exit(EXIT_USAGE, "report must be written outside the repository\n")
     if not git(repo, "rev-parse", "HEAD"):

@@ -1334,6 +1334,33 @@ python3 scripts/enterprise-experience/enterprise-gate-run.py --repo . \
 
 **边界（不许被下游读大）**：这是**工具层**的同候选回归——92 条单元/合成用例 + 1 次两门禁真实运行；**不是**纵向"不退化"证明（无改前基线），**不覆盖**后端全量（R07.9 的 `2164 passed / 1 skipped`）与前端全量（R07.5 的 `1003 passed`），**更不覆盖** A2 那 5 项前端 UI 失败。
 
+### R09.11 留证断言在**真实语料**上的演练（把 R07.11b 登记的那条限度收窄到 1 条）
+
+**要解决的账**：R07.11b 末尾如实登记过一条限度——**门禁的 `post` 校验只在命令通过时执行**，而 `browser_acceptance_simulated` 当前恒红（25/30），所以留证的 8 条证据断言**在真实数据上从未被求值**，只有合成用例覆盖。**一个永远走不到的检查器和没有检查器不可区分**——这正是本轮反复要防的那类假信号。
+
+**做法（只读、不新增门禁、不新增文件）**：给 `enterprise-gate-run.py` 加 `--validate-browser-evidence <result.json>` 纯核对模式：
+
+| 特征 | 说明 |
+| --- | --- |
+| 不短路 | 新增 `audit_browser_evidence()` 把 **9 条**断言逐条算出并打印（`check_browser_evidence()` 原样不动，门禁语义零变更） |
+| 纯读 | **不跑套件、不构建前端、不起服务、不写报告**；该模式下连 `build_dir` 临时目录都不创建，`--out` 也不再强制（正常门禁路径仍强制——有用例钉住） |
+| 不许误读 | 退出码 0 只表示"这份留证自述**内部自洽**"，措辞恒为 `verdict=evidence_assertions_held`，**从不出现 `gates_green`**（有用例断言这一点） |
+
+**真实语料实测（不是合成）**——两份**既有**留证，一份是 R07.11b 后的、一份是 R07.11b 前的：
+
+| 留证 | 断言 | 成立 | 不成立的是 |
+| --- | --- | --- | --- |
+| `/tmp/siq-gate-browser-evidence-yguusfnq/result.json`（E4，17:43:35，R07.11b 之后） | 9 | **8** | 只有 `suite_passed`（`passed=False`，即 25/30 那 5 项前端失败） |
+| `/tmp/siq-gate-browser-evidence-41rshtk2/result.json`（E1 期，R07.11b 之前） | 9 | 6 | `suite_passed` + **`suite_digest_matches`**（记录的 `c3324651…` ≠ 现套件 `af07098c…`）+ **`real_dev_api_measured`**（`NoneType`） |
+
+**第二份是有意选的负对照**：它证明这些检查**在真实数据上不是空跑**——摘要绑定与"范围自述必须有度量字段"两条都**确实抓到了**真实的漂移与缺失。否则"8/9 成立"可能只是断言太松。
+
+**结论**：R07.11b 那条限度的范围由「**8 条断言全部未在真实数据上求值**」收窄为「**仅 `suite_passed` 这一条未在真实数据上求值**」——而它是否成立**不取决于工具**，只取决于 A2 那 5 项前端 UI 失败被前端作者线裁决之后，30 个脚本是否全绿。
+
+**落盘与账目**：改动 = 2 条已跟踪源码路径（`enterprise-gate-run.py`、`test_enterprise_gate_run.py`）+ 2 条滚动文档 = **4 条**，**清单条数不变（30）**。提交前同口径读数（`2026-09-26T09:58:33Z` / `/tmp/preflight-r0911-20260926T175833.json`）= **106 tracked / 705 untracked**，相对上一份（`102 / 705`）**差恰好 +4**。**正常门禁路径另做一次真实复跑**（改了 `--out` 的必填性之后必须证明它没受影响）：`--only rulepack_python_go_identity,contract_version_chain` → 两条 `passed`、结论 `partial_run_not_a_gate`、报告 `/tmp/gate-R0911-real-20260926T175833.json`（`head=f67f0ed`）。
+
+**边界**：本条**不**让门禁变绿（`suite_passed` 仍为红）、**不**覆盖门禁自身的通过路径（仍未演练）、**不是**"不退化"证明、**不产生 `enforcement_verified`**；它只是把"留证自述的自洽性"这一层从"只有合成证据"升级为"**有真实语料证据且有真实负对照**"。
+
 ### R07.11 可选浏览器验收门禁（把 `browser_acceptance` 从"恒登记"变成"可执行"）
 
 **为什么做**：R09.5 实测推翻了 `browser_acceptance` 原登记的 `requires_running_services`，"恒 `skipped`"就不再是事实描述。按 R07.10 给 `migration_replay_postgres` 的模式（**默认连探测都不做、显式 opt-in 才跑、证据附摘要级断言**）把它做成同构的第二条可选门禁。

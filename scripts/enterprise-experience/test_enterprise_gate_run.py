@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import shutil
@@ -694,3 +695,131 @@ class GateRunTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BrowserEvidenceAuditMode(unittest.TestCase):
+    """`--validate-browser-evidence` 是**只读审计**：它的绿不是门禁绿，它的红不写报告。
+
+    为什么单独测：R07.11b 之前，留证的 8 条断言只在**门禁命令通过时**才求值，而该门禁当前恒红，
+    于是"断言本身写对了吗"在真实语料上从未被演练——一个永远走不到的检查器和没有检查器不可区分。
+    """
+
+    def _repo(self, base: Path) -> Path:
+        repo = make_git_repo(base)
+        write(repo, tool.BROWSER_SUITE_TOOL, "# suite\n")
+        return repo
+
+    def _proof(self, repo: Path, **overrides) -> dict:
+        suite = repo / tool.BROWSER_SUITE_TOOL
+        proof = {
+            "passed": True,
+            "simulated_build": True,
+            "production_deployed": False,
+            "production_identity_tested": False,
+            "counts": {"total": 30, "passed": 30, "failed": 0, "blocked": 0},
+            "real_dev_api_scripts": ["a-browser-smoke"],
+            "suite_sha256": hashlib.sha256(suite.read_bytes()).hexdigest(),
+        }
+        proof.update(overrides)
+        return proof
+
+    def _call(self, repo: Path, result: Path, extra: list | None = None):
+        buf = io.StringIO()
+        argv = ["--repo", str(repo), "--validate-browser-evidence", str(result)]
+        with unittest.mock.patch("sys.stderr", new=buf):
+            code = tool.main(argv + list(extra or []))
+        return code, buf.getvalue()
+
+    def test_all_held_reads_as_evidence_assertions_not_gates_green(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo(Path(tmp))
+            result = Path(tmp) / "result.json"
+            result.write_text(json.dumps(self._proof(repo)), encoding="utf-8")
+            code, err = self._call(repo, result)
+            self.assertEqual(code, tool.EXIT_PASS)
+            self.assertIn("verdict=evidence_assertions_held", err)
+            # 措辞必须把"留证自洽"和"门禁通过"分开：这里没有 gates_green 这种词。
+            self.assertNotIn("gates_green", err)
+
+    def test_every_assertion_is_reported_even_after_a_failure(self):
+        """不短路：恒红的门禁只会走到第一条失败，审计模式必须把每条都算出来。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo(Path(tmp))
+            result = Path(tmp) / "result.json"
+            result.write_text(json.dumps(self._proof(repo, passed=False, counts={},
+                                                    real_dev_api_scripts=None)),
+                              encoding="utf-8")
+            code, err = self._call(repo, result)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            names = [line.split()[1] for line in err.strip().splitlines()[:-1]]
+            for expected in ("suite_passed", "has_scripts", "real_dev_api_measured",
+                             "suite_digest_matches", "simulated_build"):
+                self.assertIn(expected, names)
+            self.assertIn("FAIL  suite_passed", err)
+            self.assertIn("ok    simulated_build", err)
+
+    def test_production_claims_and_digest_drift_are_caught(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo(Path(tmp))
+            result = Path(tmp) / "result.json"
+            result.write_text(json.dumps(self._proof(repo, production_deployed=True,
+                                                     suite_sha256="deadbeef")),
+                              encoding="utf-8")
+            code, err = self._call(repo, result)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            self.assertIn("FAIL  not_production_deployed", err)
+            self.assertIn("FAIL  suite_digest_matches", err)
+
+    def test_measurement_type_is_checked_not_truthiness(self):
+        """`real_dev_api_scripts` 非 list（如 None）必须判红——空 list 是"测到 0 个"，None 是"没测"。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo(Path(tmp))
+            result = Path(tmp) / "result.json"
+            result.write_text(json.dumps(self._proof(repo, real_dev_api_scripts=[])),
+                              encoding="utf-8")
+            self.assertEqual(self._call(repo, result)[0], tool.EXIT_PASS)
+            result.write_text(json.dumps(self._proof(repo, real_dev_api_scripts=None)),
+                              encoding="utf-8")
+            code, err = self._call(repo, result)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            self.assertIn("FAIL  real_dev_api_measured", err)
+
+    def test_missing_or_unreadable_evidence_is_not_a_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo(Path(tmp))
+            with self.assertRaises(SystemExit) as ctx:
+                self._call(repo, Path(tmp) / "nope.json")
+            self.assertEqual(ctx.exception.code, tool.EXIT_USAGE)
+            broken = Path(tmp) / "result.json"
+            broken.write_text("{not json", encoding="utf-8")
+            code, err = self._call(repo, broken)
+            self.assertEqual(code, tool.EXIT_NOT_GREEN)
+            self.assertIn("FAIL  evidence_result_readable", err)
+
+    def test_audit_of_a_missing_file_yields_exactly_one_finding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            findings = tool.audit_browser_evidence(Path(tmp) / "nope.json",
+                                                   Path(tmp) / "suite.py")
+            self.assertEqual([f["assertion"] for f in findings], ["evidence_result_exists"])
+            self.assertFalse(findings[0]["ok"])
+
+    def test_mode_never_runs_the_suite_and_never_writes_a_report(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo(Path(tmp))
+            result = Path(tmp) / "result.json"
+            result.write_text(json.dumps(self._proof(repo)), encoding="utf-8")
+            report = Path(tmp) / "report.json"
+            before = result.read_text(encoding="utf-8")
+            code, _ = self._call(repo, result, extra=["--out", str(report)])
+            self.assertEqual(code, tool.EXIT_PASS)
+            self.assertFalse(report.exists())          # 纯核对模式：不写报告
+            self.assertEqual(result.read_text(encoding="utf-8"), before)  # 也不改留证
+            # 不传 --out 时同理（否则纯核对必须被迫给一个报告路径）
+            self.assertEqual(self._call(repo, result)[0], tool.EXIT_PASS)
+
+    def test_out_is_still_required_for_the_normal_gate_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self._repo(Path(tmp))
+            with self.assertRaises(SystemExit) as ctx:
+                tool.main(["--repo", str(repo)])
+            self.assertEqual(ctx.exception.code, tool.EXIT_USAGE)
