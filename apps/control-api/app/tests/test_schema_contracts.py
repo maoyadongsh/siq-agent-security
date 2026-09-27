@@ -394,6 +394,7 @@ def test_hermes_instances_and_targeted_plan_contracts() -> None:
     for contract, fixture_name in [
         ("local-adapter-instances.v1.schema.json", "adapter-instances.json"),
         ("local-adapter-plan.v2.schema.json", "adapter-plan.v2.json"),
+        ("local-adapter-plan.v2.schema.json", "adapter-plan.v2-windows.json"),
     ]:
         schema = json.loads((CONTRACTS / contract).read_text(encoding="utf-8"))
         Draft7Validator.check_schema(schema)
@@ -1426,10 +1427,11 @@ def test_v1_signed_contract_calendar_and_closed_fields(sample, schema_name, time
         assert list(validator.iter_errors(missing)), (sample, field)
 
 
-def test_managed_adapter_plan_contract() -> None:
+@pytest.mark.parametrize("sample", ["adapter-plan.v3.json", "adapter-plan.v3-windows.json"])
+def test_managed_adapter_plan_contract(sample: str) -> None:
     schema = json.loads((CONTRACTS / "local-adapter-plan.v3.schema.json").read_text(encoding="utf-8"))
     Draft7Validator.check_schema(schema)
-    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / "adapter-plan.v3.json"
+    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / sample
     data = json.loads(fixture.read_text(encoding="utf-8"))
     validator = Draft7Validator(schema)
     validator.validate(data)
@@ -1446,7 +1448,8 @@ def test_managed_adapter_plan_contract() -> None:
     assert list(validator.iter_errors(missing))
 
 
-def test_grant_revision_draft_contracts() -> None:
+@pytest.mark.parametrize("created_sample", ["grant-draft-created", "grant-draft-created-windows"])
+def test_grant_revision_draft_contracts(created_sample: str) -> None:
     from referencing import Registry, Resource
     from referencing.jsonschema import DRAFT7
 
@@ -1459,7 +1462,8 @@ def test_grant_revision_draft_contracts() -> None:
         schema = json.loads((CONTRACTS / f"{name}.v1.schema.json").read_text(encoding="utf-8"))
         Draft7Validator.check_schema(schema)
         validator = Draft7Validator(schema, registry=registry)
-        data = json.loads((fixture_dir / f"{name}.json").read_text(encoding="utf-8"))
+        fixture_name = created_sample if name == "grant-draft-created" else name
+        data = json.loads((fixture_dir / f"{fixture_name}.json").read_text(encoding="utf-8"))
         validator.validate(data)
         assert list(validator.iter_errors({**data, "secret": "never"}))
         for required in schema["required"]:

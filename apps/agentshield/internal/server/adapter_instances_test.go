@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -86,6 +87,9 @@ func TestInstanceAndPlanV2ContractFixtures(t *testing.T) {
 		}
 	}
 	for name, value := range map[string]any{"adapter-instances.json": view, "adapter-plan.v2.json": plan} {
+		if runtime.GOOS == "windows" && name == "adapter-plan.v2.json" {
+			name = "adapter-plan.v2-windows.json"
+		}
 		raw, _ := json.MarshalIndent(value, "", "  ")
 		raw = append(raw, '\n')
 		path := filepath.Join("..", "..", "testdata", "contracts", name)

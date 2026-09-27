@@ -201,7 +201,8 @@ func TestAddFileDetectsReplacedInode(t *testing.T) {
 	if err := os.WriteFile(path, []byte("one"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	// Hold the original inode open so the replacement cannot recycle it.
+	// Capture the old object from a handle. Retain it under another name so its
+	// identity cannot be recycled; close before renaming for Windows sharing.
 	held, err := os.Open(path)
 	if err != nil {
 		t.Fatal(err)
@@ -211,7 +212,10 @@ func TestAddFileDetectsReplacedInode(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Remove(path); err != nil {
+	if err := held.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Rename(path, path+".previous"); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(path, []byte("two"), 0o600); err != nil {

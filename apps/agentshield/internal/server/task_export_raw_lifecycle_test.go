@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -125,7 +127,7 @@ func TestTaskExportsAcrossRawRevocationDeletionAndExpiry(t *testing.T) {
 	}
 	after := up07Snapshot(t, st.Dir)
 	for name, digest := range before {
-		if len(name) >= len("raw-task-content/") && name[:len("raw-task-content/")] == "raw-task-content/" {
+		if strings.HasPrefix(filepath.ToSlash(name), "raw-task-content/") {
 			continue
 		}
 		if after[name] != digest {
