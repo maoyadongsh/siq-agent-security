@@ -52,3 +52,33 @@ func TestManagedConfigReplacementAndRollbackPreserveDeny(t *testing.T) {
 		})
 	}
 }
+
+func TestManagedFileNewPublicationAndDeletedFileRestore(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, "private", "settings.json")
+	before := fileImage{}
+	after := fileImage{Exists: true, Mode: 0600, Data: []byte("fixture")}
+	if err := writeImage(root, path, before, after, true); err != nil {
+		t.Fatal(err)
+	}
+	live, err := readImage(root, path, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if live.Security == "" {
+		t.Fatal("new file did not preserve private security")
+	}
+	if err := publishManagedSecurity(path, after, false, true); err == nil {
+		t.Fatal("publication overwrote existing target")
+	}
+	if err := writeImage(root, path, live, before, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeImage(root, path, before, live, true); err != nil {
+		t.Fatal(err)
+	}
+	recovered, err := readImage(root, path, true)
+	if err != nil || !sameImage(live, recovered) {
+		t.Fatal("restored file is not a private single-link byte/permission match", err)
+	}
+}

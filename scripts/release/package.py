@@ -17,7 +17,7 @@ import sys
 import tarfile
 import tempfile
 import zipfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[2]
 NAME = "siq-agent-security"
@@ -74,8 +74,8 @@ def extract_source(archive, destination):
     with tarfile.open(archive) as bundle:
         members = bundle.getmembers()
         for member in members:
-            name = Path(member.name)
-            if name.is_absolute() or ".." in name.parts or not (member.isfile() or member.isdir()):
+            name = PurePosixPath(member.name)
+            if "\\" in member.name or ":" in member.name or name.is_absolute() or ".." in name.parts or not (member.isfile() or member.isdir()):
                 raise ValueError("unsafe source archive entry")
             if name.name == ".env" or name.suffix == ".seed":
                 raise ValueError("private state in source archive")

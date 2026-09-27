@@ -2606,3 +2606,6 @@ Windows init 对已有但未启用 profile 的状态返回明确恢复提示而�
 原生快速竞争复现：同一关联目录创建/删除锁期间，CREATE_NEW 返回 Win32 5，而非普通已存在。Windows 待删除对象继续占用名称时会返回该错误；不把所有 Access Denied 改成可重试。Windows 释放改为 `PublishPrivateNew`：复验本次创建的单链接私密对象身份，以句柄排他、不覆盖地移动到同目录随机退休名，关闭后再删除该精确退休名。这样复用的 lock 名不进入待删除状态。改名失败保留 fail-closed，不删除未知对象；原生权限失败仍立即拒绝，只有已存在的锁在原 deadline 内等待。随机退休文件不授权，崩溃残留计入容量而不自动清扫。
 
 此受限操作复用现有私密单链接发布原语，仅适用于当前调用持有的临时关联锁；不改变授权/回执、其他进程锁、旧 correlation 记录或系统 ACL。依据：[CreateFileW 的待删除名称规则](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew)。
+
+
+WorkBuddy Windows 新文件及回滚恢复的排他发布同样使用已验证单链接文件的句柄移动，不使用临时 hardlink 再删除。新文件在创建时使用私密 DACL，旧对象副本使用备份 SDDL；缺失父目录只在已批准事务的精确路径内创建为私密目录。既有目录只验证、不修改权限。这样中断不会由本安装路径留下临时双链接的活动对象；非 Windows/其他宿主的原发布路径保持。

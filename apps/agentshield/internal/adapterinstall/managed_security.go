@@ -41,11 +41,14 @@ func captureManagedSecurity(path string, image fileImage, preserveSecurity ...bo
 	return image, snapshot.Verify()
 }
 
-func publishManagedSecurity(path string, image fileImage, replace bool) error {
-	if runtime.GOOS != "windows" || image.Security == "" {
+func publishManagedSecurity(path string, image fileImage, replace bool, preserveSecurity ...bool) error {
+	if runtime.GOOS != "windows" || (image.Security == "" && !(len(preserveSecurity) > 0 && preserveSecurity[0])) {
 		return publishFile(path, image.Data, os.FileMode(image.Mode), replace)
 	}
 	if err := stateformat.RequirePath(path, true); err != nil {
+		return err
+	}
+	if err := statefs.MkdirAllPrivate(filepath.Dir(path)); err != nil {
 		return err
 	}
 	var id [16]byte
@@ -53,7 +56,13 @@ func publishManagedSecurity(path string, image fileImage, replace bool) error {
 		return err
 	}
 	tmp := filepath.Join(filepath.Dir(path), ".siq-adapter-pending-"+hex.EncodeToString(id[:]))
-	f, err := privatefs.CreateNewWithSecurity(tmp, image.Security)
+	var f *os.File
+	var err error
+	if image.Security == "" {
+		f, err = statefs.CreatePrivate(tmp)
+	} else {
+		f, err = privatefs.CreateNewWithSecurity(tmp, image.Security)
+	}
 	if err != nil {
 		return err
 	}
@@ -61,7 +70,11 @@ func publishManagedSecurity(path string, image fileImage, replace bool) error {
 	if _, err = f.Write(image.Data); err == nil {
 		err = f.Sync()
 	}
+	created, statErr := f.Stat()
 	closeErr := f.Close()
+	if statErr != nil {
+		return statErr
+	}
 	if err != nil {
 		return err
 	}
@@ -71,5 +84,6 @@ func publishManagedSecurity(path string, image fileImage, replace bool) error {
 	if replace {
 		return statefs.Rename(tmp, path)
 	}
-	return statefs.Link(tmp, path)
+	_, err = statefs.PublishPrivateNew(tmp, path, created)
+	return err
 }

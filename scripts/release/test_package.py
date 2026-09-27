@@ -62,7 +62,8 @@ class ReleasePackageTest(unittest.TestCase):
                 package.validate_inputs(sha, version)
 
     def test_source_archive_rejects_escape_links_and_private_files(self):
-        for name, kind in (("../escape", tarfile.REGTYPE), ("/escape", tarfile.REGTYPE),
+        for name, kind in (("../escape", tarfile.REGTYPE), ("/escape", tarfile.REGTYPE), ("C:/escape", tarfile.REGTYPE),
+                           ("source\\..\\escape", tarfile.REGTYPE), ("source/file:stream", tarfile.REGTYPE),
                            ("source/link", tarfile.SYMTYPE), ("source/hardlink", tarfile.LNKTYPE),
                            ("source/.env", tarfile.REGTYPE), ("source/key.seed", tarfile.REGTYPE)):
             with self.subTest(name=name):

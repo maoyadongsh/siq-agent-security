@@ -291,7 +291,7 @@ func writeImage(home, path string, before, after fileImage, preserveSecurity ...
 	if after.Security == "" {
 		after.Security = current.Security
 	} // Legacy plans preserve the current private descriptor.
-	return publishManagedSecurity(path, after, before.Exists)
+	return publishManagedSecurity(path, after, before.Exists, preserveSecurity...)
 }
 
 func rollback(p *Plan) error {
