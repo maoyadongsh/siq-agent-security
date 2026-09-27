@@ -28,7 +28,7 @@ func NormalizeDirectory(home, input string) (string, error) {
 	if err := r.safePath(path); err != nil {
 		return "", errors.New("目录不存在、不可读取或包含符号链接")
 	}
-	info, err := os.Stat(path)
+	info, err := inspectScanRoot(path)
 	if err != nil || !info.IsDir() || readableRoot(path, info) != nil {
 		return "", errors.New("所选路径不是可读取的目录")
 	}
@@ -53,7 +53,7 @@ func Preview(opts Options) []ScanRoot {
 			if os.IsNotExist(err) {
 				status = "missing"
 			}
-		} else if info, err := os.Lstat(path); err != nil || (kind == "platform_config" || kind == "mcp_config") && !info.Mode().IsRegular() ||
+		} else if info, err := inspectScanRoot(path); err != nil || (kind == "platform_config" || kind == "mcp_config") && !info.Mode().IsRegular() ||
 			(kind == "skill_directory" || kind == "profile_directory") && !info.IsDir() {
 			status = "unreadable"
 		} else if err := readableRoot(path, info); err != nil {
@@ -122,6 +122,49 @@ func Preview(opts Options) []ScanRoot {
 	return out
 }
 
+// Capture the identity from a handle before a later access check. On Windows,
+// path-based FileInfo can defer loading its file ID until SameFile and then
+// observe a replacement instead of the object that was originally inspected.
+func inspectScanRoot(path string) (os.FileInfo, error) {
+	named, err := os.Lstat(path)
+	if err != nil {
+		return nil, err
+	}
+	if !named.IsDir() && !named.Mode().IsRegular() || named.Mode()&os.ModeSymlink != 0 {
+		return nil, errors.New("unsupported scan root")
+	}
+	f, err := statefs.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	opened, statErr := f.Stat()
+	closeErr := f.Close()
+	if statErr != nil {
+		return nil, statErr
+	}
+	if closeErr != nil {
+		return nil, closeErr
+	}
+	if named.Mode().Type() != opened.Mode().Type() {
+		return nil, errors.New("scan root changed")
+	}
+	if err := verifyScanRootName(path, opened); err != nil {
+		return nil, err
+	}
+	return opened, nil
+}
+
+func verifyScanRootName(path string, opened os.FileInfo) error {
+	named, err := os.Lstat(path)
+	if err != nil {
+		return err
+	}
+	if named.Mode()&os.ModeSymlink != 0 || named.Mode().Type() != opened.Mode().Type() || !os.SameFile(opened, named) {
+		return errors.New("scan root changed")
+	}
+	return nil
+}
+
 // Check access as this process rather than inferring it from mode bits. Read
 // at most one directory entry, and never read configuration content here.
 func readableRoot(path string, before os.FileInfo) error {
@@ -146,5 +189,5 @@ func readableRoot(path string, before os.FileInfo) error {
 			return err
 		}
 	}
-	return nil
+	return verifyScanRootName(path, after)
 }

@@ -69,24 +69,66 @@ func TestPreviewReadAccessAndRecovery(t *testing.T) {
 	}
 }
 
-func TestPreviewAccessRefusesSymlinkAndChangedObject(t *testing.T) {
+func TestPreviewAccessRefusesChangedObject(t *testing.T) {
+	for _, directory := range []bool{true, false} {
+		name := "file"
+		if directory {
+			name = "directory"
+		}
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "root")
+			create := func() {
+				t.Helper()
+				var err error
+				if directory {
+					err = os.Mkdir(path, 0700)
+				} else {
+					err = os.WriteFile(path, []byte("unchanged fixture contents"), 0600)
+				}
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			create()
+			before, err := inspectScanRoot(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := readableRoot(path, before); err != nil {
+				t.Fatal("unchanged object refused", err)
+			}
+			// A prior SameFile call must not accidentally force a lazy path-based
+			// FileInfo to cache the identity and hide the Windows regression.
+			before, err = inspectScanRoot(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Rename(path, path+"-old"); err != nil {
+				t.Fatal(err)
+			}
+			create()
+			if err := readableRoot(path, before); err == nil {
+				t.Fatal("changed object identity accepted")
+			}
+			if err := verifyScanRootName(path, before); err == nil {
+				t.Fatal("replaced root name accepted")
+			}
+			after, err := inspectScanRoot(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := readableRoot(path, after); err != nil {
+				t.Fatal("fresh preview refused", err)
+			}
+		})
+	}
+}
+
+func TestPreviewAccessRefusesSymlink(t *testing.T) {
 	home := t.TempDir()
 	dir := filepath.Join(home, "skills")
 	if err := os.Mkdir(dir, 0700); err != nil {
 		t.Fatal(err)
-	}
-	before, err := os.Stat(dir)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Rename(dir, dir+"-old"); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Mkdir(dir, 0700); err != nil {
-		t.Fatal(err)
-	}
-	if err := readableRoot(dir, before); err == nil {
-		t.Fatal("changed directory identity accepted")
 	}
 	link := filepath.Join(home, "link")
 	if err := os.Symlink(dir, link); err != nil {
@@ -94,6 +136,9 @@ func TestPreviewAccessRefusesSymlinkAndChangedObject(t *testing.T) {
 	}
 	if _, err := NormalizeDirectory(home, link); err == nil {
 		t.Fatal("manual symlink accepted")
+	}
+	if _, err := inspectScanRoot(link); err == nil {
+		t.Fatal("symlink identity accepted")
 	}
 	if previewStatus(t, Options{Home: home, SkillDirs: []string{link}}, link) != "unreadable" {
 		t.Fatal("symlink advertised as readable")
