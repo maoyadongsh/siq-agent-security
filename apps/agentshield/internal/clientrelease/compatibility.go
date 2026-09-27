@@ -103,6 +103,11 @@ func checkStateDeclaration(dir string, m *skillmanifest.Manifest) error {
 		return e
 	}
 	c := m.StateCompatibility
+	if c == nil || c.ReaderVersion < stateformat.LocalFailureProtocolVersion || c.WriterVersion < stateformat.LocalFailureProtocolVersion {
+		if err := checkLegacyEventCompatibility(dir); err != nil {
+			return err
+		}
+	}
 	if c == nil {
 		if format > 1 {
 			return errors.New("client-upgrade-check: candidate has no compatible state protocol; keep the current service")

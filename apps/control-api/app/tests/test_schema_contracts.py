@@ -3372,9 +3372,12 @@ def test_local_state_format_marker_contract() -> None:
     [
         ("local-state-format.v2", "local-state-format-v2"),
         ("local-state-status.v1", "local-state-status"),
+        ("local-state-status.v1", "local-state-status-reader4"),
         ("local-state-migration-result.v1", "local-state-migration-result"),
         ("local-state-migration-plan.v1", "local-state-migration-plan"),
         ("skill-manifest.v3", "skill-manifest.v3.sample"),
+        ("skill-manifest.v3", "skill-manifest.v3.reader3.sample"),
+        ("skill-manifest.v3", "skill-manifest.v3.reader4.sample"),
     ],
 )
 def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:

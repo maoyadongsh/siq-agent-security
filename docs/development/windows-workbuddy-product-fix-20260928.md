@@ -62,3 +62,11 @@
 - 实际 Windows 打包发现 `npm` 需要显式 `npm.cmd`，已修复；源码 tar 安全预检使用 POSIX 路径解释并拒绝 Windows 盘符/反斜杠/ADS 拼写，防止 `/escape` 在 Windows 被误判为相对路径。新增跨平台反例验证。
 
 未验证边界：真实不同 owner 的集成场景未提升权限运行；需要符号链接特权的夹具有明确 skipped；不能把这些记为通过。正式签名、新 WorkBuddy 实例登录/模型配置、具体业务 Grant 批准和 N/R/W/T/J×3/F 仍是产品结束门槛。
+
+## 回退兼容补充
+
+在新建合成 Windows 状态上，b63c8638 新二进制写入并提升一条 v2 本地失败记录后，当前程序 verify 退出 0；main@4c978aff 的只读源码构建 state-status 退出 0，而 verify 退出 4（receipt hash mismatch）。这不涉及旧正式状态或发行私钥，证明仅检查 profile 3 marker 不足以判断回退数据兼容性。
+
+新增当前发行工作流的只读历史检查：reader/writer 小于 4 的候选在 v2 pending/receipt 存在、历史不安全或无法检查时，于暂存/停止/切换前拒绝。新发行声明能力 4，旧 marker、profile journal、历史签名样例保持原字节。新 reader4 清单与 CLI 样例分别新增；不把旧二进制直接运行的失败宣称为 marker 已永久升级。恢复卡必须说明有 v2 记录后保留兼容程序和原状态。
+
+clientrelease 正负向检查已通过，包含旧 v1 允许、v2 拒绝且零暂存/历史不变、兼容候选允许、重复/未知字段、超限和非普通日志拒绝。新增能力合同的 Python 8 项验证及 go vet 退出 0。完整 Windows 模块最新阶段记录仍失败，不能将整个仓库记为绿色；最终候选与详细检查结果在交付索引固定。
