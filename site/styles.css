@@ -240,6 +240,15 @@ pre code { font-size: inherit; overflow-wrap: normal; }
 .architecture-link p { margin: 0; color: var(--muted); }
 .architecture-link .btn { flex-shrink: 0; }
 
+/* 架构全景图：暖纸卡片框 + 点击查看矢量大图 */
+.panorama { margin: 0 0 2rem; padding: 1rem; border: 1px solid var(--border); border-radius: 14px; background: var(--card); box-shadow: var(--shadow-panel); }
+.panorama a { display: block; border-radius: 8px; overflow: hidden; }
+.panorama img { width: 100%; height: auto; transition: box-shadow 160ms ease; }
+.panorama a:hover img { box-shadow: inset 0 0 0 2px var(--gold); }
+.panorama figcaption { padding: .9rem .4rem .2rem; color: var(--muted); font-size: .85rem; text-align: center; }
+#crypto .card code { color: var(--muted); font-size: .8em; }
+#release .release-files + .release-files, #release details .release-files { margin-top: 1rem; }
+
 .release-files { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; margin-bottom: 1.5rem; }
 .release-files a {
   padding: 1.2rem; border: 1px solid var(--border); border-radius: 10px;

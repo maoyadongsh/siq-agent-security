@@ -1,0 +1,482 @@
+<svg viewBox="0 0 1920 1260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SIQ Agent Security 系统架构图">
+<defs>
+<filter id="soft" x="-8%" y="-8%" width="116%" height="124%"><feDropShadow dx="0" dy="1.2" stdDeviation="2.2" flood-color="#0f172a" flood-opacity="0.09"/></filter>
+<marker id="ar-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+<marker id="ar-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b58a24"/></marker>
+<marker id="ar-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0284c7"/></marker>
+<marker id="ar-violet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6d5bd0"/></marker>
+<marker id="ar-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2f6f47"/></marker>
+<style>
+text { font-family: "Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif; letter-spacing:.01em; }
+.serif { font-family: "Playfair Display","Noto Serif SC","Songti SC",Georgia,serif; }
+.mono { font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+</style>
+</defs>
+<rect width="1920" height="1260" fill="#f7f4ee"/>
+<line x1="480.0" y1="0" x2="480.0" y2="1260" stroke="#001840" stroke-opacity="0.035"/>
+<line x1="960.0" y1="0" x2="960.0" y2="1260" stroke="#001840" stroke-opacity="0.035"/>
+<line x1="1440.0" y1="0" x2="1440.0" y2="1260" stroke="#001840" stroke-opacity="0.035"/>
+<text x="960.0" y="42" font-size="30" fill="#001840" font-weight="800" text-anchor="middle" font-family="Georgia,'Noto Serif SC','Songti SC',serif" letter-spacing="0.04em">SIQ Agent Security · 系统架构图</text>
+<text x="960.0" y="68" font-size="12" fill="#55637a" font-weight="400" text-anchor="middle">Secure Runtime for Agent Skills — 本机安全门禁 × 企业控制面 × 密码学信任链 × 合同化治理　·　权限可管理 · 执行可检查 · 结果可追溯</text>
+<text x="1896" y="30" font-size="9.5" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">v0.4.0 signed · main @ 2cd6116</text>
+<text x="1896" y="44" font-size="9.5" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">2026-09-27</text>
+<line x1="560" y1="36" x2="690" y2="36" stroke="#b58a24" stroke-width="1"/>
+<line x1="1230" y1="36" x2="1360" y2="36" stroke="#b58a24" stroke-width="1"/>
+<rect x="693" y="32.5" width="7" height="7" transform="rotate(45 696.5 36)" fill="#b58a24"/>
+<rect x="1220" y="32.5" width="7" height="7" transform="rotate(45 1223.5 36)" fill="#b58a24"/>
+<rect x="24" y="76" width="1872" height="58" rx="10" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<text x="40" y="91" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">参与者与生态</text>
+<text x="40" y="105" font-size="8" fill="#8a93a6" font-weight="400" text-anchor="start" letter-spacing="0.2em">ACTORS</text>
+<rect x="150" y="85" width="470" height="40" rx="7" fill="#fbf9f3" stroke="#e8e1d4" stroke-width="1"/>
+<rect x="150" y="88" width="3" height="34" rx="1.5" fill="#2563eb"/>
+<text x="162" y="102" font-size="12" fill="#0b1220" font-weight="700" text-anchor="start">宿主智能体 · OpenClaw / Hermes / WorkBuddy</text>
+<text x="162" y="117" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">工具调用经钩子送本地裁决 · 适配器 fail-closed</text>
+<rect x="636" y="85" width="300" height="40" rx="7" fill="#fbf9f3" stroke="#e8e1d4" stroke-width="1"/>
+<rect x="636" y="88" width="3" height="34" rx="1.5" fill="#b58a24"/>
+<text x="648" y="102" font-size="12" fill="#0b1220" font-weight="700" text-anchor="start">个人用户 · 本地控制台 / CLI</text>
+<text x="648" y="117" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">配对码 · 固定 24h 会话 · 亲自批准授权</text>
+<rect x="952" y="85" width="290" height="40" rx="7" fill="#fbf9f3" stroke="#e8e1d4" stroke-width="1"/>
+<rect x="952" y="88" width="3" height="34" rx="1.5" fill="#b42318"/>
+<text x="964" y="102" font-size="12" fill="#0b1220" font-weight="700" text-anchor="start">大语言模型 · 任务规划</text>
+<text x="964" y="117" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">非权威：输出不产 effective 权限</text>
+<text x="960" y="135" font-size="1" fill="#8a93a6" font-weight="400" text-anchor="start"></text>
+<rect x="1304" y="85" width="576" height="40" rx="7" fill="#fbf9f3" stroke="#e8e1d4" stroke-width="1"/>
+<rect x="1304" y="88" width="3" height="34" rx="1.5" fill="#2f6f47"/>
+<text x="1316" y="102" font-size="12" fill="#0b1220" font-weight="700" text-anchor="start">企业安全管理员 · 资产 / 权限 / 安全 / 审计</text>
+<text x="1316" y="117" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">OIDC 身份 · 角色×权限点 · 对象级端点先 404 后 403</text>
+<rect x="24" y="156" width="620" height="800" rx="12" fill="#fdfaf0" stroke="#ddca8f" stroke-width="1.2"/>
+<path d="M36,156 h596 a12,12 0 0 1 12,12 v20 h-620 v-20 a12,12 0 0 1 12,-12 z" fill="#f3e7c6"/>
+<rect x="40" y="164" width="20" height="20" rx="5" fill="#7c5a0c"/>
+<text x="50" y="178.5" font-size="11.5" fill="#ffffff" font-weight="800" text-anchor="middle">A</text>
+<text x="68" y="179" font-size="14.5" fill="#7c5a0c" font-weight="750" text-anchor="start">本机安全运行时 · apps/agentshield（Go · 仅标准库）</text>
+<text x="632" y="178" font-size="10" fill="#7c5a0c" font-weight="400" text-anchor="end" font-family="mono">127.0.0.1:47611</text>
+<rect x="668" y="156" width="584" height="800" rx="12" fill="#f3f7fe" stroke="#bcd2f2" stroke-width="1.2"/>
+<path d="M680,156 h560 a12,12 0 0 1 12,12 v20 h-584 v-20 a12,12 0 0 1 12,-12 z" fill="#e0ebfd"/>
+<rect x="684" y="164" width="20" height="20" rx="5" fill="#1d4ed8"/>
+<text x="694" y="178.5" font-size="11.5" fill="#ffffff" font-weight="800" text-anchor="middle">B</text>
+<text x="712" y="179" font-size="14.5" fill="#1d4ed8" font-weight="750" text-anchor="start">执行与隔离 · NVIDIA OpenShell / DGX Spark</text>
+<text x="1240" y="178" font-size="10" fill="#1d4ed8" font-weight="400" text-anchor="end" font-family="mono">可选 L3 档位</text>
+<rect x="1276" y="156" width="620" height="800" rx="12" fill="#f2f8f4" stroke="#b9d6c3" stroke-width="1.2"/>
+<path d="M1288,156 h596 a12,12 0 0 1 12,12 v20 h-620 v-20 a12,12 0 0 1 12,-12 z" fill="#e0efe5"/>
+<rect x="1292" y="164" width="20" height="20" rx="5" fill="#2f6f47"/>
+<text x="1302" y="178.5" font-size="11.5" fill="#ffffff" font-weight="800" text-anchor="middle">C</text>
+<text x="1320" y="179" font-size="14.5" fill="#2f6f47" font-weight="750" text-anchor="start">企业控制面 · 可选独立部署</text>
+<text x="1884" y="178" font-size="10" fill="#2f6f47" font-weight="400" text-anchor="end" font-family="mono">多租户 · OIDC</text>
+<rect x="34" y="196" width="600" height="112" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="34" y="202" width="3.5" height="100" rx="1.75" fill="#b58a24"/>
+<text x="48" y="216" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">HTTP API · 决策 / 管理 / 配对分权</text>
+<text x="624" y="215" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">internal/server</text>
+<text x="48" y="228" font-size="11.5" fill="#b42318" font-weight="700" text-anchor="start">决策面 capDecision</text>
+<text x="48" y="245" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">POST /v1/decide 调用前裁决</text>
+<text x="48" y="260" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">POST /v1/observe 调用后观察</text>
+<text x="48" y="275" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">hold-reserve · runtime-sessions</text>
+<text x="48" y="290" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">provenance / tool-effect 上报</text>
+<text x="244" y="228" font-size="11.5" fill="#7c5a0c" font-weight="700" text-anchor="start">管理面 capAdmin</text>
+<text x="244" y="245" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">/v1/admit · /v1/grants/*</text>
+<text x="244" y="260" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">批准需 challenge 挑战(5min)</text>
+<text x="244" y="275" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">/v1/intents · /v1/skill-contexts</text>
+<text x="244" y="290" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">/v1/assets · /v1/audit · /v1/export</text>
+<text x="440" y="228" font-size="11.5" fill="#0f766e" font-weight="700" text-anchor="start">配对与会话</text>
+<text x="440" y="245" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">一次性配对码(5min·5次)</text>
+<text x="440" y="260" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">→ 固定 24h 管理会话</text>
+<text x="440" y="275" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">决策 token 调管理面 = 403</text>
+<text x="440" y="290" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start" font-family="mono">Host 白名单 + Origin 校验</text>
+<rect x="34" y="320" width="600" height="140" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="34" y="326" width="3.5" height="128" rx="1.75" fill="#b42318"/>
+<text x="48" y="340" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">运行时裁决管线 · Decision Pipeline</text>
+<text x="624" y="339" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">internal/receipt/engine.go</text>
+<rect x="46" y="348" width="138" height="34" rx="6" fill="#f8f5ec" stroke="#ddca8f" stroke-width="1"/>
+<text x="54" y="362.5" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start">1 参数预算预检</text>
+<text x="54" y="375.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">超限 hard deny</text>
+<text x="188" y="369" font-size="11" fill="#b58a24" font-weight="700" text-anchor="start">›</text>
+<rect x="192" y="348" width="138" height="34" rx="6" fill="#f8f5ec" stroke="#ddca8f" stroke-width="1"/>
+<text x="200" y="362.5" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start">2 会话定位</text>
+<text x="200" y="375.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">污点会话不过期</text>
+<text x="334" y="369" font-size="11" fill="#b58a24" font-weight="700" text-anchor="start">›</text>
+<rect x="338" y="348" width="138" height="34" rx="6" fill="#f8f5ec" stroke="#ddca8f" stroke-width="1"/>
+<text x="346" y="362.5" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start">3 SEC 归属重验</text>
+<text x="346" y="375.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">执行上下文全量验</text>
+<text x="480" y="369" font-size="11" fill="#b58a24" font-weight="700" text-anchor="start">›</text>
+<rect x="484" y="348" width="138" height="34" rx="6" fill="#fdf0ee" stroke="#b42318" stroke-width="1"/>
+<text x="492" y="362.5" font-size="11.2" fill="#b42318" font-weight="700" text-anchor="start">4 Authority 硬门禁</text>
+<text x="492" y="375.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">Intent·上下文·来源</text>
+<rect x="46" y="390" width="138" height="34" rx="6" fill="#f8f5ec" stroke="#ddca8f" stroke-width="1"/>
+<text x="54" y="404.5" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start">5 污点·Trifecta</text>
+<text x="54" y="417.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">私域∩不可信∩出网</text>
+<text x="188" y="411" font-size="11" fill="#b58a24" font-weight="700" text-anchor="start">›</text>
+<rect x="192" y="390" width="138" height="34" rx="6" fill="#f8f5ec" stroke="#ddca8f" stroke-width="1"/>
+<text x="200" y="404.5" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start">6 策略评估</text>
+<text x="200" y="417.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">SEC ∩ Baseline</text>
+<text x="334" y="411" font-size="11" fill="#b58a24" font-weight="700" text-anchor="start">›</text>
+<rect x="338" y="390" width="138" height="34" rx="6" fill="#f8f5ec" stroke="#ddca8f" stroke-width="1"/>
+<text x="346" y="404.5" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start">7 Redact 改参</text>
+<text x="346" y="417.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">密钥脱敏后重评</text>
+<text x="480" y="411" font-size="11" fill="#b58a24" font-weight="700" text-anchor="start">›</text>
+<rect x="484" y="390" width="138" height="34" rx="6" fill="#f8f5ec" stroke="#ddca8f" stroke-width="1"/>
+<text x="492" y="404.5" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start">8 Enforcement</text>
+<text x="492" y="417.5" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">block/warn/audit</text>
+<rect x="86" y="430" width="118" height="20" rx="10" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="145" y="443.5" font-size="10.4" fill="#2f6f47" font-weight="700" text-anchor="middle">ALLOW 放行</text>
+<rect x="218" y="430" width="118" height="20" rx="10" fill="#ffffff" stroke="#b42318" stroke-width="1"/>
+<text x="277" y="443.5" font-size="10.4" fill="#b42318" font-weight="700" text-anchor="middle">DENY 阻断</text>
+<rect x="350" y="430" width="118" height="20" rx="10" fill="#ffffff" stroke="#7c5a0c" stroke-width="1"/>
+<text x="409" y="443.5" font-size="10.4" fill="#7c5a0c" font-weight="700" text-anchor="middle">HOLD 人工审批</text>
+<rect x="482" y="430" width="118" height="20" rx="10" fill="#ffffff" stroke="#0284c7" stroke-width="1"/>
+<text x="541" y="443.5" font-size="10.4" fill="#0284c7" font-weight="700" text-anchor="middle">REDACT 改参</text>
+<rect x="34" y="472" width="600" height="254" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="34" y="478" width="3.5" height="242" rx="1.75" fill="#2563eb"/>
+<text x="48" y="492" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">安全域模块 · Security Domains</text>
+<text x="624" y="491" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">apps/agentshield/internal</text>
+<rect x="46" y="500" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="54" y="519" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">admission</text>
+<text x="54" y="537" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">准入扫描·限额/哈希/规则</text>
+<rect x="192" y="500" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="200" y="519" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">grant</text>
+<text x="200" y="537" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">最小授权·读回effective</text>
+<rect x="338" y="500" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="346" y="519" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">intent</text>
+<text x="346" y="537" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">受信意图·两级撤销</text>
+<rect x="484" y="500" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="492" y="519" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">provenance</text>
+<text x="492" y="537" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">参数来源·声明图匹配</text>
+<rect x="46" y="558" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="54" y="577" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">skillcontext</text>
+<text x="54" y="595" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">SEC 执行上下文重验</text>
+<rect x="192" y="558" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="200" y="577" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">trustedcontext</text>
+<text x="200" y="595" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">可信上下文断言</text>
+<rect x="338" y="558" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="346" y="577" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">receipt</text>
+<text x="346" y="595" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">决策引擎·哈希链回执</text>
+<rect x="484" y="558" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="492" y="577" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">hold</text>
+<text x="492" y="595" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">审批恢复·唯一执行预留</text>
+<rect x="46" y="616" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="54" y="635" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">effectevidence</text>
+<text x="54" y="653" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">效果核验·文件/网络观察</text>
+<rect x="192" y="616" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="200" y="635" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">completion</text>
+<text x="200" y="653" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">完成聚合·四态判定</text>
+<rect x="338" y="616" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="346" y="635" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">ledger</text>
+<text x="346" y="653" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">台账投影·权限五态</text>
+<rect x="484" y="616" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="492" y="635" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">inventory</text>
+<text x="492" y="653" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">只读盘点·不执行内容</text>
+<rect x="46" y="674" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="54" y="693" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">controlsync</text>
+<text x="54" y="711" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">企业同步·重签上传</text>
+<rect x="192" y="674" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="200" y="693" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">openshell</text>
+<text x="200" y="711" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">策略下发·读回比对</text>
+<rect x="338" y="674" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="346" y="693" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">threat</text>
+<text x="346" y="711" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">静态分析·RE2 规则包</text>
+<rect x="484" y="674" width="138" height="50" rx="6" fill="#f4f7fd" stroke="#c9d8f2" stroke-width="0.8"/>
+<text x="492" y="693" font-size="11" fill="#1d4ed8" font-weight="700" text-anchor="start" font-family="mono">adapters/server</text>
+<text x="492" y="711" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">薄钩子·分权接线</text>
+<rect x="34" y="738" width="600" height="70" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="34" y="744" width="3.5" height="58" rx="1.75" fill="#6d5bd0"/>
+<text x="48" y="758" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">密码学与状态基础层</text>
+<text x="624" y="757" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">canon · signing · rulepack · state</text>
+<rect x="48" y="763" width="150" height="19" rx="5" fill="#f6f3fc" stroke="#cfc6ee" stroke-width="0.8" stroke-dasharray="3 2"/>
+<text x="123.0" y="776" font-size="9.8" fill="#5b4bb8" font-weight="400" text-anchor="middle" font-family="mono">canon 规范化 JSON</text>
+<rect x="206" y="763" width="138" height="19" rx="5" fill="#f6f3fc" stroke="#cfc6ee" stroke-width="0.8" stroke-dasharray="3 2"/>
+<text x="275.0" y="776" font-size="9.8" fill="#5b4bb8" font-weight="400" text-anchor="middle" font-family="mono">signing Ed25519</text>
+<rect x="352" y="763" width="158" height="19" rx="5" fill="#f6f3fc" stroke="#cfc6ee" stroke-width="0.8" stroke-dasharray="3 2"/>
+<text x="431.0" y="776" font-size="9.8" fill="#5b4bb8" font-weight="400" text-anchor="middle" font-family="mono">rulepack 验签·防降级</text>
+<rect x="48" y="786" width="236" height="19" rx="5" fill="#f6f3fc" stroke="#cfc6ee" stroke-width="0.8" stroke-dasharray="3 2"/>
+<text x="166.0" y="799" font-size="9.8" fill="#5b4bb8" font-weight="400" text-anchor="middle" font-family="mono">state/fs 0700·O_EXCL·排他发布</text>
+<rect x="292" y="786" width="158" height="19" rx="5" fill="#f6f3fc" stroke="#cfc6ee" stroke-width="0.8" stroke-dasharray="3 2"/>
+<text x="371.0" y="799" font-size="9.8" fill="#5b4bb8" font-weight="400" text-anchor="middle" font-family="mono">runtimeaction 动作描述</text>
+<rect x="458" y="786" width="138" height="19" rx="5" fill="#f6f3fc" stroke="#cfc6ee" stroke-width="0.8" stroke-dasharray="3 2"/>
+<text x="527.0" y="799" font-size="9.8" fill="#5b4bb8" font-weight="400" text-anchor="middle" font-family="mono">pending 离线补签</text>
+<rect x="34" y="820" width="600" height="120" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="34" y="826" width="3.5" height="108" rx="1.75" fill="#0f766e"/>
+<text x="48" y="840" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">本地状态与证据层 · 只追加 / 排他发布</text>
+<text x="624" y="839" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">~/.siq-agent-security</text>
+<rect x="46" y="848" width="188" height="82" rx="6" fill="#f2f8f6" stroke="#bcd8cd" stroke-width="0.8"/>
+<text x="55" y="865" font-size="11" fill="#0f766e" font-weight="700" text-anchor="start">状态目录</text>
+<text x="55" y="880" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">0700/0600 · 单 Writer 锁</text>
+<text x="55" y="894" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">签名私钥 · token · CAS 提交</text>
+<rect x="242" y="848" width="188" height="82" rx="6" fill="#f2f8f6" stroke="#bcd8cd" stroke-width="0.8"/>
+<text x="251" y="865" font-size="11" fill="#0f766e" font-weight="700" text-anchor="start">签名回执哈希链</text>
+<text x="251" y="880" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">prev_hash·hash·sig + checkpoint</text>
+<text x="251" y="894" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">verify 离线重算·断链 exit 4</text>
+<rect x="438" y="848" width="188" height="82" rx="6" fill="#f2f8f6" stroke="#bcd8cd" stroke-width="0.8"/>
+<text x="447" y="865" font-size="11" fill="#0f766e" font-weight="700" text-anchor="start">台账投影与导出</text>
+<text x="447" y="880" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">权限五态 · G7 生命周期 refresh</text>
+<text x="447" y="894" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">export 脱敏包·无私钥/原文</text>
+<rect x="678" y="196" width="564" height="100" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="678" y="202" width="3.5" height="88" rx="1.75" fill="#2563eb"/>
+<text x="692" y="216" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">NVIDIA OpenShell · 沙箱执行后端</text>
+<text x="1232" y="215" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">internal/openshell · 仅 CLI</text>
+<circle cx="697" cy="225.8" r="1.6" fill="#2563eb"/>
+<text x="704" y="229" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">网络策略 policy set --wait + policy get --full 读回比对 revision</text>
+<circle cx="697" cy="241.3" r="1.6" fill="#2563eb"/>
+<text x="704" y="244.5" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">任务执行 12 态状态机(无 stopped 终态)·沙箱 UUID 纳入签名批准</text>
+<circle cx="697" cy="256.8" r="1.6" fill="#2563eb"/>
+<text x="704" y="260.0" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">drift-check 漂移检测写 finding · 不调 create_generation</text>
+<rect x="678" y="308" width="564" height="84" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="678" y="314" width="3.5" height="72" rx="1.75" fill="#64748b"/>
+<text x="692" y="328" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">Decision Relay · 沙箱→宿主受限传输</text>
+<text x="1232" y="327" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">cmd/agentshield-decision-relay</text>
+<circle cx="697" cy="337.8" r="1.6" fill="#64748b"/>
+<text x="704" y="341" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">绑定已验证 bridge 网关 IP(47611–47710)·no_new_privs</text>
+<circle cx="697" cy="353.3" r="1.6" fill="#64748b"/>
+<text x="704" y="356.5" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">仅 7 条固定 POST 路径 · 不持凭据 · 上游固定 127.0.0.1:47611</text>
+<rect x="678" y="404" width="564" height="88" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="678" y="410" width="3.5" height="76" rx="1.75" fill="#7c5a0c"/>
+<text x="692" y="424" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">DGX Spark · GB10 / ARM64 旗舰研究环境</text>
+<text x="1232" y="423" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">deploy/dgx-spark</text>
+<circle cx="697" cy="433.8" r="1.6" fill="#b58a24"/>
+<text x="704" y="437" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">本地推理 Ornith :8006 × SIQ 授权 × OpenShell 隔离 · 三平面</text>
+<circle cx="697" cy="449.3" r="1.6" fill="#b58a24"/>
+<text x="704" y="452.5" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">runtime-lock 不可变输入锁 + doctor 预检(永不自置 verified)</text>
+<circle cx="697" cy="464.8" r="1.6" fill="#b58a24"/>
+<text x="704" y="468.0" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">实证:OpenShell-only 5/5 攻破 vs SIQ+OpenShell 阻断 3/5</text>
+<rect x="678" y="504" width="564" height="216" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="678" y="510" width="3.5" height="204" rx="1.75" fill="#2f6f47"/>
+<text x="692" y="524" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">端到端数据流主线 · End-to-End Flow</text>
+<text x="1232" y="523" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">① → ⑦</text>
+<circle cx="704" cy="534" r="9.5" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="704" y="538" font-size="10.5" fill="#2f6f47" font-weight="700" text-anchor="middle">①</text>
+<text x="722" y="538" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start" font-family="mono">发现盘点 inventory</text>
+<text x="928" y="538" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start">只读扫描·candidate+evidence·密钥只出 secret_ref</text>
+<line x1="704" y1="545" x2="704" y2="557" stroke="#c5d9c8" stroke-width="1"/>
+<circle cx="704" cy="560" r="9.5" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="704" y="564" font-size="10.5" fill="#2f6f47" font-weight="700" text-anchor="middle">②</text>
+<text x="722" y="564" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start" font-family="mono">准入扫描 admit</text>
+<text x="928" y="564" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start">限额/哈希/威胁规则 → admit·附条件·quarantine</text>
+<line x1="704" y1="571" x2="704" y2="583" stroke="#c5d9c8" stroke-width="1"/>
+<circle cx="704" cy="586" r="9.5" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="704" y="590" font-size="10.5" fill="#2f6f47" font-weight="700" text-anchor="middle">③</text>
+<text x="722" y="590" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start" font-family="mono">最小授权 grant</text>
+<text x="928" y="590" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start">人类 challenge 批准·读回才得 effective</text>
+<line x1="704" y1="597" x2="704" y2="609" stroke="#c5d9c8" stroke-width="1"/>
+<circle cx="704" cy="612" r="9.5" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="704" y="616" font-size="10.5" fill="#2f6f47" font-weight="700" text-anchor="middle">④</text>
+<text x="722" y="616" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start" font-family="mono">运行时裁决 /v1/decide</text>
+<text x="928" y="616" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start">硬门禁→污点→策略 ⇒ allow/deny/hold/redact</text>
+<line x1="704" y1="623" x2="704" y2="635" stroke="#c5d9c8" stroke-width="1"/>
+<circle cx="704" cy="638" r="9.5" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="704" y="642" font-size="10.5" fill="#2f6f47" font-weight="700" text-anchor="middle">⑤</text>
+<text x="722" y="642" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start" font-family="mono">签名回执 receipt chain</text>
+<text x="928" y="642" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start">批准≠执行·唯一预留·无观测恒 uncertain</text>
+<line x1="704" y1="649" x2="704" y2="661" stroke="#c5d9c8" stroke-width="1"/>
+<circle cx="704" cy="664" r="9.5" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="704" y="668" font-size="10.5" fill="#2f6f47" font-weight="700" text-anchor="middle">⑥</text>
+<text x="722" y="668" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start" font-family="mono">效果核验 effect-evidence</text>
+<text x="928" y="668" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start">verified / incomplete / conflicting / unknown</text>
+<line x1="704" y1="675" x2="704" y2="687" stroke="#c5d9c8" stroke-width="1"/>
+<circle cx="704" cy="690" r="9.5" fill="#ffffff" stroke="#2f6f47" stroke-width="1"/>
+<text x="704" y="694" font-size="10.5" fill="#2f6f47" font-weight="700" text-anchor="middle">⑦</text>
+<text x="722" y="694" font-size="11.2" fill="#0b1220" font-weight="700" text-anchor="start" font-family="mono">追溯治理 ledger·sync·audit</text>
+<text x="928" y="694" font-size="10.2" fill="#55637a" font-weight="400" text-anchor="start">台账五态 → 企业同步 → OCSF 导出 SIEM</text>
+<rect x="678" y="732" width="564" height="204" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="678" y="738" width="3.5" height="192" rx="1.75" fill="#b58a24"/>
+<text x="692" y="752" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">安全不变量 · Security Invariants</text>
+<text x="1232" y="751" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">AGENTS.md</text>
+<rect x="690" y="762" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="699" y="776" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">模型不是权威</text>
+<text x="699" y="789" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">输出不产 effective 权限</text>
+<rect x="968" y="762" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="977" y="776" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">fail-closed</text>
+<text x="977" y="789" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">不可达/超时/401 即拒</text>
+<rect x="690" y="802" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="699" y="816" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">批准 ≠ 执行</text>
+<text x="699" y="829" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">唯一签名 hold 预留</text>
+<rect x="968" y="802" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="977" y="816" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">effective 只来自读回</text>
+<text x="977" y="829" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">五态事实隔离</text>
+<rect x="690" y="842" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="699" y="856" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">秘密不落盘</text>
+<text x="699" y="869" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">凭据只存 sha256 哈希</text>
+<rect x="968" y="842" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="977" y="856" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">审计同事务</text>
+<text x="977" y="869" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">审计缺失即失败关闭</text>
+<rect x="690" y="882" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="699" y="896" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">不执行被分析内容</text>
+<text x="699" y="909" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">只存哈希+脱敏 excerpt</text>
+<rect x="968" y="882" width="268" height="34" rx="6" fill="#fdf9ef" stroke="#e2d3a4" stroke-width="0.8"/>
+<text x="977" y="896" font-size="11" fill="#7c5a0c" font-weight="700" text-anchor="start">租户身份派生</text>
+<text x="977" y="909" font-size="9.8" fill="#55637a" font-weight="400" text-anchor="start">先 404 后 403</text>
+<rect x="1286" y="196" width="600" height="100" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1286" y="202" width="3.5" height="88" rx="1.75" fill="#2f6f47"/>
+<text x="1300" y="216" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">环境连接器 × 12 · connectors/</text>
+<text x="1876" y="215" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">connector-protocol.v1</text>
+<circle cx="1305" cy="226.8" r="1.6" fill="#2f6f47"/>
+<text x="1312" y="230" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">hermes · openclaw · directory · docker · mcp · kubernetes · systemd</text>
+<circle cx="1305" cy="242.3" r="1.6" fill="#2f6f47"/>
+<text x="1312" y="245.5" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">process · dify · piagent · workbuddy · siq — 独立 Go 模块</text>
+<circle cx="1305" cy="257.8" r="1.6" fill="#2f6f47"/>
+<text x="1312" y="261.0" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">NDJSON 子进程 · 默认禁网 · 60s/8MB · 强制脱敏 · .env 整批作废</text>
+<rect x="1286" y="312" width="600" height="96" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1286" y="318" width="3.5" height="84" rx="1.75" fill="#2f6f47"/>
+<text x="1300" y="332" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">Edge Agent · edge/agent（Go CLI）</text>
+<text x="1876" y="331" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">仅出站·吊销即时生效</text>
+<circle cx="1305" cy="342.8" r="1.6" fill="#2f6f47"/>
+<text x="1312" y="346" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">注册→固定身份/公钥→领取 Ed25519 签名任务→子进程采集→回执</text>
+<circle cx="1305" cy="358.3" r="1.6" fill="#2f6f47"/>
+<text x="1312" y="361.5" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">批次+逐条双重签名(5min 新鲜度)· 凭据只存 sha256 · systemd 常驻</text>
+<rect x="1286" y="424" width="600" height="156" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1286" y="430" width="3.5" height="144" rx="1.75" fill="#7c5a0c"/>
+<text x="1300" y="444" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">Control API · apps/control-api（FastAPI · :8600）</text>
+<text x="1876" y="443" font-size="10" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">模块化单体</text>
+<circle cx="1305" cy="455.8" r="1.6" fill="#7c5a0c"/>
+<text x="1312" y="459" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">33 路由组:环境/Edge 接入·批次摄入·策略与变更审批·部署预览/批次</text>
+<circle cx="1305" cy="472.8" r="1.6" fill="#7c5a0c"/>
+<text x="1312" y="476" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">运行时绑定·风险中心·威胁扫描/隔离·审计导出·设备生命周期·周期发现</text>
+<circle cx="1305" cy="489.8" r="1.6" fill="#7c5a0c"/>
+<text x="1312" y="493" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">OIDC RS256+JWKS · tenant_id 只从验证身份派生 · 先 404 后 403</text>
+<circle cx="1305" cy="506.8" r="1.6" fill="#7c5a0c"/>
+<text x="1312" y="510" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">审计与状态同事务(缺失即失败关闭)· Outbox worker 至少一次投递</text>
+<circle cx="1305" cy="523.8" r="1.6" fill="#7c5a0c"/>
+<text x="1312" y="527" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">威胁规则包与 Go 侧逐字节一致 · critical 命中自动隔离+吊销绑定</text>
+<rect x="1286" y="596" width="188" height="148" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1286" y="602" width="3.5" height="136" rx="1.75" fill="#2563eb"/>
+<text x="1300" y="616" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">PostgreSQL</text>
+<text x="1298" y="631" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">Alembic 0001–0028 · 32 实体</text>
+<text x="1298" y="657" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">Tenant/Asset/Evidence/Finding</text>
+<text x="1298" y="683" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">ChangeRequest·Audit·Outbox</text>
+<text x="1298" y="709" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">生产禁 SQLite · 禁 Dev 头</text>
+<rect x="1486" y="596" width="188" height="148" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1486" y="602" width="3.5" height="136" rx="1.75" fill="#2563eb"/>
+<text x="1500" y="616" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">企业管理控制台</text>
+<text x="1498" y="631" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">apps/web · React18+Vite</text>
+<text x="1498" y="657" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">nginx :80 · 资产/权限/安全/审计</text>
+<text x="1498" y="683" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">IAM Cookie→内存 token</text>
+<text x="1498" y="709" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">严格 CSP · token 不落存储</text>
+<rect x="1686" y="596" width="188" height="148" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1686" y="602" width="3.5" height="136" rx="1.75" fill="#0284c7"/>
+<text x="1700" y="616" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">审计导出 · SIEM</text>
+<text x="1698" y="631" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">GET /api/v1/export/ocsf</text>
+<text x="1698" y="657" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">OCSF v1.1.0 · NDJSON</text>
+<text x="1698" y="683" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">精确过滤 + 游标分页</text>
+<text x="1698" y="709" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">Webhook 至少一次投递</text>
+<rect x="1286" y="760" width="600" height="146" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1286" y="766" width="3.5" height="134" rx="1.75" fill="#b42318"/>
+<text x="1300" y="780" font-size="14" fill="#0b1220" font-weight="700" text-anchor="start">证据与诚实边界 · Honest Boundaries</text>
+<circle cx="1305" cy="790.8" r="1.6" fill="#b42318"/>
+<text x="1312" y="794" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">发现资产 ≠ 已纳管 ≠ 保护生效 · 以实际接入与效果证据为准</text>
+<circle cx="1305" cy="808.8" r="1.6" fill="#b42318"/>
+<text x="1312" y="812" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">签名个人客户端 ≠ 企业组件已部署 · 证据绑定候选不跨版本迁移</text>
+<circle cx="1305" cy="826.8" r="1.6" fill="#b42318"/>
+<text x="1312" y="830" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">桌面同 UID 非强隔离(spec §6)· deploy/compose 仅本地开发栈</text>
+<circle cx="1305" cy="844.8" r="1.6" fill="#b42318"/>
+<text x="1312" y="848" font-size="11" fill="#2a3852" font-weight="400" text-anchor="start">企业服务按独立部署流程交付 · 真实身份联验持续验收中</text>
+<rect x="16" y="150" width="1244" height="812" rx="16" fill="none" stroke="#b58a24" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="470" y="942" width="330" height="15" fill="#f7f4ee"/>
+<text x="635" y="953" font-size="10.4" fill="#7c5a0c" font-weight="400" text-anchor="middle">本机部署边界 · Loopback 127.0.0.1 · 私钥不出状态目录</text>
+<rect x="1268" y="150" width="632" height="812" rx="16" fill="none" stroke="#2f6f47" stroke-width="1.2" stroke-dasharray="7 5"/>
+<rect x="1440" y="942" width="296" height="15" fill="#f7f4ee"/>
+<text x="1588" y="953" font-size="10.4" fill="#2f6f47" font-weight="400" text-anchor="middle">企业网络 · OIDC · Edge 仅出站 · 凭据吊销即时生效</text>
+<line x1="380" y1="134" x2="380" y2="192" stroke="#2563eb" stroke-width="1.3" marker-end="url(#ar-blue)"/>
+<text x="372" y="146" font-size="10.3" fill="#2563eb" text-anchor="end" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">POST /v1/decide · /v1/observe · fail-closed</text>
+<path d="M700,134 V136 H470 V192" fill="none" stroke="#64748b" stroke-width="1.2" marker-end="url(#ar-gray)"/>
+<text x="480" y="148" font-size="10.3" fill="#64748b" text-anchor="start" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">配对码 → 24h 会话 · 管理面 /v1/*</text>
+<text x="1097" y="147" font-size="10" fill="#b42318" text-anchor="middle" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">✕ 不持凭据 · 不参与裁决</text>
+<line x1="1592" y1="134" x2="1592" y2="152" stroke="#2f6f47" stroke-width="1.3" marker-end="url(#ar-green)"/>
+<text x="1602" y="147" font-size="10.3" fill="#2f6f47" text-anchor="start" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">OIDC 登录</text>
+<line x1="636" y1="240" x2="674" y2="240" stroke="#b58a24" stroke-width="1.4" marker-end="url(#ar-gold)"/>
+<text x="657" y="228" font-size="10" fill="#7c5a0c" text-anchor="middle" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">policy set/get</text>
+<line x1="678" y1="350" x2="636" y2="350" stroke="#64748b" stroke-width="1.1" stroke-dasharray="5 4" marker-end="url(#ar-gray)"/>
+<text x="657" y="364" font-size="10" fill="#64748b" text-anchor="middle" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">relay 7 条固定路径</text>
+<path d="M226,940 V982 H1262 V470 H1282" fill="none" stroke="#0284c7" stroke-width="1.3" stroke-dasharray="6 5" marker-end="url(#ar-cyan)"/>
+<text x="700" y="974" font-size="10.5" fill="#0284c7" text-anchor="middle" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">controlsync 可选同步 · POST /edge/v1/batches（追加上传 · 失联不失效）</text>
+<line x1="1586" y1="296" x2="1586" y2="308" stroke="#64748b" stroke-width="1.2" marker-end="url(#ar-gray)"/>
+<line x1="1586" y1="408" x2="1586" y2="420" stroke="#64748b" stroke-width="1.2" marker-end="url(#ar-gray)"/>
+<text x="1598" y="417" font-size="10" fill="#64748b" text-anchor="start" style="paint-order:stroke;stroke:#f7f4ee;stroke-width:3.5px">batches 双签名</text>
+<line x1="1380" y1="580" x2="1380" y2="592" stroke="#2563eb" stroke-width="1.2" marker-end="url(#ar-blue)"/>
+<line x1="1586" y1="580" x2="1586" y2="592" stroke="#2563eb" stroke-width="1.2" marker-end="url(#ar-blue)"/>
+<line x1="1792" y1="580" x2="1792" y2="592" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="6 5" marker-end="url(#ar-cyan)"/>
+<line x1="200" y1="958" x2="200" y2="992" stroke="#6d5bd0" stroke-width="1.2" stroke-dasharray="2 4" marker-end="url(#ar-violet)"/>
+<line x1="960" y1="958" x2="960" y2="992" stroke="#6d5bd0" stroke-width="1.2" stroke-dasharray="2 4" marker-end="url(#ar-violet)"/>
+<line x1="1700" y1="958" x2="1700" y2="992" stroke="#6d5bd0" stroke-width="1.2" stroke-dasharray="2 4" marker-end="url(#ar-violet)"/>
+<rect x="24" y="996" width="1872" height="158" rx="12" fill="#fbf8f0" stroke="#ddca8f" stroke-width="1.2"/>
+<rect x="40" y="1006" width="20" height="20" rx="5" fill="#7c5a0c"/>
+<text x="50" y="1020.5" font-size="10" fill="#2a3852" font-weight="400" text-anchor="middle">🔑</text>
+<text x="68" y="1020" font-size="14.5" fill="#7c5a0c" font-weight="750" text-anchor="start">密码学信任链 · Cryptographic Trust Chain</text>
+<text x="1884" y="1019" font-size="10.2" fill="#7c5a0c" font-weight="400" text-anchor="end" font-family="mono">Ed25519 · SHA-256 · RS256 · 常量时间比较</text>
+<text x="68" y="1037" font-size="10.5" fill="#55637a" font-weight="400" text-anchor="start">一切签名始于规范化字节；模型与适配器永不持有私钥</text>
+<rect x="40" y="1048" width="284" height="88" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="40" y="1053" width="3.5" height="78" rx="1.75" fill="#7c5a0c"/>
+<text x="53" y="1066" font-size="12.4" fill="#0b1220" font-weight="700" text-anchor="start">① 本地密钥身份</text>
+<text x="315" y="1065" font-size="9" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">internal/signing</text>
+<text x="53" y="1083" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">signing.seed Ed25519 私钥</text>
+<text x="53" y="1099" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">O_EXCL 一次生成 · 0600</text>
+<text x="53" y="1115" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">损坏不重生成·永不出状态目录</text>
+<line x1="328" y1="1092.0" x2="346" y2="1092.0" stroke="#b58a24" stroke-width="1.6" marker-end="url(#ar-gold)"/>
+<rect x="352" y="1048" width="284" height="88" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="352" y="1053" width="3.5" height="78" rx="1.75" fill="#6d5bd0"/>
+<text x="365" y="1066" font-size="12.4" fill="#0b1220" font-weight="700" text-anchor="start">② 规范化序列化</text>
+<text x="627" y="1065" font-size="9" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">internal/canon</text>
+<text x="365" y="1083" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">与 CPython json.dumps 逐字节一致</text>
+<text x="365" y="1099" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">sort_keys · 紧凑分隔符</text>
+<text x="365" y="1115" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">签名只签规范化字节(128 hex)</text>
+<line x1="640" y1="1092.0" x2="658" y2="1092.0" stroke="#b58a24" stroke-width="1.6" marker-end="url(#ar-gold)"/>
+<rect x="664" y="1048" width="284" height="88" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="664" y="1053" width="3.5" height="78" rx="1.75" fill="#2563eb"/>
+<text x="677" y="1066" font-size="12.4" fill="#0b1220" font-weight="700" text-anchor="start">③ 签名文档族</text>
+<text x="939" y="1065" font-size="9" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">admission/grant/intent/...</text>
+<text x="677" y="1083" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">Admission·Grant·Intent V2/V3·SEC</text>
+<text x="677" y="1099" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">Context/Provenance 断言·Skill 清单</text>
+<text x="677" y="1115" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">Hold 预留/结案·effect 证据封套</text>
+<line x1="952" y1="1092.0" x2="970" y2="1092.0" stroke="#b58a24" stroke-width="1.6" marker-end="url(#ar-gold)"/>
+<rect x="976" y="1048" width="284" height="88" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="976" y="1053" width="3.5" height="78" rx="1.75" fill="#0f766e"/>
+<text x="989" y="1066" font-size="12.4" fill="#0b1220" font-weight="700" text-anchor="start">④ 哈希链回执</text>
+<text x="1251" y="1065" font-size="9" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">internal/receipt/chain.go</text>
+<text x="989" y="1083" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">hash = sha256(canon(receipt))</text>
+<text x="989" y="1099" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">prev_hash 链 + Ed25519 链签</text>
+<text x="989" y="1115" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">checkpoint 锚定防整段截断</text>
+<line x1="1264" y1="1092.0" x2="1282" y2="1092.0" stroke="#b58a24" stroke-width="1.6" marker-end="url(#ar-gold)"/>
+<rect x="1288" y="1048" width="284" height="88" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1288" y="1053" width="3.5" height="78" rx="1.75" fill="#b42318"/>
+<text x="1301" y="1066" font-size="12.4" fill="#0b1220" font-weight="700" text-anchor="start">⑤ 在线验签 · 重验</text>
+<text x="1563" y="1065" font-size="9" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">receipt engine · grant</text>
+<text x="1301" y="1083" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">决策时全量重验 Intent/SEC/现场</text>
+<text x="1301" y="1099" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">规则包验签+版本防降级(fail-closed)</text>
+<text x="1301" y="1115" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">挑战 nonce 绑 digest·5min·单次</text>
+<line x1="1576" y1="1092.0" x2="1594" y2="1092.0" stroke="#b58a24" stroke-width="1.6" marker-end="url(#ar-gold)"/>
+<rect x="1600" y="1048" width="284" height="88" rx="8" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1600" y="1053" width="3.5" height="78" rx="1.75" fill="#2f6f47"/>
+<text x="1613" y="1066" font-size="12.4" fill="#0b1220" font-weight="700" text-anchor="start">⑥ 离线 / 跨域验证</text>
+<text x="1875" y="1065" font-size="9" fill="#8a93a6" font-weight="400" text-anchor="end" font-family="mono">verify · manifest · edge</text>
+<text x="1613" y="1083" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">agentshield verify 断链 exit 4</text>
+<text x="1613" y="1099" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">发行 manifest-verify 四目标二进制</text>
+<text x="1613" y="1115" font-size="10" fill="#55637a" font-weight="400" text-anchor="start">Edge 批次双签名 · OIDC RS256+JWKS</text>
+<text x="40" y="1144" font-size="10.4" fill="#7c5a0c" font-weight="400" text-anchor="start" font-family="mono">秘密只存哈希：Edge 凭据 sha256 · observer token 哈希 · 配对码 sha256 常量时间比较 · 私钥与参数原文永不进日志 / 审计 / outbox</text>
+<rect x="24" y="1172" width="560" height="60" rx="9" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="24" y="1178" width="3.5" height="48" rx="1.75" fill="#6d5bd0"/>
+<text x="38" y="1192" font-size="12.5" fill="#0b1220" font-weight="700" text-anchor="start">合同层 · packages/contracts（全仓事实源）</text>
+<text x="38" y="1208" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">307 份 JSON Schema + 92 份协议文档 · admission/grant/intent/receipt/hold</text>
+<text x="38" y="1222" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">provenance/effect-evidence/SEC/event-envelope · Schema First · Python×Go 对等</text>
+<rect x="608" y="1172" width="560" height="60" rx="9" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="608" y="1178" width="3.5" height="48" rx="1.75" fill="#b58a24"/>
+<text x="622" y="1192" font-size="12.5" fill="#0b1220" font-weight="700" text-anchor="start">签名发行 0.4.0 · scripts/release + platforms/</text>
+<text x="622" y="1208" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">Ed25519 签名清单绑定四目标:linux amd64/arm64 · darwin arm64 · windows amd64</text>
+<text x="622" y="1222" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">systemd / LaunchAgent / Windows 任务计划 三套 OS 生命周期载体</text>
+<rect x="1192" y="1172" width="704" height="60" rx="9" fill="#fdfcf9" stroke="#e8e1d4" stroke-width="1" filter="url(#soft)"/>
+<rect x="1192" y="1178" width="3.5" height="48" rx="1.75" fill="#0f766e"/>
+<text x="1206" y="1192" font-size="12.5" fill="#0b1220" font-weight="700" text-anchor="start">研究与证据链 · research / evaluations / benchmarks</text>
+<text x="1206" y="1208" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">RQ1–RQ5 研究问题 · 固定语料基准(21 对 42 场景)· 评测登记「谁/什么候选/什么环境」</text>
+<text x="1206" y="1222" font-size="10.3" fill="#55637a" font-weight="400" text-anchor="start">证据不可跨候选迁移 · 代码合并/CI/验签/原生安装/人工桌面验证不能互换</text>
+<text x="540" y="1251.5" font-size="10" fill="#55637a" font-weight="700" text-anchor="end">图例</text>
+<line x1="560" y1="1248" x2="590" y2="1248" stroke="#b58a24" stroke-width="1.6"/>
+<path d="M590,1248 l7,0" stroke="#b58a24" stroke-width="1.6"/>
+<text x="600" y="1251.5" font-size="11" fill="#55637a" font-weight="400" text-anchor="start">控制流 / 裁决调用</text>
+<line x1="749.0" y1="1248" x2="779.0" y2="1248" stroke="#2563eb" stroke-width="1.6"/>
+<path d="M779.0,1248 l7,0" stroke="#2563eb" stroke-width="1.6"/>
+<text x="789.0" y="1251.5" font-size="11" fill="#55637a" font-weight="400" text-anchor="start">数据 / 查询</text>
+<line x1="903.5" y1="1248" x2="933.5" y2="1248" stroke="#0284c7" stroke-width="1.6" stroke-dasharray="6 5"/>
+<path d="M933.5,1248 l7,0" stroke="#0284c7" stroke-width="1.6"/>
+<text x="943.5" y="1251.5" font-size="11" fill="#55637a" font-weight="400" text-anchor="start">证据 / 审计同步</text>
+<line x1="1081.0" y1="1248" x2="1111.0" y2="1248" stroke="#64748b" stroke-width="1.6" stroke-dasharray="5 4"/>
+<path d="M1111.0,1248 l7,0" stroke="#64748b" stroke-width="1.6"/>
+<text x="1121.0" y="1251.5" font-size="11" fill="#55637a" font-weight="400" text-anchor="start">受限传输</text>
+<line x1="1201.0" y1="1248" x2="1231.0" y2="1248" stroke="#6d5bd0" stroke-width="1.6" stroke-dasharray="2 4"/>
+<path d="M1231.0,1248 l7,0" stroke="#6d5bd0" stroke-width="1.6"/>
+<text x="1241.0" y="1251.5" font-size="11" fill="#55637a" font-weight="400" text-anchor="start">合同约束</text>
+</svg>
