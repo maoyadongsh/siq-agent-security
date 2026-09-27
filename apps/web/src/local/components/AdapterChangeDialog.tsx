@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Modal from '@/components/Modal';
 import { LocalApiError, localApi } from '../api';
 import { configurationLabel, platformLabel } from '../format';
@@ -6,6 +6,7 @@ import AdapterDiagnosisPanel from './AdapterDiagnosisPanel';
 import type { AdapterPlan, AdapterInstances } from '../types';
 import { useInstancePermissions } from './useInstancePermissions';
 import { useLocalSession } from '../session';
+import { verifyAdapterReadback, verifyAdapterResult } from '../managedReadback';
 
 export interface AdapterChangeRequest { platform: string; action: 'install' | 'uninstall'; instanceId?: string; grantId?: string }
 export interface AdapterAppliedChange { platform: string; action: 'install' | 'uninstall'; instanceId?: string }
@@ -24,6 +25,7 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const submitting = useRef(false);
   const [attempt, setAttempt] = useState(0);
   const [catalogAttempt, setCatalogAttempt] = useState(0);
   const managedPlatform = request.platform === 'hermes' || request.platform === 'openclaw' || request.platform === 'workbuddy' ? request.platform : null;
@@ -80,11 +82,18 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
   }, [request.platform, action, instanceId, previewNativeEnable, attempt, connectionMode, previewIdentityId, managedAvailable]);
 
   const apply = async () => {
-    if (!plan || working || loading || plan.instance_id !== (instanceId || undefined) || plan.action !== action) return;
+    if (submitting.current || !plan || working || loading || plan.instance_id !== (instanceId || undefined) || plan.action !== action) return;
     if (action === 'install' && managedInstance && connectionMode === 'permissions' && (!managedAvailable || plan.runtime_identity_id !== permissions.identityId)) return;
+    submitting.current = true;
     setBusy(true); setError('');
     try {
-      await localApi.adapterApply(plan, actorId);
+      const result = await localApi.adapterApply(plan, actorId);
+      verifyAdapterResult(plan, result);
+      if (managedInstance) {
+        const current = await localApi.adapterInstances(request.platform);
+        setCatalog(current);
+        verifyAdapterReadback(plan, current);
+      }
       onApplied(action === 'install'
         ? `${platformLabel(request.platform)}${selected ? ` / ${selected.name}` : ''}：配置已应用，请查看诊断并验证实际调用。`
         : `${platformLabel(request.platform)}${selected ? ` / ${selected.name}` : ''}：接入配置已移除，其他平台设置已保留。`,
@@ -92,10 +101,11 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
     } catch (err) {
       setError(err instanceof Error ? err.message : '操作失败，请检查状态后重试');
       setPlan(null);
-    } finally { setBusy(false); }
+    } finally { submitting.current = false; setBusy(false); }
   };
   const recover = async () => {
-    if (managedInstance && !instanceId) return;
+    if (submitting.current || working || managedInstance && !instanceId) return;
+    submitting.current = true;
     setBusy(true); setError('');
     try {
       const result = await localApi.adapterRecover(request.platform, instanceId || undefined);
@@ -103,7 +113,7 @@ export default function AdapterChangeDialog({ request, onClose, onApplied }: Pro
         ? '没有待恢复的中断操作。请检查平台配置后重新预览。'
         : '中断操作已恢复。请重新查看诊断，再决定是否接入。');
     } catch (err) { setError(err instanceof Error ? err.message : '恢复未完成，现有修改已保留'); }
-    finally { setBusy(false); }
+    finally { submitting.current = false; setBusy(false); }
   };
   return <><Modal open={!permissions.editing} className="grant-resource-modal" onClose={close} title={`${platformLabel(request.platform)} · ${action === 'install' ? '接入' : '卸载'}预览`}
     description="确认后才会应用以下变更，并保存本机恢复记录。预览有效期为 5 分钟；配置变化时需要重新预览。">

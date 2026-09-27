@@ -123,6 +123,8 @@ Windows 新建私密目录/文件必须在 CreateDirectory/CreateFile 的安全�
 
 Windows 适配器恢复材料增量（2026-09-18）：`adapter-backup.key`、`adapter-transactions` 下的密封计划/终态文件，以及 `adapter-operations`、`adapter-write` 目录必须使用同一私密边界。既存密钥、恢复文件或操作目录的 ACL 变宽后，预览/接入/恢复拒绝，不读出密钥或解密备份，不自动修复 ACL、轮换密钥或修改宿主配置。仅内部私密恢复材料使用显式私密发布，用户宿主配置文件仍走原有备份/确认与写入语义，不将通用配置读写全部私密化。
 
+Windows WorkBuddy 产品修复（2026-09-28）：受管配置安装预览/应用/读回/诊断和 hook 共用 [受管运行规格](workbuddy-managed-runtime-spec-v1.md) 的只读预检。配置直接父目录与凭据父目录也必须满足私密边界；诊断打开凭据只验证元数据，不读取或缓存秘密。Windows 快照固定对象且结束前复验，失败以稳定对象类别返回；不会把静态校验成功显示成原生运行已验证，不自动修改既存 ACL。
+
 私密不可变文件排他发布共用 `privatefs.PublishNew`：Windows 对已同步、关闭的本次暂存重新打开不共享 READ + DELETE 句柄，验证普通单链接、ACL 和创建身份，校验源/目标父目录后通过 FileRenameInfo（ReplaceIfExists=false）原子移动；保留 ACL/只读属性，成功返回源已移动，失败不覆盖目标。目标存在保留明确冲突类别；不引入双链接窗口、不 copy、不清只读、不删除未知对象。非 Windows 继续 os.Link，由调用方清理自己的暂存。statefs 包装先执行源/目标兼容屏障；迁移在已有特殊屏障内直接调用 privatefs。适配器发布失败保留私密暂存，不因名字曾属于本次尝试而删除可能已替换的对象；成功的非 Windows 硬链接发布按既有语义清理本次暂存。该 Win32 使用属于既有平台文件操作限定例外，仍只用标准库。
 
 Windows Skill 安装/更新元数据增量（2026-09-18）：`skill-installations` 私有根及 plans、update-plans、operations、runtime-bindings、removals、update-operations、update-installations、update-sources 等内部记录沿显式私密边界创建/读取。每次内部计划或签名记录读取复验实际状态根、私有元数据根、所在目录和同一文件句柄的 ACL；缓存 Store 不豁免权限漂移。拒绝宽 ACL 不修改文件字节、宿主目标、Grant 或 ACL，不降级为缺失或自动重建。
@@ -143,7 +145,7 @@ Windows Writer 恢复增量（2026-09-18，Issue #79）：Windows 专属实现�
 
 Windows 回收在同一个 DELETE + 只读、禁止共享的文件句柄内读取有界锁内容、验证普通单链接且非重解析点、确认死亡，并通过 SetFileInformationByHandle 将该对象排他重命名到同目录唯一 stale 名。不能先读路径再按路径 rename；并发回收失败应拒绝，不得移动新持有者的锁。锁文件格式及新锁 O_EXCL 发布不变，旧锁保留原始字节；stale 目标已存在时不得覆盖。此保证限定于已打开的锁对象与合作 Writer，并非防任意同用户替换父目录的沙箱。非 Windows 恢复行为不在本增量中改写。
 - 子命令（`admit`/`grant`）与 `serve` 同时运行时，通过 HTTP 提交给 `serve` 写入；`serve` 未运行则子命令在写锁下直接写文件。
-- 回执链：`serve` 内存持有 `(seq, hash)`；写入顺序 = 先 append 行、`fsync`、再更新 `HEAD`。恢复时以文件最后一行为准，`HEAD` 只是加速。
+- 回执链：`serve` 内存持有 `(seq, hash)`；写入顺序 = 先 append 行、`fsync`、再更新 `HEAD`。恢复时以文件最后一行为准，`HEAD` 只是加速。2026-09-28 Windows 回归观察到 HEAD 原子换入返回 Access Denied，具体占用来源未确认；该可重建提示更新失败不撤销已 fsync 的签名行，继续发布独立受管 checkpoint。签名行写入/fsync/关闭和受管 checkpoint 失败仍报错，HEAD 不成为信任锚或回放许可。
 - 不可变版本按 ADR-012 先在同目录私有暂存文件完成写入/Sync，再排他发布最终版本名；版本占用只允许重试下一序号，不能返回伪成功。读者不得看见未完成暂存或把损坏最新版本忽略为空。
 - grant 状态变迁（approve/reject/deploy/revoke/patch-desired/effective/resolve-overlap）必须带 `expected_revision`（当前磁盘版本序号）；冲突返回 409，不得静默追加成功。创建响应与 `GET /v1/grants/{id}` 返回 `state_revision`。该 CAS 不替代多文档审计事务（DEV03）。
 - **高影响批准（DEV02-B）：** `approve` 前须 `POST /v1/grants/{id}/challenge` 取得单次 `challenge_id`+`nonce`；挑战绑定 grant digest、scope digest、subject/platform 与 `expected_revision`，TTL 5 分钟，消费后不可重放。grant 正文或 desired 变更会使 digest 失配。desktop-same-uid 下挑战不是 OS 隔离边界，不宣称防止同 UID 自批。
@@ -153,6 +155,10 @@ Windows 回收在同一个 DELETE + 只读、禁止共享的文件句柄内读�
 - **Go staging 的平台语义：** `skillmanifest.StageVerifiedBinary` 在非 Windows 继续要求普通源文件具有 POSIX 执行位；Windows 的 Go `FileMode` 不表达 loader 执行性，不以 `0111` 判定源是否可启动。普通文件、源与副本摘要、可选 pin、排他复制和失败清理条件不变，不增加扩展名或 PE 格式限制，也不改变下载信任。成功暂存只证明上述复制完整性；Windows 实际加载须由明确执行自建 staged `.exe` 的独立证据证明，`Chmod(0700)` 不证明 Windows DACL 私有。本增量不改 Python bootstrap、`clientrelease.Stage` 或原生客户端安装/升级支持范围。
 
 ### 2.3.1 状态格式前置拒绝（N01 审查修复，2026-09-13）
+
+2026-09-28 诊断增量：Windows 迁移清点使用已验证的私密快照读取，失败保留 `state_migration_multiple_links`、`state_migration_reparse`、`state_migration_owner_mismatch`、`state_migration_private_permissions`、`state_migration_source_changed` 或 `state_migration_source_unavailable` 内部原因码及状态根内相对对象引用。硬链接默认拒绝，不能标成真实内容竞态；不自动断链、修改 ACL 或清理根外别名。只读诊断不是迁移确认，不变更业务记录。
+
+`task-start --help/-h` 与 `task-stop --help/-h` 仅输出帮助，先于状态兼容检查及服务管理，不要求确认且不初始化/查询/启动/停止实例。帮助必须是唯一参数；正常动作仍要求原有精确确认参数。`task-runtime` 的 last_result 是 Task Scheduler 状态值；running/267009 表示任务仍在运行，不代表进程已退出，也不代表服务健康。
 
 后续 N01 完整实现规格见 [状态协议与迁移实施规格](n01-state-protocol-design-20260913.md)，其中 v2、迁移与发行预检规则覆盖本节下方首轮修复的历史范围。
 
@@ -499,6 +505,8 @@ G7（`serve` 约 5 分钟及每次台账 GET 的 refresh）：
 - **受管 checkpoint（DEV15-E）：** `<state>/checkpoints/<chain_id>.json`（`agentshield.checkpoint.v1`，`local_canonical/v1` 签名）保存最高 `seq`+`tip_hash`。路径必须在 `receipts/` **之外**；**禁止**把 `receipts/<id>/HEAD` 当锚点。Append 成功后由 serve 自动 Publish。有匹配 checkpoint 时 `history_integrity=verified`；截断/回滚相对该文件可检为 `failed`；无 checkpoint 时前缀有效仍为 `unknown`。诚实边界：同 UID 整 state 目录回滚不在本切片宣称；可用 `OpenCheckpointStoreAt` 指向独立挂载。
 
 #### 3.8.4 fail-closed 表（适配器侧行为）
+
+2026-09-28 WorkBuddy 本地失败证据按 [v2 规格](workbuddy-local-failure-v2.md) 和新增 `pending-decision.v2.schema.json`、`receipt.v2.schema.json` 实施。调用标识、动作摘要、阶段和稳定原因保留在未签名事件；提升时间与原始时间分离，回执 `local_failure` 不属于在线策略裁决或真实成功 observation。旧 pending/v1 与签名回执保持原序列化兼容。
 
 | 场景 | block | warn / audit_only |
 | --- | --- | --- |
@@ -2565,3 +2573,36 @@ E151 兼容边界：当前已为空（省略字段或显式空 map）时保留�
 ### E153：单次运行输出目录与显式读取（2026-09-23）
 
 按 [E153 规格](development/runtime-output-view-e153-spec.md)，新增管理认证的活动 outputs 列表与 POST read。服务器只从签名历史 activity/binding/intent/runtime identity 解析来源，不接受客户端身份/路径；旧 v1、不匹配来源与非 output 排除。读取不恢复执行权限，正文在明确确认后临时显示，活动快照和预期摘要变化拒绝；密文保留期与仓状态继续生效。
+
+### Windows WorkBuddy 产品状态读回增量（2026-09-28）
+
+受管接入应用后必须核对响应的平台/动作，并重新读取同实例的配置诊断；返回错误、缺失实例或失败诊断不能显示应用完成。此读回仍仅证明配置，runtime_state 保留 unverified。前端提交锁在异步调用前同步置位，失败需要重新预览；后端保留原计划摘要、修订号、事务幂等校验。
+
+授权批准与部署后重新读取同一 Grant；只有匹配此次部署修订且状态为 deployed/effective 才确认部署。更新期间读回的新状态应展示，但不能混入旧确认。effective_readback 的 null 不变成 true。Grant 到期缺字段为未知、null 为未设置、合法时间为服务端期限；会话 TTL 从登记起计算，不从身份创建时间推算会话到期，不自动续期。
+
+WorkBuddy 覆盖说明明确 Read/Write 等已映射动作与 present_files、Glob、Grep 的未知效果边界。present_files 不冒充 Read，不由只读模板增加工具或权限；产物卡片与宿主历史记忆界面不证明 SIQ 对其内容/外发/UI 全路径控制。资源身份不可用与范围拒绝分别呈现；不可用本身不能断言文件缺失，用户可核对路径是否存在并跳过非必需步骤。
+
+`task-runtime` 保留 state/instances/last_result 原值并补充 last_result_kind 与 health=unverified；267009 表示调度器仍在运行，不是本次进程退出码或业务完成。只读 help 不创建状态或执行生命周期动作。
+
+W1 受管配置替换补充：Windows WorkBuddy 专属配置的文件快照包含 owner/DACL 的 SDDL，仅留在加密事务材料中，不进入预览响应或日志。预览和应用复验原描述符，已有配置的新副本在 CREATE_NEW 时使用相同描述符，保留 deny ACE 和保护/继承标记；不调用 SetSecurityInfo 修改现有对象。回滚也按已密封描述符创建副本。未变更权限的同目录原子替换后，再次按 hook 语义读取；描述符或配置被并发修改即拒绝并保留恢复材料。此范围包含专属受管配置及本事务触及的既有 WorkBuddy settings/plugin 配置，不自动修复宿主根或未知组 ACL。
+
+`state-migrate --preview` 是只读清单核验，返回 local-state-migration-preview/v1：精确 state_directory_id/instance_id、格式、私密备份预计条目与字节数、Windows profile 的 enabled/activation_required/not_applicable。预览不创建锁、备份、身份或迁移计划，不输出文件内容/摘要，不把快照当作可长期复用的迁移许可。未知、不兼容、活动迁移屏障或不合格对象仍返回具体错误；--preview 与 --confirm 互斥。执行仍用原五个实例锁并重新核验，预览不能证明服务已停止。
+
+Windows 全新安装在创建发行暂存文件前显式初始化 format 2，建立本实例签名身份，再经原 Windows profile 激活事务进入 min_reader/min_writer 3。仅 Initialize 确认 pristine 的新状态自动走此流程；已有历史状态、既有格式和未知对象仍走迁移预览/显式升级，不靠改 marker 跳过 journal。profile 失败时不返回初始化完成，不注册/启动后台任务。client-install 的显式初始端口必须传入同一次初始化，避免先固定默认端口再与 setup 冲突。存储能力不批准业务 Grant。
+
+Windows CLI 初始化和显式 profile 准备拒绝环境签名 seed 覆盖，且在状态写入前检查；必须使用本实例持久化身份。首次初始化中断后重试不会把历史状态当作 pristine，旧 format/profile 显式检查与恢复路径继续适用。
+
+Windows 迁移 CLI 预览同时返回当前规范 EXE 路径、字节摘要以及绑定精确 state_directory_id 的 invocation_binding。确认必须回传 --binding；该摘要不是权限令牌，执行前、取得本实例全部生命周期锁后和各提交边界均重算。EXE/状态目录任一变化拒绝；不自动停止或启动服务。失败保留原 journal，并提示使用相同 EXE/状态目录核查 state-status、完成原恢复后 task-start --confirm-start、task-runtime 与 health 读回，不宣称已恢复。旧平台无绑定的显式迁移兼容；底层旧恢复合同不改写。
+
+WorkBuddy Windows 事务同时保留已存在的 settings/plugin 配置文件的 owner/DACL，仍仅将 SDDL 放在加密恢复材料中。若应用中宿主根 DACL 漂移，回滚也必须拒绝不安全对象并返回 recovery_required；操作者恢复专用夹具/对象的安全状态后，原事务可幂等回滚。不能为让回滚成功绕过父目录校验。
+
+Windows SDDL 复验比较 owner、DACL 保护位和完整 ACE（包括 deny、顺序及 ID 继承位）；仅忽略 CREATE_NEW 会清除的 SE_DACL_AUTO_INHERITED（SDDL AI）系统记录位，不忽略保护位、AR 请求位或任何 ACE。原始 SDDL 仍保留在加密备份；在新文件写入任何内容前复验创建结果。实机合成夹具覆盖有/无 AI 的继承描述符。
+
+Windows init 对已有但未启用 profile 的状态返回明确恢复提示而非成功就绪；client-install 也在发行暂存前拒绝此状态，提示先 state-migrate --preview，确认精确绑定后迁移，再显式 state-enable-windows-resources --confirm。中断首次初始化的重试走同一显式恢复路径，保留已建立身份和所有 Grant。缺失历史身份的原拒绝优先，不因 profile 提示生成替代身份。
+
+
+### WorkBuddy Windows 关联锁释放增量（2026-09-28）
+
+原生快速竞争复现：同一关联目录创建/删除锁期间，CREATE_NEW 返回 Win32 5，而非普通已存在。Windows 待删除对象继续占用名称时会返回该错误；不把所有 Access Denied 改成可重试。Windows 释放改为 `PublishPrivateNew`：复验本次创建的单链接私密对象身份，以句柄排他、不覆盖地移动到同目录随机退休名，关闭后再删除该精确退休名。这样复用的 lock 名不进入待删除状态。改名失败保留 fail-closed，不删除未知对象；原生权限失败仍立即拒绝，只有已存在的锁在原 deadline 内等待。随机退休文件不授权，崩溃残留计入容量而不自动清扫。
+
+此受限操作复用现有私密单链接发布原语，仅适用于当前调用持有的临时关联锁；不改变授权/回执、其他进程锁、旧 correlation 记录或系统 ACL。依据：[CreateFileW 的待删除名称规则](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew)。

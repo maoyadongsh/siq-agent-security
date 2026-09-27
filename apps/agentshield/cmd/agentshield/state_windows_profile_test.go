@@ -12,6 +12,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/product"
 	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/state"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 )
@@ -39,10 +40,26 @@ func windowsProfileCommandIdentityFixture(t *testing.T) string {
 	t.Setenv(product.EnvSigningSeedOld, "")
 	dir := filepath.Join(t.TempDir(), "state")
 	t.Setenv(product.EnvStateDir, dir)
-	if err := cmdInitialize(nil, &bytes.Buffer{}); err != nil {
+	initializePreProfileFixture(t, dir)
+	return dir
+}
+
+// Model an existing format-2 installation. New Windows CLI init now activates
+// the profile; these tests specifically exercise the old-state upgrade path.
+func initializePreProfileFixture(t *testing.T, dir string) {
+	t.Helper()
+	w, err := state.AcquireWriter(dir)
+	if err != nil {
 		t.Fatal(err)
 	}
-	return dir
+	defer w.Release()
+	st, err := state.Open(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := st.Initialize(w, 0); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func writeWindowsProfileIdentityFixture(path string, raw []byte) error {
@@ -189,11 +206,10 @@ func TestWindowsProfileCommandContractAndRetry(t *testing.T) {
 	if runtime.GOOS != "windows" {
 		t.Skip("native Windows activation only")
 	}
-	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", filepath.Join(t.TempDir(), "state"))
+	dir := filepath.Join(t.TempDir(), "state")
+	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", dir)
 	var out bytes.Buffer
-	if err := cmdInitialize(nil, &out); err != nil {
-		t.Fatal(err)
-	}
+	initializePreProfileFixture(t, dir)
 	out.Reset()
 	if err := cmdStateEnableWindowsResources([]string{"--confirm"}, &out); err != nil {
 		t.Fatal(err)

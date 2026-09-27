@@ -20,7 +20,13 @@ type ReadSnapshot struct {
 
 func snapshotShape(f *os.File, directory bool) error {
 	var info syscall.ByHandleFileInformation
-	if f == nil || syscall.GetFileInformationByHandle(syscall.Handle(f.Fd()), &info) != nil || info.FileAttributes&syscall.FILE_ATTRIBUTE_REPARSE_POINT != 0 || (info.FileAttributes&syscall.FILE_ATTRIBUTE_DIRECTORY != 0) != directory {
+	if f == nil || syscall.GetFileInformationByHandle(syscall.Handle(f.Fd()), &info) != nil {
+		return ErrPrivate
+	}
+	if info.FileAttributes&syscall.FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+		return ErrReparse
+	}
+	if (info.FileAttributes&syscall.FILE_ATTRIBUTE_DIRECTORY != 0) != directory {
 		return ErrPrivate
 	}
 	return nil
@@ -137,10 +143,7 @@ func (s *ReadSnapshot) PinDirectory(name string) error {
 	return nil
 }
 
-func (s *ReadSnapshot) ReadFile(name string, limit int64) ([]byte, error) {
-	if limit <= 0 {
-		return nil, ErrPrivate
-	}
+func (s *ReadSnapshot) openFile(name string) (*os.File, error) {
 	path, err := s.privateParent(name)
 	if err != nil {
 		return nil, err
@@ -152,6 +155,26 @@ func (s *ReadSnapshot) ReadFile(name string, limit int64) ([]byte, error) {
 			return nil, err
 		}
 		s.files[path] = f
+	}
+	return f, nil
+}
+
+// CheckFile pins and checks the credential object without reading its bytes.
+func (s *ReadSnapshot) CheckFile(name string) error {
+	f, err := s.openFile(name)
+	if err != nil {
+		return err
+	}
+	return checkFile(f, false)
+}
+
+func (s *ReadSnapshot) ReadFile(name string, limit int64) ([]byte, error) {
+	if limit <= 0 {
+		return nil, ErrPrivate
+	}
+	f, err := s.openFile(name)
+	if err != nil {
+		return nil, err
 	}
 	before, err := f.Stat()
 	if err != nil || before.Size() > limit {
@@ -165,8 +188,14 @@ func (s *ReadSnapshot) ReadFile(name string, limit int64) ([]byte, error) {
 		return nil, ErrPrivate
 	}
 	after, err := f.Stat()
-	if err != nil || int64(len(raw)) > limit || !os.SameFile(before, after) || before.Size() != after.Size() || !before.ModTime().Equal(after.ModTime()) || checkFile(f, false) != nil {
+	if err != nil || int64(len(raw)) > limit {
 		return nil, ErrPrivate
+	}
+	if !os.SameFile(before, after) || before.Size() != after.Size() || !before.ModTime().Equal(after.ModTime()) {
+		return nil, ErrObjectChanged
+	}
+	if err := checkFile(f, false); err != nil {
+		return nil, err
 	}
 	return raw, nil
 }
@@ -178,18 +207,18 @@ func (s *ReadSnapshot) Verify() error {
 		return ErrPrivate
 	}
 	for _, f := range s.ambient {
-		if snapshotShape(f, true) != nil {
-			return ErrPrivate
+		if err := snapshotShape(f, true); err != nil {
+			return err
 		}
 	}
 	for _, f := range s.dirs {
-		if checkFile(f, true) != nil {
-			return ErrPrivate
+		if err := checkFile(f, true); err != nil {
+			return err
 		}
 	}
 	for _, f := range s.files {
-		if checkFile(f, false) != nil {
-			return ErrPrivate
+		if err := checkFile(f, false); err != nil {
+			return err
 		}
 	}
 	return nil

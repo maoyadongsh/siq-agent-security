@@ -19,6 +19,7 @@ type LocalInstance struct {
 }
 
 type InitializationResult struct {
+	Fresh            bool   `json:"-"`
 	SchemaVersion    string `json:"schema_version"`
 	Status           string `json:"status"`
 	InstanceID       string `json:"instance_id"`
@@ -147,7 +148,7 @@ func (s *Store) Initialize(w *Writer, port int) (InitializationResult, error) {
 	if err := s.publishInitialStateFormat(w, fresh); err != nil {
 		return result, err
 	}
-	return InitializationResult{SchemaVersion: "local-client-initialization/v1", Status: "initialized", InstanceID: instance.InstanceID, StateDirectoryID: directoryID, Port: cfg.Port}, nil
+	return InitializationResult{Fresh: fresh, SchemaVersion: "local-client-initialization/v1", Status: "initialized", InstanceID: instance.InstanceID, StateDirectoryID: directoryID, Port: cfg.Port}, nil
 }
 
 // Missing client configuration alone does not mean there is no older state.

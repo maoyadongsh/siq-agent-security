@@ -97,6 +97,19 @@ func (c *Chain) Append(r *Receipt) error {
 	}
 	c.seq = r.Seq
 	c.head = r.Hash
+	// The signed line is durable. HEAD is a disposable acceleration hint;
+	// failure to replace it (e.g. a Windows sharing conflict) cannot turn a
+	// committed event into an unrecorded decision. Checkpoint errors still fail.
+	_ = c.writeHeadHint()
+	if c.cpStore != nil {
+		if err := c.cpStore.Publish(c.chainID, c.seq, c.head); err != nil {
+			return fmt.Errorf("receipt: append ok but checkpoint publish failed: %w", err)
+		}
+	}
+	return nil
+}
+
+func (c *Chain) writeHeadHint() error {
 	headPath := filepath.Join(c.dir, "HEAD")
 	tmp, err := statefs.CreateTemp(c.dir, ".head-*")
 	if err != nil {
@@ -120,11 +133,6 @@ func (c *Chain) Append(r *Receipt) error {
 	if err := statefs.Rename(tmpName, headPath); err != nil {
 		_ = statefs.Remove(tmpName)
 		return err
-	}
-	if c.cpStore != nil {
-		if err := c.cpStore.Publish(c.chainID, c.seq, c.head); err != nil {
-			return fmt.Errorf("receipt: append ok but checkpoint publish failed: %w", err)
-		}
 	}
 	return nil
 }

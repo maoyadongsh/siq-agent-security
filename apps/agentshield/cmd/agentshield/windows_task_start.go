@@ -16,6 +16,10 @@ import (
 var windowsTaskStartScript string
 
 func cmdWindowsTaskStart(args []string, out io.Writer) error {
+	if windowsTaskHelpRequested("task-start", args) {
+		_, err := fmt.Fprintln(out, "Usage: siq-agent-security task-start --confirm-start\nStart only this owned Windows task and verify service health. This does not enable login startup.\n--help, -h: show help without reading state or starting a task.")
+		return err
+	}
 	if len(args) != 1 || args[0] != "--confirm-start" {
 		return errors.New("task-start: --confirm-start required, no other arguments accepted")
 	}

@@ -108,7 +108,37 @@ func (p *Plan) prepareWorkBuddyManagedConfig() error {
 	if _, err := adapters.DecodeWorkBuddyManagedConfig(raw, path, o.StateDir); err != nil {
 		return ErrPlanChanged
 	}
+	if err := adapters.PreviewWorkBuddyManagedConfig(raw, path, o.StateDir); err != nil {
+		return err
+	}
 	return p.write(path, append(raw, '\n'), 0600, "连接已确认的 WorkBuddy 实例身份；仅保存专属凭据引用")
+}
+
+// Recheck live private-object facts even on an otherwise idempotent request.
+// Secret bytes are deliberately absent from the reviewed and sealed plan.
+func (p *Plan) checkWorkBuddyPreflight(readback bool) error {
+	o := p.payload.Options
+	if o.Platform != WorkBuddy || o.RuntimeIdentityID == "" || p.payload.View.Action != "install" {
+		return nil
+	}
+	path := workBuddyManagedConfigPath(o)
+	if readback {
+		cfg, err := adapters.InspectWorkBuddyManagedConfig(path, o.StateDir)
+		if err != nil {
+			return err
+		}
+		if cfg.RuntimeIdentityID != o.RuntimeIdentityID || cfg.Endpoint != o.Endpoint || cfg.EnforcementMode != o.Mode {
+			return ErrPlanChanged
+		}
+		return nil
+	}
+	raw := p.payload.Inputs[path].Data
+	for _, op := range p.payload.Files {
+		if op.Path == path {
+			raw = op.After.Data
+		}
+	}
+	return adapters.PreviewWorkBuddyManagedConfig(raw, path, o.StateDir)
 }
 
 func upsertWorkBuddyManagedHook(existing any, command string, o Options, recordedBinary string) []any {
@@ -163,11 +193,18 @@ func inspectWorkBuddyManaged(d *Diagnosis, o Options) bool {
 			return false
 		}
 	}
-	raw, err := inspectRead(o.Home, path)
-	if err == nil && workBuddyManagedConnectionMatches(o, raw) {
-		d.check("service_configuration", "pass", "受管连接的实例、身份、专属凭据引用和服务配置一致；未读取凭据")
+	cfg, err := adapters.InspectWorkBuddyManagedConfig(path, o.StateDir)
+	if err == nil && (o.RuntimeIdentityID == "" || cfg.RuntimeIdentityID == o.RuntimeIdentityID) && cfg.Endpoint == o.Endpoint && cfg.EnforcementMode == o.Mode {
+		d.check("service_configuration", "pass", "受管配置、直接父目录及凭据对象通过当前私密校验；未读取凭据内容，身份有效性和原生运行仍待验证")
 	} else {
 		d.check("service_configuration", "fail", "WorkBuddy 受管配置缺失或不一致；禁止回退共享凭据，请重新预览修复")
+		var failure *adapters.WorkBuddyPreflightError
+		if errors.As(err, &failure) {
+			d.check(failure.Code, "fail", "受管运行前置检查失败；请检查对应专用对象后重新预览，未自动修改权限")
+			if failure.ObjectCode != "" {
+				d.check(failure.ReasonCode(), "fail", "私密对象检查类别；未读取凭据内容、未修改 ACL")
+			}
+		}
 	}
 	doc, err := inspectJSON(o.Home, filepath.Join(o.configRoot(), "settings.json"))
 	if err == nil && hostHookRegisteredCommand(doc, workBuddyManagedCommand(o.Binary, o)) {

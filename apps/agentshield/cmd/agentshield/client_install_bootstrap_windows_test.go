@@ -27,9 +27,7 @@ func windowsClientInstallBootstrapDir(t *testing.T, initialized bool) string {
 	dir := filepath.Join(t.TempDir(), "s")
 	t.Setenv(product.EnvStateDir, dir)
 	if initialized {
-		if err := cmdInitialize(nil, io.Discard); err != nil {
-			t.Fatal(err)
-		}
+		initializePreProfileFixture(t, dir)
 	}
 	return dir
 }
@@ -92,6 +90,18 @@ func TestWindowsClientInstallBootstrapsIdentityBeforeStaging(t *testing.T) {
 		}
 		t.Run(name, func(t *testing.T) {
 			dir := windowsClientInstallBootstrapDir(t, initialized)
+			if initialized {
+				neverStage := func(string, string, string) (string, error) {
+					t.Fatal("old profile staged before explicit activation")
+					return "", nil
+				}
+				if _, _, err := prepareClientInstallation(dir, "manifest", "download", windowsClientInstallTrustedFixture, neverStage); err == nil {
+					t.Fatal("old profile reported ready")
+				}
+				if err := cmdStateEnableWindowsResources([]string{"--confirm"}, io.Discard); err != nil {
+					t.Fatal(err)
+				}
+			}
 			stage := windowsClientInstallBootstrapStage(t, dir)
 			if _, _, err := prepareClientInstallation(dir, "manifest", "download", windowsClientInstallTrustedFixture, stage); err != nil {
 				t.Fatal(err)
@@ -231,6 +241,9 @@ func TestWindowsClientInstallBootstrapFailureDoesNotStageOrReplaceKey(t *testing
 func TestWindowsClientInstallReusesIdentityWhilePrimaryWriterHeld(t *testing.T) {
 	dir := windowsClientInstallBootstrapDir(t, true)
 	if _, err := loadWindowsTaskPreparationKey(dir); err != nil {
+		t.Fatal(err)
+	}
+	if err := cmdStateEnableWindowsResources([]string{"--confirm"}, io.Discard); err != nil {
 		t.Fatal(err)
 	}
 	writer, err := state.AcquireWriter(dir)

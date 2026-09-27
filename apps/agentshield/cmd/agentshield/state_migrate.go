@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"io"
+	"runtime"
 	"siq-agent-security/apps/agentshield/internal/clientrelease"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
@@ -14,19 +15,54 @@ func cmdStateMigrate(args []string, out io.Writer) error {
 	fs := flag.NewFlagSet("state-migrate", flag.ContinueOnError)
 	fs.SetOutput(io.Discard)
 	confirm := fs.Bool("confirm", false, "confirm versioned backup and metadata migration")
+	binding := fs.String("binding", "", "exact executable/state binding from --preview (required on Windows)")
+	preview := fs.Bool("preview", false, "read-only source and Windows profile inventory; does not stop the service")
 	if e := fs.Parse(args); e != nil {
 		return e
 	}
-	if !*confirm || fs.NArg() != 0 {
-		return errors.New("请先停止本实例，使用 state-migrate --confirm 确认备份并迁移状态；不会恢复旧权限")
+	if *confirm == *preview || fs.NArg() != 0 {
+		return errors.New("先用 state-migrate --preview 只读检查；停止本实例后用 state-migrate --confirm --binding <预览值> 确认备份并迁移。失败后检查状态与本实例健康；不会恢复旧权限")
 	}
 	dir, e := state.DefaultDir()
 	if e != nil {
 		return e
 	}
-	result, e := (&state.Store{Dir: dir}).MigrateState(Version)
+	if *preview {
+		if *binding != "" {
+			return errors.New("state-migrate: binding belongs to --confirm")
+		}
+		result, err := (&state.Store{Dir: dir}).PreviewStateMigration()
+		if err != nil {
+			return err
+		}
+		invocation, err := inspectMigrationInvocation(dir)
+		if err != nil {
+			return err
+		}
+		return json.NewEncoder(out).Encode(migrationCommandPreview{MigrationPreview: result, ExecutablePath: invocation.ExecutablePath, ExecutableSHA256: invocation.ExecutableSHA256, InvocationBinding: invocation.Binding})
+	}
+	st := &state.Store{Dir: dir}
+	var result state.MigrationResult
+	if runtime.GOOS == "windows" || *binding != "" {
+		invocation, err := inspectMigrationInvocation(dir)
+		if err != nil {
+			return err
+		}
+		if *binding == "" || *binding != invocation.Binding {
+			return errors.New("state-migrate: invocation binding missing or changed; use the exact executable and state directory from --preview")
+		}
+		result, e = st.MigrateStateBound(Version, invocation.DirectoryID, func() error {
+			current, err := inspectMigrationInvocation(dir)
+			if err != nil || current != invocation {
+				return errors.New("state-migrate: invocation binding changed")
+			}
+			return nil
+		})
+	} else {
+		result, e = st.MigrateState(Version)
+	}
 	if e != nil {
-		return e
+		return errors.Join(e, errors.New("迁移未完成；未自动恢复服务。用原 EXE 和原状态目录执行 state-status，完成原迁移恢复后再 task-start --confirm-start，并读回 task-runtime 与 health；不要恢复旧 Grant"))
 	}
 	return json.NewEncoder(out).Encode(result)
 }

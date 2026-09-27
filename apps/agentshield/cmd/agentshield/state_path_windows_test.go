@@ -189,7 +189,9 @@ func TestWindowsStatePathAliasHookFailsClosedWithoutFallback(t *testing.T) {
 			defer windowsStatePathAssertUnchanged(t, root, before)
 			for _, event := range []string{"PreToolUse", "PostToolUse"} {
 				var out bytes.Buffer
-				input := `{"session_id":"state-alias-fixture","tool_use_id":"state-alias-call","hook_event_name":"` + event + `","tool_name":"Read","tool_input":{"file_path":"/fixture"}}`
+				// Use the actual managed envelope; malformed input has separate
+				// fail-closed tests and cannot supply verified event/call metadata.
+				input := `{"session_id":"state-alias-fixture","tool_use_id":"state-alias-call","call_id":"state-alias-call","hook_event_name":"` + event + `","tool_name":"Read","tool_input":{"file_path":"/fixture"},"tool_response":"fixture"}`
 				if err := runWorkBuddyHook(strings.NewReader(input), &out); err != nil {
 					t.Fatal("hook must emit structured output instead of a non-blocking exit error")
 				}

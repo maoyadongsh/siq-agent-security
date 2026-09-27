@@ -9,18 +9,40 @@ import (
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/adapters"
+	"siq-agent-security/apps/agentshield/internal/privatefs"
 )
 
 func workBuddyManagedOptions(t *testing.T) Options {
 	t.Helper()
 	o := testOpts(t, WorkBuddy)
 	root := configDir(o.Home, WorkBuddy)
+	if err := privatefs.MkdirAll(root); err != nil {
+		t.Fatal(err)
+	}
 	putTestFile(t, filepath.Join(root, "settings.json"), []byte(`{"enabledPlugins":{"builtin":true},"user_setting":"before"}`), 0600)
 	o = WithWorkBuddyInstance(o, root)
 	o.RuntimeIdentityID = "ri-" + strings.Repeat("c", 32)
 	raw, _ := json.Marshal(map[string]any{"schema_version": "local-runtime-identity/v2", "filesystem_profile": "windows-local-drive/v1", "identity_id": o.RuntimeIdentityID, "instance_id": o.Instance.ID, "agent_id": "hri-" + strings.TrimPrefix(o.Instance.ID, "hi-"), "platform": WorkBuddy})
 	putTestFile(t, filepath.Join(o.StateDir, "runtime-identities", o.RuntimeIdentityID+".json"), raw, 0600)
+	putWorkBuddyCredential(t, o)
 	return o
+}
+
+func putWorkBuddyCredential(t *testing.T, o Options) {
+	t.Helper()
+	if err := privatefs.MkdirAll(filepath.Dir(managedCredentialPath(o))); err != nil {
+		t.Fatal(err)
+	}
+	f, err := privatefs.CreateNew(managedCredentialPath(o))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.WriteString(strings.Repeat("synthetic-credential-", 4)); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestWorkBuddyManagedInstallDiagnosisAndRevokedUninstall(t *testing.T) {

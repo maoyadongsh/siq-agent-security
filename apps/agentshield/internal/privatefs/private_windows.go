@@ -82,7 +82,10 @@ func checkParents(path string) error {
 		if err != nil {
 			return privateError(err)
 		}
-		if attrs&syscall.FILE_ATTRIBUTE_DIRECTORY == 0 || attrs&syscall.FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+		if attrs&syscall.FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+			return ErrReparse
+		}
+		if attrs&syscall.FILE_ATTRIBUTE_DIRECTORY == 0 {
 			return ErrPrivate
 		}
 		if dir == filepath.Dir(dir) {
@@ -146,11 +149,17 @@ func checkFile(f *os.File, directory bool) error {
 	}
 	h := syscall.Handle(f.Fd())
 	var info syscall.ByHandleFileInformation
-	if syscall.GetFileInformationByHandle(h, &info) != nil || info.FileAttributes&syscall.FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+	if syscall.GetFileInformationByHandle(h, &info) != nil {
 		return ErrPrivate
 	}
-	if (info.FileAttributes&syscall.FILE_ATTRIBUTE_DIRECTORY != 0) != directory || (!directory && info.NumberOfLinks != 1) {
+	if info.FileAttributes&syscall.FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+		return ErrReparse
+	}
+	if (info.FileAttributes&syscall.FILE_ATTRIBUTE_DIRECTORY != 0) != directory {
 		return ErrPrivate
+	}
+	if !directory && info.NumberOfLinks != 1 {
+		return ErrMultipleLinks
 	}
 	wantOwner, err := currentSID()
 	if err != nil {
@@ -173,8 +182,11 @@ func checkFile(f *os.File, directory bool) error {
 		return ErrPrivate
 	}
 	ownerText, err := owner.String()
-	if err != nil || ownerText != wantOwner {
+	if err != nil {
 		return ErrPrivate
+	}
+	if ownerText != wantOwner {
+		return ErrOwnerMismatch
 	}
 	if ok, _, _ := validACL.Call(uintptr(acl)); ok == 0 {
 		return ErrPrivate

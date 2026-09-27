@@ -182,8 +182,8 @@ def build(args):
         if "index.html" not in before:
             raise ValueError("embedded UI missing")
         print("Rebuilding the locked local UI in an isolated source snapshot", flush=True)
-        run(["npm", "ci"], cwd=source / "apps/web", env=env, phase="locked Web dependencies")
-        run(["npm", "run", "build:local"], cwd=source / "apps/web", env=env, phase="local UI build")
+        run(["npm.cmd" if os.name == "nt" else "npm", "ci"], cwd=source / "apps/web", env=env, phase="locked Web dependencies")
+        run(["npm.cmd" if os.name == "nt" else "npm", "run", "build:local"], cwd=source / "apps/web", env=env, phase="local UI build")
         if inventory(embedded) != before:
             raise ValueError("rebuilt UI differs from the committed embed; commit and review generated assets first")
         bundle = workspace / "bundle"

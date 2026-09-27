@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,9 +19,7 @@ import (
 func TestStateStatusDistinguishesDirectoryBindingMismatch(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "instance")
 	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", dir)
-	if err := cmdInitialize([]string{"--port", "47619"}, io.Discard); err != nil {
-		t.Fatal(err)
-	}
+	initializePreProfileFixture(t, dir)
 	markerPath := filepath.Join(dir, state.StateFormatMarkerName)
 	raw, err := os.ReadFile(markerPath)
 	if err != nil {

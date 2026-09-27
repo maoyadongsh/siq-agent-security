@@ -269,7 +269,7 @@ func (p *Plan) verifyCurrent() error {
 		return err
 	}
 	for path, before := range p.payload.Inputs {
-		current, err := readImage(p.payload.Options.Home, path)
+		current, err := readImage(p.payload.Options.Home, path, p.payload.Options.Platform == WorkBuddy)
 		if err != nil || !sameImage(current, before) {
 			return ErrPlanChanged
 		}
@@ -277,8 +277,8 @@ func (p *Plan) verifyCurrent() error {
 	return nil
 }
 
-func writeImage(home, path string, before, after fileImage) error {
-	current, err := readImage(home, path)
+func writeImage(home, path string, before, after fileImage, preserveSecurity ...bool) error {
+	current, err := readImage(home, path, before.Security != "" || after.Security != "" || (len(preserveSecurity) > 0 && preserveSecurity[0]))
 	if err != nil || !sameImage(current, before) {
 		return ErrPlanChanged
 	}
@@ -288,14 +288,17 @@ func writeImage(home, path string, before, after fileImage) error {
 		}
 		return statefs.Remove(path)
 	}
-	return publishFile(path, after.Data, os.FileMode(after.Mode), before.Exists)
+	if after.Security == "" {
+		after.Security = current.Security
+	} // Legacy plans preserve the current private descriptor.
+	return publishManagedSecurity(path, after, before.Exists)
 }
 
 func rollback(p *Plan) error {
 	conflict := false
 	for i := len(p.payload.Files) - 1; i >= 0; i-- {
 		op := p.payload.Files[i]
-		current, err := readImage(p.payload.Options.Home, op.Path)
+		current, err := readImage(p.payload.Options.Home, op.Path, p.payload.Options.Platform == WorkBuddy)
 		if err != nil {
 			conflict = true
 			continue
@@ -307,7 +310,7 @@ func rollback(p *Plan) error {
 			conflict = true
 			continue
 		}
-		if err := writeImage(p.payload.Options.Home, op.Path, op.After, op.Before); err != nil {
+		if err := writeImage(p.payload.Options.Home, op.Path, op.After, op.Before, p.payload.Options.Platform == WorkBuddy); err != nil {
 			conflict = true
 		}
 	}
@@ -362,11 +365,17 @@ func Apply(p *Plan) (*Result, error) {
 	if status, err := endState(st.Dir, claim); err != nil {
 		return nil, err
 	} else if status == "committed" {
+		if err := p.checkWorkBuddyPreflight(true); err != nil {
+			return nil, err
+		}
 		return transactionResult(p, claim.Action), nil
 	} else if status != "" {
 		return nil, errors.New("adapter: preview already rolled back")
 	}
 	if err := p.verifyCurrent(); err != nil {
+		return nil, err
+	}
+	if err := p.checkWorkBuddyPreflight(false); err != nil {
 		return nil, err
 	}
 	if _, _, err := latestManagedRecord(st.Dir, claim.Platform, operationKey(p.payload.Options)); err != nil && !errors.Is(err, errNoInstallRecord) {
@@ -401,8 +410,11 @@ func Apply(p *Plan) (*Result, error) {
 	if err := transactionBoundary("prepared"); err != nil {
 		return fail(err)
 	}
+	if err := p.checkWorkBuddyPreflight(false); err != nil {
+		return fail(err)
+	}
 	for i, op := range p.payload.Files {
-		if err := writeImage(p.payload.Options.Home, op.Path, op.Before, op.After); err != nil {
+		if err := writeImage(p.payload.Options.Home, op.Path, op.Before, op.After, p.payload.Options.Platform == WorkBuddy); err != nil {
 			return fail(err)
 		}
 		if err := transactionBoundary(fmt.Sprintf("file:%d", i)); err != nil {
@@ -418,7 +430,7 @@ func Apply(p *Plan) (*Result, error) {
 		expected[op.Path] = op.After
 	}
 	for path, after := range expected {
-		current, err := readImage(p.payload.Options.Home, path)
+		current, err := readImage(p.payload.Options.Home, path, p.payload.Options.Platform == WorkBuddy)
 		if err != nil || !sameImage(current, after) {
 			return fail(ErrPlanChanged)
 		}
@@ -430,6 +442,9 @@ func Apply(p *Plan) (*Result, error) {
 		return fail(errors.New("adapter: completion audit unavailable"))
 	}
 	if err := transactionBoundary("audited"); err != nil {
+		return fail(err)
+	}
+	if err := p.checkWorkBuddyPreflight(true); err != nil {
 		return fail(err)
 	}
 	if err := finishOperation(st.Dir, claim, "committed"); err != nil {

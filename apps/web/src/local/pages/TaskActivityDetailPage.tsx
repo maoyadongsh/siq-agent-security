@@ -17,7 +17,8 @@ const columns: TableColumn<ActivityReceipt>[] = [
   { key: 'seq', header: '序号', render: (r) => String(r.seq) },
   { key: 'time', header: '时间', render: (r) => r.issued_at || '未知' },
   { key: 'tool', header: '工具', render: (r) => r.tool || '未知' },
-  { key: 'action', header: '裁决', render: (r) => actionLabel(r.action) },
+  { key: 'action', header: '记录结果', render: (r) => r.record_type === 'local_failure'
+    ? (r.action === 'unknown' ? '本地观察未确认' : '本地失败关闭') : actionLabel(r.action) },
   { key: 'reason', header: '原因', render: (r) => r.reason || '未记录' },
   { key: 'grant', header: '授权引用', render: (r) => r.matched_grant_id ?? '未记录' },
 ];
@@ -86,6 +87,7 @@ export default function TaskActivityDetailPage() {
       {data ? <TaskSecurityViewPanel detail={data} /> : null}
       {data && binding && view === 'tasks' ? <TaskOutputsPanel detail={data} /> : null}
       <details className="block-gap"><summary>查看工具调用和审计详情</summary>
+      {data?.receipts.some((r) => r.record_type === 'local_failure') ? <p role="status">本地失败记录来自钩子，表中时间为恢复入链时间；它不表示服务端已作出范围裁决，也不证明工具当前受保护。原始发生时间和调用关联保留在本地原始回执。</p> : null}
       {data && binding ? <ActivityExportButton key={key} detail={data} /> : null}
       {data && binding ? <ActivityTraceExportButton key={`trace-${key}`} detail={data} /> : null}
       {data ? <ActivitySourcesPanel key={key} detail={data} /> : null}

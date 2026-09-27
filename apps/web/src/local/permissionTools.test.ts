@@ -26,6 +26,10 @@ describe('read-only permission proposal', () => {
     expect(result.readOnly).toBe(' C:\\reports \nC:\\output');
   });
   it('does not describe unknown tools as safe or available', () => {
+    for (const tool of ['present_files', 'Glob', 'Grep']) {
+      expect(permissionToolLabel(tool)).toContain('尚未支持');
+      expect(readOnlyTools([tool])).toEqual([]);
+    }
     expect(permissionToolLabel('file')).toBe('自定义工具或工具组（file）');
     expect(permissionToolLabel('mcp_read_admin')).toBe('自定义工具或工具组（mcp_read_admin）');
     expect(permissionToolLabel('terminal')).toBe('执行命令（terminal）');

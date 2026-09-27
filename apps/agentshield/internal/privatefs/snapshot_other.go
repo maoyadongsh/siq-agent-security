@@ -23,6 +23,15 @@ func (s *ReadSnapshot) ReadFile(name string, limit int64) ([]byte, error) {
 	}
 	return ReadFile(filepath.Join(s.root, name), limit)
 }
+func (s *ReadSnapshot) CheckFile(name string) error {
+	if s == nil || s.closed || !filepath.IsLocal(name) || filepath.Clean(name) != name {
+		return ErrPrivate
+	}
+	if err := s.PinDirectory(filepath.Dir(name)); err != nil {
+		return err
+	}
+	return CheckFilePath(filepath.Join(s.root, name))
+}
 func (s *ReadSnapshot) Verify() error {
 	if s == nil || s.closed {
 		return ErrPrivate

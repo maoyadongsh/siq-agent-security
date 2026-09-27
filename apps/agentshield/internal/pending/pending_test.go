@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
+	"siq-agent-security/apps/agentshield/internal/statefs"
 	"testing"
 )
 
@@ -46,7 +48,11 @@ func TestAppendWritesUnsignedJSONL(t *testing.T) {
 		t.Fatalf("want 2 lines, got %d", n)
 	}
 	info, _ := os.Stat(path)
-	if info.Mode().Perm() != 0o600 {
+	if runtime.GOOS == "windows" {
+		if err := statefs.CheckPrivateFile(path); err != nil {
+			t.Fatal("pending ACL is not private", err)
+		}
+	} else if info.Mode().Perm() != 0o600 {
 		t.Fatalf("pending log must be 0600, got %o", info.Mode().Perm())
 	}
 }

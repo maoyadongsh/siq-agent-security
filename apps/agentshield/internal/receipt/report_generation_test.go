@@ -1,7 +1,6 @@
 package receipt
 
 import (
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -13,7 +12,9 @@ import (
 func TestReportGenerationRequiresEveryScope(t *testing.T) {
 	for _, missing := range []string{"none", "tool", "company", "metadata", "output", "network"} {
 		t.Run(missing, func(t *testing.T) {
-			root := filepath.ToSlash(t.TempDir())
+			// This is the research broker's POSIX resource vocabulary, not a
+			// path to a file on the test runner's host filesystem.
+			root := "/fixture/research"
 			company := root + "/data/wiki/companies/600418-example"
 			run := "qwen-request-0123456789abcdef"
 			facts := []admission.DeclaredFact{}
