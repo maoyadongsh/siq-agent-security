@@ -1,0 +1,31 @@
+{
+  "schema_version": "local-skill-import-list/v2",
+  "items": [
+    {
+      "import_id": "si-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "record_status": "metadata_verified",
+      "payload_status": "unchecked",
+      "summary": {
+        "created_at": "2026-09-11T01:00:00Z",
+        "source_kind": "https_zip",
+        "actor_id": "fixture-human",
+        "artifact_digest": "7b8243ebc4e1eb98af70af37748fb4d9ba14868756421aafd5ce496fdd21f67a",
+        "file_count": 2,
+        "total_bytes": 109
+      }
+    },
+    {
+      "import_id": "si-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "record_status": "metadata_verified",
+      "payload_status": "unchecked",
+      "summary": {
+        "created_at": "2026-09-11T01:00:00Z",
+        "source_kind": "local_dir",
+        "actor_id": "fixture-human",
+        "artifact_digest": "bda671ae22cab71a2cede6e2f1201b7dc6b084c67717380b407f95094aac2da2",
+        "file_count": 1,
+        "total_bytes": 92
+      }
+    }
+  ]
+}

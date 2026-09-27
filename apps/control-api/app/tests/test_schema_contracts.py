@@ -1632,15 +1632,18 @@ def test_skill_import_list_go_sample() -> None:
 
 
 @pytest.mark.parametrize(
-    "name",
+    ("name", "suffix"),
     [
-        "local-skill-import-remote-create.v1",
-        "local-skill-import.v2",
-        "local-skill-import-result.v2",
-        "local-skill-import-list.v2",
+        ("local-skill-import-remote-create.v1", ""),
+        ("local-skill-import.v2", ""),
+        ("local-skill-import-result.v2", ""),
+        ("local-skill-import-list.v2", ""),
+        ("local-skill-import.v2", "-windows"),
+        ("local-skill-import-result.v2", "-windows"),
+        ("local-skill-import-list.v2", "-windows"),
     ],
 )
-def test_remote_skill_import_go_samples(name: str) -> None:
+def test_remote_skill_import_go_samples(name: str, suffix: str) -> None:
     from jsonschema import FormatChecker
     from referencing import Registry, Resource
     from referencing.jsonschema import DRAFT7
@@ -1655,7 +1658,7 @@ def test_remote_skill_import_go_samples(name: str) -> None:
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text(encoding="utf-8"))
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema, registry=registry, format_checker=FormatChecker())
-    data = json.loads((GO_SAMPLES / f"{name}.sample.json").read_text(encoding="utf-8"))
+    data = json.loads((GO_SAMPLES / f"{name}{suffix}.sample.json").read_text(encoding="utf-8"))
     validator.validate(data)
     assert list(validator.iter_errors(data | {"credential": "forbidden"}))
     for field in schema["required"]:
@@ -1666,6 +1669,10 @@ def test_remote_skill_import_go_samples(name: str) -> None:
             assert list(validator.iter_errors(data | {key: value}))
         validator.validate(data | {"archive_path": "", "expected_sha256": ""})
     elif name == "local-skill-import.v2":
+        script = next(file for file in data["files"] if file["path"] == "run.sh")
+        assert script["executable"] is (suffix != "-windows")
+        for value in ["false", None, 1]:
+            assert list(validator.iter_errors(data | {"files": [script | {"executable": value}]}))
         for key, value in [
             ("archive_sha256", "bad"),
             ("archive_bytes", 0),

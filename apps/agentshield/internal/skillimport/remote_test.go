@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -227,6 +228,26 @@ func TestRemoteImportContractSamples(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Stable DTO fixtures normalize clocks and the separately stored analysis digest.
+	if !signing.VerifyCanonical(s.key.Public(), unsigned(*rec), rec.Signature) || !admission.Verify(s.key.Public(), analysis.Admission) {
+		t.Fatal("runtime sample signatures invalid")
+	}
+	scriptInfo, err := os.Stat(filepath.Join(s.blob(req.ImportID), "payload", "run.sh"))
+	wantExecutable := runtime.GOOS != "windows"
+	if err != nil || (scriptInfo.Mode().Perm()&0111 != 0) != wantExecutable {
+		t.Fatal("copied script mode does not match platform fixture", err)
+	}
+	foundScript := false
+	for _, file := range rec.Files {
+		if file.Path == "run.sh" {
+			foundScript = true
+			if file.Executable != wantExecutable {
+				t.Fatal("signed script mode differs from copied file")
+			}
+		}
+	}
+	if !foundScript {
+		t.Fatal("copied script missing from signed record")
+	}
 	rec.CreatedAt = "2026-09-11T01:00:00Z"
 	rec.AnalysisSHA256 = strings.Repeat("2", 64)
 	analysis.Admission.DecidedAt = rec.CreatedAt
@@ -245,6 +266,9 @@ func TestRemoteImportContractSamples(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if !signing.VerifyCanonical(s.key.Public(), unsigned(*rec), rec.Signature) || !admission.Verify(s.key.Public(), analysis.Admission) {
+		t.Fatal("normalized sample signatures invalid")
+	}
 	for i := range list.Items {
 		list.Items[i].Summary.CreatedAt = rec.CreatedAt
 	}
@@ -254,7 +278,11 @@ func TestRemoteImportContractSamples(t *testing.T) {
 			t.Fatal(err)
 		}
 		raw = append(raw, '\n')
-		path := "../../testdata/contracts/" + name + ".sample.json"
+		suffix := ""
+		if runtime.GOOS == "windows" && name != "local-skill-import-remote-create.v1" {
+			suffix = "-windows"
+		}
+		path := "../../testdata/contracts/" + name + suffix + ".sample.json"
 		if os.Getenv("AGENTSHIELD_UPDATE_SAMPLES") == "1" {
 			if err := os.WriteFile(path, raw, 0600); err != nil {
 				t.Fatal(err)

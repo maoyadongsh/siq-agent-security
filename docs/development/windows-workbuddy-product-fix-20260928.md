@@ -118,3 +118,13 @@ Windows 定向 r13 退出 0：四项 Git 导入/上游测试（含三个先前�
 新增 WorkBuddy Windows HTTP 检查使用既有生产实例草稿、挑战批准、部署、专属 identity/v2 凭据、intent/v4 登记和 Pre/Post 入口。实际写入及“Post 声称成功但没有文件”分别运行，独立 observer 在清缓存、错误路径恢复、正确接管后保留原 before，发布真实 expected/completed 或 unexpected/failed 事实；旧 observer 不可结束新 owner 的观察，已完成重试复用原签名，撤销阻止后续采样及恢复，Grant 字节不变。两种情形任务完成度都保持 unknown，因为实例权限没有任务效果要求。
 
 定向 r14 退出 0：3 项原生 pending 检查（含 6 个边界子项，effectevidence 31.832 秒），WorkBuddy 文件效果检查的真实写入/缺失输出两项（server 14.455 秒）通过。这里运行的是 Windows NTFS、生产状态和 HTTP 组件，未启动 WorkBuddy 桌面或模型，也没有批准真实业务 Grant；正式 publisher 签名与新原生任务验收仍未完成。
+
+## Windows 导入模式与合同样例补充
+
+`84076cf6` 的固定源码 r14 结束：53 个包结果、8 个失败包、19 个顶层失败名。上一节新增 4 项组件及 8 个子项在完整运行中通过，并发 pending/唯一接管两项 Windows race 通过（4.510 秒）；7 个远端工作流通过。正式签名与新宿主任务矩阵仍未执行。
+
+其中远程导入 DTO 失败已逐字段定位：只有实际复制 `run.sh` 的 executable=false，以及由其派生的 artifact_digest/signature 不同，共 7 个 JSON 路径；request 一致。ADR-033 要求摘要绑定实际文件事实，不能在 Windows 保留归档中的 POSIX 执行位声明。现新增 record/result/list 三份完整 Windows 样例，保留旧签名样例；Go 在归一化合成时钟前后都验证签名，并校验实际复制文件模式，Python 对两套样例执行同一正负向 schema 检查。
+
+物理执行位篡改的旧探针已证明 Windows `chmod(0700)` 前后均为普通 0666 文件，没有注入变化。该单一子项现在明确 skip/未验证，POSIX 继续真实 chmod 并验证执行位确已改变。新增 Windows 正向测试验证不变的文件模式/身份仍保留原签名与摘要；新增各平台负向篡改合成记录的 executable，重算清单摘要并合法签名，先证明记录层可读，再要求完整 Load 因与实际文件不符而拒绝。它不冒充物理 mode 变更，不删除内容、分析或签名篡改断言。
+
+定向 r15 的六项 Windows Go 顶层检查通过（1.617 秒），物理执行位和原有 symlink 两子项分别记 skip；7 项新旧合同 schema 检查、Ruff 与 go vet 通过。首次 Python 命令误加载依赖 FastAPI 的全应用 conftest，退出 4，未运行合同测试；随后使用本纯 schema 模块的 `--noconftest` 正确执行，原错误日志保留。完整固定源码结果及候选记录以最终交付索引为准，不把定向结果等同原生验收。
