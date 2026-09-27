@@ -18,7 +18,6 @@
 </p>
 
 <p align="center">
-  CI / research 徽章仅反映 <code>main</code>，不代表未合并分支或已发布版本。<br />
   当前发行验证见<a href="docs/evidence/releases/0.4.0/README.md">发行记录</a>，最新源码与后续验收见<a href="docs/development/current.md">当前开发</a>。
 </p>
 
