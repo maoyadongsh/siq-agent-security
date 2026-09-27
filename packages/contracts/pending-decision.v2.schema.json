@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/pending-decision.v2.json",
+  "title": "Unsigned local WorkBuddy failure v2",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "pending_decision/v2"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "platform": {
+      "const": "workbuddy"
+    },
+    "tool": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^workbuddy-session/v1:[a-f0-9]{64}$"
+    },
+    "enforcement_mode": {
+      "enum": [
+        "block",
+        "warn",
+        "audit_only"
+      ]
+    },
+    "outcome": {
+      "enum": [
+        "deny",
+        "unconfirmed"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "signed": {
+      "const": false
+    },
+    "origin": {
+      "const": "local_hook"
+    },
+    "stage": {
+      "enum": [
+        "parse",
+        "bootstrap",
+        "enrollment",
+        "correlation",
+        "decision",
+        "observation"
+      ]
+    },
+    "reason_code": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9_]+$"
+    },
+    "native_session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "native_call_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "tool_call_id": {
+      "type": "string",
+      "pattern": "^workbuddy-call/v1:[a-f0-9]{64}$"
+    },
+    "action_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "schema",
+    "recorded_at",
+    "platform",
+    "enforcement_mode",
+    "outcome",
+    "reason",
+    "signed",
+    "origin",
+    "stage",
+    "reason_code"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "anyOf": [
+          {
+            "required": [
+              "session_id"
+            ]
+          },
+          {
+            "required": [
+              "tool_call_id"
+            ]
+          },
+          {
+            "required": [
+              "native_session_id"
+            ]
+          },
+          {
+            "required": [
+              "native_call_id"
+            ]
+          },
+          {
+            "required": [
+              "action_digest"
+            ]
+          }
+        ]
+      },
+      "then": {
+        "required": [
+          "session_id",
+          "tool_call_id",
+          "native_session_id",
+          "native_call_id",
+          "action_digest",
+          "tool"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outcome": {
+            "const": "unconfirmed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "stage": {
+            "const": "observation"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "parse"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "session_id"
+              ]
+            },
+            {
+              "required": [
+                "tool_call_id"
+              ]
+            },
+            {
+              "required": [
+                "native_session_id"
+              ]
+            },
+            {
+              "required": [
+                "native_call_id"
+              ]
+            },
+            {
+              "required": [
+                "action_digest"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

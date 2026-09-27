@@ -172,3 +172,11 @@ OpenShell 已登记网关只读选择使用 `local-openshell-gateways/v1`、
 `local-adapter-instances/v3` 用于显式 `include_projects=true` 的 Hermes 实例读取，
 保留 v1 默认范围及 v2 WorkBuddy 合同；新增 `registered_project` 来源。项目登记只扩大
 明确位置的只读发现范围，安装、运行身份与权限仍需原接口的独立预览、确认和校验。
+
+### Windows WorkBuddy 本地失败与迁移预览
+
+- `pending-decision.v2.schema.json`：有界、未签名的本地钩子失败/观察未确认，完整解析后才保留 native/derived 调用及动作摘要；不包含原始参数。
+- `receipt.v2.schema.json`：只用于该事件恢复入链的 `local_failure`。原发生时间与提升时间分开，保留 unsigned local origin；不认证在线裁决或 matched Grant。既有 v1 schema 和签名历史保持不变。
+- `local-state-migration-preview.v1.schema.json`：只读状态/profile 清单，不创建迁移计划，不证明服务停止，不批准 Grant。
+
+合同校验：`python app/tests/test_workbuddy_pending_contracts.py`（需要 jsonschema 与 rfc3339-validator）；Go 正反向生成/验签测试见 `internal/pending` 和 `internal/receipt`。

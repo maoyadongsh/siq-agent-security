@@ -1,0 +1,1000 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/receipt.v2.json",
+  "title": "Promoted local failure receipt v2",
+  "description": "Signed promotion of an unsigned local event; not an online policy decision. issued_at is promotion time; local_origin.recorded_at is original event time.",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "chain_id",
+    "seq",
+    "prev_hash",
+    "hash",
+    "sig",
+    "issued_at",
+    "platform",
+    "session_id",
+    "tool",
+    "params_digest",
+    "action",
+    "reason",
+    "enforcement_mode",
+    "matched_fact_ids",
+    "taint_labels",
+    "engine",
+    "schema_version",
+    "record_type",
+    "local_origin"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "provenance_refs": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+      }
+    },
+    "resource_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain",
+          "digest"
+        ],
+        "properties": {
+          "domain": {
+            "enum": [
+              "filesystem",
+              "network",
+              "message"
+            ]
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "user"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "authority_status": {
+      "enum": [
+        "valid",
+        "invalid",
+        "unbound_legacy"
+      ]
+    },
+    "authority_reason_code": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_action": {
+      "enum": [
+        "allow",
+        "deny",
+        "hold",
+        "redact"
+      ]
+    },
+    "effective_action": {
+      "enum": [
+        "allow",
+        "deny",
+        "hold",
+        "redact"
+      ]
+    },
+    "parameter_provenance": {
+      "type": "array",
+      "maxItems": 1024,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "parameter_path": {
+            "type": "string",
+            "maxLength": 1024,
+            "pattern": "^(?:/(?:[^~]|~[01])*)+$"
+          },
+          "provenance_refs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+            }
+          }
+        },
+        "required": [
+          "parameter_path",
+          "provenance_refs"
+        ]
+      }
+    },
+    "context_assertion_id": {
+      "type": "string",
+      "description": "Signed context reference; never grants additional filesystem rights"
+    },
+    "record_type": {
+      "const": "local_failure"
+    },
+    "decision_receipt_id": {
+      "type": "string"
+    },
+    "parent_action_id": {
+      "type": "string"
+    },
+    "task_seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "action_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "task_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "可信 Intent 的任务标识；绑定 Intent 时由服务端解析，不能由宿主运行时替代。"
+    },
+    "runtime_task_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256,
+      "description": "宿主运行时的每任务标识；用于 SEC、确认重试与本机追溯边界，不单独授予 Intent 权限。"
+    },
+    "intent_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "intent_digest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "authority_revision": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "operation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "effects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reason_code": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "intent_binding": {
+      "enum": [
+        "bound",
+        "unbound"
+      ]
+    },
+    "receipt_id": {
+      "type": "string"
+    },
+    "chain_id": {
+      "type": "string",
+      "description": "链标识（本地模式为状态目录内单链；同步到控制面后按 tenant/environment 归属）"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "链内序号，从 0 起连续递增"
+    },
+    "prev_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "上一条 hash；seq=0 时为 64 个 0"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sig": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$",
+      "description": "Ed25519 对 hash 的签名（hex）"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "openclaw",
+        "hermes",
+        "codebuddy",
+        "workbuddy",
+        "trae",
+        "claude_code",
+        "codex",
+        "other"
+      ]
+    },
+    "session_id": {
+      "type": "string",
+      "description": "平台会话键（脱敏）；污点与 trifecta 以此为作用域"
+    },
+    "agent_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tool": {
+      "type": "string",
+      "description": "平台工具名，如 exec / terminal / web_fetch / send_message"
+    },
+    "tool_call_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "params_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "规范化参数的 sha256；不存参数原文"
+    },
+    "params_excerpt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 512,
+      "description": "脱敏后的参数片段，供人阅读；禁止 token / secret 原文"
+    },
+    "action": {
+      "enum": [
+        "deny",
+        "unknown"
+      ]
+    },
+    "advisory_action": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "deny",
+        "hold",
+        "redact",
+        null
+      ],
+      "description": "enforcement_mode=audit_only / warn 时记录\"若为 block 会怎样\"；block 模式下为 null"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 1024,
+      "description": "人可读的决策理由；deny / hold / redact 必须非空并点名命中的事实或污点规则"
+    },
+    "matched_grant_id": {
+      "type": "null"
+    },
+    "matched_fact_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 0
+    },
+    "matched_rule_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "参数 / 结果命中的规则包或污点规则",
+      "maxItems": 0
+    },
+    "taint_labels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "secret",
+          "pii",
+          "untrusted_content",
+          "private_mount"
+        ]
+      },
+      "description": "本次调用之前会话已累积的污点标签",
+      "maxItems": 0
+    },
+    "trifecta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "private_data",
+        "untrusted_input",
+        "egress"
+      ],
+      "description": "lethal trifecta 三要素在本会话是否已具备；三者同时为 true 且本次为出网类工具时默认 deny",
+      "properties": {
+        "private_data": {
+          "type": "boolean"
+        },
+        "untrusted_input": {
+          "type": "boolean"
+        },
+        "egress": {
+          "type": "boolean"
+        }
+      }
+    },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": [
+        "audit_only",
+        "warn",
+        "block"
+      ]
+    },
+    "policy_revision": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "决策时生效的 OpenShell / 平台策略 revision"
+    },
+    "sandbox_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "model_key": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "命名模型 key，不含凭据"
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "rulepack_version"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "rulepack_version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "decision_latency_ms": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "hold": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "channel",
+        "timeout_ms"
+      ],
+      "description": "action=hold 时的人工签核请求；结果由后续回执记录，不改写本条",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": [
+            "console",
+            "openclaw_approval",
+            "hermes_cli",
+            "codebuddy_prompt",
+            "other"
+          ]
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "resolved_by_receipt_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "skill_attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "description": "运行时 Skill 归属的可信裁决（UX-007 / Q05 / N05-R01）：verified 仅由有效 skill-execution-context/v1（SEC）服务端命中得出；模型/运行时自报、可复制的安装摘要或 grantID 永不视为 verified。仅当调用携带 Skill 声明或主体被 SEC 覆盖时存在。",
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "mismatch",
+            "unknown"
+          ]
+        },
+        "evidence_level": {
+          "type": "string",
+          "enum": [
+            "controlled_task",
+            "controlled_session"
+          ],
+          "description": "归属证据等级：仅 verified 时存在；controlled_session 为会话粒度，不含逐调用因果。"
+        },
+        "context_id": {
+          "type": "string",
+          "pattern": "^sec-[0-9a-f]{32}$",
+          "description": "产生 verified 的 Skill 执行上下文 ID，仅 verified 时存在。"
+        },
+        "call_binding": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "对平台、会话、主体、任务、工具、调用 ID 与最终参数 canonical 编码的 SHA-256；仅 verified 时存在。"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "verified"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "skill_id",
+              "content_hash",
+              "evidence_level",
+              "context_id",
+              "call_binding"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "mismatch",
+                  "unknown"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "evidence_level"
+                  ]
+                },
+                {
+                  "required": [
+                    "context_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "call_binding"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "runtime-receipt/v2"
+    },
+    "local_origin": {
+      "title": "Unsigned local WorkBuddy failure v2",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "pending_decision/v2"
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "platform": {
+          "const": "workbuddy"
+        },
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^workbuddy-session/v1:[a-f0-9]{64}$"
+        },
+        "enforcement_mode": {
+          "enum": [
+            "block",
+            "warn",
+            "audit_only"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "deny",
+            "unconfirmed"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "signed": {
+          "const": false
+        },
+        "origin": {
+          "const": "local_hook"
+        },
+        "stage": {
+          "enum": [
+            "parse",
+            "bootstrap",
+            "enrollment",
+            "correlation",
+            "decision",
+            "observation"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-z][a-z0-9_]+$"
+        },
+        "native_session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "native_call_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "tool_call_id": {
+          "type": "string",
+          "pattern": "^workbuddy-call/v1:[a-f0-9]{64}$"
+        },
+        "action_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "schema",
+        "recorded_at",
+        "platform",
+        "enforcement_mode",
+        "outcome",
+        "reason",
+        "signed",
+        "origin",
+        "stage",
+        "reason_code"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              {
+                "required": [
+                  "session_id"
+                ]
+              },
+              {
+                "required": [
+                  "tool_call_id"
+                ]
+              },
+              {
+                "required": [
+                  "native_session_id"
+                ]
+              },
+              {
+                "required": [
+                  "native_call_id"
+                ]
+              },
+              {
+                "required": [
+                  "action_digest"
+                ]
+              }
+            ]
+          },
+          "then": {
+            "required": [
+              "session_id",
+              "tool_call_id",
+              "native_session_id",
+              "native_call_id",
+              "action_digest",
+              "tool"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "unconfirmed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "stage": {
+                "const": "observation"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "stage": {
+                "const": "parse"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "session_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "tool_call_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "native_session_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "native_call_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "action_digest"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "enum": [
+              "deny",
+              "hold",
+              "redact"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason": {
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "hold"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "hold": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "hold"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "seq": {
+            "const": 0
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "prev_hash": {
+            "const": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "authority_status"
+        ],
+        "properties": {
+          "authority_status": {
+            "const": "invalid"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "authority_reason_code",
+          "effective_action"
+        ],
+        "properties": {
+          "action": {
+            "const": "deny"
+          },
+          "effective_action": {
+            "const": "deny"
+          },
+          "advisory_action": {
+            "type": "null"
+          }
+        },
+        "not": {
+          "required": [
+            "policy_action"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "allow"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "allow"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "deny"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "deny"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "hold"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "hold"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "effective_action"
+        ],
+        "properties": {
+          "effective_action": {
+            "const": "redact"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "redact"
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "authority_status"
+            ]
+          },
+          {
+            "required": [
+              "authority_reason_code"
+            ]
+          },
+          {
+            "required": [
+              "policy_action"
+            ]
+          },
+          {
+            "required": [
+              "effective_action"
+            ]
+          },
+          {
+            "required": [
+              "intent_id"
+            ]
+          },
+          {
+            "required": [
+              "intent_digest"
+            ]
+          },
+          {
+            "required": [
+              "intent_binding"
+            ]
+          },
+          {
+            "required": [
+              "authority_revision"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "local_origin": {
+            "properties": {
+              "outcome": {
+                "const": "unconfirmed"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action": {
+            "const": "unknown"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "action": {
+            "const": "deny"
+          }
+        }
+      }
+    }
+  ]
+}
