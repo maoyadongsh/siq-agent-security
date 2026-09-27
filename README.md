@@ -33,7 +33,7 @@
 ---
 
 <p align="center">
-  <img src="docs/siq-agent-security-architecture.svg" width="1600" alt="SIQ Agent Security 系统架构全景图：本机安全运行时 × 企业控制面 × 密码学信任链" />
+  <img src="docs/siq-agent-security-architecture.png" width="1600" alt="SIQ Agent Security 系统架构全景图：本机安全运行时 × 企业控制面 × 密码学信任链" />
 </p>
 <p align="center">
   <strong>系统架构全景</strong> — 本机安全门禁 × 企业控制面 × 密码学信任链 × 合同化治理（<a href="docs/siq-agent-security-architecture.svg">查看大图</a>）
