@@ -32,6 +32,13 @@
 
 ---
 
+<p align="center">
+  <img src="docs/siq-agent-security-architecture.svg" width="1600" alt="SIQ Agent Security 系统架构全景图：本机安全运行时 × 企业控制面 × 密码学信任链" />
+</p>
+<p align="center">
+  <strong>系统架构全景</strong> — 本机安全门禁 × 企业控制面 × 密码学信任链 × 合同化治理（<a href="docs/siq-agent-security-architecture.svg">查看大图</a>）
+</p>
+
 **SIQ 是通过 Skill 引导接入、由独立本地程序和宿主钩子执行保护的开源智能体安全系统。** 它发现和盘点已支持环境中的智能体及其关联资产，管理 Skill 生命周期与权限，并将资产、授权、运行记录和已采集的效果证据关联起来。
 
 用户继续使用原有智能体，通过 SIQ 看清：
