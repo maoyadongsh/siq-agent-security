@@ -108,3 +108,13 @@ Windows r9 全模块共 35 个顶层失败名称，已在未改动 4c978aff 对�
 本地 Git 夹具的脱敏 stderr 定位到路径过长；仅规范 file URI 或启用 `core.longpaths` 仍因 `$GIT_DIR` 超限失败。缩短临时状态目录后两个测试通过，另一个显露 Windows 不表示 POSIX 执行位的样例假设。现使用短随机目录，分别校验源文件和快照的真实平台模式，保留条目、验签、固定副本、错误 pin、缺失子目录及 hook 禁用断言；正式 Git fetch 接口保持不变，不执行候选脚本。
 
 Windows 定向 r13 退出 0：四项 Git 导入/上游测试（含三个先前失败名，6.411 秒）和全部 17 项 OpenShell task-exec 测试（含三个先前失败名，11.489 秒）通过。此结果只证明组件，不代替正式签名及新的 WorkBuddy 原生矩阵。
+
+## Windows 原生文件效果与持久化组件补充
+
+完整 r13 在 `97fea090` 结束：53 个包结果、8 个失败包、19 个顶层失败名，上一节 6 项修复均通过，7 个远端工作流通过。剩余旧 POSIX 用例不能直接改成 Windows：intent/v4 实例权限明确不接受 intent/v3 的 effect_requirements。旧用例及失败记录保留，不从 GOOS 推定新版 Authority。
+
+新增 Windows 外部包测试调用真实 Initialize/ActivateWindowsProfile 事务，随后用原生 v2 快照、pending/v2 检查 store 重开、相同发布并发重试、唯一接管胜者、原期限、容量及历史完整性。原 pending 的字节、签名和 before 始终不改；有界失败及未发布临时文件不改变 owner。首次探针期待“未改内容的恢复历史硬链接被拒绝”，实测不成立：该历史目前是普通签名读取，现有单链接合同适用于私密读与资源采样，不能混称。保留探针失败，正式用例验证通过别名篡改已签 owner 后拒绝；没有为绿色结果放宽产品读取或改写历史。
+
+新增 WorkBuddy Windows HTTP 检查使用既有生产实例草稿、挑战批准、部署、专属 identity/v2 凭据、intent/v4 登记和 Pre/Post 入口。实际写入及“Post 声称成功但没有文件”分别运行，独立 observer 在清缓存、错误路径恢复、正确接管后保留原 before，发布真实 expected/completed 或 unexpected/failed 事实；旧 observer 不可结束新 owner 的观察，已完成重试复用原签名，撤销阻止后续采样及恢复，Grant 字节不变。两种情形任务完成度都保持 unknown，因为实例权限没有任务效果要求。
+
+定向 r14 退出 0：3 项原生 pending 检查（含 6 个边界子项，effectevidence 31.832 秒），WorkBuddy 文件效果检查的真实写入/缺失输出两项（server 14.455 秒）通过。这里运行的是 Windows NTFS、生产状态和 HTTP 组件，未启动 WorkBuddy 桌面或模型，也没有批准真实业务 Grant；正式 publisher 签名与新原生任务验收仍未完成。

@@ -577,6 +577,10 @@ Windows 证据持久化失败夹具必须实际阻止在本次合成 evidence �
 
 本地 file:// Git 夹具使用短随机状态目录，避免长测试名使 Git for Windows 的内部 `$GIT_DIR` 超限；不修改全局 Git 或系统长路径选项。该夹具只验证测试接缝的本地 clone，正式 Git 来源仍走 ADR-0051 的受控 fetch。快照的可执行标志遵循当前文件系统实际 mode：POSIX 的 0700 脚本必须为真，Windows 普通脚本无 POSIX 执行位必须为假；两侧都验证条目存在、签名、固定副本、pin 拒绝与禁止 hook，不执行候选脚本。
 
+Windows 文件效果与恢复组件回归使用实际 Initialize/ActivateWindowsProfile 事务创建的独立状态、原生 v2 文件快照及明确 v2 pending，不直接伪写 marker，也不把旧 v1 pending 自动升级。覆盖重开 store 后原快照/签名不变、并发相同发布幂等、接管唯一胜者、原期限不延长、容量耗尽、已签历史篡改（包括通过测试创建的硬链接别名改写）；底层组件夹具的固定 intent 引用不代表批准真实业务。现有恢复历史是普通签名读取，不声明已覆盖私密单链接读取；资源采样和迁移的多链接拒绝仍按各自原合同验证。
+
+WorkBuddy 的补充 HTTP 效果检查从实际实例草稿、资源挑战批准、部署、identity/v2 和登记的 intent/v4 派生 Authority，使用专属决策凭据及独立 observer。工具自报成功与独立文件结果分别保存；缺失文件不能报告真实写入。清缓存和接管不得重采样原 before，完成重试不得改写已签证据；撤销后不得通过 observer 恢复继续采样。此处只验证合成状态中的组件，不能冒充宿主模型运行。intent/v4 仍不接受 v3 的 effect_requirements，任务完成度保持未知，不借测试给 Windows 实例增加任务目的或必需效果合同。
+
 按 [ADR-020](adr/0020-personal-discovery-and-skill-identity.md) 实施 UX-005：Skill 安装身份按本机规范化目录稳定生成，内容版本独立保留摘要；支持有界分类目录、profile Skills 和基于配置的多个消费者关系。新增关系仅为 inferred，不改变权限事实来源。台账兼容旧 locator/ID，路径与内容不变的迁移不撤权，内容变化保持原有复核与撤权语义。新个人扫描入口触发真实扫描并展示范围和结果；手动范围独立版本化保存，不能以缓存读取伪装重新扫描。接口和关系合同见 `packages/contracts/local-discovery.v1.schema.json`。
 
 2026-09-23 便捷接入增量：配对后的首页和资产页复用既有 discovery 接口；本服务尚无扫描
