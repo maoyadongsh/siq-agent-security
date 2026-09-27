@@ -20,6 +20,12 @@ func DenyExecute(t *testing.T, root, path string) func() {
 	return fixtureDACL(t, root, path, "(D;;0x20;;;WD)", "")
 }
 
+// DenyCreate prevents new files and subdirectories in one synthetic directory.
+// The deny is not inherited, so existing evidence remains readable.
+func DenyCreate(t *testing.T, root, path string) func() {
+	return fixtureDACL(t, root, path, "(D;;0x6;;;WD)", "")
+}
+
 func fixtureDACL(t *testing.T, root, path, prefix, suffix string) func() {
 	t.Helper()
 	rel, err := filepath.Rel(root, path)

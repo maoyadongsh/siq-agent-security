@@ -98,3 +98,13 @@ Windows r9 全模块共 35 个顶层失败名称，已在未改动 4c978aff 对�
 - 原始内容过期清理的快照断言统一相对路径分隔符，仅允许精确 raw-task-content 子目录变化；其他签名历史仍逐项不变。
 
 上述 8 项 Windows 定向检查退出 0，server 6.708 秒；相应新旧 DTO 的 10 项 Python schema 正负向检查退出 0。其他旧式 POSIX 资源夹具在 Windows 仍可能失败，未将未验证能力自动转换成 Windows Authority，也未用整包 skip 代替真实回归。全量 Windows 和远端记录以最终固定提交的交付索引为准。
+
+## Windows 写入故障与 Git 夹具补充
+
+`12636ee3` 的完整 Windows r12 退出 1：53 个包结果、8 个失败包、25 个顶层失败名，上一节 8 项均通过。剩余同名失败均在未改动基线复现，仍是失败而非验收豁免。
+
+其中三项 OpenShell evidence 测试用目录 `chmod 0500` 注入写失败；Windows 实测 DACL 未改变且仍能创建文件。现改用测试专用 deny-create ACE，仅作用于本次临时 evidence 目录并在清理时恢复；真实创建返回 PermissionDenied 后才执行断言。计划持久化失败仍要求零执行和原 reservation 的签名结案；执行后持久化失败仍要求明确 executed/uncertain、单次执行、无自动重放、不泄露输出。其他平台保留 mode 注入，同样验证注入确实生效。产品代码、用户对象 ACL 与权限均未改变。
+
+本地 Git 夹具的脱敏 stderr 定位到路径过长；仅规范 file URI 或启用 `core.longpaths` 仍因 `$GIT_DIR` 超限失败。缩短临时状态目录后两个测试通过，另一个显露 Windows 不表示 POSIX 执行位的样例假设。现使用短随机目录，分别校验源文件和快照的真实平台模式，保留条目、验签、固定副本、错误 pin、缺失子目录及 hook 禁用断言；正式 Git fetch 接口保持不变，不执行候选脚本。
+
+Windows 定向 r13 退出 0：四项 Git 导入/上游测试（含三个先前失败名，6.411 秒）和全部 17 项 OpenShell task-exec 测试（含三个先前失败名，11.489 秒）通过。此结果只证明组件，不代替正式签名及新的 WorkBuddy 原生矩阵。

@@ -573,6 +573,10 @@ Windows 回归夹具约定：当前发现/诊断的未签名展示样例遵守�
 
 真实 CLI 拒绝测试必须先成功启动当前 OS 的可执行文件；启动失败是夹具错误，不能冒充产品的非零拒绝退出。文件替换反例在句柄上固定身份后关闭句柄，将旧对象改名保留以防 inode/文件 ID 重用，再重建原名，确保 Windows 共享模式没有阻止注入本身。历史快照比较只将相对路径转换为统一分隔符来识别允许清理的精确原始内容子目录，不放宽其他历史文件的逐字节不变断言。
 
+Windows 证据持久化失败夹具必须实际阻止在本次合成 evidence 目录创建文件；目录 `chmod 0500` 不改变 DACL，不能作为成功注入的证明。测试专用 ACL 辅助包可在已知临时根内增加仅作用于该目录的 create-file/create-directory deny ACE，结束时恢复私密夹具 DACL；调用前以真实排他创建验证 PermissionDenied。产品路径不导入该辅助包，不改既有用户权限。计划写失败仍须零执行并保留已消费 reservation 的签名结案；执行后记录失败仍明确 executed/uncertain，不自动重放或报告成功。
+
+本地 file:// Git 夹具使用短随机状态目录，避免长测试名使 Git for Windows 的内部 `$GIT_DIR` 超限；不修改全局 Git 或系统长路径选项。该夹具只验证测试接缝的本地 clone，正式 Git 来源仍走 ADR-0051 的受控 fetch。快照的可执行标志遵循当前文件系统实际 mode：POSIX 的 0700 脚本必须为真，Windows 普通脚本无 POSIX 执行位必须为假；两侧都验证条目存在、签名、固定副本、pin 拒绝与禁止 hook，不执行候选脚本。
+
 按 [ADR-020](adr/0020-personal-discovery-and-skill-identity.md) 实施 UX-005：Skill 安装身份按本机规范化目录稳定生成，内容版本独立保留摘要；支持有界分类目录、profile Skills 和基于配置的多个消费者关系。新增关系仅为 inferred，不改变权限事实来源。台账兼容旧 locator/ID，路径与内容不变的迁移不撤权，内容变化保持原有复核与撤权语义。新个人扫描入口触发真实扫描并展示范围和结果；手动范围独立版本化保存，不能以缓存读取伪装重新扫描。接口和关系合同见 `packages/contracts/local-discovery.v1.schema.json`。
 
 2026-09-23 便捷接入增量：配对后的首页和资产页复用既有 discovery 接口；本服务尚无扫描

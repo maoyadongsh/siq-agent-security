@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -72,7 +73,18 @@ func gitTestStore(t *testing.T, fixtureURL string) (*Store, *GitCreateRequest) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	store, err := Open(t.TempDir(), key, pack, "fixture")
+	// Git for Windows bounds its internal $GIT_DIR even when core.longpaths
+	// is enabled. Avoid adding the full test name to the nested clone path.
+	tempState, err := os.MkdirTemp("", "siq-git-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		if err := os.RemoveAll(tempState); err != nil {
+			t.Error(err)
+		}
+	})
+	store, err := Open(tempState, key, pack, "fixture")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -107,17 +119,27 @@ func TestGitImportClonesFixedCopyWithoutHooks(t *testing.T) {
 	if !record.ExcludedGitMetadata {
 		t.Fatal("git metadata not excluded")
 	}
-	var execFound bool
+	// The local clone seam snapshots filesystem modes. Windows does not
+	// represent POSIX execute bits on ordinary .sh files.
+	wantExecutable := runtime.GOOS != "windows"
+	scriptInfo, err := os.Stat(filepath.Join(fixtureRoot, "repo", "install.sh"))
+	if err != nil || (scriptInfo.Mode().Perm()&0111 != 0) != wantExecutable {
+		t.Fatalf("unexpected fixture script mode: %v, %v", scriptInfo, err)
+	}
+	var scriptFound bool
 	for _, file := range record.Files {
 		if strings.Contains(file.Path, ".git") {
 			t.Fatal("git metadata leaked into payload", file.Path)
 		}
 		if file.Path == "install.sh" {
-			execFound = file.Executable
+			scriptFound = true
+			if file.Executable != wantExecutable {
+				t.Fatalf("script executable = %v, want %v", file.Executable, wantExecutable)
+			}
 		}
 	}
-	if !execFound {
-		t.Fatal("executable bit lost in snapshot")
+	if !scriptFound {
+		t.Fatal("script missing from snapshot")
 	}
 	if !admission.Verify(s.key.Public(), analysis.Admission) {
 		t.Fatal("unverified admission")

@@ -683,12 +683,9 @@ func TestOpenShellTaskExecEvidenceFailureNeverReportsSuccess(t *testing.T) {
 	// is, after the plan and before the outcome — make every later evidence
 	// write fail.
 	spy.next = func(int) openshell.TaskRunResult {
-		if err := os.Chmod(evDir, 0o500); err != nil {
-			t.Errorf("chmod evidence dir: %v", err)
-		}
+		refuseEvidenceWrites(t, s.d.Store.Dir, evDir)
 		return openshell.TaskRunResult{ExitCode: 0, Stdout: "ok\n", Spawned: true}
 	}
-	defer func() { _ = os.Chmod(evDir, 0o700) }()
 
 	code, out := taskExecPost(t, s, token, taskExecBody(decision))
 	if code != 503 || out["error"] != "execution_evidence_incomplete" {
@@ -719,12 +716,9 @@ func TestOpenShellTaskExecUncertainEvidenceFailureIsExplicit(t *testing.T) {
 			decision := taskExecApproveHold(t, s)
 			evDir := filepath.Join(s.d.Store.Dir, "evidence")
 			spy.next = func(int) openshell.TaskRunResult {
-				if err := os.Chmod(evDir, 0o500); err != nil {
-					t.Errorf("chmod evidence dir: %v", err)
-				}
+				refuseEvidenceWrites(t, s.d.Store.Dir, evDir)
 				return result
 			}
-			defer func() { _ = os.Chmod(evDir, 0o700) }()
 
 			code, out := taskExecPost(t, s, token, taskExecBody(decision))
 			if code != 503 || out["error"] != "execution_evidence_incomplete" || out["reason_code"] != "execution_evidence_incomplete" {
@@ -774,7 +768,7 @@ func TestOpenShellTaskExecAuditFailureIsExplicit(t *testing.T) {
 }
 
 // TestOpenShellTaskExecPlanNotPersistedRefusesBeforeSpawn covers the one branch
-// that the evidence-failure test above cannot reach, because that chmod happens
+// that the evidence-failure test above cannot reach, because that denial happens
 // inside the spawn and the plan is written before the spawn.
 //
 // The reservation receipts carry only a params digest, so a plan record that
@@ -792,10 +786,7 @@ func TestOpenShellTaskExecPlanNotPersistedRefusesBeforeSpawn(t *testing.T) {
 	// Blocked before the request: the reservation still has to succeed (it is
 	// durable in the signed chain, not here), and the plan write is the first
 	// thing that needs this directory.
-	if err := os.Chmod(evDir, 0o500); err != nil {
-		t.Fatalf("chmod evidence dir: %v", err)
-	}
-	defer func() { _ = os.Chmod(evDir, 0o700) }()
+	refuseEvidenceWrites(t, s.d.Store.Dir, evDir)
 
 	code, out := taskExecPost(t, s, token, taskExecBody(decision))
 	if code != 503 || out["error"] != "task_plan_not_persisted" {
