@@ -105,6 +105,21 @@ func validateCommit(c GrantCommit) error {
 // CommitGrant durably prepares all materials before publishing any grant. The
 // final marker binds their bytes and is the visibility boundary for readers.
 func (s *Store) CommitGrant(c GrantCommit) (int, error) {
+	return s.commitGrant(c, false)
+}
+
+// CommitInitialGrant distinguishes a new publication from an already completed
+// identical transaction. HTTP creators can then read back the existing Grant
+// instead of reporting a replay as a second creation. Recovery still uses the
+// original journal; ordinary CommitGrant retains its idempotent semantics.
+func (s *Store) CommitInitialGrant(c GrantCommit) (int, error) {
+	if c.ExpectedRevision != -1 {
+		return -1, errors.New("state: initial grant requires absent revision")
+	}
+	return s.commitGrant(c, true)
+}
+
+func (s *Store) commitGrant(c GrantCommit, initialOnly bool) (int, error) {
 	unlock, err := s.lockGrantPublication()
 	if err != nil {
 		return -1, err
@@ -112,6 +127,13 @@ func (s *Store) CommitGrant(c GrantCommit) (int, error) {
 	defer unlock()
 	commitMu.Lock()
 	defer commitMu.Unlock()
+	if initialOnly {
+		if _, revision, err := s.GetGrantWithSeq(c.Grant.GrantID); err == nil {
+			return revision, &RevisionConflictError{Expected: -1, Actual: revision}
+		} else if !errors.Is(err, os.ErrNotExist) && !errors.Is(err, ErrIncompleteCommit) {
+			return -1, err
+		}
+	}
 	return s.commitGrantLocked(c)
 }
 

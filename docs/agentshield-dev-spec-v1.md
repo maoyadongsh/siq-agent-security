@@ -2615,3 +2615,5 @@ WorkBuddy Windows 新文件及回滚恢复的排他发布同样使用已验证�
 合成 Windows 状态实测：旧 reader/writer 3 程序可接受 format 2/profile 3 元数据，但无法验证包含 runtime-receipt/v2 的链。因此新发行声明 reader/writer 4（支持 v1 和 v2 本地失败记录）；现有 marker、profile journal 与历史签名不改写。当前程序的状态绑定发行检查在允许 reader/writer 小于 4 的候选前，只读检查 pending/decisions.jsonl 和 receipts 下各链的 JSONL：出现 v2、未知版本、重复字段、非法 JSON、不安全对象或超出检查预算即拒绝，在发行暂存及服务停止/切换之前执行，并沿现有事务在锁内重新检查。旧 v1 历史仍可回退。每行最多 1 MiB，总检查最多 256 MiB / 10000 个条目；超限保留当前服务并明确失败，不截断后宣称兼容。
 
 这是当前升级/回退工作流的数据能力门禁，不是永久提升存储 marker。操作者必须使用当前任务绑定的兼容程序执行回退；手工运行旧 EXE 无此新预检，会在读取 v2 pending 或验证回执时失败关闭。不得删除 pending、回执或回放整个旧状态规避门禁。回退到 reader/writer 3 仅适用于尚无 v2 记录的状态；需要修复时使用支持这些记录的已签名发行。
+
+实例权限草稿的首次创建入口在原 Grant publication 锁与 commit 锁内区分已完成事务和未发布事务。已完成的同一初始 Grant 必须返回修订冲突，由 HTTP 重新验证签名、来源、实例及策略后以 200/reused=true 读回；只有第一次成功发布返回 201/reused=false。通用 CommitGrant 的显式幂等恢复语义保留，未完成事务不靠复用响应掩盖；审计、签名及 Grant 版本不改写。该细化修正已复现的 Windows 并发多次 201，不产生新权限。
