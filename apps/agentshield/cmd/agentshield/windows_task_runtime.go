@@ -89,7 +89,15 @@ func cmdWindowsTaskRuntime(args []string, out io.Writer) error {
 		if err != nil {
 			return err
 		}
-		_, err = fmt.Fprintf(out, "state=%s instances=%d last_result=%d\n", result.State, result.Instances, result.LastResult)
-		return err
+		return writeWindowsTaskRuntime(out, result)
 	})
+}
+
+func writeWindowsTaskRuntime(out io.Writer, result windowsTaskRuntime) error {
+	kind := "scheduler_result"
+	if result.LastResult == 267009 {
+		kind = "scheduler_running"
+	}
+	_, err := fmt.Fprintf(out, "state=%s instances=%d last_result=%d\nlast_result_kind=%s health=unverified\n", result.State, result.Instances, result.LastResult, kind)
+	return err
 }

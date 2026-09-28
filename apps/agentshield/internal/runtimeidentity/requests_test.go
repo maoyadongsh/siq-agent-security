@@ -355,9 +355,7 @@ func TestRequestPrivateCredentialRetryRejectsUnsafeOrLostFile(t *testing.T) {
 				if err := os.Remove(path); err != nil {
 					t.Fatal(err)
 				}
-				if err := os.Symlink(target, path); err != nil {
-					t.Fatal(err)
-				}
+				identitySymlinkFixture(t, target, path)
 			case "directory":
 				if err := os.Remove(path); err != nil {
 					t.Fatal(err)
@@ -366,9 +364,7 @@ func TestRequestPrivateCredentialRetryRejectsUnsafeOrLostFile(t *testing.T) {
 					t.Fatal(err)
 				}
 			case "public":
-				if err := os.Chmod(path, 0644); err != nil {
-					t.Fatal(err)
-				}
+				broadenIdentityFile(t, s.dir, path)
 			case "wrong-token":
 				if err := os.WriteFile(path, []byte(child.IdentityID+"."+strings.Repeat("e", 64)), 0600); err != nil {
 					t.Fatal(err)

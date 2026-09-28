@@ -4,17 +4,22 @@ import (
 	"errors"
 	"runtime"
 
+	"siq-agent-security/apps/agentshield/internal/product"
+
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 )
 
-// A fresh init deliberately has only installation metadata. Establish its
+// A pre-profile installation may have only metadata. Establish its
 // signing identity before activation publishes immutable history; afterwards
 // the missing-identity guard must require restoration, never generate a key.
 func prepareWindowsProfileIdentity(dir string) (resultErr error) {
 	if runtime.GOOS != "windows" {
 		return nil // The activation command retains its platform refusal.
+	}
+	if product.Env(product.EnvSigningSeed, product.EnvSigningSeedOld) != "" {
+		return errors.New("Windows profile requires a persisted local identity; unset the signing seed override")
 	}
 	if _, err := state.CheckStateCompatibility(dir); err != nil {
 		if errors.Is(err, stateformat.ErrWindowsProfileMigration) {

@@ -1,3 +1,6 @@
+//go:build !windows
+
+// POSIX path and symlink fixtures for launchd/systemd lifecycle operations.
 package main
 
 import (

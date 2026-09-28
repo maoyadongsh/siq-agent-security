@@ -232,11 +232,18 @@ type WorkBuddyManagedDecider interface {
 
 // WorkBuddyManagedFailure distinguishes a local refusal from a possibly
 // consumed server reservation without inventing a decision receipt.
-type WorkBuddyManagedFailure struct{ Uncertain bool }
+type WorkBuddyManagedFailure struct {
+	Uncertain bool
+	Code      string
+}
 
 func (e *WorkBuddyManagedFailure) Error() string { return "managed WorkBuddy correlation unavailable" }
 
 // These fixed categories never expose a transport error, URL, or bearer.
+type WorkBuddyServiceFailure struct{ Code string }
+
+func (e *WorkBuddyServiceFailure) Error() string { return "managed service unavailable" }
+
 type WorkBuddyEnrollmentDeadline struct{ BeforeRequest bool }
 
 func (e *WorkBuddyEnrollmentDeadline) Error() string { return "managed enrollment deadline" }
@@ -246,15 +253,18 @@ func (e *WorkBuddyEnrollmentDeadline) Error() string { return "managed enrollmen
 func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode, stateDir string) WorkBuddyOutput {
 	ev, err := ParseWorkBuddyManagedInput(in)
 	if err != nil {
-		return WorkBuddyManagedDeny("", "", mode, stateDir, "invalid managed hook input")
+		return workBuddyLocalFailure(nil, mode, stateDir, "parse", "workbuddy_input_invalid", "invalid managed hook input")
+	}
+	fail := func(stage, code, reason string) WorkBuddyOutput {
+		return workBuddyLocalFailure(&ev, mode, stateDir, stage, code, reason)
 	}
 	session, err := runtimeidentity.WorkBuddySessionID(ev.SessionID)
 	if err != nil {
-		return WorkBuddyManagedDeny(ev.ToolName, "", mode, stateDir, "invalid native session")
+		return workBuddyLocalFailure(nil, mode, stateDir, "parse", "workbuddy_session_invalid", "invalid native session")
 	}
 	call, err := runtimeidentity.WorkBuddyCallID(ev.SessionID, ev.CallID)
 	if err != nil {
-		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, "invalid native call")
+		return workBuddyLocalFailure(nil, mode, stateDir, "parse", "workbuddy_call_invalid", "invalid native call")
 	}
 	req := receipt.Request{Platform: "workbuddy", SessionID: session, AgentID: agentID, Tool: ev.ToolName, ToolCallID: call, Params: ev.ToolInput, Context: map[string]any{"cwd": ev.Cwd, "permission_mode": ev.PermissionMode}}
 	var out WorkBuddyOutput
@@ -276,34 +286,49 @@ func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode
 				return out
 			}
 		}
-		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": managed observation unavailable; no receipt confirmed"
-		return out
+		return fail("observation", "workbuddy_observation_unconfirmed", "managed observation unavailable")
 	}
 	if d == nil || !strings.HasPrefix(agentID, "hri-") {
-		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, "managed configuration or credential unavailable")
+		return fail("bootstrap", "workbuddy_configuration_unavailable", "managed configuration or credential unavailable; run adapter diagnosis (workbuddy-preflight)")
 	}
 	if err := d.Enroll(session); err != nil {
 		reason := "managed session enrollment unavailable"
+		code := "workbuddy_enrollment_unavailable"
+		var service *WorkBuddyServiceFailure
+		if errors.As(err, &service) {
+			switch service.Code {
+			case "workbuddy_service_unavailable", "workbuddy_identity_rejected", "workbuddy_enrollment_rejected", "workbuddy_session_expired":
+				code = service.Code
+			}
+		}
 		var deadline *WorkBuddyEnrollmentDeadline
 		if errors.As(err, &deadline) {
 			reason = "managed session enrollment deadline during request"
+			code = "workbuddy_enrollment_deadline_during_request"
 			if deadline.BeforeRequest {
 				reason = "managed session enrollment deadline before request"
+				code = "workbuddy_enrollment_deadline_before_request"
 			}
 		}
-		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, reason)
+		return fail("enrollment", code, reason)
 	}
 	dec, err := d.Decide(req)
 	var failure *WorkBuddyManagedFailure
 	if errors.As(err, &failure) {
 		reason := "managed approval or correlation unavailable"
+		code := "workbuddy_correlation_unavailable"
+		switch failure.Code {
+		case "workbuddy_correlation_lock_unavailable", "workbuddy_correlation_history_unavailable", "workbuddy_correlation_pre_unavailable":
+			code = failure.Code
+		}
 		if failure.Uncertain {
 			reason = "execution uncertain; inspect SIQ and do not replay"
+			code = "workbuddy_execution_uncertain"
 		}
-		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, reason)
+		return fail("correlation", code, reason)
 	}
 	if err != nil || dec == nil || dec.Receipt.ReceiptID == "" || dec.Receipt.ActionID == "" {
-		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, "managed decision unavailable")
+		return fail("decision", "workbuddy_decision_unavailable", "managed decision unavailable")
 	}
 	switch dec.Action {
 	case receipt.ActionAllow:
@@ -319,7 +344,7 @@ func WorkBuddyManagedHook(in io.Reader, d WorkBuddyManagedDecider, agentID, mode
 		out.HookSpecificOutput.PermissionDecision = "deny"
 		out.HookSpecificOutput.PermissionDecisionReason = product.Name + ": parameter rewrite is not supported (receipt " + dec.Receipt.ReceiptID + ")"
 	default:
-		return WorkBuddyManagedDeny(ev.ToolName, session, mode, stateDir, "invalid managed decision")
+		return fail("decision", "workbuddy_decision_invalid", "invalid managed decision")
 	}
 	return out
 }

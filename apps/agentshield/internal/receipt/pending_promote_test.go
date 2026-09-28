@@ -1,10 +1,59 @@
 package receipt
 
 import (
+	"encoding/json"
+	"os"
+	"path/filepath"
 	"testing"
+	"time"
 
 	"siq-agent-security/apps/agentshield/internal/pending"
 )
+
+func TestLocalPendingPromotionPreservesOriginAndDoesNotBackdate(t *testing.T) {
+	fx := newFixture(t, "block", nil, false)
+	for _, outcome := range []string{"deny", "unconfirmed"} {
+		p := pending.Record{Schema: pending.LocalSchemaID, Platform: "workbuddy", RecordedAt: fx.clock.Add(-time.Hour).Format(time.RFC3339Nano), EnforcementMode: "block", Outcome: outcome, Reason: "managed observation unavailable", Origin: "local_hook", Stage: "observation", ReasonCode: "workbuddy_observation_unconfirmed"}
+		rec, err := fx.eng.AppendPendingObserved(p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if rec.RecordType != "local_failure" || rec.SchemaVersion != "runtime-receipt/v2" || rec.LocalOrigin == nil || rec.LocalOrigin.RecordedAt != p.RecordedAt || rec.IssuedAt == p.RecordedAt || rec.LocalOrigin.Signed {
+			t.Fatal("local origin/time lost", rec)
+		}
+		if rec.AuthorityStatus != "" || rec.PolicyAction != "" || rec.EffectiveAction != "" || rec.MatchedGrantID != nil || rec.ToolCallID != nil || rec.SessionID != "" {
+			t.Fatal("promotion fabricated online authority/correlation")
+		}
+		if outcome == "unconfirmed" && rec.Action != "unknown" {
+			t.Fatal("unconfirmed observation reported as decision")
+		}
+		if outcome == "deny" && rec.Action != "deny" {
+			t.Fatal("local deny changed")
+		}
+		if !VerifyHashSignature(fx.k.Public(), rec.Hash, rec.Sig) {
+			t.Fatal("promotion unsigned")
+		}
+		if outcome == "unconfirmed" {
+			if os.Getenv("SIQ_UPDATE_CONTRACT_FIXTURES") == "1" {
+				raw, err := json.MarshalIndent(rec, "", "  ")
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(filepath.Join("..", "..", "testdata", "contracts", "receipt-local-failure-v2.json"), append(raw, '\n'), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+		}
+	}
+	records, err := fx.chain.Read()
+	if err != nil || Verify(records, fx.k.Public()) != nil {
+		t.Fatal("mixed event chain invalid", err)
+	}
+	records[0].LocalOrigin.ReasonCode = "tampered_local_reason"
+	if Verify(records, fx.k.Public()) == nil {
+		t.Fatal("local origin excluded from hash/signature")
+	}
+}
 
 func TestPromotePendingToSignedReceipt(t *testing.T) {
 	fx := newFixture(t, "block", nil, false)

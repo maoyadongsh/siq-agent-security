@@ -27,7 +27,7 @@ func TestStateProtocolCLIContractFixtures(t *testing.T) {
 			t.Fatal("CLI contract differs", name)
 		}
 	}
-	check("local-state-status-reader3")
+	check("local-state-status-reader4")
 	if _, e := os.Lstat(dir); !os.IsNotExist(e) {
 		t.Fatal("diagnosis created state")
 	}
@@ -36,7 +36,11 @@ func TestStateProtocolCLIContractFixtures(t *testing.T) {
 		t.Fatal(e)
 	}
 	out.Reset()
-	if e := cmdStateMigrate([]string{"--confirm"}, &out); e != nil {
+	invocation, err := inspectMigrationInvocation(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if e := cmdStateMigrate([]string{"--confirm", "--binding", invocation.Binding}, &out); e != nil {
 		t.Fatal(e)
 	}
 	check("local-state-migration-result")

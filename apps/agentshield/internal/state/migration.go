@@ -71,7 +71,7 @@ func migrationExcluded(rel string) bool {
 func snapshotMigration(dir string) ([]MigrationEntry, error) { return snapshotMigrationTree(dir, true) }
 func snapshotMigrationTree(dir string, exclude bool) ([]MigrationEntry, error) {
 	if err := privatefs.CheckDir(dir); err != nil {
-		return nil, err
+		return nil, migrationObjectError(".", err)
 	}
 	entries := []MigrationEntry{}
 	var total int64
@@ -97,12 +97,15 @@ func snapshotMigrationTree(dir string, exclude bool) ([]MigrationEntry, error) {
 			return errors.New("state-migrate: entry budget exceeded")
 		}
 		info, e := os.Lstat(p)
+		if e == nil && info.Mode()&os.ModeSymlink != 0 {
+			return migrationObjectError(rel, privatefs.ErrReparse)
+		}
 		if e != nil || (!info.IsDir() && !info.Mode().IsRegular()) || info.Mode()&(os.ModeSetuid|os.ModeSetgid|os.ModeSticky) != 0 {
 			return errors.New("state-migrate: nonregular entry rejected")
 		}
 		if info.IsDir() {
 			if err := privatefs.CheckDir(p); err != nil {
-				return err
+				return migrationObjectError(rel, err)
 			}
 		}
 		row := MigrationEntry{Path: rel, Mode: uint32(info.Mode().Perm()), Directory: info.IsDir()}
@@ -110,9 +113,9 @@ func snapshotMigrationTree(dir string, exclude bool) ([]MigrationEntry, error) {
 			if info.Size() > migrationMaxFile || total+info.Size() > migrationMaxBytes {
 				return errors.New("state-migrate: backup byte budget exceeded")
 			}
-			b, e := privatefs.ReadFile(p, migrationMaxFile)
+			b, e := readMigrationSource(p, migrationMaxFile)
 			if e != nil {
-				return errors.New("state-migrate: source changed")
+				return migrationObjectError(rel, e)
 			}
 			row.Size = int64(len(b))
 			row.SHA256 = stateformat.Hash(b)
@@ -338,7 +341,33 @@ func (s *Store) MigrateState(version string) (MigrationResult, error) {
 }
 
 // fault is only an internal test seam, never runtime configuration.
-func (s *Store) migrateState(version string, fault func(string) error) (result MigrationResult, resultErr error) {
+func (s *Store) migrateState(version string, fault func(string) error) (MigrationResult, error) {
+	return s.migrateStateChecked(version, fault, nil)
+}
+
+// MigrateStateBound repeats the caller's executable binding under all lifecycle
+// locks and at commit boundaries. It never stops another running instance.
+func (s *Store) MigrateStateBound(version, directoryID string, executableCheck func() error) (MigrationResult, error) {
+	if directoryID == "" || executableCheck == nil {
+		return MigrationResult{}, errors.New("state-migrate: invocation binding required")
+	}
+	check := func() error {
+		actual, err := s.DirectoryID()
+		if err != nil || actual != directoryID {
+			return errors.New("state-migrate: directory binding changed")
+		}
+		return executableCheck()
+	}
+	return s.migrateStateChecked(version, nil, check)
+}
+
+func (s *Store) migrateStateChecked(version string, fault func(string) error, bindingCheck func() error) (result MigrationResult, resultErr error) {
+	if bindingCheck != nil {
+		if err := bindingCheck(); err != nil {
+			return result, err
+		}
+	}
+
 	if err := stateformat.ValidatePath(s.Dir); err != nil {
 		return result, err
 	}
@@ -351,6 +380,11 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 		}
 	}
 	fail := func(at string) error {
+		if bindingCheck != nil && !strings.HasPrefix(at, "backup:") {
+			if err := bindingCheck(); err != nil {
+				return err
+			}
+		}
 		if fault != nil {
 			return fault(at)
 		}
@@ -389,6 +423,11 @@ func (s *Store) migrateState(version string, fault func(string) error) (result M
 			return result, e
 		}
 		locks = append(locks, w)
+	}
+	if bindingCheck != nil {
+		if err := bindingCheck(); err != nil {
+			return result, err
+		}
 	}
 	var plan MigrationPlan
 	raw, e := migrationReadRegular(planPath, 8<<20)

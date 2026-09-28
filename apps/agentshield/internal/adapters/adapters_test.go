@@ -6,7 +6,9 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
+	"syscall"
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/admission"
@@ -108,6 +110,9 @@ func TestPolicyExecFailsClosed(t *testing.T) {
 func TestPolicyExecRejectsSymlinkedStagedRoot(t *testing.T) {
 	link := filepath.Join(t.TempDir(), "staged")
 	if err := os.Symlink(fixture("benign/pure-doc"), link); err != nil {
+		if runtime.GOOS == "windows" && errors.Is(err, syscall.Errno(1314)) {
+			t.Skip("Windows symlink privilege unavailable; no elevation for fixture")
+		}
 		t.Fatal(err)
 	}
 	in, err := json.Marshal(map[string]any{

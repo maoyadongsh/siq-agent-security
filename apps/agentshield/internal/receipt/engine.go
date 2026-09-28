@@ -19,6 +19,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"siq-agent-security/apps/agentshield/internal/canon"
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/intent"
@@ -182,6 +183,8 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
+	SchemaVersion       string                        `json:"schema_version,omitempty"`
+	LocalOrigin         *pending.Record               `json:"local_origin,omitempty"`
 	ParameterProvenance []provenance.ParameterBinding `json:"parameter_provenance,omitempty"`
 	ContextAssertionID  string                        `json:"context_assertion_id,omitempty"`
 	AuthorityStatus     string                        `json:"authority_status,omitempty"`
@@ -1118,24 +1121,47 @@ func denyGrantAuthority(rec *Receipt, code string) (string, string) {
 	return ActionDeny, code
 }
 
-// AppendPendingObserved promotes one unsigned pending_decision/v1 line into a
-// signed hash-chain receipt (DEV07-D / spec §3.8.4). Outcome deny→action deny;
-// allow→action allow. Does not update session taint state.
+// AppendPendingObserved preserves legacy v1 promotion bytes/semantics. V2 is a
+// distinct local_failure receipt with an unsigned origin and promotion time;
+// it never becomes an online policy decision or changes session taint.
 func (e *Engine) AppendPendingObserved(p pending.Record) (*Receipt, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	if err := pending.ValidateLocalRecord(p); err != nil {
+		return nil, err
+	}
 	action := ActionDeny
 	if p.Outcome == "allow" {
 		action = ActionAllow
+	} else if p.Schema == pending.LocalSchemaID && p.Outcome == "unconfirmed" {
+		action = "unknown"
 	} else if p.Outcome != "" && p.Outcome != "deny" {
 		return nil, fmt.Errorf("receipt: pending outcome %q not deny|allow", p.Outcome)
 	}
 	seed := p.RecordedAt + "|" + p.Platform + "|" + p.Tool + "|" + p.SessionID + "|" + p.Outcome + "|" + p.Reason
+	if p.Schema == pending.LocalSchemaID {
+		raw, err := json.Marshal(p)
+		if err != nil {
+			return nil, err
+		}
+		value, err := canon.Decode(raw)
+		if err != nil {
+			return nil, err
+		}
+		raw, err = canon.Marshal(value)
+		if err != nil {
+			return nil, err
+		}
+		seed = "pending-promotion/v2\x00" + string(raw)
+	}
 	digest := sha256.Sum256([]byte(seed))
 	now := e.opts.Now()
 	issued := p.RecordedAt
 	if issued == "" {
 		issued = now.Format(time.RFC3339)
+	}
+	if p.Schema == pending.LocalSchemaID {
+		issued = now.UTC().Format(time.RFC3339Nano)
 	}
 	mode := p.EnforcementMode
 	if mode == "" {
@@ -1173,6 +1199,18 @@ func (e *Engine) AppendPendingObserved(p pending.Record) (*Receipt, error) {
 		Trifecta:        &tf,
 		EnforcementMode: mode,
 		Engine:          EngineInfo{Version: e.opts.Version, RulepackVersion: e.opts.Pack.Version},
+	}
+	if p.Schema == pending.LocalSchemaID {
+		rec.SchemaVersion, rec.RecordType, rec.LocalOrigin = "runtime-receipt/v2", "local_failure", &p
+		rec.SessionID, rec.Tool = p.SessionID, p.Tool
+		rec.Reason, rec.ReasonCode = "promoted unsigned local hook event: "+p.Reason, p.ReasonCode
+		rec.MatchedRuleIDs = []string{}
+		if p.ToolCallID != "" {
+			rec.ToolCallID = &p.ToolCallID
+		}
+		if p.ActionDigest != "" {
+			rec.ParamsDigest = p.ActionDigest
+		}
 	}
 	if err := e.opts.Chain.Append(&rec); err != nil {
 		return nil, err

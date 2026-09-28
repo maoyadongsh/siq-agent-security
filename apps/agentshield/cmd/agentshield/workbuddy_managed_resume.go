@@ -11,22 +11,26 @@ import (
 	"siq-agent-security/apps/agentshield/internal/workbuddycorrelation"
 )
 
-func workBuddyBlocked(reason string) (*receipt.Decision, error) {
-	return nil, &adapters.WorkBuddyManagedFailure{Uncertain: strings.Contains(reason, "uncertain") || strings.Contains(reason, "do not replay")}
+func workBuddyBlocked(reason string, code ...string) (*receipt.Decision, error) {
+	category := ""
+	if len(code) > 0 {
+		category = code[0]
+	}
+	return nil, &adapters.WorkBuddyManagedFailure{Code: category, Uncertain: strings.Contains(reason, "uncertain") || strings.Contains(reason, "do not replay")}
 }
 
 func (h *workBuddyManagedClient) Decide(req receipt.Request) (*receipt.Decision, error) {
-	tx, err := workbuddycorrelation.Lock(h.config, req)
+	tx, err := workbuddycorrelation.LockWithinDeadline(h.ctx, h.config, req)
 	if err != nil {
-		return workBuddyBlocked(err.Error())
+		return workBuddyBlocked(err.Error(), "workbuddy_correlation_lock_unavailable")
 	}
 	defer tx.Close()
 	prior, err := tx.PriorHold()
 	if err != nil {
-		return workBuddyBlocked(err.Error())
+		return workBuddyBlocked(err.Error(), "workbuddy_correlation_history_unavailable")
 	}
 	if err = tx.Write("pre", tx.Base); err != nil {
-		return workBuddyBlocked("duplicate or unavailable pre correlation; blocked")
+		return workBuddyBlocked("duplicate or unavailable pre correlation; blocked", "workbuddy_correlation_pre_unavailable")
 	}
 	if h.ctx.Err() != nil {
 		return workBuddyBlocked("request deadline elapsed; execution uncertain")
@@ -107,7 +111,7 @@ func (h *workBuddyManagedClient) resumeWorkBuddy(tx *workbuddycorrelation.Transa
 }
 
 func (h *workBuddyManagedClient) Observe(req receipt.Request, result string) error {
-	tx, err := workbuddycorrelation.Lock(h.config, req)
+	tx, err := workbuddycorrelation.LockWithinDeadline(h.ctx, h.config, req)
 	if err != nil {
 		return err
 	}

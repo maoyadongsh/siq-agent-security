@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,9 +10,7 @@ import (
 func TestServeRefusesIncompleteServiceSwitchBeforeIdentityCreation(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("SIQ_AGENT_SECURITY_STATE_DIR", dir)
-	if err := cmdInitialize(nil, io.Discard); err != nil {
-		t.Fatal(err)
-	}
+	initializePreProfileFixture(t, dir)
 	if err := os.WriteFile(filepath.Join(dir, "service-switch.pending.json"), []byte("invalid pending"), 0600); err != nil {
 		t.Fatal(err)
 	}

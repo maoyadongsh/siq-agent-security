@@ -166,6 +166,46 @@ hash; it does not update any previously published package.
 
 Legacy `agentshield` on PATH and `AGENTSHIELD_*` environment names still work.
 
+## Windows WorkBuddy status and recovery
+
+Use these states separately: browser connected; Grant approved/deployed;
+configuration installed/pending verification; native runtime verified.
+`effective_readback=null` means unknown. A successful click, installation,
+background task or browser connection does not establish runtime protection.
+Read the latest server Grant revision and instance diagnosis after applying.
+Display session/identity expiry separately from the Grant expiry; never renew
+credentials or permissions automatically. Restart requires a new browser
+connection and does not restore revoked business authority.
+
+For a new Windows state the client creates its identity before activating the
+Windows resource profile. Existing state requires read-only `state-migrate
+--preview`, an explicit stop of this exact instance, then `state-migrate
+--confirm --binding <invocation_binding>` with the same EXE and state directory.
+Follow with explicit `state-enable-windows-resources --confirm` when required.
+A migration error is not a reason to remove locks, replace keys, unlink aliases,
+change existing ACLs, restore old Grants or clear the recycle bin. Report the
+safe object/reason code and follow the reviewed recovery plan.
+
+Managed WorkBuddy uses the native `Read` and `Write` mappings with approved
+resource scopes. `present_files`, `Glob` and `Grep` are not substitutes for those
+capabilities: unsupported effects fail closed. An artifact card or history/memory
+visible in the host UI does not prove that path was controlled. Missing optional
+memory or input produces resource identity unavailable; check existence and skip
+nonessential work within the current Grant. Do not request the entire user home.
+
+Service unavailable or identity rejected during enrollment is a local failure,
+not a confirmed server scope decision. Pending local failures promoted later
+retain their original time and local origin. An uncertain result must not be
+replayed automatically. Keep the original 60-second hook budget; the host's
+75-second timeout is only an outer limit.
+
+`task-start --help` and `task-stop --help` are read-only. Use the supported
+`--confirm-start` / `--confirm-stop` actions only for the owned instance.
+`task-runtime` value 267009 means the scheduler reports running; service health
+and real tool results require separate readback. Background installation is
+separate from login startup. Preserve the same Grant and hook configuration
+when testing service stop/recovery.
+
 ## Quick Reference
 
 | Command | Purpose |

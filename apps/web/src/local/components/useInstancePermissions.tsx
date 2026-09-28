@@ -6,6 +6,7 @@ import { useLocalSession } from '../session';
 import type { Admission, Grant, RuntimeIdentity } from '../types';
 import GrantResourceDialog from './GrantResourceDialog';
 import GrantScopeSummary from './GrantScopeSummary';
+import { verifyDeployedGrant } from '../managedReadback';
 import InstanceSkillCheck from './InstanceSkillCheck';
 import { skillInstallErrorText } from '../skillInstall';
 import type { SkillRuntimeReadiness } from '../types';
@@ -140,7 +141,10 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
     if (grant.status !== 'approved' || grant.state_revision === undefined) return;
     const out = await localApi.grantAction(grant.grant_id, 'deploy', { expected_revision: grant.state_revision, actor_id: actor.trim() });
     if (!out.grant) throw new Error('未返回应用结果');
-    keepGrant({ ...out.grant, state_revision: out.state_revision });
+    const applied = { ...out.grant, state_revision: out.state_revision };
+    const current = await localApi.grant(grant.grant_id);
+    keepGrant(current.grant);
+    verifyDeployedGrant(applied, current.grant);
   });
   const issue = () => run(async () => {
     if (!selected || selected.state_revision === undefined || reviewed !== reviewKey || identity || (imported && !importPrepared)
@@ -169,6 +173,9 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
     {loadedFor === scopeKey && identity ? <>
       <p role="status">{identity.status === 'issued' ? (!identityProfileMatches ? '身份的路径解释尚未核对，暂不能预览接入。' : changing ? '当前仍使用旧授权，新权限尚未接入。' : imported && !importPrepared ? '正在核验安装权限，暂不能预览接入。' : '已有可用授权，可以预览接入配置。') : '原有授权已失效，请先停用旧身份，再重新设置。'}</p>
       <p>当前身份的文件路径解释：{filesystemProfileLabel(identityFilesystemProfile(identity))}</p>
+      <p>单次会话最长 {identity.session_ttl_seconds / 3600} 小时，从该会话登记起计算；实际到期以会话记录为准，不自动续期。业务授权到期单独显示。</p>
+      {platform === 'workbuddy' ? <p>工具覆盖：Read/Write 等按具体动作与目录裁决。present_files、Glob、Grep 的效果映射尚未支持，不能视为普通读取。宿主产物卡片和历史记忆界面不代表其内容或分享路径已受控。</p> : null}
+      {platform === 'workbuddy' ? <p>资源身份不可用与路径超出授权范围是不同结果。可先核对路径是否存在；缺少非必需 memory 文件时保持当前授权并跳过该步骤，不需要扩大到整个用户目录。</p> : null}
       {!identityProfileMatches ? <p role="alert">身份与当前授权的路径解释无法核对，暂不能预览接入。请刷新并检查授权；不要改用旧解释继续。</p> : null}
       {scope(currentGrant, '当前实例权限')}
       <p><Link to={`/activities?platform=${encodeURIComponent(identity.platform)}&agent_id=${encodeURIComponent(identity.agent_id)}`}>查看此实例运行记录</Link></p>

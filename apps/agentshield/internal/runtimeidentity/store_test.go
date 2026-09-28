@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
+	"syscall"
 	"testing"
 	"time"
 
@@ -338,16 +340,12 @@ func TestIdentityCorruptAndAliasedRecordsFailClosed(t *testing.T) {
 				if err = os.Rename(dir, dir+"-original"); err != nil {
 					t.Fatal(err)
 				}
-				if err = os.Symlink(dir+"-original", dir); err != nil {
-					t.Fatal(err)
-				}
+				identitySymlinkFixture(t, dir+"-original", dir)
 			case "record_link":
 				if err = os.Rename(path, path+".original"); err != nil {
 					t.Fatal(err)
 				}
-				if err = os.Symlink(path+".original", path); err != nil {
-					t.Fatal(err)
-				}
+				identitySymlinkFixture(t, path+".original", path)
 			case "permissions":
 				broadenIdentityFile(t, s.dir, path)
 			}
@@ -532,5 +530,15 @@ func TestEmptyToolGrantDoesNotPublishIdentityOrSecret(t *testing.T) {
 		if len(entries) != 0 {
 			t.Fatal("published unusable authority", dir)
 		}
+	}
+}
+
+func identitySymlinkFixture(t *testing.T, target, path string) {
+	t.Helper()
+	if err := os.Symlink(target, path); err != nil {
+		if runtime.GOOS == "windows" && errors.Is(err, syscall.Errno(1314)) {
+			t.Skip("Windows symlink creation privilege unavailable; ACL/hardlink/junction tests remain enabled")
+		}
+		t.Fatal(err)
 	}
 }

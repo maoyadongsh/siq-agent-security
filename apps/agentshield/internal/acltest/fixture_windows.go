@@ -12,6 +12,21 @@ import (
 // BroadenRead adds Everyone read access to one known fixture. The returned
 // function restores a private fixture DACL; production never imports this package.
 func BroadenRead(t *testing.T, root, path string) func() {
+	return fixtureDACL(t, root, path, "", "(A;;GR;;;WD)")
+}
+
+// DenyExecute preserves a meaningful deny ACE without preventing JSON reads.
+func DenyExecute(t *testing.T, root, path string) func() {
+	return fixtureDACL(t, root, path, "(D;;0x20;;;WD)", "")
+}
+
+// DenyCreate prevents new files and subdirectories in one synthetic directory.
+// The deny is not inherited, so existing evidence remains readable.
+func DenyCreate(t *testing.T, root, path string) func() {
+	return fixtureDACL(t, root, path, "(D;;0x6;;;WD)", "")
+}
+
+func fixtureDACL(t *testing.T, root, path, prefix, suffix string) func() {
 	t.Helper()
 	rel, err := filepath.Rel(root, path)
 	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) || !filepath.IsAbs(root) {
@@ -37,9 +52,9 @@ func BroadenRead(t *testing.T, root, path string) func() {
 	if err != nil {
 		t.Fatal(err)
 	}
-	apply := func(extra string) {
+	apply := func(before, after string) {
 		t.Helper()
-		text, err := syscall.UTF16PtrFromString("D:P(A;OICI;FA;;;" + sid + ")(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)" + extra)
+		text, err := syscall.UTF16PtrFromString("D:P" + before + "(A;OICI;FA;;;" + sid + ")(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)" + after)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -52,8 +67,8 @@ func BroadenRead(t *testing.T, root, path string) func() {
 			t.Fatal(e)
 		}
 	}
-	apply("(A;;GR;;;WD)")
-	restore := func() { apply("") }
+	apply(prefix, suffix)
+	restore := func() { apply("", "") }
 	t.Cleanup(restore)
 	return restore
 }

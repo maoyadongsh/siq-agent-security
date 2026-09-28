@@ -157,7 +157,14 @@ export interface Receipt {
   authority_reason_code?: string;
   policy_action?: "allow" | "deny" | "hold" | "redact";
   effective_action?: "allow" | "deny" | "hold" | "redact";
-  record_type?: 'decision' | 'observation' | 'hold_resolution';
+  schema_version?: 'runtime-receipt/v2';
+  record_type?: 'decision' | 'observation' | 'hold_resolution' | 'hold_reservation' | 'hold_reconciliation' | 'local_failure';
+  local_origin?: {
+    schema: 'pending_decision/v2'; origin: 'local_hook'; signed: false; recorded_at: string;
+    stage: 'parse' | 'bootstrap' | 'enrollment' | 'correlation' | 'decision' | 'observation';
+    reason_code: string; outcome: 'deny' | 'unconfirmed'; native_session_id?: string; native_call_id?: string;
+    session_id?: string; tool_call_id?: string; action_digest?: string;
+  };
   decision_receipt_id?: string;
   action_id?: string;
   parent_action_id?: string;

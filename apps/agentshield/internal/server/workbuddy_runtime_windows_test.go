@@ -11,6 +11,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/receipt"
 	"siq-agent-security/apps/agentshield/internal/runtimeidentity"
+	"siq-agent-security/apps/agentshield/internal/state"
 )
 
 // Component evidence: real state/NTFS and production HTTP admit, instance-draft,
@@ -102,7 +103,11 @@ func TestWorkBuddyWindowsInventoryAmbiguityAndRawAliases(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(root, "config.yaml"), []byte("model: fixture\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
-	s := &Server{d: Deps{Home: home}}
+	st, err := state.Open(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := &Server{d: Deps{Home: home, Store: st}}
 	list := func() map[string]any {
 		w := httptest.NewRecorder()
 		s.workBuddyInstanceRow(w)

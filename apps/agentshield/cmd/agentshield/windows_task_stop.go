@@ -11,6 +11,10 @@ import (
 )
 
 func cmdWindowsTaskStop(args []string, out io.Writer) error {
+	if windowsTaskHelpRequested("task-stop", args) {
+		_, err := fmt.Fprintln(out, "Usage: siq-agent-security task-stop --confirm-stop\nGracefully stop only this owned Windows task and verify idle state. Configuration and authorizations are retained.\n--help, -h: show help without reading state or stopping a task.")
+		return err
+	}
 	if len(args) != 1 || args[0] != "--confirm-stop" {
 		return errors.New("task-stop: --confirm-stop required, no other arguments accepted")
 	}

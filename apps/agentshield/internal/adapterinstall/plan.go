@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"siq-agent-security/apps/agentshield/internal/privatefs"
 	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"slices"
@@ -52,9 +53,10 @@ type PlanView struct {
 }
 
 type fileImage struct {
-	Exists bool   `json:"exists"`
-	Data   []byte `json:"data,omitempty"`
-	Mode   uint32 `json:"mode"`
+	Exists   bool   `json:"exists"`
+	Data     []byte `json:"data,omitempty"`
+	Mode     uint32 `json:"mode"`
+	Security string `json:"windows_security,omitempty"`
 }
 type fileChange struct {
 	Path   string    `json:"path"`
@@ -93,12 +95,12 @@ func imageHash(image fileImage) string {
 	return hex.EncodeToString(sum[:])
 }
 func sameImage(a, b fileImage) bool {
-	return a.Exists == b.Exists && (!a.Exists || (runtime.GOOS == "windows" || a.Mode == b.Mode) && bytes.Equal(a.Data, b.Data))
+	return a.Exists == b.Exists && (!a.Exists || (runtime.GOOS == "windows" || a.Mode == b.Mode) && bytes.Equal(a.Data, b.Data) && (a.Security == "" || b.Security == "" || privatefs.EquivalentSecurity(a.Security, b.Security)))
 }
 
 // Read an existing regular file or an explicitly missing file. Missing leaf
 // paths still require every existing ancestor to be a real directory.
-func readImage(home, path string) (fileImage, error) {
+func readImage(home, path string, preserveSecurity ...bool) (fileImage, error) {
 	if !filepath.IsAbs(path) {
 		return fileImage{}, errors.New("adapter: absolute path required")
 	}
@@ -131,7 +133,8 @@ func readImage(home, path string) (fileImage, error) {
 	if err != nil {
 		return fileImage{}, err
 	}
-	return fileImage{Exists: true, Data: raw, Mode: uint32(info.Mode().Perm())}, nil
+	image := fileImage{Exists: true, Data: raw, Mode: uint32(info.Mode().Perm())}
+	return captureManagedSecurity(path, image, preserveSecurity...)
 }
 
 // input pins the first read, including files whose planned output is unchanged.
@@ -140,7 +143,7 @@ func (p *Plan) input(path string) (fileImage, error) {
 	if image, ok := p.payload.Inputs[path]; ok {
 		return image, nil
 	}
-	image, err := readImage(p.payload.Options.Home, path)
+	image, err := readImage(p.payload.Options.Home, path, p.payload.Options.Platform == WorkBuddy)
 	if err != nil {
 		return fileImage{}, err
 	}
@@ -158,6 +161,9 @@ func (p *Plan) add(path string, after fileImage, purpose string) error {
 	before, err := p.input(path)
 	if err != nil {
 		return err
+	}
+	if after.Exists && before.Security != "" {
+		after.Security = before.Security
 	}
 	if sameImage(before, after) {
 		return nil

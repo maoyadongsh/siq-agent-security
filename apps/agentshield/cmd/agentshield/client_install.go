@@ -55,7 +55,7 @@ func cmdClientInstall(args []string, out io.Writer) error {
 		return err
 	}
 	staged, version, err := prepareClientInstallationWithBootstrap(dir, *manifest, *binary,
-		checkUpgradeForCurrentState, func() error { return bootstrapClientIdentity(dir) }, clientrelease.Stage)
+		checkUpgradeForCurrentState, func() error { return bootstrapClientIdentity(dir, *port) }, clientrelease.Stage)
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func cmdClientInstall(args []string, out io.Writer) error {
 	return writeConsoleAccessGuide(out, cfg.Port)
 }
 
-func bootstrapClientIdentity(dir string) error {
+func bootstrapClientIdentity(dir string, initialPort ...int) error {
 	// A user service cannot inherit an installer shell's signing seed. The
 	// identity must already live in the selected state directory before Stage
 	// publishes files that would make a missing key look historical.
@@ -134,7 +134,7 @@ func bootstrapClientIdentity(dir string) error {
 		return errors.New("client-install: background service requires a stored signing identity")
 	}
 	if runtime.GOOS == "windows" {
-		return prepareWindowsClientInstallationIdentity(dir)
+		return prepareWindowsClientInstallationIdentity(dir, initialPort...)
 	}
 	_, err := signing.Load(dir)
 	return err
@@ -196,14 +196,17 @@ func prepareClientInstallationWithBootstrap(dir, manifest, binary string, check 
 	return staged, version, nil
 }
 
-func prepareWindowsClientInstallationIdentity(dir string) error {
+func prepareWindowsClientInstallationIdentity(dir string, initialPort ...int) error {
 	// A readable identity must not bypass the state writer-version or migration
 	// barrier. Stage independently checks it again before publishing files.
 	if err := state.RequireStateCompatibility(dir); err != nil {
 		return err
 	}
 	_, err := signing.LoadExisting(dir)
-	if err == nil || !errors.Is(err, os.ErrNotExist) {
+	if err == nil {
+		return requireWindowsInstallationProfile(dir)
+	}
+	if !errors.Is(err, os.ErrNotExist) {
 		return err
 	}
 	// Do not interpret a missing prerequisite from the read path as permission
@@ -215,8 +218,24 @@ func prepareWindowsClientInstallationIdentity(dir string) error {
 		}
 		return err
 	}
+	port := 0
+	if len(initialPort) > 0 {
+		port = initialPort[0]
+	}
+	compat, err := state.CheckStateCompatibility(dir)
+	if err != nil {
+		return err
+	}
+	if compat.Status == state.CompatStatusEmpty {
+		if _, err := initializeLocalClient(dir, port); err != nil {
+			return err
+		}
+	}
 	_, err = loadWindowsTaskPreparationKey(dir)
-	return err
+	if err != nil {
+		return err
+	}
+	return requireWindowsInstallationProfile(dir)
 }
 
 func installationEnvironment(environment []string, dir string) []string {

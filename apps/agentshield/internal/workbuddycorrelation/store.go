@@ -3,10 +3,12 @@
 package workbuddycorrelation
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -28,6 +30,41 @@ const Window = 300 * time.Second
 
 var ErrUnavailable = errors.New("workbuddy correlation unavailable; execution blocked")
 var ErrUncertain = errors.New("workbuddy execution uncertain; do not replay")
+var ErrBusy = fmt.Errorf("%w: scope lock busy", ErrUnavailable)
+
+// LockWithinDeadline waits only for ordinary lock contention. It does not retry
+// decisions, remove stale locks or extend the hook's enrollment/HTTP deadline.
+func LockWithinDeadline(ctx context.Context, cfg adapters.WorkBuddyManagedConfig, req receipt.Request) (*Transaction, error) {
+	if ctx == nil {
+		return nil, ErrUnavailable
+	}
+	if _, bounded := ctx.Deadline(); !bounded {
+		return nil, ErrUnavailable
+	}
+	for {
+		if ctx.Err() != nil {
+			return nil, ErrUnavailable
+		}
+		tx, err := Lock(cfg, req)
+		if err == nil {
+			if ctx.Err() != nil {
+				tx.Close()
+				return nil, ErrUnavailable
+			}
+			return tx, nil
+		}
+		if !errors.Is(err, ErrBusy) {
+			return nil, err
+		}
+		timer := time.NewTimer(10 * time.Millisecond)
+		select {
+		case <-ctx.Done():
+			timer.Stop()
+			return nil, ErrUnavailable
+		case <-timer.C:
+		}
+	}
+}
 
 type Record struct {
 	SchemaVersion             string `json:"schema_version"`
@@ -75,22 +112,25 @@ func Lock(cfg adapters.WorkBuddyManagedConfig, req receipt.Request) (*Transactio
 	tx := &Transaction{dir: filepath.Join(cfg.StateDir, "workbuddy-hooks", scope), Base: Record{SchemaVersion: "workbuddy-hook-correlation/v1", ScopeDigest: scope, SessionID: req.SessionID, AgentID: req.AgentID, Tool: req.Tool, ToolCallID: req.ToolCallID, ParamsDigest: digest(string(params)), CreatedAt: now.Format(time.RFC3339Nano), ExpiresAt: now.Add(Window).Format(time.RFC3339Nano)}}
 	tx.Base.EffectDigest = effect(scope, req.SessionID, req.Tool, tx.Base.ParamsDigest)
 	if err := statefs.MkdirAllPrivate(tx.dir); err != nil {
-		return nil, ErrUnavailable
+		return nil, fmt.Errorf("%w: directory: %w", ErrUnavailable, err)
 	}
 	if _, err := tx.entries(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: entries", err)
 	}
 	// A scope lock also serializes capacity admission across different effects.
 	// Contention fails closed immediately; it never extends the HTTP budget.
 	tx.lockPath = filepath.Join(tx.dir, "lock")
 	f, err := statefs.CreatePrivate(tx.lockPath)
 	if err != nil {
-		return nil, ErrUnavailable
+		if errors.Is(err, os.ErrExist) {
+			return nil, ErrBusy
+		}
+		return nil, fmt.Errorf("%w: create: %w", ErrUnavailable, err)
 	}
 	tx.lockInfo, err = f.Stat()
 	closeErr := f.Close()
 	if err != nil || closeErr != nil {
-		return nil, ErrUnavailable
+		return nil, fmt.Errorf("%w: stat/close", ErrUnavailable)
 	}
 	return tx, nil
 }
@@ -103,15 +143,7 @@ func (t *Transaction) Close() {
 		return
 	}
 	t.lockPath = ""
-	f, err := statefs.OpenPrivate(path)
-	if err != nil {
-		return
-	}
-	info, statErr := f.Stat()
-	closeErr := f.Close()
-	if statErr == nil && closeErr == nil && os.SameFile(t.lockInfo, info) {
-		_ = statefs.Remove(path)
-	}
+	releaseOwnedLock(path, t.lockInfo)
 }
 
 func (t *Transaction) entries() ([]os.DirEntry, error) {

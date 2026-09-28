@@ -17,6 +17,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -342,6 +343,9 @@ func TestUP07RealBinaryRefusesFutureStateBeforeSideEffects(t *testing.T) {
 		t.Skip("real-binary leg skipped in -short")
 	}
 	bin := filepath.Join(t.TempDir(), "agentshield")
+	if runtime.GOOS == "windows" {
+		bin += ".exe"
+	}
 	build := exec.Command("go", "build", "-o", bin, "./cmd/agentshield")
 	build.Dir = filepath.Join("..", "..")
 	if out, err := build.CombinedOutput(); err != nil {
@@ -370,6 +374,8 @@ func TestUP07RealBinaryRefusesFutureStateBeforeSideEffects(t *testing.T) {
 			code = 1
 			if ee, ok := err.(*exec.ExitError); ok {
 				code = ee.ExitCode()
+			} else {
+				t.Fatalf("could not start fixture binary: %v", err)
 			}
 		}
 		return code, string(out)

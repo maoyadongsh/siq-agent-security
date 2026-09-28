@@ -53,7 +53,7 @@ func main() {
 		usage()
 		os.Exit(2)
 	}
-	if err := checkCommandState(os.Args[1]); err != nil {
+	if err := checkCommandState(os.Args[1], os.Args[2:]...); err != nil {
 		fmt.Fprintln(os.Stderr, product.Name+":", err)
 		if errors.Is(err, state.ErrIncompatibleState) {
 			fmt.Fprintln(os.Stderr, stateformat.RecoveryMessageFor(err))

@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"siq-agent-security/apps/agentshield/internal/state"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -23,15 +24,23 @@ func TestServeStateDirectorySelection(t *testing.T) {
 	if got, err := serveStateDirectory("", false); err != nil || got != ambient {
 		t.Fatal(got, err)
 	}
-	link := filepath.Join(t.TempDir(), "alias")
-	if err := os.Symlink(selected, link); err != nil {
-		t.Fatal(err)
-	}
+	t.Run("symlink", func(t *testing.T) {
+		link := filepath.Join(t.TempDir(), "alias")
+		if err := os.Symlink(selected, link); err != nil {
+			if runtime.GOOS == "windows" && errors.Is(err, syscall.Errno(1314)) {
+				t.Skip("Windows symlink privilege unavailable; junction tests run separately")
+			}
+			t.Fatal(err)
+		}
+		if _, err := serveStateDirectory(link, true); err == nil {
+			t.Fatal("accepted symlink")
+		}
+	})
 	file := filepath.Join(t.TempDir(), "file")
 	if err := os.WriteFile(file, []byte("original"), 0600); err != nil {
 		t.Fatal(err)
 	}
-	for _, invalid := range []string{"", "relative", selected + string(os.PathSeparator) + ".", link, file, ambient} {
+	for _, invalid := range []string{"", "relative", selected + string(os.PathSeparator) + ".", file, ambient} {
 		if _, err := serveStateDirectory(invalid, true); err == nil {
 			t.Fatal("accepted invalid directory", invalid)
 		}

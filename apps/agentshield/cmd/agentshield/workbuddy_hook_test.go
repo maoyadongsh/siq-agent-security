@@ -23,6 +23,11 @@ func TestWorkBuddyBootstrapFailuresStillProduceHookDecision(t *testing.T) {
 		{"audit", `{"enforcement_mode":"audit_only"}`, "short", "allow"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
+			home := t.TempDir()
+			t.Setenv("HOME", home)
+			t.Setenv("USERPROFILE", home)
+			t.Setenv("WORKBUDDY_CONFIG_DIR", "")
+			t.Setenv("CODEBUDDY_CONFIG_DIR", "")
 			dir := filepath.Join(t.TempDir(), "state")
 			if _, err := state.Open(dir); err != nil {
 				t.Fatal(err)

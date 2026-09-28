@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/schemas/local-state-migration-preview.v1.json",
+  "title": "Read-only state migration preview",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "state_directory_id",
+    "instance_id",
+    "format_version",
+    "backup_entries",
+    "backup_bytes",
+    "windows_profile",
+    "service_stop_required"
+  ],
+  "properties": {
+    "schema": {
+      "const": "local-state-migration-preview/v1"
+    },
+    "state_directory_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "format_version": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "backup_entries": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    },
+    "backup_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483648
+    },
+    "windows_profile": {
+      "enum": [
+        "enabled",
+        "activation_required",
+        "not_applicable"
+      ]
+    },
+    "service_stop_required": {
+      "const": true
+    },
+    "executable_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32768
+    },
+    "executable_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "invocation_binding": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "dependencies": {
+    "executable_path": [
+      "executable_path",
+      "executable_sha256",
+      "invocation_binding"
+    ],
+    "executable_sha256": [
+      "executable_path",
+      "executable_sha256",
+      "invocation_binding"
+    ],
+    "invocation_binding": [
+      "executable_path",
+      "executable_sha256",
+      "invocation_binding"
+    ]
+  }
+}

@@ -66,7 +66,11 @@ func Promote(stateDir string, appendOne func(Record) error) (int, error) {
 		if err := json.Unmarshal([]byte(line), &rec); err != nil {
 			return promoted, fmt.Errorf("pending: corrupt JSONL at line %d: %w", i+1, err)
 		}
-		if rec.Schema != "" && rec.Schema != SchemaID {
+		if rec.Schema == LocalSchemaID {
+			if err := decodeLocalRecord([]byte(line), &rec); err != nil {
+				return promoted, fmt.Errorf("pending: invalid local event at line %d", i+1)
+			}
+		} else if rec.Schema != "" && rec.Schema != SchemaID {
 			return promoted, fmt.Errorf("pending: unknown schema %q at line %d", rec.Schema, i+1)
 		}
 		if err := appendOne(rec); err != nil {

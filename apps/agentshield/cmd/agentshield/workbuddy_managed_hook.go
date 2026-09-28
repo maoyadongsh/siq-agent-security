@@ -8,15 +8,11 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
-	"runtime"
-	"strings"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
 	"siq-agent-security/apps/agentshield/internal/adapters"
 	"siq-agent-security/apps/agentshield/internal/receipt"
-	"siq-agent-security/apps/agentshield/internal/statefs"
 )
 
 type workBuddyManagedClient struct {
@@ -43,11 +39,15 @@ func (h *workBuddyManagedClient) postStatus(path string, body any, expected int)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := h.client.Do(req)
 	if err != nil {
-		return nil, errors.New("managed service unavailable")
+		return nil, &adapters.WorkBuddyServiceFailure{Code: "workbuddy_service_unavailable"}
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != expected {
-		return nil, errors.New("managed service rejected request")
+		code := "workbuddy_enrollment_rejected"
+		if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
+			code = "workbuddy_identity_rejected"
+		}
+		return nil, &adapters.WorkBuddyServiceFailure{Code: code}
 	}
 	raw, err = io.ReadAll(io.LimitReader(resp.Body, adapters.WorkBuddyHookLimit+1))
 	if err != nil || len(raw) > adapters.WorkBuddyHookLimit {
@@ -84,7 +84,7 @@ func (h *workBuddyManagedClient) Enroll(session string) error {
 	}
 	expires, err := time.Parse(time.RFC3339Nano, out.ExpiresAt)
 	if err != nil || !expires.After(time.Now()) {
-		return errors.New("managed enrollment expired")
+		return &adapters.WorkBuddyServiceFailure{Code: "workbuddy_session_expired"}
 	}
 	return nil
 }
@@ -145,17 +145,17 @@ func (h *workBuddyManagedClient) requestObservation(req receipt.Request, result 
 func runWorkBuddySelectedHook(configPath string, explicit bool, in io.Reader, out io.Writer) error {
 	dir, err := stateDir()
 	if err != nil {
-		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedDeny("", "", "block", "", "managed state unavailable"))
+		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedBootstrapFailure(in, "block", "", "workbuddy_state_unavailable"))
 	}
 	if !explicit {
 		home, homeErr := os.UserHomeDir()
 		if homeErr != nil {
-			return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedDeny("", "", "block", dir, "managed configuration unavailable"))
+			return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedBootstrapFailure(in, "block", dir, "workbuddy_home_unavailable"))
 		}
 		var managed bool
 		configPath, managed, err = adapterinstall.WorkBuddyManagedConfigReference(home, dir)
 		if err != nil {
-			return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedDeny("", "", "block", dir, "managed configuration unavailable"))
+			return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedBootstrapFailure(in, "block", dir, "workbuddy_configuration_unavailable"))
 		}
 		if !managed {
 			d, mode, state := hostHookClient()
@@ -170,20 +170,16 @@ func runWorkBuddyManagedHook(configPath, dir string, in io.Reader, out io.Writer
 }
 
 func runWorkBuddyManagedHookWithBudget(configPath, dir string, in io.Reader, out io.Writer, budget time.Duration) error {
-	if !filepath.IsAbs(configPath) || filepath.Clean(configPath) != configPath || filepath.Base(configPath) != "siq-agent-security.json" {
-		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, nil, "", "block", dir))
-	}
 	// Reading configuration is not allowed to initialize state, mint credentials,
 	// consult daily host databases, or fall back to the shared decision token.
-	raw, err := statefs.ReadPrivateFile(configPath, 16<<10)
-	cfg, cfgErr := adapters.DecodeWorkBuddyManagedConfig(raw, configPath, dir)
-	if runtime.GOOS != "windows" || err != nil || cfgErr != nil {
-		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, nil, "", "block", dir))
-	}
-	raw, err = statefs.ReadPrivateFile(cfg.CredentialPath, 4096)
-	token := strings.TrimSpace(string(raw))
-	if err != nil || len(token) < 32 || len(token) > 4096 || strings.ContainsAny(token, " \t\r\n") {
-		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedHook(in, nil, "", cfg.EnforcementMode, dir))
+	cfg, token, err := adapters.ReadWorkBuddyManagedConnection(configPath, dir)
+	if err != nil {
+		code := "workbuddy_configuration_unavailable"
+		var failure *adapters.WorkBuddyPreflightError
+		if errors.As(err, &failure) {
+			code = failure.ReasonCode()
+		}
+		return json.NewEncoder(out).Encode(adapters.WorkBuddyManagedBootstrapFailure(in, "block", dir, code))
 	}
 	// One deadline bounds enroll + decide together; retries do not renew the Windows I/O budget.
 	ctx, cancel := context.WithTimeout(context.Background(), budget)

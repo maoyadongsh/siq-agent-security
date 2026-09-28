@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -224,7 +225,11 @@ func TestManagedPlanV3ContractFixture(t *testing.T) {
 		t.Fatal(err)
 	}
 	raw = append(raw, '\n')
-	path := filepath.Join("..", "..", "testdata", "contracts", "adapter-plan.v3.json")
+	name := "adapter-plan.v3.json"
+	if runtime.GOOS == "windows" {
+		name = "adapter-plan.v3-windows.json"
+	}
+	path := filepath.Join("..", "..", "testdata", "contracts", name)
 	if os.Getenv("AGENTSHIELD_UPDATE_SAMPLES") == "1" {
 		if err := os.WriteFile(path, raw, 0644); err != nil {
 			t.Fatal(err)

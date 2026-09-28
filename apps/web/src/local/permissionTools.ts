@@ -13,6 +13,7 @@ const labels: Record<string, string> = {
   send_message: '发送消息', message: '发送消息',
 };
 export function permissionToolLabel(name: string): string {
+  if (['present_files', 'glob', 'grep'].includes(name.toLowerCase())) return `效果映射尚未支持（${name}）`;
   return `${labels[name.toLowerCase()] ?? '自定义工具或工具组'}（${name}）`;
 }
 export function permissionToolNames(text: string): string[] {

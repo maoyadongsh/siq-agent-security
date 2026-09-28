@@ -18,8 +18,13 @@ import (
 
 const MarkerName = "state-format.json"
 const Budget = 4096
-const ReaderVersion = 3
-const WriterVersion = 3
+
+// Protocol 4 also understands pending_decision/v2 and runtime-receipt/v2.
+// Existing storage/profile markers remain unchanged; clientrelease checks the
+// actual journals before permitting a downgrade to a protocol 3 candidate.
+const LocalFailureProtocolVersion = 4
+const ReaderVersion = LocalFailureProtocolVersion
+const WriterVersion = LocalFailureProtocolVersion
 const PlanName = "logs/migration-plan.json"
 const MigrationDir = "state-migration-v2"
 

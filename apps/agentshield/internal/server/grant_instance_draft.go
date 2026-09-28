@@ -87,7 +87,7 @@ func (s *Server) grantInstanceDraft(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	now := time.Now().UTC().Format(time.RFC3339Nano)
-	revision, err := s.d.Store.CommitGrant(state.GrantCommit{Grant: built.Grant, DesiredPolicy: built.DesiredPolicy, ExpectedRevision: -1,
+	revision, err := s.d.Store.CommitInitialGrant(state.GrantCommit{Grant: built.Grant, DesiredPolicy: built.DesiredPolicy, ExpectedRevision: -1,
 		Audit: &state.AuditEvent{At: now, Event: "grant_instance_draft", Target: id, ActorID: body.ActorID, Note: "admission=" + body.AdmissionID + " instance=" + body.InstanceID + " request=" + body.RequestID}})
 	if errors.Is(err, state.ErrRevisionConflict) {
 		if existing, currentRevision, readErr := s.d.Store.GetGrantWithSeq(id); readErr == nil {

@@ -16,6 +16,7 @@ func reinstallWorkBuddyIdentity(t *testing.T, o Options) Options {
 	o.RuntimeIdentityID = "ri-" + strings.Repeat("d", 32)
 	raw, _ := json.Marshal(map[string]any{"schema_version": "local-runtime-identity/v2", "filesystem_profile": "windows-local-drive/v1", "identity_id": o.RuntimeIdentityID, "instance_id": o.Instance.ID, "agent_id": "hri-" + strings.TrimPrefix(o.Instance.ID, "hi-"), "platform": WorkBuddy})
 	putTestFile(t, filepath.Join(o.StateDir, "runtime-identities", o.RuntimeIdentityID+".json"), raw, 0600)
+	putWorkBuddyCredential(t, o)
 	return o
 }
 

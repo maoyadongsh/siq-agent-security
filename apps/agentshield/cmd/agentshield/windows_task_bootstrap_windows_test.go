@@ -19,9 +19,7 @@ func windowsTaskBootstrapFixture(t *testing.T) string {
 	t.Setenv(product.EnvStateDir, dir)
 	t.Setenv(product.EnvSigningSeed, "")
 	t.Setenv(product.EnvSigningSeedOld, "")
-	if err := cmdInitialize(nil, io.Discard); err != nil {
-		t.Fatal(err)
-	}
+	initializePreProfileFixture(t, dir)
 	return dir
 }
 

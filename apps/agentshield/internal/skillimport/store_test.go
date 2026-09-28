@@ -100,7 +100,7 @@ func TestImportDirectoryFixedSnapshotAndIdempotency(t *testing.T) {
 	}
 }
 func TestImportTamperAndAnalysisBinding(t *testing.T) {
-	for _, kind := range []string{"payload", "signature_auxiliary", "executable", "empty_directory", "analysis", "record", "duplicate_key", "case_alias", "link"} {
+	for _, kind := range []string{"payload", "signature_auxiliary", "executable", "signed_executable", "empty_directory", "analysis", "record", "duplicate_key", "case_alias", "link"} {
 		t.Run(kind, func(t *testing.T) {
 			s, req := storeFixture(t)
 			put(t, filepath.Join(req.Path, "skill-manifest.json"), []byte(`{"fixture":"before"}`), 0600)
@@ -119,8 +119,35 @@ func TestImportTamperAndAnalysisBinding(t *testing.T) {
 					t.Fatal("test must preserve legacy admission hash")
 				}
 			case "executable":
+				if runtime.GOOS == "windows" {
+					t.Skip("Windows chmod has no POSIX executable bit; physical mode tampering is not tested")
+				}
 				if err = os.Chmod(filepath.Join(payload, "SKILL.md"), 0700); err != nil {
 					t.Fatal(err)
+				}
+				info, err := os.Stat(filepath.Join(payload, "SKILL.md"))
+				if err != nil || info.Mode().Perm()&0111 == 0 {
+					t.Fatal("executable tamper was not injected", err)
+				}
+			case "signed_executable":
+				// A valid record signature and self-consistent manifest must not
+				// replace verification of the actual copied filesystem facts.
+				rec.Files[0].Executable = !rec.Files[0].Executable
+				rec.ArtifactDigest, err = (tree{rec.Directories, rec.Files}).digest()
+				if err != nil {
+					t.Fatal(err)
+				}
+				rec.Signature, err = s.key.SignCanonical(unsigned(*rec))
+				if err != nil {
+					t.Fatal(err)
+				}
+				raw, err := json.Marshal(rec)
+				if err != nil {
+					t.Fatal(err)
+				}
+				put(t, s.record(req.ImportID), raw, 0600)
+				if _, err := s.readRecord(context.Background(), req.ImportID); err != nil {
+					t.Fatal("signed metadata fixture is invalid before payload verification", err)
 				}
 			case "empty_directory":
 				if err = os.Mkdir(filepath.Join(payload, "injected"), 0700); err != nil {

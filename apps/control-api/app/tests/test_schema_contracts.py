@@ -394,6 +394,7 @@ def test_hermes_instances_and_targeted_plan_contracts() -> None:
     for contract, fixture_name in [
         ("local-adapter-instances.v1.schema.json", "adapter-instances.json"),
         ("local-adapter-plan.v2.schema.json", "adapter-plan.v2.json"),
+        ("local-adapter-plan.v2.schema.json", "adapter-plan.v2-windows.json"),
     ]:
         schema = json.loads((CONTRACTS / contract).read_text(encoding="utf-8"))
         Draft7Validator.check_schema(schema)
@@ -1426,10 +1427,11 @@ def test_v1_signed_contract_calendar_and_closed_fields(sample, schema_name, time
         assert list(validator.iter_errors(missing)), (sample, field)
 
 
-def test_managed_adapter_plan_contract() -> None:
+@pytest.mark.parametrize("sample", ["adapter-plan.v3.json", "adapter-plan.v3-windows.json"])
+def test_managed_adapter_plan_contract(sample: str) -> None:
     schema = json.loads((CONTRACTS / "local-adapter-plan.v3.schema.json").read_text(encoding="utf-8"))
     Draft7Validator.check_schema(schema)
-    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / "adapter-plan.v3.json"
+    fixture = CONTRACTS.parents[1] / "apps" / "agentshield" / "testdata" / "contracts" / sample
     data = json.loads(fixture.read_text(encoding="utf-8"))
     validator = Draft7Validator(schema)
     validator.validate(data)
@@ -1446,7 +1448,8 @@ def test_managed_adapter_plan_contract() -> None:
     assert list(validator.iter_errors(missing))
 
 
-def test_grant_revision_draft_contracts() -> None:
+@pytest.mark.parametrize("created_sample", ["grant-draft-created", "grant-draft-created-windows"])
+def test_grant_revision_draft_contracts(created_sample: str) -> None:
     from referencing import Registry, Resource
     from referencing.jsonschema import DRAFT7
 
@@ -1459,7 +1462,8 @@ def test_grant_revision_draft_contracts() -> None:
         schema = json.loads((CONTRACTS / f"{name}.v1.schema.json").read_text(encoding="utf-8"))
         Draft7Validator.check_schema(schema)
         validator = Draft7Validator(schema, registry=registry)
-        data = json.loads((fixture_dir / f"{name}.json").read_text(encoding="utf-8"))
+        fixture_name = created_sample if name == "grant-draft-created" else name
+        data = json.loads((fixture_dir / f"{fixture_name}.json").read_text(encoding="utf-8"))
         validator.validate(data)
         assert list(validator.iter_errors({**data, "secret": "never"}))
         for required in schema["required"]:
@@ -1628,15 +1632,18 @@ def test_skill_import_list_go_sample() -> None:
 
 
 @pytest.mark.parametrize(
-    "name",
+    ("name", "suffix"),
     [
-        "local-skill-import-remote-create.v1",
-        "local-skill-import.v2",
-        "local-skill-import-result.v2",
-        "local-skill-import-list.v2",
+        ("local-skill-import-remote-create.v1", ""),
+        ("local-skill-import.v2", ""),
+        ("local-skill-import-result.v2", ""),
+        ("local-skill-import-list.v2", ""),
+        ("local-skill-import.v2", "-windows"),
+        ("local-skill-import-result.v2", "-windows"),
+        ("local-skill-import-list.v2", "-windows"),
     ],
 )
-def test_remote_skill_import_go_samples(name: str) -> None:
+def test_remote_skill_import_go_samples(name: str, suffix: str) -> None:
     from jsonschema import FormatChecker
     from referencing import Registry, Resource
     from referencing.jsonschema import DRAFT7
@@ -1651,7 +1658,7 @@ def test_remote_skill_import_go_samples(name: str) -> None:
     schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text(encoding="utf-8"))
     Draft7Validator.check_schema(schema)
     validator = Draft7Validator(schema, registry=registry, format_checker=FormatChecker())
-    data = json.loads((GO_SAMPLES / f"{name}.sample.json").read_text(encoding="utf-8"))
+    data = json.loads((GO_SAMPLES / f"{name}{suffix}.sample.json").read_text(encoding="utf-8"))
     validator.validate(data)
     assert list(validator.iter_errors(data | {"credential": "forbidden"}))
     for field in schema["required"]:
@@ -1662,6 +1669,10 @@ def test_remote_skill_import_go_samples(name: str) -> None:
             assert list(validator.iter_errors(data | {key: value}))
         validator.validate(data | {"archive_path": "", "expected_sha256": ""})
     elif name == "local-skill-import.v2":
+        script = next(file for file in data["files"] if file["path"] == "run.sh")
+        assert script["executable"] is (suffix != "-windows")
+        for value in ["false", None, 1]:
+            assert list(validator.iter_errors(data | {"files": [script | {"executable": value}]}))
         for key, value in [
             ("archive_sha256", "bad"),
             ("archive_bytes", 0),
@@ -3372,9 +3383,12 @@ def test_local_state_format_marker_contract() -> None:
     [
         ("local-state-format.v2", "local-state-format-v2"),
         ("local-state-status.v1", "local-state-status"),
+        ("local-state-status.v1", "local-state-status-reader4"),
         ("local-state-migration-result.v1", "local-state-migration-result"),
         ("local-state-migration-plan.v1", "local-state-migration-plan"),
         ("skill-manifest.v3", "skill-manifest.v3.sample"),
+        ("skill-manifest.v3", "skill-manifest.v3.reader3.sample"),
+        ("skill-manifest.v3", "skill-manifest.v3.reader4.sample"),
     ],
 )
 def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:

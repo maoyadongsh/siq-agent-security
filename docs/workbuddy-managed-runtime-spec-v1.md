@@ -43,6 +43,24 @@ allow 输出仅表示 SIQ 无异议，不覆盖宿主原权限门禁；初次 de
 
 ## 验证要求
 
+2026-09-28 并发复现增量：Windows loopback 夹具的同实例/同原生 session、10 个不同 call 与不同 Glob 目标，旧 scope 锁只允许 1 个请求进入裁决，9 个立即关联失败。此复现不能倒推历史 J-02 的唯一根因。受管 hook 现在仅对“锁已存在”在同一次 60 秒 context deadline 内等待；获取锁后仍执行全部原有 call/effect/hold/uncertain 校验，不重试 HTTP 请求、不清理遗留锁、不续期。取消、截止时间、ACL、容量及记录错误仍失败关闭。单独调用底层 Lock 保留立即竞争拒绝语义。
+
+### 2026-09-28 产品修复：共享只读运行预检
+
+安装预览、应用前、提交前读回、安装诊断及运行 hook 必须共用配置路径/内容、兼容屏障、直接父目录和凭据引用的私密校验。Windows 检查使用已有 ReadSnapshot：固定祖先与私密父目录，检查普通单链接文件、owner/DACL 与重解析条件，结束前复验；检查结果只在本次调用有效。预览允许配置尚不存在，不能允许已有不合格配置或缺失/不合格凭据。诊断和安装只打开凭据检查元数据，不读内容、不封入计划；只有执行 hook 可读取有界凭据。
+
+稳定内部类别分别为 `workbuddy_config_path_invalid`、`workbuddy_state_incompatible`、`workbuddy_config_parent_unavailable`、`workbuddy_config_file_unavailable`、`workbuddy_config_mismatch`、`workbuddy_credential_parent_unavailable`、`workbuddy_credential_file_unavailable`、`workbuddy_credential_invalid`。unavailable 包含权限、owner、文件形状及查询失败，不把这些错误误判为不存在。诊断保留对象类别，不输出主体列表、秘密字节或底层传输错误。普通模型只得到 fail-closed 和固定诊断入口提示。
+
+预检不创建目录、修改 ACL、签发凭据或联系服务；不代表身份/Grant 有效或真实工具运行成功。安装应用前和写入后的同等检查失败不能提交成功标记，继续使用私密密封计划和现有事务恢复。原生运行状态保留 unverified；对已提交计划的重复请求也重新检查当前配置。
+
 合同正负向、旧签名/旧 POSIX 兼容、真实目录发现、缺 session/call、跨实例/平台/session、profile 降级、撤销、重复登记不续期、服务不可达及 malformed 请求必须分别验证。核心 HTTP 夹具不能替代桌面允许/越界拒绝/失联恢复/撤销的原生证据；未经新增账号额度授权不发送 WorkBuddy 模型任务。
 
 2026-09-19 按主开发规格的实机修复增量，替代此前固定 4 秒预算的约束：受管 Pre 的登记、裁决及审批恢复请求共用一次 20 秒 HTTP 截止时间，宿主同步 hook 等待 30 秒。原预算已在真实桌面正常调用中造成超时；预算调整后已取得正常写入及拒绝场景证据，见 [当前交付](windows-functional-delivery-20260918.md)。到期仍拒绝，不重置截止时间、不自动重试、不延迟撤销检查、不复用旧 Authority；这不构成审批恢复已实机通过的证据。
+
+### 2026-09-28 当前预算及诊断补充
+
+合并复核补充：配置应用读回与历史 `hook_load` 自检结论分开；历史自检失败仍展示为失败并要求重新验证，但不得将本次配置修复成功改称应用失败。配置、实例身份、服务连接等失败仍阻止成功确认。WorkBuddy 卸载后允许保留宿主 settings 与第三方 hook；仅当本实例最新已提交卸载的密封计划通过验证，且全部操作文件与卸载后镜像一致，才返回 `not_installed`。未完成事务、计划不可验证或当前文件漂移不得由历史卸载记录掩盖；此读回不修改文件、不恢复身份、不代表运行验证。
+
+本轮基线代码的完整 hook 预算为 60 秒，宿主同步 timeout 75 秒，替代上文历史 20/30 秒记录。登记/裁决/审批恢复/锁等待共享同一截止时间，不重置也不自动重放。不可达、身份被服务拒绝、登记被拒、已返回会话期限过期在本地事件中分别分类；401/403 不能单独声称身份已过期。登记失败不是服务端已确认范围裁决。
+
+私密对象原因进一步区分 multiple_links / reparse / owner_mismatch / object_changed / missing / private_check_failed / unreadable；普通模型仍得到固定简短诊断提示。所有对象校验失败都保持 fail-closed。关联失败进一步保留锁、历史检查和 pre 记录阶段，便于将并发竞争与存储或记录损坏区分。

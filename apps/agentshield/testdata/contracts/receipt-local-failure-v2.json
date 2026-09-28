@@ -1,0 +1,53 @@
+{
+  "schema_version": "runtime-receipt/v2",
+  "local_origin": {
+    "schema": "pending_decision/v2",
+    "recorded_at": "2026-09-04T06:00:00.002Z",
+    "platform": "workbuddy",
+    "enforcement_mode": "block",
+    "outcome": "unconfirmed",
+    "reason": "managed observation unavailable",
+    "signed": false,
+    "origin": "local_hook",
+    "stage": "observation",
+    "reason_code": "workbuddy_observation_unconfirmed"
+  },
+  "record_type": "local_failure",
+  "receipt_id": "rcp-2779c6315941-pending",
+  "chain_id": "local",
+  "seq": 1,
+  "prev_hash": "e29175a4df1d66c5407b8fb09c2b65a1ea9377eece0188365cc4c73c03465622",
+  "hash": "bfb0e3d42c404cb2fd90b887a1b59b0c0d74ef87b7d0fb439101a28aeadb3eb4",
+  "sig": "a92b70f6ff502984a2e5dbed12e6409be795f886c9938f1851acdb6ffe4da0f4cba4bab9c9710177320b1b218363c532278d38b1d2032de1e79caa2a5c02180e",
+  "issued_at": "2026-09-04T07:00:00.003Z",
+  "platform": "workbuddy",
+  "session_id": "",
+  "agent_id": null,
+  "tool": "",
+  "tool_call_id": null,
+  "params_digest": "2779c63159412557881d3aee5dca5e04428b4d2cf05b64483aab5c095e711b2c",
+  "params_excerpt": null,
+  "action": "unknown",
+  "advisory_action": null,
+  "reason": "promoted unsigned local hook event: managed observation unavailable",
+  "reason_code": "workbuddy_observation_unconfirmed",
+  "matched_grant_id": null,
+  "matched_fact_ids": [],
+  "matched_rule_ids": [],
+  "taint_labels": [],
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  },
+  "enforcement_mode": "block",
+  "policy_revision": null,
+  "sandbox_id": null,
+  "model_key": null,
+  "engine": {
+    "version": "test",
+    "rulepack_version": 1
+  },
+  "decision_latency_ms": null,
+  "hold": null
+}

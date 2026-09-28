@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -151,11 +152,15 @@ func TestGrantDraftContractSamples(t *testing.T) {
 	if !grant.Verify(s.d.Key.Public(), *g) {
 		t.Fatal("invalid runtime signature")
 	}
-	// Only the generated timestamp/signature vary for the exact fixture inputs.
+	// Clocks/signatures vary per run. Evidence IDs also depend on the native
+	// file locator, so the Windows DTO keeps its separately verified sample.
 	projected := out["grant"].(map[string]any)
 	projected["created_at"] = "2026-09-10T09:00:00Z"
 	projected["signature"] = strings.Repeat("0", 128)
 	for name, value := range map[string]any{"grant-draft-create.json": body, "grant-draft-created.json": out} {
+		if runtime.GOOS == "windows" && name == "grant-draft-created.json" {
+			name = "grant-draft-created-windows.json"
+		}
 		raw, _ := json.MarshalIndent(value, "", "  ")
 		raw = append(raw, '\n')
 		path := filepath.Join("..", "..", "testdata", "contracts", name)
