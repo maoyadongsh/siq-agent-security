@@ -59,6 +59,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--base", required=True)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--require-full-pass", action="store_true")
     args = parser.parse_args()
     if os.name != "nt" or not re.fullmatch(r"[0-9a-f]{40}", args.base):
         parser.error("requires Windows and an exact base commit")
@@ -79,7 +80,7 @@ def main():
     raw = json.dumps(report, ensure_ascii=False, indent=2)
     (output / "comparison.json").write_text(raw, encoding="utf-8")
     print(raw)
-    return 1 if report["new_failures"] else 0
+    return 1 if report["new_failures"] or (args.require_full_pass and not report["candidate_full_suite_passed"]) else 0
 
 
 if __name__ == "__main__":

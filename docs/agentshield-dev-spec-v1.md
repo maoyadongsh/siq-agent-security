@@ -663,6 +663,10 @@ other。action 筛选含义是“存在该裁决的调用”，不是任务成�
 快捷范围，应用时固化起止时间到 URL；刷新不悄悄改变范围。详情、返回与翻页保留
 全部筛选。完整性失败仍显式提示，无结果证据不得根据 allow 显示任务成功。
 
+Windows CI 基线收口：UNC 的 host/share 分界由原始输入识别，不依赖不同 Go 版本对设备命名空间 VolumeName 的划分；host 的 DNS 尾点保留，share 与后续目录尾点/空格继续拒绝。CLI 盘点夹具同时隔离 HOME、USERPROFILE、宿主配置覆盖和本地应用目录，HTTP 失败用例必须证明确有非空批次到达测试服务，不能依赖开发机真实配置。危险 seed 链接在 Windows 私密读取层提前返回 reparse_object 属于明确拒绝，必须验证未产生密钥、链接及外部目标不变，不放宽产品读取规则。
+
+Linux systemd / macOS launchd 的目录 fsync 和符号链接发布正向文件测试限定 POSIX；Windows 继续覆盖 CLI 在触碰文件前拒绝这两种服务入口，以及自身 Task Scheduler 的删除中断、重试与归属校验。非当前平台测试不计作 Windows 通过；比较报告继续列出未运行的旧失败，Linux CI 运行原正负向断言。Windows CI 的候选全模块退出码必须为 0，基线对照仅保留诊断，不再以“无新增失败”替代候选全量通过。
+
 ### 3.11 个人客户端 M1：启动识别与管理会话恢复（2026-09-10）
 
 2026-09-23 OpenShell 发现接续：新增管理只读 `GET /v1/openshell/targets`，

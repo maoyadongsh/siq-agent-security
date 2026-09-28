@@ -67,7 +67,7 @@ jobs:
             $env:BASE_SHA = git rev-parse HEAD^
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
-          python scripts/personal-experience/windows_ci_owner.py python scripts/personal-experience/windows_go_compare.py --base $env:BASE_SHA --out "$env:RUNNER_TEMP/wb-review"
+          python scripts/personal-experience/windows_ci_owner.py python scripts/personal-experience/windows_go_compare.py --require-full-pass --base $env:BASE_SHA --out "$env:RUNNER_TEMP/wb-review"
           exit $LASTEXITCODE
       - name: Preserve component results and both full runs, never private state
         if: always()
