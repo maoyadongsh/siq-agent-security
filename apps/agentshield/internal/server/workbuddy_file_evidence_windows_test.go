@@ -40,7 +40,10 @@ func TestWorkBuddyWindowsFileEvidence(t *testing.T) {
 					t.Fatal(err)
 				}
 				legacyFields["effect_requirements"] = []any{}
-				windowsAuthorityHTTP(t, f.s, "POST", "/v1/intents", f.s.bootAdmin, legacyFields, 400)
+				rejected := windowsAuthorityHTTP(t, f.s, "POST", "/v1/intents", f.s.bootAdmin, legacyFields, 400)
+				if rejected["error"] != "intent_invalid_request" {
+					t.Fatal("v3 fields reached the managed issuer instead of being rejected by decoding", rejected)
+				}
 				grantBefore, _, err := f.st.GetGrantWithSeq(f.grantID)
 				if err != nil {
 					t.Fatal(err)

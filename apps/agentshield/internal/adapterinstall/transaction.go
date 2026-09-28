@@ -278,6 +278,18 @@ func (p *Plan) verifyCurrent() error {
 }
 
 func writeImage(home, path string, before, after fileImage, preserveSecurity ...bool) error {
+	for attempt := 0; ; attempt++ {
+		err := writeImageOnce(home, path, before, after, preserveSecurity...)
+		if attempt >= 4 || !before.Exists || !after.Exists || !configPublishBusy(err, path) {
+			return err
+		}
+		// Only a failed Windows rename is retried. Each attempt starts with
+		// the original reviewed before image and rechecks the live path.
+		time.Sleep(time.Duration(20<<attempt) * time.Millisecond)
+	}
+}
+
+func writeImageOnce(home, path string, before, after fileImage, preserveSecurity ...bool) error {
 	current, err := readImage(home, path, before.Security != "" || after.Security != "" || (len(preserveSecurity) > 0 && preserveSecurity[0]))
 	if err != nil || !sameImage(current, before) {
 		return ErrPlanChanged

@@ -587,6 +587,8 @@ Windows 文件效果与恢复组件回归使用实际 Initialize/ActivateWindows
 
 链接负向回归区分叶子符号链接与目录重定向：仅 Windows ERROR_PRIVILEGE_NOT_HELD 可将具体叶子 symlink 子项标为未验证，其余断言继续执行；目录跳转在 Windows 使用本次临时目录中的真实 junction，在 POSIX 使用 symlink。共享测试辅助包只由测试导入，沿用上述临时 junction 例外，不调整系统策略或权限。连接器候选在 Windows 必须拒绝包括显式根在内的 reparse 祖先，不能因叶子为普通 exe 就接受目录跳转；发现预览、文件采样、清理和导入仍各自执行现有路径拒绝规则。
 
+Windows 已授权配置事务遇到临时禁止 delete-sharing 的读句柄时，替换 rename 可能返回 AccessDenied/SharingViolation。仅对该已失败的 rename 最多重试四次（20/40/80/160 ms）；每次重新读取并复核原 before 内容、路径及已绑定的安全描述符，再重新发布本次暂存文件。永久拒绝、内容变化或其他操作错误仍失败关闭，不修改 ACL、清除只读属性、覆盖未知对象或重放宿主工具；失败尝试的临时文件照常清理。其他平台不增加重试。
+
 WorkBuddy 的补充 HTTP 效果检查从实际实例草稿、资源挑战批准、部署、identity/v2 和登记的 intent/v4 派生 Authority，使用专属决策凭据及独立 observer。工具自报成功与独立文件结果分别保存；缺失文件不能报告真实写入。清缓存和接管不得重采样原 before，完成重试不得改写已签证据；撤销后不得通过 observer 恢复继续采样。此处只验证合成状态中的组件，不能冒充宿主模型运行。intent/v4 仍不接受 v3 的 effect_requirements，任务完成度保持未知，不借测试给 Windows 实例增加任务目的或必需效果合同。
 
 按 [ADR-020](adr/0020-personal-discovery-and-skill-identity.md) 实施 UX-005：Skill 安装身份按本机规范化目录稳定生成，内容版本独立保留摘要；支持有界分类目录、profile Skills 和基于配置的多个消费者关系。新增关系仅为 inferred，不改变权限事实来源。台账兼容旧 locator/ID，路径与内容不变的迁移不撤权，内容变化保持原有复核与撤权语义。新个人扫描入口触发真实扫描并展示范围和结果；手动范围独立版本化保存，不能以缓存读取伪装重新扫描。接口和关系合同见 `packages/contracts/local-discovery.v1.schema.json`。

@@ -140,3 +140,5 @@ PR #110 已合并到 `76cea35897c59c8e35b6191bc88dfb189a49021d`。本批从该 m
 两个 intent/v3 文件 HTTP 测试限定为 POSIX 合同；Windows 的真实 v4 Authority HTTP 用例扩展到 block/warn × 写入/缺失输出四种情况，额外拒绝在有效 v4 中插入 effect_requirements。Windows 的任务完成度仍为 unknown；不能将组件算法的合成 Task 当作实例权限取得任务目的。Linux namespace relay 的私密描述符正向留在 POSIX，Windows 明确拒绝该路径/描述符通道，平台无关 JSON 解析仍验证通过。
 
 定向检查覆盖上述文件、恢复、导入、安装检查、清理、连接器和 HTTP 场景，静态检查通过。CI 比较器现在列出新增辅助包和未运行的旧失败名，保留新失败与 skip，不把移出某平台的用例写成通过；新增包仍由 go list 与完整 go test 结果逐项对齐，删除包仍拒绝。比较器 6 项测试通过。全量 Windows、跨平台构建与远端检查随后按本批确切提交和代码树记录；正式签名、WorkBuddy 桌面新任务矩阵仍未完成。
+
+首轮全量探针 r16 另见 OpenClaw 卸载替换 `openclaw.json` 返回 Windows AccessDenied；该用例单独连续 20 轮未复现。用真实未允许 delete-sharing 的读句柄可确定复现相同的 rename 错误，但不能据此断言原占用进程是谁。旧实现的读句柄释放、持续占用、占用期间用户改写三个反例均立即失败。现仅重试 Windows 暂存配置 rename 的 AccessDenied/SharingViolation，最多 300 ms 累计等待，每次复核原 before，持续占用仍拒绝，用户变化返回 ErrPlanChanged，零 ACL 调整，临时文件清理不变；三项反例及原卸载场景合计连续 10 轮通过。r16 保留为诊断探针；补充修复后以再次完整运行作为最终源码的验证依据。首次未签名组包已编译四目标，但目录发布遇到另一个 WinError 32，仍记失败，未把仅编译完写成候选交付成功。
