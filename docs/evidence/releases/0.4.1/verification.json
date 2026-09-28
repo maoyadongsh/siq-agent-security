@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq-release-verification/v1",
+  "version": "0.4.1",
+  "expected_source_sha": "a620a31b1dccdc7d2061e97ed4378c574321860d",
+  "source_identity_scope": "descriptive metadata matched; publisher signature binds Skill and binary pins, not source attestation",
+  "official_signature_and_skill_content": "passed",
+  "four_binary_pins": "passed",
+  "asset_inventory_and_checksums": "passed",
+  "bundle_skill_zip_and_flat_binaries": "passed",
+  "trusted_installation_instructions": "passed",
+  "native_installation": {
+    "host": "linux/arm64",
+    "fresh_state_start_status_pair_console_stop": "passed"
+  },
+  "published": "not_checked",
+  "assets": [
+    {
+      "name": "SHA256SUMS",
+      "sha256": "b172ba705b11f0d3bc53237b74a23879df09ffd9a68edcfd4a68e3d756144c25",
+      "bytes": 681
+    },
+    {
+      "name": "SOURCE-INFO.json",
+      "sha256": "9a1891ce47c4405bf7288b1e1b79f9005089f56b06677e56d3f20f9990c2966a",
+      "bytes": 25586
+    },
+    {
+      "name": "siq-agent-security-0.4.1-bundle.zip",
+      "sha256": "190dd5d3f07020014f98eabe6637e43ecb7e7980437b8deb793b4230e89822c4",
+      "bytes": 47673726
+    },
+    {
+      "name": "siq-agent-security-darwin-arm64",
+      "sha256": "885a5e20ae079725b05f2ce8ab4153c8737a2addbc5cbf4e1daaabef54dd820d",
+      "bytes": 19568546
+    },
+    {
+      "name": "siq-agent-security-linux-amd64",
+      "sha256": "726fc2bd52216c15397bda873a7c23c43fce18ed55de25b68b0395716d16ac6d",
+      "bytes": 20594850
+    },
+    {
+      "name": "siq-agent-security-linux-arm64",
+      "sha256": "5dfbf04d61abc81bd66b7d6d733ddf09feee4e14c1924872353438d3760e2534",
+      "bytes": 19333282
+    },
+    {
+      "name": "siq-agent-security-skill-0.4.1.zip",
+      "sha256": "e791662807a958334bfac3287672561c4c7a92d5218fac352c2e819dfc3f51e5",
+      "bytes": 35386
+    },
+    {
+      "name": "siq-agent-security-windows-amd64.exe",
+      "sha256": "a334b2993727c98a9d14c14d472d49217448945112acf38425884f9b6c1a20a6",
+      "bytes": 21132800
+    }
+  ]
+}
