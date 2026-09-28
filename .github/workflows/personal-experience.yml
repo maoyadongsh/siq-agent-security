@@ -27,11 +27,29 @@ jobs:
           cache: false
       - name: Validate comparison failure handling
         run: python -m unittest discover -s scripts/personal-experience/tests -p test_windows_go_compare.py -v
+      - name: Prepare a private local NTFS fixture root
+        run: |
+          Get-Volume | Select-Object DriveLetter, FileSystem, DriveType | Format-Table
+          $drive = $env:SystemDrive.TrimEnd(':')
+          if ((Get-Volume -DriveLetter $drive).FileSystem -ne 'NTFS') { throw 'NTFS fixture volume required' }
+          $fixtureRoot = Join-Path ($env:SystemDrive + '\') ('siq-wb-ci-' + [guid]::NewGuid().ToString('N'))
+          $directory = New-Item -ItemType Directory -Path $fixtureRoot -ErrorAction Stop
+          $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
+          $acl = [System.Security.AccessControl.DirectorySecurity]::new()
+          $acl.SetAccessRuleProtection($true, $false)
+          $acl.SetOwner($sid)
+          foreach ($principal in @($sid.Value, 'S-1-5-18', 'S-1-5-32-544')) {
+            $identity = [System.Security.Principal.SecurityIdentifier]::new($principal)
+            $rule = [System.Security.AccessControl.FileSystemAccessRule]::new($identity, 'FullControl', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
+            $acl.AddAccessRule($rule)
+          }
+          Set-Acl -LiteralPath $directory.FullName -AclObject $acl
+          "SIQ_WINDOWS_CI_TEMP=$fixtureRoot" >> $env:GITHUB_ENV
       - name: Windows ACL, uninstall readback, profile and concurrent hooks
         working-directory: apps/agentshield
         # Isolated test state only; no desktop, model, real Grant or system task.
         run: |
-          python ../../scripts/personal-experience/windows_ci_owner.py go test -count=1 -timeout 10m -v ./internal/adapterinstall ./internal/privatefs ./internal/state ./cmd/agentshield -run 'TestWorkBuddyUninstallReadbackPreservesHostSettings|TestWorkBuddyManagedInstallDiagnosisAndRevokedUninstall|TestWorkBuddyManagedPreflight|TestWorkBuddyManagedApplyRechecksACL|TestManagedConfigReplacementAndRollbackPreserveDeny|TestManagedFileNewPublicationAndDeletedFileRestore|TestWorkBuddyManagedConcurrent|TestFreshWindowsClientInitialization|TestWindowsInitialization|TestWindowsPrivate|TestWindowsReadSnapshot|TestSecurity|TestWindowsMigrationDistinguishes' > "$env:RUNNER_TEMP/wb-targeted.txt" 2>&1
+          python ../../scripts/personal-experience/windows_ci_owner.py go test -count=1 -timeout 10m -v ./internal/adapterinstall ./internal/privatefs ./internal/state ./cmd/agentshield ./internal/runtimepath ./internal/effectevidence ./internal/server -run 'TestWorkBuddyUninstallReadbackPreservesHostSettings|TestWorkBuddyManagedInstallDiagnosisAndRevokedUninstall|TestWorkBuddyManagedPreflight|TestWorkBuddyManagedApplyRechecksACL|TestManagedConfigReplacementAndRollbackPreserveDeny|TestManagedFileNewPublicationAndDeletedFileRestore|TestWorkBuddyManagedConcurrent|TestFreshWindowsClientInitialization|TestWindowsInitialization|TestWindowsPrivate|TestWindowsReadSnapshot|TestSecurity|TestWindowsMigrationDistinguishes|TestWindowsLiveResource|TestWindowsResource|TestWindowsPending|TestWorkBuddyWindowsFileEvidence' > "$env:RUNNER_TEMP/wb-targeted.txt" 2>&1
           $code = $LASTEXITCODE
           Get-Content "$env:RUNNER_TEMP/wb-targeted.txt"
           exit $code

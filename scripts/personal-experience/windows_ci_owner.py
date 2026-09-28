@@ -50,7 +50,12 @@ def main():
             actual = info(4)
             if not advapi.EqualSid(owner, ctypes.c_void_p.from_buffer(actual)):
                 raise RuntimeError("CI process default owner readback failed")
-            return subprocess.run(sys.argv[1:], check=False).returncode
+            environment = os.environ.copy()
+            test_root = environment.get("SIQ_WINDOWS_CI_TEMP")
+            if not test_root or not os.path.isdir(test_root):
+                raise RuntimeError("CI requires an explicitly prepared NTFS test root")
+            environment["TEMP"] = environment["TMP"] = test_root
+            return subprocess.run(sys.argv[1:], env=environment, check=False).returncode
         finally:
             if not advapi.SetTokenInformation(token, 4, ctypes.byref(prior), ctypes.sizeof(prior)):
                 raise ctypes.WinError(ctypes.get_last_error())
