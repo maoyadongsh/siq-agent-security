@@ -583,6 +583,10 @@ HTTPS ZIP 导入的执行位同样绑定实际复制文件的 mode，而非将�
 
 Windows 文件效果与恢复组件回归使用实际 Initialize/ActivateWindowsProfile 事务创建的独立状态、原生 v2 文件快照及明确 v2 pending，不直接伪写 marker，也不把旧 v1 pending 自动升级。覆盖重开 store 后原快照/签名不变、并发相同发布幂等、接管唯一胜者、原期限不延长、容量耗尽、已签历史篡改（包括通过测试创建的硬链接别名改写）；底层组件夹具的固定 intent 引用不代表批准真实业务。现有恢复历史是普通签名读取，不声明已覆盖私密单链接读取；资源采样和迁移的多链接拒绝仍按各自原合同验证。
 
+跨平台文件测试应通过同一组公开 API 断言运行：POSIX 使用 v1，Windows 经真实状态激活选择明确 profile、规范化资源引用及 v2 pending；仅测试夹具按 OS 选择，产品不得从 OS 隐式派生 Authority。完成度组件可使用合成 Task 检查证据算法，但不宣称 Windows intent/v4 支持任务目的。v3 HTTP 专属用例保留 POSIX 验证，Windows 使用实际 v4 Authority 检查文件结果和未知完成度。Linux namespace relay 的降权描述符要求 POSIX 私密 mode；Windows 明确拒绝，不能用 chmod 成功替代 DACL 校验或冒称支持该通道。
+
+链接负向回归区分叶子符号链接与目录重定向：仅 Windows ERROR_PRIVILEGE_NOT_HELD 可将具体叶子 symlink 子项标为未验证，其余断言继续执行；目录跳转在 Windows 使用本次临时目录中的真实 junction，在 POSIX 使用 symlink。共享测试辅助包只由测试导入，沿用上述临时 junction 例外，不调整系统策略或权限。连接器候选在 Windows 必须拒绝包括显式根在内的 reparse 祖先，不能因叶子为普通 exe 就接受目录跳转；发现预览、文件采样、清理和导入仍各自执行现有路径拒绝规则。
+
 WorkBuddy 的补充 HTTP 效果检查从实际实例草稿、资源挑战批准、部署、identity/v2 和登记的 intent/v4 派生 Authority，使用专属决策凭据及独立 observer。工具自报成功与独立文件结果分别保存；缺失文件不能报告真实写入。清缓存和接管不得重采样原 before，完成重试不得改写已签证据；撤销后不得通过 observer 恢复继续采样。此处只验证合成状态中的组件，不能冒充宿主模型运行。intent/v4 仍不接受 v3 的 effect_requirements，任务完成度保持未知，不借测试给 Windows 实例增加任务目的或必需效果合同。
 
 按 [ADR-020](adr/0020-personal-discovery-and-skill-identity.md) 实施 UX-005：Skill 安装身份按本机规范化目录稳定生成，内容版本独立保留摘要；支持有界分类目录、profile Skills 和基于配置的多个消费者关系。新增关系仅为 inferred，不改变权限事实来源。台账兼容旧 locator/ID，路径与内容不变的迁移不撤权，内容变化保持原有复核与撤权语义。新个人扫描入口触发真实扫描并展示范围和结果；手动范围独立版本化保存，不能以缓存读取伪装重新扫描。接口和关系合同见 `packages/contracts/local-discovery.v1.schema.json`。

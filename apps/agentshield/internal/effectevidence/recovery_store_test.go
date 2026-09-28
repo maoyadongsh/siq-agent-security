@@ -1,4 +1,4 @@
-package effectevidence
+package effectevidence_test
 
 import (
 	"bytes"
@@ -10,34 +10,31 @@ import (
 	"testing"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/effectevidence"
+	"siq-agent-security/apps/agentshield/internal/evidencetest"
+	"siq-agent-security/apps/agentshield/internal/linktest"
 	"siq-agent-security/apps/agentshield/internal/provenance"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
 
-func recoveryFixture(t *testing.T) (*Store, PendingFile, time.Time) {
+func recoveryFixture(t *testing.T) (*effectevidence.Store, effectevidence.PendingFile, time.Time, string) {
 	t.Helper()
-	key, err := signing.FromSeed(bytes.Repeat([]byte{7}, 32))
-	if err != nil {
-		t.Fatal(err)
-	}
-	store, err := NewStore(t.TempDir(), key)
-	if err != nil {
-		t.Fatal(err)
-	}
-	before, err := CaptureFile(filepath.Join(t.TempDir(), "absent"), 1024)
+	f := evidencetest.New(t)
+	store := f.Store
+	before, err := f.Capture(filepath.Join(t.TempDir(), "absent"), 1024)
 	if err != nil {
 		t.Fatal(err)
 	}
 	now := time.Now()
-	p, err := store.SavePendingFile(PendingFile{SchemaVersion: "file-observation-pending/v1", ID: "recovery-matrix", ActionID: "a1", ReceiptID: "r1", Scope: provenance.Scope{Platform: "hermes", SessionID: "s1", AgentID: "a1", TaskID: "t1"}, Source: Source{Type: "host_observer", SourceID: "host", Independence: "host_independent"}, Before: before, OwnerDigest: strings.Repeat("a", 64), ExpectedDigest: strings.Repeat("b", 64), MaxBytes: 1024, ExpiresAt: now.Add(time.Hour).Format(time.RFC3339Nano), SigningSchema: signing.SchemaLocalCanonicalV1})
+	p, err := store.SavePendingFile(f.Pending(effectevidence.PendingFile{SchemaVersion: "file-observation-pending/v1", ID: "recovery-matrix", ActionID: "a1", ReceiptID: "r1", Scope: provenance.Scope{Platform: "hermes", SessionID: "s1", AgentID: "a1", TaskID: "t1"}, Source: effectevidence.Source{Type: "host_observer", SourceID: "host", Independence: "host_independent"}, Before: before, OwnerDigest: strings.Repeat("a", 64), ExpectedDigest: strings.Repeat("b", 64), MaxBytes: 1024, ExpiresAt: now.Add(time.Hour).Format(time.RFC3339Nano), SigningSchema: signing.SchemaLocalCanonicalV1}))
 	if err != nil {
 		t.Fatal(err)
 	}
-	return store, p, now
+	return store, p, now, filepath.Join(f.Dir, "effect-evidence-pending", p.ID+".recoveries")
 }
 
 func TestRecoveryConcurrentDifferentOwnersHaveOneWinner(t *testing.T) {
-	s, p, now := recoveryFixture(t)
+	s, p, now, dir := recoveryFixture(t)
 	var wg sync.WaitGroup
 	results := make(chan error, 8)
 	start := make(chan struct{})
@@ -57,50 +54,49 @@ func TestRecoveryConcurrentDifferentOwnersHaveOneWinner(t *testing.T) {
 	for err := range results {
 		if err == nil {
 			winners++
-		} else if err != ErrConflict {
+		} else if err != effectevidence.ErrConflict {
 			t.Fatal(err)
 		}
 	}
 	if winners != 1 {
 		t.Fatalf("wanted one durable winner, got %d", winners)
 	}
-	history, _, err := s.recoveryHistory(p, now)
+	history, err := os.ReadDir(dir)
 	if err != nil || len(history) != 1 {
 		t.Fatal(history, err)
+	}
+	if owner, err := s.PendingFileOwner(p.ID, now); err != nil || owner == p.OwnerDigest {
+		t.Fatal("durable history did not validate its new owner", owner, err)
 	}
 }
 
 func TestRecoveryStoredCapacityAndFailureIsolation(t *testing.T) {
-	s, p, now := recoveryFixture(t)
+	s, p, now, _ := recoveryFixture(t)
 	owner := p.OwnerDigest
-	for i := 1; i <= MaxRecoveries; i++ {
+	for i := 1; i <= effectevidence.MaxRecoveries; i++ {
 		next := fmt.Sprintf("%064x", i)
 		if _, err := s.RecoverPendingFile(p.ID, owner, next, now); err != nil {
 			t.Fatal(i, err)
 		}
 		owner = next
 	}
-	if _, err := s.RecoverPendingFile(p.ID, owner, strings.Repeat("f", 64), now); err != ErrCapacity {
+	if _, err := s.RecoverPendingFile(p.ID, owner, strings.Repeat("f", 64), now); err != effectevidence.ErrCapacity {
 		t.Fatal(err)
 	}
 	if current, err := s.PendingFileOwner(p.ID, now); err != nil || current != owner {
 		t.Fatal("failed append changed owner", current, err)
 	}
-	if r, err := s.RecoverPendingFile(p.ID, owner, owner, now); err != nil || r.Sequence != MaxRecoveries {
+	if r, err := s.RecoverPendingFile(p.ID, owner, owner, now); err != nil || r.Sequence != effectevidence.MaxRecoveries {
 		t.Fatal("retry at capacity failed", err)
 	}
 }
 
 func TestRecoveryMalformedStorageFailsClosed(t *testing.T) {
-	for _, kind := range []string{"gap", "unknown-field", "symlink", "oversized", "unpublished-temp"} {
+	for _, kind := range []string{"gap", "unknown-field", "symlink", "redirected-history", "oversized", "unpublished-temp"} {
 		t.Run(kind, func(t *testing.T) {
-			s, p, now := recoveryFixture(t)
+			s, p, now, dir := recoveryFixture(t)
 			owner := strings.Repeat("c", 64)
 			if _, err := s.RecoverPendingFile(p.ID, p.OwnerDigest, owner, now); err != nil {
-				t.Fatal(err)
-			}
-			dir, err := s.recoveryDir(p.ID)
-			if err != nil {
 				t.Fatal(err)
 			}
 			path := filepath.Join(dir, "000001.json")
@@ -109,6 +105,14 @@ func TestRecoveryMalformedStorageFailsClosed(t *testing.T) {
 				t.Fatal(err)
 			}
 			switch kind {
+			case "redirected-history":
+				if err := os.Rename(dir, dir+".owned"); err != nil {
+					t.Fatal(err)
+				}
+				if err := linktest.Directory(dir+".owned", dir); err != nil {
+					t.Fatal(err)
+				}
+				defer os.Remove(dir)
 			case "gap":
 				err = os.Rename(path, filepath.Join(dir, "000002.json"))
 			case "unknown-field":
@@ -121,7 +125,7 @@ func TestRecoveryMalformedStorageFailsClosed(t *testing.T) {
 				if err = os.Remove(path); err != nil {
 					t.Fatal(err)
 				}
-				err = os.Symlink(target, path)
+				linktest.Symlink(t, target, path)
 			case "oversized":
 				err = os.WriteFile(path, bytes.Repeat([]byte(" "), 4097), 0600)
 			case "unpublished-temp":
@@ -135,7 +139,7 @@ func TestRecoveryMalformedStorageFailsClosed(t *testing.T) {
 				if err != nil || current != owner {
 					t.Fatal("unpublished temp affected valid owner", err)
 				}
-			} else if err != ErrState {
+			} else if err != effectevidence.ErrState {
 				t.Fatal("malformed history accepted", kind, err)
 			}
 		})

@@ -9,6 +9,7 @@ import (
 	"sync"
 	"testing"
 
+	"siq-agent-security/apps/agentshield/internal/linktest"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
@@ -90,15 +91,28 @@ func TestStoreRejectsUnsafeStateAndInput(t *testing.T) {
 	if _, err = s.Submit(e, a, Source{Type: "host_observer", SourceID: "real", Independence: "host_independent"}, now); !errors.Is(err, ErrObserver) {
 		t.Fatal(err)
 	}
-	if err = os.Symlink(filepath.Join(t.TempDir(), "missing"), filepath.Join(s.dir, e.EvidenceID+".json")); err != nil {
-		t.Fatal(err)
-	}
-	if _, err = s.Get(e.EvidenceID, now); !errors.Is(err, ErrState) {
-		t.Fatal("symlink accepted", err)
-	}
-	if _, err = s.Submit(e, a, e.Source, now); !errors.Is(err, ErrState) {
-		t.Fatal("symlink overwritten", err)
-	}
+	t.Run("leaf-symlink", func(t *testing.T) {
+		linktest.Symlink(t, filepath.Join(t.TempDir(), "missing"), filepath.Join(s.dir, e.EvidenceID+".json"))
+		if _, err = s.Get(e.EvidenceID, now); !errors.Is(err, ErrState) {
+			t.Fatal("symlink accepted", err)
+		}
+		if _, err = s.Submit(e, a, e.Source, now); !errors.Is(err, ErrState) {
+			t.Fatal("symlink overwritten", err)
+		}
+	})
+
+	t.Run("redirected-store", func(t *testing.T) {
+		outside := t.TempDir()
+		link := filepath.Join(t.TempDir(), "effect-evidence")
+		if err := linktest.Directory(outside, link); err != nil {
+			t.Fatal(err)
+		}
+		defer os.Remove(link)
+		if _, err := NewStore(filepath.Dir(link), key); !errors.Is(err, ErrState) {
+			t.Fatal("redirected store accepted", err)
+		}
+	})
+
 }
 
 func TestStoreCapacityAndInterruptedPublication(t *testing.T) {

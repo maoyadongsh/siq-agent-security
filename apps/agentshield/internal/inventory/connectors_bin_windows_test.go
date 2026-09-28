@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"siq-agent-security/apps/agentshield/internal/linktest"
 )
 
 func windowsConnectorLayouts(root string) []string {
@@ -80,9 +82,7 @@ func TestFindConnectorBinWindowsRejectsSymlink(t *testing.T) {
 	root := t.TempDir()
 	target := filepath.Join(t.TempDir(), "owned-target.exe")
 	write(t, target, "fixed candidate outside the connector directory")
-	if err := os.Symlink(target, filepath.Join(root, "hermes.exe")); err != nil {
-		t.Fatalf("symlink fixture prerequisite failed: %v", err)
-	}
+	linktest.Symlink(t, target, filepath.Join(root, "hermes.exe"))
 	if got, err := findConnectorBin(root, "hermes"); got != "" || !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("symlink candidate accepted: %q, %v", got, err)
 	}
@@ -118,5 +118,38 @@ func TestFindConnectorBinWindowsExplicitDotRootDoesNotUsePATH(t *testing.T) {
 	}
 	if bin, err := findConnectorBin(".", "hermes"); bin != "" || !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("missing local candidate fell back to PATH: %q, %v", bin, err)
+	}
+}
+
+func TestFindConnectorBinWindowsRejectsRedirectedAncestors(t *testing.T) {
+	for _, kind := range []string{"nested", "root", "above-root"} {
+		t.Run(kind, func(t *testing.T) {
+			root, outside := t.TempDir(), t.TempDir()
+			link := filepath.Join(root, "hermes")
+			name := "hermes-connector.exe"
+			if kind != "nested" {
+				link = filepath.Join(root, "redirect")
+			}
+			searchRoot := root
+			if kind == "root" {
+				searchRoot = link
+			}
+			if kind == "above-root" {
+				searchRoot = filepath.Join(link, "ordinary")
+				name = filepath.Join("ordinary", name)
+			}
+			write(t, filepath.Join(outside, name), "external candidate must not execute")
+			if err := linktest.Directory(outside, link); err != nil {
+				t.Fatal(err)
+			}
+			defer os.Remove(link)
+			if got, err := findConnectorBin(searchRoot, "hermes"); got != "" || !errors.Is(err, os.ErrNotExist) {
+				t.Fatalf("redirected ancestor accepted: %q, %v", got, err)
+			}
+			raw, err := os.ReadFile(filepath.Join(outside, name))
+			if err != nil || string(raw) != "external candidate must not execute" {
+				t.Fatal("outside candidate changed", err)
+			}
+		})
 	}
 }

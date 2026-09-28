@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"siq-agent-security/apps/agentshield/internal/linktest"
 )
 
 func installedInspection(t *testing.T) (fixture, *Operation) {
@@ -22,7 +24,7 @@ func installedInspection(t *testing.T) (fixture, *Operation) {
 	return f, op
 }
 func TestInspectionSeparatesHistoricalRecordAndCurrentContents(t *testing.T) {
-	for _, kind := range []string{"matched", "modified", "removed", "type_changed", "ownership_changed", "unknown_directory", "source_corrupt", "missing", "owner_missing"} {
+	for _, kind := range []string{"matched", "modified", "removed", "type_changed", "leaf_symlink", "ownership_changed", "unknown_directory", "source_corrupt", "missing", "owner_missing"} {
 		t.Run(kind, func(t *testing.T) {
 			f, op := installedInspection(t)
 			s := f.store
@@ -42,11 +44,17 @@ func TestInspectionSeparatesHistoricalRecordAndCurrentContents(t *testing.T) {
 				if err := os.Remove(entry); err != nil {
 					t.Fatal(err)
 				}
-				outside := filepath.Join(t.TempDir(), "outside")
-				write(t, outside, "external content")
-				if err := os.Symlink(outside, entry); err != nil {
+				if err := os.Mkdir(entry, 0700); err != nil {
 					t.Fatal(err)
 				}
+			case "leaf_symlink":
+				wantChange = "type_changed"
+				if err := os.Remove(entry); err != nil {
+					t.Fatal(err)
+				}
+				outside := filepath.Join(t.TempDir(), "outside")
+				write(t, outside, "external content")
+				linktest.Symlink(t, outside, entry)
 			case "ownership_changed":
 				raw, err := os.ReadFile(entry)
 				if err != nil {

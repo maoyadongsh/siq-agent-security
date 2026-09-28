@@ -11,6 +11,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/grant"
 	"siq-agent-security/apps/agentshield/internal/hermeshome"
+	"siq-agent-security/apps/agentshield/internal/linktest"
 	"siq-agent-security/apps/agentshield/internal/skillinstall"
 )
 
@@ -146,16 +147,21 @@ func TestImportedPermissionRejectsAmbiguousAndSymlinkOpenClawTargets(t *testing.
 			},
 		},
 		{
-			name: "symlink",
+			name: "directory_redirect",
 			configure: func(t *testing.T, s *Server) string {
 				real := filepath.Join(s.d.Home, "real-openclaw")
 				root := filepath.Join(s.d.Home, ".openclaw")
 				if err := os.MkdirAll(real, 0700); err != nil {
 					t.Fatal(err)
 				}
-				if err := os.Symlink(real, root); err != nil {
+				if err := linktest.Directory(real, root); err != nil {
 					t.Fatal(err)
 				}
+				t.Cleanup(func() {
+					if err := os.Remove(root); err != nil {
+						t.Error(err)
+					}
+				})
 				return hermeshome.Identifier(root)
 			},
 		},
