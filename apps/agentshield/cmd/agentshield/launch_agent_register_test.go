@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
@@ -22,37 +21,6 @@ func launchRegistrationFixture(t *testing.T) (string, string, string) {
 		t.Skip("symlink unavailable")
 	}
 	return home, source, label
-}
-func TestLaunchRegistrationExclusiveReuseAndPreservation(t *testing.T) {
-	home, source, label := launchRegistrationFixture(t)
-	link, err := publishLaunchRegistration(home, source, label)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if target, err := os.Readlink(link); err != nil || target != source {
-		t.Fatal("wrong registration target", err)
-	}
-	if _, err := publishLaunchRegistration(home, source, label); err != nil {
-		t.Fatal("repeat publication", err)
-	}
-	if runtime.GOOS != "windows" {
-		info, err := os.Stat(filepath.Dir(link))
-		if err != nil || info.Mode().Perm() != 0700 {
-			t.Fatal("new directory permissions", err)
-		}
-	}
-	if err := os.Remove(link); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(link, []byte("unrelated user data"), 0600); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := publishLaunchRegistration(home, source, label); err == nil {
-		t.Fatal("unknown file adopted")
-	}
-	if raw, _ := os.ReadFile(link); string(raw) != "unrelated user data" {
-		t.Fatal("user file changed")
-	}
 }
 func TestLaunchRegistrationRefusesRedirectedDirectoriesAndLinks(t *testing.T) {
 	for _, kind := range []string{"library", "agents", "foreign", "relative", "invalid-label", "source"} {

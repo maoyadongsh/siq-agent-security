@@ -76,6 +76,20 @@ func privateRead(path string, limit int64) ([]byte, error) {
 }
 
 func publishFile(path string, raw []byte, mode os.FileMode, replace bool) error {
+	return publishFileChecked(path, raw, mode, replace, nil)
+}
+
+func recheckStagedConfig(check func() error) error {
+	if err := transactionBoundary("config_staged"); err != nil {
+		return err
+	}
+	if check != nil {
+		return check()
+	}
+	return nil
+}
+
+func publishFileChecked(path string, raw []byte, mode os.FileMode, replace bool, check func() error) error {
 	if err := statefs.MkdirAll(filepath.Dir(path), 0o700); err != nil {
 		return err
 	}
@@ -98,6 +112,9 @@ func publishFile(path string, raw []byte, mode os.FileMode, replace bool) error 
 		return err
 	}
 	if err := f.Close(); err != nil {
+		return err
+	}
+	if err := recheckStagedConfig(check); err != nil {
 		return err
 	}
 	if replace {
@@ -278,6 +295,18 @@ func (p *Plan) verifyCurrent() error {
 }
 
 func writeImage(home, path string, before, after fileImage, preserveSecurity ...bool) error {
+	for attempt := 0; ; attempt++ {
+		err := writeImageOnce(home, path, before, after, preserveSecurity...)
+		if attempt >= 4 || !before.Exists || !after.Exists || !configPublishBusy(err, path) {
+			return err
+		}
+		// Only a failed Windows rename is retried. Each attempt starts with
+		// the original reviewed before image and rechecks the live path.
+		time.Sleep(time.Duration(20<<attempt) * time.Millisecond)
+	}
+}
+
+func writeImageOnce(home, path string, before, after fileImage, preserveSecurity ...bool) error {
 	current, err := readImage(home, path, before.Security != "" || after.Security != "" || (len(preserveSecurity) > 0 && preserveSecurity[0]))
 	if err != nil || !sameImage(current, before) {
 		return ErrPlanChanged
@@ -291,7 +320,14 @@ func writeImage(home, path string, before, after fileImage, preserveSecurity ...
 	if after.Security == "" {
 		after.Security = current.Security
 	} // Legacy plans preserve the current private descriptor.
-	return publishManagedSecurity(path, after, before.Exists, preserveSecurity...)
+	check := func() error {
+		latest, err := readImage(home, path, before.Security != "" || after.Security != "" || (len(preserveSecurity) > 0 && preserveSecurity[0]))
+		if err != nil || !sameImage(latest, before) {
+			return ErrPlanChanged
+		}
+		return nil
+	}
+	return publishManagedSecurityChecked(path, after, before.Exists, check, preserveSecurity...)
 }
 
 func rollback(p *Plan) error {

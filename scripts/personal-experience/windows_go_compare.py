@@ -9,12 +9,14 @@ from pathlib import Path
 
 
 def summarize(raw, code):
-    packages, failed, skipped = {}, set(), set()
+    packages, tests, failed, skipped = {}, {}, set(), set()
     for line in raw.splitlines():
         event = json.loads(line)
         package, test, action = event.get("Package"), event.get("Test"), event.get("Action")
         if not package:
             continue
+        if test and action in {"pass", "fail", "skip"}:
+            tests[package + "/" + test] = action
         if test and action in {"fail", "skip"}:
             (failed if action == "fail" else skipped).add(package + "/" + test)
         if not test and action in {"pass", "fail", "skip"}:
@@ -22,13 +24,15 @@ def summarize(raw, code):
     unexplained = [p for p, a in packages.items() if a == "fail" and not any(t.startswith(p + "/") for t in failed)]
     if code not in (0, 1) or not packages or unexplained or bool(code) != bool(failed):
         raise ValueError("incomplete/build/tool failure; not a comparable test run")
-    return {"exit_code": code, "packages": packages, "failed_tests": sorted(failed), "skipped_tests": sorted(skipped)}
+    return {"exit_code": code, "packages": packages, "tests": tests, "failed_tests": sorted(failed), "skipped_tests": sorted(skipped)}
 
 
 def compare(candidate, baseline):
-    if set(candidate["packages"]) != set(baseline["packages"]):
-        raise ValueError("package inventories differ; requires review")
+    if set(baseline["packages"]) - set(candidate["packages"]):
+        raise ValueError("baseline packages missing; requires review")
     return {
+        "added_packages": sorted(set(candidate["packages"]) - set(baseline["packages"])),
+        "baseline_failures_not_run": sorted(set(baseline["failed_tests"]) - set(candidate["tests"])),
         "new_failures": sorted(set(candidate["failed_tests"]) - set(baseline["failed_tests"])),
         "new_skips": sorted(set(candidate["skipped_tests"]) - set(baseline["skipped_tests"])),
         "candidate_full_suite_passed": candidate["exit_code"] == 0,
@@ -55,6 +59,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--base", required=True)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--require-full-pass", action="store_true")
     args = parser.parse_args()
     if os.name != "nt" or not re.fullmatch(r"[0-9a-f]{40}", args.base):
         parser.error("requires Windows and an exact base commit")
@@ -75,7 +80,7 @@ def main():
     raw = json.dumps(report, ensure_ascii=False, indent=2)
     (output / "comparison.json").write_text(raw, encoding="utf-8")
     print(raw)
-    return 1 if report["new_failures"] else 0
+    return 1 if report["new_failures"] or (args.require_full_pass and not report["candidate_full_suite_passed"]) else 0
 
 
 if __name__ == "__main__":

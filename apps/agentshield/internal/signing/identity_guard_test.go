@@ -4,6 +4,9 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
+	"siq-agent-security/apps/agentshield/internal/linktest"
+	"siq-agent-security/apps/agentshield/internal/privatefs"
 	"testing"
 )
 
@@ -64,11 +67,18 @@ func TestMissingIdentityRejectsDanglingSeedLink(t *testing.T) {
 		t.Fatal(err)
 	}
 	outside := filepath.Join(t.TempDir(), "missing")
-	if err := os.Symlink(outside, filepath.Join(dir, "keys/signing.seed")); err != nil {
-		t.Skip(err)
+	seed := filepath.Join(dir, "keys/signing.seed")
+	linktest.Symlink(t, outside, seed)
+	want := ErrIdentityMissing
+	if runtime.GOOS == "windows" {
+		// Native private reads reject the reparse point before bootstrap.
+		want = privatefs.ErrReparse
 	}
-	if _, err := Load(dir); !errors.Is(err, ErrIdentityMissing) {
-		t.Fatal(err)
+	if key, err := Load(dir); key != nil || !errors.Is(err, want) {
+		t.Fatalf("unsafe seed was not rejected: %v", err)
+	}
+	if target, err := os.Readlink(seed); err != nil || target != outside {
+		t.Fatal("seed link replaced", err)
 	}
 	if _, err := os.Lstat(outside); !os.IsNotExist(err) {
 		t.Fatal("followed seed link")

@@ -19,6 +19,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/admission"
 	"siq-agent-security/apps/agentshield/internal/canon"
+	"siq-agent-security/apps/agentshield/internal/linktest"
 	"siq-agent-security/apps/agentshield/internal/rulepack"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
@@ -493,8 +494,14 @@ func TestImportLocalSymlinksAndWrongSigningKey(t *testing.T) {
 				target = filepath.Join(target, "outside")
 				put(t, target, []byte("outside secret"), 0600)
 			}
-			if err := os.Symlink(target, filepath.Join(req.Path, "linked")); err != nil {
-				t.Fatal(err)
+			link := filepath.Join(req.Path, "linked")
+			if directory {
+				if err := linktest.Directory(target, link); err != nil {
+					t.Fatal(err)
+				}
+				defer os.Remove(link)
+			} else {
+				linktest.Symlink(t, target, link)
 			}
 			if _, _, _, err := s.Create(context.Background(), req); err == nil {
 				t.Fatal("source link imported")

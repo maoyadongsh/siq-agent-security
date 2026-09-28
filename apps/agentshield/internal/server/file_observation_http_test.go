@@ -1,3 +1,8 @@
+//go:build !windows
+
+// intent/v3 uses POSIX resources and task-purpose requirements. Windows uses
+// explicit intent/v4 authority in workbuddy_file_evidence_windows_test.go;
+// that contract intentionally has no task-purpose completion requirements.
 package server
 
 import (

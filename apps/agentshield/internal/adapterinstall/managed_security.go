@@ -42,8 +42,12 @@ func captureManagedSecurity(path string, image fileImage, preserveSecurity ...bo
 }
 
 func publishManagedSecurity(path string, image fileImage, replace bool, preserveSecurity ...bool) error {
+	return publishManagedSecurityChecked(path, image, replace, nil, preserveSecurity...)
+}
+
+func publishManagedSecurityChecked(path string, image fileImage, replace bool, check func() error, preserveSecurity ...bool) error {
 	if runtime.GOOS != "windows" || (image.Security == "" && !(len(preserveSecurity) > 0 && preserveSecurity[0])) {
-		return publishFile(path, image.Data, os.FileMode(image.Mode), replace)
+		return publishFileChecked(path, image.Data, os.FileMode(image.Mode), replace, check)
 	}
 	if err := stateformat.RequirePath(path, true); err != nil {
 		return err
@@ -80,6 +84,9 @@ func publishManagedSecurity(path string, image fileImage, replace bool, preserve
 	}
 	if closeErr != nil {
 		return closeErr
+	}
+	if err := recheckStagedConfig(check); err != nil {
+		return err
 	}
 	if replace {
 		return statefs.Rename(tmp, path)

@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"time"
 )
@@ -112,6 +113,9 @@ func ParseConfig(raw []byte) (Config, error) {
 }
 
 func LoadConfig(path string) (Config, error) {
+	if runtime.GOOS == "windows" {
+		return Config{}, errors.New("decision relay: POSIX private configuration is unsupported on Windows")
+	}
 	if !filepath.IsAbs(path) || filepath.Clean(path) != path {
 		return Config{}, errors.New("decision relay: config path must be absolute and clean")
 	}
@@ -136,6 +140,9 @@ func LoadConfig(path string) (Config, error) {
 // privileges before parsing configuration that remains private to the host
 // lifecycle user. The caller retains ownership of file.
 func LoadConfigFile(file *os.File) (Config, error) {
+	if runtime.GOOS == "windows" {
+		return Config{}, errors.New("decision relay: POSIX private configuration is unsupported on Windows")
+	}
 	if file == nil {
 		return Config{}, errors.New("decision relay: configuration unavailable")
 	}

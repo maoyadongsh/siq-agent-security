@@ -23,7 +23,11 @@ func ValidatePath(path string) error {
 	}
 	if hostStart >= 0 {
 		if end := strings.IndexByte(separators[hostStart:], '\\'); end >= 0 {
-			share := separators[hostStart+end+1:]
+			// Go versions differ in the volume length for device UNC paths.
+			// Skip only the host authority; validate the share and every later
+			// component using the same spelling rule as ordinary directories.
+			start = hostStart + end + 1
+			share := separators[start:]
 			if end := strings.IndexByte(share, '\\'); end >= 0 {
 				share = share[:end]
 			}

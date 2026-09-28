@@ -11,6 +11,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/signing"
 	"siq-agent-security/apps/agentshield/internal/state"
 	"strings"
+	"sync/atomic"
 	"testing"
 )
 
@@ -24,7 +25,7 @@ func TestCmdSyncSkipsWithoutCreds(t *testing.T) {
 	t.Setenv("SIQ_AS_EDGE_IDENTITY", "")
 	t.Setenv("SIQ_AS_EDGE_SECRET", "")
 	t.Setenv("SIQ_AS_EDGE_TASK_ID", "")
-	t.Setenv("HOME", filepath.Join(dir, "home"))
+	isolateSyncHome(t, filepath.Join(dir, "home"))
 	_ = os.MkdirAll(filepath.Join(dir, "home"), 0o700)
 
 	if err := cmdSync([]string{"--control-api", "http://127.0.0.1:9"}); err != nil {
@@ -43,13 +44,18 @@ func TestCmdSyncHTTPFailureUnchanged(t *testing.T) {
 	if _, err := signing.Load(dir); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("HOME", filepath.Join(dir, "home"))
+	isolateSyncHome(t, filepath.Join(dir, "home"))
 	home := filepath.Join(dir, "home")
 	_ = os.MkdirAll(filepath.Join(home, ".hermes"), 0o700)
 	if err := os.WriteFile(filepath.Join(home, ".hermes", "config.yaml"), []byte("model: x\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
+	var requests atomic.Int32
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		if r.Method != http.MethodPost || r.URL.Path != "/edge/v1/batches" {
+			t.Errorf("unexpected sync request: %s %s", r.Method, r.URL.Path)
+		}
 		w.WriteHeader(401)
 	}))
 	defer srv.Close()
@@ -63,6 +69,9 @@ func TestCmdSyncHTTPFailureUnchanged(t *testing.T) {
 		"--secret-file", secret,
 		"--task-id", "tsk-1",
 	})
+	if requests.Load() != 1 {
+		t.Fatalf("expected one nonempty inventory batch; got %d requests", requests.Load())
+	}
 	if err == nil {
 		t.Fatal("401 must fail")
 	}
@@ -91,7 +100,7 @@ func TestCmdExportWritesFile(t *testing.T) {
 	if _, err := signing.Load(dir); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("HOME", filepath.Join(dir, "home"))
+	isolateSyncHome(t, filepath.Join(dir, "home"))
 	_ = os.MkdirAll(filepath.Join(dir, "home"), 0o700)
 	rawDir := filepath.Join(dir, "raw-task-content", "content")
 	if err := os.MkdirAll(rawDir, 0o700); err != nil {
@@ -126,4 +135,15 @@ func TestCmdExportWritesFile(t *testing.T) {
 	if runtime.GOOS != "windows" && st.Mode().Perm() != 0o600 {
 		t.Fatalf("perm %o", st.Mode().Perm())
 	}
+}
+
+// Discovery must never depend on this developer's or runner's real home.
+func isolateSyncHome(t *testing.T, home string) {
+	t.Helper()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("HERMES_HOME", filepath.Join(home, ".hermes"))
+	t.Setenv("LOCALAPPDATA", filepath.Join(home, "AppData", "Local"))
+	t.Setenv("WORKBUDDY_CONFIG_DIR", filepath.Join(home, ".workbuddy"))
+	t.Setenv("SIQ_AS_CONNECTORS_DIR", "")
 }

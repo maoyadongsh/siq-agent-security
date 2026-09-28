@@ -12,6 +12,7 @@ import (
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
 	"siq-agent-security/apps/agentshield/internal/intent"
+	"siq-agent-security/apps/agentshield/internal/linktest"
 )
 
 func TestRecoveryFindsBindingPublishedBeforeJournalUpdate(t *testing.T) {
@@ -110,7 +111,7 @@ func TestAuditFailureNeverStartsHostOrReportsPass(t *testing.T) {
 	}
 }
 
-func TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair(t *testing.T) {
+func TestCleanupRefusesRedirectedParentAndCanBeRetriedAfterRepair(t *testing.T) {
 	fx := newManagerFixture(t)
 	outside := t.TempDir()
 	sentinel := filepath.Join(outside, "sentinel")
@@ -118,17 +119,25 @@ func TestCleanupRefusesSymlinkAndCanBeRetriedAfterRepair(t *testing.T) {
 		t.Fatal(err)
 	}
 	parent := filepath.Join(fx.m.o.Store.Dir, "runtime-check-materials")
+	injected := make(chan bool, 1)
 	fx.m.launchHost = func(context.Context, *run, adapterinstall.RuntimeTarget, string, probes) error {
 		if err := os.Rename(parent, parent+".owned"); err != nil {
 			return err
 		}
-		if err := os.Symlink(outside, parent); err != nil {
-			return err
+		if err := linktest.Directory(outside, parent); err != nil {
+			restoreErr := os.Rename(parent+".owned", parent)
+			return errors.Join(err, restoreErr)
 		}
+		injected <- true
 		return errors.New("runtime_check_fixture_interruption")
 	}
 	plan, _ := startFixture(t, fx)
 	out := awaitResult(t, fx.m, plan.ID)
+	select {
+	case <-injected:
+	default:
+		t.Fatal("directory redirect fault was not injected")
+	}
 	if out.Status != "failed" || out.Cleanup != "failed" {
 		t.Fatal(out)
 	}

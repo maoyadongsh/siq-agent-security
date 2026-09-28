@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/linktest"
 	"siq-agent-security/apps/agentshield/internal/signing"
 )
 
@@ -391,9 +392,7 @@ func TestMCPSymlinkIsSkipped(t *testing.T) {
 	if err := os.MkdirAll(filepath.Dir(link), 0o700); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Symlink(target, link); err != nil {
-		t.Fatal(err)
-	}
+	linktest.Symlink(t, target, link)
 	rep := runInv(t, home)
 	for _, c := range rep.Candidates {
 		if c.SourceType == "mcp_server" {
@@ -436,5 +435,30 @@ func TestMCPEmptyServersIsNotError(t *testing.T) {
 	if len(rep.Candidates) != 0 || len(rep.Skipped) != 0 || len(rep.Platforms) != 0 {
 		t.Fatalf("empty mcpServers must be a no-op: candidates=%v skipped=%v platforms=%v",
 			rep.Candidates, rep.Skipped, rep.Platforms)
+	}
+}
+
+func TestMCPRedirectedParentIsSkipped(t *testing.T) {
+	home, outside := t.TempDir(), t.TempDir()
+	write(t, filepath.Join(outside, "mcp.json"), "{\"mcpServers\":{\"x\":{\"command\":\"npx\"}}}")
+	link := filepath.Join(home, ".cursor")
+	if err := linktest.Directory(outside, link); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(link)
+	rep := runInv(t, home)
+	for _, c := range rep.Candidates {
+		if c.SourceType == "mcp_server" {
+			t.Fatal("followed redirected MCP parent", c)
+		}
+	}
+	found := false
+	for _, reason := range rep.Skipped {
+		if reason == "unreadable:mcp:.cursor/mcp.json" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("missing refusal reason", rep.Skipped)
 	}
 }

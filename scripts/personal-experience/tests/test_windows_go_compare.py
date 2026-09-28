@@ -32,3 +32,30 @@ class WindowsGoComparisonTests(unittest.TestCase):
                 checker.summarize(raw, code)
         with self.assertRaises(ValueError):
             checker.compare(self.run_data(), {"packages": {"missing": "pass"}})
+
+    def test_added_test_helper_is_reported_without_hiding_failures(self):
+        for action in ("pass", "skip", "fail"):
+            with self.subTest(action=action):
+                events = [{"Package": "pkg", "Action": "pass"}]
+                if action == "fail":
+                    events.append({"Package": "new", "Test": "TestFailure", "Action": "fail"})
+                events.append({"Package": "new", "Action": action})
+                candidate = checker.summarize("\n".join(json.dumps(e) for e in events), int(action == "fail"))
+                result = checker.compare(candidate, self.run_data())
+                self.assertEqual(result["added_packages"], ["new"])
+                self.assertEqual(result["new_failures"], ["new/TestFailure"] if action == "fail" else [])
+                self.assertEqual(result["candidate_full_suite_passed"], action != "fail")
+
+    def test_omitted_baseline_failure_is_not_a_pass(self):
+        result = checker.compare(self.run_data(), self.run_data(["TestPOSIXOnly"]))
+        self.assertEqual(result["baseline_failures_not_run"], ["pkg/TestPOSIXOnly"])
+
+    def test_successful_rerun_is_distinct_from_omitted_test(self):
+        candidate = checker.summarize(
+            '\n'.join(json.dumps(e) for e in [
+                {"Package": "pkg", "Test": "TestOld", "Action": "pass"},
+                {"Package": "pkg", "Action": "pass"},
+            ]), 0,
+        )
+        result = checker.compare(candidate, self.run_data(["TestOld"]))
+        self.assertEqual(result["baseline_failures_not_run"], [])

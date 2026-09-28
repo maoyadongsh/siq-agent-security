@@ -1,7 +1,6 @@
-package completion
+package completion_test
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"os"
@@ -10,19 +9,16 @@ import (
 	"testing"
 	"time"
 
+	"siq-agent-security/apps/agentshield/internal/completion"
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
-	"siq-agent-security/apps/agentshield/internal/runtimeaction"
-	"siq-agent-security/apps/agentshield/internal/signing"
+	"siq-agent-security/apps/agentshield/internal/evidencetest"
 )
 
 func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T) {
-	key, _ := signing.FromSeed(bytes.Repeat([]byte{9}, 32))
-	store, err := effectevidence.NewStore(t.TempDir(), key)
-	if err != nil {
-		t.Fatal(err)
-	}
+	f := evidencetest.New(t)
+	key, store := f.Key, f.Store
 	path := filepath.Join(t.TempDir(), "report")
-	before, err := effectevidence.CaptureFile(path, 1024)
+	before, err := f.Capture(path, 1024)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +28,7 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	if err = os.WriteFile(path, content, 0600); err != nil {
 		t.Fatal(err)
 	}
-	after, err := effectevidence.CaptureFile(path, 1024)
+	after, err := f.Capture(path, 1024)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,18 +36,18 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	if err != nil {
 		t.Fatal(err)
 	}
-	a := effectevidence.Action{ActionID: "a1", DecisionReceiptID: "r1", TaskID: "t1", IntentID: "i1", IntentDigest: strings.Repeat("c", 64), IssuedAt: time.Now().Add(-time.Minute), Authorized: true, Effects: []string{"file.write"}, Resources: runtimeaction.ResourceRefs([]runtimeaction.Resource{{Domain: "filesystem", Value: path}})}
+	a := effectevidence.Action{ActionID: "a1", DecisionReceiptID: "r1", TaskID: "t1", IntentID: "i1", IntentDigest: strings.Repeat("c", 64), IssuedAt: time.Now().Add(-time.Minute), Authorized: true, Effects: []string{"file.write"}, Resources: f.Resources(t, path)}
 	source := effectevidence.Source{Type: "host_observer", SourceID: "observer", Independence: "host_independent"}
 	r, err := store.SubmitFile("e1", material, a, source, time.Now())
 	if err != nil {
 		t.Fatal(err)
 	}
-	req := Requirement{RequirementID: "req1", EffectType: "file.write", ResourceRef: after.ResourceRef, ExpectedDigest: expected, MinimumIndependence: "host_independent", MinimumCoverage: "partial"}
-	task := Task{ID: a.TaskID, IntentID: a.IntentID, IntentDigest: a.IntentDigest, Requirements: []Requirement{req}}
+	req := completion.Requirement{RequirementID: "req1", EffectType: "file.write", ResourceRef: after.ResourceRef, ExpectedDigest: expected, MinimumIndependence: "host_independent", MinimumCoverage: "partial"}
+	task := completion.Task{ID: a.TaskID, IntentID: a.IntentID, IntentDigest: a.IntentDigest, Requirements: []completion.Requirement{req}}
 	lookup := func(string, string) (effectevidence.Action, error) { return a, nil }
-	check := func(task Task, records []effectevidence.Record, want string) {
+	check := func(task completion.Task, records []effectevidence.Record, want string) {
 		t.Helper()
-		out, err := Evaluate(task, records, key.Public(), lookup, time.Now())
+		out, err := completion.Evaluate(task, records, key.Public(), lookup, time.Now())
 		if err != nil || out.Status != want {
 			t.Fatal(out, err, want)
 		}
@@ -61,7 +57,7 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	// Task-detail projection must not borrow effects from another actor/session.
 	scopedAction := a
 	scopedAction.Platform, scopedAction.SessionID, scopedAction.AgentID = "hermes", "session-1", "agent-1"
-	subject := Subject{Platform: "hermes", SessionID: "session-1", AgentID: "agent-1"}
+	subject := completion.Subject{Platform: "hermes", SessionID: "session-1", AgentID: "agent-1"}
 	for _, mode := range []string{"matching", "platform", "session", "agent", "intent", "digest", "lookup mismatch", "tampered", "duplicate", "empty subject"} {
 		t.Run("subject/"+mode, func(t *testing.T) {
 			candidate := scopedAction
@@ -88,7 +84,7 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 				scope.AgentID = ""
 			}
 			calls := 0
-			result, err := EvaluateForSubject(task, scope, records, key.Public(), func(string, string) (effectevidence.Action, error) { calls++; return candidate, nil }, time.Now())
+			result, err := completion.EvaluateForSubject(task, scope, records, key.Public(), func(string, string) (effectevidence.Action, error) { calls++; return candidate, nil }, time.Now())
 			invalid := mode == "lookup mismatch" || mode == "tampered" || mode == "duplicate" || mode == "empty subject"
 			if invalid {
 				if err == nil {
@@ -111,7 +107,7 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	if err := os.Remove(path); err != nil {
 		t.Fatal(err)
 	}
-	absent, err := effectevidence.CaptureFile(path, 1024)
+	absent, err := f.Capture(path, 1024)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -149,11 +145,11 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 		}
 		return a, nil
 	}
-	out, err := Evaluate(task, []effectevidence.Record{r, otherFailure}, key.Public(), otherLookup, time.Now())
+	out, err := completion.Evaluate(task, []effectevidence.Record{r, otherFailure}, key.Public(), otherLookup, time.Now())
 	if err != nil || out.Status != "incomplete" {
 		t.Fatal("different attempts became conflicting", out, err)
 	}
-	out, err = Evaluate(task, []effectevidence.Record{claimRecord, otherFailure}, key.Public(), otherLookup, time.Now())
+	out, err = completion.Evaluate(task, []effectevidence.Record{claimRecord, otherFailure}, key.Public(), otherLookup, time.Now())
 	if err != nil || out.Status != "unknown" {
 		t.Fatal("different attempt contradicted tool claim", out, err)
 	}
@@ -172,14 +168,14 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	none.Requirements = nil
 	check(none, nil, "unknown")
 	strict := task
-	strict.Requirements = []Requirement{req}
+	strict.Requirements = []completion.Requirement{req}
 	strict.Requirements[0].MinimumCoverage = "full"
 	check(strict, []effectevidence.Record{r}, "unknown")
 	strict.Requirements[0] = req
 	strict.Requirements[0].MinimumIndependence = "external_independent"
 	check(strict, []effectevidence.Record{r}, "unknown")
 	wrong := task
-	wrong.Requirements = []Requirement{req}
+	wrong.Requirements = []completion.Requirement{req}
 	wrong.Requirements[0].ExpectedDigest = strings.Repeat("d", 64)
 	check(wrong, []effectevidence.Record{r}, "conflicting")
 	plain := r.Evidence
@@ -192,7 +188,7 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 	check(task, []effectevidence.Record{r, plainRecord}, "unknown")
 	bad := r
 	bad.TaskID = "forged"
-	if _, err := Evaluate(task, []effectevidence.Record{bad}, key.Public(), lookup, time.Now()); err == nil {
+	if _, err := completion.Evaluate(task, []effectevidence.Record{bad}, key.Public(), lookup, time.Now()); err == nil {
 		t.Fatal("invalid envelope became completion")
 	}
 	wrongLookup := func(string, string) (effectevidence.Action, error) {
@@ -200,10 +196,10 @@ func TestCompletionRequiresActualSignedMaterialAndRetainsConflicts(t *testing.T)
 		bad.IntentDigest = strings.Repeat("e", 64)
 		return bad, nil
 	}
-	if _, err := Evaluate(task, []effectevidence.Record{r}, key.Public(), wrongLookup, time.Now()); err == nil {
+	if _, err := completion.Evaluate(task, []effectevidence.Record{r}, key.Public(), wrongLookup, time.Now()); err == nil {
 		t.Fatal("intent mismatch accepted")
 	}
-	if _, err := Evaluate(task, []effectevidence.Record{r, r}, key.Public(), lookup, time.Now()); err == nil {
+	if _, err := completion.Evaluate(task, []effectevidence.Record{r, r}, key.Public(), lookup, time.Now()); err == nil {
 		t.Fatal("duplicate evidence accepted")
 	}
 	a.Authorized = false
