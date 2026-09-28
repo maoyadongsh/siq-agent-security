@@ -46,7 +46,10 @@ func TestWindowsConfigReplaceWaitsForTemporaryReader(t *testing.T) {
 			if kind == "changed" {
 				putTestFile(t, path, []byte("user change"), 0600)
 			}
-			if kind != "held" {
+			// Keep the changed target locked until a later attempt detects it.
+			// Closing here would race an already-started attempt, rather than
+			// prove that the next attempt revalidates its original before image.
+			if kind == "released" {
 				if err := reader.Close(); err != nil {
 					t.Fatal(err)
 				}

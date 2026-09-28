@@ -76,6 +76,20 @@ func privateRead(path string, limit int64) ([]byte, error) {
 }
 
 func publishFile(path string, raw []byte, mode os.FileMode, replace bool) error {
+	return publishFileChecked(path, raw, mode, replace, nil)
+}
+
+func recheckStagedConfig(check func() error) error {
+	if err := transactionBoundary("config_staged"); err != nil {
+		return err
+	}
+	if check != nil {
+		return check()
+	}
+	return nil
+}
+
+func publishFileChecked(path string, raw []byte, mode os.FileMode, replace bool, check func() error) error {
 	if err := statefs.MkdirAll(filepath.Dir(path), 0o700); err != nil {
 		return err
 	}
@@ -98,6 +112,9 @@ func publishFile(path string, raw []byte, mode os.FileMode, replace bool) error 
 		return err
 	}
 	if err := f.Close(); err != nil {
+		return err
+	}
+	if err := recheckStagedConfig(check); err != nil {
 		return err
 	}
 	if replace {
@@ -303,7 +320,14 @@ func writeImageOnce(home, path string, before, after fileImage, preserveSecurity
 	if after.Security == "" {
 		after.Security = current.Security
 	} // Legacy plans preserve the current private descriptor.
-	return publishManagedSecurity(path, after, before.Exists, preserveSecurity...)
+	check := func() error {
+		latest, err := readImage(home, path, before.Security != "" || after.Security != "" || (len(preserveSecurity) > 0 && preserveSecurity[0]))
+		if err != nil || !sameImage(latest, before) {
+			return ErrPlanChanged
+		}
+		return nil
+	}
+	return publishManagedSecurityChecked(path, after, before.Exists, check, preserveSecurity...)
 }
 
 func rollback(p *Plan) error {
