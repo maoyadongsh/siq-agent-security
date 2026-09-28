@@ -56,6 +56,11 @@ func Inspect(opts Options) Diagnosis {
 		d.check("instance_target", "fail", "实例定位已变化，请重新发现")
 		return d
 	}
+	if opts.Platform == WorkBuddy && workBuddyUninstallReadback(opts) {
+		d.check("adapter_files", "pass", "已核验本实例卸载后的配置；宿主设置和其他钩子保留")
+		d.NextSteps = append(d.NextSteps, "此实例接入已移除；重新接入需重新预览，卸载不恢复已停用身份。")
+		return d
+	}
 	root := opts.configRoot()
 	plugin := filepath.Join(root, "plugins", product.PluginDir())
 	entry := filepath.Join(plugin, "index.ts")

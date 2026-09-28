@@ -10,6 +10,55 @@ permissions:
   contents: read
 
 jobs:
+  windows-workbuddy-components:
+    name: Windows WorkBuddy components and baseline comparison
+    runs-on: windows-latest
+    timeout-minutes: 35
+    env:
+      PYTHONUTF8: '1'
+      BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.26.6'
+          cache: false
+      - name: Validate comparison failure handling
+        run: python -m unittest discover -s scripts/personal-experience/tests -p test_windows_go_compare.py -v
+      - name: Windows ACL, uninstall readback, profile and concurrent hooks
+        working-directory: apps/agentshield
+        # Isolated test state only; no desktop, model, real Grant or system task.
+        run: |
+          go test -count=1 -timeout 10m -v ./internal/adapterinstall ./internal/privatefs ./internal/state ./cmd/agentshield -run 'TestWorkBuddyUninstallReadbackPreservesHostSettings|TestWorkBuddyManagedInstallDiagnosisAndRevokedUninstall|TestWorkBuddyManagedPreflight|TestWorkBuddyManagedApplyRechecksACL|TestManagedConfigReplacementAndRollbackPreserveDeny|TestManagedFileNewPublicationAndDeletedFileRestore|TestWorkBuddyManagedConcurrent|TestFreshWindowsClientInitialization|TestWindowsInitialization|TestWindowsPrivate|TestWindowsReadSnapshot|TestSecurity|TestWindowsMigrationDistinguishes' > "$env:RUNNER_TEMP/wb-targeted.txt" 2>&1
+          $code = $LASTEXITCODE
+          Get-Content "$env:RUNNER_TEMP/wb-targeted.txt"
+          exit $code
+      - name: Full module comparison with exact base (not desktop acceptance)
+        if: always()
+        run: |
+          if (-not $env:BASE_SHA -or $env:BASE_SHA -eq ('0' * 40)) {
+            $env:BASE_SHA = git rev-parse HEAD^
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          python scripts/personal-experience/windows_go_compare.py --base $env:BASE_SHA --out "$env:RUNNER_TEMP/wb-review"
+          exit $LASTEXITCODE
+      - name: Preserve component results and both full runs, never private state
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: windows-workbuddy-components-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/wb-targeted.txt
+            ${{ runner.temp }}/wb-review/candidate.jsonl
+            ${{ runner.temp }}/wb-review/candidate.stderr.txt
+            ${{ runner.temp }}/wb-review/candidate.exit.txt
+            ${{ runner.temp }}/wb-review/baseline.jsonl
+            ${{ runner.temp }}/wb-review/baseline.stderr.txt
+            ${{ runner.temp }}/wb-review/baseline.exit.txt
+            ${{ runner.temp }}/wb-review/comparison.json
   macos-path-config-regressions:
     name: macOS path and config regressions (component only)
     runs-on: macos-latest

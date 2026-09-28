@@ -113,6 +113,9 @@ func TestWorkBuddyManagedInstallDiagnosisAndRevokedUninstall(t *testing.T) {
 	if strings.Contains(string(raw), "hook workbuddy") || doc["later_user_edit"] != true || doc["enabledPlugins"].(map[string]any)["builtin"] != true {
 		t.Fatal("uninstall damaged unrelated configuration")
 	}
+	if d := Inspect(o); d.ConfigurationState != "not_installed" || d.RuntimeState != "unverified" {
+		t.Fatalf("committed managed uninstall misreported: %+v", d)
+	}
 }
 
 func TestWorkBuddyManagedInstallRepairsRestrictedRegistration(t *testing.T) {

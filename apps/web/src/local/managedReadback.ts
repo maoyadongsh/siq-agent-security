@@ -9,7 +9,9 @@ export function verifyAdapterReadback(plan: AdapterPlan, catalog: AdapterInstanc
   if (!instance) throw new Error('配置操作已返回，但未能读回此实例；请刷新诊断。');
   const diagnosis = instance.diagnosis;
   const expected = plan.action === 'uninstall' ? ['not_installed'] : ['ready', 'needs_verification'];
-  if (!expected.includes(diagnosis.configuration_state) || diagnosis.checks.some((check) => check.status === 'fail')) {
+  // A prior native self-check stays visible, but does not invalidate a newly
+  // verified configuration repair. Authority/configuration failures still do.
+  if (!expected.includes(diagnosis.configuration_state) || diagnosis.checks.some((check) => check.status === 'fail' && check.code !== 'hook_load')) {
     throw new Error('配置操作已返回，但配置读回尚未通过；请查看实例诊断并重新预览。');
   }
 }
