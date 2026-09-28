@@ -1,0 +1,12 @@
+{
+  "name": "siq-agent-security",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "control-api",
+      "command": "cd apps/control-api && SIQ_AS_DEV=1 SIQ_AS_DATABASE_URL=\"sqlite:///./dev.db\" .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8600",
+      "description": "Control Plane API dev server (SQLite dev mode) on http://127.0.0.1:8600"
+    }
+  ],
+  "ports": [{ "name": "control-api", "port": 8600 }]
+}
