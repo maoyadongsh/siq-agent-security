@@ -2,7 +2,7 @@
 
 开发入口为 `main`；用户安装入口为经过签发的具体版本包。GitHub 自动生成的 Source code ZIP 和直接复制的 `skills/siq-agent-security/` 不含该版本签名清单，不能作为签名安装包使用。历史 `testdata/releases/` 只用于回归测试。
 
-当前稳定版：[0.4.0（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.0)，普通用户选择 `siq-agent-security-0.4.0-bundle.zip`。Windows WorkBuddy 新批次使用已签名的 [0.4.1-rc.1 候选](evidence/releases/0.4.1-rc.1/README.md)，当前为草稿；源码固定 `a620a31b`，签名与四目标 pin 已核验，真实 WorkBuddy 验收尚未完成。按包内 INSTALL.md 验签，平台边界分别见各版本证据。
+当前稳定版：[0.4.0（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.0)，普通用户选择 `siq-agent-security-0.4.0-bundle.zip`。Windows WorkBuddy 新批次使用已签名的 [0.4.1-rc.1 候选](evidence/releases/0.4.1-rc.1/README.md)，已公开为预发布版；源码固定 `a620a31b`，签名与四目标 pin 已核验，真实 WorkBuddy 验收尚未完成。按包内 INSTALL.md 验签，平台边界分别见各版本证据。
 
 历史记录（2026-09-24）：当时从主线 `7b68c14` 使用原发行密钥签发 **0.4.0-rc.2 本机候选**，完整包为 `.tmp/releases/0.4.0-rc.2-signed/siq-agent-security-0.4.0-rc.2-bundle.zip`。官方验签、四目标 pin、Linux ARM64 最终包首次启动及三项篡改拒绝通过，见[候选记录](evidence/releases/0.4.0-rc.2/README.md)。尚未公开发布，不改变 Latest；使用完整离线包及独立状态目录，按包内 `INSTALL.md` 验签后启动。该候选发布前不要使用 Skill-only 的联网下载；系统服务安装、跨版本升级/回滚与其他目标原生验收仍待完成。
 

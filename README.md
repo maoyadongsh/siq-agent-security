@@ -52,7 +52,7 @@
 
 **项目定位：以用户授权为依据、覆盖 Agent 与 Skill 生命周期的安全管理。** Agent 负责规划任务，SIQ 运行时依据受信授权检查具体动作；对已接入效果采集的任务，将调用记录、签名回执与实际观察关联起来，供用户核验结果。项目同时保留来源约束与效果核验的研究链路，并持续适配 **NVIDIA DGX Spark 本地 AI 环境与 NVIDIA OpenShell 执行后端**。研究演示可在普通 Linux 上使用确定性夹具运行，无需模型 API 密钥或 GPU。
 
-> **签名安装包（2026-09-28）**：[0.4.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.0) 提供完整离线包、签名 Skill 与四目标二进制，源码固定在 `2cd6116`，使用原发行密钥签发。Linux ARM64 已通过最终包全新状态启动和 3/3 篡改拒绝；其他目标本次仅完成构建与签名 pin 核对，不等于原生安装、升级/回滚、Apple 公证或 Authenticode 验收。请选择 Release 的八份安装资产；GitHub 自动源码压缩包及仓库内 Skill 仍是开发源码。新增 [0.4.1-rc.1 签名候选](docs/evidence/releases/0.4.1-rc.1/README.md)（源码 `a620a31b`），当前为草稿，供 Windows WorkBuddy 新批次验收；不替换稳定版。见[安装说明](docs/signed-release-packaging.md)和[0.4.0 签发与公开回读](docs/evidence/releases/0.4.0/README.md)。
+> **签名安装包（2026-09-28）**：[0.4.0 正式版（Latest）](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.0) 提供完整离线包、签名 Skill 与四目标二进制，源码固定在 `2cd6116`，使用原发行密钥签发。Linux ARM64 已通过最终包全新状态启动和 3/3 篡改拒绝；其他目标本次仅完成构建与签名 pin 核对，不等于原生安装、升级/回滚、Apple 公证或 Authenticode 验收。请选择 Release 的八份安装资产；GitHub 自动源码压缩包及仓库内 Skill 仍是开发源码。新增 [0.4.1-rc.1 签名候选](docs/evidence/releases/0.4.1-rc.1/README.md)（源码 `a620a31b`），已公开为[预发布版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.1-rc.1)，供 Windows WorkBuddy 新批次验收；不替换稳定版。见[安装说明](docs/signed-release-packaging.md)和[0.4.0 签发与公开回读](docs/evidence/releases/0.4.0/README.md)。
 
 > **升级边界**：`0.4.0` 包含 Skill 辅助浏览器连接、固定 24 小时管理会话、个人端权限事实和批量撤权等主线成果。浏览器连接请求有效 5 分钟，确认管理会话不批准任何智能体业务权限。正式版名称不改变平台证据范围；完整跨平台系统服务安装、升级/回滚和宿主旅程仍需继续验收。
 
@@ -73,7 +73,7 @@
 
 **仅安装 Skill 不会自动安装宿主钩子，也不代表运行时保护已生效。** 需要确认本地服务运行、宿主钩子实际加载，并通过行为验证确定可检查或阻断的范围。“独立本地程序”描述组件分工，不表示当前桌面模式已具备同 UID 强隔离；具体能力以宿主接入与平台证据为准。
 
-**截至 2026-09-28，Windows WorkBuddy 修复及回归修正已通过 PR #110/#111 合入 `main`，源码 `a620a31b` 已签发为 `0.4.1-rc.1` 草稿候选；`0.4.0` 继续为正式版：** 合并范围和验证边界见[主线整合记录](docs/development/main-branch-integration-20260926.md)、[全面验收记录](docs/development/enterprise-comprehensive-acceptance-review-20260926.md)、[合并后收口交接](docs/development/enterprise-post-merge-remaining-closeout-handoff-20260926.md)及[发行记录](docs/evidence/releases/0.4.0/README.md)。**当前 Latest 为 `0.4.0`；签名个人客户端不等于企业组件已部署，也不补齐尚未执行的跨平台原生验收。** 历史实机证据继续绑定各自候选，不能迁移为当前正式版的完整验收。
+**截至 2026-09-28，Windows WorkBuddy 修复及回归修正已通过 PR #110/#111 合入 `main`，源码 `a620a31b` 已签发为 `0.4.1-rc.1` 预发布候选；`0.4.0` 继续为正式版：** 合并范围和验证边界见[主线整合记录](docs/development/main-branch-integration-20260926.md)、[全面验收记录](docs/development/enterprise-comprehensive-acceptance-review-20260926.md)、[合并后收口交接](docs/development/enterprise-post-merge-remaining-closeout-handoff-20260926.md)及[发行记录](docs/evidence/releases/0.4.0/README.md)。**当前 Latest 为 `0.4.0`；签名个人客户端不等于企业组件已部署，也不补齐尚未执行的跨平台原生验收。** 历史实机证据继续绑定各自候选，不能迁移为当前正式版的完整验收。
 
 | 范围 | 当前可核验状态 | 尚待完成 |
 | --- | --- | --- |

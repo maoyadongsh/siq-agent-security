@@ -1,6 +1,6 @@
 # SIQ Agent Security 0.4.1-rc.1 签名候选
 
-2026-09-28，按用户要求合并并签发 Windows WorkBuddy 修复。源码固定为 `a620a31b1dccdc7d2061e97ed4378c574321860d`；[PR #111](https://github.com/maoyadongsh/siq-agent-security/pull/111) 的合并提交为 `3f0f9b585628cae07347ab9e9c50af8e9ecde0dc`，代码树相同。main 保护规则保持不变。当前为 GitHub 草稿候选，公开 Latest 仍为 0.4.0；签名不代表真实 WorkBuddy 新批次验收完成。
+2026-09-28，按用户要求合并并签发 Windows WorkBuddy 修复。源码固定为 `a620a31b1dccdc7d2061e97ed4378c574321860d`；[PR #111](https://github.com/maoyadongsh/siq-agent-security/pull/111) 的合并提交为 `3f0f9b585628cae07347ab9e9c50af8e9ecde0dc`，代码树相同。main 保护规则保持不变。用户确认后已[公开为预发布版](https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.1-rc.1)，Latest 仍为 0.4.0；签名不代表真实 WorkBuddy 新批次验收完成。
 
 ## 签发与校验
 
@@ -18,10 +18,11 @@
 | Linux ARM64 原生最终包 | 全新状态 start/status/pair/控制台/stop 通过；不注册系统服务或宿主 |
 | [篡改拒绝](tamper-rejection.json) | 正常对照退出 0；Skill、二进制、错误公钥三项退出 3，拒绝暂存；工具探针错误保留 |
 | [草稿下载回读](draft-readback.json) | 八附件与本机候选逐字节一致，再次独立验签通过；不等于匿名公开下载 |
+| [公开下载回读](publication.json) | 八附件与已验参考逐字节一致；官方验签、匿名校验和下载及签名 URL 下载/暂存通过；prerelease=true，Latest 保持 0.4.0 |
 
 ## Windows 接续
 
-有仓库权限的维护者可下载草稿的完整离线包。源码与候选版本分别为 `a620a31b` / `0.4.1-rc.1`。按包内 INSTALL.md 使用固定官方公钥验证实际 Skill 和 Windows 程序后，在专用实例继续新批次。草稿未公开时不要使用 Skill-only 的下载 URL。
+可公开下载[完整离线包](https://github.com/maoyadongsh/siq-agent-security/releases/download/siq-agent-security-v0.4.1-rc.1/siq-agent-security-0.4.1-rc.1-bundle.zip)。源码与候选版本分别为 `a620a31b` / `0.4.1-rc.1`。按包内 INSTALL.md 使用固定官方公钥验证实际 Skill 和 Windows 程序后，在专用实例继续新批次。同版本 Skill ZIP 与四目标二进制均已公开；Skill-only 下载仍须先验证签名及实际内容。
 
 ```powershell
 gh release download siq-agent-security-v0.4.1-rc.1 --repo maoyadongsh/siq-agent-security --dir .\siq-0.4.1-rc.1-assets
