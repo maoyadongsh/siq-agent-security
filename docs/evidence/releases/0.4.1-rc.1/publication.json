@@ -1,0 +1,60 @@
+{
+  "schema_version": "siq-release-readback/v1",
+  "version": "0.4.1-rc.1",
+  "tag_source_sha": "a620a31b1dccdc7d2061e97ed4378c574321860d",
+  "checked_at_utc": "2026-09-28T05:38:01.368407+00:00",
+  "release_url": "https://github.com/maoyadongsh/siq-agent-security/releases/tag/siq-agent-security-v0.4.1-rc.1",
+  "published": true,
+  "prerelease": true,
+  "is_latest": false,
+  "remote_assets_equal_local_verified_reference": true,
+  "official_signature_and_all_pins_verified": true,
+  "public_checksum_download": "passed",
+  "signed_url_download_and_staging": {
+    "target": "linux/arm64",
+    "result": "passed"
+  },
+  "native_installation": "not_run; readback never starts a service",
+  "assets": [
+    {
+      "name": "SHA256SUMS",
+      "sha256": "e06e1964d06a68dfbdbf2da6573194c7e272b2c85566b6a42c0c19540394726d",
+      "bytes": 691
+    },
+    {
+      "name": "SOURCE-INFO.json",
+      "sha256": "800e09c75da11737fd22d27824ac6067bb346dc6a14454915b8a4df0a7c5f61d",
+      "bytes": 25591
+    },
+    {
+      "name": "siq-agent-security-0.4.1-rc.1-bundle.zip",
+      "sha256": "ed3983591a3b68d49aa41b6013f41fe5b56b4db09e7a5878743998a2e83c177d",
+      "bytes": 47675047
+    },
+    {
+      "name": "siq-agent-security-darwin-arm64",
+      "sha256": "f3abab65c1c60455f504b6639e25ed0a65a293dc7019accdc6840c3bccf561df",
+      "bytes": 19568546
+    },
+    {
+      "name": "siq-agent-security-linux-amd64",
+      "sha256": "95d4574d9bac55e8b919d51130bd4cd8623eff297455dde360cf5f17e8e44f09",
+      "bytes": 20594850
+    },
+    {
+      "name": "siq-agent-security-linux-arm64",
+      "sha256": "0268d88ebc5dd45be032593bdd64279ca26d7ea83b890a83e1b932fcad61e59d",
+      "bytes": 19333282
+    },
+    {
+      "name": "siq-agent-security-skill-0.4.1-rc.1.zip",
+      "sha256": "46dcc6dda65965034928684b147925839485370134dcb3c2953ce5635bf97ff3",
+      "bytes": 35396
+    },
+    {
+      "name": "siq-agent-security-windows-amd64.exe",
+      "sha256": "408fbab5bb94867413710a2787a28c6b6e13514be7057b29d63a1c6009c80588",
+      "bytes": 21132800
+    }
+  ]
+}

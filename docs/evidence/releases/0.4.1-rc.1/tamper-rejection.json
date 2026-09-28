@@ -1,0 +1,38 @@
+{
+  "version": "0.4.1-rc.1",
+  "source_sha": "a620a31b1dccdc7d2061e97ed4378c574321860d",
+  "target": "linux/arm64",
+  "checks": [
+    {
+      "case": "unchanged",
+      "exit_code": 0,
+      "result": "accepted"
+    },
+    {
+      "case": "skill-content",
+      "exit_code": 3,
+      "result": "rejected-before-staging"
+    },
+    {
+      "case": "binary-content",
+      "exit_code": 3,
+      "result": "rejected-before-staging"
+    },
+    {
+      "case": "wrong-public-key",
+      "exit_code": 3,
+      "result": "rejected-before-staging"
+    }
+  ],
+  "earlier_probes": [
+    {
+      "result": "invalid-command-not-a-tamper-test",
+      "exit_code": 2,
+      "reason": "unsupported --os / --arch arguments"
+    },
+    {
+      "result": "invalid-positive-fixture-not-a-product-failure",
+      "reason": "copyfile omitted executable mode; corrected with copy2 and 0700 in temporary fixture"
+    }
+  ]
+}
