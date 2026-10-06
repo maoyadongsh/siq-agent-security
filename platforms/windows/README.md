@@ -1,6 +1,6 @@
 # Windows
 
-当前宿主范围为 OpenClaw、Hermes、WorkBuddy。0.4.0 正式包提供 amd64 程序和已签名 Skill，完成固定源码构建、项目清单验签与 pin 核对；本版 Windows 原生安装、升级/回滚及完整宿主验收未运行。项目签名不等于 Authenticode，交叉编译也不等于 Windows 原生验收。
+当前宿主范围为 OpenClaw、Hermes、WorkBuddy。0.4.1 正式包提供 amd64 程序和已签名 Skill，完成固定源码构建、项目清单验签与 pin 核对；发行源 Windows 原生组件 CI 为 55 包退出 0，67 条条件／平台 skip 不计通过。本版正式包原生安装、升级/回滚及完整宿主业务矩阵仍待验收。项目签名不等于 Authenticode，交叉编译也不等于 Windows 原生验收。
 
 - 安装入口：[签名包 PowerShell 步骤](../../docs/signed-release-packaging.md)，选择 windows-amd64.exe；依次验签、初始化启动、浏览器配对。沿用系统正常脚本策略，不降低签名或路径检查。
 - 操作与恢复：[个人手册](../../docs/personal-client-operation-guide-20260916.md)、[任务生命周期 CLI](../../AGENTSHIELD.md)。核对 SID、任务 XML、DACL、实例目录与实际程序；未知归属、迁移状态或锁不得手动删除来推进。
@@ -12,6 +12,8 @@
 
 ## 源码、基础检查与功能验收
 
+2026-10-06 仅复核[WorkBuddy 5.6.2 历史业务记录](../../third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)：原 0.4.0 的 22 次任务包含初始失败、实际越权拒绝、合法简报及失联恢复。没有新增 Windows 运行，不能将其写成 0.4.1 或 DGX 同批次成绩。[0.4.1 发行核验](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)与历史业务证据分开。
+
 [运行时模块](../../apps/agentshield/README.md)、[Web](../../apps/web/README.md)与[宿主适配器](../../adapters/runtime/README.md)分别维护共享核心、界面和协议边界。平台生命周期按本页手册执行，不复制另一套实现到 platforms 目录。
 
-[四目标源码原生检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)已有本平台历史自建程序的准入与基础启动/配对/控制台/停止记录。它与 0.4.0 正式包使用不同候选，不等于本版系统服务、升级回滚、通知或完整宿主验收；后续验收仍需固定 0.4.0 程序、UI、适配器、宿主版本和状态格式，再记录允许、拒绝、撤销与恢复的实际结果。
+[四目标源码原生检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)已有本平台历史自建程序的准入与基础启动/配对/控制台/停止记录。它与 0.4.1 正式包使用不同候选，不等于本版系统服务、升级回滚、通知或完整宿主验收；后续验收仍需固定 0.4.1 程序、UI、适配器、宿主版本和状态格式，再记录允许、拒绝、撤销与恢复的实际结果。

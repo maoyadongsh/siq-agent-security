@@ -15,7 +15,7 @@ model and optional key (local model endpoints may not require a key). It validat
 JSON and typed outputs and fails without fallback. `FixtureProvider` is restricted
 to explicitly selected test mode and is always labelled `fixture`, not StepFun.
 
-Provider configuration:
+Provider configuration (the archived example below keeps its original model; the October evaluation selected `step-5-preview` and local Qwen in separate frozen protocols):
 
 ```bash
 export SIQ_MODEL_PROVIDER=stepfun
@@ -173,6 +173,8 @@ values must be literal true/false. Invalid policy and unavailable local sensitiv
 inference fail closed. See the [egress contract](../../docs/hackathon/model-egress-v4.md).
 
 ## Implementation map
+
+The 2026-10-06 [reference-application comparisons](../../third-party-evaluation/20261006/reports/business-comparison-controls-report.md) observed real same-value delivery differences between B0/A-PROV/B2; [real-model comparisons](../../third-party-evaluation/20261006/reports/business-comparison-models-report.md) also retained legitimate-delivery losses and no demonstrated incremental natural attack blocking in that cohort. [routing regression](../../third-party-evaluation/20261006/reports/business-model-routing-fixed-candidate-report.md) belongs to its separately frozen repair candidate; do not assume this checkout or the personal-client package contains every tested repair. The [Research Engine permission closeout](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md) is a different application and execution entry.
 
 | Component | Role in the experiment |
 | --- | --- |

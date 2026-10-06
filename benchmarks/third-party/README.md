@@ -1,6 +1,6 @@
 # SIQ 第三方测评执行工具
 
-这是作者侧可复查测评工具，尚未完成整套第三方验收。当前活动目录为 [20261006](../../third-party-evaluation/20261006/README.md)，准确结果与剩余范围见[阶段报告](../../third-party-evaluation/20261006/reports/progress-report.md)。
+这是作者侧可复查测评工具。20261006 的 DGX／分析助手 Agent 与已安装 Skill 权限收口已完成，入口为[最终报告](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)和[权限复现说明](../../third-party-evaluation/20261006/README-PERMISSIONS.md)。原[阶段报告](../../third-party-evaluation/20261006/reports/progress-report.md)保留历史广义轨道状态；没有完成全部原计划或独立机构认证。
 
 以[复核与复跑说明](../../third-party-evaluation/20261006/REPRODUCE.md)为执行入口。`run.py` 支持原 A 轨道以及 v2 协议的 B 轨道日志恢复校准；后者仅验证测评设施，不是新增产品成绩。B 产品样例、模型、AgentDojo、来源消融、企业 HTTP/PostgreSQL 仍有专项 runner 和 verifier，尚未全部迁移至统一生命周期。`governance_trial.py --include-edge` 可冻结合成 Edge 协议与资产证据扩展。各 cohort 先冻结任务、源码和预算，原始失败与后续修订使用不同目录。
 
@@ -21,3 +21,5 @@ python3 -m unittest discover -s benchmarks/third-party/tests -v
 P06 本地管理面：`management_trial.py --campaign ... --run-id <新ID>` 冻结并执行 5 条真实 HTTP 旅程。`management_scoring.py` 从逐请求响应与授权文件前后摘要计算安全和正常功能结果，`verify.py` 统一复核日志、签名 Intent 与汇总。最新批次 42 个计分请求、138 项断言通过；首次非法夹具输入的失败原样保留。
 
 浏览器部分单独运行 `browser_management_trial.py --campaign ... --run-id <新ID>`：真实内嵌 UI 配对/恢复/退出、持久存储和 4 个跨源探针，最新 29/29 检查。CDP 核对实际 POST 与 OPTIONS，独立授权文件核对副作用；首批采集超时及不可读正文保留。该 Linux Chromium 行关闭沙箱，不能作为同 UID 或 OS 隔离证明。
+
+后续 SafeClawBench Exec、Skill 供应链与隐藏集见[独立实施方案](../../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)，目前只有方案。AgentDojo 已完成 240 单元公开试点，但未触发唯一接入的顶层邮件门禁，不能计增量防护。新轮次使用独立 campaign 和冻结候选，先核对专项脚本的实际接口；不要直接把旧协议指向变化后的源码。

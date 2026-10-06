@@ -4,6 +4,8 @@
 
 ## 当前定位与实现边界
 
+最新[DGX／分析助手实测](../../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)使用真实本地模型、OpenShell 和 Hermes：Agent 日常入口授权读写及拒绝已验证；Reader／Writer 为真实安装和原生加载，使用宿主显式 SEC 同步的专属验收入口。不是插件自动推断任意 Skill 归属。合法 terminal／execute_code、部分委派及 MCP 入口仍有 runtime_effect_unknown 导致的效用限制。
+
 Hermes 在 Linux、macOS、Windows 均属于当前接入范围，实际通过情况逐候选登记于[平台矩阵](../../../platforms/support-matrix.md)。组件桥接、公开 CLI 合成模型会话与真实用户任务分别验证；不能用某个 OS 的插件单测代替全部原生验收。
 
 本适配器的重点是将真实实例/会话、参数来源和执行前授权连接起来。实例凭据不能调用管理 API；MCP 来源上报保持 untrusted；Skill 名称不自动证明执行归属，verified SEC 必须由 daemon 复验安装与授权。对应实现见[本地运行时](../../../apps/agentshield/README.md)，审批恢复见[适配器总览](../README.md)。
@@ -41,9 +43,12 @@ Windows 新接入配置的 HTTP 等待为每请求 20 秒，其他系统为 5 �
 
 ## fail-closed
 
+2026-10-06 [九格原生实测](../../../third-party-evaluation/20261006/reports/native-auth-modes-report.md)将 block/warn/audit_only 的正常、身份撤销、后端不可达分开验证；受管路径故障后没有所测新文件读写事件。该批为真实 Hermes 工具＋受控模型协议，0 次真实模型推理；不改变旧非受管配置的建议模式语义。
+
 | 场景 | `block` | `audit_only` / `warn` |
 | --- | --- | --- |
-| 服务不可达 / 超时 / 401 / 非法 JSON / 无 token | **block** | allow + stderr 警告 |
+| 旧非受管全局凭据：服务不可达 / 超时 / 401 / 非法 JSON / 无 token | **block** | allow + stderr 警告 |
+| 受管实例身份或短期自检凭据：登记、认证、决策连接或响应失败 | **block** | **block** |
 
 ## 卸载
 
@@ -73,7 +78,7 @@ V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项�
 
 宿主可通过`provenance_reference(session_id, tool_name, tool_call_id)`取回引用，并在后续pre_tool_call传入`parameter_provenance`或`context_assertion_id`。这只是显式桥接，不能直接把原结果引用绑定到变换后的参数；选择/派生必须经过daemon的对应API生成内容摘要匹配的引用。插件不推断模型隐式lineage，不签发可信声明，也不把自称USER的工具结果提升权威。
 
-内存引用缓存最多2048条、5分钟到期，满时不驱逐既有引用来假装干净；不持久化原结果或token。结果预算预留JSON编码空间，超限不截断后当完整来源。默认映射为空，原版Hermes自动配置/传播和真实原生MCP链路仍需单独验证；现有测试只证明钩子映射、受限上报及缓存边界。
+内存引用缓存最多2048条、5分钟到期，满时不驱逐既有引用来假装干净；不持久化原结果或token。结果预算预留JSON编码空间，超限不截断后当完整来源。默认映射为空，原版 Hermes 的通用自动配置／传播尚未证明；除钩子组件测试外，已有特定原生 MCP 读回及显式字段选择专项，见[原生来源选择](../../../third-party-evaluation/20261006/reports/native-business-mcp-selection-report.md)。显式桥接结果不代表默认参数入口或任意 MCP 全链可用；未知效果拒绝和正常效用缺口仍保留。
 
 
 真实daemon组件桥接复现：
@@ -98,7 +103,7 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 
 停用权限会撤销实例身份。卸载经管理界面先撤权，再执行可恢复文件事务；卸载失败不恢复旧授权。直接 CLI 卸载已管理实例必须先在管理界面或 API 撤销身份，再带明确 `--instance` 操作；CLI 暂不提供完整身份发行流程。Hermes 原生命令会规范化 YAML，卸载恢复本产品原有登记语义并保留其他设置，不承诺原文件格式逐字恢复。
 
-`scripts/personal-experience/managed-instance-native-smoke.py` 在隔离 profile 中通过正式安装 API 与公开 Hermes CLI 验证自动会话、只读范围、撤销和独立产品自检；`managed-instance-browser-smoke.py` 验证从起草到接入/撤销/卸载的界面流程。具体证据见 [M13 开发记录](../../../docs/evidence/personal-experience/managed-instance-20260910/verification.json)。实际 Skill 加载归属、用户已有会话迁移、跨 OS 和其他平台仍需独立验收。
+`scripts/personal-experience/managed-instance-native-smoke.py` 在隔离 profile 中通过正式安装 API 与公开 Hermes CLI 验证自动会话、只读范围、撤销和独立产品自检；`managed-instance-browser-smoke.py` 验证从起草到接入/撤销/卸载的界面流程。具体证据见 [M13 开发记录](../../../docs/evidence/personal-experience/managed-instance-20260910/verification.json)。该历史批次没有验证实际 Skill 加载归属；2026-10-06 的指定安装归属证据见上文，用户已有会话迁移、跨 OS 和其他平台仍需独立验收。
 
 
 ### 调整已接入实例的权限

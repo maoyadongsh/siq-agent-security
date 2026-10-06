@@ -6,6 +6,8 @@
 
 ## 合同文件清单
 
+2026-10-06 测评分支新增风险接受边界、并发与规则生命周期合同：[acceptance v1](enterprise-risk-acceptance.v1.md)、[concurrency v1](enterprise-risk-concurrency.v1.md)、[rule lifecycle v2](enterprise-risk-rule-lifecycle.v2.md)；v1 保留历史演进。[合法生命周期实测](../../third-party-evaluation/20261006/reports/risk-legal-lifecycle-report.md)核对状态、审计和 outbox；合同存在不替代其他候选或客户环境验收，权限收口另见[最终报告](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)。
+
 下表列出关键合同与不变量，并非全目录清单。新增版本以实际 schema、固定向量和消费方测试为准；旧版文件保留不表示新请求仍可使用。
 
 | 文件 | 内容 | 关键字段/约定 | 对应设计文档 |

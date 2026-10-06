@@ -66,6 +66,8 @@ unset siq_enrollment
 
 ## 实现与验证
 
+2026-10-06 [原生企业链](../../third-party-evaluation/20261006/reports/enterprise-chain-report.md)已有真实 Edge 二进制、Hermes Connector、生产模式 Control API 与独立 PostgreSQL 的发现／上传／治理证据；[目标授权](../../third-party-evaluation/20261006/reports/enterprise-authority-report.md)验证审批与部署管理员授权不能互相替代。隔离测试身份、受控目录及网络目标不等于客户设备长期采集、正式企业安装包或生产 IdP 验收。
+
 安装前先预览：`setup-enterprise --review-only --plan FILE --tenant ID --environment ID --control-plane ORIGIN [--start]`。输出组织/环境、有效期、采集器及 roots/include 文件范围和确认摘要，明确是否请求启动服务。预览不需要注册码或发行包，不读取设备私密身份、不落盘、不启动扫描；其中 release_signature_verified=false，不能把它当成制品认证。阅读后由用户另行确认，再运行安装入口，禁止脚本仅凭预览摘要自动批准。
 
 统一开发入口：`setup-enterprise --help`。将确认计划、可信暂存、环境绑定注册/原身份恢复/既有身份复用、采集范围保存和用户服务安装串为一次调用。自动化采用确认摘要和 --enrollment-code-stdin；Linux 终端可改用 --interactive，直接阅读组织/环境/范围后输入 yes，默认取消，首次注册码在验签后提示且不回显，不进入命令参数。交互确认期间计划变化或过期拒绝。输出逐阶段 NDJSON（交互模式另有提示），暂存成功后即返回 stage_path，后续失败可用 --resume-stage 重验继续。默认只配置，显式 --start 才启动发现服务，不批准业务权限。未签名制品在注册前拒绝，失败不删除身份或暂存。serve 已接入确认范围内的去重首扫申请，但包下载、完整生产签名包/systemd 一次安装与结果页真实验收仍未完成，不作为已发布一键安装承诺。

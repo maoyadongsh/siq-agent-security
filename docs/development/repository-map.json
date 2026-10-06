@@ -369,6 +369,27 @@
       "validation": [
         "repository guard; catalog negative tests"
       ]
+    },
+    {
+      "id": "third-party-evaluation",
+      "paths": [
+        "third-party-evaluation/"
+      ],
+      "kind": "evaluation-evidence",
+      "owner_role": "evaluation maintainers",
+      "strategy": "maintain current README navigation; retain protocols, original failures and signed evidence; exclude private runtime state from publication",
+      "consumers": [
+        "README.md",
+        "README.en.md",
+        "evaluations/README.md",
+        "benchmarks/third-party/README.md"
+      ],
+      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; companion and upstream materials retain their own terms",
+      "validation": [
+        "repository navigation guard",
+        "candidate-bound evidence verifiers",
+        "publication allowlist and secret review"
+      ]
     }
   ],
   "changes": [

@@ -4,13 +4,13 @@
 
 # 2026-10-06 测评批次
 
-当前接续：按用户最新指定范围，以[DGX真实分析助手权限管控方案](plan/dgx-research-permission-closeout-001.md)为收口主线：DGX Spark＋Hermes＋OpenShell＋siq-research-engine，重点验证Agent和具体Skill的授权读写、越权拒绝及撤权。其他平台引用历史Windows＋WorkBuddy。通用20任务及无关扩量延期，旧证据和失败保留；RG01–09尚待本轮同链路实测。
+当前状态：RG01–09 已按用户限定范围完成，见[最终权限报告](reports/research-permissions-final-report.md)；10 个主证据批次、67 条签名和 20 项文件检查通过。Agent 日常入口与 Skill 专属验收入口分列，跨候选和失败边界保留。Windows／WorkBuddy 仅引用历史；原通用20任务与无关扩量延期。以下旧阶段导航用于追溯，不是当前待办清单。
 
-最新：[ZIP准入、安装与原生工具实测](reports/native-zip-onboarding-report.md)。首试34/34检查，正常读写完成、私有读取被SIQ拒绝且无读取事件；归档、批准、安装、SEC和真实调用已关联。公网HTTPS与其余旅程继续。
+最新：[ZIP准入、安装与原生工具实测](reports/native-zip-onboarding-report.md)。首试34/34检查，正常读写完成、私有读取被SIQ拒绝且无读取事件；归档、批准、安装、SEC和真实调用已关联。公网 HTTPS 后续另有[003实测](reports/remote-source-import-report.md)；其他广义旅程不由此关闭。
 
-最新实测：[来源导入管理与完整性](reports/source-import-management-report.md)。002完成23次真实HTTP、123/123检查、6份签名；001初始化遗漏失败保留。Git关闭门禁，公网成功与ZIP原生安装链仍未完成。
+最新实测：[来源导入管理与完整性](reports/source-import-management-report.md)。002完成23次真实HTTP、123/123检查、6份签名；001初始化遗漏失败保留。本批 Git 获取关闭；公网成功与 ZIP 原生安装后来分别由上述专项补充，不回填本批结果。
 
-当前方案修订入口：[基于真实功能的测评修订](plan/product-grounded-evaluation-revision-001.md)。统一六条产品链的对照与结束条件，新增16项来源实施规格；[来源复核](reports/source-capability-review-001.md)明确Git生产门禁与HTTPS公网证据缺口。本次是功能/方案复核与组件检查，没有新增业务或模型成绩。
+当前方案修订入口：[基于真实功能的测评修订](plan/product-grounded-evaluation-revision-001.md)。统一六条产品链的对照与结束条件，新增16项来源实施规格；[来源复核](reports/source-capability-review-001.md)保存当时 Git 生产门禁与 HTTPS 公网证据缺口；公网后续结果见上述003报告。本次是功能/方案复核与组件检查，没有新增业务或模型成绩。
 
 最新：[自检快照与业务授权状态实测](reports/native-runtime-snapshot-report.md)。8个快照/授权变体、16次真实产品自检完成，336/336检查符合修订预期。插件或模式变化使旧结果invalidated，恢复不复活；业务Skill漂移使实例授权暂不可用，明确撤销使授权持续不可用，但独立自检仍可passed。两类状态必须分开，不能把自检通过提升为全部业务已保护。
 
@@ -26,7 +26,7 @@
 
 前序批次：[同候选个人接入实测](reports/native-personal-onboarding-report.md)。本次同候选个人接入已实际串联发现→准入→审批→安装→原生工具：恶意包隔离且权限创建409，正常包批准安装后公开读写完成、私有读取grant_scope_violation。首批25/27测量检查失败保留；修正安装归属文件和原生读回格式后另冻新批27/27。这是一个开发任务块的两次运行，0真实模型推理，无新增B0，不计算自然攻击增益。
 
-状态：实施中。持续目标为合并方案v1.3，保留v1.1原范围及全部冻结成绩，执行台账见 `implementation-progress.json`。
+历史阶段状态：合并方案 v1.3 实施期间保留 v1.1 原范围及全部冻结成绩，阶段台账见 `implementation-progress.json`；当前交付范围以本页开头的 RG01–09 收口说明为准。
 
 本次按用户要求先复核功能、再完善方案：[功能与执行收口](plan/product-acceptance-execution-order.md)明确六条产品链、18旅程的证据复用与缺口、后续有限批次和16个路由验收条件。原应用与直接构造Router的默认策略不同，正式测评须区分入口。该次功能收口本身只包含方案和来源复核；后续新增实测按下列报告各自的候选与协议解释。
 
@@ -34,7 +34,7 @@
 
 最新[原生文件/终端实际效果对照](reports/native-effects-report.md)：授权读写正常；固定提议下越界文件读/写与普通终端读在B0实际执行、B2拒绝。内核事件与进程标记另行取证，Hermes自身阻断不计SIQ收益。两批保留3项宿主基线预期失败，补充核验器修正Go参数摘要转义，原分数不变。见[方案第13节](plan/real-business-evaluation-v2.md)及[接入索引003](inventory/native-business-integration-003.json)。
 
-最新接续入口：[全面功能核对](reports/project-function-understanding.md) → [40项功能追踪](inventory/function-traceability-v2.json) → [18条真实业务旅程方案](plan/real-business-evaluation-v2.md)。梳理后已完成[原应用12个机制控制](reports/business-chain-controls-001-report.md)及[Qwen/Step 5共20个真实模型校准](reports/business-chain-model-calibration-report.md)，均有独立文件/接收观察和离线验证。来源消融已见实际差异；恶意MCP后的会话污染也暴露合法发送损失。后续已补齐[24个B0三臂控制](reports/business-comparison-controls-report.md)与[36个真实模型三臂对照](reports/business-comparison-models-report.md)，并完成[PII文本归因](reports/business-taint-attribution-report.md)和[实际观察器故障校准](reports/business-observer-calibration-report.md)。原生业务、安全恢复、研究语义评分及其余旅程继续实施。
+最新接续入口：[全面功能核对](reports/project-function-understanding.md) → [40项功能追踪](inventory/function-traceability-v2.json) → [18条真实业务旅程方案](plan/real-business-evaluation-v2.md)。梳理后已完成[原应用12个机制控制](reports/business-chain-controls-001-report.md)及[Qwen/Step 5共20个真实模型校准](reports/business-chain-model-calibration-report.md)，均有独立文件/接收观察和离线验证。来源消融已见实际差异；恶意MCP后的会话污染也暴露合法发送损失。后续已补齐[24个B0三臂控制](reports/business-comparison-controls-report.md)与[36个真实模型三臂对照](reports/business-comparison-models-report.md)，并完成[PII文本归因](reports/business-taint-attribution-report.md)和[实际观察器故障校准](reports/business-observer-calibration-report.md)。该阶段后续事项中，原生业务与安全恢复已由 RG01–09 指定范围补充；研究语义评分及其余通用旅程不属于本次收口。
 
 从[阶段报告](reports/progress-report.md)查看实测结论，从[复核与复跑说明](REPRODUCE.md)直接执行离线复核。当前材料均为作者侧运行，尚无独立第三方认证。
 
@@ -106,6 +106,9 @@
 - [外部签发者导入权限边界](reports/issuer-ingress-report.md)：五组API配对10/10、120/120，正常真实投递5次、攻击0次；首批理由码预期错误5/10保留。外部有效签名与注册权限、调用凭据分开核验，未关闭完整PB03。
 
 - [18条业务旅程证据复用核对](reports/journey-evidence-reuse-report.md)：113个历史批次重新核对，111个原核验可复算，1个不完整及1个原事件错误各自保留；逐旅程登记候选和缺口，不新增产品成绩或关闭旅程。
+
+
+后续拟实施项目见[独立时间戳方案](../../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)；SafeClawBench、Skill 供应链扩展与独立隐藏集目前只有方案，未来应另建活动目录。本批[公开交付范围](https://github.com/maoyadongsh/siq-agent-security/blob/9d6e02ead7bb6f564a05caa953027c01faf7cb5d/third-party-evaluation/20261006/PUBLICATION.md)界定公开包；历史归档路径不保证都在公开仓内，精确复跑须核对实际可用材料。
 
 ## 原应用模型路由实测
 
