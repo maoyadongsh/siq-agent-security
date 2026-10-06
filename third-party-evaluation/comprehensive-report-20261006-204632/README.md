@@ -7,7 +7,7 @@
 按阅读偏好，历史失败、修复及勘误集中在 [独立 HTML 附录](SIQ_测评证据与历史复核附录_20261006-204632.html)，通过主报告链接打开。保持两个 HTML 在同一目录。正文、图示、筛选和 JSON 导出离线可用；固定版本原报告链接需要联网。
 
 - [证据索引](evidence-index.json)：339 条主要报告／证据入口、35 项关键引用及来源 SHA-256。条目不是独立实验或通过数。原始协议和冻结报告是事实依据。
-- `report.css`：复用项目暖纸、墨蓝、深金与证据深绿的报告样式；构建时内联进两个 HTML。
+- `report.css`：复用项目暖纸、墨蓝、深金与证据深绿的报告样式；`fonts.css` 内嵌拉丁衬线字体（base64 data URI，数字由 DM Serif Display 接管）；两者构建时内联进 HTML，零外部资源。
 - `build_report.py`：在本仓库执行 `python3 third-party-evaluation/comprehensive-report-20261006-204632/build_report.py` 重建；需要 Python 3 和所引用的 Git 对象。本次校验时来源均与固定公开提交字节一致。
 - `validation.json`：文档结构、引用、浏览器与离线检查摘要；不代表重新运行底层测评。
 
