@@ -1,4 +1,4 @@
-import type { AdapterInstances, AdapterPlan, AdapterResult, Grant } from './types';
+import type { AdapterInstances, AdapterPlan, AdapterResult, Grant, RuntimeIdentity } from './types';
 
 export function verifyAdapterResult(plan: AdapterPlan, result: AdapterResult): void {
   if (result.platform !== plan.platform || result.action !== plan.action) throw new Error('应用结果与预览不一致，请重新读取实例状态。');
@@ -27,4 +27,15 @@ export function grantExpiryLabel(expiresAt: string | null | undefined): string {
   if (expiresAt === null) return '未设置到期时间';
   if (!expiresAt || !Number.isFinite(Date.parse(expiresAt))) return '未知，请刷新授权状态';
   return new Date(expiresAt).toLocaleString();
+}
+
+// A UI readiness hint, never authority: the server rechecks every operation.
+export function canPrepareManagedIdentity(identity: RuntimeIdentity | undefined, grant: Grant | undefined, now = Date.now()): boolean {
+  if (!identity || !grant || identity.status !== 'issued' || !['deployed', 'effective'].includes(grant.status)
+    || identity.grant_ref.grant_id !== grant.grant_id || identity.grant_ref.admission_id !== grant.admission_id
+    || identity.platform !== grant.platform || grant.subject.type !== 'agent_instance' || grant.subject.id !== identity.agent_id) return false;
+  if (grant.expires_at === null) return true;
+  if (!grant.expires_at) return false;
+  const expiry = Date.parse(grant.expires_at);
+  return Number.isFinite(expiry) && expiry > now;
 }

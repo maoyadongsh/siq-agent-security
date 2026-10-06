@@ -6,7 +6,7 @@ import { useLocalSession } from '../session';
 import type { Admission, Grant, RuntimeIdentity } from '../types';
 import GrantResourceDialog from './GrantResourceDialog';
 import GrantScopeSummary from './GrantScopeSummary';
-import { verifyDeployedGrant } from '../managedReadback';
+import { canPrepareManagedIdentity, verifyDeployedGrant } from '../managedReadback';
 import InstanceSkillCheck from './InstanceSkillCheck';
 import { skillInstallErrorText } from '../skillInstall';
 import type { SkillRuntimeReadiness } from '../types';
@@ -47,6 +47,7 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
   const eligible = grants.filter((item) => item.platform === platform && item.subject.type === 'agent_instance' && item.subject.id === subject
     && ['pending_approval', 'approved', 'deployed', 'effective'].includes(item.status));
   const currentGrant = grants.find((item) => item.grant_id === identity?.grant_ref.grant_id);
+  const identityReady = canPrepareManagedIdentity(identity, currentGrant);
   const changing = preparing || !!(requiredGrantId && identity && identity.grant_ref.grant_id !== requiredGrantId);
   const selected = identity && !changing ? currentGrant : eligible.find((item) => item.grant_id === (requiredGrantId ?? selectedId));
   const imported = selected?.admission_id.startsWith('adm-si-') ?? false;
@@ -171,7 +172,7 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
     <p>先核对权限，再确认接入。这里配置实例可用范围，实际调用的 Skill 归属仍待验证。</p>
     {loading ? <p role="status">正在读取检查结果和权限…</p> : null}
     {loadedFor === scopeKey && identity ? <>
-      <p role="status">{identity.status === 'issued' ? (!identityProfileMatches ? '身份的路径解释尚未核对，暂不能预览接入。' : changing ? '当前仍使用旧授权，新权限尚未接入。' : imported && !importPrepared ? '正在核验安装权限，暂不能预览接入。' : '已有可用授权，可以预览接入配置。') : '原有授权已失效，请先停用旧身份，再重新设置。'}</p>
+      <p role="status">{identityReady ? (!identityProfileMatches ? '身份的路径解释尚未核对，暂不能预览接入。' : changing ? '当前仍使用旧授权，新权限尚未接入。' : imported && !importPrepared ? '正在核验安装权限，暂不能预览接入。' : '已有可用授权，可以预览接入配置。') : '身份或授权尚未核验为可用，请刷新并核对部署、到期与撤销状态。'}</p>
       <p>当前身份的文件路径解释：{filesystemProfileLabel(identityFilesystemProfile(identity))}</p>
       <p>单次会话最长 {identity.session_ttl_seconds / 3600} 小时，从该会话登记起计算；实际到期以会话记录为准，不自动续期。业务授权到期单独显示。</p>
       {platform === 'workbuddy' ? <p>工具覆盖：Read/Write 等按具体动作与目录裁决。present_files、Glob、Grep 的效果映射尚未支持，不能视为普通读取。宿主产物卡片和历史记忆界面不代表其内容或分享路径已受控。</p> : null}
@@ -230,6 +231,6 @@ export function useInstancePermissions(platform: RuntimeIdentity['platform'], in
     {error ? <p role="alert" className="action-error">{error}</p> : null}
     <button type="button" className="btn" disabled={busy || loading} onClick={refresh}>刷新权限状态</button>
   </section>;
-  return { panel, busy, editing: editingId !== null, identityId: !changing && identityProfileMatches && (!imported || importPrepared) && identity?.status === 'issued' && (!requiredGrantId || identity.grant_ref.grant_id === requiredGrantId) ? identity.identity_id : '',
+  return { panel, busy, editing: editingId !== null, identityId: !changing && identityProfileMatches && (!imported || importPrepared) && identityReady && identity && (!requiredGrantId || identity.grant_ref.grant_id === requiredGrantId) ? identity.identity_id : '',
     editor: editingId ? <GrantResourceDialog grantId={editingId} onClose={closeEditor} onSaved={(grant) => { keepGrant(grant); setEditingId(null); }} /> : null };
 }
