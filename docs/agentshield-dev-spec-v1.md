@@ -2612,6 +2612,9 @@ E151 兼容边界：当前已为空（省略字段或显式空 map）时保留�
 
 授权批准与部署后重新读取同一 Grant；只有匹配此次部署修订且状态为 deployed/effective 才确认部署。更新期间读回的新状态应展示，但不能混入旧确认。effective_readback 的 null 不变成 true。Grant 到期缺字段为未知、null 为未设置、合法时间为服务端期限；会话 TTL 从登记起计算，不从身份创建时间推算会话到期，不自动续期。
 
+2026-10-07 剩余草稿整合：管理台只有在同一平台、主体、Grant/admission 引用均匹配、身份 issued、Grant deployed/effective，且服务端到期字段明确为 null 或尚未到期的合法时间时，才显示可预览接入；缺失/异常期限为未知。该判断只使用本次读回，不产生 Authority，也不替代后端逐次在线核验。身份会话 TTL 仍不从身份创建时间推算。WorkBuddy 受管预检的管理 API 错误只输出固定对象类别及恢复提示，已知预检类别返回 409；未知错误仍用原通用响应。恢复记录/计划冲突优先于预检提示，不能把需恢复的事务误报为 recovery_required=false，不返回路径、凭据或原始 OS 错误。
+
+
 WorkBuddy 覆盖说明明确 Read/Write 等已映射动作与 present_files、Glob、Grep 的未知效果边界。present_files 不冒充 Read，不由只读模板增加工具或权限；产物卡片与宿主历史记忆界面不证明 SIQ 对其内容/外发/UI 全路径控制。资源身份不可用与范围拒绝分别呈现；不可用本身不能断言文件缺失，用户可核对路径是否存在并跳过非必需步骤。
 
 `task-runtime` 保留 state/instances/last_result 原值并补充 last_result_kind 与 health=unverified；267009 表示调度器仍在运行，不是本次进程退出码或业务完成。只读 help 不创建状态或执行生命周期动作。
