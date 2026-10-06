@@ -275,26 +275,28 @@ def check_third_party_digest_exceptions(binary, config):
         ignored, detected = set(), set()
         for group in groups:
             # These entries deliberately use exact escaped literals, not broad globs.
-            name = re.sub(r"\\(.)", r"\1", group["paths"][0][1:-1])
-            pattern = group["regexes"][0]
-            assert pattern.startswith(r"^\s*") and pattern.endswith(r",?\s*$")
-            line = re.sub(r"\\(.)", r"\1", pattern[4:-6])
-            field, digest = next(iter(json.loads("{" + line + "}").items()))
-            changed = "f" if digest[0] != "f" else "e"
-            negative_value = json.dumps(field) + ": " + json.dumps(changed + digest[1:])
-            negative_field = '"api_key": ' + json.dumps(digest)
-            # Use the already-calibrated synthetic key: random strings can hit
-            # the upstream entropy or common-word filters and flake in CI.
-            credential = '"api_key": "sk-proj-secret1234567890123456"'
-            path = root / name
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(f"{line}\n{negative_value}\n{negative_field}\n{credential}\n")
-            ignored.add((name, 1))
-            detected.update((name, n) for n in (2, 3, 4))
-            copied = root / "copied" / name
-            copied.parent.mkdir(parents=True, exist_ok=True)
-            copied.write_text(line + "\n")
-            detected.add(("copied/" + name, 1))
+            # Check both original and relocated exact paths when present.
+            for literal in group["paths"][:2]:
+                name = re.sub(r"\\(.)", r"\1", literal[1:-1])
+                pattern = group["regexes"][0]
+                assert pattern.startswith(r"^\s*") and pattern.endswith(r",?\s*$")
+                line = re.sub(r"\\(.)", r"\1", pattern[4:-6])
+                field, digest = next(iter(json.loads("{" + line + "}").items()))
+                changed = "f" if digest[0] != "f" else "e"
+                negative_value = json.dumps(field) + ": " + json.dumps(changed + digest[1:])
+                negative_field = '"api_key": ' + json.dumps(digest)
+                # Use the already-calibrated synthetic key: random strings can hit
+                # the upstream entropy or common-word filters and flake in CI.
+                credential = '"api_key": "sk-proj-secret1234567890123456"'
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f"{line}\n{negative_value}\n{negative_field}\n{credential}\n")
+                ignored.add((name, 1))
+                detected.update((name, n) for n in (2, 3, 4))
+                copied = root / "copied" / name
+                copied.parent.mkdir(parents=True, exist_ok=True)
+                copied.write_text(line + "\n")
+                detected.add(("copied/" + name, 1))
         for arguments in (("init", "-q", "-b", "main"),
                           ("config", "user.name", "Scanner calibration"),
                           ("config", "user.email", "scanner@example.invalid"),

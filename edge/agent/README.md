@@ -66,7 +66,7 @@ unset siq_enrollment
 
 ## 实现与验证
 
-2026-10-06 [原生企业链](../../third-party-evaluation/20261006/reports/enterprise-chain-report.md)已有真实 Edge 二进制、Hermes Connector、生产模式 Control API 与独立 PostgreSQL 的发现／上传／治理证据；[目标授权](../../third-party-evaluation/20261006/reports/enterprise-authority-report.md)验证审批与部署管理员授权不能互相替代。隔离测试身份、受控目录及网络目标不等于客户设备长期采集、正式企业安装包或生产 IdP 验收。
+2026-10-06 [原生企业链](../../evaluations/campaigns/20261006/reports/enterprise-chain-report.md)已有真实 Edge 二进制、Hermes Connector、生产模式 Control API 与独立 PostgreSQL 的发现／上传／治理证据；[目标授权](../../evaluations/campaigns/20261006/reports/enterprise-authority-report.md)验证审批与部署管理员授权不能互相替代。隔离测试身份、受控目录及网络目标不等于客户设备长期采集、正式企业安装包或生产 IdP 验收。
 
 安装前先预览：`setup-enterprise --review-only --plan FILE --tenant ID --environment ID --control-plane ORIGIN [--start]`。输出组织/环境、有效期、采集器及 roots/include 文件范围和确认摘要，明确是否请求启动服务。预览不需要注册码或发行包，不读取设备私密身份、不落盘、不启动扫描；其中 release_signature_verified=false，不能把它当成制品认证。阅读后由用户另行确认，再运行安装入口，禁止脚本仅凭预览摘要自动批准。
 

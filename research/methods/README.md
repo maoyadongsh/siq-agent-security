@@ -17,12 +17,12 @@
 
 ## 机制如何进入可检验实验
 
-新[来源对照](../../third-party-evaluation/20261006/reports/business-comparison-controls-report.md)已观察相同不可信来源参数在 B0／来源消融组实际投递、完整 SIQ 不投递；其余层已拒绝的动作不能归为 SIQ 独占贡献。[原生撤权时序](../../third-party-evaluation/20261006/reports/native-held-authority-report.md)保留预留后仍产生效果的记录；审批、预留、派发与已发生效果须按时间线解释，不能用符合合同预期掩盖实际损害。
+新[来源对照](../../evaluations/campaigns/20261006/reports/business-comparison-controls-report.md)已观察相同不可信来源参数在 B0／来源消融组实际投递、完整 SIQ 不投递；其余层已拒绝的动作不能归为 SIQ 独占贡献。[原生撤权时序](../../evaluations/campaigns/20261006/reports/native-held-authority-report.md)保留预留后仍产生效果的记录；审批、预留、派发与已发生效果须按时间线解释，不能用符合合同预期掩盖实际损害。
 
 | 工程机制 | 可检验对照 | 实现与实验入口 |
 | --- | --- | --- |
 | 独立 Intent 与参数来源 | 相同参数值、不同来源身份；值未变而授权或作用域改变 | [运行时与 provenance](../../apps/agentshield/README.md)、[运行时基准](../../benchmarks/runtime-security/README.md) |
-| SEC 的安装归属 | 名称/路径相同，但安装摘要、实例、会话或授权不匹配 | [skillcontext](../../apps/agentshield/internal/skillcontext/)；已有 [DGX 指定安装实测](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)，显式 SEC 同步不等于任意 Skill 自动归属或跨宿主保证 |
+| SEC 的安装归属 | 名称/路径相同，但安装摘要、实例、会话或授权不匹配 | [skillcontext](../../apps/agentshield/internal/skillcontext/)；已有 [DGX 指定安装实测](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)，显式 SEC 同步不等于任意 Skill 自动归属或跨宿主保证 |
 | 批准后的最终检查与唯一预留 | 批准后撤权、改参、重复回调、预留响应丢失 | [适配器协议](../../adapters/runtime/README.md)、[OpenClaw 固定补丁](../../patches/openclaw/README.md) |
 | 效果与完成分层 | 工具返回成功但效果缺失，或实际内容/接收端冲突 | [Secure Agent](../../apps/secure-agent/README.md)、[控制案例](../../benchmarks/hackathon/README.md) |
 

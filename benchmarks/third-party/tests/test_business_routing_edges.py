@@ -17,7 +17,7 @@ class RoutingEdgesTests(unittest.TestCase):
         # scorer dependency used by this frozen batch, not its mutable successor.
         import importlib.util
         from unittest.mock import patch
-        root = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+        root = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
         path = root / 'protocols/business-alias-controls-001-protocol/harness-source/business_routing_scoring.py'
         spec = importlib.util.spec_from_file_location('edges_frozen_base_scoring', path)
         module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
@@ -25,7 +25,7 @@ class RoutingEdgesTests(unittest.TestCase):
         handle.start(); self.addCleanup(handle.stop)
 
     def fixture(self, refused=True):
-        campaign = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+        campaign = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
         root = campaign / 'data/business-model-routing-controls-001'
         original = 'local-http-failure' if refused else 'confidential-default'
         raw = json.loads((root / 'cases' / original / 'result.json').read_text())
@@ -111,7 +111,7 @@ class RoutingEdgesTests(unittest.TestCase):
         import shutil
         import subprocess
         import tempfile
-        campaign = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+        campaign = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
         source = campaign / 'data/business-routing-edges-001'
         verifier = campaign / 'protocols/business-routing-edges-001-protocol/harness-source/verify_business_routing_edges.py'
         with tempfile.TemporaryDirectory(dir=campaign / 'private/tmp') as temporary:

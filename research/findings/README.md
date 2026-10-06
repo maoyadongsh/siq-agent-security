@@ -14,4 +14,4 @@
 
 现有证据的价值是可追溯的实现与具体观察。小样本、自编公开语料、重复任务、可信观察器及环境依赖限制结论；没有观察到不安全效果不构成普遍无风险证明。新发现以新候选/协议/记录追加，勘误保留派生关系，不覆盖冻结证据。
 
-新[权限报告](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)支持已接入 Agent 和明确绑定安装 Skill 的读写约束、撤销及生命周期；[效果评估](../../third-party-evaluation/20261006/reports/siq-effectiveness-assessment.md)同时记录同值来源的受控增益、自然模型试点无新增阻断证据及解释器／委派合法效用损失。跨候选结果、开发用例和有限观察窗口不支持普遍安全结论；原表是历史研究入口，不穷尽新批次。
+新[权限报告](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)支持已接入 Agent 和明确绑定安装 Skill 的读写约束、撤销及生命周期；[效果评估](../../evaluations/campaigns/20261006/reports/siq-effectiveness-assessment.md)同时记录同值来源的受控增益、自然模型试点无新增阻断证据及解释器／委派合法效用损失。跨候选结果、开发用例和有限观察窗口不支持普遍安全结论；原表是历史研究入口，不穷尽新批次。

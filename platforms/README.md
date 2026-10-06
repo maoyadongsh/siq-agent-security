@@ -11,4 +11,4 @@ OS 负责路径、权限和生命周期，宿主负责配置、钩子和调用�
 
 开发者从[本地运行时](../apps/agentshield/README.md)与[适配器](../adapters/runtime/README.md)定位实现；[四目标源码检查](../docs/evidence/repository-reorganization-final-20260919/README.md)提供后续基础原生记录。比较平台时须同时固定 OS/架构、宿主版本、程序摘要、UI/适配器和状态格式；不能仅凭相同版本号或目录名合并结果。
 
-截至 2026-10-06，新增[DGX 权限收口](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)和[Windows 历史复核](../third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)分别登记。前者包含真实模型与文件效果，后者没有本轮重跑；[0.4.1 发行记录](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)不包含这些开发候选的自动升级验收。
+截至 2026-10-06，新增[DGX 权限收口](../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)和[Windows 历史复核](../evaluations/campaigns/20261006/reports/research-permissions-windows-history-001.md)分别登记。前者包含真实模型与文件效果，后者没有本轮重跑；[0.4.1 发行记录](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)不包含这些开发候选的自动升级验收。

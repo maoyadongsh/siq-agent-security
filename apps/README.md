@@ -10,7 +10,7 @@ SIQ 把研究问题落实为可独立运行、边界明确的组件：模型负�
 | [Secure Agent](secure-agent/README.md) | 研究参考应用：规划、Skill 选择、受约束工具执行与完成核验 | Python 标准库 + 本地运行时；显式 fixture 或已配置模型，不能执行任意 Skill 代码 |
 
 
-2026-10-06 的[DGX 真实业务测评](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)已验证分析助手中的 Agent 与明确绑定的已安装 Skill 权限；[企业闭环](../third-party-evaluation/20261006/reports/enterprise-chain-report.md)另验证原生发现、审批、后端限制及回滚。两条链各有候选、身份与效果证据；分析助手属于独立 Research Engine 项目，不等于本仓 Secure Agent 参考应用。
+2026-10-06 的[DGX 真实业务测评](../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)已验证分析助手中的 Agent 与明确绑定的已安装 Skill 权限；[企业闭环](../evaluations/campaigns/20261006/reports/enterprise-chain-report.md)另验证原生发现、审批、后端限制及回滚。两条链各有候选、身份与效果证据；分析助手属于独立 Research Engine 项目，不等于本仓 Secure Agent 参考应用。
 
 ## 如何选择
 

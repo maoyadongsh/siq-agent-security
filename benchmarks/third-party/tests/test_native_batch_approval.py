@@ -10,7 +10,7 @@ import native_batch_approval as batch
 from common import sha256
 from verify_native_lifecycle import verify
 
-C = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+C = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 
 
 def material(profile='2-lost', revision='003'):

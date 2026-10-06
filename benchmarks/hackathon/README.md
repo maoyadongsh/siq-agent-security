@@ -81,4 +81,4 @@ own source, provider, report and failures; it does not update those artifacts.
 Use the [research protocol](../../research/experiments/README.md) to plan new
 comparisons, and [evaluations](../../evaluations/README.md) to locate scoped evidence.
 
-The [October evaluation tools](../third-party/README.md) reuse this 23-control suite and separately run provenance comparisons, real-model application tasks, AgentDojo and native permissions. Their cohorts and failures remain separate. The [DGX permission report](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md) does not expand this fixture suite or turn its controls into natural-model attack samples.
+The [October evaluation tools](../third-party/README.md) reuse this 23-control suite and separately run provenance comparisons, real-model application tasks, AgentDojo and native permissions. Their cohorts and failures remain separate. The [DGX permission report](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md) does not expand this fixture suite or turn its controls into natural-model attack samples.

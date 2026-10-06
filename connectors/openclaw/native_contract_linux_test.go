@@ -20,8 +20,16 @@ import (
 // /proc and asserts it is exactly the minimal whitelist — no real user config,
 // no SIQ credentials, no proxy variables leak into the connector process.
 func TestNativeChildEnvWhitelistLinux(t *testing.T) {
+	// Synthetic parent canaries must not be inherited by the child.
+	t.Setenv("HTTPS_PROXY", "http://parent-proxy.invalid")
+	t.Setenv("SIQ_AS_TOKEN", "parent-only-test-canary")
 	home := t.TempDir()
 	s := startNativeSession(t, home)
+
+	// Start returning does not establish application readiness. Synchronize on
+	// a real protocol response before inspecting /proc during process startup.
+	resp, _ := s.rpc(t, "env-01", "describe", nil)
+	rpcOK(t, resp)
 
 	data, err := os.ReadFile(fmt.Sprintf("/proc/%d/environ", s.cmd.Process.Pid))
 	if err != nil {
@@ -61,10 +69,6 @@ func TestNativeChildEnvWhitelistLinux(t *testing.T) {
 			t.Errorf("child environment leaks sensitive variable family %q", k)
 		}
 	}
-
-	// The process is alive and answering on this exact environment.
-	resp, _ := s.rpc(t, "env-01", "describe", nil)
-	rpcOK(t, resp)
 }
 
 // TestNativeFifoConfigRefusedLinux plants a FIFO named openclaw.json. The

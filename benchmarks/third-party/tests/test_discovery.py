@@ -11,7 +11,7 @@ from common import sha256
 from discovery_scoring import parse_trace, score
 from verify_discovery import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / "third-party-evaluation/20261006"
+CAMPAIGN = Path(__file__).resolve().parents[3] / "evaluations/campaigns/20261006"
 RUN = CAMPAIGN / "data/discovery-http-003"
 
 

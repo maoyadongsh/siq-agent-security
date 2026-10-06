@@ -13,7 +13,7 @@ import native_lifecycle_trial
 from common import sha256
 from verify_native_lifecycle import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 CANDIDATE = CAMPAIGN / 'private/candidates/5470ab3780f2-nativefixturefix3'
 REGISTRY = json.loads(contract.REGISTRY.read_text())
 

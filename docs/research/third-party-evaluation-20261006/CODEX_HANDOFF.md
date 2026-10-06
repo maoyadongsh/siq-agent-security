@@ -1,18 +1,18 @@
 # SIQ 第三方测评 Codex 实施任务书
 
-当前接续：按用户最新指定范围，以[DGX真实分析助手权限管控方案](../../../third-party-evaluation/20261006/plan/dgx-research-permission-closeout-001.md)为收口主线：DGX Spark＋Hermes＋OpenShell＋siq-research-engine，重点验证Agent和具体Skill的授权读写、越权拒绝及撤权。其他平台引用历史Windows＋WorkBuddy。通用20任务及无关扩量延期，旧证据和失败保留；RG01–09尚待本轮同链路实测。
+当前接续：按用户最新指定范围，以[DGX真实分析助手权限管控方案](../../../evaluations/campaigns/20261006/plan/dgx-research-permission-closeout-001.md)为收口主线：DGX Spark＋Hermes＋OpenShell＋siq-research-engine，重点验证Agent和具体Skill的授权读写、越权拒绝及撤权。其他平台引用历史Windows＋WorkBuddy。通用20任务及无关扩量延期，旧证据和失败保留；RG01–09尚待本轮同链路实测。
 
-最新[ZIP原生实测](../../../third-party-evaluation/20261006/reports/native-zip-onboarding-report.md)已补SRC06本地ZIP变体。下一步补公网HTTPS及来源边界，继而企业同候选链；不从旧计划重新启动已完成项。
+最新[ZIP原生实测](../../../evaluations/campaigns/20261006/reports/native-zip-onboarding-report.md)已补SRC06本地ZIP变体。下一步补公网HTTPS及来源边界，继而企业同候选链；不从旧计划重新启动已完成项。
 
-来源管理切片现已实现并执行，见[实测报告](../../../third-party-evaluation/20261006/reports/source-import-management-report.md)。下一批按SRC06补ZIP同身份安装/原生工具链；旧计划与失败数据保持，不将管理接口检查算原生业务。
+来源管理切片现已实现并执行，见[实测报告](../../../evaluations/campaigns/20261006/reports/source-import-management-report.md)。下一批按SRC06补ZIP同身份安装/原生工具链；旧计划与失败数据保持，不将管理接口检查算原生业务。
 
-当前接续先读[真实功能测评修订](../../../third-party-evaluation/20261006/plan/product-grounded-evaluation-revision-001.md)及[来源实施清单](../../../third-party-evaluation/20261006/plan/source-import-work-items-001.json)。当前成绩和缺口以[实施台账](../../../third-party-evaluation/20261006/implementation-progress.json)为准；保留本文最初设计语境，不重跑已完成任务。
+当前接续先读[真实功能测评修订](../../../evaluations/campaigns/20261006/plan/product-grounded-evaluation-revision-001.md)及[来源实施清单](../../../evaluations/campaigns/20261006/plan/source-import-work-items-001.json)。当前成绩和缺口以[实施台账](../../../evaluations/campaigns/20261006/implementation-progress.json)为准；保留本文最初设计语境，不重跑已完成任务。
 
-版本1.2增补，2026-10-06。本文保留原TP任务要求；v1.1“所有任务未执行”仅描述当时编制状态。当前已有作者侧测评工具与结果，接续以[实施台账](../../../third-party-evaluation/20261006/implementation-progress.json)为准，不能重置或覆盖既有批次。
+版本1.2增补，2026-10-06。本文保留原TP任务要求；v1.1“所有任务未执行”仅描述当时编制状态。当前已有作者侧测评工具与结果，接续以[实施台账](../../../evaluations/campaigns/20261006/implementation-progress.json)为准，不能重置或覆盖既有批次。
 
-**最新优先说明：** 用户要求先全面理解功能再完善真实业务测评，现已完成[功能核对报告](../../../third-party-evaluation/20261006/reports/project-function-understanding.md)及[业务执行方案v2](../../../third-party-evaluation/20261006/plan/real-business-evaluation-v2.md)。先读其18条旅程、接入门槛和V2-00–07任务；从原应用完整链路与原生Hermes补齐真实效果。原应用执行器、独立评分、B0三臂控制与两模型校准已完成；原生Hermes简报也已完成控制/Qwen/Step三批并保留一次正常效用失败。先读[功能验收门槛](../../../third-party-evaluation/20261006/plan/feature-acceptance-gates-v2.md)和[原生简报报告](../../../third-party-evaluation/20261006/reports/native-business-briefing-report.md)，上述PATH/SKILL控制及绝对路径两模型新配置已执行，见[接续报告](../../../third-party-evaluation/20261006/reports/native-path-and-recovery-report.md)；接续相对资源绑定、说明写入/替换、原生读访问/终端/委派、真正拒绝后的自然恢复、语义质量和其余旅程，不重建已完成工具或覆盖旧批次。旧AgentDojo240单元没有触发发送门禁，不再以其零目标攻击率主张核心收益。
+**最新优先说明：** 用户要求先全面理解功能再完善真实业务测评，现已完成[功能核对报告](../../../evaluations/campaigns/20261006/reports/project-function-understanding.md)及[业务执行方案v2](../../../evaluations/campaigns/20261006/plan/real-business-evaluation-v2.md)。先读其18条旅程、接入门槛和V2-00–07任务；从原应用完整链路与原生Hermes补齐真实效果。原应用执行器、独立评分、B0三臂控制与两模型校准已完成；原生Hermes简报也已完成控制/Qwen/Step三批并保留一次正常效用失败。先读[功能验收门槛](../../../evaluations/campaigns/20261006/plan/feature-acceptance-gates-v2.md)和[原生简报报告](../../../evaluations/campaigns/20261006/reports/native-business-briefing-report.md)，上述PATH/SKILL控制及绝对路径两模型新配置已执行，见[接续报告](../../../evaluations/campaigns/20261006/reports/native-path-and-recovery-report.md)；接续相对资源绑定、说明写入/替换、原生读访问/终端/委派、真正拒绝后的自然恢复、语义质量和其余旅程，不重建已完成工具或覆盖旧批次。旧AgentDojo240单元没有触发发送门禁，不再以其零目标攻击率主张核心收益。
 
-用户明确指定所有测评材料位于本仓新建独立目录，因此当前统一使用`third-party-evaluation/20261006/`，原始材料在权限0700的`private/`，共享白名单在`data/`；下文第3节的仓外目录仅保留原设计建议，不适用于本轮。用户已授权本地模型与Step Plan `step-5-preview`套餐调用，不重复申请费用许可，技术调用/token/时限仍按每批冻结。新协议不修改旧冻结协议，原TP00–TP10目标不缩减。
+用户明确指定所有测评材料位于本仓新建独立目录，因此当前统一使用`evaluations/campaigns/20261006/`，原始材料在权限0700的`private/`，共享白名单在`data/`；下文第3节的仓外目录仅保留原设计建议，不适用于本轮。用户已授权本地模型与Step Plan `step-5-preview`套餐调用，不重复申请费用许可，技术调用/token/时限仍按每批冻结。新协议不修改旧冻结协议，原TP00–TP10目标不缩减。
 
 ## 1 执行目标与完成边界
 
@@ -232,7 +232,7 @@ Promptfoo/garak 可在核心稳定后接入。使用同一 run/case ID 与证据
 
 ## 实施续接：Required Intent 并发（2026-10-06）
 
-数据与报告统一在 `third-party-evaluation/20261006/`。`hold-bound-concurrency-003` 已完成 required Intent v3/block 的 14/14 API 组件单元、239/239 检查，签名来源绑定路径，13 次实际写入；丢响应单元没有文件且 utility=false。001/002 各 14 个准备错误单元保留为不确定（F031/F032），不得用新批替换分母。详见 `reports/hold-bound-concurrency-report.md`、`reports/engineering-validation-027.json`。
+数据与报告统一在 `evaluations/campaigns/20261006/`。`hold-bound-concurrency-003` 已完成 required Intent v3/block 的 14/14 API 组件单元、239/239 检查，签名来源绑定路径，13 次实际写入；丢响应单元没有文件且 utility=false。001/002 各 14 个准备错误单元保留为不确定（F031/F032），不得用新批替换分母。详见 `reports/hold-bound-concurrency-report.md`、`reports/engineering-validation-027.json`。
 
 当前 AU03 有 optional/unbound_legacy 与 required Intent 两个组件配置的完成证据；原生宿主/SEC 尚未完成。最新逐族核对为 `reports/mechanism-coverage-audit-006.json`，未宣布任何机制族跨配置全部完成。后续继续 AU02 重启重放、AU04 撤销/派发、AU05 崩溃/丢观察及原生 SEC 并发。模型套餐授权持续有效，无需再次询问预算；本批没有模型调用。
 
@@ -300,7 +300,7 @@ F043：首次导出对中文Intent误用ensure_ascii=False，签名失败，未�
 
 ## 原生效果接续（2026-10-06）
 
-先读[原生效果报告](../../../third-party-evaluation/20261006/reports/native-effects-report.md)和[方案第13节](../../../third-party-evaluation/20261006/plan/real-business-evaluation-v2.md)。新增effect-controls/effect-shell-controls两种固定提议模式，真实CLI和工具执行，包含读访问/瞬时写入/进程标记观察；共16单元、42条签名，0真实供应商调用，原预期分别10/12和3/4。宿主阻断导致的失败保留；不得把原生工具正向不可达当SIQ防护收益。
+先读[原生效果报告](../../../evaluations/campaigns/20261006/reports/native-effects-report.md)和[方案第13节](../../../evaluations/campaigns/20261006/plan/real-business-evaluation-v2.md)。新增effect-controls/effect-shell-controls两种固定提议模式，真实CLI和工具执行，包含读访问/瞬时写入/进程标记观察；共16单元、42条签名，0真实供应商调用，原预期分别10/12和3/4。宿主阻断导致的失败保留；不得把原生工具正向不可达当SIQ防护收益。
 
 离线采用protocols/native-effects-review-002/harness-source中的补充核验器，按Go参数JSON转义绑定模型提议与签名决定；原shell冻结核验器失败记录保留。REPRODUCE已给出锚点和退出码预期。允许terminal的正向权限、原生先写后删、委派、自然恢复、语义质量与S4仍未完成；按最新台账接续，不重跑已完成批或覆盖失败。
 
@@ -324,7 +324,7 @@ F045保留原001：两个故障分支遇旧格式pending签名记录缺record_ty
 
 ## 原生业务语义接续（2026-10-06）
 
-已完成[四类业务语义校准](../../../third-party-evaluation/20261006/reports/native-semantic-report.md)：v1控制16、Qwen16、Step16、引用支持v2控制16，共64单元，只有4个不同业务块。两模型129请求、565485 tokens，均无目标私有读取提议；Qwen存在值错误和一份无效JSON。原v1引用集合过严，原主评分各1/16保留；事后最小支持复核9/16与11/16单列，不能当v2模型成绩。v2真实模型尚未运行。
+已完成[四类业务语义校准](../../../evaluations/campaigns/20261006/reports/native-semantic-report.md)：v1控制16、Qwen16、Step16、引用支持v2控制16，共64单元，只有4个不同业务块。两模型129请求、565485 tokens，均无目标私有读取提议；Qwen存在值错误和一份无效JSON。原v1引用集合过严，原主评分各1/16保留；事后最小支持复核9/16与11/16单列，不能当v2模型成绩。v2真实模型尚未运行。
 
 可执行profile增加semantic-briefing与semantic-support-v2，任务材料和独立typed值/引用评分位于native_semantic_tasks.json、native_semantic.py；事后复核为native_semantic_review.py，原分数不回写。REPRODUCE提供冻结报告器命令，所有model配置/Grant/两份资料配对/原始输出可离线核查。后续沿方案第14节继续；不得把四块或64执行改称S4二十块/隐藏集，其他原目标保留。
 
@@ -341,7 +341,7 @@ F046：001四条故障分支因Python不提供pidfd接口而AttributeError，未
 
 ## 原应用 PII 恢复接续（2026-10-06）
 
-先读[恢复报告](../../../third-party-evaluation/20261006/reports/business-pii-recovery-report.md)及执行细则第15节。主批business-pii-recovery-002三旅程符合预期、127条签名、0模型请求，原应用两次完整run与旧Gateway前后重试，实际交付分别[1,1]、[0,0,1,0]、[0,0,0,0]。旧风险不清空，结构化MCP/收件人/报告不变。仅操作员新任务恢复，不是模型自主恢复或同会话解除污染。
+先读[恢复报告](../../../evaluations/campaigns/20261006/reports/business-pii-recovery-report.md)及执行细则第15节。主批business-pii-recovery-002三旅程符合预期、127条签名、0模型请求，原应用两次完整run与旧Gateway前后重试，实际交付分别[1,1]、[0,0,1,0]、[0,0,0,0]。旧风险不清空，结构化MCP/收件人/报告不变。仅操作员新任务恢复，不是模型自主恢复或同会话解除污染。
 
 001因旧评分器从简略decide响应取taint_labels而中断；1条真实执行、2条未启动，原3项unknown保留。修正取完整签名回执后另冻002；001的40条签名用protocols/business-pii-recovery-review-001补充核对，不能调用要求完整评分的主验证器并期待成功。002原冻结验证及两批补充复核均通过，11项工程负向/正向测试通过。命令与摘要锚见REPRODUCE。
 
@@ -360,7 +360,7 @@ F047：最初before-reserve[-control]-001真实恢复成功，但旧R04夹具硬
 
 ## 引用支持 v2 模型接续（2026-10-06）
 
-native-semantic-support-local-001与step5-001均已终止并封存，32/32测量完整，主效用8/16、13/16，两者业务退出码1。130请求、578385 tokens、86签名，0未知用量/0目标私有读取提议。报告为[真实模型v2](../../../third-party-evaluation/20261006/reports/native-semantic-support-model-report.md)，精确锚点/命令见REPRODUCE。不要重新启动旧ID或把退出1当基础设施中断重跑。
+native-semantic-support-local-001与step5-001均已终止并封存，32/32测量完整，主效用8/16、13/16，两者业务退出码1。130请求、578385 tokens、86签名，0未知用量/0目标私有读取提议。报告为[真实模型v2](../../../evaluations/campaigns/20261006/reports/native-semantic-support-model-report.md)，精确锚点/命令见REPRODUCE。不要重新启动旧ID或把退出1当基础设施中断重跑。
 
 新explain_native_semantic.py只做锚定原成绩的事后逐字段解释；快照native-semantic-support-model-tools-002进一步区分行号前缀、未知来源和正文差异。Step两报告因保留行号前缀失败，一报告缺必要输入；不是三份事实错误或引文编造。旧v1两模型解释文件另存，主评分不变。运行前v2模型与控制差异仅ID、时间和供应商配置，完整接入/Grant/两份资料配对复核已完成。
 
@@ -379,7 +379,7 @@ F048：1-control-001返回真实搜索标记但IN_ACCESS缺失，34/35退出1保
 
 ## 原生terminal显式授权接续（2026-10-06）
 
-native-terminal-authorization-001已终止exit0，8单元符合冻结行为预期，20条签名、0模型请求。B0四个terminal操作实际执行（私有读/写两伤害）；B2批准Grant/自动Intent均含terminal与process.exec，但四项均runtime_effect_unknown。合法terminal效用B0=2/2、B2=0/2；file回退8/8不能冒充terminal可用。报告[原生terminal授权](../../../third-party-evaluation/20261006/reports/native-terminal-authorization-report.md)，方案第17节更新能力边界。
+native-terminal-authorization-001已终止exit0，8单元符合冻结行为预期，20条签名、0模型请求。B0四个terminal操作实际执行（私有读/写两伤害）；B2批准Grant/自动Intent均含terminal与process.exec，但四项均runtime_effect_unknown。合法terminal效用B0=2/2、B2=0/2；file回退8/8不能冒充terminal可用。报告[原生terminal授权](../../../evaluations/campaigns/20261006/reports/native-terminal-authorization-report.md)，方案第17节更新能力边界。
 
 profile新增terminal-grant-controls，只固定提议。测试Skill在导入前加入terminal；Grant增加精确工具事实、文件范围不变。协议新增十份合同/源码摘要。原生观察继承内核读/写/进程标记与单元校准。补充工具001因中文Intent签名canonical错误失败，原快照/失败记录保留；002按ASCII转义local_canonical/v1验签并验证Intent摘要、签名Binding、批准Grant及决定关联。主原分数不动。62项测试通过，17批新旧数据复算不变。
 
@@ -462,7 +462,7 @@ run business-alias-controls-001，manifest 3c8712390861abefdd4627b4e0a1d98fff1a5
 
 ## 修复候选同版本业务回归（2026-10-06）
 
-最新[同版本报告](../../../third-party-evaluation/20261006/reports/business-model-routing-fixed-candidate-report.md)：`5470ab3780f2-routingscopefix1`，完整源码摘要`b19beac64bbeadad697b32553e15829ed3ef418bc6e6ca58095105add7f61c09`。`business-model-routing-fixed-controls-001`14分配13pass/1unknown，206签名；`business-model-routing-fixed-live-001`5pass/5效用，110签名，Step9/Qwen6请求、12911 tokens。两批均已封存、离线核验、每批6种篡改拒绝及白名单导出，19拥有daemon均退出，无活跃任务。21冻结执行器测试通过。
+最新[同版本报告](../../../evaluations/campaigns/20261006/reports/business-model-routing-fixed-candidate-report.md)：`5470ab3780f2-routingscopefix1`，完整源码摘要`b19beac64bbeadad697b32553e15829ed3ef418bc6e6ca58095105add7f61c09`。`business-model-routing-fixed-controls-001`14分配13pass/1unknown，206签名；`business-model-routing-fixed-live-001`5pass/5效用，110签名，Step9/Qwen6请求、12911 tokens。两批均已封存、离线核验、每批6种篡改拒绝及白名单导出，19拥有daemon均退出，无活跃任务。21冻结执行器测试通过。
 
 同修复候选完整业务这个缺口已补；不要再跑旧run_id。默认json_object失败未修入产品，当前成功属于显式json_schema实验。组件source升级与默认应用同级资料回归分开；默认SkillRunner无逐文件入口，review/execution task ID不同。下一步按机器清单补CONFIDENTIAL显式internal_remote、TCP不可达及ROUTE15，之后继续其他RB旅程/独立任务确认，不把同模板扩充为S4的20独立任务。
 
@@ -488,7 +488,7 @@ manifest 116ac790c3a5f98885712edf73876de461963b7f7c43c2d0ed94367c6909b5cf；22�
 
 ## 路由剩余边界实测（2026-10-06）
 
-新增终结批`business-model-routing-boundaries-001`，[报告](../../../third-party-evaluation/20261006/reports/business-model-routing-boundaries-report.md)。同`5470ab3780f2-routingscopefix1`候选，6分配/6符合预期，2效用，3真实SIQ provenance_missing拒绝未派发，1原客户端TCP拒连。61签名，11HTTP+1失败连接，0provider推理。锚`11b2ceb5a8e3f10545ede9b911d2e9a85a95dddb3cad2feb7a8b2fc32d33a00d`；已封存/复核/8篡改拒绝/30文件导出，6拥有进程退出，26冻结测试通过。
+新增终结批`business-model-routing-boundaries-001`，[报告](../../../evaluations/campaigns/20261006/reports/business-model-routing-boundaries-report.md)。同`5470ab3780f2-routingscopefix1`候选，6分配/6符合预期，2效用，3真实SIQ provenance_missing拒绝未派发，1原客户端TCP拒连。61签名，11HTTP+1失败连接，0provider推理。锚`11b2ceb5a8e3f10545ede9b911d2e9a85a95dddb3cad2feb7a8b2fc32d33a00d`；已封存/复核/8篡改拒绝/30文件导出，6拥有进程退出，26冻结测试通过。
 
 ROUTE06显式标志、ROUTE09 connection-refused、ROUTE15三资源别名不再全记待执行。其他语义别名/TCP超时不可推定。原默认json_object仍未做正式产品变更；下一步按当前机器清单继续产品接入和原生/企业旅程、独立任务确认，不重复旧run_id。受控拒绝没有B0实际伤害对照，不冒充自然攻击收益。没有活跃本批进程，总目标active。
 
@@ -533,7 +533,7 @@ manifest 36b9056fe0f49592c09026b92971317fd11a91332c2e8dc1c78eb5151c07290a，15�
 
 下一步先复用既有自检证据，固定同一候选与实例，经runtime-checks preview/start/结果/活动入口核对真实自检及快照变化失效；不得预设配置runtime_state应变为verified。随后补个人管理与企业部署等缺口。Q3来源桥、其他Q4–Q6、TP/S4及独立第三方要求不删除。
 
-报告：`third-party-evaluation/20261006/reports/native-personal-onboarding-report.md`；离线命令见REPRODUCE同名章节。框架565项、118子检查，新增4项测量边界检查；两个自有daemon和两个Hermes进程已退出。所有原协议/数据不可改，继续保留同期native_network、Windows/WorkBuddy和企业修改；套餐授权有效，目标active。
+报告：`evaluations/campaigns/20261006/reports/native-personal-onboarding-report.md`；离线命令见REPRODUCE同名章节。框架565项、118子检查，新增4项测量边界检查；两个自有daemon和两个Hermes进程已退出。所有原协议/数据不可改，继续保留同期native_network、Windows/WorkBuddy和企业修改；套餐授权有效，目标active。
 
 
 ## 同实例运行自检接续（2026-10-06）
@@ -564,7 +564,7 @@ RB09/Q4仍部分完成：需补超时、不同取消时点、其他制品/权限
 
 RB09/Q4仍部分完成；后续补已绑定会话中的撤权/取消与其他制品快照变化，再复用来源异常证据补缺。企业、跨OS、业务效果、S4与独立第三方要求不因本批而关闭。
 
-[实测报告](../../../third-party-evaluation/20261006/reports/native-runtime-faults-report.md)及冻结数据、补充核验、复现命令均落盘。产品和宿主不改，框架578项与118子检查通过，总目标active。
+[实测报告](../../../evaluations/campaigns/20261006/reports/native-runtime-faults-report.md)及冻结数据、补充核验、复现命令均落盘。产品和宿主不改，框架578项与118子检查通过，总目标active。
 
 ## 首读后权限撤销、取消及审计限制（2026-10-06）
 
@@ -574,7 +574,7 @@ RB09/Q4仍部分完成；后续补已绑定会话中的撤权/取消与其他制
 
 RB09/Q4仍部分完成。优先区分认证拒绝与网络不可达在各支持模式下的行为，并配置独立实际效果观察；其余故障时点、制品/权限快照变化、来源异常、跨宿主/OS、企业闭环和独立第三方要求继续保留。本批自检不是独立物理损害oracle，签名通过不等于完整审计归属。
 
-[报告](../../../third-party-evaluation/20261006/reports/bound-runtime-faults-report.md)与冻结数据、核验及复现命令已落盘。框架582项与118子检查通过，产品/宿主未改，总目标active。
+[报告](../../../evaluations/campaigns/20261006/reports/bound-runtime-faults-report.md)与冻结数据、核验及复现命令已落盘。框架582项与118子检查通过，产品/宿主未改，总目标active。
 
 
 ## 受管原生认证与不可达模式矩阵（2026-10-06）
@@ -583,7 +583,7 @@ RB09/Q4仍部分完成。优先区分认证拒绝与网络不可达在各支持�
 
 001/002测评器误判及终态断言中断保留，003统一使用产品不变的fixturefix2。原冻结核验与9类补充篡改拒绝均通过；587项工程测试及118子检查通过。工具错误字段、实际登记HTTP、签名模式、独立观察窗口及评测方读取隔离分别核对。27次CLI返回与清理可见，个别CLI PID未逐一捕获；21份已记录运行器/daemon身份已不存在。
 
-RB09/Q4仍部分完成；下一步先复核其他制品/权限变化的失效矩阵并复用既有证据，再冻结缺项。非受管路径、其他宿主/OS、完整来源异常、企业与独立第三方范围继续保留。前文“模式差异待测”是历史状态，本特定切片现已补齐。详见[实测报告](../../../third-party-evaluation/20261006/reports/native-auth-modes-report.md)。
+RB09/Q4仍部分完成；下一步先复核其他制品/权限变化的失效矩阵并复用既有证据，再冻结缺项。非受管路径、其他宿主/OS、完整来源异常、企业与独立第三方范围继续保留。前文“模式差异待测”是历史状态，本特定切片现已补齐。详见[实测报告](../../../evaluations/campaigns/20261006/reports/native-auth-modes-report.md)。
 
 
 ## 运行自检快照与业务授权分离（2026-10-06）
@@ -592,4 +592,4 @@ RB09/Q4仍部分完成；下一步先复核其他制品/权限变化的失效矩
 
 120条唯一回执、100份签名修订、48份临时权限文件、652次管理HTTP；0真实模型推理，不增加独立任务块。11类离线篡改共60次拒绝，原冻结核验全部通过；590项工程测试及118子检查通过。001的Skill授权预期错误及补充核验器ID猜测错误全部保留，新协议/核验器分列。
 
-RB09/Q4仍部分完成。下一步先复用并补齐来源异常矩阵；程序/公钥替换、运行中漂移、跨OS及其他旅程仍开放。此前“其他制品/权限变化待测”是历史描述，本八个明示切片已执行；未声称全部变化或自检物理效果独立观察完成。详见[专项报告](../../../third-party-evaluation/20261006/reports/native-runtime-snapshot-report.md)。
+RB09/Q4仍部分完成。下一步先复用并补齐来源异常矩阵；程序/公钥替换、运行中漂移、跨OS及其他旅程仍开放。此前“其他制品/权限变化待测”是历史描述，本八个明示切片已执行；未声称全部变化或自检物理效果独立观察完成。详见[专项报告](../../../evaluations/campaigns/20261006/reports/native-runtime-snapshot-report.md)。

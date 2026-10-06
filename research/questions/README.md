@@ -12,4 +12,4 @@
 
 文献线索见[目录](../literature/README.md)。根总览中的多宿主/隔离能力分层是工程研究专题，不替换 RQ4。重复种子不增加独立任务数；正常、攻击目标、来源案例的分母可以重叠，不能相加。
 
-2026-10-06 的[真实权限案例](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)和[来源／效果专项](../../third-party-evaluation/20261006/reports/siq-effectiveness-assessment.md)为 RQ1–RQ3 增加限定证据；RQ4 的应用级路由另见[同候选业务回归](../../third-party-evaluation/20261006/reports/business-model-routing-fixed-candidate-report.md)，不扩展为全局 DLP。未见任务、独立方复现及 RQ5 的充分效用／成本对照仍需按[后续方案](../../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)或单独协议执行。
+2026-10-06 的[真实权限案例](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)和[来源／效果专项](../../evaluations/campaigns/20261006/reports/siq-effectiveness-assessment.md)为 RQ1–RQ3 增加限定证据；RQ4 的应用级路由另见[同候选业务回归](../../evaluations/campaigns/20261006/reports/business-model-routing-fixed-candidate-report.md)，不扩展为全局 DLP。未见任务、独立方复现及 RQ5 的充分效用／成本对照仍需按[后续方案](../../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)或单独协议执行。

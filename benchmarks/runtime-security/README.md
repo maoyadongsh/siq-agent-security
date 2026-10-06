@@ -14,7 +14,7 @@ D5 只有具有独立 observer 和可核验材料的样本才能计入分母。�
 
 ## 运行组件基准
 
-2026-10-06 的[基线复跑](../../third-party-evaluation/20261006/reports/progress-report.md)在夹具修正后完成 42 场景各三轮及 23 项应用控制，原失败保留。重复场景不增加独立样本数；[真实业务权限测评](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)另有原生模型、签名决定和文件事实，不能合入本组件基准分母。下方恢复、性能及早期增量按各自协议解释。
+2026-10-06 的[基线复跑](../../evaluations/campaigns/20261006/reports/progress-report.md)在夹具修正后完成 42 场景各三轮及 23 项应用控制，原失败保留。重复场景不增加独立样本数；[真实业务权限测评](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)另有原生模型、签名决定和文件事实，不能合入本组件基准分母。下方恢复、性能及早期增量按各自协议解释。
 
 ```bash
 python3 benchmarks/runtime-security/run.py --out /tmp/siq-runtime-benchmark.json

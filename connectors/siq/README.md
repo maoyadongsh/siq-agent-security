@@ -19,4 +19,4 @@ go -C edge/agent build -o .tmp/bin/siq-edge .
 
 研究 API 侧使用 `SIQ_SECURITY_EXPORT_ENABLED=1` 显式开启，`SIQ_SECURITY_EXPORT_ROOT` 可覆盖默认的 `var/security-export`。生产部署应让 API 写入、Edge 只读挂载该目录，并为两个进程配置能满足 owner-only 约束的同一服务身份或等价受控身份映射。当前 Edge 远程注册能力仍未声明 `siq`；本模块已完成本地 `run-once` 与跨仓 canary，不能据此宣称远程调度或生产 IAM 已验收。
 
-最新[分析助手 Agent／Skill 权限报告](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)验证的是业务 API—Hermes—OpenShell—SIQ 执行链，不是本 Connector 远程调度的新验收；业务权限仍由 Research API 管理，本模块只消费受控投影。权限撤销修复及实际执行结果不能提升本模块的 effective 声明或生产 IAM 状态。
+最新[分析助手 Agent／Skill 权限报告](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)验证的是业务 API—Hermes—OpenShell—SIQ 执行链，不是本 Connector 远程调度的新验收；业务权限仍由 Research API 管理，本模块只消费受控投影。权限撤销修复及实际执行结果不能提升本模块的 effective 声明或生产 IAM 状态。

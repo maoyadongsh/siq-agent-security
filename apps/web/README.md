@@ -41,7 +41,7 @@ Windows PowerShell 可将 `npm` 写为 `npm.cmd`，无需修改 ExecutionPolicy�
 
 ## 开发验证与交付
 
-新增[个人浏览器接入与审计](../../third-party-evaluation/20261006/reports/personal-runtime-browser-report.md)及[运行自检状态实测](../../third-party-evaluation/20261006/reports/native-runtime-snapshot-report.md)：同候选接入、自检、活动关联、配置失效、取消和卸载有真实浏览器证据；自检 passed 不代表已撤销的业务授权仍可用。DGX 分析助手前端属于另一项目，其权限测评不能替代本 Web 全页面回归。
+新增[个人浏览器接入与审计](../../evaluations/campaigns/20261006/reports/personal-runtime-browser-report.md)及[运行自检状态实测](../../evaluations/campaigns/20261006/reports/native-runtime-snapshot-report.md)：同候选接入、自检、活动关联、配置失效、取消和卸载有真实浏览器证据；自检 passed 不代表已撤销的业务授权仍可用。DGX 分析助手前端属于另一项目，其权限测评不能替代本 Web 全页面回归。
 
 Vitest 覆盖请求、状态投影和权限/效果相关逻辑；隔离浏览器旅程覆盖桌面/375px、权限过滤、分页、恢复与零意外写请求，真实身份、设备和宿主旅程仍见[测评索引](../../evaluations/README.md)。开发页面可访问不等于配对、授权或宿主已验收。
 

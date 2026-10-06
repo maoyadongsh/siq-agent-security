@@ -23,7 +23,7 @@
 
 ```bash
 $SIQ_EVAL_PY benchmarks/third-party/journal_trial.py \
-  --campaign third-party-evaluation/20261006 --run-id <全新批次ID>
+  --campaign evaluations/campaigns/20261006 --run-id <全新批次ID>
 ```
 
 该命令先冻结工具与 Schema，再运行已登记操作，不接受任意 shell/argv。Linux `/proc` 身份核对和 flock 是当前实现前提，未宣称 Windows 原生恢复验收。
@@ -50,10 +50,10 @@ verify.py RUN_DIR --expected-manifest-sha256 DIGEST
 
 ```bash
 $SIQ_EVAL_PY benchmarks/third-party/product_journal.py \
-  --campaign third-party-evaluation/20261006 --run-id <新正常批次ID>
+  --campaign evaluations/campaigns/20261006 --run-id <新正常批次ID>
 # 按输出协议路径，使用同目录 harness-source/run.py 的统一入口运行并 --seal。
 $SIQ_EVAL_PY benchmarks/third-party/product_journal_trial.py \
-  --campaign third-party-evaluation/20261006 --run-id <新中断批次ID>
+  --campaign evaluations/campaigns/20261006 --run-id <新中断批次ID>
 ```
 
 后续任务：迁移其余产品、模型和企业执行器；建立已有结果的可核验投影而不改写原文；为原生宿主和模型操作分别实现资源核对；完成跨轨道统一调度、完整校准矩阵及统一资源硬限制。当前注册组件调用沿用已有调用超时，故障注入驱动另设子执行器 240 秒等待上限，不能声称已完成所有轨道的资源控制。上述剩余工作完成前 TP02 保持进行中。

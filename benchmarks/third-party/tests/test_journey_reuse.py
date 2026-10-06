@@ -10,7 +10,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from review_journey_reuse import inspect_run, reconcile, verify_oracle_calibration
 
-C = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+C = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 
 
 class JourneyReuseTests(unittest.TestCase):

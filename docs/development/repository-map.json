@@ -358,7 +358,7 @@
       ],
       "kind": "navigation-index",
       "owner_role": "evaluations maintainers",
-      "strategy": "unified evaluation navigation, reader reports and batch entries; frozen campaign evidence retains original paths",
+      "strategy": "single evaluation root: reader reports, byte-preserved campaigns, source-bound relocation manifest and private-state exclusions",
       "consumers": [
         "README.md",
         "README.en.md",
@@ -368,27 +368,6 @@
       "license": "LICENSES/scope.json; indexes do not grant third-party rights",
       "validation": [
         "repository guard; catalog negative tests"
-      ]
-    },
-    {
-      "id": "third-party-evaluation",
-      "paths": [
-        "third-party-evaluation/"
-      ],
-      "kind": "evaluation-evidence",
-      "owner_role": "evaluation maintainers",
-      "strategy": "legacy frozen campaign archive and report compatibility entries; new reader reports are under evaluations/reports; preserve signed evidence and private-state exclusions",
-      "consumers": [
-        "README.md",
-        "README.en.md",
-        "evaluations/README.md",
-        "benchmarks/third-party/README.md"
-      ],
-      "license": "LICENSES/scope.json; THIRD_PARTY_NOTICES.md; companion and upstream materials retain their own terms",
-      "validation": [
-        "repository navigation guard",
-        "candidate-bound evidence verifiers",
-        "publication allowlist and secret review"
       ]
     }
   ],
@@ -2594,8 +2573,8 @@
     },
     {
       "path": "third-party-evaluation/README.md",
-      "action": "add",
-      "reason": "Unify report discovery while preserving frozen campaign evidence and source identities",
+      "action": "delete",
+      "reason": "Retire legacy root; evaluations is the sole entry",
       "consumers": [
         "evaluation readers",
         "report rebuilders"
@@ -2603,6 +2582,22 @@
       "validation": [
         "repository navigation guard",
         "byte identity and report redirect checks"
+      ],
+      "source_commit": "d80879cbbddb05abaaaa42c69fd7f82e30bf3bc4",
+      "source_blob": "613fadf122bbfa9e75b5e1004adcc53aa1aa2698"
+    },
+    {
+      "path": "evaluations/migrations/20261007/README.md",
+      "action": "add",
+      "reason": "Complete source-bound campaign relocation with replay instructions",
+      "consumers": [
+        "evaluation readers",
+        "reproduction tools"
+      ],
+      "validation": [
+        "source byte identity",
+        "repository navigation",
+        "offline verifier tests"
       ]
     }
   ],

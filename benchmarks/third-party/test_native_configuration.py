@@ -8,7 +8,7 @@ from cryptography.exceptions import InvalidSignature
 from native_configuration_review import review_scope
 from verify_native_business import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[2] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[2] / 'evaluations/campaigns/20261006'
 
 
 class NativeConfigurationTests(unittest.TestCase):

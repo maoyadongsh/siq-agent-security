@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from backend_governance import evaluate
 from verify_governance import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / "third-party-evaluation/20261006"
+CAMPAIGN = Path(__file__).resolve().parents[3] / "evaluations/campaigns/20261006"
 
 
 class BackendGovernanceTests(unittest.TestCase):

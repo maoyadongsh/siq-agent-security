@@ -11,7 +11,7 @@ from common import sha256
 from observer_recovery import allocation, verify_observer_recovery
 from verify_product_journal import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 RUN = CAMPAIGN / 'data/observer-recovery-002'
 
 

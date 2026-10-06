@@ -49,6 +49,6 @@ stdin 外层必需 `hook_event_name`、`session_id`、`tool_use_id`、`call_id`�
 
 ## 验证边界
 
-截至 2026-10-06，[0.4.1 正式版](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)已经发布，绑定 a620a31b，包含 Windows 私密文件／路径、配置写入和关联诊断修复；源码原生 CI 不等于最终包桌面验收。[Windows 历史附件](../../../third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)复核 0.4.0／WorkBuddy 5.6.2 的 22 次业务尝试，含失败、越权读写拒绝和失联恢复。本轮没有重跑 Windows，不把历史效果迁移成 0.4.1 全面通过。
+截至 2026-10-06，[0.4.1 正式版](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)已经发布，绑定 a620a31b，包含 Windows 私密文件／路径、配置写入和关联诊断修复；源码原生 CI 不等于最终包桌面验收。[Windows 历史附件](../../../evaluations/campaigns/20261006/reports/research-permissions-windows-history-001.md)复核 0.4.0／WorkBuddy 5.6.2 的 22 次业务尝试，含失败、越权读写拒绝和失联恢复。本轮没有重跑 Windows，不把历史效果迁移成 0.4.1 全面通过。
 
 组件测试验证严格输入、专属凭据和 HTTP 顺序、缺失/损坏配置不降级、安装备份、撤销卸载与宿主门禁保留。真实桌面允许、越权拒绝、服务失联/恢复、撤销和审批恢复须另有原生证据，完成前不标记 WorkBuddy 全部通过。插件市场和 `enabledPlugins@source` 的装前拦截尚未实现。

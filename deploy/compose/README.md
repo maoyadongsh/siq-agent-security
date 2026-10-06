@@ -22,6 +22,6 @@ docker compose -f deploy/compose/compose.yaml down
 
 ## 生产与验收边界
 
-2026-10-06 [生产模式隔离测评](../../third-party-evaluation/20261006/reports/enterprise-chain-report.md)另行使用 PostgreSQL、测试 JWKS、原生 Edge 与真实 OpenShell，观察到部署限制及回滚后的实际请求变化。该成绩来自专项环境，不表示本开发 Compose 已包含完整生产组件或客户身份验收。
+2026-10-06 [生产模式隔离测评](../../evaluations/campaigns/20261006/reports/enterprise-chain-report.md)另行使用 PostgreSQL、测试 JWKS、原生 Edge 与真实 OpenShell，观察到部署限制及回滚后的实际请求变化。该成绩来自专项环境，不表示本开发 Compose 已包含完整生产组件或客户身份验收。
 
 生产须关闭开发身份头，注入数据库/任务签名秘密，配置 OIDC/JWKS、迁移、备份与恢复；实际缺口见[运维模板](../../docs/enterprise-production-runbook-v1.md)。仓库已有隔离 PostgreSQL/JWKS 记录，见[测评索引](../../evaluations/README.md)，不代表 HA、客户 IdP、长期运维或便捷 LAN 多设备流程已验收。

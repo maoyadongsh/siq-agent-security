@@ -47,6 +47,6 @@
 
 ## 全文归位与引用兼容
 
-2026-10-06 的[后续第三方测评方案](../../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)选择 SafeClawBench Exec、Skill 供应链和独立复现作为下一步；论文入库和官方协议查阅不表示这些实验已经执行。已运行的 AgentDojo 另见[试点报告](../../third-party-evaluation/20261006/reports/agentdojo-pilot20-report.md)，不由文献标题推导产品有效性。
+2026-10-06 的[后续第三方测评方案](../../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)选择 SafeClawBench Exec、Skill 供应链和独立复现作为下一步；论文入库和官方协议查阅不表示这些实验已经执行。已运行的 AgentDojo 另见[试点报告](../../evaluations/campaigns/20261006/reports/agentdojo-pilot20-report.md)，不由文献标题推导产品有效性。
 
 35 份 PDF 已原字节迁入 [papers/](papers/README.md)，XLSX 保留于本目录作为历史清单。`catalog.json` 是维护入口，`original_path` 保留旧路径，`path` 为现位置；不会同时维护第二份全文。旧根目录及临时迁移说明已清理；历史路径可从[原始目录快照](https://github.com/maoyadongsh/siq-agent-security/tree/1173042275ae994faa4ed1c99cee58f7d541cb1c/Frontier%20References%20on%20Agent%20Security)访问，旧 main URL 不再提供兼容入口。未知来源/作者/权属/阅读状态不会因归位而变为已核实。

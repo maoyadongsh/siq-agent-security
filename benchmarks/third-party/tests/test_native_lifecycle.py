@@ -11,7 +11,7 @@ from common import sha256
 from native_lifecycle_scoring import load_lines, score
 from verify_native_lifecycle import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 RUN = CAMPAIGN / 'data/native-lifecycle-003'
 
 

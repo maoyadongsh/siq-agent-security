@@ -1,8 +1,8 @@
 # SIQ 第三方测评执行工具
 
-这是作者侧可复查测评工具。20261006 的 DGX／分析助手 Agent 与已安装 Skill 权限收口已完成，入口为[最终报告](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)和[权限复现说明](../../third-party-evaluation/20261006/README-PERMISSIONS.md)。原[阶段报告](../../third-party-evaluation/20261006/reports/progress-report.md)保留历史广义轨道状态；没有完成全部原计划或独立机构认证。
+这是作者侧可复查测评工具。20261006 的 DGX／分析助手 Agent 与已安装 Skill 权限收口已完成，入口为[最终报告](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)和[权限复现说明](../../evaluations/campaigns/20261006/README-PERMISSIONS.md)。原[阶段报告](../../evaluations/campaigns/20261006/reports/progress-report.md)保留历史广义轨道状态；没有完成全部原计划或独立机构认证。
 
-以[复核与复跑说明](../../third-party-evaluation/20261006/REPRODUCE.md)为执行入口。`run.py` 支持原 A 轨道以及 v2 协议的 B 轨道日志恢复校准；后者仅验证测评设施，不是新增产品成绩。B 产品样例、模型、AgentDojo、来源消融、企业 HTTP/PostgreSQL 仍有专项 runner 和 verifier，尚未全部迁移至统一生命周期。`governance_trial.py --include-edge` 可冻结合成 Edge 协议与资产证据扩展。各 cohort 先冻结任务、源码和预算，原始失败与后续修订使用不同目录。
+以[复核与复跑说明](../../evaluations/campaigns/20261006/REPRODUCE.md)为执行入口。`run.py` 支持原 A 轨道以及 v2 协议的 B 轨道日志恢复校准；后者仅验证测评设施，不是新增产品成绩。B 产品样例、模型、AgentDojo、来源消融、企业 HTTP/PostgreSQL 仍有专项 runner 和 verifier，尚未全部迁移至统一生命周期。`governance_trial.py --include-edge` 可冻结合成 Edge 协议与资产证据扩展。各 cohort 先冻结任务、源码和预算，原始失败与后续修订使用不同目录。
 
 [统一记录与恢复说明](LIFECYCLE.md)说明逐次尝试 Schema、首次尝试统计、显式重试与实际进程中断校准。旧封套保持原样，不以新 Schema 改写历史证据。
 
@@ -14,7 +14,7 @@
 python3 -m unittest discover -s benchmarks/third-party/tests -v
 ```
 
-此历史测试集会读取 `20261006/data/`、`protocols/` 中的冻结夹具，个别用例还需要 `private/` 内的隔离 SDK 和 Hermes Python 环境。公开仓库只包含经选择的发布材料，直接在全新克隆中运行上面的完整命令会因缺少档案而失败；该失败不能解释为产品越权，也不能计作测试通过。公开读者优先按[权限复现说明](../../third-party-evaluation/20261006/README-PERMISSIONS.md)核对已发布材料；完整历史校准需另行准备相同锚定档案，不应提交私有运行状态来补齐。
+此历史测试集会读取 `20261006/data/`、`protocols/` 中的冻结夹具，个别用例还需要 `private/` 内的隔离 SDK 和 Hermes Python 环境。公开仓库只包含经选择的发布材料，直接在全新克隆中运行上面的完整命令会因缺少档案而失败；该失败不能解释为产品越权，也不能计作测试通过。公开读者优先按[权限复现说明](../../evaluations/campaigns/20261006/README-PERMISSIONS.md)核对已发布材料；完整历史校准需另行准备相同锚定档案，不应提交私有运行状态来补齐。
 
 模型密钥从仅当前用户可读的私有文件读取，不能写入协议、命令参数值、报告或日志。临时 daemon、凭据和外部工具副本均在活动目录的 `private/` 内，公共审阅副本只按封套白名单导出。
 

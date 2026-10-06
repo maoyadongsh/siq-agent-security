@@ -15,7 +15,7 @@
 
 ## 研究路线
 
-2026-10-06 新增[DGX Agent／已安装 Skill 权限证据](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)、[来源机制与效用评估](../third-party-evaluation/20261006/reports/siq-effectiveness-assessment.md)及[AgentDojo 试点](../third-party-evaluation/20261006/reports/agentdojo-pilot20-report.md)。原生权限案例支持限定的实际控制；AgentDojo 原 240 单元未触发唯一保护入口，不提供增量邮件防护结论。后续[外部基准与隐藏集方案](../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)尚未执行，不据此更新 DOI、独立认证或研究泛化主张。
+2026-10-06 新增[DGX Agent／已安装 Skill 权限证据](../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)、[来源机制与效用评估](../evaluations/campaigns/20261006/reports/siq-effectiveness-assessment.md)及[AgentDojo 试点](../evaluations/campaigns/20261006/reports/agentdojo-pilot20-report.md)。原生权限案例支持限定的实际控制；AgentDojo 原 240 单元未触发唯一保护入口，不提供增量邮件防护结论。后续[外部基准与隐藏集方案](../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)尚未执行，不据此更新 DOI、独立认证或研究泛化主张。
 
 研究材料位于根目录 `research/`，与 `apps/`、`docs/` 平级。沿以下顺序阅读；每页连接问题、方法、实现、协议与证据，正文只维护一份。
 

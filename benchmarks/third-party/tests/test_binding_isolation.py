@@ -13,7 +13,7 @@ import evidence
 from common import sha256
 from verify_product_journal import verify
 
-C = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+C = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 RUN = C / 'data/binding-isolation-001'
 
 

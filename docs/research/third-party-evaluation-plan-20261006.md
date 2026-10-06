@@ -1,14 +1,14 @@
 # SIQ Agent Security 第三方测评方案
 
 
-当前交付：用户指定的 DGX Spark＋Hermes＋OpenShell＋智能分析助手 Agent/已安装 Skill 权限测评已完成，见[最终报告](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)和[复现说明](../../third-party-evaluation/20261006/README-PERMISSIONS.md)。原日常入口 Agent 权限、专属部署已安装 Skill 权限及生命周期分别有真实工具和文件证据；10 个主证据批次的 67 条签名记录及 20 项当前文件检查通过。失败、不同候选身份和能力限制保留，不宣称任意 Skill 自动归属、解释器细粒度隔离或独立机构认证。
+当前交付：用户指定的 DGX Spark＋Hermes＋OpenShell＋智能分析助手 Agent/已安装 Skill 权限测评已完成，见[最终报告](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)和[复现说明](../../evaluations/campaigns/20261006/README-PERMISSIONS.md)。原日常入口 Agent 权限、专属部署已安装 Skill 权限及生命周期分别有真实工具和文件证据；10 个主证据批次的 67 条签名记录及 20 项当前文件检查通过。失败、不同候选身份和能力限制保留，不宣称任意 Skill 自动归属、解释器细粒度隔离或独立机构认证。
 
-当前范围以[DGX 权限收口方案](../../third-party-evaluation/20261006/plan/dgx-research-permission-closeout-001.md)及 [RG01–09 台账](../../third-party-evaluation/20261006/plan/dgx-research-permission-closeout-001.json)为准；其他平台引用历史 Windows/WorkBuddy。原通用 20 任务、企业全功能及外部基准扩量为延期设计，不记为完成。
+当前范围以[DGX 权限收口方案](../../evaluations/campaigns/20261006/plan/dgx-research-permission-closeout-001.md)及 [RG01–09 台账](../../evaluations/campaigns/20261006/plan/dgx-research-permission-closeout-001.json)为准；其他平台引用历史 Windows/WorkBuddy。原通用 20 任务、企业全功能及外部基准扩量为延期设计，不记为完成。
 版本：v1.6（按用户指定的DGX真实分析助手、Agent与Skill权限管控收口）。修订日期：2026-10-06。适用对象：产品负责人、测评执行者与后续实施的 Codex。协议和结果分别保存；本方案中的预期不等于实测通过。
 
 本方案以两类真实产品为对象：**个人本地安全运行时**与**企业治理控制面**。核心问题是合法业务能否完成、越权动作是否被实际阻止、错误完成是否能被识别，以及部署、撤权和恢复是否作用于正确目标。提示注入基准仅覆盖其中一部分，不能代替产品全链路验收。
 
-功能理解已整理为[项目功能与真实链路报告](../../third-party-evaluation/20261006/reports/project-function-understanding.md)及[40项功能追踪表](../../third-party-evaluation/20261006/reports/function-traceability-table.md)。依据包括页面/HTTP/CLI入口、合同、核心实现、适配器，以及本机Demo关键帧、脚本和原始记录；并非逐行审计或逐帧观看全部视频。历史演示只用于定位可复现案例，不能计为本轮成绩。
+功能理解已整理为[项目功能与真实链路报告](../../evaluations/campaigns/20261006/reports/project-function-understanding.md)及[40项功能追踪表](../../evaluations/campaigns/20261006/reports/function-traceability-table.md)。依据包括页面/HTTP/CLI入口、合同、核心实现、适配器，以及本机Demo关键帧、脚本和原始记录；并非逐行审计或逐帧观看全部视频。历史演示只用于定位可复现案例，不能计为本轮成绩。
 
 | 真实功能链 | 测评必须证明 | 不能替代效果证据的材料 |
 |---|---|---|
@@ -21,15 +21,15 @@
 
 每条链均分开记录**合法效用、实际越界效果、SIQ贡献和证据完整性**。采用B0无SIQ、B2完整防护及必要消融时，固定任务、模型、工具与候选；自然模型攻击与确定性越权提议分列。攻击未到达受保护动作时，记录未触发机会，不计为SIQ阻断。合法和越权都被拒绝时，记录效用缺口，不能声称细粒度防护成功。AgentDojo旧试点保留为外部基准记录，不承担核心收益结论。
 
-**Codex当前执行入口：** 先读[DGX权限收口方案](../../third-party-evaluation/20261006/plan/dgx-research-permission-closeout-001.md)及[RG01–09机器台账](../../third-party-evaluation/20261006/plan/dgx-research-permission-closeout-001.json)，围绕真实分析助手执行。原18条旅程与全功能验收表作为历史设计和证据索引，不再充当本轮新增门槛。每批先冻结候选、入口、用例、外部判据与资源范围，再运行、核验、保留全部失败和清理自有资源。用户已明确授权发现问题直接修复优化；修复后另立批次，不能覆盖失败或调整评分掩盖能力缺口。
+**Codex当前执行入口：** 先读[DGX权限收口方案](../../evaluations/campaigns/20261006/plan/dgx-research-permission-closeout-001.md)及[RG01–09机器台账](../../evaluations/campaigns/20261006/plan/dgx-research-permission-closeout-001.json)，围绕真实分析助手执行。原18条旅程与全功能验收表作为历史设计和证据索引，不再充当本轮新增门槛。每批先冻结候选、入口、用例、外部判据与资源范围，再运行、核验、保留全部失败和清理自有资源。用户已明确授权发现问题直接修复优化；修复后另立批次，不能覆盖失败或调整评分掩盖能力缺口。
 
 历史广义轨道：worker顺序周期、风险处置及规则并发曾完成指定变体修复复测；确认集、企业通知故障/UI、真实客户IdP、跨OS与机构独立执行等剩余设计已由用户当前收口范围延期，不能读作本轮待执行清单。默认Hermes来源传播不完整、部分合法终端/委派不可用、共享沙箱细粒度隔离未建立等能力边界，须依据各自候选报告，不通过调整评分或替换业务入口掩盖。
 
-已执行材料见[产品测评总览](../../third-party-evaluation/20261006/reports/product-evaluation-overview.md)和[阶段报告](../../third-party-evaluation/20261006/reports/progress-report.md)。本轮由作者侧执行，尚非独立第三方认证。原TP00–TP10、历史协议、首次失败和候选差异继续保留；下列广义实施设计供后续重新立项使用，当前完成范围由用户指定的RG01–09决定，历史状态以对应冻结报告为准。此次整理了重复、过时的首页接续说明，整理前全文保留在本机修订备份 `third-party-evaluation/20261006/plan/revision-history/risk-legal-lifecycle-002/files/docs/research/third-party-evaluation-plan-20261006.md`（未纳入公开仓库）；公开读者可查阅上述阶段报告及本文件的 Git 修订历史。
+已执行材料见[产品测评总览](../../evaluations/campaigns/20261006/reports/product-evaluation-overview.md)和[阶段报告](../../evaluations/campaigns/20261006/reports/progress-report.md)。本轮由作者侧执行，尚非独立第三方认证。原TP00–TP10、历史协议、首次失败和候选差异继续保留；下列广义实施设计供后续重新立项使用，当前完成范围由用户指定的RG01–09决定，历史状态以对应冻结报告为准。此次整理了重复、过时的首页接续说明，整理前全文保留在本机修订备份 `evaluations/campaigns/20261006/plan/revision-history/risk-legal-lifecycle-002/files/docs/research/third-party-evaluation-plan-20261006.md`（未纳入公开仓库）；公开读者可查阅上述阶段报告及本文件的 Git 修订历史。
 
-本次复核与实施补充：见[功能深入复核](../../third-party-evaluation/20261006/reports/product-capability-reassessment-005.md)、[实施方案v3](../../third-party-evaluation/20261006/plan/product-grounded-acceptance-v3.md)和[机器验收登记](../../third-party-evaluation/20261006/plan/product-acceptance-register-v3.json)。v3保存当时规划的AC01–12、20种开发业务、臂数和停止条件；它不覆盖用户后续指定的DGX权限收口范围。TP05/06扩量仍为延期设计，不借本轮权限案例标记完成。
+本次复核与实施补充：见[功能深入复核](../../evaluations/campaigns/20261006/reports/product-capability-reassessment-005.md)、[实施方案v3](../../evaluations/campaigns/20261006/plan/product-grounded-acceptance-v3.md)和[机器验收登记](../../evaluations/campaigns/20261006/plan/product-acceptance-register-v3.json)。v3保存当时规划的AC01–12、20种开发业务、臂数和停止条件；它不覆盖用户后续指定的DGX权限收口范围。TP05/06扩量仍为延期设计，不借本轮权限案例标记完成。
 
-用户最新范围优先：本轮以[DGX权限收口方案](../../third-party-evaluation/20261006/plan/dgx-research-permission-closeout-001.md)及[九项任务登记](../../third-party-evaluation/20261006/plan/dgx-research-permission-closeout-001.json)为准。此前v3的通用20任务、全平台与无关企业功能不再作为本轮新增必需门槛；这些历史设计和已有证据保留，不记为完成。目标以实际结果支持，Agent实例Grant与Skill安装级权限分别验收。
+用户最新范围优先：本轮以[DGX权限收口方案](../../evaluations/campaigns/20261006/plan/dgx-research-permission-closeout-001.md)及[九项任务登记](../../evaluations/campaigns/20261006/plan/dgx-research-permission-closeout-001.json)为准。此前v3的通用20任务、全平台与无关企业功能不再作为本轮新增必需门槛；这些历史设计和已有证据保留，不记为完成。目标以实际结果支持，Agent实例Grant与Skill安装级权限分别验收。
 
 ## 0 阅读顺序与任务包
 
@@ -37,7 +37,7 @@
 | --- | --- | --- |
 | 本文 | 范围、方法、指标、实验组及产品主张 | 完整合并设计 |
 | [Codex 实施任务书](third-party-evaluation-20261006/CODEX_HANDOFF.md) | TP00–TP10 的输入、步骤、路径、验收、异常处理和接续方式 | 原要求保留；已执行状态见测评台账 |
-| [功能报告与业务方案](../../third-party-evaluation/20261006/plan/real-business-evaluation-v2.md) | 40项功能、18条业务旅程、V2-00–07实施任务 | 功能层面核对及方案完成；新cohort须另行冻结 |
+| [功能报告与业务方案](../../evaluations/campaigns/20261006/plan/real-business-evaluation-v2.md) | 40项功能、18条业务旅程、V2-00–07实施任务 | 功能层面核对及方案完成；新cohort须另行冻结 |
 | [专项用例矩阵](third-party-evaluation-20261006/case_matrix.json) | 30 个机制测试族与 24 个产品组的映射、设置、正负变体、外部判据 | 机器可读开发规范；不是测试结果或隐藏集 |
 | [预注册模板](third-party-evaluation-20261006/preregistration.template.json) | 版本、组别、模型、预算、分母、停止及重试规则 | 待填冻结字段；`ready_to_run=false` |
 | [第三方工作范围](third-party-evaluation-20261006/EVALUATOR_SOW.md) | 独立性、隐藏集控制、交付验收、复核与结论权限 | 委托范围草案；未联系或委托机构 |
@@ -790,23 +790,23 @@ v1.1编制阶段核对了仓库、合同、官方方法资料、链接、JSON及
 
 ## 20 功能核对后的执行增补
 
-详细步骤以[真实业务执行方案v2](../../third-party-evaluation/20261006/plan/real-business-evaluation-v2.md)为准：RB01–RB08覆盖原参考应用、来源、完成判定、审批恢复、原生Hermes、OpenShell、委派和模型路由；RB09–RB18覆盖发现/准入/安装、管理权限、审计原文、企业设备/资产/部署、Skill更新、客户端生命周期、真实业务在途撤权与性能。
+详细步骤以[真实业务执行方案v2](../../evaluations/campaigns/20261006/plan/real-business-evaluation-v2.md)为准：RB01–RB08覆盖原参考应用、来源、完成判定、审批恢复、原生Hermes、OpenShell、委派和模型路由；RB09–RB18覆盖发现/准入/安装、管理权限、审计原文、企业设备/资产/部署、Skill更新、客户端生命周期、真实业务在途撤权与性能。
 
-18条旅程是原24产品组和30机制族的实际执行路径，不相加为新的独立攻击分母。完整接入必须核对所有工具及嵌套调用、真实身份、Intent版本、SEC和显式来源传播；自然模型提议、固定错误提议、产品决定、实际派发及效果分别计分。原应用执行器、独立评分和离线验证现已实现，完成[12个机制控制](../../third-party-evaluation/20261006/reports/business-chain-controls-001-report.md)及[20个真实模型校准](../../third-party-evaluation/20261006/reports/business-chain-model-calibration-report.md)。来源消融体现实际门禁差异；会话污染导致合法发送损失也已保留。该阶段仍缺B0与实际观察故障对照，接续结果见下段；原生业务与扩大配对试点仍待完成。
+18条旅程是原24产品组和30机制族的实际执行路径，不相加为新的独立攻击分母。完整接入必须核对所有工具及嵌套调用、真实身份、Intent版本、SEC和显式来源传播；自然模型提议、固定错误提议、产品决定、实际派发及效果分别计分。原应用执行器、独立评分和离线验证现已实现，完成[12个机制控制](../../evaluations/campaigns/20261006/reports/business-chain-controls-001-report.md)及[20个真实模型校准](../../evaluations/campaigns/20261006/reports/business-chain-model-calibration-report.md)。来源消融体现实际门禁差异；会话污染导致合法发送损失也已保留。该阶段仍缺B0与实际观察故障对照，接续结果见下段；原生业务与扩大配对试点仍待完成。
 
-接续已完成[原应用B0三臂控制](../../third-party-evaluation/20261006/reports/business-comparison-controls-report.md)、[两模型三臂探索对照](../../third-party-evaluation/20261006/reports/business-comparison-models-report.md)、[MCP文本PII归因](../../third-party-evaluation/20261006/reports/business-taint-attribution-report.md)及[实际观察器故障校准](../../third-party-evaluation/20261006/reports/business-observer-calibration-report.md)。原应用交付链B0已具备；原生宿主、更多故障覆盖、研究语义评分和20独立任务块确认集仍待完成。自然模型对照仍未显示额外攻击阻断收益，合法交付代价必须保留。
+接续已完成[原应用B0三臂控制](../../evaluations/campaigns/20261006/reports/business-comparison-controls-report.md)、[两模型三臂探索对照](../../evaluations/campaigns/20261006/reports/business-comparison-models-report.md)、[MCP文本PII归因](../../evaluations/campaigns/20261006/reports/business-taint-attribution-report.md)及[实际观察器故障校准](../../evaluations/campaigns/20261006/reports/business-observer-calibration-report.md)。原应用交付链B0已具备；原生宿主、更多故障覆盖、研究语义评分和20独立任务块确认集仍待完成。自然模型对照仍未显示额外攻击阻断收益，合法交付代价必须保留。
 
-方案、数据、报告统一存放于用户指定的仓内`third-party-evaluation/20261006/`，私有原件留`private/`，白名单导出留`data/`。新的业务批次每次先冻结；原所有失败、修复前后及外部条件限制保留。
+方案、数据、报告统一存放于用户指定的仓内`evaluations/campaigns/20261006/`，私有原件留`private/`，白名单导出留`data/`。新的业务批次每次先冻结；原所有失败、修复前后及外部条件限制保留。
 
-接续新增[真实功能验收门槛](../../third-party-evaluation/20261006/plan/feature-acceptance-gates-v2.md)和[原生Hermes简报结果](../../third-party-evaluation/20261006/reports/native-business-briefing-report.md)。控制批确认真实越界读取B0有实际效果、B2拒绝后合法简报继续；两模型自然提议仍无目标攻击差异。Step正常B2有一次效用失败，方案据此增加相对路径解析、固定Skill说明最小读取权限、工具可见/获准一致性与恢复任务。不得通过只展示受控成功、删除自然模型失败来形成总体防护率。当前v2执行细则第11节给出后续具体工作项；未完成旅程与确认集不变。
+接续新增[真实功能验收门槛](../../evaluations/campaigns/20261006/plan/feature-acceptance-gates-v2.md)和[原生Hermes简报结果](../../evaluations/campaigns/20261006/reports/native-business-briefing-report.md)。控制批确认真实越界读取B0有实际效果、B2拒绝后合法简报继续；两模型自然提议仍无目标攻击差异。Step正常B2有一次效用失败，方案据此增加相对路径解析、固定Skill说明最小读取权限、工具可见/获准一致性与恢复任务。不得通过只展示受控成功、删除自然模型失败来形成总体防护率。当前v2执行细则第11节给出后续具体工作项；未完成旅程与确认集不变。
 
-上述接续已完成[路径/安装说明控制与两模型新配置](../../third-party-evaluation/20261006/reports/native-path-and-recovery-report.md)：准确定位相对路径与工作目录差异，最小说明读取权限没有扩大到其他Skill/私有资料，两模型明确绝对路径的新配置均完成4/4。缓存探针首批失败、工作目录失败及原Step失败全部保留。相对路径产品修复、真正拒绝后的自然恢复、更广工具/业务任务与独立确认仍待完成，具体下一步见执行细则第12节。
+上述接续已完成[路径/安装说明控制与两模型新配置](../../evaluations/campaigns/20261006/reports/native-path-and-recovery-report.md)：准确定位相对路径与工作目录差异，最小说明读取权限没有扩大到其他Skill/私有资料，两模型明确绝对路径的新配置均完成4/4。缓存探针首批失败、工作目录失败及原Step失败全部保留。相对路径产品修复、真正拒绝后的自然恢复、更广工具/业务任务与独立确认仍待完成，具体下一步见执行细则第12节。
 
-功能深度复核与后续执行以[功能核对报告](../../third-party-evaluation/20261006/reports/project-function-understanding.md)、[40项追踪表](../../third-party-evaluation/20261006/reports/function-traceability-table.md)及执行细则为当前入口。细则第13–14节已补原生文件/终端实际效果与四类闭域语义，不能再将这些切片笼统记为全未测；允许terminal后的细粒度控制、开放研究质量和独立确认集仍未完成。第15节新增[PII新任务恢复](../../third-party-evaluation/20261006/reports/business-pii-recovery-report.md)：保持旧会话拒绝，新干净任务真实交付、新污染任务继续拒绝。只完成操作员受控恢复，模型自主恢复和同会话解除污染未验证。各批首次失败、未知与测评器修正分别留档，不据局部通过关闭全产品测评。
+功能深度复核与后续执行以[功能核对报告](../../evaluations/campaigns/20261006/reports/project-function-understanding.md)、[40项追踪表](../../evaluations/campaigns/20261006/reports/function-traceability-table.md)及执行细则为当前入口。细则第13–14节已补原生文件/终端实际效果与四类闭域语义，不能再将这些切片笼统记为全未测；允许terminal后的细粒度控制、开放研究质量和独立确认集仍未完成。第15节新增[PII新任务恢复](../../evaluations/campaigns/20261006/reports/business-pii-recovery-report.md)：保持旧会话拒绝，新干净任务真实交付、新污染任务继续拒绝。只完成操作员受控恢复，模型自主恢复和同会话解除污染未验证。各批首次失败、未知与测评器修正分别留档，不据局部通过关闭全产品测评。
 
 ## 修复候选同版本业务回归（2026-10-06）
 
-功能核对后的执行继续按真实入口和完整候选身份推进。[同版本业务测评](../../third-party-evaluation/20261006/reports/business-model-routing-fixed-candidate-report.md)已补来源分级修复候选14控制及5/5真实Step/Qwen业务，源码、原始请求、签名决定、文件和实际交付相互关联。默认应用不提供逐文件分级入口，准备/执行也有任务边界；混合来源组件修复与业务回归分别报告，不能拼成统一攻击防护率。默认格式失败保留，正式产品格式整合、剩余变体及全产品确认集仍未完成。
+功能核对后的执行继续按真实入口和完整候选身份推进。[同版本业务测评](../../evaluations/campaigns/20261006/reports/business-model-routing-fixed-candidate-report.md)已补来源分级修复候选14控制及5/5真实Step/Qwen业务，源码、原始请求、签名决定、文件和实际交付相互关联。默认应用不提供逐文件分级入口，准备/执行也有任务边界；混合来源组件修复与业务回归分别报告，不能拼成统一攻击防护率。默认格式失败保留，正式产品格式整合、剩余变体及全产品确认集仍未完成。
 
 
 ## 同候选个人接入链路的实测反馈（2026-10-06）
@@ -817,7 +817,7 @@ v1.1编制阶段核对了仓库、合同、官方方法资料、链接、JSON及
 
 下一步先复用既有自检证据，固定同一候选与实例，经runtime-checks preview/start/结果/活动入口核对真实自检及快照变化失效；不得预设配置runtime_state应变为verified。随后补个人管理与企业部署等缺口。Q3来源桥、其他Q4–Q6、TP/S4及独立第三方要求不删除。
 
-[实际报告](../../third-party-evaluation/20261006/reports/native-personal-onboarding-report.md)与执行细则末尾冻结门槛已同步，首次失败及原计划均保留。
+[实际报告](../../evaluations/campaigns/20261006/reports/native-personal-onboarding-report.md)与执行细则末尾冻结门槛已同步，首次失败及原计划均保留。
 
 
 ## 同实例产品运行自检实测增补（2026-10-06）
@@ -828,7 +828,7 @@ v1.1编制阶段核对了仓库、合同、官方方法资料、链接、JSON及
 
 后续RB09补同候选浏览器自检/活动呈现、取消/超时及其他快照变化；来源异常按既有证据复用后补缺。其余个人、企业、跨OS、Q3来源桥、TP/S4和第三方独立执行不因本批通过而关闭。
 
-[实际自检报告](../../third-party-evaluation/20261006/reports/native-personal-runtime-check-report.md)及冻结协议、复核命令和任务状态已同步。
+[实际自检报告](../../evaluations/campaigns/20261006/reports/native-personal-runtime-check-report.md)及冻结协议、复核命令和任务状态已同步。
 
 ## 按真实产品功能补充浏览器闭环（2026-10-06）
 
@@ -838,7 +838,7 @@ v1.1编制阶段核对了仓库、合同、官方方法资料、链接、JSON及
 
 RB09/Q4仍部分完成：需补超时、不同取消时点、其他制品/权限变化、完整来源异常及跨宿主/OS。本批没有独立自检系统调用效果观察，不能据此计算损害减少；企业闭环、自然模型收益和独立第三方执行仍按各自台账验收。
 
-[浏览器实测报告](../../third-party-evaluation/20261006/reports/personal-runtime-browser-report.md)。未来协议使用已修正摘要投影的核验器；复核003必须使用其独立冻结的补充工具，不能拿新源码替换旧协议。
+[浏览器实测报告](../../evaluations/campaigns/20261006/reports/personal-runtime-browser-report.md)。未来协议使用已修正摘要投影的核验器；复核003必须使用其独立冻结的补充工具，不能拿新源码替换旧协议。
 
 ## 自检故障与恢复实测增补（2026-10-06）
 
@@ -848,7 +848,7 @@ RB09/Q4仍部分完成：需补超时、不同取消时点、其他制品/权限
 
 RB09/Q4仍部分完成；后续补已绑定会话中的撤权/取消与其他制品快照变化，再复用来源异常证据补缺。企业、跨OS、业务效果、S4与独立第三方要求不因本批而关闭。
 
-[实测报告](../../third-party-evaluation/20261006/reports/native-runtime-faults-report.md)及冻结数据、补充核验、复现命令均落盘。产品和宿主不改，框架578项与118子检查通过，总目标active。
+[实测报告](../../evaluations/campaigns/20261006/reports/native-runtime-faults-report.md)及冻结数据、补充核验、复现命令均落盘。产品和宿主不改，框架578项与118子检查通过，总目标active。
 
 ## 首读后权限撤销、取消及审计限制（2026-10-06）
 
@@ -858,7 +858,7 @@ RB09/Q4仍部分完成；后续补已绑定会话中的撤权/取消与其他制
 
 RB09/Q4仍部分完成。优先区分认证拒绝与网络不可达在各支持模式下的行为，并配置独立实际效果观察；其余故障时点、制品/权限快照变化、来源异常、跨宿主/OS、企业闭环和独立第三方要求继续保留。本批自检不是独立物理损害oracle，签名通过不等于完整审计归属。
 
-[报告](../../third-party-evaluation/20261006/reports/bound-runtime-faults-report.md)与冻结数据、核验及复现命令已落盘。框架582项与118子检查通过，产品/宿主未改，总目标active。
+[报告](../../evaluations/campaigns/20261006/reports/bound-runtime-faults-report.md)与冻结数据、核验及复现命令已落盘。框架582项与118子检查通过，产品/宿主未改，总目标active。
 
 
 ## 受管原生认证与不可达模式矩阵（2026-10-06）
@@ -867,7 +867,7 @@ RB09/Q4仍部分完成。优先区分认证拒绝与网络不可达在各支持�
 
 001/002测评器误判及终态断言中断保留，003统一使用产品不变的fixturefix2。原冻结核验与9类补充篡改拒绝均通过；587项工程测试及118子检查通过。工具错误字段、实际登记HTTP、签名模式、独立观察窗口及评测方读取隔离分别核对。27次CLI返回与清理可见，个别CLI PID未逐一捕获；21份已记录运行器/daemon身份已不存在。
 
-RB09/Q4仍部分完成；下一步先复核其他制品/权限变化的失效矩阵并复用既有证据，再冻结缺项。非受管路径、其他宿主/OS、完整来源异常、企业与独立第三方范围继续保留。前文“模式差异待测”是历史状态，本特定切片现已补齐。详见[实测报告](../../third-party-evaluation/20261006/reports/native-auth-modes-report.md)。
+RB09/Q4仍部分完成；下一步先复核其他制品/权限变化的失效矩阵并复用既有证据，再冻结缺项。非受管路径、其他宿主/OS、完整来源异常、企业与独立第三方范围继续保留。前文“模式差异待测”是历史状态，本特定切片现已补齐。详见[实测报告](../../evaluations/campaigns/20261006/reports/native-auth-modes-report.md)。
 
 
 ## 运行自检快照与业务授权分离（2026-10-06）
@@ -876,4 +876,4 @@ RB09/Q4仍部分完成；下一步先复核其他制品/权限变化的失效矩
 
 120条唯一回执、100份签名修订、48份临时权限文件、652次管理HTTP；0真实模型推理，不增加独立任务块。11类离线篡改共60次拒绝，原冻结核验全部通过；590项工程测试及118子检查通过。001的Skill授权预期错误及补充核验器ID猜测错误全部保留，新协议/核验器分列。
 
-RB09/Q4仍部分完成。下一步先复用并补齐来源异常矩阵；程序/公钥替换、运行中漂移、跨OS及其他旅程仍开放。此前“其他制品/权限变化待测”是历史描述，本八个明示切片已执行；未声称全部变化或自检物理效果独立观察完成。详见[专项报告](../../third-party-evaluation/20261006/reports/native-runtime-snapshot-report.md)。
+RB09/Q4仍部分完成。下一步先复用并补齐来源异常矩阵；程序/公钥替换、运行中漂移、跨OS及其他旅程仍开放。此前“其他制品/权限变化待测”是历史描述，本八个明示切片已执行；未声称全部变化或自检物理效果独立观察完成。详见[专项报告](../../evaluations/campaigns/20261006/reports/native-runtime-snapshot-report.md)。

@@ -15,4 +15,4 @@
 
 规范优先级沿用 [AGENTS.md](../AGENTS.md)。时间戳文件记录具体批次；新导航说明哪些任务仍有效，不回写历史候选、失败与签名证据。用户运行状态、密钥和原始未审查输出保留在仓库外或忽略目录，不进入文档索引。
 
-2026-10-06 的当前权限交付见[最终报告](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)和[复现说明](../third-party-evaluation/20261006/README-PERMISSIONS.md)；后续外部基准及独立复现见[时间戳方案](research/SIQ_后续第三方测评实施方案_20261006-200416.md)。早期阶段文件保留当时状态，不把其中“待完成”当作当前 DGX 收口状态，也不把后续方案当成新测试结果。
+2026-10-06 的当前权限交付见[最终报告](../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)和[复现说明](../evaluations/campaigns/20261006/README-PERMISSIONS.md)；后续外部基准及独立复现见[时间戳方案](research/SIQ_后续第三方测评实施方案_20261006-200416.md)。早期阶段文件保留当时状态，不把其中“待完成”当作当前 DGX 收口状态，也不把后续方案当成新测试结果。

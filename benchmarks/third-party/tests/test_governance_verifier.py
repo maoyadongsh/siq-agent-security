@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import sha256
 from verify_governance import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / "third-party-evaluation/20261006"
+CAMPAIGN = Path(__file__).resolve().parents[3] / "evaluations/campaigns/20261006"
 SOURCE = CAMPAIGN / "data/governance-http-003"
 ANCHOR = "c6b0e40c6a31f892c8c5380ab0d078fe2a239c2817e04355571685744593495c"
 

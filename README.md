@@ -60,7 +60,7 @@
 
 ## 当前产品方向与支持状态
 
-**2026-10-06 实测更新：** DGX Spark＋Hermes＋OpenShell＋智能分析助手已完成本轮 Agent／已安装 Skill 权限收口：授权读取和指定范围写入能够完成，所测越权写入、Skill SEC 撤销后再次写入及服务失联期间写入被拒绝，并核对实际文件效果。Agent 使用日常业务入口；Skill 使用真实安装、原生加载和显式宿主上下文绑定的专属验收入口，尚不代表默认入口自动管控任意 Skill 切换。见[最终报告](third-party-evaluation/20261006/reports/research-permissions-final-report.md)和[复现说明](third-party-evaluation/20261006/README-PERMISSIONS.md)。这些是项目方执行、跨批次冻结候选的证据，不是独立机构认证，也未回填为 0.4.1 发行包验收。
+**2026-10-06 实测更新：** DGX Spark＋Hermes＋OpenShell＋智能分析助手已完成本轮 Agent／已安装 Skill 权限收口：授权读取和指定范围写入能够完成，所测越权写入、Skill SEC 撤销后再次写入及服务失联期间写入被拒绝，并核对实际文件效果。Agent 使用日常业务入口；Skill 使用真实安装、原生加载和显式宿主上下文绑定的专属验收入口，尚不代表默认入口自动管控任意 Skill 切换。见[最终报告](evaluations/campaigns/20261006/reports/research-permissions-final-report.md)和[复现说明](evaluations/campaigns/20261006/README-PERMISSIONS.md)。这些是项目方执行、跨批次冻结候选的证据，不是独立机构认证，也未回填为 0.4.1 发行包验收。
 
 当前产品围绕“**发现与核对 → 准入与授权 → 运行与确认 → 追溯与维护**”组织功能。个人端已补充环境与项目发现、模型连接测试、多 OpenShell 网关检查、只读授权方案、原生保护检查、活动筛选与按任务输出查看；企业端以资产、权限、安全、审计四个主入口组织框架实例、角色与 Skill 观察、权限事实、风险处置、运行时绑定和精确审计查询，原策略、变更、环境与高级管理能力仍保留。周期计划的控制面、设备确认/轮询/退役与只读发现已合入，真实设备和生产身份旅程仍需验收。当前重点是将已验证的开发候选收敛为同版本回归，补齐正式包原生验收、企业真实身份和跨系统联验；公开基准扩展与独立复现按后续方案另行实施。
 
@@ -83,7 +83,7 @@
 | macOS | LaunchAgent 生命周期、OpenClaw/Hermes/WorkBuddy 阶段成果及独立复核修复已合入；0.4.1 提供签名清单绑定的 arm64 二进制 | 0.4.1 原生安装/升级、三宿主同版本复测、完整平台验收和 Apple 签名公证；项目清单签名不等于公证 |
 | Windows | Writer、迁移恢复、DACL、资源与身份复验、三宿主管理、任务安装升级回滚及 junction 防护已合入；0.4.1 正式版包含 ACL 预检、配置发布复验、关联诊断及 UNC 修复；Windows 源码全量 55 包退出 0，67 条条件/平台 skip 不计通过 | 0.4.1 签名包安装/升级及真实 WorkBuddy 新批次；历史 OpenClaw 证据来自 WSL Agent，Hermes 为原生 CLI，WorkBuddy 原生最小读写不等于完整审批恢复、桌面更新和重复稳定性验收 |
 | OpenClaw / Hermes / WorkBuddy | 新增 OpenClaw 2026.9.5 原生组件、会话隔离与输出链路验证；Hermes 0.21 有隔离环境的真实模型报告旅程；受控 OpenClaw 检查点补丁与原版能力分开登记 | Linux 只交付 OpenClaw、Hermes；组件验证不等于 OpenClaw 全模型业务旅程通过；Windows/macOS 三宿主及 WorkBuddy 桌面仍按同候选实机证据验收 |
-| DGX Spark / OpenShell | 2026-10-06 真实分析助手已验证 Agent 只读／窄写授权、已绑定安装 Skill 的不同权限、更新与撤销、漂移收容、失联恢复；[10 个主批次](third-party-evaluation/20261006/reports/research-permissions-final-report.md)有 67 条签名记录及 20 项文件检查 | 非同一最终发行候选全量回归；任意 Skill 自动归属、解释器细粒度合法效用、所有撤权竞态及独立第三方复现仍未证明 |
+| DGX Spark / OpenShell | 2026-10-06 真实分析助手已验证 Agent 只读／窄写授权、已绑定安装 Skill 的不同权限、更新与撤销、漂移收容、失联恢复；[10 个主批次](evaluations/campaigns/20261006/reports/research-permissions-final-report.md)有 67 条签名记录及 20 项文件检查 | 非同一最终发行候选全量回归；任意 Skill 自动归属、解释器细粒度合法效用、所有撤权竞态及独立第三方复现仍未证明 |
 | 局域网团队多设备管理 | 企业 API / Web、周期计划存储与管理、设备端显式确认/轮询/退役及只读待办发现已合入；已有 Control API、Edge / Connector 集中治理基础 | 真实组织账号、独立审批者与业务结果跨系统联验；真实设备上的持续采集、安装衔接与恢复验收；便捷团队设备接入、统一管控与多设备验收 |
 
 主线已有 OpenShell 受约束任务执行、多网关发现与检查入口：执行前需要显式绑定 CLI 与 endpoint、确认策略加载及实例身份，并再次校验授权。`policy_apply` 响应仍不代表任务实际执行；任务是否启动以执行回执和效果证据判断。新增请求级监督与恢复只覆盖其绑定的请求和已验证路径，不能推定任意远端任务都可安全停止。最新范围见[当前开发](docs/development/current.md)，历史 v6 结果保留在[Linux 进度台账](docs/linux-dual-host-progress-20260918.md)。发现资产不等于已启用保护；保护范围取决于实际接入的工具路径。
@@ -384,7 +384,7 @@ flowchart TB
 
 ## DGX Spark 与 NVIDIA OpenShell 深度适配
 
-最新真实业务证据见[2026-10-06 权限收口](third-party-evaluation/20261006/reports/research-permissions-final-report.md)：真实鉴权、公司授权、Hermes 工具、OpenShell 运行和本地模型串联，资料为合成测试文件。原生企业链另在 OpenShell 0.0.104 上核对允许／拒绝／回滚后的接收效果。以下历史网关和候选记录保留原范围，不把版本不同的结果合为一次验收。
+最新真实业务证据见[2026-10-06 权限收口](evaluations/campaigns/20261006/reports/research-permissions-final-report.md)：真实鉴权、公司授权、Hermes 工具、OpenShell 运行和本地模型串联，资料为合成测试文件。原生企业链另在 OpenShell 0.0.104 上核对允许／拒绝／回滚后的接收效果。以下历史网关和候选记录保留原范围，不把版本不同的结果合为一次验收。
 
 **DGX Spark 承载本地 AI 工作负载，SIQ 管理动作授权与证据，OpenShell 承担其实际支持的执行隔离和策略约束。** 本仓已提供专用部署、环境预检、模型与服务身份检查，以及 Go / Python OpenShell 后端适配；适配深度覆盖部署、授权、策略、读回、故障恢复和证据验证。
 
@@ -498,7 +498,7 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 <details>
 <summary>查看 StepFun + DGX Spark 配置入口</summary>
 
-2026-10-06 新批次使用本地 Qwen3.8-27B-NVFP4 与远端 Step `step-5-preview`，DGX 权限收口使用本地 Qwen；按批次协议独立配置和统计，见[权限复现说明](third-party-evaluation/20261006/README-PERMISSIONS.md)。历史实模型演示使用 **StepFun `step-3.7-flash` 远程规划**与 **DGX Spark 上的 Ornith 本地分析**。后续另有 Hermes 0.21 / Qwen / OpenShell 的隔离报告旅程，见[最新收尾记录](docs/development/flagship-closeout-current-20260924.md)，不替代原定 Nemotron 或真实业务账号验收。这些路径需要独立配置模型、私密凭据和硬件；与无密钥路径分开运行、分开统计。
+2026-10-06 新批次使用本地 Qwen3.8-27B-NVFP4 与远端 Step `step-5-preview`，DGX 权限收口使用本地 Qwen；按批次协议独立配置和统计，见[权限复现说明](evaluations/campaigns/20261006/README-PERMISSIONS.md)。历史实模型演示使用 **StepFun `step-3.7-flash` 远程规划**与 **DGX Spark 上的 Ornith 本地分析**。后续另有 Hermes 0.21 / Qwen / OpenShell 的隔离报告旅程，见[最新收尾记录](docs/development/flagship-closeout-current-20260924.md)，不替代原定 Nemotron 或真实业务账号验收。这些路径需要独立配置模型、私密凭据和硬件；与无密钥路径分开运行、分开统计。
 
 从 [DGX 部署说明](deploy/dgx-spark/README.md)、[私密模型配置](docs/hackathon/step-plan.md)和[三轨复现指南](REPRODUCIBILITY.md)进入。机密分析的本地失败不能因此自动获准回退到远程模型。
 
@@ -534,12 +534,12 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 | 已归档观察 | 结果 | 证据与范围 |
 | --- | --- | --- |
-| DGX Agent／Skill 权限真实业务 | 10 个主证据批次；67 条签名记录、20 项文件检查通过 | [最终报告](third-party-evaluation/20261006/reports/research-permissions-final-report.md)；Agent 日常入口与 Skill 专属入口分列，37 个业务批次包含失败及诊断，不是通过率；不同候选不合并为发行认证 |
-| 个人来源、准入与安装 | 目录／ZIP 导入、完整性拒绝、原生安装读写及公网 HTTPS 导入已有专项证据 | [原生 ZIP](third-party-evaluation/20261006/reports/native-zip-onboarding-report.md)、[公网来源](third-party-evaluation/20261006/reports/remote-source-import-report.md)；各自范围和首次失败保留，Git 生产获取仍未开放 |
-| 企业治理与后端实际效果 | 原生 Edge／Connector → 审批与目标授权 → OpenShell 部署 → 实际请求受限 → 回滚恢复 | [企业闭环](third-party-evaluation/20261006/reports/enterprise-chain-report.md)、[风险生命周期](third-party-evaluation/20261006/reports/risk-legal-lifecycle-report.md)；隔离 PostgreSQL、测试身份源和受控请求，不是客户生产 IAM 验收 |
-| 来源与完成真实性 | 同值来源受控对照存在实际投递差异；假成功与错误效果分别核验 | [机制证据](third-party-evaluation/20261006/reports/siq-effectiveness-assessment.md)；固定动作不等于模型诱导概率，效果检测不等于预防 |
-| AgentDojo 公开试点 | 两模型、20 任务、三臂共 240 单元执行并复核，未证明本批 SIQ 增量邮件防护 | [试点报告](third-party-evaluation/20261006/reports/agentdojo-pilot20-report.md)；全部无顶层 send_email 调用，原适配只保护该入口；删除复放另计 |
-| Windows／WorkBuddy 历史复核 | 引用原 0.4.0／WorkBuddy 5.6.2 的 22 次业务任务记录，包含失败 | [历史附件](third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)；本轮未重跑，固定顺序与人工续跑限制保留，不算 0.4.1 原生验收 |
+| DGX Agent／Skill 权限真实业务 | 10 个主证据批次；67 条签名记录、20 项文件检查通过 | [最终报告](evaluations/campaigns/20261006/reports/research-permissions-final-report.md)；Agent 日常入口与 Skill 专属入口分列，37 个业务批次包含失败及诊断，不是通过率；不同候选不合并为发行认证 |
+| 个人来源、准入与安装 | 目录／ZIP 导入、完整性拒绝、原生安装读写及公网 HTTPS 导入已有专项证据 | [原生 ZIP](evaluations/campaigns/20261006/reports/native-zip-onboarding-report.md)、[公网来源](evaluations/campaigns/20261006/reports/remote-source-import-report.md)；各自范围和首次失败保留，Git 生产获取仍未开放 |
+| 企业治理与后端实际效果 | 原生 Edge／Connector → 审批与目标授权 → OpenShell 部署 → 实际请求受限 → 回滚恢复 | [企业闭环](evaluations/campaigns/20261006/reports/enterprise-chain-report.md)、[风险生命周期](evaluations/campaigns/20261006/reports/risk-legal-lifecycle-report.md)；隔离 PostgreSQL、测试身份源和受控请求，不是客户生产 IAM 验收 |
+| 来源与完成真实性 | 同值来源受控对照存在实际投递差异；假成功与错误效果分别核验 | [机制证据](evaluations/campaigns/20261006/reports/siq-effectiveness-assessment.md)；固定动作不等于模型诱导概率，效果检测不等于预防 |
+| AgentDojo 公开试点 | 两模型、20 任务、三臂共 240 单元执行并复核，未证明本批 SIQ 增量邮件防护 | [试点报告](evaluations/campaigns/20261006/reports/agentdojo-pilot20-report.md)；全部无顶层 send_email 调用，原适配只保护该入口；删除复放另计 |
+| Windows／WorkBuddy 历史复核 | 引用原 0.4.0／WorkBuddy 5.6.2 的 22 次业务任务记录，包含失败 | [历史附件](evaluations/campaigns/20261006/reports/research-permissions-windows-history-001.md)；本轮未重跑，固定顺序与人工续跑限制保留，不算 0.4.1 原生验收 |
 | 0.4.1 正式发行 | 官方验签、四目标 pin、Linux ARM64 最终包启动和 **3/3** 篡改拒绝通过；远端 **8/8** 资产逐字节一致 | [发行记录](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)；固定 `a620a31b`，正式版、Latest；不含其他目标原生安装或跨平台升级/回滚验收 |
 | 当前主线整合与验收 | 合并后 Control API **2257 passed / 1 skipped**；全面验收另行记录 Web **1012 passed**、14 个 Go 模块与隔离浏览器 **30/30**；当前 `main` CI 通过 | [主线整合](docs/development/main-branch-integration-20260926.md)、[全面验收](docs/development/enterprise-comprehensive-acceptance-review-20260926.md)、[合并后交接](docs/development/enterprise-post-merge-remaining-closeout-handoff-20260926.md)；不同运行和计数口径不合并，源码/CI 验证不等于正式发行或生产验收 |
 | 企业 API / Web 部署更新 | 数据迁移、备份恢复、新旧镜像切换及登录入口检查通过 | [部署记录](docs/development/enterprise-runtime-delivery-20260924.md)；既有 Gateway / IAM 入口，未完成真实账号登录、独立审批与跨系统结果旅程 |
@@ -593,7 +593,7 @@ apps/control-api/.venv/bin/python benchmarks/hackathon/verify.py \
 
 ## 安全边界
 
-本轮实测同时记录了能力代价：部分 terminal／execute_code／委派／MCP 路径因未知效果而整体拒绝，合法操作也可能不可用；来源污染可能降低合法交付效用；审批预留之后的撤权不能追回已派发效果。具体模式与候选见[效果评估](third-party-evaluation/20261006/reports/siq-effectiveness-assessment.md)及[权限报告](third-party-evaluation/20261006/reports/research-permissions-final-report.md)，不能从“拒绝”推导全部业务已安全可用。
+本轮实测同时记录了能力代价：部分 terminal／execute_code／委派／MCP 路径因未知效果而整体拒绝，合法操作也可能不可用；来源污染可能降低合法交付效用；审批预留之后的撤权不能追回已派发效果。具体模式与候选见[效果评估](evaluations/campaigns/20261006/reports/siq-effectiveness-assessment.md)及[权限报告](evaluations/campaigns/20261006/reports/research-permissions-final-report.md)，不能从“拒绝”推导全部业务已安全可用。
 
 - **同 UID 不隔离**：当前桌面模式不能阻止同一操作系统用户的恶意进程读取密钥或改写状态；Python ToolGateway 不是 OS 沙箱。
 - **接入范围有限**：授权检查只覆盖正确接入的执行路径；来源注册与敏感级别分类仍依赖可信操作者。

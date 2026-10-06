@@ -14,7 +14,7 @@ from process_resources import identity, stop_owned
 from product_journal import observe
 from verify_product_journal import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / "third-party-evaluation/20261006"
+CAMPAIGN = Path(__file__).resolve().parents[3] / "evaluations/campaigns/20261006"
 RUN = CAMPAIGN / "data/product-journal-recovery-001"
 
 
