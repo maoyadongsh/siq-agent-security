@@ -56,7 +56,7 @@
 
 > **升级边界**：`0.4.1` 保留 Skill 辅助浏览器连接、固定 24 小时管理会话、个人端权限事实和批量撤权等主线成果。浏览器连接请求有效 5 分钟，确认管理会话不批准任何智能体业务权限。正式版名称不改变平台证据范围；完整跨平台系统服务安装、升级/回滚和宿主旅程仍需继续验收。
 
-[应用模块](apps/README.md) · [文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md)
+[应用模块](apps/README.md) · [文档地图](docs/README.md) · [当前开发](docs/development/current.md) · [仓库整理进度](docs/development/reorganization-progress.md) · [平台交付](platforms/README.md) · [测评与外部复现](evaluations/README.md) · [测评报告](evaluations/reports/README.md)
 
 ## 当前产品方向与支持状态
 

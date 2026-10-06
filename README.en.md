@@ -44,7 +44,7 @@ The **personal client** provides a local service and browser console for agents,
 
 > **Upgrade boundary:** `0.4.1` retains agent-assisted browser connection, fixed 24-hour management sessions, personal permission facts and batch revocation. Connection requests expire after 5 minutes, and confirming a browser management session does not grant any agent business permission. The stable label does not broaden platform evidence: full cross-platform service installation, upgrade/rollback and host journeys remain open.
 
-[Application modules](apps/README.md) · [Documentation map](docs/README.md) · [Current development](docs/development/current.md) · [Repository reorganization](docs/development/reorganization-progress.md) · [Platform delivery](platforms/README.md) · [Evaluations and external reproduction](evaluations/README.md)
+[Application modules](apps/README.md) · [Documentation map](docs/README.md) · [Current development](docs/development/current.md) · [Repository reorganization](docs/development/reorganization-progress.md) · [Platform delivery](platforms/README.md) · [Evaluations and external reproduction](evaluations/README.md) · [Evaluation reports](evaluations/reports/README.md)
 
 ## Product direction and support status
 
