@@ -283,7 +283,10 @@ def check_third_party_digest_exceptions(binary, config):
             changed = "f" if digest[0] != "f" else "e"
             negative_value = json.dumps(field) + ": " + json.dumps(changed + digest[1:])
             negative_field = '"api_key": ' + json.dumps(digest)
-            credential = '"api_key": "' + secrets.token_hex(32) + '"'
+            # Distinct characters guarantee entropy above the scanner threshold;
+            # random hex alone can occasionally fall below it and flake in CI.
+            canary = "".join(secrets.SystemRandom().sample(string.ascii_letters + string.digits, 48))
+            credential = '"api_key": "' + canary + '"'
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(f"{line}\n{negative_value}\n{negative_field}\n{credential}\n")
