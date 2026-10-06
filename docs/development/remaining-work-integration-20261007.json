@@ -1,0 +1,243 @@
+{
+  "schema": "siq-integration-review/v1",
+  "baseline": "2caad03255efb72f97025df3126cd060de86ebf9",
+  "scope": "33 differing tracked files and local source/test/contract candidates; raw captures excluded",
+  "files": [
+    {
+      "path": "README.en.md",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "README.md",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/client_install.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/main.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/state_migrate.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/windows_task_runtime.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/windows_task_start.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/windows_task_stop.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/workbuddy_managed_hook.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/workbuddy_managed_hook_windows_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/workbuddy_managed_resume.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/transaction.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/workbuddy_managed.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/adapterinstall/workbuddy_managed_windows_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/adapters/workbuddy_managed.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/pending/pending.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/pending/promote.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/privatefs/private.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/privatefs/private_windows.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/engine.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/pending_promote_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/server/adapter_http.go",
+      "decision": "adapt_fixed_preflight_categories_preserving_recovery"
+    },
+    {
+      "path": "apps/agentshield/internal/state/migration.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/index.html",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/workbuddycorrelation/store.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/web/src/local/components/AdapterChangeDialog.tsx",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/web/src/local/components/GrantScopeSummary.tsx",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/web/src/local/components/useInstancePermissions.tsx",
+      "decision": "adapt_grant_readiness_only_preserving_current_readback"
+    },
+    {
+      "path": "apps/web/src/local/types.ts",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "docs/agentshield-dev-spec-v1.md",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "evaluations/README.md",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "packages/contracts/README.md",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "scripts/check_gitleaks_config.py",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/client_storage_windows_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/windows_task_help.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/cmd/agentshield/windows_task_help_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/adapters/workbuddy_pending_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/adapters/workbuddy_preflight.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/adapters/workbuddy_preflight_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/grant/workbuddy_coverage_test.go",
+      "decision": "already_covered_by_exact_minimal_toolset_assertions"
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeaction/workbuddy_coverage_test.go",
+      "decision": "fold_memory_cases_into_existing_tests"
+    },
+    {
+      "path": "apps/agentshield/internal/state/migration_diagnostics_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/state/migration_diagnostics_windows_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/state/migration_preview.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/DemoPage-DsR0e8_k.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/InstalledSkillsPage-yfoT_xVp.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/PermissionCenterPage-LYZNRiZl.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/SkillImportsPage-85T_4b32.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/SkillUpdatesPage-CO6tfVY4.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/TaskActivitiesPage-B-K9AiQ-.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/TaskActivityDetailPage-CPCLdLlH.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/ui/embedded/assets/index.local-B2Br96_J.js",
+      "decision": "obsolete_build_not_published"
+    },
+    {
+      "path": "apps/agentshield/internal/workbuddycorrelation/concurrency_test.go",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/agentshield/testdata/contracts/pending-decision.v2.json",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/control-api/app/tests/test_pending_local_contracts.py",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "apps/web/src/local/accessState.test.ts",
+      "decision": "adapt_readiness_only_into_managedReadback"
+    },
+    {
+      "path": "apps/web/src/local/accessState.ts",
+      "decision": "adapt_readiness_only_into_managedReadback"
+    },
+    {
+      "path": "packages/contracts/local-state-migration-preview.v1.schema.json",
+      "decision": "superseded_by_main"
+    },
+    {
+      "path": "packages/contracts/pending-decision.v2.schema.json",
+      "decision": "superseded_by_main"
+    }
+  ]
+}

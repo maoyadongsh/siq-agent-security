@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/adapterinstall"
+	"siq-agent-security/apps/agentshield/internal/adapters"
 )
 
 type pendingAdapterPlan struct {
@@ -120,6 +121,29 @@ func adapterError(w http.ResponseWriter, err error) {
 	var recovery *adapterinstall.RecoveryPlan
 	if errors.As(err, &recovery) {
 		code, message = 409, "配置与安装记录有冲突，已保留现有文件，请检查恢复副本。"
+	}
+	// Transaction recovery takes precedence over a nested preflight failure.
+	var preflight *adapters.WorkBuddyPreflightError
+	if !errors.Is(err, adapterinstall.ErrRecoveryRequired) && !errors.Is(err, adapterinstall.ErrPlanChanged) && recovery == nil && errors.As(err, &preflight) && preflight != nil {
+		object := ""
+		switch preflight.Code {
+		case "workbuddy_config_path_invalid", "workbuddy_config_mismatch":
+			object = "受管配置"
+		case "workbuddy_state_incompatible":
+			object = "本实例状态兼容性"
+		case "workbuddy_config_parent_unavailable":
+			object = "配置父目录"
+		case "workbuddy_config_file_unavailable":
+			object = "配置文件"
+		case "workbuddy_credential_parent_unavailable":
+			object = "凭据父目录"
+		case "workbuddy_credential_file_unavailable", "workbuddy_credential_invalid":
+			object = "专属凭据"
+		}
+		if object != "" {
+			writeJSON(w, http.StatusConflict, map[string]any{"error": "WorkBuddy " + object + "预检未通过，请查看本实例接入诊断后重新预览；未自动修改权限。", "code": preflight.Code, "recovery_required": false})
+			return
+		}
 	}
 	// Never return filesystem / decoder errors that may contain private paths
 	// or configuration contents. Durable recovery records stay on this machine.
