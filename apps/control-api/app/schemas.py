@@ -365,8 +365,8 @@ class EdgeBatchIn(BaseModel):
 class FindingAcceptRisk(BaseModel):
     model_config = StrictModelConfig
 
-    owner_user_id: str
-    reason: str = Field(min_length=1, max_length=512)
+    owner_user_id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9][A-Za-z0-9._:@-]*$")
+    reason: str = Field(min_length=1, max_length=512, pattern=r"\S")
     expires_at: datetime
 
 

@@ -30,7 +30,7 @@ def acknowledge_finding(
     identity: Identity = Depends(get_identity),
 ):
     finding = session.scalar(
-        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id)
+        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id).with_for_update()
     )
     if finding is None:
         raise HTTPException(status_code=404, detail="not_found")
@@ -62,7 +62,7 @@ def resolve_finding(
 ):
     """解决 Finding：必须回链修复证据（design §13.2 修复与验证方式）。"""
     finding = session.scalar(
-        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id)
+        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id).with_for_update()
     )
     if finding is None:
         raise HTTPException(status_code=404, detail="not_found")
@@ -168,14 +168,21 @@ def accept_risk(
     finding_id: str,
     body: FindingAcceptRisk,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("finding:manage")),
+    identity: Identity = Depends(get_identity),
 ):
     finding = session.scalar(
-        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id)
+        select(Finding).where(Finding.id == finding_id, Finding.tenant_id == identity.tenant_id).with_for_update()
     )
     if finding is None:
         raise HTTPException(status_code=404, detail="not_found")
-    if body.expires_at.astimezone(UTC).replace(tzinfo=None) < utcnow():
+    ensure_permission(identity, "finding:manage")
+    if finding.status not in {"open", "acknowledged"}:
+        raise HTTPException(status_code=409, detail="invalid_state")
+    try:
+        expires_at = body.expires_at.astimezone(UTC).replace(tzinfo=None)
+    except (ValueError, OverflowError):
+        raise HTTPException(status_code=422, detail="invalid_expiry") from None
+    if expires_at < utcnow():
         raise HTTPException(status_code=422, detail="expiry_in_past")
     finding.status = "risk_accepted"
     finding.owner_user_id = body.owner_user_id
