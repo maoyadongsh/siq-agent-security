@@ -11,7 +11,7 @@ from common import sha256
 from revocation_boundary import allocation, recovered, verify_boundary
 from verify_product_journal import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 RUN = CAMPAIGN / 'data/intent-revocation-boundary-002'
 
 

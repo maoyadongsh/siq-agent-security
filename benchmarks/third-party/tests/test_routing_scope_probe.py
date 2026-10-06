@@ -70,7 +70,7 @@ class RoutingScopeProbeTests(unittest.TestCase):
         self.assertNotIn('response_format', request_for(p, 'text'))
 
     def captured(self):
-        campaign = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+        campaign = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
         root = campaign / 'data/routing-scope-components-001'
         unit = probe.allocation()[1]
         raw = json.loads((root / (unit['unit_id'] + '.json')).read_text())
@@ -95,7 +95,7 @@ class RoutingScopeProbeTests(unittest.TestCase):
             probe.verify_raw(unit, raw)
 
     def test_original_violation_and_fixed_cohort_remain_distinct(self):
-        campaign = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+        campaign = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
         for name, expected in [('routing-scope-components-001', (7, 1)), ('routing-scope-components-fixed-001', (8, 0))]:
             anchor = json.loads((campaign / 'inventory/anchors' / (name + '.json')).read_text())['manifest_sha256']
             r = probe.verify(campaign / 'data' / name, anchor)

@@ -70,7 +70,7 @@ class NativeNetworkTests(unittest.TestCase):
 
     def test_original_pinned_sdk_uses_real_fixture_and_target(self):
         root = Path(__file__).resolve().parents[3]
-        sdk = root / 'third-party-evaluation/20261006/private/dependencies/native-web-firecrawl-001'
+        sdk = root / 'evaluations/campaigns/20261006/private/dependencies/native-web-firecrawl-001'
         with Services() as service:
             service.bodies['allowed'] = 'SDK_ACTUAL_TARGET_BODY'
             result = subprocess.run(['/home/maoyd/siq/hermes-agent/venv/bin/python', '-c',

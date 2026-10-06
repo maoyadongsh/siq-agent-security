@@ -4,7 +4,7 @@
 
 ## 当前定位与实现边界
 
-最新[DGX／分析助手实测](../../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)使用真实本地模型、OpenShell 和 Hermes：Agent 日常入口授权读写及拒绝已验证；Reader／Writer 为真实安装和原生加载，使用宿主显式 SEC 同步的专属验收入口。不是插件自动推断任意 Skill 归属。合法 terminal／execute_code、部分委派及 MCP 入口仍有 runtime_effect_unknown 导致的效用限制。
+最新[DGX／分析助手实测](../../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)使用真实本地模型、OpenShell 和 Hermes：Agent 日常入口授权读写及拒绝已验证；Reader／Writer 为真实安装和原生加载，使用宿主显式 SEC 同步的专属验收入口。不是插件自动推断任意 Skill 归属。合法 terminal／execute_code、部分委派及 MCP 入口仍有 runtime_effect_unknown 导致的效用限制。
 
 Hermes 在 Linux、macOS、Windows 均属于当前接入范围，实际通过情况逐候选登记于[平台矩阵](../../../platforms/support-matrix.md)。组件桥接、公开 CLI 合成模型会话与真实用户任务分别验证；不能用某个 OS 的插件单测代替全部原生验收。
 
@@ -43,7 +43,7 @@ Windows 新接入配置的 HTTP 等待为每请求 20 秒，其他系统为 5 �
 
 ## fail-closed
 
-2026-10-06 [九格原生实测](../../../third-party-evaluation/20261006/reports/native-auth-modes-report.md)将 block/warn/audit_only 的正常、身份撤销、后端不可达分开验证；受管路径故障后没有所测新文件读写事件。该批为真实 Hermes 工具＋受控模型协议，0 次真实模型推理；不改变旧非受管配置的建议模式语义。
+2026-10-06 [九格原生实测](../../../evaluations/campaigns/20261006/reports/native-auth-modes-report.md)将 block/warn/audit_only 的正常、身份撤销、后端不可达分开验证；受管路径故障后没有所测新文件读写事件。该批为真实 Hermes 工具＋受控模型协议，0 次真实模型推理；不改变旧非受管配置的建议模式语义。
 
 | 场景 | `block` | `audit_only` / `warn` |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ V2：有 tool_call_id 时保存服务端 action_id/receipt_id（最多 2048 项�
 
 宿主可通过`provenance_reference(session_id, tool_name, tool_call_id)`取回引用，并在后续pre_tool_call传入`parameter_provenance`或`context_assertion_id`。这只是显式桥接，不能直接把原结果引用绑定到变换后的参数；选择/派生必须经过daemon的对应API生成内容摘要匹配的引用。插件不推断模型隐式lineage，不签发可信声明，也不把自称USER的工具结果提升权威。
 
-内存引用缓存最多2048条、5分钟到期，满时不驱逐既有引用来假装干净；不持久化原结果或token。结果预算预留JSON编码空间，超限不截断后当完整来源。默认映射为空，原版 Hermes 的通用自动配置／传播尚未证明；除钩子组件测试外，已有特定原生 MCP 读回及显式字段选择专项，见[原生来源选择](../../../third-party-evaluation/20261006/reports/native-business-mcp-selection-report.md)。显式桥接结果不代表默认参数入口或任意 MCP 全链可用；未知效果拒绝和正常效用缺口仍保留。
+内存引用缓存最多2048条、5分钟到期，满时不驱逐既有引用来假装干净；不持久化原结果或token。结果预算预留JSON编码空间，超限不截断后当完整来源。默认映射为空，原版 Hermes 的通用自动配置／传播尚未证明；除钩子组件测试外，已有特定原生 MCP 读回及显式字段选择专项，见[原生来源选择](../../../evaluations/campaigns/20261006/reports/native-business-mcp-selection-report.md)。显式桥接结果不代表默认参数入口或任意 MCP 全链可用；未知效果拒绝和正常效用缺口仍保留。
 
 
 真实daemon组件桥接复现：

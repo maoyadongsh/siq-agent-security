@@ -6,7 +6,7 @@
 
 ## 证据驱动的治理链
 
-本测评分支还包含风险输入、状态迁移与审计／outbox 事务的修复合同及聚焦验证；[合法风险生命周期](../../third-party-evaluation/20261006/reports/risk-legal-lifecycle-report.md)验证真实到期重开后可重新接受，已接受／已解决的直接覆盖被拒绝。风险接受不会产生 effective 权限；这些修复候选不能回填为 0.4.1 发行源码已具备的结果。
+本测评分支还包含风险输入、状态迁移与审计／outbox 事务的修复合同及聚焦验证；[合法风险生命周期](../../evaluations/campaigns/20261006/reports/risk-legal-lifecycle-report.md)验证真实到期重开后可重新接受，已接受／已解决的直接覆盖被拒绝。风险接受不会产生 effective 权限；这些修复候选不能回填为 0.4.1 发行源码已具备的结果。
 
 ```text
 环境/周期计划 → 已注册 Edge → 签名候选/证据批次 → 资产与框架/角色/Skill 观察
@@ -55,7 +55,7 @@ SIQ_AS_DEV=1 SIQ_AS_ALLOW_SQLITE=1 uv run uvicorn app.main:app --host 127.0.0.1 
 
 ## 验证与能力边界
 
-2026-10-06 [企业原生闭环](../../third-party-evaluation/20261006/reports/enterprise-chain-report.md)已完成原生 Edge／Hermes Connector 发现、独立审批、目标授权、真实 OpenShell 限制和回滚；实际受控请求先到达、收紧后不到达、回滚后恢复。[目标授权专项](../../third-party-evaluation/20261006/reports/enterprise-authority-report.md)保留共享沙箱／多 Skill 隔离未实现边界。身份源为测试 RS256/JWKS、数据库为独立 PostgreSQL，不等于客户生产账号验收。
+2026-10-06 [企业原生闭环](../../evaluations/campaigns/20261006/reports/enterprise-chain-report.md)已完成原生 Edge／Hermes Connector 发现、独立审批、目标授权、真实 OpenShell 限制和回滚；实际受控请求先到达、收紧后不到达、回滚后恢复。[目标授权专项](../../evaluations/campaigns/20261006/reports/enterprise-authority-report.md)保留共享沙箱／多 Skill 隔离未实现边界。身份源为测试 RS256/JWKS、数据库为独立 PostgreSQL，不等于客户生产账号验收。
 
 ```bash
 # 在 apps/control-api 下

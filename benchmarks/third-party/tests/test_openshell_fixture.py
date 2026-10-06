@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import sha256
 from verify_openshell_fixture import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / "third-party-evaluation/20261006"
+CAMPAIGN = Path(__file__).resolve().parents[3] / "evaluations/campaigns/20261006"
 SOURCE = CAMPAIGN / "data/openshell-preflight-003"
 ANCHOR = "dba390418da00ff29586440f5054edb5cdf08d1a4d187e7cbc0482539946c16f"
 

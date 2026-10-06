@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check repository navigation and immutable evidence without network or services."""
 import argparse
+from fnmatch import fnmatchcase
 import hashlib
 import html
 import json
@@ -150,7 +151,7 @@ def validate_map(root, data):
     for name in files(root):
         parts = Path(name).parts
         if parts[0] in ('research', 'platforms', 'evaluations'):
-            require(not any(part.endswith('-private') or part in ('state', 'secrets') for part in parts)
+            require(not any(part.endswith('-private') or part in ('private', 'state', 'secrets') for part in parts)
                     and Path(name).suffix not in ('.seed', '.db', '.sqlite', '.sqlite3')
                     and Path(name).name not in ('.env', 'token'), f'private output in public index: {name}')
         require(any(covered(name, prefix) for e in entries for prefix in e['paths']),
@@ -207,13 +208,32 @@ def check_frozen(root, policy, base):
                 f'claim evidence changed: {claim["id"]}')
 
 
+def navigation_documents(root, data):
+    documents = set(data['navigation_files'])
+    # Enumerate only Git-tracked public documents, never local private captures.
+    tracked = files(root)
+    for pattern in data['navigation_globs']:
+        for name in tracked:
+            if '/**/' in pattern:
+                matched = fnmatchcase(name, pattern.replace('/**/', '/'))
+            else:
+                matched = (Path(name).parent == Path(pattern).parent
+                           and fnmatchcase(Path(name).name, Path(pattern).name))
+            if matched:
+                documents.add(name)
+    return documents
+
+
 def check(root, base=None):
     data = json.loads((root / MAP).read_text())
     count = validate_map(root, data)
     check_frozen(root, data['frozen'], base)
-    documents = set(data['navigation_files'])
-    for pattern in data['navigation_globs']:
-        documents.update(p.relative_to(root).as_posix() for p in root.glob(pattern))
+    documents = navigation_documents(root, data)
+    from evaluation_archive import verify_migration
+    frozen_archive = verify_migration(root)
+    # Historical snapshots retain original paths; verify their exact Git bytes.
+    # Active navigation is checked normally, including new batch README entries.
+    documents.difference_update(frozen_archive)
     links = sum(check_document(root, name) for name in sorted(documents))
     from catalogs import validate
     catalogs = validate(root)

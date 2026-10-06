@@ -11,7 +11,7 @@ from common import sha256
 from effect_authorization_time import allocation, verify_temporal
 from verify_product_journal import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 RUN = CAMPAIGN / 'data/effect-time-002'
 
 

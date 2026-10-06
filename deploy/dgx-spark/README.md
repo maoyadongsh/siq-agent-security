@@ -48,7 +48,7 @@ Preflight intentionally does not upgrade `deployment_verified` based on health a
 
 ## Flagship runtime lock and doctor
 
-The 2026-10-06 [DGX permission closeout](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md) used the real Research Engine business API, local Qwen, Hermes and OpenShell with synthetic company documents. Authorized reads/scoped writes, installed-Skill permissions, revocation and relay recovery have scoped file/receipt evidence. The daily Agent entry and dedicated Skill acceptance entry are distinct; explicit host SEC binding is not automatic attribution of arbitrary Skills. Follow the [campaign reproduction guide](../../third-party-evaluation/20261006/README-PERMISSIONS.md) for these batches; the archived deployment commands below keep their own model and candidate identities.
+The 2026-10-06 [DGX permission closeout](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md) used the real Research Engine business API, local Qwen, Hermes and OpenShell with synthetic company documents. Authorized reads/scoped writes, installed-Skill permissions, revocation and relay recovery have scoped file/receipt evidence. The daily Agent entry and dedicated Skill acceptance entry are distinct; explicit host SEC binding is not automatic attribution of arbitrary Skills. Follow the [campaign reproduction guide](../../evaluations/campaigns/20261006/README-PERMISSIONS.md) for these batches; the archived deployment commands below keep their own model and candidate identities.
 
 The Hermes + OpenShell flagship candidate has a separate immutable input lock:
 

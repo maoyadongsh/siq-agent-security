@@ -2,15 +2,15 @@
 
 [测评报告](reports/README.md) · [实验批次](campaigns/README.md) · [机器索引](catalog.json) · [外部复现](external/README.md) · [提交要求](templates/README.md) · [当前缺口](gaps.md) · [研究](../research/README.md) · [平台](../platforms/README.md)
 
-本目录登记“谁以什么候选，在什么环境、协议下观察到什么”。执行器留在 benchmarks/scripts，测试留在所属模块，原证据留在历史路径。索引引用不增加实测次数，代码合并、源码 CI、制品验签、原生安装、真实宿主与桌面人工验证不能互换。
+本目录登记“谁以什么候选，在什么环境、协议下观察到什么”。执行器留在 benchmarks/scripts，测试留在所属模块，原始测评批次集中在 campaigns/，其他历史证据保持各自归档位置。索引引用不增加实测次数，代码合并、源码 CI、制品验签、原生安装、真实宿主与桌面人工验证不能互换。
 
 | 记录 | 已归档结果 | 范围 |
 | --- | --- | --- |
 | 0.4.1 当前正式发行 | 四目标验签、Linux ARM64 最终包启动与 3/3 篡改拒绝、8/8 资产回读 | `a620a31b`；[发行记录](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)，Windows 源码 CI 与正式包业务验收分开 |
-| DGX Spark Agent／Skill 权限收口 | 10 个主批次、67 条签名及 20 项文件检查 | [最终报告](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)；真实业务入口、专属 Skill 入口与多候选边界单列 |
-| 企业原生治理与效果 | 原生 Edge 发现、审批、目标授权、OpenShell 实际限制及回滚 | [企业链路](../third-party-evaluation/20261006/reports/enterprise-chain-report.md)；测试身份源与受控网络，不是客户生产验收 |
-| AgentDojo 公开开发试点 | 240 单元完成，未显示本批 SIQ 增量邮件防护 | [试点](../third-party-evaluation/20261006/reports/agentdojo-pilot20-report.md)；无顶层发送调用，不能计为 240 次成功防御 |
-| Windows／WorkBuddy 历史附件 | 复核原 22 次业务尝试，保留失败与人工续跑限制 | [历史附件](../third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)；本轮未重跑、非 0.4.1 验收 |
+| DGX Spark Agent／Skill 权限收口 | 10 个主批次、67 条签名及 20 项文件检查 | [最终报告](../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)；真实业务入口、专属 Skill 入口与多候选边界单列 |
+| 企业原生治理与效果 | 原生 Edge 发现、审批、目标授权、OpenShell 实际限制及回滚 | [企业链路](../evaluations/campaigns/20261006/reports/enterprise-chain-report.md)；测试身份源与受控网络，不是客户生产验收 |
+| AgentDojo 公开开发试点 | 240 单元完成，未显示本批 SIQ 增量邮件防护 | [试点](../evaluations/campaigns/20261006/reports/agentdojo-pilot20-report.md)；无顶层发送调用，不能计为 240 次成功防御 |
+| Windows／WorkBuddy 历史附件 | 复核原 22 次业务尝试，保留失败与人工续跑限制 | [历史附件](../evaluations/campaigns/20261006/reports/research-permissions-windows-history-001.md)；本轮未重跑、非 0.4.1 验收 |
 | 0.4.0 正式发行（历史记录） | 官方验签/Linux ARM64 启动通过，3/3 篡改拒绝，8/8 回读 | `2cd6116`；[独立发行记录](../docs/evidence/releases/0.4.0/README.md)，不计入下方原有 15 条 catalog，也不扩展其他平台原生验收 |
 | 0.3.0 包检查 | 14/14 | `83fde2d`；官方根、内容/程序 pin、六条拒绝、Linux ARM64 bootstrap/控制台/停止与包内空状态启动步骤 |
 | 0.3.0 远端回读 | 8/8 资产一致 | 与已验候选逐字节比较，实际公开下载与签名 URL 暂存；Latest 是回读时状态 |
@@ -48,3 +48,5 @@
 ## 后续源码基础检查
 
 [四目标源码检查](../docs/evidence/repository-reorganization-final-20260919/README.md)另外登记 Linux amd64/arm64、macOS arm64、Windows amd64 的自建程序、准入与基础启动链路，及缺发行清单时拒绝 bootstrap 的边界。这批记录不在上表 15 条历史 catalog 中，不改写其分母，也不扩展 0.3.0 正式包的原生验收。查某项功能时，应同时核对[模块说明](../apps/README.md)、[宿主适配](../adapters/runtime/README.md)与该次候选报告。
+
+完整目录迁移及历史路径复核见[2026-10-07 迁移记录](migrations/20261007/README.md)。根目录不再保留旧测评文件夹。

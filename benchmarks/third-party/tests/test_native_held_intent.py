@@ -14,7 +14,7 @@ from common import canonical, sha256
 from native_lifecycle_scoring import load_lines
 from verify_native_lifecycle import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 RUNS = tuple(f'native-held-{kind}-{profile}-001' for kind in ('intent', 'binding') for profile in native_hold_boundary.PROFILES)
 
 

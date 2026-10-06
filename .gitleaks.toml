@@ -200,14 +200,23 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-business\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-business\-003\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-drift\-003\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-004\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-drift\-004\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-authority\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-drift\-authority\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-containment\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-drift\-containment\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-containment\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-drift\-containment\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-revoke\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-revoke\-003\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-004\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-revoke\-004\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -280,10 +289,15 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-revoke\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-revoke\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-revoke\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-revoke\-003\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-replacement\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-replacement\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-update\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-update\-001\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -305,13 +319,21 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-relay\-recovery\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-relay\-recovery\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-relay\-recovery\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-relay\-recovery\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-replacement\-003\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-004\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-replacement\-004\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-005\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-replacement\-005\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-utility\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-tool\-utility\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-utility\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-tool\-utility\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-utility\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-tool\-utility\-003\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -343,26 +365,47 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-agent\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-agent\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-agent\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-agent\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-003\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-004\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-004\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-005\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-005\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-006\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-006\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-007\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-007\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-revoke\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-business\-revoke\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-cross\-company\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-cross\-company\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-cross\-company\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-cross\-company\-003\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-cross\-company\-004\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-cross\-company\-004\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-business\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-business\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-business\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-business\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-drift\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-drift\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-skill\-revoke\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-coverage\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-tool\-coverage\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-coverage\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-tool\-coverage\-002\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-coverage\-003\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-tool\-coverage\-003\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -383,6 +426,7 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/inventory/candidate\-source\-files\.json$''',
+      '''^evaluations/campaigns/20261006/inventory/candidate\-source\-files\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -469,11 +513,17 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-authority\-loss\-message\-001\-source\-manifest\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-authority\-loss\-message\-001\-source\-manifest\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-permissions\-001\-preparation\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-daily\-permissions\-001\-preparation\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-permissions\-001\-source\-manifest\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-daily\-permissions\-001\-source\-manifest\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-permissions\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-daily\-permissions\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-launch\-001\-source\-manifest\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-launch\-001\-source\-manifest\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-supervisor\-diagnostics\-001\-source\-manifest\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-supervisor\-diagnostics\-001\-source\-manifest\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -536,6 +586,7 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/reports/research\-permissions\-relay\-recovery\-002\-private\-archive\.json$''',
+      '''^evaluations/campaigns/20261006/reports/research\-permissions\-relay\-recovery\-002\-private\-archive\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -546,6 +597,7 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/reports/research\-permissions\-skill\-drift\-004\-diagnosis\.json$''',
+      '''^evaluations/campaigns/20261006/reports/research\-permissions\-skill\-drift\-004\-diagnosis\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -556,6 +608,7 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/inventory/function\-traceability\-v2\.json$''',
+      '''^evaluations/campaigns/20261006/inventory/function\-traceability\-v2\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -569,6 +622,7 @@
     paths = [
       '''^benchmarks/third\-party/schemas/native\-held\-contract\-sources\.v1\.json$''',
       '''^third\-party\-evaluation/20261006/reports/bound\-runtime\-audit\-attribution\-001\.json$''',
+      '''^evaluations/campaigns/20261006/reports/bound\-runtime\-audit\-attribution\-001\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -579,8 +633,11 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-entry\-001\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-daily\-entry\-001\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-entry\-002\-preparation\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-daily\-entry\-002\-preparation\.json$''',
       '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-entry\-002\.json$''',
+      '''^evaluations/campaigns/20261006/protocols/research\-permissions\-daily\-entry\-002\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -593,7 +650,9 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/inventory/product\-surface\-candidate\-001\.json$''',
+      '''^evaluations/campaigns/20261006/inventory/product\-surface\-candidate\-001\.json$''',
       '''^third\-party\-evaluation/20261006/inventory/product\-surface\-review\-001\.json$''',
+      '''^evaluations/campaigns/20261006/inventory/product\-surface\-review\-001\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -607,6 +666,7 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/reports/native\-auth\-modes\-engineering\-validation\.json$''',
+      '''^evaluations/campaigns/20261006/reports/native\-auth\-modes\-engineering\-validation\.json$''',
     ]
     regexTarget = "line"
     regexes = [
@@ -619,6 +679,7 @@
     condition = "AND"
     paths = [
       '''^third\-party\-evaluation/20261006/inventory/dgx\-research\-permission\-entry\-001\.json$''',
+      '''^evaluations/campaigns/20261006/inventory/dgx\-research\-permission\-entry\-001\.json$''',
     ]
     regexTarget = "line"
     regexes = [

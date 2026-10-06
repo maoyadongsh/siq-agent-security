@@ -69,7 +69,7 @@ class NativeDelegationTests(unittest.TestCase):
         self.assertEqual(r, original)
 
     def captured(self, group='B0'):
-        root = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006/data/native-delegation-entry-001'
+        root = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006/data/native-delegation-entry-001'
         return json.loads((root / 'cases' / ('delegate-' + group) / 'result.json').read_text())
 
     def test_captured_native_lineage_and_parent_attribution(self):

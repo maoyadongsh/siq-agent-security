@@ -14,7 +14,7 @@
 
 ## 源码、基础检查与功能验收
 
-2026-10-06 新增[DGX Spark／Hermes／OpenShell／分析助手权限实测](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)：Agent 日常入口与明确绑定安装 Skill 的专属入口已各自验证合法读写、越权拒绝和生命周期边界。合成业务数据、多个冻结候选和显式 SEC 同步不等于所有 Linux 宿主、默认任意 Skill 或 0.4.1 正式包完整回归。
+2026-10-06 新增[DGX Spark／Hermes／OpenShell／分析助手权限实测](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)：Agent 日常入口与明确绑定安装 Skill 的专属入口已各自验证合法读写、越权拒绝和生命周期边界。合成业务数据、多个冻结候选和显式 SEC 同步不等于所有 Linux 宿主、默认任意 Skill 或 0.4.1 正式包完整回归。
 
 [运行时模块](../../apps/agentshield/README.md)、[Web](../../apps/web/README.md)与[宿主适配器](../../adapters/runtime/README.md)分别维护共享核心、界面和协议边界。平台生命周期按本页手册执行，不复制另一套实现到 platforms 目录。
 

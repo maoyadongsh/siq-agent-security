@@ -12,7 +12,7 @@
 
 ## 源码、基础检查与功能验收
 
-2026-10-06 仅复核[WorkBuddy 5.6.2 历史业务记录](../../third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)：原 0.4.0 的 22 次任务包含初始失败、实际越权拒绝、合法简报及失联恢复。没有新增 Windows 运行，不能将其写成 0.4.1 或 DGX 同批次成绩。[0.4.1 发行核验](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)与历史业务证据分开。
+2026-10-06 仅复核[WorkBuddy 5.6.2 历史业务记录](../../evaluations/campaigns/20261006/reports/research-permissions-windows-history-001.md)：原 0.4.0 的 22 次任务包含初始失败、实际越权拒绝、合法简报及失联恢复。没有新增 Windows 运行，不能将其写成 0.4.1 或 DGX 同批次成绩。[0.4.1 发行核验](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)与历史业务证据分开。
 
 [运行时模块](../../apps/agentshield/README.md)、[Web](../../apps/web/README.md)与[宿主适配器](../../adapters/runtime/README.md)分别维护共享核心、界面和协议边界。平台生命周期按本页手册执行，不复制另一套实现到 platforms 目录。
 

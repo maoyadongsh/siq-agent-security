@@ -11,7 +11,7 @@ from common import sha256
 from revocation_boundary import allocation, recovered, verify_boundary
 from verify_product_journal import verify
 
-RUN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006/data/revocation-boundary-001'
+RUN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006/data/revocation-boundary-001'
 
 
 class RevocationBoundaryTests(unittest.TestCase):

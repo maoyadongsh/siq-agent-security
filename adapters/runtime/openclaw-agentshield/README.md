@@ -6,7 +6,7 @@
 
 ## 当前接入与研究边界
 
-2026-10-06 状态核对：本轮新增真实业务收口针对 Hermes，不提升 OpenClaw 的支持档位；本页固定 2026.9.5 兼容清单继续生效。[审批／撤权时序专项](../../../third-party-evaluation/20261006/reports/native-held-authority-report.md)进一步说明预留前拒绝和预留后仍可能执行必须分开记录，不能据其他宿主结果宣称原版 OpenClaw 已补齐检查点。
+2026-10-06 状态核对：本轮新增真实业务收口针对 Hermes，不提升 OpenClaw 的支持档位；本页固定 2026.9.5 兼容清单继续生效。[审批／撤权时序专项](../../../evaluations/campaigns/20261006/reports/native-held-authority-report.md)进一步说明预留前拒绝和预留后仍可能执行必须分开记录，不能据其他宿主结果宣称原版 OpenClaw 已补齐检查点。
 
 Linux/macOS/Windows 的产品范围与实际证据见[平台矩阵](../../../platforms/support-matrix.md)。原生 Skill 安装策略、插件加载、会话授权和审批后检查点是四项独立能力。当前实际 CLI 为 OpenClaw 2026.9.5；库存档与带固定检查点补丁的受控副本分别记账。OC-01 的 20/20 来自“库存失败关闭 + 私有受控副本”，不证明上游原版已补齐审批后最终检查。
 

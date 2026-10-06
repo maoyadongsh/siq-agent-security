@@ -4,7 +4,7 @@
 
 ## 先选择验证对象
 
-2026-10-06 新增的真实[Agent／Skill 权限证据](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)及浏览器／生命周期专项由[third-party 执行器](../../benchmarks/third-party/README.md)维护；本目录脚本继续承担各自组件和原生回归，不因新报告而自动扩大候选范围。正式包现为[0.4.1](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)，历史脚本指定的候选／测试信任根不能当作该发行包验收。
+2026-10-06 新增的真实[Agent／Skill 权限证据](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)及浏览器／生命周期专项由[third-party 执行器](../../benchmarks/third-party/README.md)维护；本目录脚本继续承担各自组件和原生回归，不因新报告而自动扩大候选范围。正式包现为[0.4.1](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)，历史脚本指定的候选／测试信任根不能当作该发行包验收。
 
 - 当前任务、候选和未闭合项从[开发导航](../../docs/development/current.md)进入；已合入主线的范围与剩余门禁另见[主线整合](../../docs/development/main-branch-integration-20260926.md)和[全面验收](../../docs/development/enterprise-comprehensive-acceptance-review-20260926.md)，不把脚本存在或 CI 通过视为正式发行/原生验收。
 - Linux 双宿主按 [LX00–LX10 任务书](../../docs/linux-dual-host-integration-development-taskbook-20260918-205119.md)选择脚本；第六代功能与第八代 UI 分开记账。

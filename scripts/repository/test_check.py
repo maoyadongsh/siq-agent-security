@@ -39,6 +39,19 @@ class NavigationTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 check.check_document(self.root, 'README.md')
 
+    def test_navigation_includes_tracked_documents_without_walking_private_captures(self):
+        private = self.root / 'evaluations/private'
+        private.mkdir(parents=True)
+        (private / 'README.md').write_text('[local capture](missing.md)')
+        tracked = ['evaluations/README.md', 'evaluations/campaigns/a/README.md',
+                   'README.md', 'nested/README.md']
+        data = {'navigation_files': ['SECURITY.md'],
+                'navigation_globs': ['evaluations/**/*.md', 'README*.md']}
+        with patch.object(check, 'files', return_value=tracked):
+            self.assertEqual(check.navigation_documents(self.root, data),
+                             {'SECURITY.md', 'README.md', 'evaluations/README.md',
+                              'evaluations/campaigns/a/README.md'})
+
     def test_headings_inside_fences_do_not_create_anchors(self):
         self.assertEqual(check.anchors('# A\n~~~\n# Hidden\n~~~\n# A\n'), {'a', 'a-1'})
 
@@ -82,7 +95,7 @@ class MapTest(unittest.TestCase):
                  'strategy': 'index', 'consumers': ['README'], 'license': 'LICENSE', 'validation': ['check']}
         data = {'schema_version': 'siq-repository-map/v1', 'assets': [entry], 'changes': []}
         for name in ('unknown/file.md', 'evaluations/a-private/result.json', 'evaluations/state/config.json',
-                     'evaluations/key.seed', 'evaluations/token'):
+                     'evaluations/private/result.json', 'evaluations/key.seed', 'evaluations/token'):
             with self.subTest(name=name), patch.object(check, 'files', return_value=[name]):
                 with self.assertRaises(ValueError):
                     check.validate_map(Path('.'), data)

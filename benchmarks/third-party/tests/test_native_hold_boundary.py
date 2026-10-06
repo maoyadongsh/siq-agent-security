@@ -12,7 +12,7 @@ from common import sha256
 from native_lifecycle_scoring import load_lines, score
 from verify_native_lifecycle import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 PRIMARY = ('native-hold-before-status-control-002', 'native-hold-before-status-001',
            'native-hold-before-reserve-control-002', 'native-hold-before-reserve-003',
            'native-hold-after-reserve-control-001', 'native-hold-after-reserve-001',

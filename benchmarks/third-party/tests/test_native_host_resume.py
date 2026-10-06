@@ -9,7 +9,7 @@ import native_host_resume as host
 from common import sha256
 from verify_native_lifecycle import verify
 
-C = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+C = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 
 
 def material(profile, revision='002'):

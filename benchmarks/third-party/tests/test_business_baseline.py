@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from business_chain_baseline import baseline
 from business_chain_trial import load_benchmark
 
-CANDIDATE = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2'
+CANDIDATE = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006/private/candidates/5470ab3780f2-fixturefix2'
 
 
 class BaselineSeamTests(unittest.TestCase):

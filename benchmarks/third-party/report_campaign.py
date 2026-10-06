@@ -257,7 +257,7 @@ def main():
               "- [候选与接口清单](../inventory/interface-bindings.json)", "",
               "公开可审阅副本按封套白名单复制；测试凭据、daemon 状态及命令原始日志保留在 private/。所有材料目前仅落本机，未上传或发布。", "",
               "复核命令：", "", "```bash",
-              "python3 benchmarks/third-party/verify.py third-party-evaluation/20261006/data/A-fixturefix2-001 \\",
+              "python3 benchmarks/third-party/verify.py evaluations/campaigns/20261006/data/A-fixturefix2-001 \\",
               "  --expected-manifest-sha256 6059376c2190da248c63e350b3fd7561fb39fe6a415b8dd5834e0efc849552c3", "```", "",
               "摘要当前由作者本地保管。验签与摘要匹配证明材料一致性，不能单独认证独立执行者身份。", ""]
     (reports / "progress-report.md").write_text("\n".join(lines))

@@ -45,7 +45,7 @@ def main():
         if not item:
             continue
         name = item[3:]
-        if name.startswith(("third-party-evaluation/", "benchmarks/third-party/")):
+        if name.startswith(("evaluations/", "benchmarks/third-party/")):
             continue
         file = ROOT / name
         if file.is_file() and not file.is_symlink():

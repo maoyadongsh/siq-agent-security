@@ -10,7 +10,7 @@ from common import sha256
 from cryptography.exceptions import InvalidSignature
 from verify_agentdojo_delete_replay import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 CANDIDATE = CAMPAIGN / 'private/candidates/5470ab3780f2-fixturefix2'
 RUN = CAMPAIGN / 'data/agentdojo-delete-replay-002'
 

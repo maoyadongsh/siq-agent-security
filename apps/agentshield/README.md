@@ -48,7 +48,7 @@ go -C apps/agentshield test ./...
 
 ## 验证与适用范围
 
-2026-10-06 [真实权限收口](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)支持已接入路径上的授权读写、越权拒绝、Skill SEC 撤销、更新不自动扩权、安装漂移收容与失联恢复。日常 Agent 入口和专属 Skill 验收入口分列；67 条签名记录及 20 项文件检查来自 10 个主批次，不是同一最终发行程序全量回归。默认任意 Skill 自动归属和合法解释器细粒度执行仍未证明。
+2026-10-06 [真实权限收口](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)支持已接入路径上的授权读写、越权拒绝、Skill SEC 撤销、更新不自动扩权、安装漂移收容与失联恢复。日常 Agent 入口和专属 Skill 验收入口分列；67 条签名记录及 20 项文件检查来自 10 个主批次，不是同一最终发行程序全量回归。默认任意 Skill 自动归属和合法解释器细粒度执行仍未证明。
 
 共享合同由 Go 输出、Python schema 校验及规范化/签名固定向量交叉验证；运行时对照见 [runtime-security](../../benchmarks/runtime-security/README.md)，端到端研究应用见 [Secure Agent](../secure-agent/README.md)。[四目标源码检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)覆盖隔离构建与基础启动，不覆盖所有系统服务和宿主旅程。
 

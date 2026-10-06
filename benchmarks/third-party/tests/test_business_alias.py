@@ -11,7 +11,7 @@ import business_alias_trial as alias
 
 class BusinessAliasTests(unittest.TestCase):
     def fixture(self, variant='question', condition='normal'):
-        root = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006/data/business-model-routing-controls-001'
+        root = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006/data/business-model-routing-controls-001'
         p = json.loads((root / 'protocol.json').read_text())
         original = next(u for u in p['allocation'] if u['unit_id'] == 'confidential-default')
         raw = json.loads((root / 'cases' / original['unit_id'] / 'result.json').read_text())
@@ -105,7 +105,7 @@ class BusinessAliasTests(unittest.TestCase):
         import shutil
         import subprocess
         import tempfile
-        campaign = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+        campaign = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
         source = campaign / 'data/business-alias-controls-001'
         verifier = campaign / 'protocols/business-alias-controls-001-protocol/harness-source/verify_business_alias.py'
         with tempfile.TemporaryDirectory(dir=campaign / 'private/tmp') as temporary:

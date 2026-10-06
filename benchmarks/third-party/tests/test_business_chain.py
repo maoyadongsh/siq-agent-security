@@ -12,7 +12,7 @@ from business_chain_scoring import score
 from common import sha256
 from verify_business_chain import verify
 
-CAMPAIGN = Path(__file__).resolve().parents[3] / 'third-party-evaluation/20261006'
+CAMPAIGN = Path(__file__).resolve().parents[3] / 'evaluations/campaigns/20261006'
 RUN = CAMPAIGN / 'private/runs/business-chain-controls-001'
 CANDIDATE = CAMPAIGN / 'private/candidates/5470ab3780f2-fixturefix2'
 

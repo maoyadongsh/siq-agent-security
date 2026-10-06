@@ -4,7 +4,7 @@
 
 ## 验证现有签名包
 
-2026-10-06 已核对 GitHub Latest 仍为 0.4.1（2026-09-28 发布，固定 a620a31b）。[新权限测评](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)及后续测评分支不是新发行包；不得用这些运行结果修改已发布八资产或替代同版本原生验收。下面命令复验指定版本，不自动追踪未来 Latest。
+2026-10-06 已核对 GitHub Latest 仍为 0.4.1（2026-09-28 发布，固定 a620a31b）。[新权限测评](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)及后续测评分支不是新发行包；不得用这些运行结果修改已发布八资产或替代同版本原生验收。下面命令复验指定版本，不自动追踪未来 Latest。
 
 先将指定 Release 的八份附件下载到一个新目录。`SOURCE-INFO.json` 中的源码身份只是描述性元数据；核对预期 tag/commit 后显式传入，不能把元数据当作源码构建证明。
 

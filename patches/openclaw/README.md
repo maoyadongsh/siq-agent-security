@@ -18,7 +18,7 @@
 
 ## 2026.9.5 当前验收
 
-截至 2026-10-06，本目录仍按固定版本、补丁和适配器摘要适用；新[DGX／Hermes 权限结果](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)不构成 OpenClaw 原版或本补丁的新验收。现有结果保持原合成 operator、私有副本和调用范围，不因个人客户端 0.4.1 发布而升级为上游原生支持。
+截至 2026-10-06，本目录仍按固定版本、补丁和适配器摘要适用；新[DGX／Hermes 权限结果](../../evaluations/campaigns/20261006/reports/research-permissions-final-report.md)不构成 OpenClaw 原版或本补丁的新验收。现有结果保持原合成 operator、私有副本和调用范围，不因个人客户端 0.4.1 发布而升级为上游原生支持。
 
 从仓库根目录执行以下命令。脚本先核对库存指纹，再复制完整运行时、只在临时副本应用补丁，并分别运行库存负向和受控原生场景：
 

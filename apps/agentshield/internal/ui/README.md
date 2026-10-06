@@ -15,7 +15,7 @@ make -C apps/agentshield ui
 
 ## 当前个人流程
 
-2026-10-06 [浏览器专项](../../../../third-party-evaluation/20261006/reports/personal-runtime-browser-report.md)记录真实接入、自检、活动关联和卸载；[状态专项](../../../../third-party-evaluation/20261006/reports/native-runtime-snapshot-report.md)区分配置快照、实例授权和临时自检身份。界面展示通过不能代替业务 Grant、安装身份或实际文件效果；本轮文档更新不重建嵌入资产。
+2026-10-06 [浏览器专项](../../../../evaluations/campaigns/20261006/reports/personal-runtime-browser-report.md)记录真实接入、自检、活动关联和卸载；[状态专项](../../../../evaluations/campaigns/20261006/reports/native-runtime-snapshot-report.md)区分配置快照、实例授权和临时自检身份。界面展示通过不能代替业务 Grant、安装身份或实际文件效果；本轮文档更新不重建嵌入资产。
 
 | 入口 | 关键行为 | 结果的解释 |
 | --- | --- | --- |

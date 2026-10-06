@@ -1,6 +1,6 @@
 # 风险接受到期的 UTC 语义修复
 
-2026-10-06。第三方测评001在真实生产模式API/PostgreSQL和原生发现资产上确认：风险接受截止时间传递为-08:00时可能提前重开，+08:00时可能延后。原始失败保存在`third-party-evaluation/20261006/private/runs/enterprise-risk-001`，不覆盖。
+2026-10-06。第三方测评001在真实生产模式API/PostgreSQL和原生发现资产上确认：风险接受截止时间传递为-08:00时可能提前重开，+08:00时可能延后。原始失败保存在`evaluations/campaigns/20261006/private/runs/enterprise-risk-001`，不覆盖。
 
 现有合同的“到期”指时间点，而不是带时区时间的墙上钟面值。API校验已换算UTC，worker必须采用同一语义：aware时间先`astimezone(UTC)`再移除tzinfo与库内naive UTC比较；历史naive时间继续按UTC处理；严格早于当前时刻才重开（等于时刻沿用原有不重开条件）。保持原始risk_acceptance内容，不改接口、状态名称或签名材料。到期重开审计及outbox继续同事务，一次重开不重复生成事件。
 
