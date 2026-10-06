@@ -1,0 +1,78 @@
+{
+  "schema_version": "siq.remote-publication-validation.v1",
+  "recorded_unix": 1791287149.580031,
+  "passed": true,
+  "workspace": "isolated Git worktree based on task branch HEAD; original dirty worktrees untouched",
+  "go_vet_all": {
+    "passed": true
+  },
+  "go_test_all": {
+    "passed": true
+  },
+  "cross_builds": {
+    "passed": true,
+    "rows": [
+      {
+        "target": "linux/arm64",
+        "exit_code": 0,
+        "sha256": "a32fd6ae1ca68ca6fed08e227f701edc36f0976f1f889d2f021659af31a5faf5",
+        "error": ""
+      },
+      {
+        "target": "linux/amd64",
+        "exit_code": 0,
+        "sha256": "eb4fbe089bb4097a0095eaa741ac0c62906ef32d5f8b8f104d860af58d01f593",
+        "error": ""
+      },
+      {
+        "target": "darwin/arm64",
+        "exit_code": 0,
+        "sha256": "7ff1906ed2ac01711615c88015fba954bc715de718e5b1e65b22eb24f0e7230d",
+        "error": ""
+      },
+      {
+        "target": "windows/amd64",
+        "exit_code": 0,
+        "sha256": "b3002a079315aa7e93774eb557c92eb17b0f92d4a24a25cb6a1b3aea13361669",
+        "error": ""
+      }
+    ]
+  },
+  "control_api_focused": {
+    "passed": true,
+    "tests": 55,
+    "suite": "risk acceptance, disposition transactions, expiry timezone, rule lifecycle and scan transactions"
+  },
+  "evaluator_focused": {
+    "passed": true,
+    "tests": 48,
+    "duration_seconds": 3.8
+  },
+  "public_evidence_reverified": {
+    "passed": true,
+    "primary_batches": 10,
+    "receipts": 67
+  },
+  "credential_field_scan_ref": "credential-field-scan.json",
+  "companion_scan_ref": "companion-secret-scan.json",
+  "primary_scan_review_ref": "scan-review.json",
+  "limits": [
+    "No new model measurement or Windows native runtime test in publication preparation.",
+    "Companion Research source is a review snapshot with explicit dependency/baseline constraints, not a standalone deployment.",
+    "Historical frozen candidate may differ from clean published branch; original measured hashes unchanged."
+  ],
+  "source_whitespace_check_passed": true,
+  "preserved_artifact_whitespace": {
+    "diagnostic_count": 89,
+    "paths": [
+      "third-party-evaluation/20261006/companion/research-engine/research-evaluation.patch",
+      "third-party-evaluation/20261006/companion/research-engine/source/infra/openshell/patches/hermes-post-tool-observer-serialization.patch",
+      "third-party-evaluation/20261006/protocols/research-permissions-hook-repair-001-unadapted.patch",
+      "third-party-evaluation/20261006/reports/enterprise-risk-timezone-before.txt",
+      "third-party-evaluation/20261006/reports/research-permissions-authority-loss-message-001.patch",
+      "third-party-evaluation/20261006/reports/research-permissions-final-confirmation-adjustments-001.patch",
+      "third-party-evaluation/20261006/reports/research-permissions-hook-repair-001.patch"
+    ],
+    "reason": "Unified-diff blank context lines and original pytest failure transcript bytes intentionally preserved; source/doc changes pass whitespace checks."
+  }
+}

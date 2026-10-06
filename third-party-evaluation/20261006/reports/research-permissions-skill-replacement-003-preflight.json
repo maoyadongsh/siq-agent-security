@@ -1,0 +1,43 @@
+{
+  "batch": "research-permissions-skill-replacement-003",
+  "source_count": 1444,
+  "owned_ports_free": {
+    "47811": true,
+    "18083": true,
+    "47710": true
+  },
+  "offline_tests_passed": 17,
+  "Go_focused_regression": "passed (failed before repair with exact observed 503)",
+  "Go_vet": "passed",
+  "Go_full_suite": "running; completion required before closure",
+  "cross_compilation": [
+    {
+      "os": "linux",
+      "arch": "arm64",
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/builds/research-session-conflict-001/siq-agent-security-linux-arm64",
+      "sha256": "68e7f95cb2e54e86943bfe2c3ee635f103e2c91fcfcc275b8994e0b8b4691796"
+    },
+    {
+      "os": "linux",
+      "arch": "amd64",
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/builds/research-session-conflict-001/siq-agent-security-linux-amd64",
+      "sha256": "54625899e8f61370ea128e73d4851c721d0734093f5aebab72d981d0afcf7692"
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64",
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/builds/research-session-conflict-001/siq-agent-security-darwin-arm64",
+      "sha256": "24045db925f062edb43cc6bf35584ca5ef770ce55eb58b5375111295daf6db1a"
+    },
+    {
+      "os": "windows",
+      "arch": "amd64",
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/builds/research-session-conflict-001/siq-agent-security-windows-amd64.exe",
+      "sha256": "59297aa6c57746bebc046975901740779fc76df2d9665ce38b61d9d2c994cd41"
+    }
+  ],
+  "Python_schema_contracts": "passed",
+  "gofmt": "changed Go files formatted; 4 unrelated existing unformatted files retained",
+  "offline_image_gates": "passed",
+  "live_metadata_signature_calibration": 5
+}

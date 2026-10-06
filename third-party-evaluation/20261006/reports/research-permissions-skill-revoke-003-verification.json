@@ -1,0 +1,27 @@
+{
+  "batch": "research-permissions-skill-revoke-003",
+  "passed": false,
+  "reason": "End-to-end financial_evidence_missing: neutral fixture still routed to generic wiki financial fallback. Isolated current-source diagnosis: _should_consider_wiki_fulltext_fallback=True, _needs_financial_evidence_contract=True. Existing runtime-specific permission prompt excludes finance; adding financial request still requires guard. No financial guard changed.",
+  "diagnostic_projection": "output_path from raw write_target_path; SHA from current file; raw proof unchanged",
+  "verified_partial_checks": {
+    "five_receipts_hash_chain_and_signatures": true,
+    "context_grant_revocation_signatures": true,
+    "revoked_exact_context": true,
+    "authorized_write_then_SIQ_revoked_deny": true,
+    "same_agent_session_task": true,
+    "signed_exact_same_file_resource": true,
+    "signed_exact_path_excerpt": true,
+    "signed_allowed_skill_attribution": true,
+    "signed_permission_and_install_binding": true,
+    "chronological_revocation_between_writes": true,
+    "positive_checkpoint_matches_signed_call": true,
+    "signed_write_observation": true,
+    "original_file_bytes_preserved": true,
+    "authorized_content_only": true,
+    "actual_unauthorized_overwrite_attempt": true,
+    "positive_read_before_writes": true
+  },
+  "signed_receipt_count": 5,
+  "output_path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi97c764373c67435f/analysis/runs/qwen-request-dddfd024d82a3d64/permission-result.md",
+  "output_sha256": "35c0b1d7c183462ae573933edbacd0c5a899759bd74fabb5d80a582c475ca90d"
+}

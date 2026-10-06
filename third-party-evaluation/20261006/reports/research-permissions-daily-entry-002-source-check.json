@@ -1,0 +1,24 @@
+{
+  "batch": "research-permissions-daily-entry-002",
+  "recorded_unix": 1791283129.210019,
+  "all_unchanged": true,
+  "source_files": 16,
+  "checks": {
+    "scripts/openshell/prove_research_daily_entry.py": true,
+    "scripts/openshell/tests/test_research_daily_entry.py": true,
+    "apps/api/routers/agent_user_router.py": true,
+    "apps/api/routers/auth.py": true,
+    "apps/api/services/auth_service.py": true,
+    "apps/api/services/auth_dependencies.py": true,
+    "apps/api/services/hermes_client.py": true,
+    "apps/api/services/qwen38_request_selector.py": true,
+    "apps/api/services/agent_chat_runtime_impl.py": true,
+    "apps/api/services/runtime_coordination.py": true,
+    "apps/api/database.py": true,
+    "apps/api/main.py": true,
+    "apps/api/services/hermes_runtime_http_errors.py": true,
+    "apps/api/tests/test_hermes_runtime_http_errors.py": true,
+    "apps/api/tests/test_qwen38_http_errors.py": true,
+    "apps/api/tests/test_qwen38_request_selector.py": true
+  }
+}

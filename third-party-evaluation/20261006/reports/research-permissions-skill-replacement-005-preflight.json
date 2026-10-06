@@ -1,0 +1,19 @@
+{
+  "batch": "research-permissions-skill-replacement-005",
+  "checks": {
+    "runner_denial_tests": 5,
+    "verifier_and_protocol_tests": 12,
+    "heartbeat_and_runner_tests": 17,
+    "Go_full_suite": "passed",
+    "Go_vet": "passed",
+    "cross_compile": "linux arm64/amd64, darwin arm64, windows amd64 passed",
+    "Python_schema_contracts": "passed",
+    "live_metadata_signature_calibration": 5,
+    "source_snapshot_files": 1445,
+    "financial_evidence_gate": "unchanged"
+  },
+  "expected_image_id": "sha256:625884e89675b4c6c960a8b51b181df3c85994857d2bb1cf34a52ba1dd4981f2",
+  "test_count_note": "Groups overlap; do not add these counts as unique tests.",
+  "pre_run_sources_frozen": true,
+  "note": "This ledger written during run; original protocol predates startup and launcher checks it."
+}

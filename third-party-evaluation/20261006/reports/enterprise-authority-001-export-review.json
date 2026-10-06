@@ -1,0 +1,21 @@
+{
+  "run_id": "enterprise-authority-001",
+  "export_files": 12,
+  "known_private_values_checked": 2,
+  "private_value_matches": [],
+  "credential_pattern_matches": [],
+  "api_gateway_pids_absent": {
+    "449396": true,
+    "447631": true
+  },
+  "owned_container_ids_absent": {
+    "1ac1dea4a095674efb8c617dfbd9f48d3ba6a4ec28316473f63f4ec13f3474aa": true,
+    "b8f58e7097c4": true,
+    "b23f0d905d098cac2695c4051f42239948dad0aa10137e23fec105bbc41653e3": true
+  },
+  "owned_networks_absent": {
+    "siq-tp07-b56ca9c3d961": true
+  },
+  "ephemeral_native_root_absent": true,
+  "scope": "known-value and pattern scans plus explicit owned-resource readback; not exhaustive secret classification"
+}

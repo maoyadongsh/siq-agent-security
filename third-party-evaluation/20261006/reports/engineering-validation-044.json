@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-10-06T01:29:34.033404+00:00",
+  "scope": "Q1 scoped evidence reuse and original routing source review; no new product trial",
+  "totals": {
+    "journeys_reviewed": 18,
+    "distinct_runs": 113,
+    "runs_verified": 111,
+    "preserved_incomplete_runs": 1,
+    "preserved_invalid_runs": 1,
+    "runs_unresolved": 0,
+    "new_executions": 0,
+    "paid_model_calls": 0,
+    "journeys_closed": 0
+  },
+  "review_ref": "reports/journey-evidence-reuse-003.json",
+  "review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+  "prior_reviews_preserved": [
+    "reports/journey-evidence-reuse-001.json",
+    "reports/journey-evidence-reuse-002.json"
+  ],
+  "framework_tests": {
+    "passed": 383,
+    "exit_code": 0,
+    "log": "reports/journey-reuse-framework-tests-001.txt"
+  },
+  "focused_tests": {
+    "passed": 8,
+    "exit_code": 0,
+    "log": "reports/journey-reuse-focused-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "log": "reports/journey-reuse-ruff-001.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/journey-reuse-diff-check-001.txt"
+  },
+  "source_snapshot": {
+    "manifest": "engineering-evidence/journey-reuse-tools-001/manifest.json",
+    "sha256": "94eee76ad3091c847d4eff2c3e83b3b1ae019402547493daeb39c9134ed0f0e0"
+  },
+  "routing_entry_review": "inventory/routing-entry-review-001.json",
+  "product_changed": false,
+  "paid_model_calls": 0,
+  "goal_status": "active",
+  "product_or_host_processes_started": 0
+}

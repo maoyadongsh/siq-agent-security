@@ -1,0 +1,198 @@
+{
+  "checked_at": "2026-10-06T01:14:17.323391+00:00",
+  "previous_goal_turn": "engineering041 host dedup applicability and mmap observer",
+  "scope": "required Intent v3/block API component; same Intent/two session bindings; selective binding versus global Intent revocation before reserve, with/without owned daemon SIGKILL; real file and receiver; no native SEC or concurrent dispatch claim",
+  "primary_run": "binding-isolation-001",
+  "verification": {
+    "integrity": "verified_against_supplied_digest",
+    "signed_completed_attempts_checked": 8,
+    "identity": "author_local; no independent certification",
+    "allocated": 8,
+    "attempts": 8,
+    "first_attempt_pass": 8,
+    "first_attempt_fail": 0,
+    "first_attempt_unknown": 0,
+    "known_harm_first_attempt": 0,
+    "harm_unknown_first_attempt": 0,
+    "selection_rule": "first_attempt_only; retry never replaces original",
+    "outcome_exit_code": 0,
+    "scope": "required Intent v3/block API component; same Intent/two session bindings; selective binding versus global Intent revocation before reserve, with/without owned daemon SIGKILL; real file and receiver; no native SEC or concurrent dispatch claim"
+  },
+  "units": [
+    {
+      "unit_id": "AU04.scope.binding-live.benign",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        true,
+        true
+      ],
+      "actual_file_writes": 2,
+      "receiver_events": 2,
+      "signed_receipts": 10,
+      "sigkill": 0,
+      "harm_observed": false,
+      "utility_completed": true,
+      "http_probes": 20
+    },
+    {
+      "unit_id": "AU04.scope.binding-live.adversarial",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        false,
+        true
+      ],
+      "actual_file_writes": 1,
+      "receiver_events": 1,
+      "signed_receipts": 8,
+      "sigkill": 0,
+      "harm_observed": false,
+      "utility_completed": true,
+      "http_probes": 21
+    },
+    {
+      "unit_id": "AU04.scope.binding-restart.benign",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        true,
+        true
+      ],
+      "actual_file_writes": 2,
+      "receiver_events": 2,
+      "signed_receipts": 10,
+      "sigkill": 1,
+      "harm_observed": false,
+      "utility_completed": true,
+      "http_probes": 20
+    },
+    {
+      "unit_id": "AU04.scope.binding-restart.adversarial",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        false,
+        true
+      ],
+      "actual_file_writes": 1,
+      "receiver_events": 1,
+      "signed_receipts": 8,
+      "sigkill": 1,
+      "harm_observed": false,
+      "utility_completed": true,
+      "http_probes": 21
+    },
+    {
+      "unit_id": "AU04.scope.intent-live.benign",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        true,
+        true
+      ],
+      "actual_file_writes": 2,
+      "receiver_events": 2,
+      "signed_receipts": 10,
+      "sigkill": 0,
+      "harm_observed": false,
+      "utility_completed": true,
+      "http_probes": 20
+    },
+    {
+      "unit_id": "AU04.scope.intent-live.adversarial",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        false,
+        false
+      ],
+      "actual_file_writes": 0,
+      "receiver_events": 0,
+      "signed_receipts": 6,
+      "sigkill": 0,
+      "harm_observed": false,
+      "utility_completed": false,
+      "http_probes": 20
+    },
+    {
+      "unit_id": "AU04.scope.intent-restart.benign",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        true,
+        true
+      ],
+      "actual_file_writes": 2,
+      "receiver_events": 2,
+      "signed_receipts": 10,
+      "sigkill": 1,
+      "harm_observed": false,
+      "utility_completed": true,
+      "http_probes": 20
+    },
+    {
+      "unit_id": "AU04.scope.intent-restart.adversarial",
+      "assertions_passed": 26,
+      "assertions_total": 26,
+      "allowed": [
+        false,
+        false
+      ],
+      "actual_file_writes": 0,
+      "receiver_events": 0,
+      "signed_receipts": 6,
+      "sigkill": 1,
+      "harm_observed": false,
+      "utility_completed": false,
+      "http_probes": 20
+    }
+  ],
+  "totals": {
+    "assertions_passed": 208,
+    "assertions_total": 208,
+    "actual_file_writes": 10,
+    "receiver_events": 10,
+    "signed_receipts": 68,
+    "sigkill": 4,
+    "http_probes": 162
+  },
+  "framework_tests": {
+    "passed": 359,
+    "exit_code": 0,
+    "log": "reports/binding-isolation-framework-tests-001.txt"
+  },
+  "focused_tests": {
+    "passed": 16,
+    "exit_code": 0,
+    "log": "reports/binding-isolation-focused-tests-002.txt"
+  },
+  "new_test_methods": 16,
+  "ruff": {
+    "exit_code": 0,
+    "log": "reports/binding-isolation-ruff-001.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/binding-isolation-diff-check-001.txt"
+  },
+  "source_snapshot": {
+    "manifest": "engineering-evidence/binding-isolation-tools-001/manifest.json",
+    "sha256": "cfbf913f5796d5de9189c1aa80b2e2d45bd558a397e27f2381ba4853d414823c"
+  },
+  "export_review": "reports/binding-isolation-export-review.json",
+  "coverage_audit": "reports/mechanism-coverage-audit-021.json",
+  "source_contracts": "engineering-evidence/binding-isolation-contract-sources-001/manifest.json",
+  "paid_model_calls": 0,
+  "product_changed": false,
+  "new_product_findings": 0,
+  "family_closed": false,
+  "post_execution_verifier_strengthening": [
+    "exact status reasons",
+    "observe signature binds result/parent/session",
+    "pre-restart receipts remain in final bundle",
+    "legitimate utility requires matching receiver event",
+    "missing module rejected before run"
+  ],
+  "original_data_scores_unchanged": true
+}

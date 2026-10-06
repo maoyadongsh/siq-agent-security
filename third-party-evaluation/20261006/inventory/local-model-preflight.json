@@ -1,0 +1,14 @@
+{
+  "endpoint": "http://127.0.0.1:8005/v1",
+  "models": [
+    "Qwen3.8-27B-NVFP4"
+  ],
+  "image_id": "sha256:60166a99b6610e2b4b3febbeb6411e4cbc9338e996ab6c80d3339f86a7b5b9c3",
+  "container": "qwen38-nvfp4-dflash2-sglang",
+  "credential": "private_file_reference_only",
+  "preflight_history": [
+    "configured Hermes 8004/8006 unreachable",
+    "actual 8005 requires authentication",
+    "configured key file is JSON; api_key field parsed without export"
+  ]
+}

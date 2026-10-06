@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-06T05:04:56.729611+00:00",
+  "repository": "siq-agent-security",
+  "product_changed": false,
+  "pytest": {
+    "command": "third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "exit_code": 0,
+    "passed": 630,
+    "subtests_passed": 118,
+    "seconds": 40.99,
+    "log_ref": "reports/source-budget-framework-tests.txt",
+    "log_sha256": "b132eb582a3063734697d36e4383934b658495252c804b7fdaef3bf9233688df"
+  },
+  "focused_tests": {
+    "file": "benchmarks/third-party/test_source_budget.py",
+    "passed": 9,
+    "exit_code": 0
+  },
+  "ruff": {
+    "exit_code": 0,
+    "files": [
+      "source_import_trial.py",
+      "export_source_import.py",
+      "source_budget_trial.py",
+      "verify_source_budget.py",
+      "review_source_budget.py",
+      "test_source_budget.py"
+    ]
+  },
+  "git_diff_check_exit_code": 0,
+  "evaluator_sha256": {
+    "source_import_trial.py": "77a401e01948c1c9511734c4138b3055c9321d4be2d3b826d0df4b3047e5ed53",
+    "export_source_import.py": "fb847b47c399fe375aa1a987c1dafeb686b860509f8ddb42e4011e0b9c767a1c",
+    "source_budget_trial.py": "231c7de58c641f88fe91b15e6924aa40953f118d8311d3a7d17ddbcc81cd526a",
+    "verify_source_budget.py": "abdf915acaf33bc4c4d69d8974992fc9a72b659bb466ba9ec3e9e93b36c2af7a",
+    "review_source_budget.py": "88bcf8fcc9cb89056b711c0142ee4e166942c94c34f5d3abb3b494d90212c03d",
+    "test_source_budget.py": "56f7e37874308f0c74534d94b1c9f543574e506852c72c2aef3c4d4be393d1eb"
+  },
+  "scope": "evaluation-only change; fixed product binary; no product rebuild"
+}

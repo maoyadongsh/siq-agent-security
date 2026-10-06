@@ -1,0 +1,15 @@
+test_corrected_cohort_verifies (test_observer_recovery.ObserverRecoveryTests.test_corrected_cohort_verifies) ... ok
+test_graceful_exit_does_not_prove_sigkill (test_observer_recovery.ObserverRecoveryTests.test_graceful_exit_does_not_prove_sigkill) ... ok
+test_http_summary_must_match_raw_probe (test_observer_recovery.ObserverRecoveryTests.test_http_summary_must_match_raw_probe) ... ok
+test_original_predicate_failures_remain_failures (test_observer_recovery.ObserverRecoveryTests.test_original_predicate_failures_remain_failures) ... ok
+test_physical_file_survives_revoked_pending (test_observer_recovery.ObserverRecoveryTests.test_physical_file_survives_revoked_pending) ... ok
+test_probe_removal_and_identity_substitution_rejected (test_observer_recovery.ObserverRecoveryTests.test_probe_removal_and_identity_substitution_rejected) ... ok
+test_recovery_hash_chain_cannot_be_reordered (test_observer_recovery.ObserverRecoveryTests.test_recovery_hash_chain_cannot_be_reordered) ... ok
+test_revoke_cannot_target_another_owner (test_observer_recovery.ObserverRecoveryTests.test_revoke_cannot_target_another_owner) ... ok
+test_signed_pending_snapshot_cannot_be_resampled (test_observer_recovery.ObserverRecoveryTests.test_signed_pending_snapshot_cannot_be_resampled) ... ok
+test_unsigned_resumed_snapshot_is_not_blindly_trusted (test_observer_recovery.ObserverRecoveryTests.test_unsigned_resumed_snapshot_is_not_blindly_trusted) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.080s
+
+OK

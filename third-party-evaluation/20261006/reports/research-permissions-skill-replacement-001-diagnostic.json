@@ -1,0 +1,15 @@
+{
+  "batch": "research-permissions-skill-replacement-001",
+  "passed": false,
+  "phase": "pre_model_setup",
+  "business_HTTP_attempted": false,
+  "committed_update_status": "updated_unverified",
+  "old_grant_status": "revoked",
+  "old_identity_status": "grant_unavailable",
+  "stale_decision_HTTP": 401,
+  "stale_enroll_HTTP": 401,
+  "stopped_before": "new_identity_old_session accepted-response assertion",
+  "exact_failure_HTTP_retained": false,
+  "setup_cleanup": true,
+  "next_batch": "research-permissions-skill-replacement-002"
+}

@@ -1,0 +1,16 @@
+{
+  "batch": "research-permissions-authority-loss-message-001",
+  "recorded_unix": 1791285425.696949,
+  "product_tests": {
+    "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest -q apps/api/tests/test_agent_runtime_authority_loss.py apps/api/tests/test_agent_runtime_active_runs.py apps/api/tests/test_qwen38_request_api.py",
+    "passed": 85,
+    "warnings": 392,
+    "seconds": 40.62
+  },
+  "evaluation_tests": {
+    "research_passed": 52,
+    "security_passed": 7,
+    "later_containment_reply_regression_passed": 2
+  },
+  "source_manifest_ref": "protocols/research-permissions-authority-loss-message-001-source-manifest.json"
+}

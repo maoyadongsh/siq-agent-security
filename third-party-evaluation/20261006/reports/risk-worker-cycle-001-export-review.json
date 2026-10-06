@@ -1,0 +1,16 @@
+{
+  "run_id": "risk-worker-cycle-001",
+  "known_private_values_checked": 2,
+  "private_value_matches": [],
+  "credential_pattern_matches": [],
+  "api_pids_absent": {
+    "691431": true
+  },
+  "owned_container_ids_absent": {
+    "05c8581334a95aa76fec99ea6167ede0a119a8a30aa053d9826586be226b107f": true
+  },
+  "native_temp_absent": true,
+  "owned_webhook_closed": true,
+  "scope": "known-value/pattern scan and exact owned-resource readback; not exhaustive classification",
+  "correction": "Read api_started.child_pid; initial supplemental file checked runner pid and is retained separately."
+}

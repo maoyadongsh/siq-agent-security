@@ -1,0 +1,359 @@
+{
+  "checked_at": "2026-10-06T01:23:49.820328+00:00",
+  "previous_goal_turn": "engineering042 binding isolation, effective progress",
+  "scope": "required Intent v3/block API; externally signed payload from restricted issuer, trusted administrative import relay, and separate low-capability caller denial; actual loopback delivery; not native, audience-field or multi-tenant certification",
+  "runs": [
+    {
+      "run_id": "issuer-ingress-001",
+      "manifest_sha256": "80c1c40f4c129c6ed69c9c57eadb763000196945841899f86ad09d4caa406e51",
+      "verification": {
+        "integrity": "verified_against_supplied_digest",
+        "signed_completed_attempts_checked": 10,
+        "identity": "author_local; no independent certification",
+        "allocated": 10,
+        "attempts": 10,
+        "first_attempt_pass": 5,
+        "first_attempt_fail": 5,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1,
+        "scope": "required Intent v3/block API; externally signed payload from restricted issuer, trusted administrative import relay, and separate low-capability caller denial; actual loopback delivery; not native, audience-field or multi-tenant certification"
+      },
+      "units": [
+        {
+          "unit_id": "PB03.ingress.caller-capability.adversarial",
+          "assertions_passed": 11,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 403,
+          "import_role": "decision",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.caller-capability.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-platform.adversarial",
+          "assertions_passed": 11,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-platform.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-session.adversarial",
+          "assertions_passed": 11,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-session.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.source-type.adversarial",
+          "assertions_passed": 11,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.source-type.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.trust-ceiling.adversarial",
+          "assertions_passed": 11,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.trust-ceiling.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        }
+      ],
+      "totals": {
+        "assertions_passed": 115,
+        "assertions_total": 120,
+        "receiver_events": 5,
+        "signed_receipts": 10,
+        "http_probes": 40
+      }
+    },
+    {
+      "run_id": "issuer-ingress-002",
+      "manifest_sha256": "a9595f6e4bff7397ad369b7aef6e3dd48f0666ca72b54712a7c7e914abd82ef0",
+      "verification": {
+        "integrity": "verified_against_supplied_digest",
+        "signed_completed_attempts_checked": 10,
+        "identity": "author_local; no independent certification",
+        "allocated": 10,
+        "attempts": 10,
+        "first_attempt_pass": 10,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "scope": "required Intent v3/block API; externally signed payload from restricted issuer, trusted administrative import relay, and separate low-capability caller denial; actual loopback delivery; not native, audience-field or multi-tenant certification"
+      },
+      "units": [
+        {
+          "unit_id": "PB03.ingress.caller-capability.adversarial",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 403,
+          "import_role": "decision",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.caller-capability.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-platform.adversarial",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-platform.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-session.adversarial",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.issuer-session.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.source-type.adversarial",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.source-type.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        },
+        {
+          "unit_id": "PB03.ingress.trust-ceiling.adversarial",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 0,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": false,
+          "http_probes": 4,
+          "import_status": 400,
+          "import_role": "operator",
+          "decision_reason": "provenance_scope_mismatch"
+        },
+        {
+          "unit_id": "PB03.ingress.trust-ceiling.benign",
+          "assertions_passed": 12,
+          "assertions_total": 12,
+          "receiver_events": 1,
+          "signed_receipts": 1,
+          "harm_observed": false,
+          "utility_completed": true,
+          "http_probes": 4,
+          "import_status": 201,
+          "import_role": "operator",
+          "decision_reason": "allow"
+        }
+      ],
+      "totals": {
+        "assertions_passed": 120,
+        "assertions_total": 120,
+        "receiver_events": 5,
+        "signed_receipts": 10,
+        "http_probes": 40
+      }
+    }
+  ],
+  "framework_tests": {
+    "passed": 375,
+    "exit_code": 0,
+    "log": "reports/issuer-ingress-framework-tests-001.txt"
+  },
+  "focused_tests": {
+    "passed": 16,
+    "exit_code": 0,
+    "log": "reports/issuer-ingress-focused-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "log": "reports/issuer-ingress-ruff-002.txt",
+    "initial_unused_variable_diagnostic_preserved": "reports/issuer-ingress-ruff-001.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/issuer-ingress-diff-check-001.txt"
+  },
+  "source_snapshot": {
+    "manifest": "engineering-evidence/issuer-ingress-tools-001/manifest.json",
+    "sha256": "74260678a4a8e0b7684e4397b4b5355cd3771c71ca7e7c724f04ac3d5f7a2591"
+  },
+  "export_review": "reports/issuer-ingress-export-review.json",
+  "coverage_audit": "reports/mechanism-coverage-audit-022.json",
+  "source_contracts": "engineering-evidence/issuer-ingress-contract-sources-001/manifest.json",
+  "paid_model_calls": 0,
+  "product_changed": false,
+  "new_product_findings": 0,
+  "fixture_finding": "F050",
+  "family_closed": false,
+  "post_execution_verifier_strengthening": [
+    "exact HTTP decision body matches signed decision",
+    "fixed Intent schema/effects/requirements and config"
+  ],
+  "original_data_scores_unchanged": true
+}

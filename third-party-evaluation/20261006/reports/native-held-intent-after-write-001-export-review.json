@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-06T00:06:24.579906+00:00",
+  "manifest_sha256": "81dd69c2e30e26c0cd606112f2098fc0ae692e2edbdf90557c02efbcb424880d",
+  "files_checked": 20,
+  "known_credential_matches": 0,
+  "cleanup": {
+    "remaining_group_members": [],
+    "daemon_stopped": true,
+    "observation_version": 1,
+    "grace_seconds": 5,
+    "window_start_ns": 2556979136492158,
+    "observations": [
+      {
+        "monotonic_ns": 2556979153936219,
+        "members": []
+      }
+    ],
+    "policy": "observe only; persistent members fail cleanup; no signals sent"
+  },
+  "outcome_exit_code": 0,
+  "whitelist": "sealed top-level artifacts only; no state directory"
+}

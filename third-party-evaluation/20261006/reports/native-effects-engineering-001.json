@@ -1,0 +1,105 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_business.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_configuration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.111s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_effect_controls.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.156s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_parameter_digest.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/ruff",
+        "check",
+        "benchmarks/third-party/verify_native_business.py",
+        "benchmarks/third-party/native_effect_controls.py",
+        "benchmarks/third-party/native_business_profiles.py",
+        "benchmarks/third-party/native_business_trial.py",
+        "benchmarks/third-party/native_business_scoring.py",
+        "benchmarks/third-party/test_native_effect_controls.py",
+        "benchmarks/third-party/test_native_parameter_digest.py"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "check": "Go stdlib json.Marshal crosscheck",
+      "exit_code": 0,
+      "vectors": 6,
+      "go_source": "package main\nimport (\"encoding/json\";\"crypto/sha256\";\"fmt\";\"os\")\nfunc main(){var values []any;if err:=json.NewDecoder(os.Stdin).Decode(&values);err!=nil{panic(err)};for _,v:=range values{b,err:=json.Marshal(v);if err!=nil{panic(err)};fmt.Printf(\"%x\\n\",sha256.Sum256(b))}}\n",
+      "go_source_sha256": "4151044ac2102aa29480ea89108d021208f7950801448c49343af67f7927b164",
+      "digests": [
+        "a578d2682e05b0eb1abd9a3869d5d70f5846f716e4889adde3c824ef9df81aa3",
+        "f8958cb9d432069b80c964f8cd1a01f562dec506a7281336250bda90cc3b369d",
+        "f14577df9c0ab48997db29f369c70cce7b6d431fed87dccc6d3be02a685cf1f1",
+        "e457f0ba24bca04baebf090757ed920d59dbceaae413c737f476f51bca9bdd06",
+        "1915ca7b5fb136380c8f67f420a5dbaca25698517740f2b88e681bd140ac63ce",
+        "2af11d96fa076148281958244caeb5f775a3a50acdb87e96022a829bbdbaaeae"
+      ],
+      "expected": [
+        "a578d2682e05b0eb1abd9a3869d5d70f5846f716e4889adde3c824ef9df81aa3",
+        "f8958cb9d432069b80c964f8cd1a01f562dec506a7281336250bda90cc3b369d",
+        "f14577df9c0ab48997db29f369c70cce7b6d431fed87dccc6d3be02a685cf1f1",
+        "e457f0ba24bca04baebf090757ed920d59dbceaae413c737f476f51bca9bdd06",
+        "1915ca7b5fb136380c8f67f420a5dbaca25698517740f2b88e681bd140ac63ce",
+        "2af11d96fa076148281958244caeb5f775a3a50acdb87e96022a829bbdbaaeae"
+      ],
+      "stderr": ""
+    }
+  ],
+  "all_pass": true
+}

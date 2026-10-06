@@ -15,6 +15,8 @@
 
 ## 研究路线
 
+2026-10-06 新增[DGX Agent／已安装 Skill 权限证据](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)、[来源机制与效用评估](../third-party-evaluation/20261006/reports/siq-effectiveness-assessment.md)及[AgentDojo 试点](../third-party-evaluation/20261006/reports/agentdojo-pilot20-report.md)。原生权限案例支持限定的实际控制；AgentDojo 原 240 单元未触发唯一保护入口，不提供增量邮件防护结论。后续[外部基准与隐藏集方案](../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)尚未执行，不据此更新 DOI、独立认证或研究泛化主张。
+
 研究材料位于根目录 `research/`，与 `apps/`、`docs/` 平级。沿以下顺序阅读；每页连接问题、方法、实现、协议与证据，正文只维护一份。
 
 [文献与理论线索](literature/README.md) → [研究问题 RQ1–RQ5](questions/README.md) → [方法与威胁边界](methods/README.md) → [实验设计与复现](experiments/README.md) → [发现与局限](findings/README.md)。[研究治理](governance/README.md)贯穿引用、贡献、数据与发布。
@@ -36,4 +38,4 @@
 
 正文保留在 `docs/research/`，此处是唯一研究总览；根 `RESEARCH.md` 与旧总览只作稳定导航。已有导航足以消除入口歧义，当前不移动协议、技术报告或冻结证据；文献全文已按清单原字节归位，不复制第二份结论。文献索引标记未知的作者、来源核查与再分发权，不由文件名补造已发表/已评审信息。
 
-研究源码版 `research-v0.1.0-rc.1` 与比赛 V5 保持各自冻结身份。客户端正式版 0.4.0 不更新研究分母、DOI 或独立复现状态。没有登记的外部结果保持待开展；协作者设备验证和托管 CI 均不作为独立第三方认证。
+研究源码版 `research-v0.1.0-rc.1` 与比赛 V5 保持各自冻结身份。客户端正式版 0.4.1 不更新研究分母、DOI 或独立复现状态。没有登记的外部结果保持待开展；协作者设备验证和托管 CI 均不作为独立第三方认证。

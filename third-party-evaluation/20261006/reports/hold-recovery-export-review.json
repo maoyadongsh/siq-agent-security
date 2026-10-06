@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-05T22:55:13.600797+00:00",
+  "scope": "sealed artifacts only; owned runtime/recovery tokens and signing seeds checked in raw/hex/base64; provider key scan at export",
+  "runs": {
+    "hold-recovery-001": {
+      "manifest_sha256": "76ae18c6bfd2c32704720bb1fb613abed85f0ece1c1b4a8789f76138911e0cef",
+      "artifacts_checked": 110,
+      "owned_token_or_signing_seed_matches": 0,
+      "cleanup_confirmed": 10,
+      "allocated": 10,
+      "verification_exit_code": 0
+    },
+    "hold-recovery-002": {
+      "manifest_sha256": "7bcdab3dbd41ca95de26399a10999c4e6eb4b006d278fefa875650e7775d51b7",
+      "artifacts_checked": 132,
+      "owned_token_or_signing_seed_matches": 0,
+      "cleanup_confirmed": 12,
+      "allocated": 12,
+      "verification_exit_code": 0
+    }
+  }
+}

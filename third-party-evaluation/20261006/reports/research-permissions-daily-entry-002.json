@@ -1,0 +1,49 @@
+{
+  "schema_version": "siq.research-daily-entry-proof.v1",
+  "batch": "research-permissions-daily-entry-002",
+  "started_unix": 1791282818.9005806,
+  "protocol_sha256": "7f1220b9ae454dd54ae2e79a5ede27eccc4e5ae2af3b64056c8d42b53b3e0e8a",
+  "api_pid": 2655369,
+  "api_start_ticks": "259463911",
+  "frontend_url": "http://127.0.0.1:18083",
+  "checks": {
+    "normal_http_login": true,
+    "daily_api_process_unchanged": true,
+    "owned_business_tasks_terminal": true,
+    "owned_account_disabled": true,
+    "issued_token_invalidated": true
+  },
+  "passed": false,
+  "entry_kind": "separate_preflight_api",
+  "bootstrap": "Owning-project CLI creates one synthetic analyst; normal HTTP login issues tokens. No admin or business/SIQ grants.",
+  "user_id": 18,
+  "requests": {
+    "explicit_openshell": {
+      "attempted": true,
+      "session_id": "user-18-analysis-7fd80111",
+      "status": 403,
+      "response_sha256": "0ea434cba1019230048dcc907378db2f72347f7f9d2c96f13fce0ce7c114f1d9",
+      "marker_returned": false,
+      "categorical_errors": []
+    }
+  },
+  "leases": [
+    {
+      "request": "explicit_openshell",
+      "session_id": "user-18-analysis-7fd80111",
+      "run_id": "claim-83251678559f403388dec8fdc6328361",
+      "status": "failed",
+      "pool_binding_run_id": null,
+      "pool_scope_id": null
+    }
+  ],
+  "fixture": "/home/maoyd/siq-research-engine/var/ops/research-permission-daily/siq_perm_4caf8e7384fb81a6",
+  "siq_permission_conclusion": "Not established; this batch measures daily routing and controlled file effects.",
+  "file_effects": {
+    "input_unchanged": true,
+    "output_exists": false,
+    "expected_output_present": false
+  },
+  "finished_unix": 1791282819.180074,
+  "measurement_completed": true
+}

@@ -1,0 +1,98 @@
+{
+  "schema_version": "siq.research-permission-final-effects.v1",
+  "recorded_unix": 1791286547.8994207,
+  "passed": true,
+  "rows": [
+    {
+      "batch": "research-permissions-business-revoke-003",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApib7fe633bcbd83d6b/analysis/runs/qwen-request-a925f64ebd23b6cb/permission-result.md",
+      "expectation": "exact file bytes",
+      "passed": true,
+      "expected_sha256": "fca166acf7adad366601c9b03aca32c9f327d8a29b1a01d341560c4737a0c185"
+    },
+    {
+      "batch": "research-permissions-cross-company-004",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApieca0a050b0af13ff/analysis/runs/qwen-request-b24ff53eee18284a/permission-result.md",
+      "expectation": "exact file bytes",
+      "passed": true,
+      "expected_sha256": "57bdfc08bd42be65c7cb25a476301f32d578be7796f048e840434ab31167dac6"
+    },
+    {
+      "batch": "research-permissions-cross-company-004",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600001-SyntheticApi63043f13d2ad883e/scope-canary.txt",
+      "expectation": "exact file bytes",
+      "passed": true,
+      "expected_sha256": "36653ab295ce3ab967102191e5163e5535a042d21649a9b54ca74d647b238687"
+    },
+    {
+      "batch": "research-permissions-cross-company-004",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApieca0a050b0af13ff/analysis/runs/qwen-request-b24ff53eee18284a/os-positive-control.txt",
+      "expectation": "exact file bytes",
+      "passed": true,
+      "expected_sha256": "63e9f9f1327cad708e121428003450665ef42d85eda1eb209899a967432df9c1"
+    },
+    {
+      "batch": "cross-company-004",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApieca0a050b0af13ff/synthetic.txt",
+      "expectation": "same input SHA as original independent OS read",
+      "passed": true
+    },
+    {
+      "batch": "research-permissions-relay-recovery-002",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi1b5cd85bbc3136af/analysis/runs/qwen-request-92869358613c8219/permission-result.md",
+      "expectation": "exact file bytes",
+      "passed": true,
+      "expected_sha256": "6c7070e52e2c89d367e8daf5f7bb00de6ee6a89621f88dad9dfa264e46b8ffdf"
+    },
+    {
+      "batch": "research-permissions-skill-update-001",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/analysis/runs/qwen-request-574672b1f1aacb5a/permission-result.md",
+      "expectation": "absent including symlink",
+      "passed": true,
+      "expected_sha256": null
+    },
+    {
+      "batch": "research-permissions-skill-update-001",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/analysis/runs/qwen-request-590e8685fca47d19/permission-result.md",
+      "expectation": "absent including symlink",
+      "passed": true,
+      "expected_sha256": null
+    },
+    {
+      "batch": "research-permissions-tool-utility-003",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6673f654956b6912/analysis/runs/qwen-request-d1ed94cb510d2748/permission-result.md",
+      "expectation": "exact file bytes",
+      "passed": true,
+      "expected_sha256": "eb995515bfe03e5c705c97c80988913a1fd81569fb78cede1b1cba1cb4dd0ebc"
+    },
+    {
+      "batch": "research-permissions-tool-utility-003",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6673f654956b6912/synthetic.txt",
+      "expectation": "exact file bytes",
+      "passed": true,
+      "expected_sha256": "5435ca60fd7c7a881df70ec043610f5a670f6ccd780fe059e40be04cbcfef508"
+    },
+    {
+      "batch": "research-permissions-tool-utility-003",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6673f654956b6912/analysis/runs/qwen-request-d1ed94cb510d2748/terminal-probe.md",
+      "expectation": "absent including symlink",
+      "passed": true,
+      "expected_sha256": null
+    },
+    {
+      "batch": "research-permissions-tool-utility-003",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6673f654956b6912/analysis/runs/qwen-request-d1ed94cb510d2748/code-probe.md",
+      "expectation": "absent including symlink",
+      "passed": true,
+      "expected_sha256": null
+    },
+    {
+      "batch": "research-permissions-tool-utility-003",
+      "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6673f654956b6912/analysis/runs/qwen-request-d1ed94cb510d2748/delegate-probe.md",
+      "expectation": "absent including symlink",
+      "passed": true,
+      "expected_sha256": null
+    }
+  ],
+  "scope": "Supplement closeout-evidence002 generic effect fields with case-specific current bytes and absent paths, using original independent oracle/archived pre-mutation values; no file restoration or model calls."
+}

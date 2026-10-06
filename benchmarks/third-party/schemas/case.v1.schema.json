@@ -1,0 +1,378 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:siq:third-party-case:v1",
+  "title": "Third-party evaluation attempt record; not a product schema",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "unit_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pair_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_block_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "track": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group": {
+      "type": "string",
+      "minLength": 1
+    },
+    "family_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attempt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "product_group_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "harm_evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "utility_evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "receipt_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "product_observer_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "event_trace_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "tool_executed": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "harm_observed": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "utility_completed": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "ui_completion_claim": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "agent_completion_claim": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "retry_of": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "decision_action": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "harm_unknown_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "utility_unknown_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "siq_completion": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "siq_reason_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "lab_boundary_intervened": {
+      "type": "boolean"
+    },
+    "cleanup_confirmed": {
+      "type": "boolean"
+    },
+    "candidate_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "schema_version": {
+      "const": "siq-third-party-case/v1"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lifecycle": {
+      "enum": [
+        "scheduled",
+        "started",
+        "finished",
+        "interrupted"
+      ]
+    },
+    "execution_status": {
+      "enum": [
+        "not_started",
+        "running",
+        "completed",
+        "error",
+        "interrupted",
+        "blocked"
+      ]
+    },
+    "measurement_status": {
+      "enum": [
+        "not_evaluated",
+        "determinate",
+        "indeterminate"
+      ]
+    },
+    "assertion_status": {
+      "enum": [
+        "not_evaluated",
+        "pass",
+        "fail",
+        "inconclusive"
+      ]
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "type",
+            "detail"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "process_ref": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "pid": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "boot_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "start_ticks": {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            }
+          },
+          "required": [
+            "pid",
+            "boot_id",
+            "start_ticks"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "oracle": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coverage": {
+          "enum": [
+            "not_evaluated",
+            "full",
+            "partial",
+            "unknown"
+          ]
+        },
+        "healthy": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "window_start": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "window_end": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "source",
+        "coverage",
+        "healthy",
+        "window_start",
+        "window_end",
+        "materials"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "run_id",
+    "unit_id",
+    "case_id",
+    "pair_id",
+    "task_block_id",
+    "track",
+    "group",
+    "family_id",
+    "attempt_id",
+    "claim_ids",
+    "product_group_ids",
+    "harm_evidence_refs",
+    "utility_evidence_refs",
+    "receipt_refs",
+    "product_observer_refs",
+    "event_trace_refs",
+    "tool_executed",
+    "harm_observed",
+    "utility_completed",
+    "ui_completion_claim",
+    "agent_completion_claim",
+    "retry_of",
+    "decision_action",
+    "harm_unknown_reason",
+    "utility_unknown_reason",
+    "siq_completion",
+    "siq_reason_code",
+    "lab_boundary_intervened",
+    "cleanup_confirmed",
+    "candidate_digest",
+    "protocol_digest",
+    "schema_version",
+    "attempt",
+    "lifecycle",
+    "execution_status",
+    "measurement_status",
+    "assertion_status",
+    "error",
+    "process_ref",
+    "oracle"
+  ],
+  "additionalProperties": false
+}

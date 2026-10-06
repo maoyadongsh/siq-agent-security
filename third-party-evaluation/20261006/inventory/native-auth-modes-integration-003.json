@@ -1,0 +1,537 @@
+{
+  "checked_at": "2026-10-06T04:13:51.924112+00:00",
+  "scope": "nine new frozen mode/fault variants; same preexisting task block; author local evidence",
+  "matrix": [
+    {
+      "run_id": "native-auth-block-control-003",
+      "mode": "block",
+      "profile": "control",
+      "manifest_sha256": "b7d8892a94942e34b2aa3d444dbb8b73ee7fff00376fcf8c69b8c510b249c2cb",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 8,
+      "management_HTTP": 63,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 15,
+      "fresh_read_observed": true,
+      "fresh_write_observed": true,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571671725471858,
+        "observations": [
+          {
+            "monotonic_ns": 2571671742640793,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-block-auth-denied-003",
+      "mode": "block",
+      "profile": "auth-denied",
+      "manifest_sha256": "c31b1b80bc501a5d9bc55fb5d991259fe2c67ea6403b8e2b3af8ce570f0d69e0",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 4,
+      "management_HTTP": 65,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 9,
+      "fresh_read_observed": false,
+      "fresh_write_observed": false,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571686931186184,
+        "observations": [
+          {
+            "monotonic_ns": 2571686947543780,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-block-backend-down-003",
+      "mode": "block",
+      "profile": "backend-down",
+      "manifest_sha256": "4a1cec7c90eb4a7b030611b19869661ecf76d381cc6d878923807cae035db409",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 6,
+      "management_HTTP": 68,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 9,
+      "fresh_read_observed": false,
+      "fresh_write_observed": false,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571701997647885,
+        "observations": [
+          {
+            "monotonic_ns": 2571702014019719,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-warn-control-003",
+      "mode": "warn",
+      "profile": "control",
+      "manifest_sha256": "d0eb735016aff5dbce7435fa97bc475812c24e8445849f3865b8265795c1dbc5",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 8,
+      "management_HTTP": 63,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 15,
+      "fresh_read_observed": true,
+      "fresh_write_observed": true,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571717615112078,
+        "observations": [
+          {
+            "monotonic_ns": 2571717631648842,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-warn-auth-denied-003",
+      "mode": "warn",
+      "profile": "auth-denied",
+      "manifest_sha256": "ca8dea6078b9cd7884e834c06ebadf386d29a79cd95f41479e5950fe8f32e4c7",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 4,
+      "management_HTTP": 65,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 9,
+      "fresh_read_observed": false,
+      "fresh_write_observed": false,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571732968986492,
+        "observations": [
+          {
+            "monotonic_ns": 2571732986439137,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-warn-backend-down-003",
+      "mode": "warn",
+      "profile": "backend-down",
+      "manifest_sha256": "f4fa57c5c1712ae8b7d088b272978598508b6d05227d6ebdfd2578063bced5e0",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 6,
+      "management_HTTP": 68,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 9,
+      "fresh_read_observed": false,
+      "fresh_write_observed": false,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571748159257321,
+        "observations": [
+          {
+            "monotonic_ns": 2571748176665469,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-audit_only-control-003",
+      "mode": "audit_only",
+      "profile": "control",
+      "manifest_sha256": "5c9705bb77c26cd275a64723bdac55f13515ab71590962c1b7e26ab70ec317d2",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 8,
+      "management_HTTP": 63,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 15,
+      "fresh_read_observed": true,
+      "fresh_write_observed": true,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571764347812381,
+        "observations": [
+          {
+            "monotonic_ns": 2571764364818010,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-audit_only-auth-denied-003",
+      "mode": "audit_only",
+      "profile": "auth-denied",
+      "manifest_sha256": "d34285ede4547b9467ca513be9573807f283c8b435a196d1b21b1bd302ed9491",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 4,
+      "management_HTTP": 65,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 9,
+      "fresh_read_observed": false,
+      "fresh_write_observed": false,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571779760233831,
+        "observations": [
+          {
+            "monotonic_ns": 2571779777610040,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-auth-audit_only-backend-down-003",
+      "mode": "audit_only",
+      "profile": "backend-down",
+      "manifest_sha256": "298da3204d434c10747c5d31eaafc9a819e5da0fdf9f4cf8be32521d2d015be8",
+      "checks_passed": 30,
+      "checks_registered": 30,
+      "unique_signed_receipts": 6,
+      "management_HTTP": 68,
+      "model_protocol_requests": 14,
+      "native_processes": 3,
+      "native_cli_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "native_pid_identity_recorded": false,
+      "wire_requests": 9,
+      "fresh_read_observed": false,
+      "fresh_write_observed": false,
+      "oracles_healthy": true,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2571794651614695,
+        "observations": [
+          {
+            "monotonic_ns": 2571794668534817,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "run_id": "native-auth-block-control-003",
+      "identity": {
+        "pid": 4136913,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257165567"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-block-control-003",
+      "identity": {
+        "pid": 4136900,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257165529"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-block-auth-denied-003",
+      "identity": {
+        "pid": 4139194,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257167259"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-block-auth-denied-003",
+      "identity": {
+        "pid": 4139181,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257167227"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-block-backend-down-003",
+      "identity": {
+        "pid": 4141179,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257168772"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-block-backend-down-003",
+      "identity": {
+        "pid": 4141171,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257168739"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-block-backend-down-003",
+      "identity": {
+        "pid": 4142658,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257169741"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-warn-control-003",
+      "identity": {
+        "pid": 4143385,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257170281"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-warn-control-003",
+      "identity": {
+        "pid": 4143371,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257170248"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-warn-auth-denied-003",
+      "identity": {
+        "pid": 4145389,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257171845"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-warn-auth-denied-003",
+      "identity": {
+        "pid": 4145377,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257171809"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-warn-backend-down-003",
+      "identity": {
+        "pid": 4147425,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257173375"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-warn-backend-down-003",
+      "identity": {
+        "pid": 4147412,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257173342"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-warn-backend-down-003",
+      "identity": {
+        "pid": 4148738,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257174344"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-audit_only-control-003",
+      "identity": {
+        "pid": 4149475,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257174899"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-audit_only-control-003",
+      "identity": {
+        "pid": 4149407,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257174866"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-audit_only-auth-denied-003",
+      "identity": {
+        "pid": 4151950,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257176521"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-audit_only-auth-denied-003",
+      "identity": {
+        "pid": 4151768,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257176486"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-audit_only-backend-down-003",
+      "identity": {
+        "pid": 4153934,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257178056"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-audit_only-backend-down-003",
+      "identity": {
+        "pid": 4153719,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257178022"
+      },
+      "current_state": "absent"
+    },
+    {
+      "run_id": "native-auth-audit_only-backend-down-003",
+      "identity": {
+        "pid": 4155113,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257178996"
+      },
+      "current_state": "absent"
+    }
+  ],
+  "candidate_source_differences_from_001": [
+    "scripts/personal-experience/r04-hermes-native-update-smoke.py"
+  ],
+  "candidate_digest": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "product_changed": false,
+  "real_model_calls": 0,
+  "independent_task_blocks_added": 0,
+  "checks_passed": 270,
+  "unique_signed_receipts": 54,
+  "management_HTTP": 588,
+  "model_protocol_requests": 126,
+  "native_processes": 27,
+  "wire_requests": 99,
+  "all_known_resources_exited": true,
+  "native_cleanup_scope": "CLI return codes and owned group observation; individual native PID references not captured in this harness path",
+  "full_journey_closed": false
+}

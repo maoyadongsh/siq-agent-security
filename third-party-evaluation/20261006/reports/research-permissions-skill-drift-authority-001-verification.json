@@ -1,0 +1,20 @@
+{
+  "batch": "research-permissions-skill-drift-authority-001",
+  "passed": true,
+  "checks": {
+    "signed_context_valid": true,
+    "same_self_response_before_and_restore": true,
+    "status_pair_200_401_200": true,
+    "exact_authentication_denial": true,
+    "context_same_instance_agent_grant": true,
+    "changed_bytes_preserved": true,
+    "mutation_after_positive_before_rejection": true,
+    "frozen_sources_unchanged": true,
+    "owned_cleanup": true,
+    "no_native_claim": true
+  },
+  "source_count": 2907,
+  "changed_sources": [],
+  "public_key": "SvlKPPvAsa4L/vpJJG6MIgRb0qbUdn4Xy/wdzDy5aQQ=",
+  "claim_scope": "public API installation-integrity authentication gate; does not prove a native second tool denial"
+}

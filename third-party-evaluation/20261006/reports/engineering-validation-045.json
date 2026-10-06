@@ -1,0 +1,216 @@
+{
+  "checked_at": "2026-10-06T01:43:33.029512+00:00",
+  "previous_goal_turn": "engineering043/044 yielded executed evidence and reuse map; progress",
+  "scope": "RB08 explicit router component source upgrade/operator switch/local client boundary plus separate Step format diagnosis",
+  "runs": {
+    "routing-scope-components-001": {
+      "verified_at": "2026-10-06T01:39:55.766301+00:00",
+      "allocated": 8,
+      "complete": 8,
+      "passed": 7,
+      "remote_client_policy_violations": 1,
+      "model_calls": 0,
+      "scope": "original router/client components, deterministic HTTP responses on loopback; no product tools, business completion or internet exfiltration claim",
+      "manifest_sha256": "1a33f703a6b4f69d7e00728a78d08409027261312cbda311ad14d6054a3a75aa"
+    },
+    "routing-scope-components-fixed-001": {
+      "verified_at": "2026-10-06T01:39:55.782097+00:00",
+      "allocated": 8,
+      "complete": 8,
+      "passed": 8,
+      "remote_client_policy_violations": 0,
+      "model_calls": 0,
+      "scope": "original router/client components, deterministic HTTP responses on loopback; no product tools, business completion or internet exfiltration claim",
+      "manifest_sha256": "258677731c533cf23ebeab883e4d9510bc145d3fc8673eac660cdaf36613c92a"
+    },
+    "step-format-diagnosis-001": {
+      "checked_at": "2026-10-06T01:36:29.210189+00:00",
+      "allocated": 6,
+      "attempted": 6,
+      "contract_valid": 4,
+      "no_product_execution": true,
+      "no_business_utility_claim": true,
+      "scope": "six paired synthetic provider requests, exploratory diagnosis; not independent confirmation or task success",
+      "by_mode": {
+        "json_object": [
+          {
+            "http_ok": true,
+            "json_valid": true,
+            "contract_valid": false,
+            "contract_error": "contract_fields_invalid",
+            "usage": {
+              "cached_tokens": 256,
+              "prompt_tokens": 729,
+              "completion_tokens": 1029,
+              "total_tokens": 1758,
+              "prompt_tokens_details": {
+                "cached_tokens": 256
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "finish_reason": "stop"
+          },
+          {
+            "http_ok": true,
+            "json_valid": true,
+            "contract_valid": false,
+            "contract_error": "contract_fields_invalid",
+            "usage": {
+              "cached_tokens": 256,
+              "prompt_tokens": 729,
+              "completion_tokens": 1820,
+              "total_tokens": 2549,
+              "prompt_tokens_details": {
+                "cached_tokens": 256
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "text": [
+          {
+            "http_ok": true,
+            "json_valid": true,
+            "contract_valid": true,
+            "contract_error": null,
+            "usage": {
+              "cached_tokens": 256,
+              "prompt_tokens": 729,
+              "completion_tokens": 1313,
+              "total_tokens": 2042,
+              "prompt_tokens_details": {
+                "cached_tokens": 256
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "finish_reason": "stop"
+          },
+          {
+            "http_ok": true,
+            "json_valid": true,
+            "contract_valid": true,
+            "contract_error": null,
+            "usage": {
+              "cached_tokens": 256,
+              "prompt_tokens": 729,
+              "completion_tokens": 705,
+              "total_tokens": 1434,
+              "prompt_tokens_details": {
+                "cached_tokens": 256
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "json_schema": [
+          {
+            "http_ok": true,
+            "json_valid": true,
+            "contract_valid": true,
+            "contract_error": null,
+            "usage": {
+              "cached_tokens": 256,
+              "prompt_tokens": 729,
+              "completion_tokens": 1217,
+              "total_tokens": 1946,
+              "prompt_tokens_details": {
+                "cached_tokens": 256
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "finish_reason": "stop"
+          },
+          {
+            "http_ok": true,
+            "json_valid": true,
+            "contract_valid": true,
+            "contract_error": null,
+            "usage": {
+              "cached_tokens": 256,
+              "prompt_tokens": 729,
+              "completion_tokens": 742,
+              "total_tokens": 1471,
+              "prompt_tokens_details": {
+                "cached_tokens": 256
+              },
+              "completion_tokens_details": {
+                "reasoning_tokens": 0
+              }
+            },
+            "finish_reason": "stop"
+          }
+        ]
+      },
+      "manifest_sha256": "a52a2044d8ad8f4da8c6e36a5cea29bf182d23a182ed2632d9520edb30d40a49"
+    }
+  },
+  "product_fix_candidate": "5470ab3780f2-routingscopefix1",
+  "finding_id": "F051",
+  "original_candidate_modified": false,
+  "main_product_worktree_modified": false,
+  "product_tests": {
+    "passed": 112,
+    "exit_code": 0,
+    "log": "reports/routing-scope-product-full-tests-001.txt"
+  },
+  "product_regressions_added": 6,
+  "old_behavior_negative_proof": {
+    "failures": 5,
+    "total_with_reused_base_checks": 30,
+    "log": "reports/routing-scope-product-before-tests-001.txt"
+  },
+  "framework_tests": {
+    "passed": 395,
+    "exit_code": 0,
+    "log": "reports/routing-scope-framework-tests-001.txt"
+  },
+  "focused_tests": {
+    "passed": 12,
+    "exit_code": 0,
+    "log": "reports/routing-scope-focused-tests-003.txt"
+  },
+  "delivery_patch_tests": {
+    "passed": 6,
+    "exit_code": 0,
+    "log": "reports/routing-scope-delivery-patch-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "log": "reports/routing-scope-ruff-002.txt",
+    "historical_frozen_test_import_sort_diagnostic": "reports/routing-scope-ruff-001.txt",
+    "delivery_test_imports_sorted_without_mutating_frozen_candidate": true
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/routing-scope-diff-check-001.txt"
+  },
+  "patch_manifest": "engineering-evidence/routing-source-fix-001/manifest.json",
+  "patch_manifest_sha256": "7bd73baf96fde06139f1ff4b9c8e8fbc493b8e34da2ff87fab3facadc702b18e",
+  "tool_snapshot": {
+    "manifest": "engineering-evidence/routing-scope-tools-001/manifest.json",
+    "sha256": "994734054265cd7ca26f091fa20e973904e0dace9e2c130345d3d67113c8d396"
+  },
+  "export_review": "reports/routing-scope-export-review.json",
+  "paid_model_calls_in_this_diagnostic": 6,
+  "reported_provider_tokens": 11200,
+  "component_model_inference_calls": 0,
+  "post_execution_verifier_strengthening": [
+    "source marker/class/digest and policy fixed",
+    "calibration digest and HTTP parse identity",
+    "wire events match original client diagnostics"
+  ],
+  "original_scores_unchanged": true,
+  "goal_status": "active"
+}

@@ -1,0 +1,181 @@
+{
+  "public_key": "m6AJX2m3VBgmj541pas6mk0MMQxEQN809jP50DIlU0g=",
+  "context": {
+    "schema_version": "skill-execution-context/v1",
+    "context_id": "sec-1326313616e13e3b9f68bffdb2edb905",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-ef8b14af1ef4c5055aa920296c970f85",
+      "agent_id": "hri-ef8b14af1ef4c5055aa920296c970f85",
+      "session_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:9dbdcd7212097be6729f79b15c163cb88cb680e2d7274ab4b677759f7549c1af",
+      "task_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c"
+    },
+    "skill": {
+      "skill_id": "local_dir:research-permissions-writer@eb4bc4c0f0f8",
+      "content_hash": "eb4bc4c0f0f8da7a65077219ef0f7c40a9b013e72ae50122eb825ff68e723cd6"
+    },
+    "install": {
+      "install_id": "sin-ffee66fbf35e00e2eaa491c3fb0538367b7f40451d0c0364acea97ced72de8b6",
+      "claim_signature": "5b7e723f336376f0af1c78830e6b7b8a232e08f6bebc95d46c819945e370889114cdc9cf24c08acb3904c6f7c365dfa99e722ce1ff9db1dfc027678c8166aa00"
+    },
+    "authority": {
+      "grant_id": "grt-si-ad26ba7380103e55923e4bc2ff139f1b7e82245defc5a6b682239ebd86091f46",
+      "grant_digest": "82b2970a0d438060f9910150f28774cf84ada9be7c7841885fcd369b7840a121"
+    },
+    "evidence_level": "controlled_task",
+    "issued_at": "2026-10-06T10:16:47.014702338Z",
+    "expires_at": "2026-10-06T10:26:31Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "c1a11c89b81b988d79de4a1ecaf40f58b00ff46316da3d44a4c5315ae4dbb0a262121830678c33fdf8f10cd359ed0ece7de49f4fcec382ccee069396da3bc30c"
+  },
+  "grant": {
+    "grant_id": "grt-si-ad26ba7380103e55923e4bc2ff139f1b7e82245defc5a6b682239ebd86091f46",
+    "admission_id": "adm-si-fc4ba04dc0f99a441afb5a0a8d31559b5db77a855788287029a462061bcc779d",
+    "skill": {
+      "skill_id": "local_dir:research-permissions-writer@eb4bc4c0f0f8",
+      "content_hash": "eb4bc4c0f0f8da7a65077219ef0f7c40a9b013e72ae50122eb825ff68e723cd6"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-ef8b14af1ef4c5055aa920296c970f85"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "pf-p-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-2-12bb99cf",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-3-623e9dd9",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "patch"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-4-aa79ee81",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "terminal"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-5-f65f4744",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "execute_code"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-6-b983405b",
+        "domain": "filesystem",
+        "action": "fs.read",
+        "resource": {
+          "type": "path",
+          "value": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6673f654956b6912/synthetic.txt"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-7-e17f97ac",
+        "domain": "filesystem",
+        "action": "fs.write",
+        "resource": {
+          "type": "path",
+          "value": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6673f654956b6912/analysis/runs"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "execute_code",
+      "patch",
+      "read_file",
+      "terminal",
+      "write_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-si-ad26ba7380103e55923e4bc2ff139f1b7e82245defc5a6b682239ebd86091f46",
+      "version": 2,
+      "static_domains_unavailable": [
+        "filesystem"
+      ]
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "approved",
+    "approved_by": {
+      "actor_type": "human",
+      "actor_id": "qwen-synthetic-proof-operator",
+      "approved_at": "2026-10-06T10:16:08Z",
+      "channel": "console"
+    },
+    "effective_readback": null,
+    "created_at": "2026-10-06T10:16:08Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "23b6d53dbe760e026ad30e0b133b36a4e83409c34b1c860cbfc4caa780603524f7af5a0c51cb23f8e350204ae7a11563dff0b162dab56303d33e5aea74fa1d06"
+  }
+}

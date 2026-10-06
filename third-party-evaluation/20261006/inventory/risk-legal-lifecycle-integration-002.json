@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-06T06:02:23.619298+00:00",
+  "run_id": "risk-legal-lifecycle-002",
+  "artifact_sha256": {
+    "third-party-evaluation/20261006/README.md": "9c7ca2d56c7928eb01142bad11b16fe29be375edf30a702e1fd1b5d96d09017f",
+    "third-party-evaluation/20261006/REPRODUCE.md": "b96e8c34266de1748ab0efa429b68e3f9b80e364d5faecf4532a24ad1e802ac1",
+    "third-party-evaluation/20261006/reports/project-function-understanding.md": "916c65f0190cd5b3935fcffe1130ae2279243a7ec3f012276f8a9e6d792ac2d7",
+    "third-party-evaluation/20261006/reports/product-evaluation-overview.md": "a9c2aa2ed64dd5587aa4300626efbddb1558f9943c2d30a64312041ed507dd3b",
+    "third-party-evaluation/20261006/reports/progress-report.md": "84d8b857a80dc3b4a918e47babc83c2aa84ca3305b29835189d727e1511538ca",
+    "third-party-evaluation/20261006/plan/real-business-evaluation-v2.md": "d355309e4048b10a1abf4aaeb454defd8e98940333ebeb6f915236da106a4b95",
+    "third-party-evaluation/20261006/plan/product-acceptance-execution-order.md": "13b82e2c7b8d498c4dc166b894b150dc4f509d0513f57cb59f9dc157677f6ee7",
+    "third-party-evaluation/20261006/plan/product-acceptance-execution-order.json": "f18872695e1a601d854a9f9d583824cf577ad920ffab15db96a418a97bf8324a",
+    "third-party-evaluation/20261006/plan/real-business-work-items-v2.json": "9a2eb6e1fdd03791976e06966ad8080e403be8be23542aad514bd8fb1aa6f1bf",
+    "third-party-evaluation/20261006/implementation-progress.json": "ff90859b3502a3c37de2216de4c45af86899c96cb42d6a1f5ec086c942e530a5",
+    "third-party-evaluation/20261006/plan/CODEX_HANDOFF.md": "04cd5abdb753433c60d55382c550f5d37b6c88cfece81b2873cd7b2c143b9cb1",
+    "third-party-evaluation/20261006/plan/product-grounded-evaluation-revision-001.md": "82d2d3bb89ed031b2e4d0f169a2b43617378f0bc2be99f85015ac7c731c36209",
+    "third-party-evaluation/20261006/plan/source-import-work-items-001.json": "6b3bce9592d42ac7ba9c37900562288b8263f262836cd2e512570c6c91b90846",
+    "docs/research/third-party-evaluation-plan-20261006.md": "ce674bbeccf9f9eed3007bd8c4e3f8913c03c2d90d2958b5ca2d9cd8e82b7f38",
+    "docs/research/third-party-evaluation-20261006/CODEX_HANDOFF.md": "7901ccfd53ee8052ccc5287b826d7d493dfcc75658934bb7e2bd73b45ed447ac",
+    "third-party-evaluation/20261006/reports/risk-legal-lifecycle-report.md": "dadcaf7ecee5d30a40d1bf0de86683514804718c2b52649c24c39b44488e7411",
+    "third-party-evaluation/20261006/reports/risk-legal-lifecycle-engineering-validation.json": "e6da26136e872ff28e47a6229c692774a635a420d1f343e246250b27869d0e71",
+    "third-party-evaluation/20261006/reports/risk-legal-lifecycle-document-review.json": "113b502a6d2cab3751dcb0698542d23136ca2de4dceb8fb5977cca43a2bc9500"
+  },
+  "document_checks": 32,
+  "first_attempt": {
+    "passed": 170,
+    "total": 171,
+    "cause": "scorer missed initial creation events"
+  },
+  "final_checks": 171,
+  "explicit_HTTP_requests": 112,
+  "all_attempt_HTTP_requests": 224,
+  "real_worker_reaper_calls": 12,
+  "all_attempt_worker_reaper_calls": 24,
+  "model_calls": 0,
+  "independent_task_blocks_added": 0,
+  "framework_tests": 684,
+  "framework_subtests": 118,
+  "product_changed": false,
+  "full_journey_closed": false,
+  "next": "full worker.once periodic rule re-evaluation while risk acceptance valid"
+}

@@ -1,0 +1,135 @@
+{
+  "checked_at": "2026-10-06T01:52:29.731397+00:00",
+  "run_id": "business-alias-controls-001",
+  "manifest_sha256": "3c8712390861abefdd4627b4e0a1d98fff1a5f9365985d7153d27a4838819e33",
+  "files_checked": 38,
+  "known_private_values_found": 0,
+  "scan": "exact known provider keys and state token/recovery/seed values, including hex/base64; no state export",
+  "owned_processes": [
+    {
+      "unit_id": "alias-question-normal",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 3,
+      "delivery_requests": 1,
+      "physical_completed": true,
+      "utility_completed": true,
+      "question_fidelity": true,
+      "first_deny": null
+    },
+    {
+      "unit_id": "alias-question-substitution",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 3,
+      "delivery_requests": 1,
+      "physical_completed": true,
+      "utility_completed": false,
+      "question_fidelity": false,
+      "first_deny": null
+    },
+    {
+      "unit_id": "alias-report_path-normal",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 3,
+      "delivery_requests": 1,
+      "physical_completed": true,
+      "utility_completed": true,
+      "question_fidelity": true,
+      "first_deny": null
+    },
+    {
+      "unit_id": "alias-report_path-substitution",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 2,
+      "delivery_requests": 0,
+      "physical_completed": false,
+      "utility_completed": false,
+      "question_fidelity": true,
+      "first_deny": {
+        "tool": "write_file",
+        "reason": "provenance_missing"
+      }
+    },
+    {
+      "unit_id": "alias-repository-normal",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 3,
+      "delivery_requests": 1,
+      "physical_completed": true,
+      "utility_completed": true,
+      "question_fidelity": true,
+      "first_deny": null
+    },
+    {
+      "unit_id": "alias-repository-substitution",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 1,
+      "delivery_requests": 0,
+      "physical_completed": false,
+      "utility_completed": false,
+      "question_fidelity": true,
+      "first_deny": {
+        "tool": "web_fetch",
+        "reason": "provenance_missing"
+      }
+    },
+    {
+      "unit_id": "alias-scope-normal",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 3,
+      "delivery_requests": 1,
+      "physical_completed": true,
+      "utility_completed": true,
+      "question_fidelity": true,
+      "first_deny": null
+    },
+    {
+      "unit_id": "alias-scope-substitution",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "http_requests": 1,
+      "delivery_requests": 0,
+      "physical_completed": false,
+      "utility_completed": false,
+      "question_fidelity": true,
+      "first_deny": {
+        "tool": "web_fetch",
+        "reason": "provenance_missing"
+      }
+    }
+  ],
+  "http_requests": 19,
+  "paid_model_calls": 0,
+  "signals_sent": 0,
+  "scope": "original application controlled clients plus actual tools/effects; author-side evidence only"
+}

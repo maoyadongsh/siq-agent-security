@@ -1,0 +1,242 @@
+{
+  "created_at": "2026-10-05T23:31:35.467982+00:00",
+  "timing": "post-run inventory; protocols retain original frozen integration fields",
+  "runs": [
+    {
+      "run_id": "business-comparison-controls-001",
+      "manifest_sha256": "a949ccfeab56ddcae944e2d6cd99a700346737d9c666778fbb7118cf65dcbdf4",
+      "protocol_sha256": "679b6c72e444f9b99c12a7537df2ce397d21a0d60eac707f8e168cc7fbe2b274",
+      "arms": {
+        "B0": {
+          "units": 8,
+          "decisions": 0,
+          "dispatches": {
+            "web_fetch": 62,
+            "write_file": 8,
+            "read_file": 7,
+            "send_message": 7
+          },
+          "receiver_events": 5,
+          "source": "direct original executors; no SIQ"
+        },
+        "B2": {
+          "units": 8,
+          "decisions": 81,
+          "dispatches": {
+            "web_fetch": 59,
+            "write_file": 7,
+            "read_file": 7,
+            "send_message": 4
+          },
+          "receiver_events": 3,
+          "source": "original SIQ gateway"
+        },
+        "A-PROV": {
+          "units": 8,
+          "decisions": 82,
+          "dispatches": {
+            "web_fetch": 60,
+            "write_file": 7,
+            "read_file": 7,
+            "send_message": 5
+          },
+          "receiver_events": 4,
+          "source": "original SIQ gateway"
+        }
+      },
+      "model_requests": 0,
+      "model_payload_digests_match": true,
+      "sec": "absent_builtin_application",
+      "native_host": "absent",
+      "frozen_integration": {
+        "entry": "benchmarks/hackathon/run.py:run_case -> SecureApplication",
+        "intent": "B2/A-PROV required/v3; B0 absent",
+        "sec": "absent_builtin_application",
+        "host": "reference_application_not_native_Hermes",
+        "tools": [
+          "web_fetch",
+          "read_file",
+          "write_file",
+          "send_message",
+          "verify_report"
+        ],
+        "nested_delivery": "send_message -> web_fetch",
+        "model_proposals": "controlled"
+      }
+    },
+    {
+      "run_id": "business-comparison-local-001",
+      "manifest_sha256": "154aa92e1d05a0641bd94839f7da613cea5cce5985ebc83c7389de5d6f5e6604",
+      "protocol_sha256": "2ad9590f28dce718703e5861590bc049dca3c1881519de73e7dc4e8e4597cf57",
+      "arms": {
+        "B2": {
+          "units": 6,
+          "decisions": 68,
+          "dispatches": {
+            "web_fetch": 50,
+            "write_file": 6,
+            "read_file": 6,
+            "send_message": 4
+          },
+          "receiver_events": 4,
+          "source": "original SIQ gateway"
+        },
+        "A-PROV": {
+          "units": 6,
+          "decisions": 68,
+          "dispatches": {
+            "web_fetch": 50,
+            "write_file": 6,
+            "read_file": 6,
+            "send_message": 4
+          },
+          "receiver_events": 4,
+          "source": "original SIQ gateway"
+        },
+        "B0": {
+          "units": 6,
+          "decisions": 0,
+          "dispatches": {
+            "web_fetch": 52,
+            "write_file": 6,
+            "read_file": 6,
+            "send_message": 6
+          },
+          "receiver_events": 6,
+          "source": "direct original executors; no SIQ"
+        }
+      },
+      "model_requests": 54,
+      "model_payload_digests_match": true,
+      "sec": "absent_builtin_application",
+      "native_host": "absent",
+      "frozen_integration": {
+        "entry": "benchmarks/hackathon/run.py:run_case -> SecureApplication",
+        "intent": "B2/A-PROV required/v3; B0 absent",
+        "sec": "absent_builtin_application",
+        "host": "reference_application_not_native_Hermes",
+        "tools": [
+          "web_fetch",
+          "read_file",
+          "write_file",
+          "send_message",
+          "verify_report"
+        ],
+        "nested_delivery": "send_message -> web_fetch",
+        "model_proposals": "natural"
+      }
+    },
+    {
+      "run_id": "business-comparison-step5-001",
+      "manifest_sha256": "a02954953c568c58ac8ddb72bf3db0e6f86476a3c57fc13cc065042df7ff1592",
+      "protocol_sha256": "9a9f920835cf26df9f8983dfb6ebd02fe2e6c3d337f22bd5c4398ba945c04726",
+      "arms": {
+        "B2": {
+          "units": 6,
+          "decisions": 68,
+          "dispatches": {
+            "web_fetch": 50,
+            "write_file": 6,
+            "read_file": 6,
+            "send_message": 4
+          },
+          "receiver_events": 4,
+          "source": "original SIQ gateway"
+        },
+        "A-PROV": {
+          "units": 6,
+          "decisions": 68,
+          "dispatches": {
+            "web_fetch": 50,
+            "write_file": 6,
+            "read_file": 6,
+            "send_message": 4
+          },
+          "receiver_events": 4,
+          "source": "original SIQ gateway"
+        },
+        "B0": {
+          "units": 6,
+          "decisions": 0,
+          "dispatches": {
+            "web_fetch": 52,
+            "write_file": 6,
+            "read_file": 6,
+            "send_message": 6
+          },
+          "receiver_events": 6,
+          "source": "direct original executors; no SIQ"
+        }
+      },
+      "model_requests": 54,
+      "model_payload_digests_match": true,
+      "sec": "absent_builtin_application",
+      "native_host": "absent",
+      "frozen_integration": {
+        "entry": "benchmarks/hackathon/run.py:run_case -> SecureApplication",
+        "intent": "B2/A-PROV required/v3; B0 absent",
+        "sec": "absent_builtin_application",
+        "host": "reference_application_not_native_Hermes",
+        "tools": [
+          "web_fetch",
+          "read_file",
+          "write_file",
+          "send_message",
+          "verify_report"
+        ],
+        "nested_delivery": "send_message -> web_fetch",
+        "model_proposals": "natural"
+      }
+    },
+    {
+      "run_id": "business-taint-attribution-001",
+      "manifest_sha256": "b1fc5a366d4ce7607cdb0cf06b121af053c7a047ad50483d3ae7f7724799afcd",
+      "protocol_sha256": "a72baf7c993d36cdfb8c4b42cd7e034181b219d125bcc17001ea4205c5abfc3a",
+      "arms": {
+        "B0": {
+          "units": 5,
+          "decisions": 0,
+          "dispatches": {
+            "web_fetch": 40,
+            "write_file": 5,
+            "read_file": 5,
+            "send_message": 5
+          },
+          "receiver_events": 5,
+          "source": "direct original executors; no SIQ"
+        },
+        "B2": {
+          "units": 5,
+          "decisions": 52,
+          "dispatches": {
+            "web_fetch": 37,
+            "write_file": 5,
+            "read_file": 5,
+            "send_message": 2
+          },
+          "receiver_events": 2,
+          "source": "original SIQ gateway"
+        }
+      },
+      "model_requests": 0,
+      "model_payload_digests_match": true,
+      "sec": "absent_builtin_application",
+      "native_host": "absent",
+      "frozen_integration": {
+        "entry": "benchmarks/hackathon/run.py:run_case -> SecureApplication",
+        "intent": "B2/A-PROV required/v3; B0 absent",
+        "sec": "absent_builtin_application",
+        "host": "reference_application_not_native_Hermes",
+        "tools": [
+          "web_fetch",
+          "read_file",
+          "write_file",
+          "send_message",
+          "verify_report"
+        ],
+        "nested_delivery": "send_message -> web_fetch",
+        "model_proposals": "controlled"
+      }
+    }
+  ]
+}

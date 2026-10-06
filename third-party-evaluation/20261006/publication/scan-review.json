@@ -1,0 +1,44 @@
+{
+  "files_scanned": 2424,
+  "findings_reviewed": [
+    {
+      "path": "benchmarks/third-party/.ruff_cache/0.16.2/2302358207214337422",
+      "kind": "nontext",
+      "disposition": "Excluded copied tool cache, original worktree untouched."
+    },
+    {
+      "path": "benchmarks/third-party/verify_openshell_fixture.py",
+      "kind": "private_key",
+      "disposition": "Literal PEM header in a leak-detection assertion; no private key body."
+    },
+    {
+      "path": "third-party-evaluation/20261006/inventory/applicability.json",
+      "kind": "json_sensitive_key",
+      "field": ".model.authorization",
+      "length": 81,
+      "disposition": "Model-use authorization prose, not an HTTP Authorization header or credential."
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/agentdojo-local-pilot20-001-verification.stderr.json",
+      "kind": "invalid_json",
+      "disposition": "Preserved historical stdout/stderr test output with .json suffix; not relabeled as structured JSON."
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/agentdojo-local-smoke-pilot-verifier-regression-001.json",
+      "kind": "invalid_json",
+      "disposition": "Preserved historical stdout/stderr test output with .json suffix; not relabeled as structured JSON."
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/agentdojo-step5-pilot20-001-verification-002.stderr.json",
+      "kind": "invalid_json",
+      "disposition": "Preserved historical stdout/stderr test output with .json suffix; not relabeled as structured JSON."
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/agentdojo-step5-pilot20-001-verification-debug-001.json",
+      "kind": "invalid_json",
+      "disposition": "Preserved historical stdout/stderr test output with .json suffix; not relabeled as structured JSON."
+    }
+  ],
+  "unresolved": 0,
+  "private_values_printed": false
+}

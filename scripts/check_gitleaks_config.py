@@ -262,6 +262,58 @@ def check_history(binary, config, token):
             raise SystemExit("scanner history calibration failed: root, side branch or merge addition missed")
 
 
+
+def check_third_party_digest_exceptions(binary, config):
+    """Frozen digest exceptions reject changed values, fields and path copies."""
+    rules = tomllib.loads(config.read_text())["rules"]
+    groups = [entry for rule in rules for entry in rule.get("allowlists", [])
+              if entry.get("description", "").startswith("third-party evidence SHA-256 group ")]
+    if not groups:
+        raise SystemExit("missing reviewed third-party digest exceptions")
+    with tempfile.TemporaryDirectory(prefix="siq-third-party-digest-scanner-") as directory:
+        root = Path(directory)
+        ignored, detected = set(), set()
+        for group in groups:
+            # These entries deliberately use exact escaped literals, not broad globs.
+            name = re.sub(r"\\(.)", r"\1", group["paths"][0][1:-1])
+            pattern = group["regexes"][0]
+            assert pattern.startswith(r"^\s*") and pattern.endswith(r",?\s*$")
+            line = re.sub(r"\\(.)", r"\1", pattern[4:-6])
+            field, digest = next(iter(json.loads("{" + line + "}").items()))
+            changed = "f" if digest[0] != "f" else "e"
+            negative_value = json.dumps(field) + ": " + json.dumps(changed + digest[1:])
+            negative_field = '"api_key": ' + json.dumps(digest)
+            # Use the already-calibrated synthetic key: random strings can hit
+            # the upstream entropy or common-word filters and flake in CI.
+            credential = '"api_key": "sk-proj-secret1234567890123456"'
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"{line}\n{negative_value}\n{negative_field}\n{credential}\n")
+            ignored.add((name, 1))
+            detected.update((name, n) for n in (2, 3, 4))
+            copied = root / "copied" / name
+            copied.parent.mkdir(parents=True, exist_ok=True)
+            copied.write_text(line + "\n")
+            detected.add(("copied/" + name, 1))
+        for arguments in (("init", "-q", "-b", "main"),
+                          ("config", "user.name", "Scanner calibration"),
+                          ("config", "user.email", "scanner@example.invalid"),
+                          ("config", "commit.gpgsign", "false"),
+                          ("add", "."), ("commit", "-qm", "frozen digest calibration")):
+            subprocess.run(["git", *arguments], cwd=root, capture_output=True, check=True)
+        report = root / "report.json"
+        result = subprocess.run([str(binary.resolve()), "git", str(root),
+            "--config", str(config.resolve()), "--log-opts=-1 HEAD", "--redact",
+            "--report-format", "json", "--report-path", str(report)],
+            capture_output=True, timeout=30, check=False)
+        rows = json.loads(report.read_text()) if report.exists() else []
+        actual = {(row["File"].replace("\\", "/"), row["StartLine"])
+                  for row in rows if row["RuleID"] == "generic-api-key"}
+        if result.returncode != 1 or not detected <= actual or actual & ignored:
+            raise SystemExit("third-party digest calibration failed: "
+                             f"missing={sorted(detected - actual)}; "
+                             f"unexpected={sorted(actual & ignored)}")
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, required=True)
@@ -312,6 +364,7 @@ def main():
     check_flagship_exceptions(args.binary, args.config, token)
     check_enterprise_fixture_exceptions(args.binary, args.config, token)
     check_calibration_source_exceptions(args.binary, args.config)
+    check_third_party_digest_exceptions(args.binary, args.config)
     check_history(args.binary, args.config, token)
     summary = {"status": "passed", "synthetic_only": True, "checks": [
         "ordinary credential detected", "new credential in allowed test path detected",
@@ -324,6 +377,7 @@ def main():
         "same reviewed digest under a prefixed copy of the path is detected",
         "enterprise journey canaries are exact by value and path",
         "calibrator source canaries are exact by value and path",
+        "third-party digest exceptions reject changed values, fields, credentials and path copies",
         "removed credentials in root, independent history and merge-only additions detected"], "raw_values_retained": False}
     if args.out:
         with args.out.open("x") as output:

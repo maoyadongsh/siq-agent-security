@@ -1,0 +1,91 @@
+{
+  "schema_version": "siq.research-permission-delivery-checklist.v1",
+  "status": "complete_latest_user_selected_scope",
+  "scope": "User-selected DGX/Hermes/OpenShell/Research Agent and installed-Skill permissions; Windows historical only",
+  "requirements": [
+    {
+      "id": "RG01",
+      "evidence": "reports/research-permissions-daily-permissions-001-report.md",
+      "requirement": "Original daily frontend/API, actual model/Hermes/image/cleanup",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG02",
+      "evidence": "reports/research-permissions-daily-permissions-001-verification.json",
+      "requirement": "Agent RO deny actual write, approved narrow RW allows actual write",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG03",
+      "evidence": "reports/research-permissions-cross-company-004-report.md",
+      "requirement": "A normal, B read/write denied with layer attribution",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG04",
+      "evidence": "reports/research-permissions-skill-business-003-skill-verification.json",
+      "requirement": "Actually installed/loaded Reader and Writer, distinct signed Grants/SEC and effects",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG05",
+      "evidence": [
+        "reports/research-permissions-skill-update-001-report.md",
+        "reports/research-permissions-skill-replacement-005-report.md",
+        "reports/research-permissions-skill-drift-containment-002-report.md"
+      ],
+      "requirement": "Candidate not automatically expanded; old authority cannot borrow update; actual integrity-loss containment; preserve original failed criteria",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG06",
+      "evidence": [
+        "reports/research-permissions-skill-revoke-004-verification.json",
+        "reports/research-permissions-business-revoke-003-report.md"
+      ],
+      "requirement": "Same-task SEC revoke second actual tool denied; separate business-Grant revocation and in-flight boundary",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG07",
+      "evidence": "reports/research-permissions-tool-utility-003-report.md",
+      "requirement": "14 actual tool entry points, authorized edit utility, unauthorized attempts and interpreter limitation",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG08",
+      "evidence": "reports/research-permissions-relay-recovery-002-report.md",
+      "requirement": "Owned relay unresponsive/fail closed/same process restored actual write",
+      "status": "verified_with_reported_limits"
+    },
+    {
+      "id": "RG09",
+      "evidence": "reports/research-permissions-final-report.md",
+      "requirement": "Readable business delivery/Agent/Skill/receipt/file mapping, reproduction guide, failures and limitations",
+      "status": "verified_with_reported_limits"
+    }
+  ],
+  "delivery_gates": [
+    "All selected-case signed receipt exports reverify",
+    "Current exported file checks pass",
+    "Each primary proof binds frozen protocol digest",
+    "Current default startup manifest matches worktree and API/frontend ready",
+    "Owned measurement processes/ports closed and preserved failed-cleanup recovery documented",
+    "Main plan, RG ledger and implementation progress agree",
+    "No false independent certification, global arbitrary-Skill or interpreter-isolation claim"
+  ],
+  "history": "reports/research-permissions-windows-history-001.md",
+  "open_confirmations": [],
+  "completed_unix": 1791286719.413447,
+  "requirement_audit_ref": "reports/research-permissions-final-requirement-audit-001.json",
+  "delivery_gate_evidence": {
+    "signed_exports_and_protocols": "reports/research-permissions-closeout-evidence-002.json",
+    "current_files": [
+      "reports/research-permissions-closeout-evidence-002.json",
+      "reports/research-permissions-final-effects-001.json"
+    ],
+    "default_readiness_and_cleanup": "reports/research-permissions-final-environment-001.json",
+    "coverage_and_claims": "reports/research-permissions-final-requirement-audit-001.json",
+    "final_report": "reports/research-permissions-final-report.md"
+  }
+}

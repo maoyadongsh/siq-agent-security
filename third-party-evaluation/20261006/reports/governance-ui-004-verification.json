@@ -1,0 +1,16 @@
+{
+  "integrity_verified": true,
+  "run_id": "governance-ui-004",
+  "passed": false,
+  "http_cases": 74,
+  "checks": 103,
+  "checks_passed": 103,
+  "missing": [
+    "ui_change_create",
+    "ui_policy_create"
+  ],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

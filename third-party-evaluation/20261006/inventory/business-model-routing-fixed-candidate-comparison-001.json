@@ -1,0 +1,40 @@
+{
+  "scope": "same application candidate, daemon and frozen harness across controls/live; no business result implied",
+  "run_ids": [
+    "business-model-routing-fixed-controls-001",
+    "business-model-routing-fixed-live-001"
+  ],
+  "checks": {
+    "candidate_root": true,
+    "candidate_sources": true,
+    "candidate_digest": true,
+    "binaries": true,
+    "application_candidate_source_digest": true,
+    "harness_sources": true,
+    "generation_override": true
+  },
+  "candidate_root_name": "5470ab3780f2-routingscopefix1",
+  "application_candidate_source_digest": "b19beac64bbeadad697b32553e15829ed3ef418bc6e6ca58095105add7f61c09",
+  "source_files": 8035,
+  "changes": {
+    "docs/evaluation/routing-source-upgrade.md": {
+      "before": null,
+      "after": "172c3d99a2215685e0d2c74d05a705b5cd1c277931cf702adfbf7c04070fe3a2"
+    },
+    "apps/secure-agent/secure_agent/routing.py": {
+      "before": "89626091ec7d40b991337be80e46ea9dbc2e0f7f1cb9498c2fc6a2d7a171db76",
+      "after": "f374be3cbe1fbc756faabb28135d18a42d03ed405f3b2d9a0fdab61f33b674fd"
+    },
+    "apps/secure-agent/tests/test_source_upgrade.py": {
+      "before": null,
+      "after": "b5db9127a77579eddcca7738f178d1c030d72365870bfbf8f984c24de4eed53a"
+    }
+  },
+  "control_prerequisite": {
+    "control_manifest_sha256": "4e05ed3ecb73ca33dc14b21db4bd836b0b02e973ba2be0d674648fa6b0547dc2",
+    "verification_sha256": "dfcaac93033565c8c4ec5484ac72b55e69e09fcfb48e3518d02faa5a452d53b1",
+    "negative_review_sha256": "22de96ecf25775e6a3dd91815da760f398c4694b255660f6aebcefd268cf4976",
+    "expected_unknown": "observer-loss",
+    "format_diagnostic_manifest_sha256": "afe6706c00908b9abe3cf3e484f54a8e369d59ae28e7213233a63201f0a2a15d"
+  }
+}

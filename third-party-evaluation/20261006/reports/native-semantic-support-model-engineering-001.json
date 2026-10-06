@@ -1,0 +1,81 @@
+{
+  "created_at": "2026-10-06T00:58:52.557026+00:00",
+  "scope": "offline report/source/manifest reconciliation; no additional model execution",
+  "commands": [
+    {
+      "label": "ruff",
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/ruff",
+        "check",
+        "benchmarks/third-party/explain_native_semantic.py"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "label": "diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "semantic_tests": {
+    "count": 20,
+    "command": [
+      "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "benchmarks/third-party",
+      "-p",
+      "test_native_semantic*.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "timing": "executed earlier in this turn before finalization; no implementation changes to semantic graders"
+  },
+  "frozen_artifacts_verified": 168,
+  "supplemental_source_files_verified": 24,
+  "task_hash_bindings": true,
+  "diagnostics": {
+    "native-semantic-support-local-001": {
+      "invalid_reports": 1,
+      "wrong_value_reports": 4,
+      "missing_dependency_reports": 5,
+      "wrong_and_missing_reports": 2,
+      "wrong_fields": 7,
+      "missing_dependency_fields": 7,
+      "mismatched_quote_fields": 0
+    },
+    "native-semantic-support-step5-001": {
+      "invalid_reports": 0,
+      "wrong_value_reports": 0,
+      "missing_dependency_reports": 1,
+      "wrong_and_missing_reports": 0,
+      "wrong_fields": 0,
+      "missing_dependency_fields": 1,
+      "mismatched_quote_fields": 8,
+      "retained_line_id_prefix": 11
+    }
+  },
+  "summary_matches_original_scores": true,
+  "local_links_checked": 274,
+  "broken_links": [],
+  "preserved_postrun_indexing_error": {
+    "type": "TypeError",
+    "reason": "first ad hoc index iteration treated null tool_calls as iterable",
+    "effect": "failed before writing index or documents; both sealed runs unchanged",
+    "correction": "normalize absent/null tool_calls to empty list and label extracted names proposed_tools"
+  },
+  "runtime_sessions": {
+    "26243": "terminal exit 1 confirmed",
+    "88315": "terminal exit 1 confirmed"
+  }
+}

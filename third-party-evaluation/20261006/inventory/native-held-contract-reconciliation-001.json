@@ -1,0 +1,82 @@
+{
+  "recorded_at": "2026-10-06T00:09:07.783953+00:00",
+  "review_kind": "retrospective explicit contract-path reconciliation; not retroactive preregistration",
+  "preexisting_candidate_manifest_sha256": "a54cbcbb9ba5836cfea1e142e3d096e10233f252a77f89a08afac9f88c864e58",
+  "preexisting_candidate_frozen_at": "2026-10-05T17:41:23.981542+00:00",
+  "candidate_commit": "5470ab3780f2228d77b0dd856553ea9e666de815",
+  "sources": [
+    {
+      "path": "packages/contracts/hold-status-request.v1.schema.json",
+      "sha256": "ca1ed83a939f4ee498da9236dd6c007378deb8c7a3ce1f83a529d58101cc552f",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "packages/contracts/hold-status.v1.schema.json",
+      "sha256": "f15e0300d8ed96f9c6597993fe025fc742b02da49f1eff3fdbfde9e53a539804",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "packages/contracts/hold-execution-reserve.v1.schema.json",
+      "sha256": "0422a5df166d12074ec1ec1727080fa6da47b51d30f6d6b440eba8436d14523b",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "packages/contracts/intent-revocation.v1.schema.json",
+      "sha256": "16a37ece78615993252acb7f6411f53877d98fe3656609a942f229c85e245718",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "packages/contracts/intent-binding-revocation.v1.schema.json",
+      "sha256": "ced440e865c8cdf40f461bd1428691099479f241cd5f368aa2fbdb5c4f88be03",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "packages/contracts/skill-execution-context-revocation.v1.schema.json",
+      "sha256": "3cc927026ccdaa164f1fab931525e2c1328f7762dff83d60b7507db4dcec6670",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/hold_status.go",
+      "sha256": "36b39f3df97d2b99dfdb64a68535d2bed25fdc4f453aed39094afeaaec49888d",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/hold_execution.go",
+      "sha256": "71216502d2bb990818c8613a87d4edae11cd690c77778fa4dc5408ab67e0e8e5",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/receipt/hold_execution_recheck.go",
+      "sha256": "74533efff01ad49a2967d6c006323cbacfba9194554f74f14640538a4ade94e9",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/server/runtime_identity_auth.go",
+      "sha256": "c2329161fb52428107973b887cf90637f59764e8067d28fcda7b225efe88ca0e",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/runtimeidentity/session.go",
+      "sha256": "4eed2716dbb8c80da6370188927b4720cd40336d470b956ed4b90b09d6ecab28",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/intent/revocation.go",
+      "sha256": "e29d1369b89edbfff5661700f69591e97ee372ee650d19a6af74fe2f9bdda0c6",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/intent/intent_revocation.go",
+      "sha256": "0bd5136fbf6aba5301fa87b205e86faa77da9f5a8e7a3ccd67eb0b642e8d1b1f",
+      "matches_preexisting_candidate_manifest": true
+    },
+    {
+      "path": "apps/agentshield/internal/canon/canon.go",
+      "sha256": "75f2bf733e047589f3c4645290428067386ffd6d4cfc3c194c6d3c883c10f422",
+      "matches_preexisting_candidate_manifest": true
+    }
+  ],
+  "protocol_evidence": "individual frozen native hold protocol limits, harness assertions and candidate binary digest; exact source content already in prior candidate inventory",
+  "remaining_formal_gate": "Future native hold protocols should carry this explicit path/digest mapping plus full applicability, exact state/reason, harm/utility and observation boundary fields at freeze; do not treat retrospective index as formal pre-execution binding",
+  "family_complete": false
+}

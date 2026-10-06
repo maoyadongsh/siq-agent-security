@@ -1,0 +1,7 @@
+{
+  "execution": "offline verification of unchanged old local smoke",
+  "exit_code": 3,
+  "error_type": "ValueError",
+  "reason": "pilot requires 20 distinct official task IDs",
+  "resolution": "classify new protocol by exposed_tools instead of legacy applicability; regression 002 passed; no model rerun"
+}

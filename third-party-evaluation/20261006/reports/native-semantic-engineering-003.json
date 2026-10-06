@@ -1,0 +1,116 @@
+{
+  "validated_at": "2026-10-06T00:29:46.356084+00:00",
+  "prior_engineering": "reports/native-semantic-engineering-002.json",
+  "test_methods": 54,
+  "verifications": [
+    {
+      "run_id": "native-business-controls-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 0,
+      "signed_receipts": 9,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-business-local-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 0,
+      "signed_receipts": 12,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-business-step5-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 1,
+      "signed_receipts": 12,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-path-controls-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 1,
+      "signed_receipts": 52,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-path-controls-002",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 1,
+      "signed_receipts": 52,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-skill-read-controls-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 0,
+      "signed_receipts": 16,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-absolute-local-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 0,
+      "signed_receipts": 8,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-absolute-step5-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 0,
+      "signed_receipts": 8,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-effects-controls-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 1,
+      "signed_receipts": 32,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-effects-shell-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 1,
+      "signed_receipts": 10,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-semantic-controls-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 0,
+      "signed_receipts": 52,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-semantic-local-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 1,
+      "signed_receipts": 44,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-semantic-step5-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 1,
+      "signed_receipts": 40,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-semantic-support-controls-001",
+      "all_original_scores_unchanged": true,
+      "business_exit_code": 0,
+      "signed_receipts": 52,
+      "stderr": ""
+    }
+  ],
+  "links_checked": 276,
+  "missing_links": [],
+  "plan_bindings_valid": true,
+  "reporting_source_snapshot_valid": true,
+  "summary_totals_independently_checked": true,
+  "git_diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "passed": true
+}

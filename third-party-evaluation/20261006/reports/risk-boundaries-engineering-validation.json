@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-06T05:52:18.933441+00:00",
+  "product_before_tests": {
+    "failed": 12,
+    "passed": 3
+  },
+  "focused_after_tests": 66,
+  "full_API_tests": {
+    "passed": 2287,
+    "skipped": 1,
+    "exit_code": 0,
+    "seconds": 102.86,
+    "log_sha256": "41f22d9eb94d8c1cbf38e7a88ff03e37e4b1bf149ca6e12909141132bcb6d9ec",
+    "skip": "optional SIQ_BATCH_WIRE_SAMPLE browser capture absent"
+  },
+  "framework": {
+    "passed": 669,
+    "subtests": 118,
+    "exit_code": 0,
+    "log": "reports/risk-boundaries-framework-tests.txt",
+    "log_sha256": "0764d226c9ee3d079f3d8625776ee1812a45ac5991e61dfb89ed1b2af70c841b"
+  },
+  "candidate_app_ruff": true,
+  "git_diff_check": true,
+  "changed_existing_sources": [
+    "apps/control-api/app/routers/findings.py",
+    "apps/control-api/app/schemas.py"
+  ],
+  "added_executable_sources": [
+    "apps/control-api/app/tests/test_risk_acceptance_boundaries.py"
+  ],
+  "runtime_fingerprints_equal": true,
+  "scorer_unchanged": true,
+  "contract_ref": "packages/contracts/enterprise-risk-acceptance.v1.md",
+  "contract_sha256": "a505710fea1ebcdaaddc692b83473bfd82b3910f663ac6682a3b33fda0748aa3",
+  "candidate_contract_same": true,
+  "old_lifecycle_harness_compatible_with_new_terminal_guard": false,
+  "whole_journey_closed": false
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq.evaluation.research-permission-review.v1",
+  "batch": "research-permissions-agent-002",
+  "passed": true,
+  "checks": {
+    "live_run_passed": true,
+    "independent_ed25519_and_hash_chain_verified": true,
+    "tampered_content_rejected": true,
+    "tampered_signature_rejected": true,
+    "native_read_allow": true,
+    "native_write_scope_deny": true,
+    "read_observation_present": true
+  },
+  "receipt_count": 3,
+  "claim_scope": "Agent native read/write; per-Skill unproven",
+  "decisions": [
+    {
+      "receipt_id": "rcp-7051f81a9950-065728.978472",
+      "tool_call_id": "ml02-scoped-f8287e65bec437b1-allowed-read",
+      "tool": "read_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-dfb318eac334-586b9d06",
+      "agent_id": "hri-bd4c2bf370a7ef1af28d92dfcf38fa98"
+    },
+    {
+      "receipt_id": "rcp-7810e15430f6-065729.190834",
+      "tool_call_id": "ml02-scoped-f8287e65bec437b1-denied-write",
+      "tool": "write_file",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-dfb318eac334-586b9d06",
+      "agent_id": "hri-bd4c2bf370a7ef1af28d92dfcf38fa98"
+    }
+  ]
+}

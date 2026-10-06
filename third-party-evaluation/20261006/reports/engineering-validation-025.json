@@ -1,0 +1,53 @@
+{
+  "checked_at": "2026-10-05T22:36:23.322178+00:00",
+  "scope": "AU03 optional-Intent/unbound_legacy API component profile, concurrency and lost response; required Intent/SEC/native profiles still pending",
+  "framework_tests": {
+    "passed": 162,
+    "exit_code": 0,
+    "log": "reports/hold-concurrency-framework-tests-003.txt"
+  },
+  "ruff": {
+    "exit_code": 0
+  },
+  "diff_check": {
+    "exit_code": 0
+  },
+  "cohorts": {
+    "hold-concurrency-001": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 8,
+      "identity": "author_local; no independent certification",
+      "allocated": 8,
+      "attempts": 8,
+      "first_attempt_pass": 8,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "approved hold reservation 2/8/32 caller races and dropped response; real echo subprocess/output receiver; no native host or same-UID isolation claim"
+    },
+    "hold-concurrency-003": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 14,
+      "identity": "author_local; no independent certification",
+      "allocated": 14,
+      "attempts": 14,
+      "first_attempt_pass": 14,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "approved hold reservation 2/8/32 caller races and dropped response; real echo subprocess/output receiver; no native host or same-UID isolation claim"
+    }
+  },
+  "never_executed_protocol": "hold-concurrency-002-protocol; superseded before product execution to seal calibration and preflight contract source digests",
+  "closure_review": "reports/AU03-requirement-review.json",
+  "coverage_audit": "reports/mechanism-coverage-audit-004.json",
+  "product_changed": false,
+  "cleanup_and_export": "reports/hold-concurrency-export-review.json",
+  "source_freeze": "engineering-evidence/hold-concurrency-tools-001"
+}

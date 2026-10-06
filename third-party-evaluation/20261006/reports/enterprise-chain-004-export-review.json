@@ -1,0 +1,17 @@
+{
+  "run_id": "enterprise-chain-004",
+  "export_files": 12,
+  "known_private_values_checked": 2,
+  "private_value_matches": [],
+  "api_gateway_pids_absent": {
+    "383539": true,
+    "382006": true
+  },
+  "owned_container_ids_absent": {
+    "86c4cc9d7d8c7612c8d5f7207b1ce296a8d446980fd806e87d55fbdeb088314a": true,
+    "62698a805cfb": true,
+    "31664b9eb76944bd5a3fd4424d30d15d114dcabbfe01fd24754d23efae96e5fc": true
+  },
+  "ephemeral_native_root_absent": true,
+  "scope": "known-value scan and explicit owned-resource readback, not exhaustive secret classification"
+}

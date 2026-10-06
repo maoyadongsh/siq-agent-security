@@ -1,0 +1,56 @@
+[
+  {
+    "cell": null,
+    "code": "EXE001",
+    "end_location": {
+      "column": 23,
+      "row": 1
+    },
+    "filename": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/scripts/personal-experience/r04-hermes-native-update-smoke.py",
+    "fix": null,
+    "location": {
+      "column": 1,
+      "row": 1
+    },
+    "message": "Shebang is present but file is not executable",
+    "name": "shebang-not-executable",
+    "noqa_row": 9,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/shebang-not-executable"
+  },
+  {
+    "cell": null,
+    "code": "RUF059",
+    "end_location": {
+      "column": 29,
+      "row": 198
+    },
+    "filename": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/scripts/personal-experience/r04-hermes-native-update-smoke.py",
+    "fix": {
+      "applicability": "unsafe",
+      "edits": [
+        {
+          "content": "_imported",
+          "end_location": {
+            "column": 29,
+            "row": 198
+          },
+          "location": {
+            "column": 21,
+            "row": 198
+          }
+        }
+      ],
+      "message": "Prefix it with an underscore or any other dummy variable pattern"
+    },
+    "location": {
+      "column": 21,
+      "row": 198
+    },
+    "message": "Unpacked variable `imported` is never used",
+    "name": "unused-unpacked-variable",
+    "noqa_row": 198,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/unused-unpacked-variable"
+  }
+]

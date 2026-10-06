@@ -1,0 +1,33 @@
+{
+  "integrity_verified": true,
+  "run_id": "enterprise-chain-003",
+  "passed": false,
+  "http_cases": 78,
+  "checks": 107,
+  "checks_passed": 107,
+  "missing": [
+    "backend_approve",
+    "backend_approve_two",
+    "backend_assets",
+    "backend_binding",
+    "backend_change",
+    "backend_change_two",
+    "backend_enforce",
+    "backend_instance",
+    "backend_policy",
+    "backend_preview",
+    "backend_preview_two",
+    "backend_rollback",
+    "backend_stale_submit",
+    "backend_submit",
+    "backend_unassigned",
+    "backend_unreachable_preview",
+    "backend_unreachable_self_report",
+    "backend_verify",
+    "backend_verify_old_receipt"
+  ],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "command": "apps/api/.venv/bin/python -m pytest scripts/openshell/tests/test_research_cross_company_os_probe.py -q",
+  "passed": 2,
+  "failed": 0,
+  "returncode": 0,
+  "coverage": [
+    "Readable writable B reports breach and actual mutation",
+    "Absent sandbox path reports native read and write failure; A utility succeeds"
+  ],
+  "limits": [
+    "Filesystem probe calibration only; not cross-company business or sandbox evidence."
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "checked_at": "2026-10-05T22:47:22.540220+00:00",
+  "scope": "AU03 required Intent v3/block; task-bound signed USER file path; API component; product binary unchanged",
+  "framework_tests": {
+    "passed": 176,
+    "exit_code": 0,
+    "log": "reports/hold-bound-framework-tests-002.txt"
+  },
+  "negative_tests": {
+    "passed": 7,
+    "log": "reports/hold-bound-negative-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "log": "reports/hold-bound-ruff-002.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/hold-bound-diff-check-002.txt"
+  },
+  "cohorts": {
+    "hold-bound-concurrency-001": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 0,
+      "identity": "author_local; no independent certification",
+      "allocated": 14,
+      "attempts": 14,
+      "first_attempt_pass": 0,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 14,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 14,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 2,
+      "scope": "required Intent v3 and signed USER path provenance; approved write_file reservation races; real owned filesystem writes and receiver counts; API component, not native/SEC"
+    },
+    "hold-bound-concurrency-002": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 0,
+      "identity": "author_local; no independent certification",
+      "allocated": 14,
+      "attempts": 14,
+      "first_attempt_pass": 0,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 14,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 14,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 2,
+      "scope": "required Intent v3 and signed USER path provenance; approved write_file reservation races; real owned filesystem writes and receiver counts; API component, not native/SEC"
+    },
+    "hold-bound-concurrency-003": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 14,
+      "identity": "author_local; no independent certification",
+      "allocated": 14,
+      "attempts": 14,
+      "first_attempt_pass": 14,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "required Intent v3 and signed USER path provenance; approved write_file reservation races; real owned filesystem writes and receiver counts; API component, not native/SEC"
+    }
+  },
+  "completed_cohort_predicates": 239,
+  "actual_file_writes": 13,
+  "model_calls": 0,
+  "export_review": "reports/hold-bound-export-review.json",
+  "tool_snapshot": "engineering-evidence/hold-bound-tools-001/manifest.json",
+  "tool_snapshot_sha256": "ee678003f8123cee571651e6edd7104ab1bf3daf2c6afb8712a18a3e50fecc60",
+  "original_failures_retained": [
+    "hold-bound-concurrency-001",
+    "hold-bound-concurrency-002"
+  ],
+  "findings": [
+    "F031",
+    "F032"
+  ],
+  "remaining": [
+    "native SEC concurrency",
+    "AU02 restart replay",
+    "AU04 revocation/dispatch races",
+    "AU05 dispatch/observation crash boundaries"
+  ]
+}

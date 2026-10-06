@@ -1,0 +1,42 @@
+--- before/apps/api/services/agent_chat_runtime_impl.py
++++ after/apps/api/services/agent_chat_runtime_impl.py
+@@ -172,6 +172,7 @@
+ 
+ _RUNTIME_OWNER_ID = runtime_owner_id()
+ _ACTIVE_RUN_CONFLICT_MESSAGE = "当前会话已有请求正在处理，请等待当前结果完成后再试。"
++_ACTIVE_RUN_AUTHORITY_LOST_MESSAGE = "[失败] 任务执行权限或运行状态已变化，无法确认完整结果。请先核对已产生的文件或操作记录。"
+ _ORPHAN_RECONCILIATION_TASKS: set[asyncio.Task[None]] = set()
+ 
+ 
+@@ -7800,7 +7801,12 @@
+             state.runtime_children_terminal_confirmed = False
+             state.status = "failed"
+             state.error = "active_run_lease_lost"
+-            return _ACTIVE_RUN_CONFLICT_MESSAGE
++            state.terminal_result = RunTerminalResult(
++                run_id=run_id, status="failed", received_text=reply,
++                error_code="active_run_lease_lost", retryable=False,
++                diagnostic="Runtime ownership changed before postprocessing",
++            )
++            return _ACTIVE_RUN_AUTHORITY_LOST_MESSAGE
+     except RunTerminalError as exc:
+         state.terminal_result = exc.result
+         if exc.result.status == "failed":
+@@ -8216,7 +8222,7 @@
+                             status="failed",
+                             received_text=full_reply,
+                             error_code="active_run_lease_lost",
+-                            retryable=True,
++                            retryable=False,
+                             diagnostic="Runtime ownership changed before postprocessing",
+                             runtime=terminal_result.runtime if terminal_result is not None else None,
+                         )
+@@ -8225,7 +8231,7 @@
+                             "error",
+                             _terminal_error_payload(
+                                 terminal_result,
+-                                message=_ACTIVE_RUN_CONFLICT_MESSAGE,
++                                message=_ACTIVE_RUN_AUTHORITY_LOST_MESSAGE,
+                             ),
+                         )
+                     break

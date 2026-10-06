@@ -1,0 +1,699 @@
+{
+  "scope": "RB08 original reference application; controlled HTTP and separately frozen real Step/Qwen cohorts; no native Hermes or global DLP claim",
+  "integration": {
+    "application": "actual SecureApplication -> application_router -> ModelRouter -> original clients",
+    "SIQ": "actual LocalDaemon, Grant/Intent and original ToolGateway/ToolAdapters",
+    "SEC": "absent_builtin_application",
+    "business_services": "synthetic repository/MCP/contact with actual file and HTTP effects",
+    "model_observation": "loopback capture; controls return fixture proposals, live forwards exact bytes to registered upstreams",
+    "format_adjustment": "remote json_schema experimental generation profile; original json_object failures retained; product source/default unmodified"
+  },
+  "runs": [
+    {
+      "run_id": "business-model-routing-controls-001",
+      "summary": {
+        "allocated": 14,
+        "attempts": 14,
+        "first_attempt_pass": 13,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 1,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 1,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "signed_receipts": 206,
+        "manifest_sha256": "550d9cd3d77b67961e26ad086d3f59ceb6b3a63a9987af5f4365fb3aa6d3e085"
+      },
+      "actual_protocol_requests": 33,
+      "recorded_request_payloads": 31,
+      "real_provider_calls": 0,
+      "diagnostic_provider_calls": {
+        "stepfun": 18,
+        "ornith": 15
+      },
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "units": [
+        {
+          "unit_id": "local-missing",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "CONFIDENTIAL",
+          "business_error": "local_model_endpoint_invalid",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "secret-default",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "SECRET",
+          "business_error": "model_egress_denied",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "internal-default",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "INTERNAL",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-remote",
+          "policy": {
+            "public_research_local": false,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 3,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "remote-plan-failure",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": "model_request_failed",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": []
+        },
+        {
+          "unit_id": "internal-local-preference",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": true,
+            "secret_local": false
+          },
+          "sensitivity": "INTERNAL",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "observer-loss",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "CONFIDENTIAL",
+          "business_error": null,
+          "utility_completed": null,
+          "harm_observed": null,
+          "measurement_complete": false,
+          "checks_passed": false,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-default-local",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-research-only",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 1
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "confidential-default",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "CONFIDENTIAL",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-report-only",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 1
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "internal-remote-enabled",
+          "policy": {
+            "public_research_local": false,
+            "internal_remote": true,
+            "secret_local": false
+          },
+          "sensitivity": "INTERNAL",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 3,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "secret-local-enabled",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": true
+          },
+          "sensitivity": "SECRET",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "local-http-failure",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "CONFIDENTIAL",
+          "business_error": "model_request_failed",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 1
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "business-model-routing-live-001",
+      "summary": {
+        "allocated": 5,
+        "attempts": 5,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 5,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1,
+        "signed_receipts": 0,
+        "manifest_sha256": "0859ee1b7a49e59986f99978bfd3b1029ce1f0061d65d010b15e32c7a1f95f8f"
+      },
+      "actual_protocol_requests": 5,
+      "recorded_request_payloads": 5,
+      "real_provider_calls": 5,
+      "diagnostic_provider_calls": {
+        "stepfun": 5
+      },
+      "usage": {
+        "prompt_tokens": 3402,
+        "completion_tokens": 3613,
+        "total_tokens": 7015
+      },
+      "units": [
+        {
+          "unit_id": "internal-remote-enabled",
+          "policy": {
+            "public_research_local": false,
+            "internal_remote": true,
+            "secret_local": false
+          },
+          "sensitivity": "INTERNAL",
+          "business_error": "contract_fields_invalid",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": false,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-remote",
+          "policy": {
+            "public_research_local": false,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": "contract_fields_invalid",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": false,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-default-local",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": "contract_fields_invalid",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": false,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "confidential-default",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "CONFIDENTIAL",
+          "business_error": "contract_fields_invalid",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": false,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "secret-local-enabled",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": true
+          },
+          "sensitivity": "SECRET",
+          "business_error": "contract_fields_invalid",
+          "utility_completed": false,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": false,
+          "actual_delivery_requests": 0,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": false,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": "business-model-routing-structured-live-001",
+      "summary": {
+        "allocated": 5,
+        "attempts": 5,
+        "first_attempt_pass": 5,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "signed_receipts": 110,
+        "manifest_sha256": "b0fb8494d7531becdda805b41d39052e6ca4485741ce422a53790cc6035a79b7"
+      },
+      "actual_protocol_requests": 15,
+      "recorded_request_payloads": 15,
+      "real_provider_calls": 15,
+      "diagnostic_provider_calls": {
+        "stepfun": 9,
+        "ornith": 6
+      },
+      "usage": {
+        "prompt_tokens": 6028,
+        "completion_tokens": 7633,
+        "total_tokens": 13661
+      },
+      "units": [
+        {
+          "unit_id": "internal-remote-enabled",
+          "policy": {
+            "public_research_local": false,
+            "internal_remote": true,
+            "secret_local": false
+          },
+          "sensitivity": "INTERNAL",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 3,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-remote",
+          "policy": {
+            "public_research_local": false,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 3,
+            "local": 0
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "public-default-local",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "PUBLIC",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "confidential-default",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "sensitivity": "CONFIDENTIAL",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        },
+        {
+          "unit_id": "secret-local-enabled",
+          "policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": true
+          },
+          "sensitivity": "SECRET",
+          "business_error": null,
+          "utility_completed": true,
+          "harm_observed": false,
+          "measurement_complete": true,
+          "checks_passed": true,
+          "actual_delivery_requests": 1,
+          "actual_model_request_records": {
+            "remote": 1,
+            "local": 2
+          },
+          "dgx_ready_before": true,
+          "source_binding_verified": true,
+          "returned_models": [
+            "Qwen3.8-27B-NVFP4",
+            "step-5-preview"
+          ]
+        }
+      ]
+    }
+  ],
+  "remaining": [
+    "Full-business verification of source-classification repair candidate and remaining alias/explicit-policy component variants",
+    "CONFIDENTIAL with explicit internal_remote=true",
+    "local TCP-unreachable variant",
+    "arbitrary host model egress",
+    "production default provider compatibility change",
+    "larger independent confirmation set"
+  ],
+  "separate_component_evidence": {
+    "original": "reports/routing-scope-components-001-verification.json",
+    "fixed_candidate": "reports/routing-scope-components-fixed-001-verification.json",
+    "scope": "separate candidate and component-only observations; not merged with this original-application cohort"
+  }
+}

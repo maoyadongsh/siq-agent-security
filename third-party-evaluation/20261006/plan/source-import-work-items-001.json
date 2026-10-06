@@ -1,0 +1,367 @@
+{
+  "schema_version": "siq-source-import-work-items/v1",
+  "created_at": "2026-10-06T04:32:27.863892+00:00",
+  "scope": "Next-cohort implementation specification; not a frozen run allocation or completed business result",
+  "plan_ref": "plan/product-grounded-evaluation-revision-001.md",
+  "plan_sha256": "fcb49c09fb8ba347f7e78e0823d2be4556270b1628c0e77152ef3fc631970d62",
+  "review_ref": "reports/source-capability-review-001.md",
+  "candidate_digest": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "planned_modules": [
+    "benchmarks/third-party/source_import_trial.py",
+    "benchmarks/third-party/source_import_scoring.py",
+    "benchmarks/third-party/verify_source_import.py"
+  ],
+  "modules_implemented_in_this_revision": false,
+  "case_count": 16,
+  "items": [
+    {
+      "case_id": "SRC01",
+      "operation_and_control": "同字节正常目录与ZIP，各新ID",
+      "acceptance_and_evidence": "真实API成功、artifact一致、source kind/locator不同、准入与签名有效；导入不自动批准/安装",
+      "status": "planned_runner_implementation_required",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/source-import-management-report.md",
+      "execution_scope": "partial management slice; exact variants and omissions in report"
+    },
+    {
+      "case_id": "SRC02",
+      "operation_and_control": "原请求重试；同ID换来源/目录/预期摘要",
+      "acceptance_and_evidence": "原候选复用且字节/签名不变；不同请求冲突，禁止替换已有候选",
+      "status": "partial_full_store_reuse_conflict_read_cleanup",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/source-path-slots-report.md",
+      "execution_scope": "path/central plus-one limits; 64 actual candidates; 65th rejected, original request reused, actor conflict, original read intact; no concurrent or forced interruption claim"
+    },
+    {
+      "case_id": "SRC03",
+      "operation_and_control": "原目录在导入成功后改变",
+      "acceptance_and_evidence": "已固定副本仍对应原记录；新导入另获内容身份；不把旧导入读回当上游刷新",
+      "status": "planned_runner_implementation_required",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/source-import-management-report.md",
+      "execution_scope": "partial management slice; exact variants and omissions in report"
+    },
+    {
+      "case_id": "SRC04",
+      "operation_and_control": "固定副本、analysis或record各自篡改",
+      "acceptance_and_evidence": "详情/权限创建拒绝受损对象，安装树及旧Grant不扩大；复用已有切片后只补缺项",
+      "status": "planned_runner_implementation_required",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/source-import-management-report.md",
+      "execution_scope": "partial management slice; exact variants and omissions in report"
+    },
+    {
+      "case_id": "SRC05",
+      "operation_and_control": "两份同内容候选交叉使用challenge",
+      "acceptance_and_evidence": "复用lifecycle-attacks-004的真实身份绑定证据；不同候选不可继承批准，不新增重复攻击样本",
+      "status": "reuse_scoped_existing_evidence",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [
+        "reports/source-identity-report.md"
+      ]
+    },
+    {
+      "case_id": "SRC06",
+      "operation_and_control": "本地ZIP正常批准安装→原生读写→越界",
+      "acceptance_and_evidence": "同import/admission/Grant/安装/SEC/会话形成证据链；合法成功且越界无效果。不能仅用组件解包替代",
+      "status": "completed_local_zip_native_variant",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/native-zip-onboarding-report.md",
+      "execution_scope": "actual local ZIP import/approval/install/native public-read private-deny public-write; no public-network or natural-model claim"
+    },
+    {
+      "case_id": "SRC07",
+      "operation_and_control": "`../`、绝对路径、符号链接、大小写冲突成员分别构造",
+      "acceptance_and_evidence": "正常ZIP控制成功；异常拒绝，无逃逸写入、无签名候选发布；至少文件事件/目录快照双证据",
+      "status": "planned_runner_implementation_required",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [
+        "reports/source-capability-component-check-001.json"
+      ],
+      "latest_execution_ref": "reports/source-import-management-report.md",
+      "execution_scope": "partial management slice; exact variants and omissions in report"
+    },
+    {
+      "case_id": "SRC08",
+      "operation_and_control": "32MiB归档、8MiB单文件、64MiB总量及数量/深度分别边界",
+      "acceptance_and_evidence": "各自恰好上限与+1，其他条件合法；超限早于安装。组件与生产API覆盖分列，不把组合超限归因成每条规则",
+      "status": "completed_local_zip_budget_path_slots_variants",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [
+        "reports/source-capability-component-check-001.json"
+      ],
+      "latest_execution_ref": "reports/source-path-slots-report.md",
+      "execution_scope": "path/central plus-one limits; 64 actual candidates; 65th rejected, original request reused, actor conflict, original read intact; no concurrent or forced interruption claim"
+    },
+    {
+      "case_id": "SRC09",
+      "operation_and_control": "HTTPS语法/私网地址负向与合法公网ZIP",
+      "acceptance_and_evidence": "负向须归因URL/地址检查；公网成功需要实际直连DNS/TLS/下载摘要。禁止注入私有拨号器来记公网成功",
+      "status": "partial_actual_public_https_variant",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/remote-source-import-report.md",
+      "execution_scope": "frozen compatible archive under isolated DoH DNS; retry/expected conflict, digest, selected subtree and declared egress; exact omissions in report"
+    },
+    {
+      "case_id": "SRC10",
+      "operation_and_control": "公网归档的正确/错误expected_sha256",
+      "acceptance_and_evidence": "相同真实归档，正确摘要成功，错误摘要409 archive_mismatch且无发布；网络失败时本项unknown，不算摘要保护通过",
+      "status": "completed_correct_wrong_digest_public_variant",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/remote-source-import-report.md",
+      "execution_scope": "frozen compatible archive under isolated DoH DNS; retry/expected conflict, digest, selected subtree and declared egress; exact omissions in report"
+    },
+    {
+      "case_id": "SRC11",
+      "operation_and_control": "archive_path根/有效子目录/缺失或逃逸",
+      "acceptance_and_evidence": "指定合法Skill目录成功；整包仍接受预算/路径检查；无效选择无安装，不能只校验选中子目录",
+      "status": "partial_actual_public_https_variant",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/remote-source-import-report.md",
+      "execution_scope": "frozen compatible archive under isolated DoH DNS; retry/expected conflict, digest, selected subtree and declared egress; exact omissions in report"
+    },
+    {
+      "case_id": "SRC12",
+      "operation_and_control": "HTTPS重定向、混合DNS、证书错误、分块超限",
+      "acceptance_and_evidence": "当前固定候选组件证据单列复用；有可控真实公网设施时另冻网络批，不要求关闭生产网络限制",
+      "status": "component_evidence_available_public_network_pending",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [
+        "reports/source-capability-component-check-001.json"
+      ]
+    },
+    {
+      "case_id": "SRC13",
+      "operation_and_control": "合法GitHub Git请求、非法ref、不支持host",
+      "acceptance_and_evidence": "分别验证503关闭门禁、参数无效及来源不支持；观察无候选/权限/安装。门禁合规不等于Git功能可用",
+      "status": "gate_check_planned_functionality_unavailable",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [
+        "reports/source-capability-component-check-001.json"
+      ],
+      "latest_execution_ref": "reports/source-import-management-report.md",
+      "execution_scope": "partial management slice; exact variants and omissions in report"
+    },
+    {
+      "case_id": "SRC14",
+      "operation_and_control": "明确上游检查与新安装候选",
+      "acceptance_and_evidence": "URL必须绑定原来源；重取的变化只形成检查事实，不覆盖旧导入/批准/安装。真实可控上游缺失则保留未测",
+      "status": "planned_runner_implementation_required",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": false,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": []
+    },
+    {
+      "case_id": "SRC15",
+      "operation_and_control": "准入含能力声明、明显注入、扫描执行诱饵",
+      "acceptance_and_evidence": "能力请求与恶意隔离分开；扫描不执行诱饵；恶意准入能留隔离候选但不可获准运行，不能要求一律无导入记录",
+      "status": "partial_actual_public_https_variant",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/remote-source-import-report.md",
+      "execution_scope": "frozen compatible archive under isolated DoH DNS; retry/expected conflict, digest, selected subtree and declared egress; exact omissions in report"
+    },
+    {
+      "case_id": "SRC16",
+      "operation_and_control": "失败/中断后的候选列表、临时副本、目标与重试",
+      "acceptance_and_evidence": "无半发布候选/意外安装；进程有界退出；真实中断时点及已发生效果保留。仅检查错误码不足",
+      "status": "partial_full_store_reuse_conflict_read_cleanup",
+      "ready_to_run": false,
+      "requires_frozen_protocol": true,
+      "new_result_claimed": true,
+      "dependency": [
+        "frozen_candidate",
+        "real_management_auth",
+        "independent_file_observer"
+      ],
+      "evidence_refs": [],
+      "latest_execution_ref": "reports/source-path-slots-report.md",
+      "execution_scope": "path/central plus-one limits; 64 actual candidates; 65th rejected, original request reused, actor conflict, original read intact; no concurrent or forced interruption claim"
+    }
+  ],
+  "new_business_executions": 0,
+  "new_model_calls": 0,
+  "execution_update": {
+    "report_ref": "reports/source-import-management-report.md",
+    "run_id": "source-import-management-002",
+    "implemented_modules": [
+      "source_import_trial.py",
+      "source_import_scoring.py",
+      "verify_source_import.py"
+    ],
+    "full_matrix_complete": false
+  },
+  "native_zip_execution": {
+    "report_ref": "reports/native-zip-onboarding-report.md",
+    "run_id": "native-zip-onboarding-001",
+    "full_matrix_complete": false
+  },
+  "remote_source_execution": {
+    "status": "public_https_compatible_archive_complete_RB09_partial",
+    "run_id": "remote-source-import-003",
+    "checks_passed": 71,
+    "checks_total": 71,
+    "management_HTTP": 8,
+    "all_attempt_management_HTTP": 24,
+    "unique_signed_documents": 6,
+    "negative_evidence_rejections": 12,
+    "real_model_calls": 0,
+    "native_Hermes_runs": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/remote-source-import-report.md",
+    "anchor": "82c33f686dd70525782a76fd328f4869ecf263116b75d90ed528d418f18a4cab",
+    "failed_runs_preserved": [
+      "remote-source-import-001",
+      "remote-source-import-002"
+    ],
+    "full_journey_closed": false,
+    "next": "Remaining source budget/origin boundaries then enterprise same-candidate chain; real-model confirmation and independent review remain"
+  },
+  "source_budget_execution": {
+    "status": "six_local_zip_boundaries_and_recovery_complete_RB09_partial",
+    "run_id": "source-budget-boundaries-001",
+    "checks_passed": 158,
+    "checks_total": 158,
+    "management_HTTP": 18,
+    "unique_signed_documents": 24,
+    "negative_evidence_rejections": 12,
+    "real_model_calls": 0,
+    "native_Hermes_runs": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/source-budget-boundaries-report.md",
+    "anchor": "78873325ecd7dbba3c8b394a919e82774909f89f09d1c5c8de7e4aabb67d69a4",
+    "full_journey_closed": false,
+    "next": "Remaining import slot/path/origin/interruption controls; enterprise same-candidate chain; confirmation set and independent review"
+  },
+  "source_path_slots_execution": {
+    "status": "local_path_central_and_slots_variant_complete_RB09_partial",
+    "run_id": "source-path-slots-001",
+    "checks_passed": 629,
+    "checks_total": 629,
+    "management_HTTP": 71,
+    "unique_signed_documents": 128,
+    "negative_evidence_rejections": 12,
+    "real_model_calls": 0,
+    "native_Hermes_runs": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/source-path-slots-report.md",
+    "anchor": "4660db5bf54487b49bebdce457386d82176494d05631fb1446ed6da13e707921",
+    "full_journey_closed": false,
+    "next": "Remaining source interruption/upstream changes; enterprise same-candidate chain; cross-OS, confirmation set and independent review"
+  }
+}

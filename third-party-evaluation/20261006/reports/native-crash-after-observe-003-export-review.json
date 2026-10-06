@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-06T00:37:01.633049+00:00",
+  "manifest_sha256": "95ba015f62f68dd1e58ef28b452b95a0122a96861801132071ff9e812caf2513",
+  "files_checked": 20,
+  "known_credential_matches": 0,
+  "cleanup": {
+    "remaining_group_members": [],
+    "daemon_stopped": true,
+    "observation_version": 1,
+    "grace_seconds": 5,
+    "window_start_ns": 2558838928097374,
+    "observations": [
+      {
+        "monotonic_ns": 2558838944579919,
+        "members": [
+          {
+            "pid": 2733360,
+            "start_ticks": "255883720"
+          },
+          {
+            "pid": 2733361,
+            "start_ticks": "255883720"
+          },
+          {
+            "pid": 2733362,
+            "start_ticks": "255883720"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558839060727163,
+        "members": [
+          {
+            "pid": 2733360,
+            "start_ticks": "255883720"
+          },
+          {
+            "pid": 2733361,
+            "start_ticks": "255883720"
+          },
+          {
+            "pid": 2733362,
+            "start_ticks": "255883720"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558839176912118,
+        "members": []
+      }
+    ],
+    "policy": "observe only; persistent members fail cleanup; no signals sent"
+  },
+  "outcome_exit_code": 0,
+  "whitelist": "sealed top-level artifacts only; no state directory"
+}

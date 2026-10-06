@@ -1,0 +1,20 @@
+{
+  "batch": "research-permissions-skill-drift-containment-002",
+  "files": [
+    {
+      "source": "/home/maoyd/siq-research-engine/var/openshell/qwen38/business-api-e126-v6146/api.log",
+      "archive": "private/runs/research-permissions-skill-drift-containment-002/research-api-evidence/api.log",
+      "sha256": "91a5145fb558d348304181da520de53ad302cfe75a491e66073dfd4c8e7554d3",
+      "bytes": 465,
+      "mode": "0o600"
+    },
+    {
+      "source": "/home/maoyd/siq-research-engine/var/openshell/qwen38/business-api-e126-v6146/business-response.json",
+      "archive": "private/runs/research-permissions-skill-drift-containment-002/research-api-evidence/business-response.json",
+      "sha256": "19d674119e10ebf9e63cae15f927f2e6798e2dfc6a356e51177f1694cf91ffe0",
+      "bytes": 201,
+      "mode": "0o600"
+    }
+  ],
+  "scope": "Owned synthetic business response and diagnostic log only; credential/environment references not copied."
+}

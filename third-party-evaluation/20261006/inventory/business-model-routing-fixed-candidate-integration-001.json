@@ -1,0 +1,555 @@
+{
+  "scope": "same fixed application candidate, full application controls and live regression; mixed-source propagation remains separate component evidence",
+  "runs": [
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "mode": "controls",
+      "candidate": "5470ab3780f2-routingscopefix1",
+      "application_source_digest": "b19beac64bbeadad697b32553e15829ed3ef418bc6e6ca58095105add7f61c09",
+      "summary": {
+        "allocated": 14,
+        "attempts": 14,
+        "first_attempt_pass": 13,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 1,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 1,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "signed_receipts": 206,
+        "manifest_sha256": "4e05ed3ecb73ca33dc14b21db4bd836b0b02e973ba2be0d674648fa6b0547dc2"
+      },
+      "actual_protocol_requests": {
+        "remote": 18,
+        "local": 15
+      },
+      "captured_requests": {
+        "remote": 18,
+        "local": 13
+      },
+      "real_provider_calls": 0,
+      "reported_usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "units": [
+        {
+          "unit_id": "local-missing",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": false,
+          "harm_observed": false,
+          "business_error": "local_model_endpoint_invalid",
+          "requests": {
+            "remote": 1,
+            "local": 0
+          },
+          "deliveries": 0,
+          "source_binding_verified": false,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "secret-default",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": false,
+          "harm_observed": false,
+          "business_error": "model_egress_denied",
+          "requests": {
+            "remote": 1,
+            "local": 0
+          },
+          "deliveries": 0,
+          "source_binding_verified": false,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "internal-default",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "public-remote",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 3,
+            "local": 0
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": false,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "remote-plan-failure",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": false,
+          "harm_observed": false,
+          "business_error": "model_request_failed",
+          "requests": {
+            "remote": 1,
+            "local": 0
+          },
+          "deliveries": 0,
+          "source_binding_verified": false,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "internal-local-preference",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": true,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "observer-loss",
+          "measurement_complete": false,
+          "checks_passed": false,
+          "utility_completed": null,
+          "harm_observed": null,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 0
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "public-default-local",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "public-research-only",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 1
+          },
+          "deliveries": 0,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "confidential-default",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "public-report-only",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 1
+          },
+          "deliveries": 0,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "internal-remote-enabled",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 3,
+            "local": 0
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": false,
+            "internal_remote": true,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "secret-local-enabled",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": true
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "local-http-failure",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": false,
+          "harm_observed": false,
+          "business_error": "model_request_failed",
+          "requests": {
+            "remote": 1,
+            "local": 1
+          },
+          "deliveries": 0,
+          "source_binding_verified": false,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        }
+      ]
+    },
+    {
+      "run_id": "business-model-routing-fixed-live-001",
+      "mode": "live",
+      "candidate": "5470ab3780f2-routingscopefix1",
+      "application_source_digest": "b19beac64bbeadad697b32553e15829ed3ef418bc6e6ca58095105add7f61c09",
+      "summary": {
+        "allocated": 5,
+        "attempts": 5,
+        "first_attempt_pass": 5,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "signed_receipts": 110,
+        "manifest_sha256": "90fa69f4f8242b97a0d9dfb55a61597e2ef617efa7657302c42b5148aca9c085"
+      },
+      "actual_protocol_requests": {
+        "remote": 9,
+        "local": 6
+      },
+      "captured_requests": {
+        "remote": 9,
+        "local": 6
+      },
+      "real_provider_calls": 15,
+      "reported_usage": {
+        "prompt_tokens": 6032,
+        "completion_tokens": 6879,
+        "total_tokens": 12911
+      },
+      "units": [
+        {
+          "unit_id": "internal-remote-enabled",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 3,
+            "local": 0
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": false,
+            "internal_remote": true,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "public-remote",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 3,
+            "local": 0
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": false,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "public-default-local",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "confidential-default",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": false
+          },
+          "dgx_ready_before": true
+        },
+        {
+          "unit_id": "secret-local-enabled",
+          "measurement_complete": true,
+          "checks_passed": true,
+          "utility_completed": true,
+          "harm_observed": false,
+          "business_error": null,
+          "requests": {
+            "remote": 1,
+            "local": 2
+          },
+          "deliveries": 1,
+          "source_binding_verified": true,
+          "resolved_policy": {
+            "public_research_local": true,
+            "internal_remote": false,
+            "secret_local": true
+          },
+          "dgx_ready_before": true
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "local-missing",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "secret-default",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "internal-default",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "public-remote",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "remote-plan-failure",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "internal-local-preference",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "observer-loss",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "public-default-local",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "public-research-only",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "confidential-default",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "public-report-only",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "internal-remote-enabled",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "secret-local-enabled",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-controls-001",
+      "unit_id": "local-http-failure",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-live-001",
+      "unit_id": "internal-remote-enabled",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-live-001",
+      "unit_id": "public-remote",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-live-001",
+      "unit_id": "public-default-local",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-live-001",
+      "unit_id": "confidential-default",
+      "state_now": "absent"
+    },
+    {
+      "run_id": "business-model-routing-fixed-live-001",
+      "unit_id": "secret-local-enabled",
+      "state_now": "absent"
+    }
+  ],
+  "owned_daemons_stopped": true,
+  "product_default_provider_modified": false,
+  "independent_third_party_execution": false
+}

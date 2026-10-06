@@ -1,0 +1,14 @@
+# 同实例个人接入后的产品运行自检：预注册001
+
+固定既有5470ab3780f2-nativefixturefix1二进制与原Hermes。沿个人接入002协议先完成发现、准入、审批、安装和三个实际业务工具动作；清理测试专用SEC桥并恢复安装时profile，然后通过该实例的真实产品运行自检API继续。一个已见开发任务块，不是S4新增任务。0真实模型推理。
+
+事前核对原生命周期001–003只有安装更新卸载，不覆盖本自检。原生自检smoke脚本是产品开发材料，不能当本次第三方执行成绩。功能要求来自固定候选runtimecheck、adapterinstall/runtime_target、server/runtime_check及activity合同。
+
+1. 保留完整个人接入证据。记录同一实例、自检前Grant集合、profile摘要；preview不得创建Grant。错误plan_digest返回403 runtime_check_launch_credential_invalid；confirm=false返回400 runtime_check_invalid_request；两次拒绝不得修改原Grant集合。
+2. 明确确认真实plan后start，产品自行发放短期授权并启动真实Hermes。轮询最长145秒（产品内部120秒），超限主动请求cancel，记录未知/失败，不自动重试。产品内置确定性协议端完成读、拒绝写、再读，不由测评器代填结果或调用attach。
+3. 终态应passed，五条关联回执为两项allow及观察、一项write deny。产品生成的临时Grant应撤销，已有业务Grant保持原样，临时材料目录空，profile未改变。保存全部签名自检修订文件、完整回执、Intent/绑定及活动关联。
+4. 同实例诊断hook_load应pass，runtime_state仍可按合同保持unverified。追加仅本批profile中的注释使快照变化；读回原结果应invalidated/runtime_check_snapshot_changed。恢复原字节后旧结果仍invalidated、hook_load unknown，不通过恢复配置使旧pass复活。原签名修订文件不可改写。
+5. 只读/proc观察该daemon直接子进程，绑定PID/boot/start_ticks并确认终止。它证明真实产品宿主启动，不是系统调用效果观察。产品临时探针目录由产品创建和清理，本批未部署外部内核探针；自检passed与五条回执按产品功能结果报告，不能冒充独立观察了其每次物理副作用。前置业务文件效果有既有独立评分，二者分列。
+6. 正常/失效回执关联均离线验签，检查同check/instance/Grant/Intent/活动，篡改副本须拒绝。首试完整保留，新协议才能复跑。未覆盖取消竞态、超时注入、浏览器及其他OS，不关闭整个RB09/Q4。
+
+一个分配单元，前置业务沿002的27检查，自检新增21检查。子检查不是独立攻击数。原始业务五条回执与包含其前缀的自检完整导出不得重复累计。停止所有自有进程后封存数据、manifest锚、离线复核及限定范围报告。

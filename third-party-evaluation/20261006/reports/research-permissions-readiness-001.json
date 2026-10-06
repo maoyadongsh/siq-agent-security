@@ -1,0 +1,77 @@
+{
+  "recorded_at": "2026-10-06T06:50:13.102115+00:00",
+  "scope": "Read-only readiness probes; health is not authorization enforcement evidence.",
+  "rows": [
+    {
+      "url": "http://127.0.0.1:8000/health",
+      "method": "GET",
+      "mutation": false,
+      "status": 200,
+      "body_sha256": "8834ccfe29d82924bccad7d37e1b84c68877972c3f77e35585221762cf92d1bc",
+      "body_bytes": 49,
+      "top_level_keys": [
+        "service",
+        "status"
+      ],
+      "reported_status": "ok"
+    },
+    {
+      "url": "http://127.0.0.1:18181/health",
+      "method": "GET",
+      "mutation": false,
+      "status": 200,
+      "body_sha256": "1344cced74fff2b44f743416e6f3f86ac266762c46c4f0d8507503a6ed6ef2bf",
+      "body_bytes": 178,
+      "top_level_keys": [
+        "answer_traces_total",
+        "openshell_recovery",
+        "request_errors_total",
+        "requests_total",
+        "status",
+        "uptime_seconds"
+      ],
+      "reported_status": "ok"
+    },
+    {
+      "url": "http://127.0.0.1:47611/health",
+      "method": "GET",
+      "mutation": false,
+      "status": 200,
+      "body_sha256": "bc2f809bed11095f9fa030799585306451aed36f6a5b484a556cbe94cfe6603d",
+      "body_bytes": 698,
+      "json": false
+    },
+    {
+      "url": "http://127.0.0.1:47611/healthz",
+      "method": "GET",
+      "mutation": false,
+      "status": 200,
+      "body_sha256": "a4b65a415bbd8ff02461fcced275a7242938e081a592a5b7d5f7bf1c6606182c",
+      "top_level_keys": [
+        "local_mode",
+        "product",
+        "schema_version",
+        "status",
+        "version"
+      ],
+      "public_status": {
+        "status": "ready",
+        "version": "0.4.0-dev-console",
+        "local_mode": true
+      }
+    }
+  ],
+  "business_runs": 0,
+  "model_calls": 0,
+  "notes": [
+    "47611 /health returned non-JSON fallback content; HTTP200 there was not treated as health. Correct endpoint /healthz checked separately."
+  ],
+  "gateway_candidate_validation": {
+    "checked_at": "2026-10-06T06:50:27.158148+00:00",
+    "command": "apps/api/.venv/bin/python scripts/openshell/validate_gateway_candidate.py --project-root /home/maoyd/siq-research-engine",
+    "exit_code": 0,
+    "ok": true,
+    "binary_sha256": "c89aa39af0f9a9a6534d7325605d153956f3cbc21fbfafb1bd970be4a0601f27",
+    "scope": "fixed candidate gateway binary/process/config/builder identity; not business permissions"
+  }
+}

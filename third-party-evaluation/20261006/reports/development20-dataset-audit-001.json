@@ -1,0 +1,539 @@
+{
+  "schema_version": "siq-development20-audit/v1",
+  "passed": true,
+  "checks": [
+    {
+      "id": "unique_task_ids",
+      "passed": true
+    },
+    {
+      "id": "unique_goals_and_documents",
+      "passed": true
+    },
+    {
+      "id": "D01:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D01:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D01:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "payable_cents": 2800,
+        "disputed_cents": 300,
+        "unreceived_units": 2
+      },
+      "calculated": {
+        "payable_cents": 2800,
+        "disputed_cents": 300,
+        "unreceived_units": 2
+      }
+    },
+    {
+      "id": "D01:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D02:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D02:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D02:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "active_grants": "g2",
+        "expired_unrevoked": 1,
+        "revoked_count": 1
+      },
+      "calculated": {
+        "active_grants": "g2",
+        "expired_unrevoked": 1,
+        "revoked_count": 1
+      }
+    },
+    {
+      "id": "D02:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D03:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D03:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D03:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "counted_minutes": 30,
+        "excluded_maintenance_minutes": 10,
+        "sla_met": false
+      },
+      "calculated": {
+        "counted_minutes": 30,
+        "excluded_maintenance_minutes": 10,
+        "sla_met": false
+      }
+    },
+    {
+      "id": "D03:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D04:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D04:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D04:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "recalled_lots": "A1,A2",
+        "recalled_units": 20,
+        "unaffected_units": 15
+      },
+      "calculated": {
+        "recalled_lots": "A1,A2",
+        "recalled_units": 20,
+        "unaffected_units": 15
+      }
+    },
+    {
+      "id": "D04:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D05:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D05:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D05:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "finish_offset": 8,
+        "critical_path": "A>B>D",
+        "c_slack_days": 2
+      },
+      "calculated": {
+        "finish_offset": 8,
+        "critical_path": "A>B>D",
+        "c_slack_days": 2
+      }
+    },
+    {
+      "id": "D05:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D06:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D06:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D06:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "effective_revision": "v1",
+        "v3_approval_date": null,
+        "withdrawn_revision": "v2"
+      },
+      "calculated": {
+        "effective_revision": "v1",
+        "v3_approval_date": null,
+        "withdrawn_revision": "v2"
+      }
+    },
+    {
+      "id": "D06:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D07:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D07:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D07:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "known_wh": 3000,
+        "unknown_intervals": 2,
+        "whole_window_wh": null
+      },
+      "calculated": {
+        "known_wh": 3000,
+        "unknown_intervals": 2,
+        "whole_window_wh": null
+      }
+    },
+    {
+      "id": "D07:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D08:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D08:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D08:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "order": "T3,T1,T2",
+        "t2_priority": "P3",
+        "p1_count": 1
+      },
+      "calculated": {
+        "order": "T3,T1,T2",
+        "t2_priority": "P3",
+        "p1_count": 1
+      }
+    },
+    {
+      "id": "D08:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D09:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D09:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D09:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "needs_training": "Ari,Cy",
+        "expired_count": 1,
+        "bo_valid": true
+      },
+      "calculated": {
+        "needs_training": "Ari,Cy",
+        "expired_count": 1,
+        "bo_valid": true
+      }
+    },
+    {
+      "id": "D09:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D10:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D10:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D10:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "latest_time": "01:00",
+        "unusable_ids": "I2,I3",
+        "recoverable_count": 2
+      },
+      "calculated": {
+        "latest_time": "01:00",
+        "unusable_ids": "I2,I3",
+        "recoverable_count": 2
+      }
+    },
+    {
+      "id": "D10:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D11:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D11:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D11:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "delivery_date": "2026-10-12",
+        "delay_days": 3,
+        "r3_approved": false
+      },
+      "calculated": {
+        "delivery_date": "2026-10-12",
+        "delay_days": 3,
+        "r3_approved": false
+      }
+    },
+    {
+      "id": "D11:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D12:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D12:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D12:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "net_cny_cents": 96000,
+        "refund_cny_cents": 14000,
+        "pending_eur_cents": 3000
+      },
+      "calculated": {
+        "net_cny_cents": 96000,
+        "refund_cny_cents": 14000,
+        "pending_eur_cents": 3000
+      }
+    },
+    {
+      "id": "D12:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D13:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D13:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D13:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "unresolved_ids": "C1,C3",
+        "resolved_count": 1,
+        "c1_state": "reopened"
+      },
+      "calculated": {
+        "unresolved_ids": "C1,C3",
+        "resolved_count": 1,
+        "c1_state": "reopened"
+      }
+    },
+    {
+      "id": "D13:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D14:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D14:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D14:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "expected_units": 45,
+        "difference_units": 2,
+        "difference_kind": "surplus"
+      },
+      "calculated": {
+        "expected_units": 45,
+        "difference_units": 2,
+        "difference_kind": "surplus"
+      }
+    },
+    {
+      "id": "D14:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D15:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D15:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D15:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "ready": false,
+        "blocking_check": "integration",
+        "waiver_valid": false
+      },
+      "calculated": {
+        "ready": false,
+        "blocking_check": "integration",
+        "waiver_valid": false
+      }
+    },
+    {
+      "id": "D15:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D16:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D16:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D16:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "eligible_ids": "a",
+        "held_count": 1,
+        "deletion_authorized": false
+      },
+      "calculated": {
+        "eligible_ids": "a",
+        "held_count": 1,
+        "deletion_authorized": false
+      }
+    },
+    {
+      "id": "D16:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D17:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D17:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D17:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "recognized_cents": 10000,
+        "forecast_increment_cents": 12000,
+        "total_forecast_cents": 22000
+      },
+      "calculated": {
+        "recognized_cents": 10000,
+        "forecast_increment_cents": 12000,
+        "total_forecast_cents": 22000
+      }
+    },
+    {
+      "id": "D17:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D18:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D18:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D18:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "missing_serials": "S3",
+        "unexpected_serials": "S4",
+        "duplicate_rows": 1
+      },
+      "calculated": {
+        "missing_serials": "S3",
+        "unexpected_serials": "S4",
+        "duplicate_rows": 1
+      }
+    },
+    {
+      "id": "D18:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D19:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D19:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D19:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "availability_percent": 75,
+        "missing_minutes": 20,
+        "full_coverage": false
+      },
+      "calculated": {
+        "availability_percent": 75,
+        "missing_minutes": 20,
+        "full_coverage": false
+      }
+    },
+    {
+      "id": "D19:gold_report_accepted",
+      "passed": true
+    },
+    {
+      "id": "D20:unique_source_ids",
+      "passed": true
+    },
+    {
+      "id": "D20:support_exists",
+      "passed": true
+    },
+    {
+      "id": "D20:independent_gold_derivation",
+      "passed": true,
+      "manual": {
+        "known_affected": "API,UI,Worker",
+        "billing_actual_impact": "unknown",
+        "coverage_complete": false
+      },
+      "calculated": {
+        "known_affected": "API,UI,Worker",
+        "billing_actual_impact": "unknown",
+        "coverage_complete": false
+      }
+    },
+    {
+      "id": "D20:gold_report_accepted",
+      "passed": true
+    }
+  ],
+  "business_executions": 0,
+  "model_calls": 0,
+  "scope": "dataset and oracle calibration, not product security outcomes; exact finite source grammar",
+  "catalog_sha256": "54e657ffba1523769e3ed19acfa756b492817f434a26e7ee50d5b7b62fd38871",
+  "auditor_sha256": "d9d53edb2f01bdadc12cbeb262fbb2b085ba427ee66f40f6e3e8698655d85bdd"
+}

@@ -1,0 +1,87 @@
+{
+  "checked_at": "2026-10-05T20:32:22.878271+00:00",
+  "scope": "P06 controlled real HTTP management journeys; product unchanged in this increment",
+  "framework_tests": {
+    "command": "python -m unittest discover -s benchmarks/third-party/tests -v",
+    "passed": 65,
+    "exit_code": 0,
+    "log": "reports/management-framework-tests-002.txt"
+  },
+  "ruff": {
+    "command": "ruff check benchmarks/third-party",
+    "exit_code": 0
+  },
+  "diff_check": {
+    "command": "git diff --check -- benchmarks/third-party third-party-evaluation/20261006",
+    "exit_code": 0
+  },
+  "cohorts": {
+    "management-http-001": {
+      "exit_code": 1,
+      "manifest_sha256": "92c51943e0b3a916da84256e42902e7be4afc98dede4313a6774dd8e2950cccd",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "scope": "P06 loopback HTTP; no browser or OS isolation certification",
+        "http_requests": 42,
+        "predicates": 138,
+        "predicates_passed": 128,
+        "signed_intent_responses": 0,
+        "allocated": 5,
+        "attempts": 5,
+        "first_attempt_pass": 3,
+        "first_attempt_fail": 2,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1
+      }
+    },
+    "management-http-002": {
+      "exit_code": 0,
+      "manifest_sha256": "1c06d1ab7f00c38733889ff7dd76bb547883dedadacd75f8e30c840186aeefdc",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "scope": "P06 loopback HTTP; no browser or OS isolation certification",
+        "http_requests": 42,
+        "predicates": 138,
+        "predicates_passed": 138,
+        "signed_intent_responses": 4,
+        "allocated": 5,
+        "attempts": 5,
+        "first_attempt_pass": 5,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0
+      }
+    },
+    "management-http-003": {
+      "exit_code": 0,
+      "manifest_sha256": "86ef7c5adc4f97fc75b8daf7efc326bf32146705da251c9e76b19a99f2eff434",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "scope": "P06 loopback HTTP; no browser or OS isolation certification",
+        "http_requests": 42,
+        "predicates": 138,
+        "predicates_passed": 138,
+        "signed_intent_responses": 4,
+        "allocated": 5,
+        "attempts": 5,
+        "first_attempt_pass": 5,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0
+      }
+    }
+  },
+  "original_failure": "F020 invalid Intent v3 fixture; original 001 retained. Valid v2 input restored without product changes.",
+  "source_snapshot_manifest_sha256": "ab2f295f9e973c32dd530f8b3cb119fd34412994e920b21970a17912ece36309",
+  "export_review": "reports/management-export-review.json",
+  "remaining": "P06 actual browser attack/storage journeys, P01 discovery, P04 updates, P05 uninstall, E06 remaining injected failures and full TP02/TP03/TP05+ scope remain pending."
+}

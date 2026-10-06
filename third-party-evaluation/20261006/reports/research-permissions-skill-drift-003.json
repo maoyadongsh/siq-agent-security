@@ -1,0 +1,21 @@
+{
+  "schema_version": "siq.evaluation.research-permissions-run.v1",
+  "batch": "research-permissions-skill-drift-003",
+  "mode": "skill-drift",
+  "passed": false,
+  "pre_run_protocol_sha256": "62ba32f6356fae66aaa791f992a5a389cc3cf772fd92bb609bbe1ce03a8b97a3",
+  "scope": "dedicated_real_research_deployment_synthetic_company",
+  "binary_sha256": "68e7f95cb2e54e86943bfe2c3ee635f103e2c91fcfcc275b8994e0b8b4691796",
+  "relay_sha256": "3032a2cfa0095f837e93b4906c032f558d0ad585eaa495f3b2cefa3a0c44ba7c",
+  "started_unix": 1791284423.3134687,
+  "checks": {
+    "owned_daemon_initialized": true,
+    "owned_daemon_ready": true,
+    "proof_written": false,
+    "owned_daemon_stopped": true,
+    "owned_authority_port_closed": true
+  },
+  "secret_values_exported": false,
+  "proof_exit_code": 1,
+  "finished_unix": 1791284424.1077635
+}

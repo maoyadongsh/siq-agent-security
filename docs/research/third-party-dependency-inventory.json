@@ -1,8 +1,8 @@
 {
   "schema_version": "siq-dependency-inventory/v1",
   "lockfiles": {
-    "apps/web/package-lock.json": "d27d6b9bd7676209d9279a74821bea733b94e2151f68868b085a69c808c5cba7",
-    "apps/control-api/uv.lock": "146e8615916b50f9bd81305490cee7ab041be2aa83cba5f05c55d65ff3ccee5e"
+    "apps/web/package-lock.json": "a6abdbc68b0a7ebabccd17b51128a7a94969605aa29aae8c3705ad60229fb536",
+    "apps/control-api/uv.lock": "7efdc5f2be26f51b78fc3345c9825a5e8b666388b6cbf924493454341082d478"
   },
   "web": [
     {
@@ -1606,10 +1606,10 @@
     },
     {
       "name": "source-map-js",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "license": "BSD-3-Clause",
-      "source": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
-      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
+      "source": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
+      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
       "dev": true,
       "optional": false,
       "distribution": "build/test tool, not intentionally bundled",
@@ -2122,13 +2122,13 @@
     },
     {
       "name": "pyjwt",
-      "version": "2.13.0",
+      "version": "2.15.0",
       "license": "MIT",
       "installed_version_matches_lock": true,
       "source": {
         "registry": "https://pypi.org/simple"
       },
-      "sdist_sha256": "sha256:41571c89ca91598c79e8ef18a2d07367d4810fbbd6f637794879baf1b7703423",
+      "sdist_sha256": "sha256:b11c5f9791d7bf51c2b39a81ed669f6b2dbbd669df2942f6c60167e9e3d1abe4",
       "distribution": "separately installed Control API runtime",
       "bundled_in_go_secure_agent_rc": false
     },

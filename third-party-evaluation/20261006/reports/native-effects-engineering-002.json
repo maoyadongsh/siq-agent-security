@@ -1,0 +1,112 @@
+{
+  "validated_at": "2026-10-06T00:12:36.484154+00:00",
+  "prior_engineering": "reports/native-effects-engineering-001.json",
+  "focused_tests": 34,
+  "go_parameter_vectors": 6,
+  "recomputed_runs": [
+    {
+      "run_id": "native-business-controls-001",
+      "exit_code": 0,
+      "expected_original_code": 0,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "f0cd0c184a834f93a236e30c21c680e87bd9a76128665dd91d8c3130af309e94",
+      "signed_receipts": 9,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-business-local-001",
+      "exit_code": 0,
+      "expected_original_code": 0,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "5f1c264e70f0ecfd816185dcbe2237da99870448766638380fd4c6709ad5943d",
+      "signed_receipts": 12,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-business-step5-001",
+      "exit_code": 1,
+      "expected_original_code": 1,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "099d98fc4a496db604e45d46f8e7a7c5a3ea1ba461e54097beaa37c2cbbd16ad",
+      "signed_receipts": 12,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-path-controls-001",
+      "exit_code": 1,
+      "expected_original_code": 1,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "a8a987a34675d189e46f710633f37a590a4379f078c40d4ef13534dcc1706302",
+      "signed_receipts": 52,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-path-controls-002",
+      "exit_code": 1,
+      "expected_original_code": 1,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "f2cbbf35bc6134d27a36a96f4f7e89b2d93c037a3266858d755c534666dfe8b1",
+      "signed_receipts": 52,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-skill-read-controls-001",
+      "exit_code": 0,
+      "expected_original_code": 0,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "b8aed2160deafa2e049a3718e6d5945a4c8a0c0e5f4fe9d494be4136e7f0b6a1",
+      "signed_receipts": 16,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-absolute-local-001",
+      "exit_code": 0,
+      "expected_original_code": 0,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "172578c9f1ce685762d9ab15ae3ccf5f36e356740801a11c4a0e6f165fb41034",
+      "signed_receipts": 8,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-absolute-step5-001",
+      "exit_code": 0,
+      "expected_original_code": 0,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "42a07d706f4849b61e4a4aa1c205d03f4f34ee22ed2b8ca8955020de473ba9f2",
+      "signed_receipts": 8,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-effects-controls-001",
+      "exit_code": 1,
+      "expected_original_code": 1,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "a8fe16ee41bbba9fec1a11643a2348559519ecb8968065eb421f54d5b0a05238",
+      "signed_receipts": 32,
+      "stderr": ""
+    },
+    {
+      "run_id": "native-effects-shell-001",
+      "exit_code": 1,
+      "expected_original_code": 1,
+      "all_original_scores_recomputed": true,
+      "manifest_sha256": "2534b7510ffa5590020631ac68f5c95bcbe69a0c48ab5042a879342ce85c5a42",
+      "signed_receipts": 10,
+      "stderr": ""
+    }
+  ],
+  "links_checked": 260,
+  "missing_links": [],
+  "plan_and_supplement_binding_valid": true,
+  "supplemental_source_manifest_valid": true,
+  "git_diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "runner_help": {
+    "exit_code": 0,
+    "effect_profiles_documented": true
+  },
+  "passed": true
+}

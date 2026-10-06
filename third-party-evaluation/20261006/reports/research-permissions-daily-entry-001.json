@@ -1,0 +1,64 @@
+{
+  "schema_version": "siq.research-daily-entry-proof.v1",
+  "batch": "research-permissions-daily-entry-001",
+  "started_unix": 1791282352.5749068,
+  "protocol_sha256": "287a4af952fa5a10dc582556764bb83ad2b551030b443f5a60a7ebad35fcb279",
+  "api_pid": 453532,
+  "api_start_ticks": "152027542",
+  "frontend_url": "http://127.0.0.1:15173",
+  "checks": {
+    "normal_http_login": true,
+    "daily_api_process_unchanged": true,
+    "owned_business_tasks_terminal": true,
+    "owned_account_disabled": true,
+    "issued_token_invalidated": true
+  },
+  "passed": false,
+  "bootstrap": "Owning-project CLI creates one synthetic analyst; normal HTTP login issues tokens. No admin or business/SIQ grants.",
+  "user_id": 17,
+  "requests": {
+    "explicit_openshell": {
+      "attempted": true,
+      "session_id": "user-17-analysis-196d190c",
+      "status": 500,
+      "response_sha256": "e41656eb2ba6c6293bf6dd928e5a88cdbc50535cab661c1969e0f598e497ed62",
+      "marker_returned": false,
+      "categorical_errors": []
+    },
+    "default_file_task": {
+      "attempted": true,
+      "session_id": "user-17-analysis-1c8ad322",
+      "status": 200,
+      "response_sha256": "c8e0e75200c59003d9c5b6696152d8b4e10126f513e65a3441c51c3de0028a58",
+      "marker_returned": false,
+      "categorical_errors": []
+    }
+  },
+  "leases": [
+    {
+      "request": "explicit_openshell",
+      "session_id": "user-17-analysis-196d190c",
+      "run_id": "claim-7d3786ac78bf421faa5b02edeaee7dda",
+      "status": "failed",
+      "pool_binding_run_id": null,
+      "pool_scope_id": null
+    },
+    {
+      "request": "default_file_task",
+      "session_id": "user-17-analysis-1c8ad322",
+      "run_id": "run_0d59dd138eb14545ad4fe8fbe56206b8",
+      "status": "failed",
+      "pool_binding_run_id": null,
+      "pool_scope_id": null
+    }
+  ],
+  "fixture": "/home/maoyd/siq-research-engine/var/ops/research-permission-daily/siq_perm_19741b9fb654000d",
+  "siq_permission_conclusion": "Not established; this batch measures daily routing and controlled file effects.",
+  "file_effects": {
+    "input_unchanged": true,
+    "output_exists": false,
+    "expected_output_present": false
+  },
+  "finished_unix": 1791282360.254645,
+  "measurement_completed": true
+}

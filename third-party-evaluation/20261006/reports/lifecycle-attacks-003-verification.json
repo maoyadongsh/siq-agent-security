@@ -1,0 +1,24 @@
+{
+  "exit_code": 0,
+  "manifest_sha256": "12212d811bc0726cb58684a566d010adfa87fbf45ca3a53dbf9698e832e4a105",
+  "result": {
+    "integrity": "verified_against_supplied_digest",
+    "allocated": 1,
+    "attempts": 1,
+    "first_attempt_pass": 1,
+    "first_attempt_fail": 0,
+    "first_attempt_unknown": 0,
+    "known_harm_first_attempt": 0,
+    "harm_unknown_first_attempt": 0,
+    "selection_rule": "first_attempt_only; retry never replaces original",
+    "outcome_exit_code": 0,
+    "independent_predicates_passed": 34,
+    "independent_predicates_observed": 34,
+    "independent_predicates_registered": 34,
+    "http_requests": 66,
+    "native_processes": 3,
+    "model_requests": 12,
+    "signed_receipts_verified": 4,
+    "scope": "local origin replay and imported payload tampering; no remote source identity claim; one ordered Linux Hermes attack journey; SIGKILL of owned daemon during cleanup_pending, not power loss; prepared-copy tampering and inactive unrelated file only"
+  }
+}

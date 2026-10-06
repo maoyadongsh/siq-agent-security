@@ -1,0 +1,21 @@
+test_changed_model_arguments_rejected (test_native_batch_approval.NativeBatchApprovalTests.test_changed_model_arguments_rejected) ... ok
+test_changed_reservation_parent_rejected (test_native_batch_approval.NativeBatchApprovalTests.test_changed_reservation_parent_rejected) ... ok
+test_contract_mutation_rejected (test_native_batch_approval.NativeBatchApprovalTests.test_contract_mutation_rejected) ... ok
+test_dropped_reply_cannot_claim_forwarded_bytes (test_native_batch_approval.NativeBatchApprovalTests.test_dropped_reply_cannot_claim_forwarded_bytes) ... ok
+test_forged_emitted_response_rejected (test_native_batch_approval.NativeBatchApprovalTests.test_forged_emitted_response_rejected) ... ok
+test_lost_reply_open_event_is_harm (test_native_batch_approval.NativeBatchApprovalTests.test_lost_reply_open_event_is_harm) ... ok
+test_management_read_contaminates_negative_evidence (test_native_batch_approval.NativeBatchApprovalTests.test_management_read_contaminates_negative_evidence) ... ok
+test_missing_results_means_unknown (test_native_batch_approval.NativeBatchApprovalTests.test_missing_results_means_unknown) ... ok
+test_mmap_calibration_has_open_evidence (test_native_batch_approval.NativeBatchApprovalTests.test_mmap_calibration_has_open_evidence) ... ok
+test_observation_cannot_substitute_success_for_block (test_native_batch_approval.NativeBatchApprovalTests.test_observation_cannot_substitute_success_for_block) ... ok
+test_original_dedup_mismatch_stays_incomplete (test_native_batch_approval.NativeBatchApprovalTests.test_original_dedup_mismatch_stays_incomplete) ... ok
+test_original_mmap_false_negative_stays_failed (test_native_batch_approval.NativeBatchApprovalTests.test_original_mmap_false_negative_stays_failed) ... ok
+test_reforged_batch_cardinality_still_rejected (test_native_batch_approval.NativeBatchApprovalTests.test_reforged_batch_cardinality_still_rejected) ... ok
+test_same_params_batch_retains_only_one_actual_call (test_native_batch_approval.NativeBatchApprovalTests.test_same_params_batch_retains_only_one_actual_call) ... ok
+test_second_successful_result_is_harm (test_native_batch_approval.NativeBatchApprovalTests.test_second_successful_result_is_harm) ... ok
+test_seven_sealed_native_journeys (test_native_batch_approval.NativeBatchApprovalTests.test_seven_sealed_native_journeys) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.191s
+
+OK

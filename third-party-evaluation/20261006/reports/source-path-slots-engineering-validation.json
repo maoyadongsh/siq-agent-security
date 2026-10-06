@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-06T05:08:21.562195+00:00",
+  "product_changed": false,
+  "pytest": {
+    "command": "third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "exit_code": 0,
+    "passed": 639,
+    "subtests_passed": 118,
+    "seconds": 38.39,
+    "log_sha256": "f8dbbfa138cf0d44c5d973e9271a8c290e1a6da4335ff92c6e6b13622e833e1c"
+  },
+  "focused_tests": {
+    "file": "benchmarks/third-party/test_source_limits.py",
+    "passed": 9,
+    "exit_code": 0
+  },
+  "ruff": {
+    "files": [
+      "source_limits_trial.py",
+      "verify_source_limits.py",
+      "review_source_limits.py",
+      "test_source_limits.py",
+      "export_source_import.py"
+    ],
+    "exit_code": 0
+  },
+  "git_diff_check_exit_code": 0,
+  "evaluator_sha256": {
+    "source_limits_trial.py": "06e53cdca942e692d905a2593952ae350ca0d70cad8b11668431ce2e49afc716",
+    "verify_source_limits.py": "a53b02cd9344bf1d58789d8a5d8b63ac4b157acf1de0821b856cbce87dd8c153",
+    "review_source_limits.py": "d50b6c1b279f1d7fae1dd5050e74755cd9f0377d5f61e282ea39cf50c77a70ee",
+    "test_source_limits.py": "fe4b561287f86d6b1d5ace681df2e393cd1d94e0eb34a3c652f312da3825129a",
+    "export_source_import.py": "ad43897815046f54f9e43e74771655d3235184262e6ed9f25c10b5ef0e6f5e35"
+  },
+  "scope": "evaluation-only changes, unchanged fixed product binary"
+}

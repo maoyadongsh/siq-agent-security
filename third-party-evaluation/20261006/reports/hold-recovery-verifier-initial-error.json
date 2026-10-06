@@ -1,0 +1,9 @@
+{
+  "recorded_at": "2026-10-05T22:51:12.171435+00:00",
+  "phase": "offline verifier",
+  "error": "duplicate receipt identity",
+  "cause": "overlapping historical snapshots incorrectly treated as disjoint receipt bundles",
+  "fix": "verify each snapshot individually, then compare historical records unchanged",
+  "model_calls": 0,
+  "product_changed": false
+}

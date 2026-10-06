@@ -1,0 +1,22 @@
+SIQ Research Engine
+Copyright 2026 maoyadongsh
+
+本项目自研源代码按照根目录 LICENSE 中的 Apache License 2.0 发布。
+
+本项目包含基于 NVIDIA OpenShell 的软件及修改后的集成材料：
+https://github.com/NVIDIA/OpenShell
+
+SIQ 固定使用 OpenShell v0.0.83，提交版本为
+e3d26dd3ae0dee247bbc5db368545832757ac493，并维护本地补丁。该固定版本的
+OpenShell 上游未单独发布 NOTICE 文件。OpenShell 相关内容仍受 Apache
+License 2.0 约束，修改范围和来源见 THIRD_PARTY_LICENSES.md。
+
+本项目集成并修改 Hermes Agent：
+https://github.com/NousResearch/hermes-agent
+
+Hermes Agent 按 MIT License 发布：
+
+Copyright (c) 2025 Nous Research
+
+第三方软件、模型权重、云端服务、容器镜像及数据材料不因本项目的 Apache
+License 2.0 而获得重新授权。具体边界见 THIRD_PARTY_LICENSES.md。

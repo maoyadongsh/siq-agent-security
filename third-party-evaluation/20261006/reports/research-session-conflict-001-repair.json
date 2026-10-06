@@ -1,0 +1,32 @@
+{
+  "regression_test": "TestRuntimeSessionReplacementWithRevokedGrantReportsConflict",
+  "before_fix": "FAIL: old session conflict misclassified or accepted 503 runtime_identity_unavailable",
+  "after_fix_focused": "PASS: runtimeidentity and server selected session/HTTP tests",
+  "live_original_batch": "research-permissions-skill-replacement-002",
+  "live_response": {
+    "route": "/v1/runtime-sessions",
+    "HTTP_status": 503,
+    "reason": "runtime_identity_unavailable",
+    "request": {
+      "schema_version": "local-runtime-session-enroll/v1",
+      "session_id": "research-update-02af67a354f47e57642225e7509188bf"
+    },
+    "observation_layer": "public_SIQ_API_not_native_tool"
+  },
+  "full_checks": {
+    "go_vet": "passed",
+    "go_test_all": "passed",
+    "package_output_lines": 52,
+    "log_sha256": "e129d2a1dc1012334652d033fa3380d4dfa2a8b95d346d4097957620119cafaf",
+    "cross_build_targets": [
+      "linux/arm64",
+      "linux/amd64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "schema_contract_tests": "passed",
+    "format_changed_files": "passed",
+    "format_existing_unrelated_files": 4
+  },
+  "scope": "error classification only; no authorization widening"
+}

@@ -1,0 +1,47 @@
+{
+  "checked_at": "2026-10-06T01:52:29.738656+00:00",
+  "scope": "ROUTE15 original-application alias substitution on isolated source-scope repair candidate",
+  "run_id": "business-alias-controls-001",
+  "candidate": "5470ab3780f2-routingscopefix1",
+  "manifest_sha256": "3c8712390861abefdd4627b4e0a1d98fff1a5f9365985d7153d27a4838819e33",
+  "allocated": 8,
+  "paired_task_blocks": 4,
+  "first_attempt_pass": 7,
+  "first_attempt_fail": 1,
+  "first_attempt_unknown": 0,
+  "signed_receipts": 123,
+  "known_unauthorized_effects": 0,
+  "physical_completed": 5,
+  "operator_question_utility_completed": 4,
+  "actual_control_http_requests": 19,
+  "model_inference_calls": 0,
+  "main_product_worktree_modified": false,
+  "candidate_modified": false,
+  "finding_id": "F053",
+  "framework_tests": {
+    "passed": 407,
+    "log": "reports/business-alias-framework-tests-001.txt"
+  },
+  "focused_tests": {
+    "passed": 12,
+    "log": "reports/business-alias-focused-tests-001.txt"
+  },
+  "negative_resealed_envelopes_rejected": 4,
+  "ruff": {
+    "exit_code": 0,
+    "log": "reports/business-alias-ruff-002.txt",
+    "first_diagnostic": "reports/business-alias-ruff-001.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/business-alias-diff-check-001.txt"
+  },
+  "pre_execution_test_development": "First fixture selected observer-loss instead of confidential-default; second synthetic question edit lacked matching request digest. Both test-fixture errors corrected before any product run; 8 focused tests passed before execution. Protocol froze between the latter test failure and correction; frozen executable harness bytes unchanged, tests are outside protocol source map.",
+  "tool_snapshot": {
+    "manifest": "engineering-evidence/business-alias-tools-001/manifest.json",
+    "sha256": "188fef515fbb9d50dcadf93c93a4cbae560731301b74c18fa725f3c92da3a3ac"
+  },
+  "export_review": "reports/business-alias-export-review.json",
+  "goal_status": "active",
+  "remaining": "Same-candidate real-model business and source flow, explicit flags/TCP variants, Q3-Q6, full TP/S4 and independent confirmation remain open"
+}

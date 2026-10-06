@@ -1,0 +1,92 @@
+{
+  "report_id": "20261006-204632",
+  "scope": "Report artifact validation only; no underlying experiments rerun",
+  "result": "passed",
+  "documents": [
+    {
+      "file": "SIQ_综合功能与智能体安全测评报告_20261006-204632.html",
+      "local_links_validated": 45,
+      "anchors_unresolved": 0,
+      "public_source_links": 34,
+      "duplicate_ids": 0,
+      "external_assets": 0,
+      "javascript_syntax": "passed"
+    },
+    {
+      "file": "SIQ_测评证据与历史复核附录_20261006-204632.html",
+      "local_links_validated": 8,
+      "anchors_unresolved": 0,
+      "public_source_links": 374,
+      "duplicate_ids": 0,
+      "external_assets": 0,
+      "javascript_syntax": "passed"
+    }
+  ],
+  "indexed_entries": 339,
+  "primary_citations": 35,
+  "source_bytes_match_immutable_git_objects": 339,
+  "historical_records_separated": "linked appendix",
+  "browser": {
+    "desktop": {
+      "width": 1440,
+      "scroll": 1440,
+      "chapters": 12,
+      "externalAssets": 0,
+      "heroStats": 4
+    },
+    "mobile": {
+      "width": 390,
+      "scroll": 390,
+      "chapters": 12,
+      "externalAssets": 0
+    },
+    "appendixMobile": {
+      "width": 390,
+      "scroll": 390,
+      "chapters": 2,
+      "externalAssets": 0
+    },
+    "searchMatches": {
+      "query": "WorkBuddy",
+      "matches": 6
+    },
+    "combinedFilterMatches": {
+      "query": "WorkBuddy + Windows",
+      "matches": 3
+    },
+    "archiveEntries": 339,
+    "offlineFileNavigation": "passed",
+    "download": "passed",
+    "pdf": "generated",
+    "pageErrors": []
+  },
+  "print_visual_review": "A4 generated and visually reviewed; dark hero and verdict panels invert to light; skip link, back-to-top and interactive controls hidden in print",
+  "visual_review_skill": "Playwright CLI",
+  "readme_brand_and_report_title": {
+    "heading": "SIQ Agent Security\n综合功能与智能体安全测评报告",
+    "readmeBrandCopy": "matched",
+    "design": "ink-gold editorial hero, warm paper body, embedded Playfair/DM Serif display fonts",
+    "mobile": {
+      "width": 390,
+      "scroll": 390
+    },
+    "pdf": "generated"
+  },
+  "design_v2": {
+    "fonts_embedded_base64": [
+      "Playfair Display 500/600",
+      "DM Serif Display 400 (GP Digits numerals)"
+    ],
+    "added": [
+      "dark ink-gold hero with stat band",
+      "overlapping platform cards",
+      "ink verdict panels",
+      "serif display typography",
+      "scroll reveal (reduced-motion safe)",
+      "back-to-top",
+      "refined tables/cards/evidence chips",
+      "print inversion rules"
+    ],
+    "content_unchanged": true
+  }
+}

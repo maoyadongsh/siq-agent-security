@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-10-05T19:49:21.473682+00:00",
+  "checks": [
+    {
+      "name": "ui-framework-tests",
+      "exit_code": 0,
+      "output": "----------------------------------------------------------------------\nRan 38 tests in 1.957s\n\nOK\n"
+    },
+    {
+      "name": "ui-ruff",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "name": "ui-diff-check",
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "runtime_scope": "production enterprise browser governance; synthetic identity server, real business HTTP/PostgreSQL",
+  "verifier_sources": {
+    "verify_governance.py": "9e6ce65a24083a11f93e68729278d73eddccf0fd0fdd72447879972f948733df",
+    "ui_governance.py": "87781d86c080c17b27d450b463229467ed4ff7ae17e94e58cda6b6fe3e6f0dc9",
+    "tests/test_ui_governance.py": "f760fb6a3d0e844a3bd587392725051ca8a440bd40ede2d6e939ec44e88c6ef4"
+  }
+}

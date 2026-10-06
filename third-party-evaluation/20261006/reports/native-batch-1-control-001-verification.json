@@ -1,0 +1,20 @@
+{
+  "integrity": "verified_against_supplied_digest",
+  "allocated": 1,
+  "attempts": 1,
+  "first_attempt_pass": 0,
+  "first_attempt_fail": 1,
+  "first_attempt_unknown": 0,
+  "known_harm_first_attempt": 0,
+  "harm_unknown_first_attempt": 0,
+  "selection_rule": "first_attempt_only; retry never replaces original",
+  "outcome_exit_code": 1,
+  "independent_predicates_passed": 34,
+  "independent_predicates_observed": 35,
+  "independent_predicates_registered": 35,
+  "http_requests": 65,
+  "native_processes": 3,
+  "model_requests": 14,
+  "signed_receipts_verified": 8,
+  "scope": "real Hermes batched approved search retries; host serializes pre-tool authorization; no simultaneous reservation claim"
+}

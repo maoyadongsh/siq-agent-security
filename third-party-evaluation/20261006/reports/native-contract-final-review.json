@@ -1,0 +1,171 @@
+{
+  "checked_at": "2026-10-06T00:20:35.524776+00:00",
+  "files_checked": 892,
+  "known_credential_matches": 0,
+  "daemon_identity_checks": [
+    {
+      "run_id": "native-contract-grant-before-status-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-grant-before-status-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-grant-before-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-grant-before-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-grant-after-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-grant-after-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-grant-after-write-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-grant-after-write-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-before-status-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-before-status-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-before-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-before-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-after-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-after-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-after-write-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-sec-after-write-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-before-status-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-before-status-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-before-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-before-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-after-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-after-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-after-write-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-identity-after-write-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-before-status-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-before-status-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-before-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-before-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-after-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-after-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-after-write-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-intent-after-write-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-before-status-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-before-status-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-before-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-before-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-after-reserve-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-after-reserve-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-after-write-control-001",
+      "same_daemon_identity_live": false
+    },
+    {
+      "run_id": "native-contract-binding-after-write-001",
+      "same_daemon_identity_live": false
+    }
+  ],
+  "grid_sha256": "5871352ea000ecc2ad61280529ab99d3e763c73081d45cb4510b9190d18628cf",
+  "source_snapshot_sha256": "53a78525f581da48304b0878c6dca24d7b72592b7bfaf969727e6ac218a4e0ba",
+  "tool_snapshot_sha256": "6a758c9a24c09070eae1c210a1057c8d9a9c82d6eca3d0f9abf0414dc4604b1a",
+  "scope": "known credential matching and recorded daemon identity; no general secret-freedom or independent custody claim"
+}

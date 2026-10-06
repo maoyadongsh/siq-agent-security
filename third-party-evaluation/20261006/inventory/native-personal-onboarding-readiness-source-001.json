@@ -1,0 +1,33 @@
+{
+  "schema_version": "siq-source-review/v1",
+  "candidate": "5470ab3780f2-nativefixturefix1",
+  "checked_at": "2026-10-06T03:19:51.479245+00:00",
+  "sources": {
+    "apps/agentshield/internal/adapterinstall/diagnostics.go": {
+      "sha256": "546c666d322395969e194c9e87966b79ac8a27a3557129eb6bee96010135b222",
+      "snapshot_ref": "engineering-evidence/native-personal-onboarding-readiness-source-001/apps/agentshield/internal/adapterinstall/diagnostics.go"
+    },
+    "apps/agentshield/internal/runtimeidentity/summary.go": {
+      "sha256": "a8a0e727875d545bfc647d7cdd852f70fb43309679a2157accafbdec73b258ef",
+      "snapshot_ref": "engineering-evidence/native-personal-onboarding-readiness-source-001/apps/agentshield/internal/runtimeidentity/summary.go"
+    },
+    "apps/agentshield/internal/server/adapter_diagnostics.go": {
+      "sha256": "a37d1b45dc1c539442844c7f4b46c99e5b773ff7c63d6cbe7f67138c3077322d",
+      "snapshot_ref": "engineering-evidence/native-personal-onboarding-readiness-source-001/apps/agentshield/internal/server/adapter_diagnostics.go"
+    },
+    "apps/agentshield/internal/server/runtime_check.go": {
+      "sha256": "5228b39c252e943c4b692e2b2f1e323e6ba08daaad555dd1fb253ac4b5b215d4",
+      "snapshot_ref": "engineering-evidence/native-personal-onboarding-readiness-source-001/apps/agentshield/internal/server/runtime_check.go"
+    },
+    "apps/agentshield/internal/server/runtime_check_activity.go": {
+      "sha256": "8e82e184e3fe3ea746395dd10a7c36a72d0acd7b2d597831188b20e5e0326fa4",
+      "snapshot_ref": "engineering-evidence/native-personal-onboarding-readiness-source-001/apps/agentshield/internal/server/runtime_check_activity.go"
+    }
+  },
+  "findings": [
+    "configuration runtime_state deliberately remains unverified",
+    "hook_load uses separate latest runtime-check status for the same instance",
+    "runtime identity issuance does not assert verified runtime"
+  ],
+  "scope": "post-run static source explanation; no new runtime-check execution or UI acceptance"
+}

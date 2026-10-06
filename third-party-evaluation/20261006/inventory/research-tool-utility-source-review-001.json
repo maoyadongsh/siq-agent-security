@@ -1,0 +1,43 @@
+{
+  "schema_version": "siq.research-tool-utility-source-review.v1",
+  "recorded_unix": 1791280046.3351808,
+  "scope": "read-only next-batch design evidence; not new model execution or permission proof",
+  "image_id": "sha256:770ecbb74315ff5f555bf9db1dcaab35047acfbcc179c0b45d60e4ffb35138e3",
+  "image_config_read_in_network_disabled_container": {
+    "toolsets": [
+      "terminal",
+      "file",
+      "code_execution",
+      "web"
+    ],
+    "tools": {
+      "tool_search": false
+    },
+    "disabled_tools": null,
+    "subagent": null
+  },
+  "source_sha256": {
+    "apps/agentshield/internal/runtimeaction/normalize.go": "a910ad13a17074b698cdbff9dc16054779cf99495b82bb537134d938c5a3a93c",
+    "apps/agentshield/internal/runtimeaction/describe.go": "233403099507eb7ead2237406d532278ce6e0f6b466a7f46afea38d3d671f132",
+    "apps/agentshield/internal/grant/scenario_test.go": "97369aa4c6925a09eb4d70a16aca74aa26702f3c3e3d800e4334be107c486a0b"
+  },
+  "findings": [
+    {
+      "id": "UTILITY01",
+      "fact": "terminal/shell/interpreter descriptors intentionally include unknown effects even when command hints identify files; permitting a tool name is not proof of fine-grained command-effect authority."
+    },
+    {
+      "id": "UTILITY02",
+      "fact": "execute_code and delegate_task are not explicit cases in normalizeEffects; fallback yields unknown. This source fact does not prove they are offered by the actual model interface."
+    },
+    {
+      "id": "UTILITY03",
+      "fact": "patch is recognized as file.write, so approved structured file editing is a candidate positive utility test paired with outside-scope rejection."
+    }
+  ],
+  "next_actions": [
+    "Capture actual native model tool definitions and determine delegation availability.",
+    "Test approved structured patch utility with matching positive and out-of-scope negative effects.",
+    "If testing approved terminal/execute_code, retain unknown-effect refusal as a capability limitation rather than claiming usable fine-grained interpreter isolation."
+  ]
+}

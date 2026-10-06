@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-06T04:26:15.046396+00:00",
+  "source_hashes": {
+    "native_runtime_snapshot.py": "963e8b331374335b17e4e7a061f97737a69e005ea1d03fb0e0aa3365a89ca5e1",
+    "verify_native_runtime_snapshot.py": "c845e1d9bb6e8db090f261ddc55b72477cc452b37332613abfa0603ce7764d7e",
+    "review_native_runtime_snapshot.py": "8d2d5517383ca167d5898d773e96a06e012c58770175d877325805c312b424ac",
+    "test_native_runtime_snapshot.py": "fd8748333ea420492dd03fbec1971d1e241faa87b170af6ed801cd586b3707a7"
+  },
+  "framework": {
+    "command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "exit_code": 0,
+    "passed": 590,
+    "subtests_passed": 118,
+    "log": "engineering-evidence/native-runtime-snapshot-002-framework-tests.txt"
+  },
+  "ruff_exit_code": 0,
+  "diff_check_exit_code": 0,
+  "frozen_variant_verifications": 8,
+  "offline_negative_probes": 60,
+  "unique_negative_probe_types": 11,
+  "original_calibration_failure_preserved": true,
+  "supplementary_reviewer_001_error_preserved": true,
+  "documentation_review": "reports/native-runtime-snapshot-document-review.json",
+  "resource_review": "inventory/native-runtime-snapshot-integration-002.json",
+  "new_model_inference_calls": 0,
+  "new_product_code_changes": 0,
+  "whole_goal_complete": false,
+  "goal_status": "active",
+  "next": "reuse source-identity and discovery evidence, then fill missing same-candidate source/import/integrity journey variants"
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "siq.hermes-evaluation-patch-provenance.v1",
+  "source_repository": "hermes-agent",
+  "source_commit": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+  "license": "MIT (Hermes Agent)",
+  "scope": "Post-tool observer concurrency and timeout-worker state; exported to Research evaluation image only.",
+  "patch": "infra/openshell/patches/hermes-post-tool-observer-serialization.patch",
+  "patch_sha256": "7d5e82c64a4d3f103fa59b0123454a40b8738313255dc4ab4606012011029a24",
+  "preexisting_required_gate_retained": true,
+  "daily_image_pointer_replaced": false
+}

@@ -1,0 +1,33 @@
+{
+  "run_id": "risk-race-001",
+  "native_source_and_raw_cli_verified": true,
+  "extra_HTTP_count": 19,
+  "parallel_HTTP_count": 8,
+  "preparation_HTTP_count": 11,
+  "raw_worker_outputs_joined": 3,
+  "strict_evidence_checks": {
+    "five_distinct_rule_findings": true,
+    "extra_http_unique": true,
+    "accept_pair_strict_overlap": true,
+    "accept_pair_next_rule_identity": true,
+    "resolve_pair_strict_overlap": true,
+    "resolve_pair_next_rule_identity": true,
+    "accept_resolve_strict_overlap": true,
+    "accept_resolve_next_rule_identity": true,
+    "accept_ack_strict_overlap": true,
+    "accept_ack_next_rule_identity": true,
+    "reaper_pair_strict_overlap": true
+  },
+  "frozen_checks": {
+    "risk_race_accept_pair": true,
+    "risk_race_resolve_pair": false,
+    "risk_race_accept_resolve": false,
+    "risk_race_accept_ack": false,
+    "risk_race_reaper_pair": false,
+    "risk_race_preparation": true,
+    "risk_race_no_effective": true,
+    "risk_race_barrier_removed": true
+  },
+  "actual_evidence_negative_rejections": {},
+  "scope": "author controlled overlapping transactions; supplementary stronger skip timing; no natural workload or external witness claim"
+}

@@ -1,0 +1,105 @@
+{
+  "commands": [
+    {
+      "command_id": "harness-calibrations-final",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party/tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "error": null,
+      "duration_seconds": 2.112739056814462,
+      "peak_group_rss_bytes": 31162368,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f181bb3a1b3bcd768be91c4ac4c41c95ed171495d64e040b21e9df04cf6e5f41"
+    },
+    {
+      "command_id": "harness-lint-final",
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/apps/control-api/.venv/bin/ruff",
+        "check",
+        "benchmarks/third-party"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "error": null,
+      "duration_seconds": 0.2646090956404805,
+      "peak_group_rss_bytes": 21057536,
+      "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command_id": "worktree-whitespace-final",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "error": null,
+      "duration_seconds": 0.2651102039963007,
+      "peak_group_rss_bytes": 6512640,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command_id": "export-A-fixturefix2-001",
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/apps/control-api/.venv/bin/python",
+        "benchmarks/third-party/verify.py",
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/data/A-fixturefix2-001",
+        "--expected-manifest-sha256",
+        "6059376c2190da248c63e350b3fd7561fb39fe6a415b8dd5834e0efc849552c3"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "error": null,
+      "duration_seconds": 0.2645408879034221,
+      "peak_group_rss_bytes": 9105408,
+      "stdout_sha256": "c6dedc0266eebdec51a8da51d260622e57bbfe6f42bc24c8035ea9dbee2cdcac",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command_id": "export-B-five-samples-001",
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/apps/control-api/.venv/bin/python",
+        "benchmarks/third-party/verify_samples.py",
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/data/B-five-samples-001",
+        "--expected-manifest-sha256",
+        "dcc9eec614eed9f84dfc15074cd9f31c550fbb0e660f7b5ab9fcc12deb71a752"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "error": null,
+      "duration_seconds": 0.2641950133256614,
+      "peak_group_rss_bytes": 9170944,
+      "stdout_sha256": "e4c5445e5d1844fe6006d89d3f6f6e92985462000e5b0e4fd293e0a7a042aaf0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command_id": "export-B-five-samples-002",
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/apps/control-api/.venv/bin/python",
+        "benchmarks/third-party/verify_samples.py",
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/data/B-five-samples-002",
+        "--expected-manifest-sha256",
+        "0dfc5c99527d8a5a714f86f5dfab764deab377431003329b7d56a5bc29f0941a"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "error": null,
+      "duration_seconds": 0.26423586206510663,
+      "peak_group_rss_bytes": 9105408,
+      "stdout_sha256": "e4c5445e5d1844fe6006d89d3f6f6e92985462000e5b0e4fd293e0a7a042aaf0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "expectation": "all final harness and exported A/B verifiers return zero; intentionally ablated Go/source response regression failures recorded separately"
+}

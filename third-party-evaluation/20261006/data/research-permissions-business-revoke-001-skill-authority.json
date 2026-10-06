@@ -1,0 +1,133 @@
+{
+  "public_key": "a59+MHYtWHQg0aQxTkZ+sMFcID9p+MpHp9Uc5aZRgys=",
+  "context": {
+    "schema_version": "skill-execution-context/v1",
+    "context_id": "sec-469860f9d358835dce14e2a3a5852bb5",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-00e6dcbe7c44c007727781e701c47971",
+      "agent_id": "hri-00e6dcbe7c44c007727781e701c47971",
+      "session_id": "siq:openshell:pool:b772c7f89e6f5c3f9030da6f:qwen-request-e59893d158eda339:siq_analysis:da9ad6bc60e9d0a5f524ea61e78ada1f47628bfe509a564cea8e8d5f26c175d7",
+      "task_id": "siq:openshell:pool:b772c7f89e6f5c3f9030da6f:qwen-request-e59893d158eda339:siq_analysis:d42ca6211c99a2bec3c647d5c157c847d51ff4b95a48a769ae7d75287e2b7469"
+    },
+    "skill": {
+      "skill_id": "local_dir:research-permissions-writer@b1145c53d745",
+      "content_hash": "b1145c53d7455e8e4c27c83983a2d9aff00ec6015e2fc516a00fef0047f16414"
+    },
+    "install": {
+      "install_id": "sin-32aea4bd43f15df05e99801bc7b1ef9a08a9b9cecfb581c374369fc08c1edb99",
+      "claim_signature": "d1d2711c66fbbe2ccfb0694300bb48d5e8949530be2b3a0c50bd7e397bdd15b80c18cb74d5ec41a0352243ce262ba650d25a5d72b092362a0d1741d2035a4b0f"
+    },
+    "authority": {
+      "grant_id": "grt-si-793d38c1c6776d31b0d740711e1ec8fc38496b75d3cd95e066cefde44a2750cb",
+      "grant_digest": "e560007fd02f195bcf80d5ac93536203542b395e42d7ce213dc1eb44fe8b8d2f"
+    },
+    "evidence_level": "controlled_task",
+    "issued_at": "2026-10-06T08:43:03.097548608Z",
+    "expires_at": "2026-10-06T08:52:47Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "e97415861da63a44e8bccefa89e021523d3368ce42853b2e2cf763f87589103ed9701ea5b8a0f60ebaecdc027c4d7132ad917b5e04199bfac4269560ab035800"
+  },
+  "grant": {
+    "grant_id": "grt-si-793d38c1c6776d31b0d740711e1ec8fc38496b75d3cd95e066cefde44a2750cb",
+    "admission_id": "adm-si-868e342d30dd407e720268f44a76288ea00ebffa3c949cebdb40cd8592b1199f",
+    "skill": {
+      "skill_id": "local_dir:research-permissions-writer@b1145c53d745",
+      "content_hash": "b1145c53d7455e8e4c27c83983a2d9aff00ec6015e2fc516a00fef0047f16414"
+    },
+    "subject": {
+      "type": "agent_instance",
+      "id": "hri-00e6dcbe7c44c007727781e701c47971"
+    },
+    "platform": "hermes",
+    "facts": [
+      {
+        "fact_id": "pf-p-1-811cbc58",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "read_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-2-12bb99cf",
+        "domain": "tool",
+        "action": "tool.invoke",
+        "resource": {
+          "type": "tool",
+          "value": "write_file"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-3-bf2235b0",
+        "domain": "filesystem",
+        "action": "fs.read",
+        "resource": {
+          "type": "path",
+          "value": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi61c10a0281acfedf/synthetic.txt"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      },
+      {
+        "fact_id": "pf-p-4-dfeb2c3b",
+        "domain": "filesystem",
+        "action": "fs.write",
+        "resource": {
+          "type": "path",
+          "value": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi61c10a0281acfedf/analysis/runs"
+        },
+        "effect": "allow",
+        "state": "declared",
+        "authority": "human",
+        "authority_revision": null,
+        "readback_evidence_id": null,
+        "evidence_ids": null
+      }
+    ],
+    "default_effect": "deny",
+    "hermes_toolset_allowlist": [
+      "read_file",
+      "write_file"
+    ],
+    "desired_policy_ref": {
+      "policy_id": "pol-grt-si-793d38c1c6776d31b0d740711e1ec8fc38496b75d3cd95e066cefde44a2750cb",
+      "version": 2,
+      "static_domains_unavailable": [
+        "filesystem"
+      ]
+    },
+    "overlap_conflicts": [],
+    "enforcement_mode": "block",
+    "status": "approved",
+    "approved_by": {
+      "actor_type": "human",
+      "actor_id": "qwen-synthetic-proof-operator",
+      "approved_at": "2026-10-06T08:42:23Z",
+      "channel": "console"
+    },
+    "effective_readback": null,
+    "created_at": "2026-10-06T08:42:23Z",
+    "expires_at": null,
+    "signing_schema": "local_canonical/v1",
+    "signature": "a28a505f74a156c2f621a51d482af5b13429639d8a936af3f69e41cb31fd20196015eec902afc5173ce2c9b9f0079a09311f6c7356f3f735f3f85530036c0b04"
+  }
+}

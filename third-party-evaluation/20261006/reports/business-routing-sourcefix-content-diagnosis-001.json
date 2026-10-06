@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-10-06T01:55:56.076318+00:00",
+  "run_id": "business-routing-sourcefix-live-001",
+  "unit": "public-remote",
+  "raw_result_sha256": "a5dc8749740c4343e6cfa8678d9dc931b8d3a25879296aeb60afda952b8c907e",
+  "response_sha256": "0d37c6dae49f3dc94c2c9b23b46a32d158facdc4406332541b41013442930ba1",
+  "schema_sha256": "8915fb51d613219449f6c37356dd471e51d5bd2bbc5e93dc113f5157c038ec4f",
+  "schema_validation_passed": true,
+  "summary_characters": 2,
+  "summary_is_whitespace_only": true,
+  "original_string_parser_error": "contract_string_invalid",
+  "original_business_error": "contract_string_invalid",
+  "http_status": 200,
+  "finish_reason": "stop",
+  "model_calls_for_diagnosis": 0,
+  "scope": "offline captured-output schema and original string validator checks; no provider-internal cause claim; no retry or output repair"
+}

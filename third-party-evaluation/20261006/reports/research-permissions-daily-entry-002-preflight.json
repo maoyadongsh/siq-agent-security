@@ -1,0 +1,19 @@
+{
+  "batch": "research-permissions-daily-entry-002",
+  "original_api_pid": 453532,
+  "checks": {
+    "candidate_health_ready": true,
+    "authenticated_routing_refusal_is_403": true,
+    "measurement_and_cleanup_completed": true,
+    "redacted_runtime_access_denied": true,
+    "owned_candidate_stopped": true,
+    "owned_candidate_port_closed": true,
+    "original_api_still_same_process": true
+  },
+  "preparation_sha256": "cefc29bcd04ad3034fd35b5f42a6e4125cdfa39e8f16a5c7e440673af63e5dc8",
+  "model_tasks_expected": 0,
+  "candidate_api_pid": 2655369,
+  "proof_exit_code": 0,
+  "passed": true,
+  "scope": "HTTP error-classification preflight only; not daily OpenShell permission acceptance"
+}

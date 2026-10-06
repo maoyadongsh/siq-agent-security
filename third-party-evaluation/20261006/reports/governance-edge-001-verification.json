@@ -1,0 +1,13 @@
+{
+  "integrity_verified": true,
+  "run_id": "governance-edge-001",
+  "passed": true,
+  "http_cases": 73,
+  "checks": 102,
+  "checks_passed": 102,
+  "missing": [],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

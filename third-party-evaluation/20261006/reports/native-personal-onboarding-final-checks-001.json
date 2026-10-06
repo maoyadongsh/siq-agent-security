@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "offline_verifiers": [
+    {
+      "run_id": "native-personal-onboarding-001",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "harness_sources": 28,
+      "candidate_sources": 199
+    },
+    {
+      "run_id": "native-personal-onboarding-format-002",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "harness_sources": 29,
+      "candidate_sources": 206
+    }
+  ],
+  "review_snapshot_hashes": true,
+  "prior_document_snapshot_hashes": true,
+  "ledger_hashes": true,
+  "unrelated_ledger_keys_preserved": true,
+  "report_links": true,
+  "owned_processes_absent": true
+}

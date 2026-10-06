@@ -1,0 +1,71 @@
+{
+  "checked_at": "2026-10-06T02:03:25.451561+00:00",
+  "manifest_sha256": "116ac790c3a5f98885712edf73876de461963b7f7c43c2d0ed94367c6909b5cf",
+  "files_checked": 22,
+  "known_private_value_matches": 0,
+  "scan": "provider and owned state token/recovery/seed raw/hex/base64; state excluded",
+  "units": [
+    {
+      "unit_id": "confidential-flags-control",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "model_http_requests": 3,
+      "pre_http_attempts": 0,
+      "utility_completed": true,
+      "delivery_requests": 1,
+      "before_errno": 111,
+      "after_errno": 111,
+      "observed_target_connect_attempts": 0
+    },
+    {
+      "unit_id": "confidential-internal-remote",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "model_http_requests": 3,
+      "pre_http_attempts": 0,
+      "utility_completed": true,
+      "delivery_requests": 1,
+      "before_errno": 111,
+      "after_errno": 111,
+      "observed_target_connect_attempts": 0
+    },
+    {
+      "unit_id": "local-tcp-control",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "model_http_requests": 3,
+      "pre_http_attempts": 0,
+      "utility_completed": true,
+      "delivery_requests": 1,
+      "before_errno": 111,
+      "after_errno": 111,
+      "observed_target_connect_attempts": 0
+    },
+    {
+      "unit_id": "local-tcp-refused",
+      "process_states": [
+        "absent"
+      ],
+      "servers_closed": true,
+      "servers_drained": true,
+      "model_http_requests": 1,
+      "pre_http_attempts": 1,
+      "utility_completed": false,
+      "delivery_requests": 0,
+      "before_errno": 111,
+      "after_errno": 111,
+      "observed_target_connect_attempts": 1
+    }
+  ],
+  "model_inference_calls": 0,
+  "signals_sent": 0
+}

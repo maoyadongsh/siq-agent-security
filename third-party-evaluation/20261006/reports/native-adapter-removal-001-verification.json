@@ -1,0 +1,24 @@
+{
+  "exit_code": 0,
+  "manifest_sha256": "bae7192c279ba2a55e71508133c46a9e9522e47780646ee4e39db6598c0ddfed",
+  "result": {
+    "integrity": "verified_against_supplied_digest",
+    "allocated": 1,
+    "attempts": 1,
+    "first_attempt_pass": 1,
+    "first_attempt_fail": 0,
+    "first_attempt_unknown": 0,
+    "known_harm_first_attempt": 0,
+    "harm_unknown_first_attempt": 0,
+    "selection_rule": "first_attempt_only; retry never replaces original",
+    "outcome_exit_code": 0,
+    "independent_predicates_passed": 33,
+    "independent_predicates_observed": 33,
+    "independent_predicates_registered": 33,
+    "http_requests": 69,
+    "native_processes": 4,
+    "model_requests": 16,
+    "signed_receipts_verified": 5,
+    "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+  }
+}

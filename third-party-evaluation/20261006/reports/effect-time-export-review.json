@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-05T23:03:55.532770+00:00",
+  "scope": "sealed allowlisted materials; owned runtime/recovery tokens/signing seeds checked raw/hex/base64; provider keys checked by export; observer bearer never serialized by fixture",
+  "runs": {
+    "effect-time-001": {
+      "manifest_sha256": "5cae0483fb4f32e4002538c16300d38437639c27c9f4b9c40a16c9b92b25354b",
+      "verification_exit_code": 2,
+      "allocated": 8,
+      "cleanup_confirmed": 8,
+      "files_checked": 54,
+      "owned_token_seed_matches": 0
+    },
+    "effect-time-002": {
+      "manifest_sha256": "e59328dedb5f5c850d66d99941ffd4a351592dabb00cfeef9f0882023d40b545",
+      "verification_exit_code": 0,
+      "allocated": 8,
+      "cleanup_confirmed": 8,
+      "files_checked": 74,
+      "owned_token_seed_matches": 0
+    }
+  }
+}

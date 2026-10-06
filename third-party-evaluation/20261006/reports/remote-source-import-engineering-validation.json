@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-10-06T05:00:44.933020+00:00",
+  "repository": "siq-agent-security",
+  "product_changed": false,
+  "pytest": {
+    "command": "third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "exit_code": 0,
+    "passed": 621,
+    "subtests_passed": 118,
+    "seconds": 38.97,
+    "log_ref": "reports/remote-source-import-framework-tests.txt",
+    "log_sha256": "1053622c6e5a2307d72ac71e903fcb122bf8b1aaf4c67bc929757eaca0dccc1c"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "files": [
+      "source_import_trial.py",
+      "source_network_observer.py",
+      "remote_source_import.py",
+      "verify_remote_source_import.py",
+      "test_remote_source_import.py",
+      "source_doh_relay.py",
+      "remote_source_container.py",
+      "export_source_import.py",
+      "review_remote_source_import.py"
+    ]
+  },
+  "git_diff_check_exit_code": 0,
+  "changed_evaluator_sha256": {
+    "source_import_trial.py": "8b16ca71a378bda858b58a5249c579e274d55602091bb212cb1741caa707ef25",
+    "source_network_observer.py": "46352e1f8a7c22d5b15aaf643999ceee1332c925d0b5c5013061882399b08383",
+    "remote_source_import.py": "e982bd969c7557c493036fba82fcaf2583085f75fb16d52865f672e1372805bf",
+    "verify_remote_source_import.py": "3a2e57812528361247422097584596bc031126f0724bdb07ff85e1fe45f7ee9c",
+    "test_remote_source_import.py": "2bf3036388eb2bfbb6792f8d972b93134764d419f828b9bea3220a2f874e74ba",
+    "source_doh_relay.py": "3f03beb9fe1f85836f149f9a204194a6b99391f6122640680bd2459aa239b588",
+    "remote_source_container.py": "03fa6ee6892b75af0853ae05c1e56d8f898eb203884aa460bac352a03c90cca3",
+    "export_source_import.py": "f45d82bea551af40826444822f5ff0e080f8cda8ff23ef656599c78ed8ebc282",
+    "review_remote_source_import.py": "8c183677f89ee40294af7b9fd35f888b914dafd0ee6b61df1ea2df65ff3dffd0"
+  },
+  "scope": "evaluation-only changes; product binary unchanged; no new product Go build required"
+}

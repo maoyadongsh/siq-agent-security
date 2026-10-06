@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-06T04:40:03.885773+00:00",
+  "pytest_command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+  "pytest_exit_code": 0,
+  "tests_passed": 601,
+  "subtests_passed": 118,
+  "new_scoring_tests": 11,
+  "pytest_log_sha256": "9352b16adfd1d4ce1aa8ad5e03d45af957d255692fdfddfc11586f991cd322d9",
+  "ruff_exit_code": 0,
+  "diff_check_exit_code": 0,
+  "source_sha256": {
+    "source_import_trial.py": "538c96d6232caf239567a95df1b16ee22c695711af33410f213d8b7f063ff2a1",
+    "source_import_scoring.py": "4538092f8a414e9096a64aaafdcb37ddff5b4a2ff860e3a94f3b896329dd75a9",
+    "verify_source_import.py": "53b66c04a4094c78307f4e47cf45d3c9c190d2b67987a059f95f74869dd581df",
+    "review_source_import.py": "b23d9b2306f0a3994d18b0653539990454df211b7d6506912f9a69aa64eba78e",
+    "export_source_import.py": "a6f2c70b0dcc969c49f892a51951a227a53a445c78dd48c373d690468748da8d",
+    "test_source_import.py": "77ebb94956d7c7d80484e5fb006218d8c88135f04798f65db314b5530b3c9ae2"
+  },
+  "scope": "framework engineering verification; not independent business task count"
+}

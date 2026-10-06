@@ -1,0 +1,15 @@
+test_actual_chinese_intent_requires_product_canonical_bytes (test_native_held_intent.NativeHeldIntentTests.test_actual_chinese_intent_requires_product_canonical_bytes) ... ok
+test_actual_native_enrollment_required (test_native_held_intent.NativeHeldIntentTests.test_actual_native_enrollment_required) ... ok
+test_control_requires_missing_revocation_not_generic_error (test_native_held_intent.NativeHeldIntentTests.test_control_requires_missing_revocation_not_generic_error) ... ok
+test_idempotent_retry_must_be_after_effect_window (test_native_held_intent.NativeHeldIntentTests.test_idempotent_retry_must_be_after_effect_window) ... ok
+test_incomplete_authority_capture_does_not_confirm (test_native_held_intent.NativeHeldIntentTests.test_incomplete_authority_capture_does_not_confirm) ... ok
+test_modified_intent_or_binding_fails_signature (test_native_held_intent.NativeHeldIntentTests.test_modified_intent_or_binding_fails_signature) ... ok
+test_original_authority_cannot_change_after_revoke (test_native_held_intent.NativeHeldIntentTests.test_original_authority_cannot_change_after_revoke) ... ok
+test_readback_and_retry_cannot_be_omitted (test_native_held_intent.NativeHeldIntentTests.test_readback_and_retry_cannot_be_omitted) ... ok
+test_revocation_signature_cannot_be_retargeted (test_native_held_intent.NativeHeldIntentTests.test_revocation_signature_cannot_be_retargeted) ... ok
+test_sixteen_native_journeys_keep_two_real_harms (test_native_held_intent.NativeHeldIntentTests.test_sixteen_native_journeys_keep_two_real_harms) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.259s
+
+OK

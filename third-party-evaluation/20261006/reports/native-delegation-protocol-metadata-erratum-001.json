@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-10-06T02:14:31.877739+00:00",
+  "run_id": "native-delegation-entry-001",
+  "issue": "Inherited integration.tools text incorrectly names terminal although native_toolsets and actual argv are file,delegation; inherited same Skill bytes claim unverified and corrected to same declared tool list",
+  "frozen_protocol_unchanged": true,
+  "actual_tool_inventory_ref": "reports/native-delegation-lineage-review-001.json",
+  "installed_skill_comparison": [
+    {
+      "group": "B0",
+      "installed_skill_sha256": "e8f5dbb5762e4202d957e629949b79fc7f3d46a17787a8513d37acca290948fc",
+      "bytes": 142
+    },
+    {
+      "group": "B2",
+      "installed_skill_sha256": "e8f5dbb5762e4202d957e629949b79fc7f3d46a17787a8513d37acca290948fc",
+      "bytes": 142
+    }
+  ],
+  "skill_bytes_equal": true,
+  "score_and_execution_unchanged": true,
+  "future_freeze_metadata_corrected": true
+}

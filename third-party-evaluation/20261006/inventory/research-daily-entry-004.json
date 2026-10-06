@@ -1,0 +1,28 @@
+{
+  "schema_version": "siq.research-daily-frontend-inventory.v1",
+  "recorded_unix": 1791281813.4932408,
+  "frontend_pid": 464005,
+  "frontend_cwd": "/home/maoyd/siq-research-engine/var/ops/flagship-report-delivery-20260924/web",
+  "frontend_initial_backend_url": "http://127.0.0.1:18081",
+  "health_checks": {
+    "15173": {
+      "status": 200,
+      "health_status": "ok"
+    },
+    "18081": {
+      "status": 200,
+      "health_status": "ok"
+    }
+  },
+  "source_sha256": {
+    "/home/maoyd/siq-research-engine/apps/web/scripts/proxy-config.mjs": "ad0cb1dc79a61300649e51f1d21055d6a53ec92dd2d4b6dbedd8dafc92c3ab9a",
+    "/home/maoyd/siq-research-engine/apps/web/src/shared/api/client.ts": "a55c03e0ffa9435e0eeee36a73f2cf1909fdcbb6fc707bae2af3c8fd0accddf7",
+    "/home/maoyd/siq-research-engine/start_all.sh": "deda67c53d0aca99c76d6245067dd3f913390408c3a5e73e5dd79de1f4ee53c9"
+  },
+  "findings": [
+    "Listener 15173 belongs to a historical web deployment under var/ops/flagship-report-delivery-20260924/web; its configured backend is 18081.",
+    "Frontend health proxy and backend health both respond. This verifies connectivity, not authenticated Agent/Skill permission enforcement.",
+    "Current working-tree web source is not automatically the loaded historical frontend code."
+  ],
+  "no_service_mutation": true
+}

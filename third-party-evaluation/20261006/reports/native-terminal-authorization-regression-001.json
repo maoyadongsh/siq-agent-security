@@ -1,0 +1,125 @@
+{
+  "scope": "new helpers recompute old and new immutable captures; no rerun or score change",
+  "preserved_wrapper_failure": "first indexing assumed old protocols had profile; corrected to documented default briefing without modifying protocols",
+  "runs": [
+    {
+      "run_id": "native-absolute-local-001",
+      "manifest_sha256": "172578c9f1ce685762d9ab15ae3ccf5f36e356740801a11c4a0e6f165fb41034",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 8,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-absolute-step5-001",
+      "manifest_sha256": "42a07d706f4849b61e4a4aa1c205d03f4f34ee22ed2b8ca8955020de473ba9f2",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 8,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-business-controls-001",
+      "manifest_sha256": "f0cd0c184a834f93a236e30c21c680e87bd9a76128665dd91d8c3130af309e94",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 9,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-business-local-001",
+      "manifest_sha256": "5f1c264e70f0ecfd816185dcbe2237da99870448766638380fd4c6709ad5943d",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 12,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-business-step5-001",
+      "manifest_sha256": "099d98fc4a496db604e45d46f8e7a7c5a3ea1ba461e54097beaa37c2cbbd16ad",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 12,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-effects-controls-001",
+      "manifest_sha256": "a8fe16ee41bbba9fec1a11643a2348559519ecb8968065eb421f54d5b0a05238",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 32,
+      "exact_scope_review": false
+    },
+    {
+      "run_id": "native-effects-shell-001",
+      "manifest_sha256": "2534b7510ffa5590020631ac68f5c95bcbe69a0c48ab5042a879342ce85c5a42",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 10,
+      "exact_scope_review": false
+    },
+    {
+      "run_id": "native-path-controls-001",
+      "manifest_sha256": "a8a987a34675d189e46f710633f37a590a4379f078c40d4ef13534dcc1706302",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 52,
+      "exact_scope_review": false
+    },
+    {
+      "run_id": "native-path-controls-002",
+      "manifest_sha256": "f2cbbf35bc6134d27a36a96f4f7e89b2d93c037a3266858d755c534666dfe8b1",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 52,
+      "exact_scope_review": false
+    },
+    {
+      "run_id": "native-semantic-controls-001",
+      "manifest_sha256": "855c4cfe562defb447dc0cc268896639cb830544b8c587fec95b4431737233f0",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 52,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-semantic-local-001",
+      "manifest_sha256": "dc2f149035f77e8ad69c9ee0bb559c98933849c0b6323859181d8e0bee6b7122",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 44,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-semantic-step5-001",
+      "manifest_sha256": "f04b099bb52ab35aec0b4e26162786a77a2cf2e203ee04e9c85b31db392ea40e",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 40,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-semantic-support-controls-001",
+      "manifest_sha256": "cb99027ea8ee8eddb83d2550917d4c91699477b9b91b08d799e90dc7c276f441",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 52,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-semantic-support-local-001",
+      "manifest_sha256": "6ac3c0ee2602b3cb7243c5160fc8e74e7c8227bcedccd22bd21a59bec46bf4bc",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 43,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-semantic-support-step5-001",
+      "manifest_sha256": "92a691b47efc4709bf31f4fa7d8c282f4fc80c13c9cb50602b4f7fedbb21d265",
+      "original_outcome_exit_code": 1,
+      "signed_receipts": 43,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-skill-read-controls-001",
+      "manifest_sha256": "b8aed2160deafa2e049a3718e6d5945a4c8a0c0e5f4fe9d494be4136e7f0b6a1",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 16,
+      "exact_scope_review": true
+    },
+    {
+      "run_id": "native-terminal-authorization-001",
+      "manifest_sha256": "3a3381dc98c6e99063215ddd1cd4af7116a67022dac5d6839018274d10ea1947",
+      "original_outcome_exit_code": 0,
+      "signed_receipts": 20,
+      "exact_scope_review": true
+    }
+  ]
+}

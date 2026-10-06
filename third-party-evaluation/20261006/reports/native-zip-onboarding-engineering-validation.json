@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-10-06T04:45:39.903639+00:00",
+  "pytest_command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+  "pytest_exit_code": 0,
+  "tests_passed": 609,
+  "subtests_passed": 118,
+  "new_focused_tests": 8,
+  "pytest_log_sha256": "9dfca2f78a648b83f4e752cbcee7a0a7b9ea024b00cc182c32d12f075432d3d6",
+  "ruff_exit_code": 0,
+  "diff_check_exit_code": 0,
+  "source_sha256": {
+    "native_zip_onboarding.py": "0dcb837dd29eea60b1fa76a93520eb74e11fb952b78f5aeac01a7f56791480c3",
+    "verify_native_zip_onboarding.py": "03a16b6d1df87f48ad2cfeec565634aff6337aead90dcb2611a1f50e7d1c2550",
+    "review_native_zip_onboarding.py": "5913830aedefda455938a73ecc76e1b1191ed7d287d16febe5409409e626edba",
+    "zip_source_authority.py": "a93ddbe97925d7f4db902ac2bf4c52b3924993bb1134ea1e4fdf1c7d62720b04",
+    "personal_onboarding_authority.py": "0ca4f9541ceb8c317ad56e93e812e3b9b09c8de4eedf87266f9923be7683434c",
+    "test_native_zip_onboarding.py": "0c4b4a52d46851cbaee6d3d571148d4ef8c8a9c2b05fc8be8ce98ab9b43a22f0"
+  },
+  "scope": "engineering tests and raw evidence negatives, not independent business task count"
+}

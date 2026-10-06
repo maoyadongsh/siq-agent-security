@@ -1,0 +1,20 @@
+{
+  "image_id": "sha256:e13efb6c60a2fc660adbd7d8643bd3453c5b8dca97be3bffbd58fc9189913598",
+  "sources": [
+    {
+      "path": "agent/tool_executor.py",
+      "image_sha256": "5aff6c7e95a280adc5124e7c1f1019b54984b8e7091db48bac35ad5bc2387813",
+      "matches_current_Hermes_checkout": true
+    },
+    {
+      "path": "agent/agent_runtime_helpers.py",
+      "image_sha256": "9164dac169ce580d2de3396885c0959c5660620724f01509416ff2136df890e2",
+      "matches_current_Hermes_checkout": true
+    },
+    {
+      "path": "model_tools.py",
+      "image_sha256": "5227bfe30f7c3f6eb20d064f648420138031e038d38eac2829d25b749739ad11",
+      "matches_current_Hermes_checkout": true
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "batch": "research-permissions-tool-utility-001",
+  "partial_effect_review_passed": false,
+  "whole_batch_passed": false,
+  "checks": {
+    "eleven_signed_records": true,
+    "eight_decisions_three_observations": true,
+    "approved_patch_actual_bytes": true,
+    "readonly_input_actual_bytes": true,
+    "interpreter_effects_absent": true,
+    "same_agent_task_session_skill": true,
+    "read_exact_decision": true,
+    "read_linked_observation": true,
+    "write_exact_decision": true,
+    "write_linked_observation": true,
+    "patch_exact_decision": true,
+    "patch_linked_observation": true,
+    "readonly_patch_exact_decision": true,
+    "terminal_exact_decision": true,
+    "code_exact_decision": true,
+    "process_exact_decision": true,
+    "search_exact_decision": true,
+    "initial_write_signed_parameters": true,
+    "approved_patch_signed_parameters": true,
+    "denied_patch_signed_parameters": true,
+    "probes_follow_declared_order": true,
+    "terminal_proposes_owned_write": false,
+    "code_proposes_owned_nested_write": true,
+    "interpreter_rejections_are_effect_limits": true,
+    "process_list_proposal": true,
+    "search_targets_owned_input": true
+  },
+  "signed_records": 11,
+  "limitations": [
+    "Execution failed because catalog collector raced sandbox cleanup.",
+    "Actual native catalog contains 14 tools including delegation, not frozen expected nine; coverage remains incomplete."
+  ],
+  "output_path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApifbf5554a41c8e3d6/analysis/runs/qwen-request-e9dc6646c6e489db/permission-result.md",
+  "readonly_input_path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApifbf5554a41c8e3d6/synthetic.txt"
+}

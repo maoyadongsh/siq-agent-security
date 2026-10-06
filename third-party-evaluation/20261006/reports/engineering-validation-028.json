@@ -1,0 +1,81 @@
+{
+  "checked_at": "2026-10-05T22:56:40.353747+00:00",
+  "scope": "required Intent API approved replay, real SIGKILL restart and observe reply loss; native SEC excluded",
+  "framework_tests": {
+    "passed": 185,
+    "exit_code": 0,
+    "log": "reports/hold-recovery-framework-tests-001.txt"
+  },
+  "negative_tests": {
+    "test_methods": 9,
+    "scope": "real cohort verification and tampering/fault distinctions"
+  },
+  "ruff": {
+    "scope": "files changed by this recovery phase",
+    "exit_code": 0,
+    "log": "reports/hold-recovery-ruff-targeted-001.txt"
+  },
+  "broad_ruff": {
+    "exit_code": 1,
+    "log": "reports/hold-recovery-ruff-001.txt",
+    "finding": "three import lint findings in concurrently present business_chain_trial.py, not changed in this phase; no whole-directory lint pass claimed"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/hold-recovery-diff-check-001.txt"
+  },
+  "cohorts": {
+    "hold-recovery-001": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 10,
+      "identity": "author_local; no independent certification",
+      "allocated": 10,
+      "attempts": 10,
+      "first_attempt_pass": 10,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "required Intent v3 API: same-process/restart replay and SIGKILL before reserve/after reserve/after file dispatch; no native SEC or observer revocation claim"
+    },
+    "hold-recovery-002": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 12,
+      "identity": "author_local; no independent certification",
+      "allocated": 12,
+      "attempts": 12,
+      "first_attempt_pass": 12,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "required Intent v3 API: same-process/restart replay and SIGKILL before reserve/after reserve/after file dispatch; no native SEC or observer revocation claim; actual observe reply loss after backend persistence"
+    }
+  },
+  "predicates": {
+    "hold-recovery-001": 157,
+    "hold-recovery-002": 190
+  },
+  "actual_SIGKILL_restarts": {
+    "hold-recovery-001": 8,
+    "hold-recovery-002": 10
+  },
+  "model_calls": 0,
+  "product_changed": false,
+  "export_review": "reports/hold-recovery-export-review.json",
+  "snapshot": "engineering-evidence/hold-recovery-tools-001/manifest.json",
+  "snapshot_sha256": "0ef311d351b59a0689696f899c8438ae52d47e64296ac8998e65d5727afe5a8f",
+  "findings": [
+    "F033"
+  ],
+  "remaining": [
+    "AU02 effect observed before approval",
+    "AU04 revoke/final-check/dispatch boundaries",
+    "AU05 observer revocation and takeover",
+    "native SEC concurrency and recovery"
+  ]
+}

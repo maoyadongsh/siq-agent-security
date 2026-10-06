@@ -1,0 +1,39 @@
+{
+  "recorded_at": "2026-10-05T20:09:12.935184+00:00",
+  "framework_unittests": {
+    "passed": 48,
+    "failed": 0
+  },
+  "ruff_changed_files_exit_code": 0,
+  "cli_checks": [
+    {
+      "case": "non_object",
+      "expected_exit": 3,
+      "exit_code": 3,
+      "passed": true
+    },
+    {
+      "case": "empty_v2",
+      "expected_exit": 3,
+      "exit_code": 3,
+      "passed": true
+    },
+    {
+      "case": "unified_verify_keeps_unknown",
+      "expected_exit": 2,
+      "exit_code": 2,
+      "output": "{\"integrity\": \"verified_against_supplied_digest\", \"scope\": \"evaluation infrastructure calibration, not product security results\", \"allocated\": 2, \"attempts\": 3, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 1, \"known_harm_first_attempt\": 1, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 2}\n",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "run.py": "89f0174b5a62901dc282ebbdd54b253e6cadf056aa5565943732488fda21c4c4",
+    "verify.py": "4cc12726cf3ed8dc65adacb7cde05ec2b2588bfa50ec7e168f6c965d05cc71e3",
+    "lifecycle.py": "6e7b9c5608b02339bce3f6aa2d0dd1db22307163bd03701e50b378b5bfbdd841",
+    "journal_runner.py": "83177576d0c5e2e24cca8115a450c485623c85da34eeeaecf8bb72523be8793f",
+    "journal_trial.py": "0c7debef5b6dd3cd80305a4efce734a0a0fd21a6e213abe09309ae999c8fe184",
+    "verify_journal.py": "b934f2478625bf7259eb21baadb9f5886a9b70d302dde4886951b038cb02dd13",
+    "schemas/case.v1.schema.json": "51ec56546d0f0db6362c4c1c92bc80af4b11fb72f17efd0b37d5618a5650e26e",
+    "tests/test_journal.py": "531977e3582c74d1b772a673a05b6d8a7fb68630ecfbe168cc4c1cd1ae54f8a2"
+  }
+}

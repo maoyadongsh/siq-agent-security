@@ -1,0 +1,14 @@
+test_after_write_does_not_erase_after_reserve_harm (test_native_held_authority.NativeHeldAuthorityTests.test_after_write_does_not_erase_after_reserve_harm) ... ok
+test_control_cannot_hide_authority_revocation (test_native_held_authority.NativeHeldAuthorityTests.test_control_cannot_hide_authority_revocation) ... ok
+test_early_authority_checks_are_distinct (test_native_held_authority.NativeHeldAuthorityTests.test_early_authority_checks_are_distinct) ... ok
+test_generic_error_does_not_prove_sec_revocation_gate (test_native_held_authority.NativeHeldAuthorityTests.test_generic_error_does_not_prove_sec_revocation_gate) ... ok
+test_identity_cannot_revoke_an_unrelated_subject (test_native_held_authority.NativeHeldAuthorityTests.test_identity_cannot_revoke_an_unrelated_subject) ... ok
+test_retry_result_requires_actual_model_tool_call (test_native_held_authority.NativeHeldAuthorityTests.test_retry_result_requires_actual_model_tool_call) ... ok
+test_revocation_timing_cannot_move_to_before_reserve (test_native_held_authority.NativeHeldAuthorityTests.test_revocation_timing_cannot_move_to_before_reserve) ... ok
+test_signed_sec_and_revoke_cannot_be_retargeted (test_native_held_authority.NativeHeldAuthorityTests.test_signed_sec_and_revoke_cannot_be_retargeted) ... ok
+test_sixteen_native_journeys_two_known_harms (test_native_held_authority.NativeHeldAuthorityTests.test_sixteen_native_journeys_two_known_harms) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.329s
+
+OK

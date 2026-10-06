@@ -1,0 +1,54 @@
+{
+  "schema_version": "siq.evaluation.research-permissions-run.v1",
+  "batch": "research-permissions-business-005",
+  "mode": "business",
+  "passed": false,
+  "scope": "dedicated_real_research_deployment_synthetic_company",
+  "binary_sha256": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "relay_sha256": "3032a2cfa0095f837e93b4906c032f558d0ad585eaa495f3b2cefa3a0c44ba7c",
+  "started_unix": 1791270163.5765657,
+  "checks": {
+    "owned_daemon_initialized": true,
+    "owned_daemon_ready": true,
+    "live_proof_passed": false,
+    "owned_daemon_stopped": true,
+    "owned_authority_port_closed": true
+  },
+  "secret_values_exported": false,
+  "proof_exit_code": 1,
+  "proof": {
+    "schema": "siq.qwen38.candidate-api-proof.v1",
+    "passed": false,
+    "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+    "production_ready": false,
+    "checks": {
+      "fresh_database_migrations": true,
+      "request_recovery_ready": true,
+      "legacy_recovery_disabled": true,
+      "business_model_marker_returned": true,
+      "business_execution_completed": true,
+      "API_finalizer_released_before_diagnostic_cleanup": true,
+      "model_bridge_correlated_200": true,
+      "business_settled_before_api_stop": true,
+      "candidate_listener_closed": true,
+      "business_runtime_cleanup_confirmed": true,
+      "temporary_database_removed": true,
+      "existing_service_identity_unchanged": true
+    },
+    "business_HTTP_attempted": true,
+    "business_HTTP_status": 200,
+    "request_run_sha256": "9b87d4fd88303d726ba94a46620589d9c288d81e9918e890998edfc77d7a6296",
+    "bridge_statuses": [
+      200,
+      200,
+      200
+    ],
+    "permission_task": "paired-analysis",
+    "write_target_exists": false,
+    "permission_conclusion": "requires_independent_tool_receipt_review",
+    "failure": "candidate_business_execution_ambiguous",
+    "remaining_running_execution_count": 0
+  },
+  "proof_sha256": "8e2e3e3188aaff0efe677ec4c11ae4434b77109614d49910c20f26996adf6b18",
+  "finished_unix": 1791270361.5820267
+}

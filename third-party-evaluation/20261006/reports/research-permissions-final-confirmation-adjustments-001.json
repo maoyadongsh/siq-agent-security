@@ -1,0 +1,43 @@
+{
+  "scope": "Evaluation prompt/fixture and frozen expected-content verification; no product financial guard or current default API changes in this continuation.",
+  "files": [
+    {
+      "owner": "research",
+      "path": "scripts/openshell/prove_research_skill_withdrawal.py",
+      "before_sha256": "3744bc589eac79415d5cf56ea1de6bf5e9cc91f81e4d68ce00f2dd4f17649afc",
+      "after_sha256": "9b66a1b3fa8f0b02639440e22ecfde4c1491b979748cdbde5ac14f560179cb49"
+    },
+    {
+      "owner": "research",
+      "path": "scripts/openshell/tests/test_research_skill_withdrawal.py",
+      "before_sha256": "58f5c28680f0d444733f5a723e40fe755ba1a4048bed310aa963ed61812aaf57",
+      "after_sha256": "6e035c555b7de9a578aefebba77e2b9f4586b997fea958cdfe726fd5d90c147f"
+    },
+    {
+      "owner": "security",
+      "path": "benchmarks/third-party/research_skill_withdrawal_verify.py",
+      "before_sha256": "67d9738f1c881d289acb86b0268fff6ac4ba3626230f4f88a0a321520ae128a4",
+      "after_sha256": "2799e2dde21c8234bb59fa18a1a329045f1b2c4286faded6dbfdb4df78a97393"
+    },
+    {
+      "owner": "security",
+      "path": "benchmarks/third-party/research_permission_closeout_audit.py",
+      "before_sha256": "42f8c43c15fbd70b6c42bb0d545a7dae298d53e121dfe930b45ebd3f65d4668e",
+      "after_sha256": "ca996172be2a0ed9ec096998d84b3c9ac90d18d053a44afa1ad7510a7eca1cb3"
+    }
+  ],
+  "patch_sha256": "36c72e51b26a12e8a62dcd9d6f922826b5e9c69352904e3abce0e622c7dbba1f",
+  "validation": {
+    "research_focused_tests": {
+      "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest -q scripts/openshell/tests/test_research_skill_withdrawal.py scripts/openshell/tests/test_research_relay_recovery.py scripts/openshell/tests/test_research_skill_drift_containment.py",
+      "passed": 7,
+      "duration_seconds": 0.56
+    },
+    "verifier_archived_signed_fixture_calibration": "Legacy fixture passes; wrong expected content fails; exact expected content passes.",
+    "live_case": "research-permissions-skill-revoke-004; 22 independent checks passed"
+  },
+  "original_failed_batches": [
+    "research-permissions-skill-revoke-002",
+    "research-permissions-skill-revoke-003"
+  ]
+}

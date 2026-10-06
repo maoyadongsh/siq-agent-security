@@ -1,0 +1,46 @@
+{
+  "run_id": "business-routing-sourcefix-live-001",
+  "manifest_sha256": "8323d4e0e4500c994efd6ac09dd5368af47f5b1ece7482b7a8d9504370c465ca",
+  "baseline_outcome_exit_code": 1,
+  "signed_receipts": 92,
+  "negative_controls": [
+    {
+      "mutation": "signed-record-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "receipt content hash mismatch"
+    },
+    {
+      "mutation": "model-event-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "model wire capture differs from events"
+    },
+    {
+      "mutation": "budget-excess",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "request budget exceeded"
+    },
+    {
+      "mutation": "missing-allocation",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "allocated capture missing"
+    },
+    {
+      "mutation": "source-result-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "allocation or score differs"
+    },
+    {
+      "mutation": "journal-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "journal chain mismatch"
+    }
+  ],
+  "passed": true,
+  "scope": "fresh copies and recomputed outer hashes; original frozen evidence unchanged; no model or product execution"
+}

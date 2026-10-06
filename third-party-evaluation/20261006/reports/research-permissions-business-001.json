@@ -1,0 +1,18 @@
+{
+  "schema_version": "siq.evaluation.research-permissions-run.v1",
+  "batch": "research-permissions-business-001",
+  "mode": "business",
+  "passed": false,
+  "scope": "dedicated_real_research_deployment_synthetic_company",
+  "binary_sha256": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "relay_sha256": "946cd90af62f76886fff5573161f633a94a7308ad2cce267345ab638b370a29f",
+  "started_unix": 1791269692.2603126,
+  "checks": {
+    "owned_daemon_stopped": true,
+    "owned_authority_port_closed": true
+  },
+  "secret_values_exported": false,
+  "failure_type": "RuntimeError",
+  "failure_code": "owned_daemon_exited",
+  "finished_unix": 1791269692.3726861
+}

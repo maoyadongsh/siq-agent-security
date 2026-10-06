@@ -1,0 +1,54 @@
+Using CPython 3.12.2 interpreter at: third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/bin/python
+Creating virtual environment at: third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskboundaryfix1/apps/control-api/.venv
+Resolved 49 packages in 7ms
+   Building siq-agent-security-control-api @ file:///home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskboundaryfix1/apps/control-api
+      Built siq-agent-security-control-api @ file:///home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskboundaryfix1/apps/control-api
+Prepared 1 package in 870ms
+Installed 47 packages in 22ms
+ + alembic==1.19.1
+ + annotated-doc==0.0.5
+ + annotated-types==0.8.0
+ + anyio==4.14.2
+ + attrs==26.1.0
+ + certifi==2026.7.22
+ + cffi==2.1.1
+ + click==8.4.2
+ + cryptography==50.0.0
+ + fastapi==0.141.1
+ + greenlet==3.5.5
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httptools==0.8.0
+ + httpx==0.28.1
+ + idna==3.18
+ + iniconfig==2.3.0
+ + jsonschema==4.26.0
+ + jsonschema-specifications==2025.9.1
+ + mako==1.4.1
+ + markupsafe==3.0.3
+ + packaging==26.3
+ + pluggy==1.6.0
+ + psycopg==3.3.4
+ + psycopg-binary==3.3.4
+ + pycparser==3.0
+ + pydantic==2.13.4
+ + pydantic-core==2.46.4
+ + pygments==2.20.0
+ + pyjwt==2.13.0
+ + pytest==9.1.1
+ + python-dotenv==1.2.2
+ + pyyaml==6.0.3
+ + referencing==0.37.0
+ + rfc3339-validator==0.1.4
+ + rpds-py==2026.6.3
+ + ruff==0.16.2
+ + siq-agent-security-control-api==0.1.0 (from file:///home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskboundaryfix1/apps/control-api)
+ + six==1.17.0
+ + sqlalchemy==2.0.52
+ + starlette==1.6.0
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + uvicorn==0.52.2
+ + uvloop==0.22.1
+ + watchfiles==1.2.0
+ + websockets==17.0.1

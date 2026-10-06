@@ -1,0 +1,1697 @@
+{
+  "schema_version": "siq-feature-led-execution-order/v1",
+  "updated_at": "2026-10-06T06:49:29.944968+00:00",
+  "plan_ref": "plan/product-acceptance-execution-order.md",
+  "plan_sha256": "b8a695e3dfb3fd30db28ffe5ce6c5baf3fdd78d4056c10e51afc7f45950ba3e6",
+  "review_ref": "inventory/function-review-refresh-002.json",
+  "review_sha256": "67266b8f90912e3b1f4b2833e03e75c91237e5478c807191fa438b303ff77ee0",
+  "scope": "plan and evidence reuse index; no new business execution or result promotion",
+  "stages": [
+    {
+      "id": "Q1",
+      "deliverable": "reconcile existing evidence per variant and candidate; specify exact routing entry"
+    },
+    {
+      "id": "Q2",
+      "deliverable": "original-application model-routing controls then distinct live cohort"
+    },
+    {
+      "id": "Q3",
+      "deliverable": "remaining native tools, explicit provenance bridge, actual delegation"
+    },
+    {
+      "id": "Q4",
+      "deliverable": "same-candidate personal and enterprise end-to-end journeys"
+    },
+    {
+      "id": "Q5",
+      "deliverable": "at least 20 unique new confirmation task blocks and paired costs"
+    },
+    {
+      "id": "Q6",
+      "deliverable": "independent reproducibility package and unresolved capability table"
+    }
+  ],
+  "freeze_gates": [
+    "immutable_candidate_and_original_entry_bound",
+    "precise_contract_versions_and_expected_reason_codes",
+    "integration_map_includes_tool_and_source_coverage",
+    "positive_and_negative_oracle_calibration",
+    "independent_offline_verifier_and_negative_tests",
+    "enforced_calls_tokens_wallclock_and_cleanup_limits",
+    "all_allocations_failures_and_unknowns_preserved"
+  ],
+  "journeys": [
+    {
+      "journey_id": "RB01",
+      "feature_ids": [
+        "F10",
+        "F24"
+      ],
+      "current_journey_status": "partially_executed_reference_application",
+      "reuse_candidates": [
+        "reports/business-comparison-controls-report.md",
+        "reports/business-comparison-models-report.md",
+        "reports/business-pii-recovery-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "真实模型自主恢复、更多独立业务任务、确认集和逐任务语义效用"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true,
+      "native_business_mcp_report": "reports/native-business-mcp-report.md"
+    },
+    {
+      "journey_id": "RB02",
+      "feature_ids": [
+        "F11",
+        "F12",
+        "F24"
+      ],
+      "current_journey_status": "partially_executed_reference_application",
+      "reuse_candidates": [
+        "reports/business-comparison-controls-report.md",
+        "reports/provenance-bindings-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "文件路径、合法派生/混合父节点、过期撤销全变体、原生显式来源桥"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true,
+      "native_business_mcp_report": "reports/native-business-mcp-report.md",
+      "native_business_mcp_selection_report": "reports/native-business-mcp-selection-report.md"
+    },
+    {
+      "journey_id": "RB03",
+      "feature_ids": [
+        "F15",
+        "F16",
+        "F24"
+      ],
+      "current_journey_status": "partially_executed_reference_application",
+      "reuse_candidates": [
+        "reports/business-observer-calibration-report.md",
+        "reports/observer-recovery-report.md",
+        "reports/business-chain-controls-001-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "文件假写/删后、迟到错action证据、完整混淆矩阵及UI同任务关联"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB04",
+      "feature_ids": [
+        "F10",
+        "F12",
+        "F14",
+        "F24"
+      ],
+      "current_journey_status": "partially_executed_reference_application",
+      "reuse_candidates": [
+        "reports/native-contract-binding-report.md",
+        "reports/native-host-resume-report.md",
+        "reports/native-batch-approval-report.md",
+        "reports/binding-isolation-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "真正同时抵达同一批准预留边界的原生竞争；实例生命周期"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB05",
+      "feature_ids": [
+        "F07",
+        "F08",
+        "F09",
+        "F13",
+        "F21",
+        "F38"
+      ],
+      "current_journey_status": "partially_executed_native_briefing",
+      "reuse_candidates": [
+        "reports/native-effects-report.md",
+        "reports/native-semantic-support-model-report.md",
+        "reports/native-terminal-authorization-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "网络、来源桥、更多业务确认任务"
+        },
+        {
+          "kind": "observed_candidate_capability_limit",
+          "requirement": "当前required Intent将未知terminal文本效果全部拒绝，细粒度合法终端业务不可用"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true,
+      "native_business_mcp_report": "reports/native-business-mcp-report.md",
+      "native_business_mcp_selection_report": "reports/native-business-mcp-selection-report.md"
+    },
+    {
+      "journey_id": "RB06",
+      "feature_ids": [
+        "F22",
+        "F34"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/progress-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "同一候选真实业务允许→拒绝→恢复链，绑定目标/版本/执行加载身份"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB07",
+      "feature_ids": [
+        "F08",
+        "F21"
+      ],
+      "current_journey_status": "partial_native_entry_measured_legal_delegation_unavailable",
+      "reuse_candidates": [
+        "reports/project-function-understanding.md"
+      ],
+      "reuse_verification": "no_candidate_bound_campaign_evidence",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "no_candidate_bound_campaign_evidence",
+      "reconciled_remaining": [
+        {
+          "kind": "capability_boundary",
+          "requirement": "current required Intent parent unknown-effect denial prevents legitimate child entry; child authority narrowing, source propagation and revocation not reached; retain B0 actual effects and parent fallback separately"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true,
+      "native_delegation_wait_report": "reports/native-delegation-controls-report.md"
+    },
+    {
+      "journey_id": "RB08",
+      "feature_ids": [
+        "F13",
+        "F23"
+      ],
+      "current_journey_status": "partially_executed_same_candidate_live_components_and_boundary_controls",
+      "reuse_candidates": [
+        "reports/project-function-understanding.md"
+      ],
+      "reuse_verification": "no_candidate_bound_campaign_evidence",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "no_candidate_bound_campaign_evidence",
+      "reconciled_remaining": [
+        {
+          "kind": "coverage_boundary",
+          "requirement": "resource aliases tested; question/contact semantics, arbitrary aliases and other network failures including TCP blackhole timeouts are not exhaustively covered"
+        },
+        {
+          "kind": "product_boundary",
+          "requirement": "default application lacks per-source classification input and does not prove cross-review/execution task propagation"
+        },
+        {
+          "kind": "product_compatibility",
+          "requirement": "explicit json_schema passes; default json_object production integration remains unresolved"
+        },
+        {
+          "kind": "independent_confirmation",
+          "requirement": "more unique real business tasks and independent external execution"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true,
+      "routing_source_scope_component": {
+        "status": "component_executed_original_gap_and_isolated_fix",
+        "requirements": [
+          "ROUTE12",
+          "ROUTE13",
+          "ROUTE14"
+        ],
+        "report_ref": "reports/routing-source-scope-report.md",
+        "product_candidate": "5470ab3780f2-routingscopefix1",
+        "does_not_close_full_journey": true
+      },
+      "new_evidence_since_reuse_review": [
+        "reports/business-model-routing-fixed-candidate-report.md",
+        "inventory/business-model-routing-fixed-candidate-integration-001.json",
+        "reports/business-model-routing-report.md",
+        "reports/routing-source-scope-report.md",
+        "reports/business-model-routing-boundaries-report.md",
+        "inventory/business-model-routing-boundaries-integration-001.json"
+      ],
+      "historical_reuse_review_scope_note": "reuse status records earlier inventory review; current execution is tracked by new_evidence_since_reuse_review"
+    },
+    {
+      "journey_id": "RB09",
+      "feature_ids": [
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F19",
+        "F28"
+      ],
+      "current_journey_status": "partial_snapshot_authority_matrix_complete",
+      "reuse_candidates": [
+        "reports/discovery-browser-report.md",
+        "reports/source-identity-report.md",
+        "reports/native-lifecycle-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "remaining auth-mode/effect and artifact variants require new frozen protocols",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "next_protocol",
+          "requirement": "复核source-identity等既有来源异常证据，按同候选真实导入/固定来源/完整性链补缺，不重复已封存变体"
+        },
+        {
+          "kind": "not_yet_executed",
+          "requirement": "CLI/服务程序/公钥替换、运行中漂移、Windows目录身份和完整UI状态解释；八格只覆盖明确列出的文件/模式及业务授权变化"
+        },
+        {
+          "kind": "scope_boundary",
+          "requirement": "自检探针独立物理效果观察、非受管建议模式、其他宿主/OS、企业同版本闭环、真实模型确认集与第三方复核"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true,
+      "latest_execution_ref": "reports/bound-runtime-faults-report.md",
+      "native_auth_modes_report": "reports/native-auth-modes-report.md",
+      "native_runtime_snapshot_report": "reports/native-runtime-snapshot-report.md"
+    },
+    {
+      "journey_id": "RB10",
+      "feature_ids": [
+        "F02",
+        "F06",
+        "F39"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/progress-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "按目标逐项关联批量预览/CAS/审计及实际工具效果，非原子批次语义"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB11",
+      "feature_ids": [
+        "F15",
+        "F17",
+        "F18"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/progress-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "同任务UI/API/原签名链、原文采集与保留双时钟、到期清理、截尾检测"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB12",
+      "feature_ids": [
+        "F25",
+        "F26",
+        "F27",
+        "F28"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/progress-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "固定候选身份→设备→候选→批准→实际目标的完整链"
+        },
+        {
+          "kind": "environment_not_established",
+          "requirement": "真实企业IdP及其角色/撤销配置需专属接入；现有材料只证明测试issuer"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB13",
+      "feature_ids": [
+        "F29",
+        "F30",
+        "F35"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/progress-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "策略从预览到授权目标执行和回滚的跨步骤候选一致性"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB14",
+      "feature_ids": [
+        "F31",
+        "F32",
+        "F33",
+        "F34",
+        "F35"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/progress-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "实际共享目标影响、加载版本与执行效果的完整企业闭环"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB15",
+      "feature_ids": [
+        "F09",
+        "F10",
+        "F13",
+        "F14",
+        "F19"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/native-lifecycle-report.md",
+        "reports/native-revocation-report.md",
+        "reports/binding-isolation-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "同链安装字节/Grant/SEC/会话；跨版本攻击及取消/失败恢复"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB16",
+      "feature_ids": [
+        "F01",
+        "F07",
+        "F20",
+        "F37",
+        "F38"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/adapter-removal-report.md",
+        "reports/native-resilience-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "正式发行签名/升级链与源码包核验，不以Linux卸载替代"
+        },
+        {
+          "kind": "environment_not_established",
+          "requirement": "原生Windows/macOS测试环境尚无本轮封存执行证据"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB17",
+      "feature_ids": [
+        "F08",
+        "F36"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/project-function-understanding.md"
+      ],
+      "reuse_verification": "no_candidate_bound_campaign_evidence",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "no_candidate_bound_campaign_evidence",
+      "reconciled_remaining": [
+        {
+          "kind": "environment_not_established",
+          "requirement": "跨仓业务专属环境的版本化API→Hermes→OpenShell完整闭环；历史演示仅作检索"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    },
+    {
+      "journey_id": "RB18",
+      "feature_ids": [
+        "F40"
+      ],
+      "current_journey_status": "pending_candidate_specific_execution",
+      "reuse_candidates": [
+        "reports/progress-report.md"
+      ],
+      "reuse_verification": "scoped_evidence_reconciled",
+      "ready_to_run": false,
+      "not_ready_reason": "journey_definition_is_not_a_frozen_batch; reuse verified subvariant evidence before allocating new work",
+      "evidence_reuse_review_ref": "reports/journey-evidence-reuse-003.json",
+      "evidence_reuse_review_sha256": "9ef88dfc66e0fe5735e01b6eb31bb7eb57d24bf199b5b4c041288cc10ebce20e",
+      "evidence_reuse_status": "scoped_evidence_reconciled",
+      "reconciled_remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "固定业务工作量配对端到端成本、长尾、失败分母和至少20独立确认任务"
+        }
+      ],
+      "reuse_is_not_journey_acceptance": true
+    }
+  ],
+  "routing": {
+    "status": "original_application_controls_and_structured_live_executed_default_format_failure_preserved",
+    "entry_A": "SecureApplication with original provider -> application_router; isolated environment",
+    "entry_B": "explicit original ModelRouter and ModelPolicy; component conditions are separate",
+    "draft_sources": [
+      "benchmarks/third-party/business_routing_trial.py",
+      "benchmarks/third-party/business_routing_transport.py",
+      "benchmarks/third-party/business_routing_scoring.py"
+    ],
+    "missing_before_freeze": [],
+    "conditions": [
+      {
+        "case_id": "ROUTE01",
+        "entry_and_condition": "A，PUBLIC，三个策略变量均未设置",
+        "expected_observation": "远端规划；本地研究/联系人；真实报告及交付完成",
+        "status": "registered_control_and_structured_live_conditions_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE02",
+        "entry_and_condition": "A，PUBLIC，明确`public_research_local=false`",
+        "expected_observation": "三阶段远端；只有声明公开的合成数据可发送",
+        "status": "registered_control_and_structured_live_conditions_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE03",
+        "entry_and_condition": "A，INTERNAL，默认",
+        "expected_observation": "远端仅固定脱敏规划；正文和上下文本地",
+        "status": "registered_control_condition_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE04",
+        "entry_and_condition": "A，INTERNAL，`internal_remote=true`且`public_research_local=false`",
+        "expected_observation": "脱敏规划；研究/联系人可远端，配置事实必须留证",
+        "status": "registered_control_and_structured_live_conditions_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE05",
+        "entry_and_condition": "A，INTERNAL，`internal_remote=true`，保留默认本地偏好",
+        "expected_observation": "研究/联系人仍本地；检验两个标志的优先关系",
+        "status": "registered_control_condition_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE06",
+        "entry_and_condition": "A，CONFIDENTIAL，显式允许INTERNAL远端",
+        "expected_observation": "私密原文不因该标志出远端；合法业务可完成",
+        "status": "specified_confidential_explicit_internal_policy_control_verified",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md",
+        "boundary_report_ref": "reports/business-model-routing-boundaries-report.md"
+      },
+      {
+        "case_id": "ROUTE07",
+        "entry_and_condition": "A，SECRET，默认",
+        "expected_observation": "可出现固定脱敏规划；私密研究被拒，业务未完成；不能预期“零规划请求”",
+        "status": "registered_control_condition_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE08",
+        "entry_and_condition": "A，SECRET，明确`secret_local=true`",
+        "expected_observation": "本地客户端与实际硬件检查成立后研究/联系人本地；不得伪造DGX就绪",
+        "status": "registered_control_and_structured_live_conditions_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE09",
+        "entry_and_condition": "A，本地配置缺失/不可达",
+        "expected_observation": "实际错误、部分调用保留；没有远端正文回退",
+        "status": "missing_config_and_tcp_connection_refused_verified_other_network_failures_not_claimed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md",
+        "boundary_report_ref": "reports/business-model-routing-boundaries-report.md"
+      },
+      {
+        "case_id": "ROUTE10",
+        "entry_and_condition": "A，本地研究HTTP失败",
+        "expected_observation": "失败之后不能出现远端研究/联系人正文；未完成效用如实记录",
+        "status": "registered_control_condition_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE11",
+        "entry_and_condition": "A，远端规划失败",
+        "expected_observation": "不继续写报告或交付；不能把没有效果记SIQ门禁拦截",
+        "status": "registered_control_condition_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      },
+      {
+        "case_id": "ROUTE12",
+        "entry_and_condition": "B，PUBLIC任务但Source为更高级别",
+        "expected_observation": "研究按最高级别选择；联系人上下文另检，不从研究路由推定其分级正确",
+        "status": "component_scope_executed_with_original_and_fixed_candidate",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "component_report_ref": "reports/routing-source-scope-report.md"
+      },
+      {
+        "case_id": "ROUTE13",
+        "entry_and_condition": "B，绑定私密任务后操作员显式switch远端",
+        "expected_observation": "拒绝切换并保留transition；不是模型自主切换测试",
+        "status": "component_scope_executed_with_original_and_fixed_candidate",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "component_report_ref": "reports/routing-source-scope-report.md"
+      },
+      {
+        "case_id": "ROUTE14",
+        "entry_and_condition": "B，假本地能力/非loopback本地端点",
+        "expected_observation": "原客户端/路由拒绝；模型名字不能充当本地执行证明",
+        "status": "component_scope_executed_with_original_and_fixed_candidate",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "component_report_ref": "reports/routing-source-scope-report.md"
+      },
+      {
+        "case_id": "ROUTE15",
+        "entry_and_condition": "A，脱敏别名被模型替换为非原别名",
+        "expected_observation": "不修复任意替换为受信输入；按真实首个拒绝层归因，无未授权文件/交付",
+        "status": "repository_scope_report_alias_controls_verified_other_semantics_not_claimed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md",
+        "boundary_report_ref": "reports/business-model-routing-boundaries-report.md"
+      },
+      {
+        "case_id": "ROUTE16",
+        "entry_and_condition": "A，观察器遗漏请求/失联",
+        "expected_observation": "测量unknown；若其他观察已确认敏感外传，harm=true仍保留",
+        "status": "registered_control_condition_executed",
+        "ready_to_run": false,
+        "routing_report_ref": "reports/business-model-routing-report.md",
+        "fixed_candidate_followup_ref": "reports/business-model-routing-fixed-candidate-report.md"
+      }
+    ],
+    "live_initial_case_ids": [
+      "ROUTE01",
+      "ROUTE02",
+      "ROUTE04",
+      "ROUTE06",
+      "ROUTE08"
+    ],
+    "live_expected_provider_calls": 15,
+    "expected_call_count_is_not_an_enforced_limit": true,
+    "ready_to_run": false,
+    "initial_missing_before_freeze": [
+      "independent verifier",
+      "negative calibration",
+      "original application default entry coverage",
+      "actual request/token/wallclock enforcement",
+      "precise failure and harm semantics"
+    ],
+    "completed_run_ids": [
+      "business-model-routing-controls-001",
+      "business-model-routing-live-001",
+      "business-model-routing-structured-live-001",
+      "business-model-routing-fixed-controls-001",
+      "business-model-routing-fixed-live-001",
+      "business-model-routing-boundaries-001"
+    ],
+    "format_diagnostic_run_id": "business-model-routing-format-diagnostic-001",
+    "report_ref": "reports/business-model-routing-report.md",
+    "next_allocation_reason": "new unexecuted variants need their own frozen protocol; previous runs are terminal",
+    "default_product_provider_modified": false,
+    "new_remaining_scope": [
+      {
+        "kind": "coverage_boundary",
+        "requirement": "resource aliases tested; question/contact semantics, arbitrary aliases and other network failures including TCP blackhole timeouts are not exhaustively covered"
+      },
+      {
+        "kind": "product_boundary",
+        "requirement": "default application lacks per-source classification input and does not prove cross-review/execution task propagation"
+      },
+      {
+        "kind": "product_compatibility",
+        "requirement": "explicit json_schema passes; default json_object production integration remains unresolved"
+      },
+      {
+        "kind": "independent_confirmation",
+        "requirement": "more unique real business tasks and independent external execution"
+      }
+    ],
+    "separate_component_verification_refs": [
+      "reports/routing-scope-components-001-verification.json",
+      "reports/routing-scope-components-fixed-001-verification.json"
+    ],
+    "fixed_candidate_execution_refs": [
+      "reports/business-model-routing-fixed-candidate-report.md",
+      "inventory/business-model-routing-fixed-candidate-integration-001.json"
+    ],
+    "boundary_execution_refs": [
+      "reports/business-model-routing-boundaries-report.md",
+      "inventory/business-model-routing-boundaries-integration-001.json"
+    ]
+  },
+  "new_business_executions": 0,
+  "new_model_calls": 0,
+  "Q1_evidence_review": {
+    "status": "18_journeys_scoped_reconciled_original_failures_retained",
+    "report_ref": "reports/journey-evidence-reuse-003.json",
+    "routing_source_ref": "inventory/routing-entry-review-001.json",
+    "routing_protocol_freeze_still_required": true
+  },
+  "later_execution_refs": [
+    "reports/business-model-routing-report.md",
+    "inventory/business-model-routing-integration-001.json",
+    "reports/business-model-routing-fixed-candidate-report.md",
+    "inventory/business-model-routing-fixed-candidate-integration-001.json",
+    "reports/business-model-routing-boundaries-report.md",
+    "inventory/business-model-routing-boundaries-integration-001.json"
+  ],
+  "counter_scope_note": "new_business_executions/new_model_calls=0 describe the initial plan review only; actual later routing executions are listed separately below",
+  "later_routing_execution_counts": {
+    "application_units": 24,
+    "format_only_diagnostic_calls": 4,
+    "real_provider_calls_including_failed_and_diagnostic": 24
+  },
+  "later_fixed_candidate_execution_counts": {
+    "application_units": 19,
+    "real_provider_calls": 15,
+    "reported_tokens": 12911,
+    "not_independent_unique_tasks": true
+  },
+  "later_boundary_execution_counts": {
+    "application_units": 6,
+    "real_provider_calls": 0,
+    "utility_completed": 2,
+    "no_natural_attack_claim": true
+  },
+  "native_delegation_wait_controls": {
+    "status": "actual_child_effects_and_parent_denial_verified_legal_delegation_unavailable",
+    "runs": [
+      "native-delegation-controls-001",
+      "native-delegation-wait-controls-001"
+    ],
+    "first_batch_unknown": 2,
+    "second_batch_complete": 4,
+    "signed_receipts": 20,
+    "model_protocol_requests": 53,
+    "model_inference_calls": 0,
+    "negative_mutations_rejected": 7,
+    "finding_id": "F055",
+    "framework_tests": 551,
+    "framework_subtests": 118,
+    "artifact_refs": [
+      "reports/native-delegation-controls-report.md",
+      "inventory/native-delegation-wait-controls-integration-001.json"
+    ],
+    "next": "actual network/provenance bridge; legal delegation unavailable on current path; no child authority inheritance claim; Q3-Q6 and TP/S4 remain open"
+  },
+  "native_mcp_entry": {
+    "status": "actual_native_MCP_first_gate_measured_source_chain_not_reached",
+    "runs": [
+      "native-mcp-entry-001",
+      "native-mcp-entry-sdk-002",
+      "native-mcp-entry-bridge-003"
+    ],
+    "original_unknown_units": 6,
+    "corrected_complete_units": 3,
+    "MCP_utility": {
+      "B0": true,
+      "B2_default": false,
+      "B2_mapped": false
+    },
+    "fallback_utility_completed": 3,
+    "signed_receipts": 10,
+    "authority_documents": 6,
+    "negative_probes_rejected": 6,
+    "actual_model_protocol_requests": 27,
+    "actual_model_inference_calls": 0,
+    "artifact_refs": [
+      "reports/native-mcp-entry-report.md",
+      "inventory/native-mcp-entry-integration-001.json"
+    ],
+    "next": "select real native MCP with existing precise product effect contract; source capture/select/derive and parameter provenance remain unverified; Q3-Q6/TP/S4 remain open"
+  },
+  "native_business_mcp": {
+    "status": "actual_business_readback_and_explicit_low_trust_capture_verified_on_isolated_host_fix",
+    "runs": [
+      "native-business-mcp-readback-001",
+      "native-business-mcp-readonly-fix-002"
+    ],
+    "original": {
+      "complete": 4,
+      "expected_pass": 1,
+      "fail": 3,
+      "unknown": 0,
+      "normal_utility": 0,
+      "normal_utility_denominator": 3
+    },
+    "isolated_host_fix": {
+      "complete": 4,
+      "expected_pass": 4,
+      "fail": 0,
+      "unknown": 0,
+      "normal_utility": 3,
+      "normal_utility_denominator": 3,
+      "wrong_root_reason": "grant_scope_violation",
+      "wrong_root_actual_MCP_calls": 0
+    },
+    "signed_receipts": 22,
+    "model_protocol_requests": 32,
+    "model_inference_calls": 0,
+    "independent_task_blocks": 1,
+    "negative_probes_rejected": 7,
+    "framework_tests": 558,
+    "framework_subtests": 118,
+    "host_focused_tests_passed": 17,
+    "host_installation_changed": false,
+    "artifact_refs": [
+      "reports/native-business-mcp-report.md",
+      "inventory/native-business-mcp-integration-001.json",
+      "reports/engineering-validation-native-business-mcp-001.json"
+    ],
+    "next": "actual select/derive and parameter bridge with effective source constraints; Q3/Q4-Q6/TP/S4 and independent execution remain open"
+  },
+  "native_business_mcp_selection": {
+    "status": "actual_native_string_selection_gap_and_missing_default_parameter_bridge_measured",
+    "runs": [
+      "native-business-mcp-selection-001",
+      "native-business-mcp-selection-runtime-002"
+    ],
+    "original": {
+      "complete": 1,
+      "expected_pass": 0,
+      "fail": 1,
+      "unknown": 0,
+      "business_utility": true,
+      "select_http": [
+        401,
+        401,
+        401,
+        401
+      ]
+    },
+    "corrected_credentials": {
+      "complete": 1,
+      "expected_pass": 1,
+      "fail": 0,
+      "unknown": 0,
+      "business_utility": true,
+      "select_http": [
+        400,
+        400,
+        400,
+        400
+      ],
+      "selected_parameter_utility": false,
+      "default_parameter_bridge_present": false,
+      "actual_intent_schema": "intent/v2"
+    },
+    "signed_receipts": 8,
+    "model_protocol_requests": 8,
+    "model_inference_calls": 0,
+    "explicit_API_diagnostics": 10,
+    "independent_task_blocks": 1,
+    "negative_mutations_rejected": 6,
+    "framework_tests": 561,
+    "framework_subtests": 118,
+    "product_changed": false,
+    "artifact_refs": [
+      "reports/native-business-mcp-selection-report.md",
+      "inventory/native-business-mcp-selection-integration-001.json",
+      "reports/engineering-validation-native-business-mcp-selection-001.json"
+    ],
+    "next": "Q4/RB09 same-candidate discovery-to-install-to-native-execution; preserve Q3 explicit source bridge and Q5/Q6/TP/S4 gaps"
+  },
+  "native_personal_onboarding": {
+    "status": "same_candidate_local_API_native_variant_complete_RB09_partial",
+    "runs": [
+      "native-personal-onboarding-001",
+      "native-personal-onboarding-format-002"
+    ],
+    "original": {
+      "complete": 1,
+      "expected_pass": 0,
+      "expected_fail": 1,
+      "checks_passed": 25,
+      "checks_total": 27
+    },
+    "measurement_corrected": {
+      "complete": 1,
+      "expected_pass": 1,
+      "checks_passed": 27,
+      "checks_total": 27
+    },
+    "utility_completed": 2,
+    "known_harm": 0,
+    "signed_receipts": 10,
+    "corrected_authority_documents": 12,
+    "supplementary_intent_binding_documents": 2,
+    "model_protocol_requests": 10,
+    "management_HTTP_calls": 64,
+    "model_inference_calls": 0,
+    "independent_task_blocks": 1,
+    "negative_mutations_rejected": 7,
+    "framework_tests": 565,
+    "framework_subtests": 118,
+    "product_changed": false,
+    "configuration_runtime_state": "unverified_by_design_separate_runtime_check_not_run",
+    "artifact_refs": [
+      "reports/native-personal-onboarding-report.md",
+      "inventory/native-personal-onboarding-integration-001.json",
+      "inventory/native-personal-onboarding-readiness-source-001.json",
+      "reports/native-personal-onboarding-format-002-authority-negatives-002.json"
+    ],
+    "next": [
+      {
+        "kind": "not_yet_executed",
+        "requirement": "同候选实例的独立运行自检、活动关联、快照变化失效及浏览器实际呈现"
+      },
+      {
+        "kind": "reuse_then_fill_gaps",
+        "requirement": "RB09完整来源异常矩阵：替换/摘要漂移/符号硬链接/预算/远端来源与范围外观察，按候选复用已有证据后补缺"
+      },
+      {
+        "kind": "environment_specific",
+        "requirement": "其他真实宿主与OS验收，不能迁移Linux Hermes成绩"
+      }
+    ],
+    "whole_journey_closed": false
+  },
+  "native_personal_runtime_check": {
+    "status": "same_instance_onboarding_and_API_runtime_check_complete_RB09_partial",
+    "run_id": "native-personal-runtime-check-001",
+    "allocated": 1,
+    "complete": 1,
+    "expected_pass": 1,
+    "checks_passed": 48,
+    "business_utility_completed": 1,
+    "runtime_check_status_before_drift": "passed",
+    "runtime_check_status_after_restore": "invalidated",
+    "unique_signed_receipts": 10,
+    "onboarding_authority_documents": 12,
+    "temporary_authority_documents": 3,
+    "signed_runtime_check_revisions": 7,
+    "management_HTTP_calls": 70,
+    "outer_protocol_requests": 5,
+    "internal_product_protocol_requests": null,
+    "real_model_inference_calls": 0,
+    "independent_task_blocks_added": 0,
+    "framework_tests": 568,
+    "framework_subtests": 118,
+    "negative_probes_rejected": 7,
+    "product_changed": false,
+    "full_journey_closed": false,
+    "artifact_refs": [
+      "reports/native-personal-runtime-check-report.md",
+      "reports/native-personal-runtime-check-001-verification.json",
+      "reports/native-personal-runtime-check-001-negatives.json",
+      "inventory/native-personal-runtime-check-integration-001.json"
+    ],
+    "next": [
+      {
+        "kind": "not_yet_executed",
+        "requirement": "同候选浏览器自检/活动呈现；自检取消、超时与其他制品/权限变化失效（本批仅配置注释漂移）"
+      },
+      {
+        "kind": "reuse_then_fill_gaps",
+        "requirement": "RB09完整来源异常矩阵：替换/摘要漂移/符号硬链接/预算/远端来源与范围外观察，按候选复用已有证据后补缺"
+      },
+      {
+        "kind": "environment_specific",
+        "requirement": "其他真实宿主与OS验收，不能迁移Linux Hermes成绩"
+      }
+    ]
+  },
+  "personal_runtime_browser": {
+    "status": "same_candidate_browser_variant_complete_RB09_partial",
+    "run_ids": [
+      "personal-runtime-browser-001",
+      "personal-runtime-browser-navigation-002",
+      "personal-runtime-browser-presentation-003"
+    ],
+    "cohorts_allocated": 3,
+    "complete": 1,
+    "incomplete_unknown": 2,
+    "checks_passed_latest": 36,
+    "unique_signed_receipts_latest": 10,
+    "signed_runtime_check_revisions_latest": 14,
+    "browser_HTTP_responses_latest": 151,
+    "real_model_inference_calls": 0,
+    "independent_task_blocks_added": 0,
+    "framework_tests": 573,
+    "framework_subtests": 118,
+    "negative_probes_rejected": 9,
+    "product_changed": false,
+    "full_journey_closed": false,
+    "independent_harm_oracle": false,
+    "original_003_verifier": "failed_summary_vs_full_receipt_comparison",
+    "supplementary_003_verifier": "passed_exact_projection",
+    "artifact_refs": [
+      "reports/personal-runtime-browser-report.md",
+      "reports/personal-runtime-browser-presentation-003-verification.json",
+      "reports/personal-runtime-browser-presentation-003-negatives.json",
+      "inventory/personal-runtime-browser-integration-001.json"
+    ],
+    "next": [
+      {
+        "kind": "not_yet_executed",
+        "requirement": "超时、不同取消执行时点及其他制品/权限变化；本批仅配置注释漂移和一次UI取消"
+      },
+      {
+        "kind": "reuse_then_fill_gaps",
+        "requirement": "RB09完整来源异常矩阵：替换/摘要漂移/符号硬链接/预算/远端来源与范围外观察，按候选复用已有证据后补缺"
+      },
+      {
+        "kind": "environment_specific",
+        "requirement": "其他真实宿主与OS验收，不能迁移Linux Hermes成绩"
+      }
+    ]
+  },
+  "native_runtime_faults": {
+    "status": "pre_attach_timeout_revocation_recovery_complete_RB09_partial",
+    "run_ids": [
+      "native-runtime-faults-001",
+      "native-runtime-faults-pidfd-002"
+    ],
+    "complete": 1,
+    "incomplete_unknown": 1,
+    "checks_latest": 54,
+    "temporary_authority_documents": 7,
+    "unique_signed_receipts_latest": 10,
+    "signed_revisions_latest": 16,
+    "real_model_inference_calls": 0,
+    "independent_task_blocks_added": 0,
+    "framework_tests": 578,
+    "framework_subtests": 118,
+    "negative_probes_rejected": 7,
+    "product_changed": false,
+    "full_journey_closed": false,
+    "original_002_verifier": "failed_assuming_pre_attach_binding",
+    "supplementary_002_verifier": "passed",
+    "artifact_refs": [
+      "reports/native-runtime-faults-report.md",
+      "reports/native-runtime-faults-pidfd-002-authority-review.json",
+      "inventory/native-runtime-faults-integration-001.json"
+    ],
+    "next": [
+      {
+        "kind": "not_yet_executed",
+        "requirement": "已绑定会话中的撤权/取消时点、执行阶段超时故障及其他制品/权限变化失效；本批只等待宿主超时与attach前撤权"
+      },
+      {
+        "kind": "reuse_then_fill_gaps",
+        "requirement": "完整来源异常矩阵，按候选复用后补缺；不能用正常流程代替负向"
+      },
+      {
+        "kind": "environment_specific",
+        "requirement": "其他真实宿主与OS、独立效果观察及外部第三方复核"
+      }
+    ]
+  },
+  "bound_runtime_faults": {
+    "status": "post_first_read_revoke_cancel_recovery_complete_with_audit_limitation_RB09_partial",
+    "run_id": "bound-runtime-faults-001",
+    "allocated": 1,
+    "complete": 1,
+    "checks_passed": 61,
+    "runtime_fault_checks": 34,
+    "unique_signed_receipts": 16,
+    "signed_revisions": 19,
+    "temporary_authority_documents": 9,
+    "pending_receipts_without_full_attribution": 2,
+    "management_HTTP": 74,
+    "real_model_inference_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "framework_tests": 582,
+    "framework_subtests": 118,
+    "negative_probes_rejected": 8,
+    "full_journey_closed": false,
+    "artifact_refs": [
+      "reports/bound-runtime-faults-report.md",
+      "reports/bound-runtime-faults-001-verification.json",
+      "reports/bound-runtime-faults-001-session-review.json",
+      "reports/bound-runtime-audit-attribution-001.json",
+      "inventory/bound-runtime-faults-integration-001.json"
+    ],
+    "next": [
+      {
+        "kind": "next_protocol",
+        "requirement": "区分认证拒绝与网络不可达在各支持enforcement模式下的实际工具效果；核查required Authority，不将通用pending理由当精确HTTP状态"
+      },
+      {
+        "kind": "not_yet_executed",
+        "requirement": "其他运行中故障时点及制品/权限快照变化；本批仅首读完成、末读未获准窗口"
+      },
+      {
+        "kind": "reuse_then_fill_gaps",
+        "requirement": "完整来源异常矩阵，按候选复用后补缺"
+      },
+      {
+        "kind": "environment_specific",
+        "requirement": "其他真实宿主/OS、独立效果观察、企业与外部第三方复核"
+      }
+    ]
+  },
+  "native_auth_modes": {
+    "status": "nine_managed_auth_mode_variants_complete_RB09_partial",
+    "run_ids": [
+      "native-auth-block-control-003",
+      "native-auth-block-auth-denied-003",
+      "native-auth-block-backend-down-003",
+      "native-auth-warn-control-003",
+      "native-auth-warn-auth-denied-003",
+      "native-auth-warn-backend-down-003",
+      "native-auth-audit_only-control-003",
+      "native-auth-audit_only-auth-denied-003",
+      "native-auth-audit_only-backend-down-003"
+    ],
+    "allocated": 9,
+    "complete": 9,
+    "checks_passed": 270,
+    "auth_mode_checks": 108,
+    "unique_signed_receipts": 54,
+    "management_HTTP": 588,
+    "proxy_requests": 99,
+    "model_protocol_requests": 126,
+    "native_cli_runs": 27,
+    "real_model_inference_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "framework_tests": 587,
+    "framework_subtests": 118,
+    "negative_probes_rejected": 9,
+    "prior_calibration_runs_preserved": [
+      "native-auth-block-control-001",
+      "native-auth-block-control-002",
+      "native-auth-block-auth-denied-002"
+    ],
+    "full_journey_closed": false,
+    "artifact_refs": [
+      "reports/native-auth-modes-report.md",
+      "reports/native-auth-modes-003-review.json",
+      "inventory/native-auth-modes-integration-003.json",
+      "reports/product-evaluation-overview.md"
+    ],
+    "next": [
+      {
+        "kind": "next_protocol",
+        "requirement": "复核并补齐同实例自检的其他制品/权限快照变化：逐项区分配置变化、安装字节、Grant/身份及结果失效；复用现有材料后冻结有限变体"
+      },
+      {
+        "kind": "reuse_then_fill_gaps",
+        "requirement": "完整来源异常矩阵、其他故障时点；本批仅首读后新串行文件工具"
+      },
+      {
+        "kind": "scope_boundary",
+        "requirement": "非受管legacy建议模式、其他工具和宿主/OS、企业同版本闭环、真实模型确认集及外部第三方复核"
+      }
+    ]
+  },
+  "native_runtime_snapshot": {
+    "status": "eight_snapshot_and_authority_variants_complete_RB09_partial",
+    "run_ids": [
+      "native-snapshot-workspace-control-002",
+      "native-snapshot-skill-content-002",
+      "native-snapshot-plugin-entry-002",
+      "native-snapshot-plugin-manifest-002",
+      "native-snapshot-plugin-config-002",
+      "native-snapshot-service-mode-002",
+      "native-snapshot-business-grant-002",
+      "native-snapshot-business-identity-002"
+    ],
+    "allocated": 8,
+    "complete": 8,
+    "checks_passed": 336,
+    "snapshot_checks": 120,
+    "actual_product_selfchecks": 16,
+    "unique_signed_receipts": 120,
+    "signed_revisions": 100,
+    "temporary_authority_documents": 48,
+    "management_HTTP": 652,
+    "outer_model_protocol_requests": 40,
+    "internal_model_protocol_requests": "not_separately_captured",
+    "real_model_inference_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "framework_tests": 590,
+    "framework_subtests": 118,
+    "negative_probe_types": 11,
+    "negative_probes_rejected": 60,
+    "full_journey_closed": false,
+    "artifact_refs": [
+      "reports/native-runtime-snapshot-report.md",
+      "inventory/native-runtime-snapshot-integration-002.json",
+      "reports/native-runtime-snapshot-review-001-error.json"
+    ],
+    "next": [
+      {
+        "kind": "next_protocol",
+        "requirement": "复核source-identity等既有来源异常证据，按同候选真实导入/固定来源/完整性链补缺，不重复已封存变体"
+      },
+      {
+        "kind": "not_yet_executed",
+        "requirement": "CLI/服务程序/公钥替换、运行中漂移、Windows目录身份和完整UI状态解释；八格只覆盖明确列出的文件/模式及业务授权变化"
+      },
+      {
+        "kind": "scope_boundary",
+        "requirement": "自检探针独立物理效果观察、非受管建议模式、其他宿主/OS、企业同版本闭环、真实模型确认集与第三方复核"
+      }
+    ]
+  },
+  "source_capability_review": {
+    "status": "functional_reconciliation_and_next_cohort_specification_complete",
+    "review_ref": "reports/source-capability-review-001.md",
+    "plan_ref": "plan/product-grounded-evaluation-revision-001.md",
+    "work_items_ref": "plan/source-import-work-items-001.json",
+    "source_files_rechecked": 465,
+    "history_inputs_rechecked": 14,
+    "candidate_source_files_compared": 42,
+    "identity_mismatches": 0,
+    "component_test_events_passed": 136,
+    "component_test_events_skipped": 1,
+    "business_executions_added": 0,
+    "real_model_calls_added": 0,
+    "product_changed": false,
+    "full_journey_closed": false,
+    "git_production_gate": "closed",
+    "https_public_network_acceptance": "pending",
+    "new_runner_implemented": false
+  },
+  "source_import_management": {
+    "status": "import_management_slice_executed_RB09_partial",
+    "run_id": "source-import-management-002",
+    "original_failed_run": "source-import-management-001",
+    "checks_passed": 123,
+    "checks_total": 123,
+    "management_HTTP": 23,
+    "unique_signed_documents": 6,
+    "negative_evidence_rejections": 12,
+    "source_join_checks": 16,
+    "model_calls": 0,
+    "native_host_runs": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/source-import-management-report.md",
+    "anchor": "f159ed575b0e7ed8e68e01feaeaf700f86e8765844f235d548f46ba367526c56",
+    "full_journey_closed": false,
+    "next": "SRC06 ZIP admission/approval/install/native tools; public HTTPS and remaining source boundaries"
+  },
+  "native_zip_onboarding": {
+    "status": "local_zip_native_variant_complete_RB09_partial",
+    "run_id": "native-zip-onboarding-001",
+    "checks_passed": 34,
+    "checks_total": 34,
+    "management_HTTP": 32,
+    "native_Hermes_runs": 1,
+    "fixed_model_protocol_requests": 5,
+    "real_model_calls": 0,
+    "unique_signed_receipts": 5,
+    "signed_cross_stage_documents": 12,
+    "additional_signed_intent_documents": 2,
+    "negative_evidence_rejections": 12,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/native-zip-onboarding-report.md",
+    "anchor": "7a7be8bd5b91fbef18eb9e47343a728e221a2a42c153baf50b1d8921801f497f",
+    "full_journey_closed": false,
+    "next": "Real public HTTPS success/matching and mismatching archive digest; remaining source boundaries, then enterprise same-candidate chain"
+  },
+  "remote_source_import": {
+    "status": "public_https_compatible_archive_complete_RB09_partial",
+    "run_id": "remote-source-import-003",
+    "checks_passed": 71,
+    "checks_total": 71,
+    "management_HTTP": 8,
+    "all_attempt_management_HTTP": 24,
+    "unique_signed_documents": 6,
+    "negative_evidence_rejections": 12,
+    "real_model_calls": 0,
+    "native_Hermes_runs": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/remote-source-import-report.md",
+    "anchor": "82c33f686dd70525782a76fd328f4869ecf263116b75d90ed528d418f18a4cab",
+    "failed_runs_preserved": [
+      "remote-source-import-001",
+      "remote-source-import-002"
+    ],
+    "full_journey_closed": false,
+    "next": "Remaining source budget/origin boundaries then enterprise same-candidate chain; real-model confirmation and independent review remain"
+  },
+  "source_budget_boundaries": {
+    "status": "six_local_zip_boundaries_and_recovery_complete_RB09_partial",
+    "run_id": "source-budget-boundaries-001",
+    "checks_passed": 158,
+    "checks_total": 158,
+    "management_HTTP": 18,
+    "unique_signed_documents": 24,
+    "negative_evidence_rejections": 12,
+    "real_model_calls": 0,
+    "native_Hermes_runs": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/source-budget-boundaries-report.md",
+    "anchor": "78873325ecd7dbba3c8b394a919e82774909f89f09d1c5c8de7e4aabb67d69a4",
+    "full_journey_closed": false,
+    "next": "Remaining import slot/path/origin/interruption controls; enterprise same-candidate chain; confirmation set and independent review"
+  },
+  "source_path_slots": {
+    "status": "local_path_central_and_slots_variant_complete_RB09_partial",
+    "run_id": "source-path-slots-001",
+    "checks_passed": 629,
+    "checks_total": 629,
+    "management_HTTP": 71,
+    "unique_signed_documents": 128,
+    "negative_evidence_rejections": 12,
+    "real_model_calls": 0,
+    "native_Hermes_runs": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/source-path-slots-report.md",
+    "anchor": "4660db5bf54487b49bebdce457386d82176494d05631fb1446ed6da13e707921",
+    "full_journey_closed": false,
+    "next": "Remaining source interruption/upstream changes; enterprise same-candidate chain; cross-OS, confirmation set and independent review"
+  },
+  "enterprise_native_chain": {
+    "status": "single_target_native_discovery_governed_effect_and_rollback_complete_journeys_partial",
+    "run_id": "enterprise-chain-004",
+    "candidate": "5470ab3780f2-governancefix1",
+    "checks_passed": 144,
+    "checks_total": 144,
+    "internal_native_edge_HTTP_count": "not independently counted",
+    "native_Edge_register_and_tasks": true,
+    "native_Hermes_connector": true,
+    "sandbox_business_executions": 3,
+    "receiver_health_controls": 3,
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/enterprise-chain-report.md",
+    "private_anchor": "b459997e1dee8b74e903d0f75927138fccd3b29e28a2fd97c501a227a71148fa",
+    "export_anchor": "f587bb4119348881937abe731246ab005aa8b55e48f49c5084026fb5e11b0364",
+    "failures_preserved": [
+      "enterprise-network-preflight-001",
+      "enterprise-chain-001",
+      "enterprise-chain-002",
+      "enterprise-chain-003"
+    ],
+    "full_journey_closed": false,
+    "next": "shared target/multiple binding effects, enterprise identity/install/continuous discovery, remaining source faults and confirmation set",
+    "explicit_HTTP_requests": 97,
+    "all_attempt_explicit_HTTP_requests": 252,
+    "explicit_HTTP_scope": "management plus synthetic Edge protocol requests; native Edge internal traffic excluded"
+  },
+  "enterprise_target_authority": {
+    "status": "exclusive_target_and_sequential_current_authority_boundaries_verified_shared_semantics_unimplemented",
+    "run_id": "enterprise-authority-001",
+    "candidate": "5470ab3780f2-governancefix1",
+    "checks_passed": 176,
+    "checks_total": 176,
+    "explicit_HTTP_requests": 113,
+    "explicit_HTTP_scope": "management plus synthetic Edge protocol requests; native Edge internal traffic excluded",
+    "authority_fault_variants": 6,
+    "authority_fault_HTTP_requests": 12,
+    "sandbox_business_executions": 9,
+    "receiver_health_controls": 9,
+    "blocked_rollback_business_executions": 6,
+    "rollback_denial_receiver_deliveries": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/enterprise-authority-report.md",
+    "private_anchor": "7f274d8e77f70f29d649f0aa7a22bb2380c745d5175c492fadd6e6be504f549d",
+    "export_anchor": "79576c2bd00d3fce52634e48f6f1e19e42057cd42b001093e390db89455e7427",
+    "shared_target_isolation_supported": false,
+    "full_journey_closed": false,
+    "next": "remaining enterprise batch/recovery and continuous discovery variants; shared intersection semantics are a product gap, not a pending positive test"
+  },
+  "enterprise_risk_lifecycle": {
+    "status": "native_risk_lifecycle_and_export_verified_timezone_defect_fixed_journey_partial",
+    "run_id": "enterprise-risk-003",
+    "candidate": "5470ab3780f2-riskfix1py312",
+    "checks_passed": 161,
+    "checks_total": 161,
+    "first_attempt": {
+      "run_id": "enterprise-risk-001",
+      "passed": 157,
+      "total": 161,
+      "failed_checks": [
+        "risk_west_not_early",
+        "risk_west_on_time",
+        "risk_east_on_time",
+        "risk_east_repeat_idempotent"
+      ]
+    },
+    "additional_success_with_environment_difference": "enterprise-risk-002 (Python3.13; preserved separately)",
+    "explicit_HTTP_requests": 107,
+    "all_attempt_explicit_HTTP_requests": 321,
+    "native_internal_HTTP_count": "not independently counted",
+    "reaper_subprocesses": 9,
+    "all_attempt_reaper_subprocesses": 27,
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": true,
+    "product_fix": "apps/control-api/app/worker.py risk expiry normalize aware datetime to UTC",
+    "runtime_fingerprint_matches_preserved_parent": true,
+    "original_runtime_fingerprint_is_posthoc": true,
+    "report_ref": "reports/enterprise-risk-report.md",
+    "private_anchor": "712296f3a5af0ce16fd99574846df8fa2d00479777e4d4521d033209f04ec460",
+    "export_anchor": "8971c221b9b00009eb27469bf2cd8bf8117329a63f7774b5c0b5b0e4f8c83929",
+    "full_journey_closed": false,
+    "next": "risk input/state/authorization-location boundaries; source/history fact semantics and UI; long-running scheduler/notifications remain separate"
+  },
+  "enterprise_risk_boundaries": {
+    "status": "risk_input_lookup_and_terminal_boundaries_fixed_and_verified_full_lifecycle_revalidation_required",
+    "run_id": "enterprise-risk-boundaries-002",
+    "candidate": "5470ab3780f2-riskboundaryfix1",
+    "checks_passed": 150,
+    "checks_total": 150,
+    "first_attempt": {
+      "run_id": "enterprise-risk-boundaries-001",
+      "passed": 132,
+      "total": 150,
+      "runner_failure": null,
+      "missing": []
+    },
+    "explicit_HTTP_requests": 99,
+    "all_attempt_explicit_HTTP_requests": 198,
+    "native_internal_HTTP_count": "not independently counted",
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": true,
+    "report_ref": "reports/risk-boundaries-report.md",
+    "private_anchor": "2bf54ceca40f896dd632d4d5cf1a4c8e9a798a1d1d3b8486086400138775480c",
+    "export_anchor": "1ff22a97d48a3464ea4e3324bc2d52b646387ee0aff4eeab5c8f3fe38bf1b437",
+    "full_journey_closed": false,
+    "next": "current-candidate full risk lifecycle through actual expiry reopening; do not reuse old accepted-to-accepted harness step; then concurrency and remaining RB13 semantics"
+  },
+  "enterprise_risk_legal_lifecycle": {
+    "status": "legal_expiry_reopen_reaccept_verified_full_worker_cycle_pending",
+    "run_id": "risk-legal-lifecycle-002",
+    "candidate": "5470ab3780f2-riskboundaryfix1",
+    "checks_passed": 171,
+    "checks_total": 171,
+    "first_attempt": {
+      "run_id": "risk-legal-lifecycle-001",
+      "passed": 170,
+      "total": 171,
+      "cause": "scorer omitted initial creation audit/outbox",
+      "product_failure": false,
+      "runner_failure": null,
+      "missing": []
+    },
+    "explicit_HTTP_requests": 112,
+    "all_attempt_explicit_HTTP_requests": 224,
+    "native_internal_HTTP_count": "not independently counted",
+    "real_reaper_calls": 12,
+    "all_attempt_real_reaper_calls": 24,
+    "real_expiry_windows": 4,
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": false,
+    "report_ref": "reports/risk-legal-lifecycle-report.md",
+    "private_anchor": "34c3d8cf7923faee358a73158d8b40597777baf5996827a9876676fa2e711b8f",
+    "export_anchor": "769945ac4001ef92e6116c47df99226abf193a7d84caef190c7470325cf008b6",
+    "full_journey_closed": false,
+    "next": "Full worker.once rule re-evaluation while risk acceptance valid; then concurrency, scheduling and remaining RB13 semantics"
+  },
+  "enterprise_risk_worker_cycle": {
+    "status": "full_sequential_worker_lifecycle_fixed_and_verified_concurrency_pending",
+    "run_id": "risk-worker-cycle-002",
+    "candidate": "5470ab3780f2-riskworkerfix1",
+    "checks_passed": 133,
+    "checks_total": 133,
+    "first_attempt": {
+      "run_id": "risk-worker-cycle-001",
+      "passed": 128,
+      "total": 133,
+      "cause": "rules dedup ignored acknowledged and risk_accepted, creating premature duplicate open",
+      "product_failure": true,
+      "runner_failure": null,
+      "missing": []
+    },
+    "explicit_HTTP_requests": 86,
+    "all_attempt_explicit_HTTP_requests": 172,
+    "native_internal_HTTP_count": "not independently counted",
+    "full_worker_once_calls": 8,
+    "all_attempt_full_worker_once_calls": 16,
+    "owned_webhook_received": 16,
+    "asset_webhook_events": 6,
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": true,
+    "report_ref": "reports/risk-worker-cycle-report.md",
+    "private_anchor": "7bd83439746442efde5c8977a67848a67ba16ee45838e947634b7fe179302df7",
+    "export_anchor": "b1775cabef3957debf702a9a47718810ec6d0ea98f2636271b4adb8580a4eb06",
+    "full_journey_closed": false,
+    "next": "real concurrent acceptance/resolution/reopening and first-rule creation, then scheduling and notification faults"
+  },
+  "enterprise_risk_concurrency": {
+    "status": "risk_disposition_and_expiry_races_fixed_verified_rule_creation_pending",
+    "run_id": "risk-race-002",
+    "candidate": "5470ab3780f2-riskracefix1",
+    "checks_passed": 124,
+    "checks_total": 124,
+    "first_attempt": {
+      "run_id": "risk-race-001",
+      "passed": 120,
+      "total": 124,
+      "failed_race_groups": 4,
+      "product_failure": true,
+      "runner_failure": null,
+      "missing": []
+    },
+    "base_HTTP_requests": 81,
+    "extra_HTTP_requests": 20,
+    "explicit_HTTP_requests": 101,
+    "all_attempt_explicit_HTTP_requests": 201,
+    "parallel_HTTP_per_attempt": 8,
+    "native_internal_HTTP_count": "not independently counted",
+    "reaper_calls": 5,
+    "all_attempt_reaper_calls": 8,
+    "race_groups_per_attempt": 5,
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": true,
+    "report_ref": "reports/risk-concurrency-report.md",
+    "private_anchor": "ddfc448eaf573c62536c88b7569329c5825fd774001fc80b14ddf2841d6dd613",
+    "export_anchor": "4d89b6505aa032d19608e34ed1f6ef6f041bc346c7ba17b76512b3e4a1f7525c",
+    "full_journey_closed": false,
+    "next": "real concurrent first rule creation and rule refresh versus manual disposition; then scheduling/notification faults"
+  },
+  "enterprise_rule_concurrency": {
+    "status": "rule_creation_race_fixed_refresh_and_same_candidate_worker_verified",
+    "run_id": "rule-race-002",
+    "candidate": "5470ab3780f2-rulefix1",
+    "checks_passed": 122,
+    "checks_total": 122,
+    "first_attempt": {
+      "run_id": "rule-race-001",
+      "passed": 121,
+      "total": 122,
+      "actual_findings": 3,
+      "expected_findings": 2,
+      "product_failure": true,
+      "runner_failure": null,
+      "missing": []
+    },
+    "base_HTTP_requests": 79,
+    "extra_HTTP_requests": 15,
+    "explicit_HTTP_requests": 94,
+    "all_race_attempt_HTTP_requests": 189,
+    "all_current_cohort_HTTP_requests": 275,
+    "native_internal_HTTP_count": "not independently counted",
+    "race_groups_per_attempt": 3,
+    "reaper_calls_per_attempt": 1,
+    "real_model_calls": 0,
+    "independent_task_blocks_added": 0,
+    "product_changed": true,
+    "report_ref": "reports/rule-concurrency-report.md",
+    "private_anchor": "5f87ba32f88502421a74ceb4e6ef2a9974b73aa245ea3160409e653ca46d46ff",
+    "export_anchor": "ef96db79be521aad67920f3775a07f19bc3b9756d3c704cc5f887dcd1dae1dd0",
+    "same_candidate_worker": {
+      "run_id": "rulefix-worker-001",
+      "checks_passed": 133,
+      "checks_total": 133,
+      "HTTP_requests": 86,
+      "full_once_calls": 8,
+      "owned_webhook_events": 16,
+      "asset_webhook_events": 6
+    },
+    "full_journey_closed": false,
+    "next": "requirements-to-evidence reconciliation for TP00-TP10 and 18 journeys; remaining confirmation set and enterprise notification/UI acceptance"
+  },
+  "functional_reassessment_005": {
+    "review_ref": "reports/product-capability-reassessment-005.md",
+    "plan_ref": "plan/product-grounded-acceptance-v3.md",
+    "register_ref": "plan/product-acceptance-register-v3.json",
+    "review_status": "completed_document_review_only",
+    "new_business_executions": 0,
+    "new_model_calls": 0,
+    "next_action": "P1 reconcile precise variants against original requirements, then P2 development20 real-business pilot; retain all former cohorts and unsupported boundaries."
+  },
+  "active_execution_plan_ref": "plan/dgx-research-permission-closeout-001.md",
+  "active_execution_plan_sha256": "64fa1af2aba0de4a95f5f293cba77f96e7eb6c324a1a16a9758092547bd3bf7b",
+  "active_user_scope": {
+    "scope_ref": "plan/dgx-research-permission-closeout-001.json",
+    "plan_ref": "plan/dgx-research-permission-closeout-001.md",
+    "entry_review_ref": "inventory/dgx-research-permission-entry-001.json",
+    "authority": "explicit_user_scope_change",
+    "next_action": "Freeze actual Research API/Hermes/OpenShell identity and owned test resources; run agent then installed-Skill read/write permission pairs.",
+    "new_business_executions": 0,
+    "new_model_calls": 0
+  }
+}

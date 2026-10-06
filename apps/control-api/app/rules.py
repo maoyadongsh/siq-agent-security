@@ -2,16 +2,17 @@
 
 规则只基于权威数据计算 Finding 建议，落库由调用方（worker / 手动触发）执行：
 - 每条规则声明规则 ID、严重级别、作用域与证据；
-- 幂等 upsert 键：(tenant_id, rule_id, asset_id, resource_ref) + status=open；
+- 幂等 upsert 键：(tenant_id, rule_id, asset_id, resource_ref)，保留未解决处置；
 - 规则引擎不修改权限、不下发策略。
 """
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.models import AgentAsset, Environment, Evidence, Finding, PermissionFact, new_id
@@ -198,12 +199,22 @@ def evaluate_all(session: Session, tenant_id: str) -> list[RuleResult]:
 
 
 def upsert_findings(session: Session, tenant_id: str, results: list[RuleResult]) -> dict[str, int]:
-    """幂等落库：同 (rule_id, asset_id, resource_ref) 的 open Finding 只保留一条。
+    """同租户事务串行落库：同范围未解决 Finding 继续使用原处置记录。
+
+    acknowledged/risk_accepted 不因再次命中变回 open 或生成旁路记录；
+    接受到期由 reaper 重开，resolved 后再次命中可创建新的风险。
 
     返回 {"created": n, "updated": n}。审计与事件由调用方在同一事务内追加。
     """
     from app.models import utcnow
     from app.outbox import audit, emit_event
+
+    if session.get_bind().dialect.name == "postgresql":
+        # There may be no finding row to lock yet. Serialize creation and lookup
+        # through commit/rollback without taking FK-blocking locks on Tenant.
+        digest = hashlib.sha256(("siq-as:rule-upsert:" + tenant_id).encode()).digest()
+        lock_key = int.from_bytes(digest[:8], "big", signed=True)
+        session.execute(text("SELECT pg_advisory_xact_lock(:lock_key)"), {"lock_key": lock_key})
 
     created = 0
     updated = 0
@@ -215,7 +226,7 @@ def upsert_findings(session: Session, tenant_id: str, results: list[RuleResult])
                 Finding.rule_id == r.rule_id,
                 Finding.asset_id == r.asset_id,
                 Finding.resource_ref == r.resource_ref,
-                Finding.status == "open",
+                Finding.status.in_(("open", "acknowledged", "risk_accepted")),
             )
         )
         if existing is not None:

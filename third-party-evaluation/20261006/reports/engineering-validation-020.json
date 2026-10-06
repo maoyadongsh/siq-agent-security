@@ -1,0 +1,100 @@
+{
+  "checked_at": "2026-10-05T21:49:49.835220+00:00",
+  "scope": "active benign third-party pre-LLM plugin preservation; same-session real native daemon outage/restart and fresh recovered read; no product changes",
+  "framework_tests": {
+    "passed": 135,
+    "exit_code": 0,
+    "log": "reports/native-resilience-framework-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": ""
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "stdout": ""
+  },
+  "cohorts": {
+    "native-active-hook-001": {
+      "exit_code": 0,
+      "manifest_sha256": "ab974b2411757e461569caa7eb0f5e0deba7e7e2eed21a566e20f74689fa7ccf",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 22,
+        "independent_predicates_observed": 22,
+        "independent_predicates_registered": 22,
+        "http_requests": 60,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+      }
+    },
+    "native-service-down-001": {
+      "exit_code": 1,
+      "manifest_sha256": "bbc4d1fcff2369a7c0ae0f8cbe1f8df0bf2e296e8a5ca22c65661d6520c4e7ac",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 1,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 1,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1,
+        "independent_predicates_passed": 24,
+        "independent_predicates_observed": 25,
+        "independent_predicates_registered": 29,
+        "http_requests": 58,
+        "native_processes": 2,
+        "model_requests": 13,
+        "signed_receipts_verified": 8,
+        "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+      }
+    },
+    "native-service-down-002": {
+      "exit_code": 0,
+      "manifest_sha256": "fd2ebbf8ee20d30937a42fbd7096b05a5f1ba6055b9b844a9f941028ba8e4b0c",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 29,
+        "independent_predicates_observed": 29,
+        "independent_predicates_registered": 29,
+        "http_requests": 63,
+        "native_processes": 3,
+        "model_requests": 15,
+        "signed_receipts_verified": 8,
+        "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+      }
+    }
+  },
+  "source_snapshot_manifest_sha256": "7678be217c655dd72f724452221766db7e836fe54cdad437e52f39744908cbc0",
+  "finding": "F024",
+  "export_reviews": [
+    "reports/native-active-hook-001-export-review.json",
+    "reports/native-service-down-001-export-review.json",
+    "reports/native-service-down-002-export-review.json"
+  ],
+  "remaining": "Adapter-wide uninstall/hook conflicts, malicious plugins, network effects, revoke/dispatch races, approval/tool pending, disk/publish faults, remote source and other native matrix rows; goal active."
+}

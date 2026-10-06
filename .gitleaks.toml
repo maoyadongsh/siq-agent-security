@@ -192,6 +192,440 @@
       '''^\s*"key_sha256": "94014eb8e888bc6d597aaa1afada3f8438182434e816ebd1763f8b4f15e85faa",?\s*$''',
     ]
 
+  # Reviewed 20261006 source-map/log SHA-256 metadata, never authentication values.
+  # Bind each immutable digest to its exact JSON field and enumerated file paths.
+  # Scanner calibration rejects changed digests/fields and copied paths.
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 1"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-business\-003\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-003\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-004\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-authority\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-containment\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-containment\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-003\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-004\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"/home/maoyd/siq\-research\-engine/agents/hermes/profiles/shared/scripts/siq_wiki_evidence/access_scope\.py":\ "b6791d76cd8d6f243da067c107da7822390669469a4cc78349a4ec2212296c0d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/\.venv/lib/python3\.13/site\-packages/siq_wiki_evidence/access_scope\.py":\ "b6791d76cd8d6f243da067c107da7822390669469a4cc78349a4ec2212296c0d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/hermes\-api\-multi\-turn\.md":\ "6d6070832f0f7573eb8eb993a5c07c07f9cd5faaba38ca9e86a60f7a645c6065",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/migrations/001_create_auth_tables\.sql":\ "4d97bb176840cba3fa4c16ec96495ecef64ee8e5bb1a4cdc7baaee4f50814863",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/migrations/009_add_user_token_version\.sql":\ "4a12763e3e72b22e44b13fb4772dc35d7a849b23c594b5e0a5c37458ab9b6c1e",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/migrations/015_add_user_artifact_owner_key\.sql":\ "61cb9ff1025af48942afa2abeb6cdb54cc15423b9b9deeb5bc19692f0ad7eee8",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/migrations/021_add_openshell_data_grant_request_key\.sql":\ "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/routers/auth\.py":\ "def3c63b0171dbe1afd76897eda4625aa27243d2a6a8f3f49411b22b462d8e80",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/scripts/init_auth_system\.py":\ "2426519fea6628b3d926b73e2a036aa71c53a244473f569d7b0d6a724c215890",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/agent_runtime_read_access\.py":\ "64a24421f129a48d2c5d55dcb55d3089e5fb2965095cda7cd440c704cda203c4",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/auth_dependencies\.py":\ "f1d88a199de9099757214a2d9b1fb94b7f1c29291af2392b4de8984e1eaf992d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/auth_login_guard\.py":\ "29ce41aa609355946b9e6e595b3c93f094839c8c41f384d22e2172eff50556e4",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/auth_service\.py":\ "8599ae4ec45524ff7e4474f39a7c860c073cf5e4e861dff1d131818482b2aa6f",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/chat_attachment_access\.py":\ "bf18d9da8a6849666d8eaa0a78e7c99e105142b93cbd3bc2fd385ebefd56b06d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/project_attachment_access\.py":\ "611b25c0b66d1a60a74fadf09b5f6f67936a2e03f92bb22faa07e77f712d395f",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/qwen38_request_api\.py":\ "59f4118d324430d18dd2976a6b4a0fbc2cc676f710736e0d7c9efec96d36ef28",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/fixtures/migrations/v008/001_create_auth_tables\.sql":\ "e6ce1bb36045fdb42181ab95427fa9ab00d954ad4fdb1b3e6d718e8a657a0364",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_agent_runtime_read_access\.py":\ "5247136d75969c35bb4e48c37a765465ebf4572a9a65392f6b32da7d590591fd",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_auth_dependencies\.py":\ "49d249377aaa72ab6ecfbaa184ffa860ef27f14dc0ebddfe0ed2d383e327cd11",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_auth_login_security\.py":\ "a81601a7953545c112ad286fe9887dd67600617d3dc2423b6a83896624b652c4",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_auth_password_release_a\.py":\ "14ec5936ca4e12eb3495a41be2d98ff98145f4c09735165b79136094d5add895",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_auth_report_review\.py":\ "688489971cfe872ebc18eec43d2e4febe870aa62194a021091c441388463772c",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_auth_token_revocation\.py":\ "9092986a40ef4543d295eccac392d0d4ec665d52c3a5c41bd4802a40c0cce479",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_chat_attachment_access\.py":\ "74c21b28e76a35cbc998e582d1a5de1611d1137f8c68349f51730afbafdbb882",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_openshell_data_grant_api\.py":\ "c24b3587cd84d0c9d65c1ad6750271fc3553637398c4507ab2ba5f7771317810",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_project_attachment_access\.py":\ "e99ce94383d7048c8f8d5fd513d46bd2e1900a4e6f5b8515b3332eccaab5f040",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_qwen38_request_api\.py":\ "fd63a68183512c5eef21891b7d65e7b8816ce92b85b409578b1cee17c7ba83b4",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_source_access\.py":\ "fcbd2903092df4e9c9be8d45011dcba6ce2a13a98c081ff32ba5256de1f000c8",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_workflow_auth\.py":\ "39def2aa138805a9d53b37b9bda0e7a5d9430b99f24d297656f95c5591e08721",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/db/imports/financial_query_api\.py":\ "550eae9d5f92712830f59442bcc0e34179864421e7a7e9288d86a2a9661edca5",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/db/imports/test_financial_query_api_cases\.py":\ "3214e89b478c4654e5d63adf4da22611ec2f8fb8137f5cea1fc6cfe30cfb8b5d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/db/imports/tests/test_financial_query_api_market_agent\.py":\ "1946b7f7d825f3af4f65843f51f0d36ed27de59ac4794c4d20518cf4edea1991",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/check_staged_secrets\.py":\ "6cb6bf44ad7e13fc00237a41d5187678ddca5e4801ff8b25b67d9d3f22dbfcae",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_api_execution_lease\.py":\ "c0e1ca9a223d4c2bf43898c0a474ee0f3cbfc2294ece7edc0fb457e18dce795c",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_business_api\.py":\ "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_cancel_api\.py":\ "8b567afa6bd1a20fd1ba55eaa5f0d3378a07298595cf920e4a519d8e4b4f86e7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_candidate_api\.py":\ "f8a95b23ae04718c48205f64ae6277423199329e57f13e4c81e9a5f56793bfbd",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_crash_api\.py":\ "f0936c15093b3a06db31087374b915530c8c60986ecc68da02946a3009cbfea7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_revoke_api\.py":\ "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_streaming_api\.py":\ "344b8095a242e9a634aea18cf19991867ee292c394bce74f52935b150a439acc",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_token_revocation\.py":\ "a801ba6b895c5556bf3bcbe6fd66c39e48971ef5f954ea84bb4527a098668db9",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/qwen38_model_credential\.py":\ "c0ffd7c6d37ce883f4e093c5c92c913ff7cde0a7851c4ae2811fddd87368ae53",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/rotate_broker_identity_key\.sh":\ "62f1d585d71a6dbfc5a230d9e0f16f4bc27221f8239212b790d97df9d0e9f4ad",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_check_staged_secrets\.py":\ "3f99c9d7cba48bf30dad520580433e8f86e0ebc02378b3d5eee697ee6c18b390",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_prove_qwen38_business_api\.py":\ "b09d22cca1c067e9689e748a7750f31c2c34d6ad31288d8110429ef329026273",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_prove_qwen38_cancel_api\.py":\ "cf189b53eb26ba1e324aea96c1f6a43cfdff0c2ee5b706d490c0748646944242",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_prove_qwen38_crash_api\.py":\ "901777aa462b71a481ea8d9ac5af81fd749214769731fa9784241e28c1dd92bb",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_prove_qwen38_revoke_api\.py":\ "b70c033bbb8c0514c3f6033f16d3d1fb1311f9cec27007d40a983917c554d675",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_prove_qwen38_streaming_api\.py":\ "bfbd30473be3d9b598ed591dd54b948bbe7f76faa58698f60373416cd58bf89c",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_prove_qwen38_token_revocation\.py":\ "c30b0addba084c251a55590ad2fa5f4b2cae3cb5a51216f8831cac4dd9cc0c72",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/tests/test_validate_placeholder_auth\.py":\ "086084995737b5f1f045b9e14449bdf72a05652064d3854e654ac54091d9102b",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/ops/launch_research_permission_api\.py":\ "5b0398337a8961a7de25f7ca791fb191bf4c3cb448cd880acdc309077f50be15",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/ops/tests/test_launch_research_permission_api\.py":\ "f8f2f40c04e9ba91913df3735664ca38f6ef92673dc5d94f3a39ae6374ed5df3",?\s*$''',
+      '''^\s*"apps/agentshield/cmd/agentshield/console_access\.go":\ "1c730884b7f30a0de83d58aecc39f492fa26374520017a123a23cc326b688cad",?\s*$''',
+      '''^\s*"apps/agentshield/cmd/agentshield/console_access_test\.go":\ "8a32b76ce8656802e22628072b50059f4679a2b23e6b91c402c382cddad16ea5",?\s*$''',
+      '''^\s*"apps/agentshield/internal/inventory/preview_access_test\.go":\ "a208a4e15523a8bb5ad9468ec175f39ea0a7ac20861621bfcc9de48556998918",?\s*$''',
+      '''^\s*"apps/agentshield/internal/modelconfig/file_credential\.go":\ "9940b1073617fe941f4ef6d84a3203254508f173c40a749315485180bb525433",?\s*$''',
+      '''^\s*"apps/agentshield/internal/modelconfig/file_credential_test\.go":\ "4dfc60a0597a630ba558682c9007a697dade2629a263751fcb4086032692c9dd",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz\.go":\ "babe77e07ea4031dc45ec248db710cc0abd846f8057d220658b600f1b3b7e225",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz_test\.go":\ "f3d24a39a48dac9fcb6db92a3f4beb7d4e26d0934ec04a5f25e99cbacb51ebc2",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/runtime_identity_auth\.go":\ "c2329161fb52428107973b887cf90637f59764e8067d28fcda7b225efe88ca0e",?\s*$''',
+      '''^\s*"apps/agentshield/internal/state/credential_recovery_test\.go":\ "ffa2d4e8d47c420b841eb576628bf716f1f24fbda4761519817ea1c325bced18",?\s*$''',
+      '''^\s*"apps/agentshield/internal/state/private_credentials\.go":\ "9159b866c703819c2889439d0984b9eca83792d02f1990aad16ae69fe32a8df7",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 2"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-revoke\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-revoke\-003\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-update\-001\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/qwen38_request_api\.py":\ "59f4118d324430d18dd2976a6b4a0fbc2cc676f710736e0d7c9efec96d36ef28",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_openshell_data_grant_api\.py":\ "c24b3587cd84d0c9d65c1ad6750271fc3553637398c4507ab2ba5f7771317810",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/check_staged_secrets\.py":\ "6cb6bf44ad7e13fc00237a41d5187678ddca5e4801ff8b25b67d9d3f22dbfcae",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_api_execution_lease\.py":\ "c0e1ca9a223d4c2bf43898c0a474ee0f3cbfc2294ece7edc0fb457e18dce795c",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_business_api\.py":\ "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_cancel_api\.py":\ "8b567afa6bd1a20fd1ba55eaa5f0d3378a07298595cf920e4a519d8e4b4f86e7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_candidate_api\.py":\ "f8a95b23ae04718c48205f64ae6277423199329e57f13e4c81e9a5f56793bfbd",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_crash_api\.py":\ "f0936c15093b3a06db31087374b915530c8c60986ecc68da02946a3009cbfea7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_revoke_api\.py":\ "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_streaming_api\.py":\ "344b8095a242e9a634aea18cf19991867ee292c394bce74f52935b150a439acc",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_token_revocation\.py":\ "a801ba6b895c5556bf3bcbe6fd66c39e48971ef5f954ea84bb4527a098668db9",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/qwen38_model_credential\.py":\ "c0ffd7c6d37ce883f4e093c5c92c913ff7cde0a7851c4ae2811fddd87368ae53",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 3"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-relay\-recovery\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-relay\-recovery\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-003\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-004\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-replacement\-005\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-utility\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-utility\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-utility\-003\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/qwen38_request_api\.py":\ "59f4118d324430d18dd2976a6b4a0fbc2cc676f710736e0d7c9efec96d36ef28",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/tests/test_openshell_data_grant_api\.py":\ "c24b3587cd84d0c9d65c1ad6750271fc3553637398c4507ab2ba5f7771317810",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/check_staged_secrets\.py":\ "6cb6bf44ad7e13fc00237a41d5187678ddca5e4801ff8b25b67d9d3f22dbfcae",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_api_execution_lease\.py":\ "c0e1ca9a223d4c2bf43898c0a474ee0f3cbfc2294ece7edc0fb457e18dce795c",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_business_api\.py":\ "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_cancel_api\.py":\ "8b567afa6bd1a20fd1ba55eaa5f0d3378a07298595cf920e4a519d8e4b4f86e7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_candidate_api\.py":\ "f8a95b23ae04718c48205f64ae6277423199329e57f13e4c81e9a5f56793bfbd",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_crash_api\.py":\ "f0936c15093b3a06db31087374b915530c8c60986ecc68da02946a3009cbfea7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_revoke_api\.py":\ "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_streaming_api\.py":\ "344b8095a242e9a634aea18cf19991867ee292c394bce74f52935b150a439acc",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_token_revocation\.py":\ "a801ba6b895c5556bf3bcbe6fd66c39e48971ef5f954ea84bb4527a098668db9",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/qwen38_model_credential\.py":\ "c0ffd7c6d37ce883f4e093c5c92c913ff7cde0a7851c4ae2811fddd87368ae53",?\s*$''',
+      '''^\s*"apps/agentshield/cmd/agentshield/console_access\.go":\ "1c730884b7f30a0de83d58aecc39f492fa26374520017a123a23cc326b688cad",?\s*$''',
+      '''^\s*"apps/agentshield/cmd/agentshield/console_access_test\.go":\ "8a32b76ce8656802e22628072b50059f4679a2b23e6b91c402c382cddad16ea5",?\s*$''',
+      '''^\s*"apps/agentshield/internal/inventory/preview_access_test\.go":\ "a208a4e15523a8bb5ad9468ec175f39ea0a7ac20861621bfcc9de48556998918",?\s*$''',
+      '''^\s*"apps/agentshield/internal/modelconfig/file_credential\.go":\ "9940b1073617fe941f4ef6d84a3203254508f173c40a749315485180bb525433",?\s*$''',
+      '''^\s*"apps/agentshield/internal/modelconfig/file_credential_test\.go":\ "4dfc60a0597a630ba558682c9007a697dade2629a263751fcb4086032692c9dd",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz\.go":\ "babe77e07ea4031dc45ec248db710cc0abd846f8057d220658b600f1b3b7e225",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz_test\.go":\ "f3d24a39a48dac9fcb6db92a3f4beb7d4e26d0934ec04a5f25e99cbacb51ebc2",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/runtime_identity_auth\.go":\ "c2329161fb52428107973b887cf90637f59764e8067d28fcda7b225efe88ca0e",?\s*$''',
+      '''^\s*"apps/agentshield/internal/state/credential_recovery_test\.go":\ "ffa2d4e8d47c420b841eb576628bf716f1f24fbda4761519817ea1c325bced18",?\s*$''',
+      '''^\s*"apps/agentshield/internal/state/private_credentials\.go":\ "9159b866c703819c2889439d0984b9eca83792d02f1990aad16ae69fe32a8df7",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 4"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-agent\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-agent\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-003\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-004\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-005\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-006\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-007\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-business\-revoke\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-cross\-company\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-cross\-company\-003\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-cross\-company\-004\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-business\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-business\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-drift\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-skill\-revoke\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-coverage\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-coverage\-002\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-tool\-coverage\-003\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"/home/maoyd/siq\-research\-engine/apps/api/services/qwen38_request_api\.py":\ "59f4118d324430d18dd2976a6b4a0fbc2cc676f710736e0d7c9efec96d36ef28",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/check_staged_secrets\.py":\ "6cb6bf44ad7e13fc00237a41d5187678ddca5e4801ff8b25b67d9d3f22dbfcae",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_api_execution_lease\.py":\ "c0e1ca9a223d4c2bf43898c0a474ee0f3cbfc2294ece7edc0fb457e18dce795c",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_business_api\.py":\ "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_cancel_api\.py":\ "8b567afa6bd1a20fd1ba55eaa5f0d3378a07298595cf920e4a519d8e4b4f86e7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_candidate_api\.py":\ "f8a95b23ae04718c48205f64ae6277423199329e57f13e4c81e9a5f56793bfbd",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_crash_api\.py":\ "f0936c15093b3a06db31087374b915530c8c60986ecc68da02946a3009cbfea7",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_revoke_api\.py":\ "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_streaming_api\.py":\ "344b8095a242e9a634aea18cf19991867ee292c394bce74f52935b150a439acc",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/prove_qwen38_token_revocation\.py":\ "a801ba6b895c5556bf3bcbe6fd66c39e48971ef5f954ea84bb4527a098668db9",?\s*$''',
+      '''^\s*"/home/maoyd/siq\-research\-engine/scripts/openshell/qwen38_model_credential\.py":\ "c0ffd7c6d37ce883f4e093c5c92c913ff7cde0a7851c4ae2811fddd87368ae53",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 5"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/inventory/candidate\-source\-files\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"LICENSES/third\-party/js\-tokens\-4\.0\.0\-\-LICENSE":\ "2213d91c606205c71eb051a199478cdc2adde945893404d7f1421436dd6d5cc1",?\s*$''',
+      '''^\s*"apps/agentshield/cmd/agentshield/console_access\.go":\ "1c730884b7f30a0de83d58aecc39f492fa26374520017a123a23cc326b688cad",?\s*$''',
+      '''^\s*"apps/agentshield/cmd/agentshield/console_access_test\.go":\ "8a32b76ce8656802e22628072b50059f4679a2b23e6b91c402c382cddad16ea5",?\s*$''',
+      '''^\s*"apps/agentshield/internal/inventory/preview_access_test\.go":\ "a208a4e15523a8bb5ad9468ec175f39ea0a7ac20861621bfcc9de48556998918",?\s*$''',
+      '''^\s*"apps/agentshield/internal/modelconfig/file_credential\.go":\ "9940b1073617fe941f4ef6d84a3203254508f173c40a749315485180bb525433",?\s*$''',
+      '''^\s*"apps/agentshield/internal/modelconfig/file_credential_test\.go":\ "4dfc60a0597a630ba558682c9007a697dade2629a263751fcb4086032692c9dd",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz\.go":\ "babe77e07ea4031dc45ec248db710cc0abd846f8057d220658b600f1b3b7e225",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz_test\.go":\ "f3d24a39a48dac9fcb6db92a3f4beb7d4e26d0934ec04a5f25e99cbacb51ebc2",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/runtime_identity_auth\.go":\ "c2329161fb52428107973b887cf90637f59764e8067d28fcda7b225efe88ca0e",?\s*$''',
+      '''^\s*"apps/agentshield/internal/state/credential_recovery_test\.go":\ "ffa2d4e8d47c420b841eb576628bf716f1f24fbda4761519817ea1c325bced18",?\s*$''',
+      '''^\s*"apps/agentshield/internal/state/private_credentials\.go":\ "9159b866c703819c2889439d0984b9eca83792d02f1990aad16ae69fe32a8df7",?\s*$''',
+      '''^\s*"apps/control\-api/app/routers/credential_rotation\.py":\ "c83e0c45a15fb251c1f69d651ecc870e8e7f9b29072d2acb0025461b02a081ad",?\s*$''',
+      '''^\s*"apps/control\-api/app/tests/test_batch_execute_api\.py":\ "e318ba9a0985b0ff81e4f32002324eda7faf8d3fc35cd87f66e58e01d2d92af0",?\s*$''',
+      '''^\s*"apps/control\-api/app/tests/test_credential_rotation\.py":\ "0ee7f9537256a64f558bb4320a6174b666dc40f0c1d30700bec452e87cb3db7f",?\s*$''',
+      '''^\s*"apps/control\-api/app/tests/test_credential_rotation_native\.py":\ "35ce7c6f01702dcccc5a21e9ef9f4e5c9b0fe750aa2c8851a0dd984f9d3645e7",?\s*$''',
+      '''^\s*"apps/control\-api/app/tests/test_credential_rotation_vector\.py":\ "af53ebaf2ded81ab95ca251120e21c93e335c38890b47c72fa50b00d30cb88e1",?\s*$''',
+      '''^\s*"apps/control\-api/app/tests/test_edge_secret\.py":\ "60ac7f8cd65e9a0d44154849e76d232fdd7ed209bc485282623458fb2271d98b",?\s*$''',
+      '''^\s*"apps/control\-api/app/tests/test_inventory_review_access\.py":\ "a732c5ac06fca0df73655e29878bea2fb2ff8c34f93325756e8a3bc6818c850d",?\s*$''',
+      '''^\s*"apps/control\-api/migrations/versions/0026_edge_credential_rotation\.py":\ "b48eff402baeafcbee6eea22aa55d506ebd5d41b8a7c744da1fb82cfc6fb3d7e",?\s*$''',
+      '''^\s*"apps/web/src/components/AuthGate\.tsx":\ "25164a560222a739e9ab96b4e37835e5a2c670ac332e7dce341b7ca1643c7553",?\s*$''',
+      '''^\s*"apps/web/src/hooks/useApiList\.ts":\ "727e0e0ce90e5ddfa3c18f288150f9a533cd61a6bb9fbb23d3f687871634b8ad",?\s*$''',
+      '''^\s*"apps/web/src/local/adapterManagementApi\.test\.ts":\ "f707afba1003fcba03f4ac604a85c98811c2021bdb14f4b18c1aa40f8950fc9f",?\s*$''',
+      '''^\s*"apps/web/src/local/api\.test\.ts":\ "99dc0fa8defea16e3b882e9d7c88d51fbb2c6d5336b0501bd1d394af11219b83",?\s*$''',
+      '''^\s*"apps/web/src/local/api\.ts":\ "ceca8cf8cd35dfd270717a1f3966963acdfed1e519cf449fcc51af0309f3c757",?\s*$''',
+      '''^\s*"apps/web/src/local/instanceBaselineApi\.test\.ts":\ "838f54fe6b0bb150ea8d5ce64cbbedbaeaf53add6d74cb2b78fdbc6499c0ea7a",?\s*$''',
+      '''^\s*"docs/development/business\-result\-access\-e156\-spec\.md":\ "477540a65aa14ccfc46cf62297432360859dde11009399e5f3103b334d76607a",?\s*$''',
+      '''^\s*"docs/development/main\-api\-cutover\-20260924\.md":\ "ebcb69ebb51143d505780d589fc73afad08bc754f5769262afce4e06264201f3",?\s*$''',
+      '''^\s*"docs/effect\-evidence\-api\-v1\.md":\ "142f825c105898f087ae3fac56a0bfd364707d6ddbb7023bab95eb8b72d03ec7",?\s*$''',
+      '''^\s*"docs/evidence/enterprise\-auto\-onboarding\-20260925/initial\-scan\-api\-r1\.json":\ "a3c2ff99d4f823881c3fc8be88ded9b7ef4244c7414916268f0be61f7f184759",?\s*$''',
+      '''^\s*"docs/evidence/enterprise\-auto\-onboarding\-20260925/registration\-recovery\-api\-r1\.json":\ "ead1355ad7eff4544eff6f6a0ee02453e9b2a8ae9f3c1d9c6df6574672f2b52a",?\s*$''',
+      '''^\s*"docs/evidence/flagship\-optimization\-20260921/ci\-01\-sglang\-secret\-transport\.json":\ "40bb850764a98e3f330f26a7ca1cc17f36e11b086c0a5d53f2f91fff93953e08",?\s*$''',
+      '''^\s*"docs/evidence/flagship\-optimization\-20260921/ml\-02\-business\-api\-e126\.json":\ "8465e4c15da1ce1467374feba1931724fee26f686333cdd058e9d67bda73fa21",?\s*$''',
+      '''^\s*"docs/evidence/flagship\-optimization\-20260921/ml\-02\-qwen38\-request\-api\-e109\.json":\ "2ecef37b1432ac0a3eda632a593310c98100de16bf9651e8875664a89fa86a8e",?\s*$''',
+      '''^\s*"docs/evidence/flagship\-optimization\-20260921/ml\-02\-streaming\-api\-e127\.json":\ "7a3a584ee4341e3f3d12abcdacc15cf70f7a8be802e2bae7b7634e0e8d32ad5a",?\s*$''',
+      '''^\s*"docs/evidence/flagship\-optimization\-20260921/project\-attachment\-access\-20260924\.json":\ "439a4a9feb04b58b0622986f34a254c02303545c459c8f29b85bd41fb31ae7ad",?\s*$''',
+      '''^\s*"docs/evidence/flagship\-optimization\-20260921/ux\-business\-result\-access\-e156\.json":\ "aff35fcb8e3738fe7dafaa4ebb68bca835f05a437833f28a85af1ea87de0f6b2",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/raw\-task\-content\-activation\-api\-20260913\.md":\ "67e91810a0e8e78654092fb2ca493bfb67c3e4d6287cf6b71ba5bb2bd77952bd",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/raw\-task\-content\-grant\-api\-20260913\.md":\ "1f9d79f5680c5b3987bad7b26cb44d252468ab1c84e46f2aa055d6636ce39349",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/raw\-task\-content\-management\-api\-20260913\.md":\ "9551870bc3d6d4e400d5610a532a0c3f2fb9ff3ed41efc25a46535a0724eb6de",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/task\-activities\-api\-20260912\.md":\ "5bcba3e8e6f6349c33191b26c6667451e8647277a2f725bc5ffc6691ae707fcd",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/task\-activity\-completion\-api\-20260912\.md":\ "22fe6ba1ec49ba37cfd8699f7485b0d6671bc9948b64d402eafbab13afddb0a1",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/task\-activity\-detail\-api\-20260912\.md":\ "12c64a5b51360b8c3a30e8ee29b66e290c7bc27ec092092ecb7d452ab22c4dbf",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/task\-activity\-export\-api\-20260912\.md":\ "6fbdee6e2dd47b263abe9aa413b0ec6053049f7a0235f67a6e896e5df07e96a9",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/task\-activity\-search\-api\-20260912\.md":\ "05f1ae5c4c145618c890581e6118c1873108cb8c647267a60aa860dffb67a8d7",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/task\-activity\-sources\-api\-20260912\.md":\ "4185d415f751541ef43d2052e323e40558c42179908b5adb2e0856d04f3ebe07",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/task\-trace\-export\-api\-20260913\.md":\ "1d3810ccf1d2a9659d318a45a2ddb41112b409baa69ba77e823acc2213533c60",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/windows\-sunbo/intent\-authority\-acl\-20260918/native\-api\-verification\.json":\ "6fb21fadf779e68bd2262053b844f17aa52e96cd9075b4acf6825bb1b7958bdb",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/windows\-sunbo/intent\-authority\-acl\-20260918/run\-native\-api\.py":\ "f6ce3d2b9d25207de49a5355420bdcbd9feec19c2fc136f2b53fa3e54c0899df",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/windows\-sunbo/openclaw\-session\-20260918/session\-newkey\-r1\.json":\ "0c7e86252f578f1f9ff276c04e26af7a81d01e00d2827c1bb5772665f3c67964",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/windows\-sunbo/skill\-metadata\-acl\-20260918/native\-api\-verification\.json":\ "640653de78e983cf230a5768230536a10f5eb9bb1413657730aab821332a7664",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/windows\-sunbo/skill\-metadata\-acl\-20260918/resume\-native\-api\.py":\ "5dc289885f03fd1f35adac41fc0c0db065d50397f6441c5968015811aa956767",?\s*$''',
+      '''^\s*"docs/evidence/personal\-experience/windows\-sunbo/skill\-metadata\-acl\-20260918/run\-native\-api\.py":\ "f2ed448b1c323826361deaa0982f794826a2066bb155dbe583ad165145c840ae",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-hardening\-v4/regression/remaining/check_control_api_dockerfile_lock\.log":\ "8f90dc3e02591eff29081e786f6c578a117a526253b4e4e46f871f051450cd2b",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/check_control_api_dockerfile_lock\.log":\ "8f90dc3e02591eff29081e786f6c578a117a526253b4e4e46f871f051450cd2b",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/control\-api\-final\.log":\ "361b883dacf405299a0764c1401fe54f0f40a9cc3c1fdb062556049a32166633",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/control\-api\-tests\.log":\ "002510df12d5baf603fe0ffef365468fd97e187b84b2c6969b8ed449b95d6f13",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/git\-history\-secret\-scan\-triaged\.json":\ "29e4f359ae84be7698921b71caa8fc1f02ab2d1ee43dad0e99e66509b9d16046",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/git\-history\-secret\-scan\.json":\ "e23890b0f11bff035a6dbb918afa506b95af4c5e8e7f1ed76acf7dff72312276",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/source\-secret\-scan\-accepted\.json":\ "83e4fb00a0d367af6c4f383460465c451b1292736ad31c2b91dd448c15666db7",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/source\-secret\-scan\-effective\.json":\ "b40135d35e4a53577ce36254b6787bb72815aa7dae1b9ec6ff7b9a1cdce94351",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/source\-secret\-scan\-final\.json":\ "d00d05b3fe4067a05b72ae46af5a49c64b0be981862750ae664895b36e4cefe4",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-regression\-20260908/source\-secret\-scan\.json":\ "bc4f17896ce6d456b1d3e617523d79778bff0055248618f2bca0664efdd17b10",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-release\-v5/regression/check_control_api_dockerfile_lock\.log":\ "8f90dc3e02591eff29081e786f6c578a117a526253b4e4e46f871f051450cd2b",?\s*$''',
+      '''^\s*"docs/hackathon/evidence/final\-release\-v5/regression/control\-api\.log":\ "de8ac6e959adef6f8ea5b48483c4466884efc7cf22c8b67441ee58accae37af3",?\s*$''',
+      '''^\s*"docs/provenance\-api\-v1\.md":\ "ccb210cb44b4188d3efb462b86bc16806b49b5bab7710817764fd7255734b425",?\s*$''',
+      '''^\s*"docs/research/evidence/core\-scenarios\-20260911/secret\-scan\.json":\ "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",?\s*$''',
+      '''^\s*"docs/research/release\-authentication\.md":\ "81eecf148697040a99c4c666e7a0ecd23ef3389b0d290ccc0d0fcab26aa02684",?\s*$''',
+      '''^\s*"edge/agent/credential_rotation\.go":\ "580a9170a98323db56366d2f24bbcaa3b34e4534d7ccb800323fcc09d571a1fc",?\s*$''',
+      '''^\s*"edge/agent/credential_rotation_test\.go":\ "30f8f30bcba657d521aa590137007f32a4ebce79e188cd1e2b6d2e8476b83e49",?\s*$''',
+      '''^\s*"edge/agent/rotate_credential_linux\.go":\ "74bb07dc6888d7b9f19587d3aa8f7dad3a1e0ea6d3505a19ed29ee953b19ff8a",?\s*$''',
+      '''^\s*"edge/agent/rotate_credential_linux_test\.go":\ "66401379a54082a52be0d4328292eb21101c87b5197addd881f632fb32c9bc19",?\s*$''',
+      '''^\s*"edge/agent/rotate_credential_other\.go":\ "96e166ab12f6a0c1c533a00bc92610692ca74d799469436330eff12ed2309ddb",?\s*$''',
+      '''^\s*"packages/contracts/enterprise\-edge\-credential\-rotation\.v1\.md":\ "1221972817ec3089a3e6f04b5ed3ac7e38ffc2ebaf44c681809d2e8aae0a61ea",?\s*$''',
+      '''^\s*"packages/contracts/environment\-onboarding\-access\.v1\.schema\.json":\ "e97204c9dfd19a5bce52a7ece51ddb1ec6ae8c081ea46ca19618a77d79f2da66",?\s*$''',
+      '''^\s*"packages/contracts/inventory\-access\.v1\.schema\.json":\ "ce98f9143b10b642ba2a999eb6fdbf4c2c1724d803a17180f18e0d5a637c7761",?\s*$''',
+      '''^\s*"scripts/check_control_api_dockerfile_lock\.py":\ "9d5941d093640fff73ab02f18fa6910a7b96a9c7f6bd21390078a9e84b508ce3",?\s*$''',
+      '''^\s*"scripts/enterprise\-experience/generate\-credential\-rotation\-vector\.py":\ "f76f1fdd4b78acdeb6d1a4f94b239bb1dbce8a35b66d24b84f7ff6fb9dfa2701",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 6"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-authority\-loss\-message\-001\-source\-manifest\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-permissions\-001\-preparation\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-permissions\-001\-source\-manifest\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-permissions\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-launch\-001\-source\-manifest\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-supervisor\-diagnostics\-001\-source\-manifest\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"agents/hermes/profiles/shared/scripts/siq_wiki_evidence/access_scope\.py":\ "b6791d76cd8d6f243da067c107da7822390669469a4cc78349a4ec2212296c0d",?\s*$''',
+      '''^\s*"apps/api/\.venv/lib/python3\.13/site\-packages/siq_wiki_evidence/access_scope\.py":\ "b6791d76cd8d6f243da067c107da7822390669469a4cc78349a4ec2212296c0d",?\s*$''',
+      '''^\s*"apps/api/hermes\-api\-multi\-turn\.md":\ "6d6070832f0f7573eb8eb993a5c07c07f9cd5faaba38ca9e86a60f7a645c6065",?\s*$''',
+      '''^\s*"apps/api/migrations/001_create_auth_tables\.sql":\ "4d97bb176840cba3fa4c16ec96495ecef64ee8e5bb1a4cdc7baaee4f50814863",?\s*$''',
+      '''^\s*"apps/api/migrations/009_add_user_token_version\.sql":\ "4a12763e3e72b22e44b13fb4772dc35d7a849b23c594b5e0a5c37458ab9b6c1e",?\s*$''',
+      '''^\s*"apps/api/migrations/015_add_user_artifact_owner_key\.sql":\ "61cb9ff1025af48942afa2abeb6cdb54cc15423b9b9deeb5bc19692f0ad7eee8",?\s*$''',
+      '''^\s*"apps/api/migrations/021_add_openshell_data_grant_request_key\.sql":\ "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",?\s*$''',
+      '''^\s*"apps/api/routers/auth\.py":\ "def3c63b0171dbe1afd76897eda4625aa27243d2a6a8f3f49411b22b462d8e80",?\s*$''',
+      '''^\s*"apps/api/scripts/init_auth_system\.py":\ "2426519fea6628b3d926b73e2a036aa71c53a244473f569d7b0d6a724c215890",?\s*$''',
+      '''^\s*"apps/api/services/agent_runtime_read_access\.py":\ "64a24421f129a48d2c5d55dcb55d3089e5fb2965095cda7cd440c704cda203c4",?\s*$''',
+      '''^\s*"apps/api/services/auth_dependencies\.py":\ "f1d88a199de9099757214a2d9b1fb94b7f1c29291af2392b4de8984e1eaf992d",?\s*$''',
+      '''^\s*"apps/api/services/auth_login_guard\.py":\ "29ce41aa609355946b9e6e595b3c93f094839c8c41f384d22e2172eff50556e4",?\s*$''',
+      '''^\s*"apps/api/services/auth_service\.py":\ "8599ae4ec45524ff7e4474f39a7c860c073cf5e4e861dff1d131818482b2aa6f",?\s*$''',
+      '''^\s*"apps/api/services/chat_attachment_access\.py":\ "bf18d9da8a6849666d8eaa0a78e7c99e105142b93cbd3bc2fd385ebefd56b06d",?\s*$''',
+      '''^\s*"apps/api/services/project_attachment_access\.py":\ "611b25c0b66d1a60a74fadf09b5f6f67936a2e03f92bb22faa07e77f712d395f",?\s*$''',
+      '''^\s*"apps/api/services/qwen38_request_api\.py":\ "59f4118d324430d18dd2976a6b4a0fbc2cc676f710736e0d7c9efec96d36ef28",?\s*$''',
+      '''^\s*"apps/api/tests/fixtures/migrations/v008/001_create_auth_tables\.sql":\ "e6ce1bb36045fdb42181ab95427fa9ab00d954ad4fdb1b3e6d718e8a657a0364",?\s*$''',
+      '''^\s*"apps/api/tests/test_agent_runtime_read_access\.py":\ "5247136d75969c35bb4e48c37a765465ebf4572a9a65392f6b32da7d590591fd",?\s*$''',
+      '''^\s*"apps/api/tests/test_auth_dependencies\.py":\ "49d249377aaa72ab6ecfbaa184ffa860ef27f14dc0ebddfe0ed2d383e327cd11",?\s*$''',
+      '''^\s*"apps/api/tests/test_auth_login_security\.py":\ "a81601a7953545c112ad286fe9887dd67600617d3dc2423b6a83896624b652c4",?\s*$''',
+      '''^\s*"apps/api/tests/test_auth_password_release_a\.py":\ "14ec5936ca4e12eb3495a41be2d98ff98145f4c09735165b79136094d5add895",?\s*$''',
+      '''^\s*"apps/api/tests/test_auth_report_review\.py":\ "688489971cfe872ebc18eec43d2e4febe870aa62194a021091c441388463772c",?\s*$''',
+      '''^\s*"apps/api/tests/test_auth_token_revocation\.py":\ "9092986a40ef4543d295eccac392d0d4ec665d52c3a5c41bd4802a40c0cce479",?\s*$''',
+      '''^\s*"apps/api/tests/test_chat_attachment_access\.py":\ "74c21b28e76a35cbc998e582d1a5de1611d1137f8c68349f51730afbafdbb882",?\s*$''',
+      '''^\s*"apps/api/tests/test_openshell_data_grant_api\.py":\ "c24b3587cd84d0c9d65c1ad6750271fc3553637398c4507ab2ba5f7771317810",?\s*$''',
+      '''^\s*"apps/api/tests/test_project_attachment_access\.py":\ "e99ce94383d7048c8f8d5fd513d46bd2e1900a4e6f5b8515b3332eccaab5f040",?\s*$''',
+      '''^\s*"apps/api/tests/test_qwen38_request_api\.py":\ "fd63a68183512c5eef21891b7d65e7b8816ce92b85b409578b1cee17c7ba83b4",?\s*$''',
+      '''^\s*"apps/api/tests/test_source_access\.py":\ "fcbd2903092df4e9c9be8d45011dcba6ce2a13a98c081ff32ba5256de1f000c8",?\s*$''',
+      '''^\s*"apps/api/tests/test_workflow_auth\.py":\ "39def2aa138805a9d53b37b9bda0e7a5d9430b99f24d297656f95c5591e08721",?\s*$''',
+      '''^\s*"db/imports/financial_query_api\.py":\ "550eae9d5f92712830f59442bcc0e34179864421e7a7e9288d86a2a9661edca5",?\s*$''',
+      '''^\s*"db/imports/test_financial_query_api_cases\.py":\ "3214e89b478c4654e5d63adf4da22611ec2f8fb8137f5cea1fc6cfe30cfb8b5d",?\s*$''',
+      '''^\s*"db/imports/tests/test_financial_query_api_market_agent\.py":\ "1946b7f7d825f3af4f65843f51f0d36ed27de59ac4794c4d20518cf4edea1991",?\s*$''',
+      '''^\s*"scripts/openshell/check_staged_secrets\.py":\ "6cb6bf44ad7e13fc00237a41d5187678ddca5e4801ff8b25b67d9d3f22dbfcae",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_api_execution_lease\.py":\ "c0e1ca9a223d4c2bf43898c0a474ee0f3cbfc2294ece7edc0fb457e18dce795c",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_business_api\.py":\ "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_cancel_api\.py":\ "8b567afa6bd1a20fd1ba55eaa5f0d3378a07298595cf920e4a519d8e4b4f86e7",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_candidate_api\.py":\ "f8a95b23ae04718c48205f64ae6277423199329e57f13e4c81e9a5f56793bfbd",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_crash_api\.py":\ "f0936c15093b3a06db31087374b915530c8c60986ecc68da02946a3009cbfea7",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_revoke_api\.py":\ "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_streaming_api\.py":\ "344b8095a242e9a634aea18cf19991867ee292c394bce74f52935b150a439acc",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_token_revocation\.py":\ "a801ba6b895c5556bf3bcbe6fd66c39e48971ef5f954ea84bb4527a098668db9",?\s*$''',
+      '''^\s*"scripts/openshell/qwen38_model_credential\.py":\ "c0ffd7c6d37ce883f4e093c5c92c913ff7cde0a7851c4ae2811fddd87368ae53",?\s*$''',
+      '''^\s*"scripts/openshell/rotate_broker_identity_key\.sh":\ "62f1d585d71a6dbfc5a230d9e0f16f4bc27221f8239212b790d97df9d0e9f4ad",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_check_staged_secrets\.py":\ "3f99c9d7cba48bf30dad520580433e8f86e0ebc02378b3d5eee697ee6c18b390",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_prove_qwen38_business_api\.py":\ "b09d22cca1c067e9689e748a7750f31c2c34d6ad31288d8110429ef329026273",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_prove_qwen38_cancel_api\.py":\ "cf189b53eb26ba1e324aea96c1f6a43cfdff0c2ee5b706d490c0748646944242",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_prove_qwen38_crash_api\.py":\ "901777aa462b71a481ea8d9ac5af81fd749214769731fa9784241e28c1dd92bb",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_prove_qwen38_revoke_api\.py":\ "b70c033bbb8c0514c3f6033f16d3d1fb1311f9cec27007d40a983917c554d675",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_prove_qwen38_streaming_api\.py":\ "bfbd30473be3d9b598ed591dd54b948bbe7f76faa58698f60373416cd58bf89c",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_prove_qwen38_token_revocation\.py":\ "c30b0addba084c251a55590ad2fa5f4b2cae3cb5a51216f8831cac4dd9cc0c72",?\s*$''',
+      '''^\s*"scripts/openshell/tests/test_validate_placeholder_auth\.py":\ "086084995737b5f1f045b9e14449bdf72a05652064d3854e654ac54091d9102b",?\s*$''',
+      '''^\s*"scripts/ops/launch_research_permission_api\.py":\ "5b0398337a8961a7de25f7ca791fb191bf4c3cb448cd880acdc309077f50be15",?\s*$''',
+      '''^\s*"scripts/ops/tests/test_launch_research_permission_api\.py":\ "f8f2f40c04e9ba91913df3735664ca38f6ef92673dc5d94f3a39ae6374ed5df3",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 7"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/reports/research\-permissions\-relay\-recovery\-002\-private\-archive\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"api\.log":\ "9c35e0e5f3bca7259954103dab09b5bd32bb95ea2d5601a5727595fe94a0d5e5",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 8"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/reports/research\-permissions\-skill\-drift\-004\-diagnosis\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"api_log_sha256":\ "91c730f3bb2ab73b3367a77a7b544aec43cf6bc413eee04cca151a7863a917fe",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 9"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/inventory/function\-traceability\-v2\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"apps/agentshield/internal/inventory/preview_access_test\.go":\ "a208a4e15523a8bb5ad9468ec175f39ea0a7ac20861621bfcc9de48556998918",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz\.go":\ "babe77e07ea4031dc45ec248db710cc0abd846f8057d220658b600f1b3b7e225",?\s*$''',
+      '''^\s*"apps/agentshield/internal/server/authz_test\.go":\ "f3d24a39a48dac9fcb6db92a3f4beb7d4e26d0934ec04a5f25e99cbacb51ebc2",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 10"
+    condition = "AND"
+    paths = [
+      '''^benchmarks/third\-party/schemas/native\-held\-contract\-sources\.v1\.json$''',
+      '''^third\-party\-evaluation/20261006/reports/bound\-runtime\-audit\-attribution\-001\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"apps/agentshield/internal/server/runtime_identity_auth\.go":\ "c2329161fb52428107973b887cf90637f59764e8067d28fcda7b225efe88ca0e",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 11"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-entry\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-entry\-002\-preparation\.json$''',
+      '''^third\-party\-evaluation/20261006/protocols/research\-permissions\-daily\-entry\-002\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"apps/api/routers/auth\.py":\ "def3c63b0171dbe1afd76897eda4625aa27243d2a6a8f3f49411b22b462d8e80",?\s*$''',
+      '''^\s*"apps/api/services/auth_dependencies\.py":\ "f1d88a199de9099757214a2d9b1fb94b7f1c29291af2392b4de8984e1eaf992d",?\s*$''',
+      '''^\s*"apps/api/services/auth_service\.py":\ "8599ae4ec45524ff7e4474f39a7c860c073cf5e4e861dff1d131818482b2aa6f",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 12"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/inventory/product\-surface\-candidate\-001\.json$''',
+      '''^third\-party\-evaluation/20261006/inventory/product\-surface\-review\-001\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"apps/control\-api/app/routers/credential_rotation\.py":\ "c83e0c45a15fb251c1f69d651ecc870e8e7f9b29072d2acb0025461b02a081ad",?\s*$''',
+      '''^\s*"packages/contracts/enterprise\-edge\-credential\-rotation\.v1\.md":\ "1221972817ec3089a3e6f04b5ed3ac7e38ffc2ebaf44c681809d2e8aae0a61ea",?\s*$''',
+      '''^\s*"packages/contracts/environment\-onboarding\-access\.v1\.schema\.json":\ "e97204c9dfd19a5bce52a7ece51ddb1ec6ae8c081ea46ca19618a77d79f2da66",?\s*$''',
+      '''^\s*"packages/contracts/inventory\-access\.v1\.schema\.json":\ "ce98f9143b10b642ba2a999eb6fdbf4c2c1724d803a17180f18e0d5a637c7761",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 13"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/reports/native\-auth\-modes\-engineering\-validation\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"benchmarks/third\-party/native_auth_modes\.py":\ "b05df615001438bc622962ee4a33fd3c2f62de0710ebea8dbf2c76cc02f758b0",?\s*$''',
+      '''^\s*"benchmarks/third\-party/review_native_auth_modes\.py":\ "5910552d132fbd0a460742ae529cf296801fceb6e14ade5de53b494fc3141dab",?\s*$''',
+      '''^\s*"benchmarks/third\-party/test_native_auth_modes\.py":\ "6dab9014f156e3669653661fc65ca513afcf504fc1e345e25bfebc75689f0a42",?\s*$''',
+    ]
+  [[rules.allowlists]]
+    description = "third-party evidence SHA-256 group 14"
+    condition = "AND"
+    paths = [
+      '''^third\-party\-evaluation/20261006/inventory/dgx\-research\-permission\-entry\-001\.json$''',
+    ]
+    regexTarget = "line"
+    regexes = [
+      '''^\s*"scripts/openshell/prove_qwen38_business_api\.py":\ "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",?\s*$''',
+      '''^\s*"scripts/openshell/prove_qwen38_revoke_api\.py":\ "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",?\s*$''',
+    ]
+
 [[rules]]
   id = "aws-access-token"
   [[rules.allowlists]]

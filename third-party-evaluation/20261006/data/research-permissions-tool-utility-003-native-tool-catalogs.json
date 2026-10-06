@@ -1,0 +1,2217 @@
+[
+  {
+    "api_request_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:ffebcdcd:api:1",
+    "native_session_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "recorded_unix": 1791281807.2586613,
+    "schema_version": "siq.research-native-tool-catalog.v1",
+    "task_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "tools": [
+      {
+        "name": "delegate_task",
+        "parameters": {
+          "properties": {
+            "action": {
+              "description": "Default 'spawn'. Live control of running children: 'list' = ids/goals/status/transcripts; 'steer' = queue course-correction text into one child (subagent_id + message) without stopping it; 'stop' = end one child early (subagent_id; partial result still returns). Control actions return immediately; goal/tasks are ignored unless spawning.",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "message": {
+              "description": "For action='steer': the course correction, appended to the child's next tool result mid-run. Be directive and specific.",
+              "type": "string"
+            },
+            "subagent_id": {
+              "description": "Target for action='steer'/'stop' (ids from the spawn response or action='list').",
+              "type": "string"
+            },
+            "tasks": {
+              "description": "The task(s), up to 1 in parallel for this user (set via delegation.max_concurrent_children). Each entry spawns one subagent with isolated context and terminal session; a single task is a one-entry array. Required when spawning.",
+              "items": {
+                "properties": "<dict depth limit>",
+                "required": "<list depth limit>",
+                "type": "<str depth limit>"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "parameters_sha256": "7f870ee701760dccfc0b2062b4f9a6613456c19c78878021a77325bbff8bfc81"
+      },
+      {
+        "name": "execute_code",
+        "parameters": {
+          "properties": {
+            "code": {
+              "description": "Python code to execute. Import tools with `from hermes_tools import web_search, terminal, ...` and print your final result to stdout.",
+              "type": "string"
+            },
+            "reset": {
+              "description": "Discard the kernel's persistent state and start fresh before running this code.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "0bba5ca2ba90a30f462157655148a90d5de5ca09edb911ff351e81f2d433c6eb"
+      },
+      {
+        "name": "mcp__siq_business__research_generate_report",
+        "parameters": {
+          "properties": {
+            "company_path": {
+              "title": "Company Path",
+              "type": "string"
+            },
+            "run_id": {
+              "title": "Run Id",
+              "type": "string"
+            },
+            "year": {
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company_path",
+            "run_id",
+            "year"
+          ],
+          "title": "research_generate_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "f82c8354ea17f54ca0e169bf65d819f0da714b658222bf3d1a419886c0e889f9"
+      },
+      {
+        "name": "mcp__siq_business__research_publish_report",
+        "parameters": {
+          "properties": {
+            "approval_sha256": {
+              "title": "Approval Sha256",
+              "type": "string"
+            },
+            "request_sha256": {
+              "title": "Request Sha256",
+              "type": "string"
+            },
+            "task_id": {
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "request_sha256",
+            "approval_sha256"
+          ],
+          "title": "research_publish_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "8ed94de280199f3e4fa0e479792f232fae842afae9ce0713f1c4ca897de075b6"
+      },
+      {
+        "name": "mcp__siq_business__research_verify_published_report",
+        "parameters": {
+          "properties": {
+            "report_key": {
+              "title": "Report Key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "report_key"
+          ],
+          "title": "research_verify_published_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "5ebb94640f7dd05e4859151901fb12acba40b41536700b13fe551d8d5ece7809"
+      },
+      {
+        "name": "patch",
+        "parameters": {
+          "properties": {
+            "new_string": {
+              "description": "Changed replacement text; it must differ from old_string. Pass empty string '' to delete the matched text.",
+              "type": "string"
+            },
+            "old_string": {
+              "description": "Exact text to find and replace. Must be unique in the file unless replace_all=true. Include surrounding context lines to ensure uniqueness.",
+              "type": "string"
+            },
+            "path": {
+              "description": "File path to edit.",
+              "type": "string"
+            },
+            "replace_all": {
+              "default": false,
+              "description": "Replace all occurrences instead of requiring a unique match (default: false)",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "path",
+            "old_string",
+            "new_string"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "98981809539188df808bd21eb6ac4c1e2156010888a63a29823eeae0e7f2b0a1"
+      },
+      {
+        "name": "process",
+        "parameters": {
+          "properties": {
+            "action": {
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "data": {
+              "description": "Stdin text for write/submit.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max log lines.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "offset": {
+              "description": "Log line offset (default: last 200).",
+              "type": "integer"
+            },
+            "session_id": {
+              "description": "From terminal background output; any unique prefix works ('4dae' for proc_4dae56ca81f6). Required except for 'list'.",
+              "type": "string"
+            },
+            "timeout": {
+              "description": "Max seconds for 'wait'.",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3097e82fd60a87120a065f29ae66781649e7fd10af1a46bccb11e723e1ceb95f"
+      },
+      {
+        "name": "read_file",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 2000,
+              "description": "Maximum number of lines to read (default: 2000, max: 2000). Reads are additionally capped at a ~100K-character budget with a next_offset continuation.",
+              "maximum": 2000,
+              "type": "integer"
+            },
+            "offset": {
+              "default": 1,
+              "description": "Line number to start reading from (1-indexed, default: 1)",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "path": {
+              "description": "Path to the file to read (absolute, relative, or ~/path)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "28aa3128bf87660c1beaf77a05b58972e2c1b953621f2df9def7796d2f723c13"
+      },
+      {
+        "name": "search_files",
+        "parameters": {
+          "properties": {
+            "context": {
+              "default": 0,
+              "description": "Number of context lines before and after each match (grep mode only)",
+              "type": "integer"
+            },
+            "file_glob": {
+              "description": "Filter files by pattern in grep mode (e.g., '*.py' to only search Python files)",
+              "type": "string"
+            },
+            "limit": {
+              "default": 50,
+              "description": "Maximum number of results to return (default: 50)",
+              "type": "integer"
+            },
+            "offset": {
+              "default": 0,
+              "description": "Skip first N results for pagination (default: 0)",
+              "type": "integer"
+            },
+            "output_mode": {
+              "default": "content",
+              "description": "Output format for grep mode: 'content' shows matching lines with line numbers, 'files_only' lists file paths, 'count' shows match counts per file",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "path": {
+              "default": ".",
+              "description": "Directory or file to search in (default: current working directory)",
+              "type": "string"
+            },
+            "pattern": {
+              "description": "Regex pattern for content search, or glob pattern (e.g., '*.py') for file search",
+              "type": "string"
+            },
+            "target": {
+              "default": "content",
+              "description": "'content' searches inside file contents, 'files' searches for files by name",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cdfa06b3208d4060a1c24f0bcfe93a5c5feec72d90cee51ddec7661d72e5b3d8"
+      },
+      {
+        "name": "terminal",
+        "parameters": {
+          "properties": {
+            "background": {
+              "default": false,
+              "description": "Run in the background, returning a session_id. Pair with notify=true for anything with a defined end (tests, builds, deploys) — without it the process runs silently. Only servers/watchers/daemons that never exit should stay silent. Short commands: prefer foreground with a generous timeout.",
+              "type": "boolean"
+            },
+            "command": {
+              "description": "The shell command to execute",
+              "type": "string"
+            },
+            "notify": {
+              "anyOf": [
+                "<dict depth limit>",
+                "<dict depth limit>"
+              ],
+              "description": "With background=true: notify=true fires exactly one notification when the process exits (the right choice for nearly every bounded task — builds, tests, deploys). notify=['pattern', ...] instead notifies when a line matches a pattern — ONLY for one-shot readiness signals on processes that never exit (e.g. ['Application startup complete']); rate-limited and auto-disabled if it over-fires. Omit for silent daemons."
+            },
+            "pty": {
+              "default": false,
+              "description": "With background=true: run in a pseudo-terminal for interactive CLI tools (Codex, Claude Code, Python REPL). Local backend only. Default: false.",
+              "type": "boolean"
+            },
+            "timeout": {
+              "description": "Max seconds to wait (default: 180, foreground max: 600). Returns INSTANTLY when command finishes — set high for long tasks, you won't wait unnecessarily. Foreground timeout above 600s is rejected; use background=true for longer commands.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "workdir": {
+              "description": "Working directory for this command (absolute path). Defaults to the session working directory.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cb216a6b4efd12e8190122111642974ef33574d954b7a44044ae414b674b651c"
+      },
+      {
+        "name": "vision_analyze",
+        "parameters": {
+          "properties": {
+            "image_url": {
+              "description": "Image URL (http/https), local file path, or data: URL to load.",
+              "type": "string"
+            },
+            "question": {
+              "description": "Your question or request about the image.",
+              "type": "string"
+            },
+            "region": {
+              "description": "Optional [x1, y1, x2, y2] crop in ORIGINAL-image pixel coordinates, applied before any downscaling — the crop keeps full resolution. Load the full image first, then re-call with a region to zoom into small text or fine detail.",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            }
+          },
+          "required": [
+            "image_url",
+            "question"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3badf9586d5607fb426955c6dfbe00354a0a514ecc0326990fec9cc4f1d5db79"
+      },
+      {
+        "name": "web_extract",
+        "parameters": {
+          "properties": {
+            "char_limit": {
+              "description": "Optional per-page character budget sent back (default 15000). Pages larger than this are head+tail truncated with the full text stored to disk. Raise it when you need more of a long page inline.",
+              "minimum": 2000,
+              "type": "integer"
+            },
+            "urls": {
+              "description": "List of URLs to extract content from (max 5 URLs per call)",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 5,
+              "type": "array"
+            }
+          },
+          "required": [
+            "urls"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "be733ab301215886b2f83198e10465cd82fb9ba2a6959a0e619acf045f7119f9"
+      },
+      {
+        "name": "web_search",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 5,
+              "description": "Maximum number of results to return. Defaults to 5.",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "query": {
+              "description": "The search query to look up on the web. You may include backend-supported operators such as site:example.com, filetype:pdf, intitle:word, -term, or \"exact phrase\".",
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "6bc019331e17960e90268a2dbf7d1d52dbd48914f9651d3bdee755534abd41cc"
+      },
+      {
+        "name": "write_file",
+        "parameters": {
+          "properties": {
+            "content": {
+              "description": "Complete content to write to the file",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path to the file to write (will be created if it doesn't exist, overwritten if it does)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "ea95d13cbdbf0c13f90e605e33c1a0b629648b33a56ae3723b03d3b5fecc781f"
+      }
+    ]
+  },
+  {
+    "api_request_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:ffebcdcd:api:2",
+    "native_session_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "recorded_unix": 1791281917.5207036,
+    "schema_version": "siq.research-native-tool-catalog.v1",
+    "task_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "tools": [
+      {
+        "name": "delegate_task",
+        "parameters": {
+          "properties": {
+            "action": {
+              "description": "Default 'spawn'. Live control of running children: 'list' = ids/goals/status/transcripts; 'steer' = queue course-correction text into one child (subagent_id + message) without stopping it; 'stop' = end one child early (subagent_id; partial result still returns). Control actions return immediately; goal/tasks are ignored unless spawning.",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "message": {
+              "description": "For action='steer': the course correction, appended to the child's next tool result mid-run. Be directive and specific.",
+              "type": "string"
+            },
+            "subagent_id": {
+              "description": "Target for action='steer'/'stop' (ids from the spawn response or action='list').",
+              "type": "string"
+            },
+            "tasks": {
+              "description": "The task(s), up to 1 in parallel for this user (set via delegation.max_concurrent_children). Each entry spawns one subagent with isolated context and terminal session; a single task is a one-entry array. Required when spawning.",
+              "items": {
+                "properties": "<dict depth limit>",
+                "required": "<list depth limit>",
+                "type": "<str depth limit>"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "parameters_sha256": "7f870ee701760dccfc0b2062b4f9a6613456c19c78878021a77325bbff8bfc81"
+      },
+      {
+        "name": "execute_code",
+        "parameters": {
+          "properties": {
+            "code": {
+              "description": "Python code to execute. Import tools with `from hermes_tools import web_search, terminal, ...` and print your final result to stdout.",
+              "type": "string"
+            },
+            "reset": {
+              "description": "Discard the kernel's persistent state and start fresh before running this code.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "0bba5ca2ba90a30f462157655148a90d5de5ca09edb911ff351e81f2d433c6eb"
+      },
+      {
+        "name": "mcp__siq_business__research_generate_report",
+        "parameters": {
+          "properties": {
+            "company_path": {
+              "title": "Company Path",
+              "type": "string"
+            },
+            "run_id": {
+              "title": "Run Id",
+              "type": "string"
+            },
+            "year": {
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company_path",
+            "run_id",
+            "year"
+          ],
+          "title": "research_generate_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "f82c8354ea17f54ca0e169bf65d819f0da714b658222bf3d1a419886c0e889f9"
+      },
+      {
+        "name": "mcp__siq_business__research_publish_report",
+        "parameters": {
+          "properties": {
+            "approval_sha256": {
+              "title": "Approval Sha256",
+              "type": "string"
+            },
+            "request_sha256": {
+              "title": "Request Sha256",
+              "type": "string"
+            },
+            "task_id": {
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "request_sha256",
+            "approval_sha256"
+          ],
+          "title": "research_publish_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "8ed94de280199f3e4fa0e479792f232fae842afae9ce0713f1c4ca897de075b6"
+      },
+      {
+        "name": "mcp__siq_business__research_verify_published_report",
+        "parameters": {
+          "properties": {
+            "report_key": {
+              "title": "Report Key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "report_key"
+          ],
+          "title": "research_verify_published_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "5ebb94640f7dd05e4859151901fb12acba40b41536700b13fe551d8d5ece7809"
+      },
+      {
+        "name": "patch",
+        "parameters": {
+          "properties": {
+            "new_string": {
+              "description": "Changed replacement text; it must differ from old_string. Pass empty string '' to delete the matched text.",
+              "type": "string"
+            },
+            "old_string": {
+              "description": "Exact text to find and replace. Must be unique in the file unless replace_all=true. Include surrounding context lines to ensure uniqueness.",
+              "type": "string"
+            },
+            "path": {
+              "description": "File path to edit.",
+              "type": "string"
+            },
+            "replace_all": {
+              "default": false,
+              "description": "Replace all occurrences instead of requiring a unique match (default: false)",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "path",
+            "old_string",
+            "new_string"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "98981809539188df808bd21eb6ac4c1e2156010888a63a29823eeae0e7f2b0a1"
+      },
+      {
+        "name": "process",
+        "parameters": {
+          "properties": {
+            "action": {
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "data": {
+              "description": "Stdin text for write/submit.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max log lines.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "offset": {
+              "description": "Log line offset (default: last 200).",
+              "type": "integer"
+            },
+            "session_id": {
+              "description": "From terminal background output; any unique prefix works ('4dae' for proc_4dae56ca81f6). Required except for 'list'.",
+              "type": "string"
+            },
+            "timeout": {
+              "description": "Max seconds for 'wait'.",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3097e82fd60a87120a065f29ae66781649e7fd10af1a46bccb11e723e1ceb95f"
+      },
+      {
+        "name": "read_file",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 2000,
+              "description": "Maximum number of lines to read (default: 2000, max: 2000). Reads are additionally capped at a ~100K-character budget with a next_offset continuation.",
+              "maximum": 2000,
+              "type": "integer"
+            },
+            "offset": {
+              "default": 1,
+              "description": "Line number to start reading from (1-indexed, default: 1)",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "path": {
+              "description": "Path to the file to read (absolute, relative, or ~/path)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "28aa3128bf87660c1beaf77a05b58972e2c1b953621f2df9def7796d2f723c13"
+      },
+      {
+        "name": "search_files",
+        "parameters": {
+          "properties": {
+            "context": {
+              "default": 0,
+              "description": "Number of context lines before and after each match (grep mode only)",
+              "type": "integer"
+            },
+            "file_glob": {
+              "description": "Filter files by pattern in grep mode (e.g., '*.py' to only search Python files)",
+              "type": "string"
+            },
+            "limit": {
+              "default": 50,
+              "description": "Maximum number of results to return (default: 50)",
+              "type": "integer"
+            },
+            "offset": {
+              "default": 0,
+              "description": "Skip first N results for pagination (default: 0)",
+              "type": "integer"
+            },
+            "output_mode": {
+              "default": "content",
+              "description": "Output format for grep mode: 'content' shows matching lines with line numbers, 'files_only' lists file paths, 'count' shows match counts per file",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "path": {
+              "default": ".",
+              "description": "Directory or file to search in (default: current working directory)",
+              "type": "string"
+            },
+            "pattern": {
+              "description": "Regex pattern for content search, or glob pattern (e.g., '*.py') for file search",
+              "type": "string"
+            },
+            "target": {
+              "default": "content",
+              "description": "'content' searches inside file contents, 'files' searches for files by name",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cdfa06b3208d4060a1c24f0bcfe93a5c5feec72d90cee51ddec7661d72e5b3d8"
+      },
+      {
+        "name": "terminal",
+        "parameters": {
+          "properties": {
+            "background": {
+              "default": false,
+              "description": "Run in the background, returning a session_id. Pair with notify=true for anything with a defined end (tests, builds, deploys) — without it the process runs silently. Only servers/watchers/daemons that never exit should stay silent. Short commands: prefer foreground with a generous timeout.",
+              "type": "boolean"
+            },
+            "command": {
+              "description": "The shell command to execute",
+              "type": "string"
+            },
+            "notify": {
+              "anyOf": [
+                "<dict depth limit>",
+                "<dict depth limit>"
+              ],
+              "description": "With background=true: notify=true fires exactly one notification when the process exits (the right choice for nearly every bounded task — builds, tests, deploys). notify=['pattern', ...] instead notifies when a line matches a pattern — ONLY for one-shot readiness signals on processes that never exit (e.g. ['Application startup complete']); rate-limited and auto-disabled if it over-fires. Omit for silent daemons."
+            },
+            "pty": {
+              "default": false,
+              "description": "With background=true: run in a pseudo-terminal for interactive CLI tools (Codex, Claude Code, Python REPL). Local backend only. Default: false.",
+              "type": "boolean"
+            },
+            "timeout": {
+              "description": "Max seconds to wait (default: 180, foreground max: 600). Returns INSTANTLY when command finishes — set high for long tasks, you won't wait unnecessarily. Foreground timeout above 600s is rejected; use background=true for longer commands.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "workdir": {
+              "description": "Working directory for this command (absolute path). Defaults to the session working directory.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cb216a6b4efd12e8190122111642974ef33574d954b7a44044ae414b674b651c"
+      },
+      {
+        "name": "vision_analyze",
+        "parameters": {
+          "properties": {
+            "image_url": {
+              "description": "Image URL (http/https), local file path, or data: URL to load.",
+              "type": "string"
+            },
+            "question": {
+              "description": "Your question or request about the image.",
+              "type": "string"
+            },
+            "region": {
+              "description": "Optional [x1, y1, x2, y2] crop in ORIGINAL-image pixel coordinates, applied before any downscaling — the crop keeps full resolution. Load the full image first, then re-call with a region to zoom into small text or fine detail.",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            }
+          },
+          "required": [
+            "image_url",
+            "question"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3badf9586d5607fb426955c6dfbe00354a0a514ecc0326990fec9cc4f1d5db79"
+      },
+      {
+        "name": "web_extract",
+        "parameters": {
+          "properties": {
+            "char_limit": {
+              "description": "Optional per-page character budget sent back (default 15000). Pages larger than this are head+tail truncated with the full text stored to disk. Raise it when you need more of a long page inline.",
+              "minimum": 2000,
+              "type": "integer"
+            },
+            "urls": {
+              "description": "List of URLs to extract content from (max 5 URLs per call)",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 5,
+              "type": "array"
+            }
+          },
+          "required": [
+            "urls"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "be733ab301215886b2f83198e10465cd82fb9ba2a6959a0e619acf045f7119f9"
+      },
+      {
+        "name": "web_search",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 5,
+              "description": "Maximum number of results to return. Defaults to 5.",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "query": {
+              "description": "The search query to look up on the web. You may include backend-supported operators such as site:example.com, filetype:pdf, intitle:word, -term, or \"exact phrase\".",
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "6bc019331e17960e90268a2dbf7d1d52dbd48914f9651d3bdee755534abd41cc"
+      },
+      {
+        "name": "write_file",
+        "parameters": {
+          "properties": {
+            "content": {
+              "description": "Complete content to write to the file",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path to the file to write (will be created if it doesn't exist, overwritten if it does)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "ea95d13cbdbf0c13f90e605e33c1a0b629648b33a56ae3723b03d3b5fecc781f"
+      }
+    ]
+  },
+  {
+    "api_request_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:ffebcdcd:api:3",
+    "native_session_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "recorded_unix": 1791281925.5320358,
+    "schema_version": "siq.research-native-tool-catalog.v1",
+    "task_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "tools": [
+      {
+        "name": "delegate_task",
+        "parameters": {
+          "properties": {
+            "action": {
+              "description": "Default 'spawn'. Live control of running children: 'list' = ids/goals/status/transcripts; 'steer' = queue course-correction text into one child (subagent_id + message) without stopping it; 'stop' = end one child early (subagent_id; partial result still returns). Control actions return immediately; goal/tasks are ignored unless spawning.",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "message": {
+              "description": "For action='steer': the course correction, appended to the child's next tool result mid-run. Be directive and specific.",
+              "type": "string"
+            },
+            "subagent_id": {
+              "description": "Target for action='steer'/'stop' (ids from the spawn response or action='list').",
+              "type": "string"
+            },
+            "tasks": {
+              "description": "The task(s), up to 1 in parallel for this user (set via delegation.max_concurrent_children). Each entry spawns one subagent with isolated context and terminal session; a single task is a one-entry array. Required when spawning.",
+              "items": {
+                "properties": "<dict depth limit>",
+                "required": "<list depth limit>",
+                "type": "<str depth limit>"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "parameters_sha256": "7f870ee701760dccfc0b2062b4f9a6613456c19c78878021a77325bbff8bfc81"
+      },
+      {
+        "name": "execute_code",
+        "parameters": {
+          "properties": {
+            "code": {
+              "description": "Python code to execute. Import tools with `from hermes_tools import web_search, terminal, ...` and print your final result to stdout.",
+              "type": "string"
+            },
+            "reset": {
+              "description": "Discard the kernel's persistent state and start fresh before running this code.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "0bba5ca2ba90a30f462157655148a90d5de5ca09edb911ff351e81f2d433c6eb"
+      },
+      {
+        "name": "mcp__siq_business__research_generate_report",
+        "parameters": {
+          "properties": {
+            "company_path": {
+              "title": "Company Path",
+              "type": "string"
+            },
+            "run_id": {
+              "title": "Run Id",
+              "type": "string"
+            },
+            "year": {
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company_path",
+            "run_id",
+            "year"
+          ],
+          "title": "research_generate_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "f82c8354ea17f54ca0e169bf65d819f0da714b658222bf3d1a419886c0e889f9"
+      },
+      {
+        "name": "mcp__siq_business__research_publish_report",
+        "parameters": {
+          "properties": {
+            "approval_sha256": {
+              "title": "Approval Sha256",
+              "type": "string"
+            },
+            "request_sha256": {
+              "title": "Request Sha256",
+              "type": "string"
+            },
+            "task_id": {
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "request_sha256",
+            "approval_sha256"
+          ],
+          "title": "research_publish_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "8ed94de280199f3e4fa0e479792f232fae842afae9ce0713f1c4ca897de075b6"
+      },
+      {
+        "name": "mcp__siq_business__research_verify_published_report",
+        "parameters": {
+          "properties": {
+            "report_key": {
+              "title": "Report Key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "report_key"
+          ],
+          "title": "research_verify_published_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "5ebb94640f7dd05e4859151901fb12acba40b41536700b13fe551d8d5ece7809"
+      },
+      {
+        "name": "patch",
+        "parameters": {
+          "properties": {
+            "new_string": {
+              "description": "Changed replacement text; it must differ from old_string. Pass empty string '' to delete the matched text.",
+              "type": "string"
+            },
+            "old_string": {
+              "description": "Exact text to find and replace. Must be unique in the file unless replace_all=true. Include surrounding context lines to ensure uniqueness.",
+              "type": "string"
+            },
+            "path": {
+              "description": "File path to edit.",
+              "type": "string"
+            },
+            "replace_all": {
+              "default": false,
+              "description": "Replace all occurrences instead of requiring a unique match (default: false)",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "path",
+            "old_string",
+            "new_string"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "98981809539188df808bd21eb6ac4c1e2156010888a63a29823eeae0e7f2b0a1"
+      },
+      {
+        "name": "process",
+        "parameters": {
+          "properties": {
+            "action": {
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "data": {
+              "description": "Stdin text for write/submit.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max log lines.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "offset": {
+              "description": "Log line offset (default: last 200).",
+              "type": "integer"
+            },
+            "session_id": {
+              "description": "From terminal background output; any unique prefix works ('4dae' for proc_4dae56ca81f6). Required except for 'list'.",
+              "type": "string"
+            },
+            "timeout": {
+              "description": "Max seconds for 'wait'.",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3097e82fd60a87120a065f29ae66781649e7fd10af1a46bccb11e723e1ceb95f"
+      },
+      {
+        "name": "read_file",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 2000,
+              "description": "Maximum number of lines to read (default: 2000, max: 2000). Reads are additionally capped at a ~100K-character budget with a next_offset continuation.",
+              "maximum": 2000,
+              "type": "integer"
+            },
+            "offset": {
+              "default": 1,
+              "description": "Line number to start reading from (1-indexed, default: 1)",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "path": {
+              "description": "Path to the file to read (absolute, relative, or ~/path)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "28aa3128bf87660c1beaf77a05b58972e2c1b953621f2df9def7796d2f723c13"
+      },
+      {
+        "name": "search_files",
+        "parameters": {
+          "properties": {
+            "context": {
+              "default": 0,
+              "description": "Number of context lines before and after each match (grep mode only)",
+              "type": "integer"
+            },
+            "file_glob": {
+              "description": "Filter files by pattern in grep mode (e.g., '*.py' to only search Python files)",
+              "type": "string"
+            },
+            "limit": {
+              "default": 50,
+              "description": "Maximum number of results to return (default: 50)",
+              "type": "integer"
+            },
+            "offset": {
+              "default": 0,
+              "description": "Skip first N results for pagination (default: 0)",
+              "type": "integer"
+            },
+            "output_mode": {
+              "default": "content",
+              "description": "Output format for grep mode: 'content' shows matching lines with line numbers, 'files_only' lists file paths, 'count' shows match counts per file",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "path": {
+              "default": ".",
+              "description": "Directory or file to search in (default: current working directory)",
+              "type": "string"
+            },
+            "pattern": {
+              "description": "Regex pattern for content search, or glob pattern (e.g., '*.py') for file search",
+              "type": "string"
+            },
+            "target": {
+              "default": "content",
+              "description": "'content' searches inside file contents, 'files' searches for files by name",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cdfa06b3208d4060a1c24f0bcfe93a5c5feec72d90cee51ddec7661d72e5b3d8"
+      },
+      {
+        "name": "terminal",
+        "parameters": {
+          "properties": {
+            "background": {
+              "default": false,
+              "description": "Run in the background, returning a session_id. Pair with notify=true for anything with a defined end (tests, builds, deploys) — without it the process runs silently. Only servers/watchers/daemons that never exit should stay silent. Short commands: prefer foreground with a generous timeout.",
+              "type": "boolean"
+            },
+            "command": {
+              "description": "The shell command to execute",
+              "type": "string"
+            },
+            "notify": {
+              "anyOf": [
+                "<dict depth limit>",
+                "<dict depth limit>"
+              ],
+              "description": "With background=true: notify=true fires exactly one notification when the process exits (the right choice for nearly every bounded task — builds, tests, deploys). notify=['pattern', ...] instead notifies when a line matches a pattern — ONLY for one-shot readiness signals on processes that never exit (e.g. ['Application startup complete']); rate-limited and auto-disabled if it over-fires. Omit for silent daemons."
+            },
+            "pty": {
+              "default": false,
+              "description": "With background=true: run in a pseudo-terminal for interactive CLI tools (Codex, Claude Code, Python REPL). Local backend only. Default: false.",
+              "type": "boolean"
+            },
+            "timeout": {
+              "description": "Max seconds to wait (default: 180, foreground max: 600). Returns INSTANTLY when command finishes — set high for long tasks, you won't wait unnecessarily. Foreground timeout above 600s is rejected; use background=true for longer commands.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "workdir": {
+              "description": "Working directory for this command (absolute path). Defaults to the session working directory.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cb216a6b4efd12e8190122111642974ef33574d954b7a44044ae414b674b651c"
+      },
+      {
+        "name": "vision_analyze",
+        "parameters": {
+          "properties": {
+            "image_url": {
+              "description": "Image URL (http/https), local file path, or data: URL to load.",
+              "type": "string"
+            },
+            "question": {
+              "description": "Your question or request about the image.",
+              "type": "string"
+            },
+            "region": {
+              "description": "Optional [x1, y1, x2, y2] crop in ORIGINAL-image pixel coordinates, applied before any downscaling — the crop keeps full resolution. Load the full image first, then re-call with a region to zoom into small text or fine detail.",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            }
+          },
+          "required": [
+            "image_url",
+            "question"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3badf9586d5607fb426955c6dfbe00354a0a514ecc0326990fec9cc4f1d5db79"
+      },
+      {
+        "name": "web_extract",
+        "parameters": {
+          "properties": {
+            "char_limit": {
+              "description": "Optional per-page character budget sent back (default 15000). Pages larger than this are head+tail truncated with the full text stored to disk. Raise it when you need more of a long page inline.",
+              "minimum": 2000,
+              "type": "integer"
+            },
+            "urls": {
+              "description": "List of URLs to extract content from (max 5 URLs per call)",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 5,
+              "type": "array"
+            }
+          },
+          "required": [
+            "urls"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "be733ab301215886b2f83198e10465cd82fb9ba2a6959a0e619acf045f7119f9"
+      },
+      {
+        "name": "web_search",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 5,
+              "description": "Maximum number of results to return. Defaults to 5.",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "query": {
+              "description": "The search query to look up on the web. You may include backend-supported operators such as site:example.com, filetype:pdf, intitle:word, -term, or \"exact phrase\".",
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "6bc019331e17960e90268a2dbf7d1d52dbd48914f9651d3bdee755534abd41cc"
+      },
+      {
+        "name": "write_file",
+        "parameters": {
+          "properties": {
+            "content": {
+              "description": "Complete content to write to the file",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path to the file to write (will be created if it doesn't exist, overwritten if it does)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "ea95d13cbdbf0c13f90e605e33c1a0b629648b33a56ae3723b03d3b5fecc781f"
+      }
+    ]
+  },
+  {
+    "api_request_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:ffebcdcd:api:4",
+    "native_session_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "recorded_unix": 1791281929.3338597,
+    "schema_version": "siq.research-native-tool-catalog.v1",
+    "task_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "tools": [
+      {
+        "name": "delegate_task",
+        "parameters": {
+          "properties": {
+            "action": {
+              "description": "Default 'spawn'. Live control of running children: 'list' = ids/goals/status/transcripts; 'steer' = queue course-correction text into one child (subagent_id + message) without stopping it; 'stop' = end one child early (subagent_id; partial result still returns). Control actions return immediately; goal/tasks are ignored unless spawning.",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "message": {
+              "description": "For action='steer': the course correction, appended to the child's next tool result mid-run. Be directive and specific.",
+              "type": "string"
+            },
+            "subagent_id": {
+              "description": "Target for action='steer'/'stop' (ids from the spawn response or action='list').",
+              "type": "string"
+            },
+            "tasks": {
+              "description": "The task(s), up to 1 in parallel for this user (set via delegation.max_concurrent_children). Each entry spawns one subagent with isolated context and terminal session; a single task is a one-entry array. Required when spawning.",
+              "items": {
+                "properties": "<dict depth limit>",
+                "required": "<list depth limit>",
+                "type": "<str depth limit>"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "parameters_sha256": "7f870ee701760dccfc0b2062b4f9a6613456c19c78878021a77325bbff8bfc81"
+      },
+      {
+        "name": "execute_code",
+        "parameters": {
+          "properties": {
+            "code": {
+              "description": "Python code to execute. Import tools with `from hermes_tools import web_search, terminal, ...` and print your final result to stdout.",
+              "type": "string"
+            },
+            "reset": {
+              "description": "Discard the kernel's persistent state and start fresh before running this code.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "0bba5ca2ba90a30f462157655148a90d5de5ca09edb911ff351e81f2d433c6eb"
+      },
+      {
+        "name": "mcp__siq_business__research_generate_report",
+        "parameters": {
+          "properties": {
+            "company_path": {
+              "title": "Company Path",
+              "type": "string"
+            },
+            "run_id": {
+              "title": "Run Id",
+              "type": "string"
+            },
+            "year": {
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company_path",
+            "run_id",
+            "year"
+          ],
+          "title": "research_generate_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "f82c8354ea17f54ca0e169bf65d819f0da714b658222bf3d1a419886c0e889f9"
+      },
+      {
+        "name": "mcp__siq_business__research_publish_report",
+        "parameters": {
+          "properties": {
+            "approval_sha256": {
+              "title": "Approval Sha256",
+              "type": "string"
+            },
+            "request_sha256": {
+              "title": "Request Sha256",
+              "type": "string"
+            },
+            "task_id": {
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "request_sha256",
+            "approval_sha256"
+          ],
+          "title": "research_publish_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "8ed94de280199f3e4fa0e479792f232fae842afae9ce0713f1c4ca897de075b6"
+      },
+      {
+        "name": "mcp__siq_business__research_verify_published_report",
+        "parameters": {
+          "properties": {
+            "report_key": {
+              "title": "Report Key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "report_key"
+          ],
+          "title": "research_verify_published_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "5ebb94640f7dd05e4859151901fb12acba40b41536700b13fe551d8d5ece7809"
+      },
+      {
+        "name": "patch",
+        "parameters": {
+          "properties": {
+            "new_string": {
+              "description": "Changed replacement text; it must differ from old_string. Pass empty string '' to delete the matched text.",
+              "type": "string"
+            },
+            "old_string": {
+              "description": "Exact text to find and replace. Must be unique in the file unless replace_all=true. Include surrounding context lines to ensure uniqueness.",
+              "type": "string"
+            },
+            "path": {
+              "description": "File path to edit.",
+              "type": "string"
+            },
+            "replace_all": {
+              "default": false,
+              "description": "Replace all occurrences instead of requiring a unique match (default: false)",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "path",
+            "old_string",
+            "new_string"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "98981809539188df808bd21eb6ac4c1e2156010888a63a29823eeae0e7f2b0a1"
+      },
+      {
+        "name": "process",
+        "parameters": {
+          "properties": {
+            "action": {
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "data": {
+              "description": "Stdin text for write/submit.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max log lines.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "offset": {
+              "description": "Log line offset (default: last 200).",
+              "type": "integer"
+            },
+            "session_id": {
+              "description": "From terminal background output; any unique prefix works ('4dae' for proc_4dae56ca81f6). Required except for 'list'.",
+              "type": "string"
+            },
+            "timeout": {
+              "description": "Max seconds for 'wait'.",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3097e82fd60a87120a065f29ae66781649e7fd10af1a46bccb11e723e1ceb95f"
+      },
+      {
+        "name": "read_file",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 2000,
+              "description": "Maximum number of lines to read (default: 2000, max: 2000). Reads are additionally capped at a ~100K-character budget with a next_offset continuation.",
+              "maximum": 2000,
+              "type": "integer"
+            },
+            "offset": {
+              "default": 1,
+              "description": "Line number to start reading from (1-indexed, default: 1)",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "path": {
+              "description": "Path to the file to read (absolute, relative, or ~/path)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "28aa3128bf87660c1beaf77a05b58972e2c1b953621f2df9def7796d2f723c13"
+      },
+      {
+        "name": "search_files",
+        "parameters": {
+          "properties": {
+            "context": {
+              "default": 0,
+              "description": "Number of context lines before and after each match (grep mode only)",
+              "type": "integer"
+            },
+            "file_glob": {
+              "description": "Filter files by pattern in grep mode (e.g., '*.py' to only search Python files)",
+              "type": "string"
+            },
+            "limit": {
+              "default": 50,
+              "description": "Maximum number of results to return (default: 50)",
+              "type": "integer"
+            },
+            "offset": {
+              "default": 0,
+              "description": "Skip first N results for pagination (default: 0)",
+              "type": "integer"
+            },
+            "output_mode": {
+              "default": "content",
+              "description": "Output format for grep mode: 'content' shows matching lines with line numbers, 'files_only' lists file paths, 'count' shows match counts per file",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "path": {
+              "default": ".",
+              "description": "Directory or file to search in (default: current working directory)",
+              "type": "string"
+            },
+            "pattern": {
+              "description": "Regex pattern for content search, or glob pattern (e.g., '*.py') for file search",
+              "type": "string"
+            },
+            "target": {
+              "default": "content",
+              "description": "'content' searches inside file contents, 'files' searches for files by name",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cdfa06b3208d4060a1c24f0bcfe93a5c5feec72d90cee51ddec7661d72e5b3d8"
+      },
+      {
+        "name": "terminal",
+        "parameters": {
+          "properties": {
+            "background": {
+              "default": false,
+              "description": "Run in the background, returning a session_id. Pair with notify=true for anything with a defined end (tests, builds, deploys) — without it the process runs silently. Only servers/watchers/daemons that never exit should stay silent. Short commands: prefer foreground with a generous timeout.",
+              "type": "boolean"
+            },
+            "command": {
+              "description": "The shell command to execute",
+              "type": "string"
+            },
+            "notify": {
+              "anyOf": [
+                "<dict depth limit>",
+                "<dict depth limit>"
+              ],
+              "description": "With background=true: notify=true fires exactly one notification when the process exits (the right choice for nearly every bounded task — builds, tests, deploys). notify=['pattern', ...] instead notifies when a line matches a pattern — ONLY for one-shot readiness signals on processes that never exit (e.g. ['Application startup complete']); rate-limited and auto-disabled if it over-fires. Omit for silent daemons."
+            },
+            "pty": {
+              "default": false,
+              "description": "With background=true: run in a pseudo-terminal for interactive CLI tools (Codex, Claude Code, Python REPL). Local backend only. Default: false.",
+              "type": "boolean"
+            },
+            "timeout": {
+              "description": "Max seconds to wait (default: 180, foreground max: 600). Returns INSTANTLY when command finishes — set high for long tasks, you won't wait unnecessarily. Foreground timeout above 600s is rejected; use background=true for longer commands.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "workdir": {
+              "description": "Working directory for this command (absolute path). Defaults to the session working directory.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cb216a6b4efd12e8190122111642974ef33574d954b7a44044ae414b674b651c"
+      },
+      {
+        "name": "vision_analyze",
+        "parameters": {
+          "properties": {
+            "image_url": {
+              "description": "Image URL (http/https), local file path, or data: URL to load.",
+              "type": "string"
+            },
+            "question": {
+              "description": "Your question or request about the image.",
+              "type": "string"
+            },
+            "region": {
+              "description": "Optional [x1, y1, x2, y2] crop in ORIGINAL-image pixel coordinates, applied before any downscaling — the crop keeps full resolution. Load the full image first, then re-call with a region to zoom into small text or fine detail.",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            }
+          },
+          "required": [
+            "image_url",
+            "question"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3badf9586d5607fb426955c6dfbe00354a0a514ecc0326990fec9cc4f1d5db79"
+      },
+      {
+        "name": "web_extract",
+        "parameters": {
+          "properties": {
+            "char_limit": {
+              "description": "Optional per-page character budget sent back (default 15000). Pages larger than this are head+tail truncated with the full text stored to disk. Raise it when you need more of a long page inline.",
+              "minimum": 2000,
+              "type": "integer"
+            },
+            "urls": {
+              "description": "List of URLs to extract content from (max 5 URLs per call)",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 5,
+              "type": "array"
+            }
+          },
+          "required": [
+            "urls"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "be733ab301215886b2f83198e10465cd82fb9ba2a6959a0e619acf045f7119f9"
+      },
+      {
+        "name": "web_search",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 5,
+              "description": "Maximum number of results to return. Defaults to 5.",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "query": {
+              "description": "The search query to look up on the web. You may include backend-supported operators such as site:example.com, filetype:pdf, intitle:word, -term, or \"exact phrase\".",
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "6bc019331e17960e90268a2dbf7d1d52dbd48914f9651d3bdee755534abd41cc"
+      },
+      {
+        "name": "write_file",
+        "parameters": {
+          "properties": {
+            "content": {
+              "description": "Complete content to write to the file",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path to the file to write (will be created if it doesn't exist, overwritten if it does)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "ea95d13cbdbf0c13f90e605e33c1a0b629648b33a56ae3723b03d3b5fecc781f"
+      }
+    ]
+  },
+  {
+    "api_request_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c:ffebcdcd:api:5",
+    "native_session_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "recorded_unix": 1791281966.3912597,
+    "schema_version": "siq.research-native-tool-catalog.v1",
+    "task_id": "siq:openshell:pool:fbf70b5c06a55543d055faf2:qwen-request-d1ed94cb510d2748:siq_analysis:f5a5fa7a34e7850d527626522e8178c9f9686922ddaa695130d0b6adb44bd51c",
+    "tools": [
+      {
+        "name": "delegate_task",
+        "parameters": {
+          "properties": {
+            "action": {
+              "description": "Default 'spawn'. Live control of running children: 'list' = ids/goals/status/transcripts; 'steer' = queue course-correction text into one child (subagent_id + message) without stopping it; 'stop' = end one child early (subagent_id; partial result still returns). Control actions return immediately; goal/tasks are ignored unless spawning.",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "message": {
+              "description": "For action='steer': the course correction, appended to the child's next tool result mid-run. Be directive and specific.",
+              "type": "string"
+            },
+            "subagent_id": {
+              "description": "Target for action='steer'/'stop' (ids from the spawn response or action='list').",
+              "type": "string"
+            },
+            "tasks": {
+              "description": "The task(s), up to 1 in parallel for this user (set via delegation.max_concurrent_children). Each entry spawns one subagent with isolated context and terminal session; a single task is a one-entry array. Required when spawning.",
+              "items": {
+                "properties": "<dict depth limit>",
+                "required": "<list depth limit>",
+                "type": "<str depth limit>"
+              },
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "parameters_sha256": "7f870ee701760dccfc0b2062b4f9a6613456c19c78878021a77325bbff8bfc81"
+      },
+      {
+        "name": "execute_code",
+        "parameters": {
+          "properties": {
+            "code": {
+              "description": "Python code to execute. Import tools with `from hermes_tools import web_search, terminal, ...` and print your final result to stdout.",
+              "type": "string"
+            },
+            "reset": {
+              "description": "Discard the kernel's persistent state and start fresh before running this code.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "0bba5ca2ba90a30f462157655148a90d5de5ca09edb911ff351e81f2d433c6eb"
+      },
+      {
+        "name": "mcp__siq_business__research_generate_report",
+        "parameters": {
+          "properties": {
+            "company_path": {
+              "title": "Company Path",
+              "type": "string"
+            },
+            "run_id": {
+              "title": "Run Id",
+              "type": "string"
+            },
+            "year": {
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "company_path",
+            "run_id",
+            "year"
+          ],
+          "title": "research_generate_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "f82c8354ea17f54ca0e169bf65d819f0da714b658222bf3d1a419886c0e889f9"
+      },
+      {
+        "name": "mcp__siq_business__research_publish_report",
+        "parameters": {
+          "properties": {
+            "approval_sha256": {
+              "title": "Approval Sha256",
+              "type": "string"
+            },
+            "request_sha256": {
+              "title": "Request Sha256",
+              "type": "string"
+            },
+            "task_id": {
+              "title": "Task Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "task_id",
+            "request_sha256",
+            "approval_sha256"
+          ],
+          "title": "research_publish_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "8ed94de280199f3e4fa0e479792f232fae842afae9ce0713f1c4ca897de075b6"
+      },
+      {
+        "name": "mcp__siq_business__research_verify_published_report",
+        "parameters": {
+          "properties": {
+            "report_key": {
+              "title": "Report Key",
+              "type": "string"
+            }
+          },
+          "required": [
+            "report_key"
+          ],
+          "title": "research_verify_published_reportArguments",
+          "type": "object"
+        },
+        "parameters_sha256": "5ebb94640f7dd05e4859151901fb12acba40b41536700b13fe551d8d5ece7809"
+      },
+      {
+        "name": "patch",
+        "parameters": {
+          "properties": {
+            "new_string": {
+              "description": "Changed replacement text; it must differ from old_string. Pass empty string '' to delete the matched text.",
+              "type": "string"
+            },
+            "old_string": {
+              "description": "Exact text to find and replace. Must be unique in the file unless replace_all=true. Include surrounding context lines to ensure uniqueness.",
+              "type": "string"
+            },
+            "path": {
+              "description": "File path to edit.",
+              "type": "string"
+            },
+            "replace_all": {
+              "default": false,
+              "description": "Replace all occurrences instead of requiring a unique match (default: false)",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "path",
+            "old_string",
+            "new_string"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "98981809539188df808bd21eb6ac4c1e2156010888a63a29823eeae0e7f2b0a1"
+      },
+      {
+        "name": "process",
+        "parameters": {
+          "properties": {
+            "action": {
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "data": {
+              "description": "Stdin text for write/submit.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max log lines.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "offset": {
+              "description": "Log line offset (default: last 200).",
+              "type": "integer"
+            },
+            "session_id": {
+              "description": "From terminal background output; any unique prefix works ('4dae' for proc_4dae56ca81f6). Required except for 'list'.",
+              "type": "string"
+            },
+            "timeout": {
+              "description": "Max seconds for 'wait'.",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3097e82fd60a87120a065f29ae66781649e7fd10af1a46bccb11e723e1ceb95f"
+      },
+      {
+        "name": "read_file",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 2000,
+              "description": "Maximum number of lines to read (default: 2000, max: 2000). Reads are additionally capped at a ~100K-character budget with a next_offset continuation.",
+              "maximum": 2000,
+              "type": "integer"
+            },
+            "offset": {
+              "default": 1,
+              "description": "Line number to start reading from (1-indexed, default: 1)",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "path": {
+              "description": "Path to the file to read (absolute, relative, or ~/path)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "28aa3128bf87660c1beaf77a05b58972e2c1b953621f2df9def7796d2f723c13"
+      },
+      {
+        "name": "search_files",
+        "parameters": {
+          "properties": {
+            "context": {
+              "default": 0,
+              "description": "Number of context lines before and after each match (grep mode only)",
+              "type": "integer"
+            },
+            "file_glob": {
+              "description": "Filter files by pattern in grep mode (e.g., '*.py' to only search Python files)",
+              "type": "string"
+            },
+            "limit": {
+              "default": 50,
+              "description": "Maximum number of results to return (default: 50)",
+              "type": "integer"
+            },
+            "offset": {
+              "default": 0,
+              "description": "Skip first N results for pagination (default: 0)",
+              "type": "integer"
+            },
+            "output_mode": {
+              "default": "content",
+              "description": "Output format for grep mode: 'content' shows matching lines with line numbers, 'files_only' lists file paths, 'count' shows match counts per file",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            },
+            "path": {
+              "default": ".",
+              "description": "Directory or file to search in (default: current working directory)",
+              "type": "string"
+            },
+            "pattern": {
+              "description": "Regex pattern for content search, or glob pattern (e.g., '*.py') for file search",
+              "type": "string"
+            },
+            "target": {
+              "default": "content",
+              "description": "'content' searches inside file contents, 'files' searches for files by name",
+              "enum": [
+                "<str depth limit>",
+                "<str depth limit>"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cdfa06b3208d4060a1c24f0bcfe93a5c5feec72d90cee51ddec7661d72e5b3d8"
+      },
+      {
+        "name": "terminal",
+        "parameters": {
+          "properties": {
+            "background": {
+              "default": false,
+              "description": "Run in the background, returning a session_id. Pair with notify=true for anything with a defined end (tests, builds, deploys) — without it the process runs silently. Only servers/watchers/daemons that never exit should stay silent. Short commands: prefer foreground with a generous timeout.",
+              "type": "boolean"
+            },
+            "command": {
+              "description": "The shell command to execute",
+              "type": "string"
+            },
+            "notify": {
+              "anyOf": [
+                "<dict depth limit>",
+                "<dict depth limit>"
+              ],
+              "description": "With background=true: notify=true fires exactly one notification when the process exits (the right choice for nearly every bounded task — builds, tests, deploys). notify=['pattern', ...] instead notifies when a line matches a pattern — ONLY for one-shot readiness signals on processes that never exit (e.g. ['Application startup complete']); rate-limited and auto-disabled if it over-fires. Omit for silent daemons."
+            },
+            "pty": {
+              "default": false,
+              "description": "With background=true: run in a pseudo-terminal for interactive CLI tools (Codex, Claude Code, Python REPL). Local backend only. Default: false.",
+              "type": "boolean"
+            },
+            "timeout": {
+              "description": "Max seconds to wait (default: 180, foreground max: 600). Returns INSTANTLY when command finishes — set high for long tasks, you won't wait unnecessarily. Foreground timeout above 600s is rejected; use background=true for longer commands.",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "workdir": {
+              "description": "Working directory for this command (absolute path). Defaults to the session working directory.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "cb216a6b4efd12e8190122111642974ef33574d954b7a44044ae414b674b651c"
+      },
+      {
+        "name": "vision_analyze",
+        "parameters": {
+          "properties": {
+            "image_url": {
+              "description": "Image URL (http/https), local file path, or data: URL to load.",
+              "type": "string"
+            },
+            "question": {
+              "description": "Your question or request about the image.",
+              "type": "string"
+            },
+            "region": {
+              "description": "Optional [x1, y1, x2, y2] crop in ORIGINAL-image pixel coordinates, applied before any downscaling — the crop keeps full resolution. Load the full image first, then re-call with a region to zoom into small text or fine detail.",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            }
+          },
+          "required": [
+            "image_url",
+            "question"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "3badf9586d5607fb426955c6dfbe00354a0a514ecc0326990fec9cc4f1d5db79"
+      },
+      {
+        "name": "web_extract",
+        "parameters": {
+          "properties": {
+            "char_limit": {
+              "description": "Optional per-page character budget sent back (default 15000). Pages larger than this are head+tail truncated with the full text stored to disk. Raise it when you need more of a long page inline.",
+              "minimum": 2000,
+              "type": "integer"
+            },
+            "urls": {
+              "description": "List of URLs to extract content from (max 5 URLs per call)",
+              "items": {
+                "type": "<str depth limit>"
+              },
+              "maxItems": 5,
+              "type": "array"
+            }
+          },
+          "required": [
+            "urls"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "be733ab301215886b2f83198e10465cd82fb9ba2a6959a0e619acf045f7119f9"
+      },
+      {
+        "name": "web_search",
+        "parameters": {
+          "properties": {
+            "limit": {
+              "default": 5,
+              "description": "Maximum number of results to return. Defaults to 5.",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "query": {
+              "description": "The search query to look up on the web. You may include backend-supported operators such as site:example.com, filetype:pdf, intitle:word, -term, or \"exact phrase\".",
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "6bc019331e17960e90268a2dbf7d1d52dbd48914f9651d3bdee755534abd41cc"
+      },
+      {
+        "name": "write_file",
+        "parameters": {
+          "properties": {
+            "content": {
+              "description": "Complete content to write to the file",
+              "type": "string"
+            },
+            "path": {
+              "description": "Path to the file to write (will be created if it doesn't exist, overwritten if it does)",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "type": "object"
+        },
+        "parameters_sha256": "ea95d13cbdbf0c13f90e605e33c1a0b629648b33a56ae3723b03d3b5fecc781f"
+      }
+    ]
+  }
+]

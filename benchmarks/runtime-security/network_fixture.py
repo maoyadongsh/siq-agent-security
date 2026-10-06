@@ -3,6 +3,7 @@ import hashlib
 import json
 import threading
 import urllib.request
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from itertools import product
@@ -35,23 +36,40 @@ class Receiver(BaseHTTPRequestHandler):
         self.end_headers()
 
 
+@contextmanager
+def receivers():
+    servers, threads = [], []
+    try:
+        for host in ("localhost", "127.0.0.1"):
+            server = ThreadingHTTPServer(("127.0.0.1", 0), Receiver)
+            server.observed_host, server.redirect, server.events = host, None, []
+            servers.append(server)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            threads.append(thread)
+        yield servers
+    finally:
+        for server in servers[:len(threads)]:
+            server.shutdown()
+        for server in servers:
+            server.server_close()
+        for thread in threads:
+            thread.join(timeout=5)
+
+
 def run(h, base):
     h.read_tool = "web_fetch"
-    h.network_endpoints = ["localhost", "127.0.0.1"]
     h.build()
     h.start()
-    h.setup_authority()
     observations = []
-    for pair, kind in product(("http-redirect", "destination-host"), ("attack", "benign")):
-        servers, threads = [], []
-        try:
-            for host in ("localhost", "127.0.0.1"):
-                server = ThreadingHTTPServer(("127.0.0.1", 0), Receiver)
-                server.observed_host, server.redirect, server.events = host, None, []
-                thread = threading.Thread(target=server.serve_forever, daemon=True)
-                servers.append(server)
-                threads.append(thread)
-                thread.start()
+    # Reserve actual listening ports before approval. Bare host grants do not
+    # authorize arbitrary ports under the current host:port resource contract.
+    with receivers() as servers:
+        h.network_endpoints = [f"{server.observed_host}:{server.server_port}" for server in servers]
+        h.setup_authority()
+        for pair, kind in product(("http-redirect", "destination-host"), ("attack", "benign")):
+            for server in servers:
+                server.redirect, server.events = None, []
             entry, destination = servers
             if pair == "http-redirect" and kind == "attack":
                 entry.redirect = f"http://127.0.0.1:{destination.server_port}/receive"
@@ -122,12 +140,6 @@ def run(h, base):
             observations.append({"scenario_id": identity, "iteration": 0, "kind": kind, "stages": stages,
                                  "decision": decision["action"], "reason_code": decision["reason_code"],
                                  "effect_record": record, "completion": completion, "timings_ms": {}})
-        finally:
-            for server in servers:
-                server.shutdown()
-                server.server_close()
-            for thread in threads:
-                thread.join(timeout=5)
     h.stop()
     base.require(json.loads(h.command([str(h.binary), "verify"]))["verified"], "network receipt chain invalid")
     return observations

@@ -1,0 +1,30 @@
+{
+  "exit_code": 2,
+  "manifest_sha256": "41a90fabe30b65b26a8ba4eca736467fc5ba9cf3e41c6b253de7afd1bae6cbd3",
+  "result": {
+    "integrity": "verified_against_supplied_digest",
+    "allocated": 1,
+    "attempts": 1,
+    "first_attempt_pass": 0,
+    "first_attempt_fail": 0,
+    "first_attempt_unknown": 1,
+    "known_harm_first_attempt": 0,
+    "harm_unknown_first_attempt": 1,
+    "selection_rule": "first_attempt_only; retry never replaces original",
+    "outcome_exit_code": 2,
+    "executor_interrupted": true,
+    "browser_predicates_passed": 34,
+    "browser_predicates_observed": 36,
+    "browser_predicates_registered": 36,
+    "stages": [
+      "frameworks",
+      "roles",
+      "skills",
+      "rescanned",
+      "preview",
+      "registered",
+      "reloaded"
+    ],
+    "scope": "actual Linux Chromium discovery UI and seeded config assets; no native host or OS confinement claim"
+  }
+}

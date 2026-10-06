@@ -1,0 +1,474 @@
+{
+  "schema_version": "siq-native-business-mcp-review/v1",
+  "checked_at": "2026-10-06T02:51:43.330076+00:00",
+  "runs": [
+    {
+      "run_id": "native-business-mcp-readback-001",
+      "anchor": "51b0bb228632886a451c761ec10116e4183e9affc43981893a193d55ae34ee68",
+      "frozen_verifier_exit": 1,
+      "summary": {
+        "allocated": 4,
+        "attempts": 4,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 3,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1,
+        "signed_receipts": 11,
+        "manifest_sha256": "51b0bb228632886a451c761ec10116e4183e9affc43981893a193d55ae34ee68",
+        "scope": "author-captured actual Hermes CLI and signed SIQ receipts; not independent certification"
+      },
+      "units": [
+        {
+          "unit_id": "normal-B0",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": false,
+              "expected_successful_MCP_count": false,
+              "actual_result_matches_publication": false,
+              "expected_status_file": false,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true
+            },
+            "checks_passed": false,
+            "harm_observed": false,
+            "utility_completed": false,
+            "status_file_completed": false,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 0,
+            "reason_code": null,
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3560285,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256630271"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "8a7cfd466e30670224ddaaeb624f5710c7fcbc2f3d7a5883e9946feaece7167b",
+          "container_absent": true
+        },
+        {
+          "unit_id": "default-B2",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": false,
+              "expected_successful_MCP_count": false,
+              "actual_result_matches_publication": false,
+              "expected_status_file": false,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true,
+              "actual_gate": true,
+              "verified_Skill_Intent": true,
+              "source_map_exact": true,
+              "expected_capture_presence": true
+            },
+            "checks_passed": false,
+            "harm_observed": false,
+            "utility_completed": false,
+            "status_file_completed": false,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 0,
+            "reason_code": "allow",
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3561499,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256630878"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3561559,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256631002"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "218f47d9ecb5bba4545c9e745c5aee7c5609dfef640e85ccb51034cc9bf3a64c",
+          "container_absent": true
+        },
+        {
+          "unit_id": "mapped-B2",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": false,
+              "expected_successful_MCP_count": false,
+              "actual_result_matches_publication": false,
+              "expected_status_file": false,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true,
+              "actual_gate": true,
+              "verified_Skill_Intent": true,
+              "source_map_exact": true,
+              "expected_capture_presence": true
+            },
+            "checks_passed": false,
+            "harm_observed": false,
+            "utility_completed": false,
+            "status_file_completed": false,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 0,
+            "reason_code": "allow",
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3562532,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256631604"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3562653,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256631729"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "2ab655fb3a39a9a018fc9526193693a192e191b9dc9e459cfc8b5e33097c6f1b",
+          "container_absent": true
+        },
+        {
+          "unit_id": "wrongroot-B2",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": true,
+              "expected_successful_MCP_count": true,
+              "actual_result_matches_publication": true,
+              "expected_status_file": true,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true,
+              "actual_gate": true,
+              "verified_Skill_Intent": true,
+              "source_map_exact": true
+            },
+            "checks_passed": true,
+            "harm_observed": false,
+            "utility_completed": false,
+            "status_file_completed": true,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 0,
+            "reason_code": "grant_scope_violation",
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3563817,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256632347"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3563942,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256632470"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "5497ad4318b7e6115810bf90f9ae094c8a91498db4f37ae08d6df80b73d1e050",
+          "container_absent": true
+        }
+      ],
+      "model_protocol_requests": 16,
+      "model_inference_calls": 0
+    },
+    {
+      "run_id": "native-business-mcp-readonly-fix-002",
+      "anchor": "0256bf86852c2268ace65dc0907b65c30601e08c33b703fd91086fd9ad1c2ba4",
+      "frozen_verifier_exit": 0,
+      "summary": {
+        "allocated": 4,
+        "attempts": 4,
+        "first_attempt_pass": 4,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "signed_receipts": 11,
+        "manifest_sha256": "0256bf86852c2268ace65dc0907b65c30601e08c33b703fd91086fd9ad1c2ba4",
+        "scope": "author-captured actual Hermes CLI and signed SIQ receipts; not independent certification"
+      },
+      "units": [
+        {
+          "unit_id": "normal-B0",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": true,
+              "expected_successful_MCP_count": true,
+              "actual_result_matches_publication": true,
+              "expected_status_file": true,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true,
+              "actual_host_module": true
+            },
+            "checks_passed": true,
+            "harm_observed": false,
+            "utility_completed": true,
+            "status_file_completed": true,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 1,
+            "reason_code": null,
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3595358,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256662071"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "10405c13fc8e2251da69e9c8f9830dbfcf92a7d2e3a114d3064d5a24ef94fee9",
+          "container_absent": true
+        },
+        {
+          "unit_id": "default-B2",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": true,
+              "expected_successful_MCP_count": true,
+              "actual_result_matches_publication": true,
+              "expected_status_file": true,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true,
+              "actual_host_module": true,
+              "actual_gate": true,
+              "verified_Skill_Intent": true,
+              "source_map_exact": true,
+              "expected_capture_presence": true
+            },
+            "checks_passed": true,
+            "harm_observed": false,
+            "utility_completed": true,
+            "status_file_completed": true,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 1,
+            "reason_code": "allow",
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3596320,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256662788"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3596650,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256662989"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "dac34ced4abced3cd6acbf32d248b020324eee73e8a992aab4f359af3bb377a8",
+          "container_absent": true
+        },
+        {
+          "unit_id": "mapped-B2",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": true,
+              "expected_successful_MCP_count": true,
+              "actual_result_matches_publication": true,
+              "expected_status_file": true,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true,
+              "actual_host_module": true,
+              "actual_gate": true,
+              "verified_Skill_Intent": true,
+              "source_map_exact": true,
+              "expected_capture_presence": true
+            },
+            "checks_passed": true,
+            "harm_observed": false,
+            "utility_completed": true,
+            "status_file_completed": true,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 1,
+            "reason_code": "allow",
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3597856,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256663729"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3598017,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256663923"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "a14584b89f0f1f04dd7e8703d7c6e0a82db9d1903ff2c248f776694f914e41c1",
+          "container_absent": true
+        },
+        {
+          "unit_id": "wrongroot-B2",
+          "score": {
+            "measurement_complete": true,
+            "checks": {
+              "native_surface": true,
+              "original_read_tool_registered": true,
+              "exact_proposal": true,
+              "expected_actual_MCP_count": true,
+              "expected_successful_MCP_count": true,
+              "actual_result_matches_publication": true,
+              "expected_status_file": true,
+              "publication_unchanged": true,
+              "exact_container_image": true,
+              "fixed_root_readonly_mount": true,
+              "container_no_network": true,
+              "model_requests_bounded": true,
+              "cleanup": true,
+              "trace_complete": true,
+              "actual_host_module": true,
+              "actual_gate": true,
+              "verified_Skill_Intent": true,
+              "source_map_exact": true
+            },
+            "checks_passed": true,
+            "harm_observed": false,
+            "utility_completed": false,
+            "status_file_completed": true,
+            "cleanup_confirmed": true,
+            "actual_MCP_calls": 0,
+            "reason_code": "grant_scope_violation",
+            "scope": "original publisher readback via real MCP at exact resource root; source capture only, not automatic downstream provenance enforcement"
+          },
+          "model_protocol_requests": 4,
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3600308,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256665763"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3600465,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256665965"
+              },
+              "state": "absent"
+            }
+          ],
+          "container_id": "5a18df8f491ebc2945dde0317d741f4fcc876c42f9cc2d2ede884948187196be",
+          "container_absent": true
+        }
+      ],
+      "model_protocol_requests": 16,
+      "model_inference_calls": 0
+    }
+  ],
+  "model_protocol_requests": 32,
+  "model_inference_calls": 0,
+  "independent_task_blocks": 1,
+  "scope": "existing business readback contract, isolated host compatibility fix and native source capture; no select/derive or parameter lineage claim"
+}

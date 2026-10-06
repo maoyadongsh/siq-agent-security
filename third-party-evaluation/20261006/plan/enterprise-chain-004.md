@@ -1,0 +1,5 @@
+# 企业链004资产证据读取格式修订
+
+沿用001业务预期、002容器UID和003安全临时状态目录条件。003原生CLI注册和tasks均成功，真实Connector发现1个候选、1份证据，签名扫描任务delivered；但测评器错误地从候选列表响应读取evidence_ids，触发KeyError，后续部署未运行。候选列表合同本来不返回该字段，不能判为产品扫描失败。
+
+004按既有合同从独立PostgreSQL查询目标asset的evidence_ids，与该asset实际evidence API、collector_id、CONFIG原始内容摘要和已接受签名逐项关联。没有修改产品响应或减少证据要求。97管理请求及6+4专项断言保持，新增SQL只读关联字段。003原始中断、78个管理HTTP及全部材料保留，不回写成绩。

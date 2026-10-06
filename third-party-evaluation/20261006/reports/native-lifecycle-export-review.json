@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-05T21:17:15.970057+00:00",
+  "checked_files": 55,
+  "credential_or_private_key_hits": [],
+  "owned_resources": [
+    {
+      "run": "native-lifecycle-001",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "native-lifecycle-002",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "native-lifecycle-003",
+      "kind": "daemon",
+      "state": "absent"
+    }
+  ],
+  "native_cli_exit_codes": {
+    "native-lifecycle-001": [
+      0
+    ],
+    "native-lifecycle-002": [
+      0,
+      0
+    ],
+    "native-lifecycle-003": [
+      0,
+      0,
+      0
+    ]
+  },
+  "source_notes": "model requests contain synthetic local prompts; do not publish without full rights review"
+}

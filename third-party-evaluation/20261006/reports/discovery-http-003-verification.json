@@ -1,0 +1,70 @@
+{
+  "exit_code": 0,
+  "manifest_sha256": "f497fc573f43999da50a53313eef507e44825ffaacffcb2ac9062b0b349b1f91",
+  "result": {
+    "integrity": "verified_against_supplied_digest",
+    "predicates_passed": 52,
+    "predicates": 52,
+    "phase_metrics": {
+      "scope": {
+        "initial": {
+          "expected": 14,
+          "observed": 14,
+          "matched": 14,
+          "missing": [],
+          "unexpected": [],
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "registered": {
+          "expected": 18,
+          "observed": 18,
+          "matched": 18,
+          "missing": [],
+          "unexpected": [],
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "repeated": {
+          "expected": 18,
+          "observed": 18,
+          "matched": 18,
+          "missing": [],
+          "unexpected": [],
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "restarted": {
+          "expected": 18,
+          "observed": 18,
+          "matched": 18,
+          "missing": [],
+          "unexpected": [],
+          "recall": 1.0,
+          "precision": 1.0
+        }
+      },
+      "invalid": {
+        "initial": {
+          "expected": 3,
+          "observed": 3,
+          "matched": 3,
+          "missing": [],
+          "unexpected": [],
+          "recall": 1.0,
+          "precision": 1.0
+        }
+      }
+    },
+    "allocated": 2,
+    "attempts": 2,
+    "first_attempt_pass": 2,
+    "first_attempt_fail": 0,
+    "first_attempt_unknown": 0,
+    "known_harm_first_attempt": 0,
+    "harm_unknown_first_attempt": 0,
+    "selection_rule": "first_attempt_only; retry never replaces original",
+    "outcome_exit_code": 0,
+    "scope": "seeded Linux configuration assets and successful file-open probes; not native host execution, browser display or general OS confinement"
+  }
+}

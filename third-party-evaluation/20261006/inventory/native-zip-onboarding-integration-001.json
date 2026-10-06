@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-06T04:46:07.501286+00:00",
+  "run_id": "native-zip-onboarding-001",
+  "anchor": "7a7be8bd5b91fbef18eb9e47343a728e221a2a42c153baf50b1d8921801f497f",
+  "artifact_sha256": {
+    "reports/native-zip-onboarding-report.md": "d9f526800976c01c0a4f0c62242602851b47a9e33a9c52f3c6a7ce2e4cdd4dbc",
+    "reports/native-zip-onboarding-001-verification.json": "72c2f1eb41b1f67e6e1315dd2adeaace605de57828db59ee4c8733c2c617b206",
+    "reports/native-zip-onboarding-001-review.json": "87e1771ae7ddd50aea75351ab909bd24103ec8ef071318761b4de496b6bab50a",
+    "reports/native-zip-onboarding-engineering-validation.json": "75335b61616bf9c63fcc83931d78338ed91445b5a83ac573192b27dcffa363cc",
+    "reports/native-zip-onboarding-document-review.json": "e2fc446d058a8657cb4207db67e30104c7c1edf2bb0ca99f1b685efbaf7e939a",
+    "inventory/anchors/native-zip-onboarding-001.json": "fb7c4e68b0f53c90da44711b03ec317c1a3a151bd95820ef396a58fa8bc152b4"
+  },
+  "checks": 34,
+  "signed_receipts": 5,
+  "signed_cross_stage_documents": 12,
+  "signed_intent_documents": 2,
+  "management_HTTP": 32,
+  "fixed_protocol_requests": 5,
+  "native_host_runs": 1,
+  "real_model_calls": 0,
+  "negative_probe_types": 12,
+  "framework_tests": 609,
+  "framework_subtests": 118,
+  "independent_task_blocks_added": 0,
+  "full_journey_closed": false,
+  "next": "public HTTPS actual success and expected digest controls, remaining source boundaries then enterprise same-candidate chain"
+}

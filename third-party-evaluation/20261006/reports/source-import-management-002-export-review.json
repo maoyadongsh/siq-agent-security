@@ -1,0 +1,25 @@
+{
+  "verified": {
+    "verified": true,
+    "all_passed": true,
+    "passed": 123,
+    "total": 123,
+    "unique_signed_documents": 6,
+    "http_requests": 23,
+    "scope": "author-run import management and two owned escape targets; no native execution, public download, or natural model attack claim"
+  },
+  "exported_files": [
+    "protocol.json",
+    "journal.jsonl",
+    "http.jsonl",
+    "result.json",
+    "score.json",
+    "summary.json",
+    "manifest.json"
+  ],
+  "manifest_sha256": "f159ed575b0e7ed8e68e01feaeaf700f86e8765844f235d548f46ba367526c56",
+  "known_private_values_checked": 4,
+  "private_value_matches": 0,
+  "recorded_daemon_state": "absent",
+  "scope": "exact allowlist export, author-run evidence, private state and daemon logs excluded"
+}

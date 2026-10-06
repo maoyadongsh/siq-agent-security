@@ -1,0 +1,510 @@
+{
+  "checked_at": "2026-10-06T04:24:25.145689+00:00",
+  "previous_goal_turn": "progress: native managed auth mode matrix completed and verified",
+  "candidate": "5470ab3780f2-nativefixturefix1",
+  "candidate_digest": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "matrix": [
+    {
+      "variant": "workspace-control",
+      "run_id": "native-snapshot-workspace-control-002",
+      "manifest_sha256": "eb107a4d84065208cb8adf0bf235ae8242d71cbe4567592341050e62bea27062",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "passed",
+      "old_after_restore": "passed",
+      "old_after_fresh": "passed",
+      "new_selfcheck": "passed",
+      "authority_after_change": "pass",
+      "authority_after_restore": "pass",
+      "identity_after_change": "issued",
+      "identity_after_restore": "issued",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 12,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 85,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    },
+    {
+      "variant": "skill-content",
+      "run_id": "native-snapshot-skill-content-002",
+      "manifest_sha256": "4f1000ecea0c889531f757e15508b74fb04697a9d3976cbcf6d11683c63ad3e2",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "passed",
+      "old_after_restore": "passed",
+      "old_after_fresh": "passed",
+      "new_selfcheck": "passed",
+      "authority_after_change": "fail",
+      "authority_after_restore": "pass",
+      "identity_after_change": "grant_unavailable",
+      "identity_after_restore": "issued",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 12,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 80,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    },
+    {
+      "variant": "plugin-entry",
+      "run_id": "native-snapshot-plugin-entry-002",
+      "manifest_sha256": "7011a299384f1865589bc3667f6c85a5895128e7df30986e8e8f5f2073480ab4",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "invalidated",
+      "old_after_restore": "invalidated",
+      "old_after_fresh": "invalidated",
+      "new_selfcheck": "passed",
+      "authority_after_change": "pass",
+      "authority_after_restore": "pass",
+      "identity_after_change": "issued",
+      "identity_after_restore": "issued",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 13,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 80,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    },
+    {
+      "variant": "plugin-manifest",
+      "run_id": "native-snapshot-plugin-manifest-002",
+      "manifest_sha256": "1d151e4ba01856a13f91d26769126b33e67f0bbc4bdfcef21c0341579fb36e0b",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "invalidated",
+      "old_after_restore": "invalidated",
+      "old_after_fresh": "invalidated",
+      "new_selfcheck": "passed",
+      "authority_after_change": "pass",
+      "authority_after_restore": "pass",
+      "identity_after_change": "issued",
+      "identity_after_restore": "issued",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 13,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 79,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    },
+    {
+      "variant": "plugin-config",
+      "run_id": "native-snapshot-plugin-config-002",
+      "manifest_sha256": "01d20dafd39998f407f57e93597e7ee39e99a619722f3ecab69b659172cb6ffc",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "invalidated",
+      "old_after_restore": "invalidated",
+      "old_after_fresh": "invalidated",
+      "new_selfcheck": "passed",
+      "authority_after_change": "pass",
+      "authority_after_restore": "pass",
+      "identity_after_change": "issued",
+      "identity_after_restore": "issued",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 13,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 80,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    },
+    {
+      "variant": "service-mode",
+      "run_id": "native-snapshot-service-mode-002",
+      "manifest_sha256": "eb6fc9ade6c8bbf24c97347710d837785627a226b47296c1881294fe9e8a06e6",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "invalidated",
+      "old_after_restore": "invalidated",
+      "old_after_fresh": "invalidated",
+      "new_selfcheck": "passed",
+      "authority_after_change": "pass",
+      "authority_after_restore": "pass",
+      "identity_after_change": "issued",
+      "identity_after_restore": "issued",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 13,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 86,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    },
+    {
+      "variant": "business-grant",
+      "run_id": "native-snapshot-business-grant-002",
+      "manifest_sha256": "6a8a89832ed3e31986d3901a42b353101b7ddad16cbc6d64cab0d6953b7ee0ce",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "passed",
+      "old_after_restore": "passed",
+      "old_after_fresh": "passed",
+      "new_selfcheck": "passed",
+      "authority_after_change": "fail",
+      "authority_after_restore": "fail",
+      "identity_after_change": "grant_unavailable",
+      "identity_after_restore": "grant_unavailable",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 12,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 81,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    },
+    {
+      "variant": "business-identity",
+      "run_id": "native-snapshot-business-identity-002",
+      "manifest_sha256": "656a7ac2ae8a67fa3b256ba6b01a3f7a5b401d8ba2632262a2ec2c4c1f7c5d03",
+      "passed": 42,
+      "registered": 42,
+      "old_after_change": "passed",
+      "old_after_restore": "passed",
+      "old_after_fresh": "passed",
+      "new_selfcheck": "passed",
+      "authority_after_change": "fail",
+      "authority_after_restore": "fail",
+      "identity_after_change": "revoked",
+      "identity_after_restore": "revoked",
+      "unique_signed_receipts": 15,
+      "signed_revisions": 12,
+      "temporary_authority_documents": 6,
+      "management_HTTP": 81,
+      "outer_model_protocol_requests": 5,
+      "actual_product_selfchecks": 2,
+      "resources": 4,
+      "cleanup": true
+    }
+  ],
+  "resources": [
+    {
+      "run_id": "native-snapshot-workspace-control-002",
+      "identity": {
+        "pid": 20093,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257232058"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-workspace-control-002",
+      "identity": {
+        "pid": 20207,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257232205"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-workspace-control-002",
+      "identity": {
+        "pid": 20984,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257232777"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-workspace-control-002",
+      "identity": {
+        "pid": 22128,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257233733"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-skill-content-002",
+      "identity": {
+        "pid": 23144,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257234415"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-skill-content-002",
+      "identity": {
+        "pid": 23232,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257234553"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-skill-content-002",
+      "identity": {
+        "pid": 23984,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257235055"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-skill-content-002",
+      "identity": {
+        "pid": 24620,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257235514"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-entry-002",
+      "identity": {
+        "pid": 25539,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257236184"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-entry-002",
+      "identity": {
+        "pid": 25813,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257236324"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-entry-002",
+      "identity": {
+        "pid": 26546,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257236818"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-entry-002",
+      "identity": {
+        "pid": 27182,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257237266"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-manifest-002",
+      "identity": {
+        "pid": 27924,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257237801"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-manifest-002",
+      "identity": {
+        "pid": 28256,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257237931"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-manifest-002",
+      "identity": {
+        "pid": 29002,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257238443"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-manifest-002",
+      "identity": {
+        "pid": 29703,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257238892"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-config-002",
+      "identity": {
+        "pid": 30440,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257239434"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-config-002",
+      "identity": {
+        "pid": 30582,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257239573"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-config-002",
+      "identity": {
+        "pid": 31321,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257240080"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-plugin-config-002",
+      "identity": {
+        "pid": 31986,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257240531"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-service-mode-002",
+      "identity": {
+        "pid": 32806,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257241073"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-service-mode-002",
+      "identity": {
+        "pid": 32917,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257241209"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-service-mode-002",
+      "identity": {
+        "pid": 33636,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257241694"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-service-mode-002",
+      "identity": {
+        "pid": 34285,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257242142"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-grant-002",
+      "identity": {
+        "pid": 35042,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257242677"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-grant-002",
+      "identity": {
+        "pid": 35151,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257242817"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-grant-002",
+      "identity": {
+        "pid": 35959,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257243313"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-grant-002",
+      "identity": {
+        "pid": 36633,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257243767"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-identity-002",
+      "identity": {
+        "pid": 37440,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257244310"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-identity-002",
+      "identity": {
+        "pid": 37730,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257244446"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-identity-002",
+      "identity": {
+        "pid": 38472,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257244942"
+      },
+      "state": "absent"
+    },
+    {
+      "run_id": "native-snapshot-business-identity-002",
+      "identity": {
+        "pid": 39109,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257245396"
+      },
+      "state": "absent"
+    }
+  ],
+  "known_resources_absent": true,
+  "checks_passed": 336,
+  "unique_signed_receipts": 120,
+  "signed_revisions": 100,
+  "temporary_authority_documents": 48,
+  "management_HTTP": 652,
+  "outer_model_protocol_requests": 40,
+  "internal_model_protocol_requests": "not separately captured",
+  "actual_product_selfchecks": 16,
+  "real_model_inference_calls": 0,
+  "independent_task_blocks_added": 0,
+  "negative_probe_types": [
+    "borrowed-business-grant",
+    "borrowed-business-identity",
+    "chain-prefix-truncation",
+    "different-revocation-response",
+    "foreign-instance",
+    "hide-authority-failure",
+    "no-file-change",
+    "reuse-old-check",
+    "revision-signature",
+    "revive-old-pass",
+    "wrong-variant"
+  ],
+  "negative_probes_rejected": 60,
+  "product_changed": false,
+  "full_journey_closed": false,
+  "scope": "same-instance product selfcheck snapshots and business authority diagnostics; selfcheck physical probes not independently observed"
+}

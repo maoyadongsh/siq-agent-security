@@ -1,0 +1,8 @@
+{
+  "run_id": "native-delegation-controls-001",
+  "status": "supplemental_review_failed",
+  "error": "SEC bootstrap not limited to this actual parent identity",
+  "cause": "reviewer compared native runtime task ID to synthesized authority task ID; receipt runtime_task_id is the corresponding native identifier",
+  "review_source_sha256": "89832e00151eb837c7becd2386595f77f726ce311588c43c46be088e5676404f",
+  "frozen_data_and_scores_changed": false
+}

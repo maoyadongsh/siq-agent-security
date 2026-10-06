@@ -1,0 +1,57 @@
+{
+  "checked_at": "2026-10-06T06:09:07.655519+00:00",
+  "changed_candidate_sources": [
+    "apps/control-api/app/rules.py"
+  ],
+  "added_candidate_sources": [
+    "apps/control-api/app/tests/test_risk_rule_lifecycle.py"
+  ],
+  "candidate_runtime_equal": true,
+  "harness_and_scorer_unchanged": true,
+  "product_before_tests": {
+    "failed": 4,
+    "passed": 5
+  },
+  "focused_after_tests": 75,
+  "full_API": {
+    "passed": 2296,
+    "skipped": 1,
+    "seconds": 102.23,
+    "exit_code": 0,
+    "skip": "optional SIQ_BATCH_WIRE_SAMPLE browser capture absent"
+  },
+  "framework": {
+    "passed": 684,
+    "subtests": 118,
+    "seconds": 41.02,
+    "exit_code": 0
+  },
+  "logs": {
+    "before_corrected": {
+      "path": "private/risk-worker-before-corrected-tests.log",
+      "sha256": "1ace18bdd81f7dd0986e7dff69691ef3d17b8b38941b92a139e68b494bb60f16"
+    },
+    "focused_after": {
+      "path": "private/risk-worker-focused-corrected-tests.log",
+      "sha256": "c5c6a76a80a1569fa35fe71664b1fc96be08a173a6db6381659fc1d1c67ce770"
+    },
+    "full_API": {
+      "path": "private/riskworkerfix1-control-api-tests.log",
+      "sha256": "c0455363c25ed83c01b22cd88a6a120dc1082c061f762e4a0848b86438de2317"
+    },
+    "framework": {
+      "path": "reports/risk-worker-framework-tests.txt",
+      "sha256": "c0fe705a52c9344273dc447a31acc6e1e2584a1fba27d391553ad3883079321c"
+    }
+  },
+  "working_tree_changed_sources_ruff": true,
+  "git_diff_check": true,
+  "working_test_formatting_only_AST_equal_to_frozen": true,
+  "frozen_test_style_note": "Frozen test retained with four E501 line-length warnings; current working test formatted and lint passes. Executable AST equal.",
+  "contract": {
+    "ref": "packages/contracts/enterprise-risk-rule-lifecycle.v1.md",
+    "sha256": "df01311a641d33f707988ba197d14ca0843e60e04e86f0baa186ba1e9aa4ea8d"
+  },
+  "actual_evidence_negative_rejections": 12,
+  "full_journey_closed": false
+}

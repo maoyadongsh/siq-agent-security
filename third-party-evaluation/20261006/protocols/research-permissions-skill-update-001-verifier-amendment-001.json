@@ -1,0 +1,15 @@
+{
+  "batch": "research-permissions-skill-update-001",
+  "recorded_unix": 1791277466.9927955,
+  "reason": "Original frozen verifier wrongly requires Grant signing_schema on installation metadata. Exact versioned installation canonical signature verified independently; four offline tests and actual signed metadata/tamper calibration pass. Measurement inputs, product binary, criteria, frozen original verifier and original protocol unchanged.",
+  "replacement_verifier": "benchmarks/third-party/research_skill_update_signature_review.py",
+  "original_protocol_sha256": "dc3b22b96e14cc8b11c4dcb33e4ea9c499b3eb2d451e890626cefe5ebb4ede2d",
+  "source_sha256": {
+    "benchmarks/third-party/research_skill_update_signature_review.py": "73936f8c2cbf84d3c5dd2bb00792422f6e780d09e3c227bf4187f55e101957c5",
+    "benchmarks/third-party/test_research_skill_update_signature_review.py": "289255d82a8fbdfb8d20b9075c173767e6abf68bc2cc8142a71d7f51f9f2b8f4",
+    "apps/agentshield/internal/skillinstall/record.go": "bd92b915ea9f7b62c076b3a2f8ca9eb71590ee18cdc240b8b3c202b98af5c853",
+    "apps/agentshield/internal/skillinstall/publication.go": "35fb2283a7d9c1f78b291c3a5b4bcb3e8fa4bcaa24a2b0488a688690385da601"
+  },
+  "calibration_ref": "reports/research-permissions-skill-update-001-signature-calibration.json",
+  "live_batch_in_progress": true
+}

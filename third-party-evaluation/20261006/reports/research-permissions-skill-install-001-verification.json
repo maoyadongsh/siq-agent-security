@@ -1,0 +1,18 @@
+{
+  "schema_version": "siq.evaluation.research-skill-install-review.v1",
+  "batch": "research-permissions-skill-install-001",
+  "passed": true,
+  "checks": {
+    "live_prerequisite_passed": true,
+    "two_signed_contexts_and_grants": true,
+    "same_agent": true,
+    "distinct_skills": true,
+    "distinct_grants": true,
+    "research-permissions-reader_binding_matches": true,
+    "research-permissions-reader_permission_shape": true,
+    "research-permissions-writer_binding_matches": true,
+    "research-permissions-writer_permission_shape": true,
+    "swapped_grant_signature_rejected": true
+  },
+  "claim_scope": "installation and sequential SEC prerequisites; no runtime Skill execution claim"
+}

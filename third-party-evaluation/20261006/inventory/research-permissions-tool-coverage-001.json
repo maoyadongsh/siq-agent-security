@@ -1,0 +1,49 @@
+{
+  "configured_toolsets": [
+    "terminal",
+    "file",
+    "code_execution",
+    "web"
+  ],
+  "model_tool_names_offline": [
+    "execute_code",
+    "patch",
+    "process",
+    "read_file",
+    "search_files",
+    "terminal",
+    "web_extract",
+    "web_search",
+    "write_file"
+  ],
+  "registered_bypass_candidates": [
+    "delegate_task",
+    "execute_code",
+    "read_file",
+    "terminal",
+    "write_file"
+  ],
+  "delegation_ceiling": {
+    "model": "Qwen3.8-27B-NVFP4",
+    "provider": "custom:siq-governed-qwen3.8-27b",
+    "max_iterations": 20,
+    "reasoning_effort": "medium",
+    "max_concurrent_children": 1,
+    "max_spawn_depth": 1,
+    "orchestrator_enabled": false,
+    "child_toolsets": [
+      "file",
+      "web"
+    ],
+    "inherit_mcp_toolsets": false,
+    "subagent_auto_approve": false
+  },
+  "required_pre_tool_call": [
+    "siq-agent-security",
+    "research-permission-sync"
+  ],
+  "recorded_unix": 1791273427.2755835,
+  "image_id": "sha256:e13efb6c60a2fc660adbd7d8643bd3453c5b8dca97be3bffbd58fc9189913598",
+  "scope": "offline immutable image inventory, not live bypass evaluation",
+  "script_sha256": "eac99fd6e97ba668d9436240719da0c83e9ec3654e06f9b17b88b2485871c0b0"
+}

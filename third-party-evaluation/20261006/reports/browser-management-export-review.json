@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-05T20:46:30.936523+00:00",
+  "checked_files": 178,
+  "credential_or_private_key_hits": [],
+  "broken_document_links": [],
+  "owned_resources": [
+    {
+      "run": "management-browser-001",
+      "kind": "product_daemon",
+      "state": "absent"
+    },
+    {
+      "run": "management-browser-001",
+      "kind": "browser_cli_service",
+      "pid": 1097197,
+      "state": "absent"
+    },
+    {
+      "run": "management-browser-002",
+      "kind": "product_daemon",
+      "state": "absent"
+    },
+    {
+      "run": "management-browser-002",
+      "kind": "browser_cli_service",
+      "pid": 1119865,
+      "state": "absent"
+    }
+  ],
+  "visual_review": {
+    "run": "management-browser-002",
+    "reviewed": [
+      "paired.png",
+      "logged-out.png",
+      "unpaired.png",
+      "cross-site-fixture.png"
+    ],
+    "unpaired_equals_logged_out_bytes": true,
+    "result": "candidate UI connected and pairing states legible; controlled fixture page; no visible credentials"
+  },
+  "scope": "known provider/decision/recovery secret bytes, session response redaction and private-key markers; not an exhaustive unknown-secret proof"
+}

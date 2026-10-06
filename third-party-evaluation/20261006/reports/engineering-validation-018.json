@@ -1,0 +1,95 @@
+{
+  "checked_at": "2026-10-05T21:36:55.261721+00:00",
+  "scope": "local origin replay and approved import payload tampering before prepare/commit; no product change or remote origin claim",
+  "framework_tests": {
+    "passed": 121,
+    "exit_code": 0,
+    "log": "reports/lifecycle-attacks-framework-tests-003.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": ""
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "stdout": ""
+  },
+  "cohorts": {
+    "lifecycle-attacks-001": {
+      "exit_code": 0,
+      "manifest_sha256": "9a77c82eb306290ed313669726317ad4ad24554e7eb993de0117d964cc1329dc",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 27,
+        "independent_predicates_observed": 27,
+        "independent_predicates_registered": 27,
+        "http_requests": 65,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "one ordered Linux Hermes attack journey; restart is graceful, source substitution is owned prepared-copy tampering, unrelated hook file is not an active hook execution test"
+      }
+    },
+    "lifecycle-attacks-002": {
+      "exit_code": 0,
+      "manifest_sha256": "555dffcc7d2a717f650e7e78c1cbc57bb9612f038eaf37a8066d90bc9ace5ba5",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 28,
+        "independent_predicates_observed": 28,
+        "independent_predicates_registered": 28,
+        "http_requests": 63,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "one ordered Linux Hermes attack journey; SIGKILL of owned daemon during cleanup_pending, not power loss; prepared-copy tampering and inactive unrelated file only"
+      }
+    },
+    "lifecycle-attacks-003": {
+      "exit_code": 0,
+      "manifest_sha256": "12212d811bc0726cb58684a566d010adfa87fbf45ca3a53dbf9698e832e4a105",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 34,
+        "independent_predicates_observed": 34,
+        "independent_predicates_registered": 34,
+        "http_requests": 66,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "local origin replay and imported payload tampering; no remote source identity claim; one ordered Linux Hermes attack journey; SIGKILL of owned daemon during cleanup_pending, not power loss; prepared-copy tampering and inactive unrelated file only"
+      }
+    }
+  },
+  "source_snapshot_manifest_sha256": "8f8f6f5999f92f1cb72b53d145d5a937db96d35250d2eae2d9cc2029083b743a",
+  "export_review": "reports/lifecycle-attacks-003-export-review.json",
+  "remaining": "Remote source identity/new import approval reuse, active hooks, independent revoke races, service disconnection, tool pending and disk/publish failures; full goal active."
+}

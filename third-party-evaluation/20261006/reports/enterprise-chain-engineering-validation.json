@@ -1,0 +1,49 @@
+{
+  "checked_at": "2026-10-06T05:21:58.054235+00:00",
+  "product_changed": false,
+  "pytest": {
+    "command": "third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "exit_code": 0,
+    "passed": 654,
+    "subtests_passed": 118,
+    "seconds": 38.39,
+    "log_ref": "reports/enterprise-chain-framework-tests-002.txt",
+    "log_sha256": "abeb018fd75c517df22370805d0a158cc622af0cd5bd7c34805fe93544ef6723"
+  },
+  "focused_tests": {
+    "passed": 15,
+    "negative_variants": 13,
+    "exit_code": 0
+  },
+  "initial_focused_collection_error": "test module lacked explicit repository harness import path; corrected before 18 focused governance checks and full suite",
+  "ruff": {
+    "files": [
+      "enterprise_runtime.py",
+      "enterprise_native_edge.py",
+      "enterprise_chain_trial.py",
+      "openshell_fixture.py",
+      "backend_governance.py",
+      "governance_trial.py",
+      "verify_governance.py",
+      "review_enterprise_chain.py",
+      "tests/test_enterprise_effects.py",
+      "tests/test_enterprise_native_edge.py"
+    ],
+    "exit_code": 0
+  },
+  "git_diff_check_exit_code": 0,
+  "evaluator_sha256": {
+    "enterprise_runtime.py": "9be9ba36ba2b82402cc1a8557baa800d27abbdc973937f3e6bba651ce63b4ca6",
+    "enterprise_native_edge.py": "2a9e8ee24132edf353ade03400587fe4baeec2e95da1392a56a3330f9e615bf5",
+    "enterprise_chain_trial.py": "297c3bbbd0946711f5c2166925e2808e4060447531d0ef8cfc4c7aeb872de6d3",
+    "openshell_fixture.py": "427b6f93bcbb7e119d2e45fddd2ec537efc191357203473db54cf1d2f969af64",
+    "backend_governance.py": "894003365ef0ccf1bd1811480918ce9547db86e47ee0d441b63bf0bf4bdcaea9",
+    "governance_trial.py": "79f6630c8aa7561cad1095a15fba7d486fda581ba70f7f3955b9059044beb672",
+    "verify_governance.py": "c853e2e4e6da41366f18a7c8b901242a59ff3a1977f7e69b91dcc5923fd212ec",
+    "review_enterprise_chain.py": "54e4c10c990fa8ce9db713e3663ac90234e6f6abf92261ed247bfc364d6ec4e7",
+    "tests/test_enterprise_effects.py": "c7e27e7d7cdecc4a3a44ad6f2d55cbc7cbf8017c2112cd6ca9f1c44be1a0063e",
+    "tests/test_enterprise_native_edge.py": "a4015f4052614c09cc29f498b89ef7d3f7bf0e18808f548392f1100c472a3601"
+  },
+  "supplemental_review_after_suite": "executed from frozen review-002; raw command/receiver/native joins and six actual-data negative probes pass",
+  "scope": "test harness changes and builds of existing frozen native product source; no product source modification"
+}

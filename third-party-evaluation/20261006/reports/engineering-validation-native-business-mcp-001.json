@@ -1,0 +1,59 @@
+{
+  "checked_at": "2026-10-06T02:54:37.861669+00:00",
+  "scope": "actual original business MCP readback, SDK 2 host compatibility and automatic explicit-map low-trust source capture",
+  "frozen_export_verification": [
+    {
+      "run_id": "native-business-mcp-readback-001",
+      "anchor": "51b0bb228632886a451c761ec10116e4183e9affc43981893a193d55ae34ee68",
+      "exit_code": 1
+    },
+    {
+      "run_id": "native-business-mcp-readonly-fix-002",
+      "anchor": "0256bf86852c2268ace65dc0907b65c30601e08c33b703fd91086fd9ad1c2ba4",
+      "exit_code": 0
+    }
+  ],
+  "framework": {
+    "command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "passed": 558,
+    "subtests_passed": 118,
+    "log": "engineering-evidence/native-business-mcp-framework-tests-001.txt",
+    "excluded": "AgentDojo upstream_tests require separate unchanged environment"
+  },
+  "host_focused": {
+    "runner": "scripts/run_tests.sh tests/tools/test_mcp_trust_gating.py -j 1 --file-retries 0",
+    "before_failed": 1,
+    "before_passed": 16,
+    "after_passed": 17,
+    "manifest": "engineering-evidence/hermes-mcp-sdk2-fix-001/manifest.json",
+    "original_pytest_missing_prechecks_retained": true,
+    "active_runtime_environment_changed": false
+  },
+  "new_framework_focused_tests": 3,
+  "source_content_and_scope_verified": true,
+  "source_error_binding_verified": true,
+  "negative_mutations_rejected": 7,
+  "ruff_passed": true,
+  "lint_only_fix": "removed extra blank line in posthoc integration script; original frozen harness unchanged",
+  "scoped_diff_check_passed": true,
+  "new_report_links_checked": 13,
+  "plan_hashes_checked": true,
+  "owned_containers_absent": 8,
+  "owned_process_identity_reconciliation": "inventory/native-business-mcp-integration-001.json",
+  "host_fix_deployed": false,
+  "SIQ_product_code_changed_this_slice": false,
+  "host_fix_isolated_candidate": true,
+  "SDK_isolated": true,
+  "report": "reports/native-business-mcp-report.md",
+  "integration": "inventory/native-business-mcp-integration-001.json",
+  "goal_status": "active",
+  "remaining": "native select/derive and actual parameter bridge; Q3/Q4-Q6/TP/S4 and independent confirmation retained",
+  "artifact_sha256": {
+    "engineering-evidence/review-native-business-mcp-integration-001.py": "c1e13ebc1054d6fe135bceb1e9c73780d8fc2d4ae86ea760a2eaf77a3ecb019a",
+    "engineering-evidence/hermes-mcp-sdk2-fix-001/manifest.json": "47753c16ad342a47c25b1a5fe8b7ba4111b7a59bf67c4e618fb3a030a3354d20",
+    "engineering-evidence/native-business-mcp-framework-tests-001.txt": "5289051ae6690cb24aa46f68a41345ba17cc2701d394956141fd986037c72e34",
+    "reports/native-business-mcp-readonly-fix-002-authority-negatives.json": "085cbdf9de65da1a8300bf225f4092eaf2e9431f41f3e64fb2766f1bdb40e1f8",
+    "reports/native-business-mcp-readback-001-source-error-review.json": "c8b1d80ca195d5e216890d41ae2ad63d5307ec97a300091d1408980e5712ca1a",
+    "inventory/native-business-mcp-integration-001.json": "a120bdd21e631b4685ad9c451789ec6d6c92d5200932b6e3cd73565bbafc6afc"
+  }
+}

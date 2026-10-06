@@ -1,0 +1,13 @@
+{
+  "integrity_verified": true,
+  "run_id": "governance-race-fix1-001",
+  "passed": true,
+  "http_cases": 31,
+  "checks": 48,
+  "checks_passed": 48,
+  "missing": [],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

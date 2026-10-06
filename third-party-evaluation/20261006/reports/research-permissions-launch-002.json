@@ -1,0 +1,41 @@
+{
+  "schema_version": "siq.research-api-launch-proof.v1",
+  "started_unix": 1791284194.7404714,
+  "original_api_pid": 2716725,
+  "source_manifest_sha256": "f858ef5bee32c7b30142c776b8174153bb42fcb5b75717d3c757a17030fd16b1",
+  "modes": {
+    "protected": {
+      "checks": {
+        "http_health_ready": true,
+        "openshell_recovery_disabled": true,
+        "qwen_request_recovery_disabled": true,
+        "anonymous_chat_denied": true,
+        "selected_backend_loaded": true,
+        "actual_port_matches_environment": true,
+        "owned_process_stopped": true,
+        "staging_port_closed": true,
+        "original_daily_process_unchanged": true
+      },
+      "candidate_pid": 2809440
+    },
+    "rollback": {
+      "checks": {
+        "http_health_ready": true,
+        "openshell_recovery_disabled": true,
+        "qwen_request_recovery_disabled": true,
+        "anonymous_chat_denied": true,
+        "selected_backend_loaded": true,
+        "actual_port_matches_environment": true,
+        "owned_process_stopped": true,
+        "staging_port_closed": true,
+        "original_daily_process_unchanged": true
+      },
+      "candidate_pid": 2809846
+    }
+  },
+  "passed": true,
+  "scope": "Staging startup/exit only; no model task, grant or protected execution claim.",
+  "sources_unchanged_after": true,
+  "finished_unix": 1791284198.7709188,
+  "staging_port_closed_after": true
+}

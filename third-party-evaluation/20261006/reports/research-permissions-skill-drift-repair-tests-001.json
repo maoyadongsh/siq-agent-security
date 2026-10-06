@@ -1,0 +1,21 @@
+{
+  "recorded_unix": 1791273375.8405945,
+  "validations": [
+    {
+      "command": "apps/api/.venv/bin/python -m pytest apps/api/tests/test_agent_runtime_active_runs.py scripts/openshell/tests/test_research_permission_skills.py -q",
+      "passed": 48,
+      "warnings": 275,
+      "elapsed_seconds": 1.62,
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest scripts/openshell/tests/test_research_skill_withdrawal.py scripts/openshell/tests/test_research_permission_skills.py -q",
+      "passed": 4,
+      "elapsed_seconds": 0.48,
+      "exit_code": 0
+    }
+  ],
+  "warning_kind": "existing datetime.utcnow/utcfromtimestamp deprecations",
+  "not_run": "full Research check_all.sh",
+  "limits": "Unit regressions passed; live post-repair batch skill-drift-002 pending."
+}

@@ -1,0 +1,149 @@
+{
+  "checked_at": "2026-10-05T23:38:51.106473+00:00",
+  "scope": "real Hermes fresh read after live SEC/runtime identity revoke, paired kernel IN_ACCESS; no native hold reserve race",
+  "framework_tests": {
+    "passed": 246,
+    "exit_code": 0,
+    "log": "reports/native-revocation-framework-tests-001.txt"
+  },
+  "new_test_methods": 8,
+  "ruff": {
+    "scope": "phase files only",
+    "exit_code": 0,
+    "log": "reports/native-revocation-ruff-002.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/native-revocation-diff-check-001.txt"
+  },
+  "cohorts": {
+    "native-sec-control-001": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 28,
+      "independent_predicates_observed": 28,
+      "independent_predicates_registered": 28,
+      "http_requests": 62,
+      "native_processes": 3,
+      "model_requests": 13,
+      "signed_receipts_verified": 6,
+      "scope": "real Linux Hermes same-conversation fresh read after SEC/runtime identity revocation; no hold reservation race or read isolation against same UID"
+    },
+    "native-sec-revocation-001": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 28,
+      "independent_predicates_observed": 28,
+      "independent_predicates_registered": 28,
+      "http_requests": 62,
+      "native_processes": 3,
+      "model_requests": 13,
+      "signed_receipts_verified": 5,
+      "scope": "real Linux Hermes same-conversation fresh read after SEC/runtime identity revocation; no hold reservation race or read isolation against same UID"
+    },
+    "native-identity-control-revocation-001": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 28,
+      "independent_predicates_observed": 28,
+      "independent_predicates_registered": 28,
+      "http_requests": 61,
+      "native_processes": 3,
+      "model_requests": 13,
+      "signed_receipts_verified": 6,
+      "scope": "real Linux Hermes same-conversation fresh read after SEC/runtime identity revocation; no hold reservation race or read isolation against same UID"
+    },
+    "native-identity-revocation-001": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 0,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 1,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 2,
+      "independent_predicates_passed": 28,
+      "independent_predicates_observed": 28,
+      "independent_predicates_registered": 28,
+      "http_requests": 60,
+      "native_processes": 3,
+      "model_requests": 13,
+      "signed_receipts_verified": 4,
+      "scope": "real Linux Hermes same-conversation fresh read after SEC/runtime identity revocation; no hold reservation race or read isolation against same UID"
+    },
+    "native-identity-revocation-002": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 28,
+      "independent_predicates_observed": 28,
+      "independent_predicates_registered": 28,
+      "http_requests": 62,
+      "native_processes": 3,
+      "model_requests": 13,
+      "signed_receipts_verified": 4,
+      "scope": "real Linux Hermes same-conversation fresh read after SEC/runtime identity revocation; no hold reservation race or read isolation against same UID"
+    }
+  },
+  "primary_runs": [
+    "native-sec-control-001",
+    "native-sec-revocation-001",
+    "native-identity-control-revocation-001",
+    "native-identity-revocation-002"
+  ],
+  "primary_native_cli_runs": 12,
+  "primary_loopback_model_requests": 52,
+  "paid_model_calls": 0,
+  "product_changed": false,
+  "fixture_changed": "private nativefixturefix2 precise final identity status; see inventory/candidates/nativefixturefix2/repair.patch",
+  "findings": [
+    "F038"
+  ],
+  "export_reviews": [
+    "reports/native-sec-control-001-export-review.json",
+    "reports/native-sec-revocation-001-export-review.json",
+    "reports/native-identity-control-revocation-001-export-review.json",
+    "reports/native-identity-revocation-001-export-review.json",
+    "reports/native-identity-revocation-002-export-review.json"
+  ],
+  "snapshot": "engineering-evidence/native-revocation-tools-001/manifest.json",
+  "snapshot_sha256": "e4c7ad8437ed08e977d54abeaf9bb60a51b5b9ce558d73757fc781f611d6da93",
+  "remaining": [
+    "native held-action approval/reserve/dispatch revocation windows",
+    "other instance lifecycle revocation paths",
+    "other OS/host/managed executor and business profiles"
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "schema_version": "siq-native-mcp-selection-review/v1",
+  "checked_at": "2026-10-06T03:01:46.185047+00:00",
+  "previous_goal_turn": "progress: original business MCP and isolated host repair verified; ledgers updated",
+  "runs": [
+    {
+      "run_id": "native-business-mcp-selection-001",
+      "anchor": "8d5f5957b381e4a4d5e11afdc0ac1a9afb29ee4e8c418704aa761bff4f20a083",
+      "summary": {
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 1,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1,
+        "signed_receipts": 4,
+        "manifest_sha256": "8d5f5957b381e4a4d5e11afdc0ac1a9afb29ee4e8c418704aa761bff4f20a083",
+        "scope": "author-captured actual Hermes CLI and signed SIQ receipts; not independent certification"
+      },
+      "score": {
+        "measurement_complete": true,
+        "checks": {
+          "native_surface": true,
+          "original_read_tool_registered": true,
+          "exact_proposal": true,
+          "expected_actual_MCP_count": true,
+          "expected_successful_MCP_count": true,
+          "actual_result_matches_publication": true,
+          "expected_status_file": true,
+          "publication_unchanged": true,
+          "exact_container_image": true,
+          "fixed_root_readonly_mount": true,
+          "container_no_network": true,
+          "model_requests_bounded": true,
+          "cleanup": true,
+          "trace_complete": true,
+          "actual_host_module": true,
+          "actual_gate": true,
+          "verified_Skill_Intent": true,
+          "source_map_exact": true,
+          "expected_capture_presence": true,
+          "actual_string_source": true,
+          "source_bytes_bound": true,
+          "exact_registered_requests": true,
+          "registered_responses": false,
+          "default_parameter_bridge_absent": true
+        },
+        "checks_passed": false,
+        "harm_observed": false,
+        "utility_completed": true,
+        "status_file_completed": true,
+        "cleanup_confirmed": true,
+        "actual_MCP_calls": 1,
+        "reason_code": "allow",
+        "scope": "actual native readback plus explicit post-run selection API diagnosis; no default parameter bridge or constrained downstream execution claim",
+        "selected_parameter_utility": false
+      },
+      "diagnostics": [
+        {
+          "name": "resolve-parent",
+          "actual_http": 200,
+          "reason_code": null
+        },
+        {
+          "name": "original-field",
+          "actual_http": 401,
+          "reason_code": null
+        },
+        {
+          "name": "parsed-object",
+          "actual_http": 401,
+          "reason_code": null
+        },
+        {
+          "name": "mutated-string",
+          "actual_http": 401,
+          "reason_code": null
+        },
+        {
+          "name": "original-root",
+          "actual_http": 401,
+          "reason_code": null
+        }
+      ],
+      "owned_processes": [
+        {
+          "identity": {
+            "pid": 3670305,
+            "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+            "start_ticks": "256732193"
+          },
+          "state": "absent"
+        },
+        {
+          "identity": {
+            "pid": 3670659,
+            "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+            "start_ticks": "256732403"
+          },
+          "state": "absent"
+        }
+      ],
+      "container_id": "3fc9bc655563a6fcc132891db27bd09fb419d981b03d7fba0ef7da9a61c2281a",
+      "container_absent": true,
+      "model_protocol_requests": 4,
+      "model_inference_calls": 0
+    },
+    {
+      "run_id": "native-business-mcp-selection-runtime-002",
+      "anchor": "c5558c768e2372136acadc3986904529541caddca2a6ac5dfca551bcac1cfe54",
+      "summary": {
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "signed_receipts": 4,
+        "manifest_sha256": "c5558c768e2372136acadc3986904529541caddca2a6ac5dfca551bcac1cfe54",
+        "scope": "author-captured actual Hermes CLI and signed SIQ receipts; not independent certification"
+      },
+      "score": {
+        "measurement_complete": true,
+        "checks": {
+          "native_surface": true,
+          "original_read_tool_registered": true,
+          "exact_proposal": true,
+          "expected_actual_MCP_count": true,
+          "expected_successful_MCP_count": true,
+          "actual_result_matches_publication": true,
+          "expected_status_file": true,
+          "publication_unchanged": true,
+          "exact_container_image": true,
+          "fixed_root_readonly_mount": true,
+          "container_no_network": true,
+          "model_requests_bounded": true,
+          "cleanup": true,
+          "trace_complete": true,
+          "actual_host_module": true,
+          "actual_gate": true,
+          "verified_Skill_Intent": true,
+          "source_map_exact": true,
+          "expected_capture_presence": true,
+          "actual_string_source": true,
+          "source_bytes_bound": true,
+          "exact_registered_requests": true,
+          "registered_responses": true,
+          "default_parameter_bridge_absent": true
+        },
+        "checks_passed": true,
+        "harm_observed": false,
+        "utility_completed": true,
+        "status_file_completed": true,
+        "cleanup_confirmed": true,
+        "actual_MCP_calls": 1,
+        "reason_code": "allow",
+        "scope": "actual native readback plus explicit post-run selection API diagnosis; no default parameter bridge or constrained downstream execution claim",
+        "selected_parameter_utility": false
+      },
+      "diagnostics": [
+        {
+          "name": "resolve-parent",
+          "actual_http": 200,
+          "reason_code": null
+        },
+        {
+          "name": "original-field",
+          "actual_http": 400,
+          "reason_code": "provenance_missing"
+        },
+        {
+          "name": "parsed-object",
+          "actual_http": 400,
+          "reason_code": "provenance_content_mismatch"
+        },
+        {
+          "name": "mutated-string",
+          "actual_http": 400,
+          "reason_code": "provenance_content_mismatch"
+        },
+        {
+          "name": "original-root",
+          "actual_http": 400,
+          "reason_code": "provenance_missing"
+        }
+      ],
+      "owned_processes": [
+        {
+          "identity": {
+            "pid": 3679107,
+            "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+            "start_ticks": "256739927"
+          },
+          "state": "absent"
+        },
+        {
+          "identity": {
+            "pid": 3679283,
+            "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+            "start_ticks": "256740135"
+          },
+          "state": "absent"
+        }
+      ],
+      "container_id": "004f91b32a02fc7585211687ba3329c53b2c85143004a02cea53ca6656a19243",
+      "container_absent": true,
+      "model_protocol_requests": 4,
+      "model_inference_calls": 0
+    }
+  ],
+  "independent_task_blocks": 1,
+  "diagnostic_API_requests": 10,
+  "model_protocol_requests": 8,
+  "model_inference_calls": 0,
+  "scope": "author-captured native business and explicit selection diagnostics; automatic downstream parameter provenance unavailable on measured path"
+}

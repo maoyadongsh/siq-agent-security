@@ -1,0 +1,27 @@
+{
+  "scope": "selected indexed files only; not full candidate diff",
+  "worktree_head": "5470ab3780f2228d77b0dd856553ea9e666de815",
+  "candidate_head": "5470ab3780f2228d77b0dd856553ea9e666de815",
+  "worktree_only": [
+    "packages/contracts/local-state-migration-preview.v1.schema.json",
+    "packages/contracts/pending-decision.v2.schema.json"
+  ],
+  "candidate_only": [],
+  "different": [
+    "apps/agentshield/internal/receipt/engine.go",
+    "apps/agentshield/internal/receipt/pending_promote_test.go",
+    "apps/control-api/app/routers/policies.py"
+  ],
+  "local_registration_counts": [
+    142,
+    142
+  ],
+  "enterprise_route_counts": [
+    108,
+    108
+  ],
+  "schema_counts": [
+    309,
+    307
+  ]
+}

@@ -1,0 +1,14 @@
+RUF007 Prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+  --> benchmarks/third-party/native_cleanup.py:34:30
+   |
+32 |         raise ValueError('native cleanup observation contract differs')
+33 |     times = [data['window_start_ns']] + [row['monotonic_ns'] for row in observations]
+34 |     if any(a > b for a, b in zip(times, times[1:])):
+   |                              ^^^
+35 |         raise ValueError('native cleanup observation clock differs')
+36 |     if data['remaining_group_members'] != observations[-1]['members']:
+   |
+help: Replace `zip()` with `itertools.pairwise()`
+
+Found 1 error.
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).

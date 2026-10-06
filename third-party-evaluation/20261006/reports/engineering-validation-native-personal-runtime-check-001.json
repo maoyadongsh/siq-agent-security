@@ -1,0 +1,24 @@
+{
+  "framework": {
+    "passed": 568,
+    "subtests_passed": 118,
+    "log_ref": "engineering-evidence/native-personal-runtime-check-framework-tests-001.txt"
+  },
+  "new_focused_tests": 3,
+  "negative_probes_rejected": 7,
+  "goal_status": "active",
+  "product_changed": false,
+  "manifest_sha256": "2b826474a7f092bbd36024a56068bdf7a29efaf6aaae695b47a9e04392e4b677",
+  "reference_hashes": {
+    "reports/native-personal-runtime-check-report.md": "05252bc224a5da151831e23eaca42c976242254fbf12f157875cce7c729bb0c2",
+    "reports/native-personal-runtime-check-001-verification.json": "46febf77daa9d62759ee3a501df1feffcfc946f21e2bccddd8b3e6ca304745d7",
+    "reports/native-personal-runtime-check-001-negatives.json": "b62a96a789e08b990a44a910e9765092379344b2adeb0a31fb91507749bdb993",
+    "inventory/native-personal-runtime-check-integration-001.json": "1ee13fb007d40df52beeb4241c75413cd53d3749b3bdc069ccaf6949b6ec035e",
+    "inventory/anchors/native-personal-runtime-check-001.json": "ef5d8517372ec0709e4b77bc5b7c95309f7259b608243bf8a82411cb95f1c6d7",
+    "engineering-evidence/native-personal-runtime-check-review-tools-001/review-manifest.json": "80a29750aba95a795008f85f2f587d5ba335076607bae60dd01d5d88976684d9",
+    "plan/revision-history/native-personal-runtime-check-001/manifest.json": "31702fa6d794f3fda91b244991cb44195e7e4477f94732ab1282de8df6111079",
+    "reports/native-personal-runtime-check-final-review-001.json": "c8b3dfac9bb289c4e320cfeb9d62601e06eb229178eef461c2f25764fa5b92e8"
+  },
+  "scope": "product runtime-check behavior and signed lineage; not independent temporary syscall effects or all RB09",
+  "ruff_passed": true
+}
