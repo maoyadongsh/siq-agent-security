@@ -1,0 +1,56 @@
+{
+  "report_id": "20261006-204632",
+  "scope": "Report artifact validation only; no underlying experiments rerun",
+  "result": "passed",
+  "documents": [
+    {
+      "file": "SIQ_测评证据与历史复核附录_20261006-204632.html",
+      "local_links_validated": 11,
+      "public_source_links": 374,
+      "duplicate_ids": 0,
+      "external_assets": 0,
+      "javascript_syntax": "passed"
+    },
+    {
+      "file": "SIQ_综合功能与智能体安全测评报告_20261006-204632.html",
+      "local_links_validated": 93,
+      "public_source_links": 34,
+      "duplicate_ids": 0,
+      "external_assets": 0,
+      "javascript_syntax": "passed"
+    }
+  ],
+  "indexed_entries": 339,
+  "primary_citations": 35,
+  "source_bytes_match_immutable_git_objects": 339,
+  "historical_records_separated": "linked appendix",
+  "browser": {
+    "desktop": {
+      "width": 1440,
+      "scroll": 1440,
+      "chapters": 12,
+      "externalAssets": 0
+    },
+    "mobile": {
+      "width": 390,
+      "scroll": 390,
+      "chapters": 12,
+      "externalAssets": 0
+    },
+    "appendixMobile": {
+      "width": 390,
+      "scroll": 390,
+      "chapters": 2,
+      "externalAssets": 0
+    },
+    "searchMatches": 6,
+    "combinedFilterMatches": 3,
+    "archiveEntries": 339,
+    "offlineFileNavigation": "passed",
+    "download": "passed",
+    "pdf": "generated",
+    "pageErrors": []
+  },
+  "print_visual_review": "A4 generated, page 2 visually reviewed; desktop hero, mobile and OpenShell section screenshots reviewed",
+  "visual_review_skill": "Playwright CLI"
+}
