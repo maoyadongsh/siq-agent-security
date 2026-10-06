@@ -9,6 +9,9 @@ SIQ 把研究问题落实为可独立运行、边界明确的组件：模型负�
 | [Control API](control-api/README.md) | 多租户资产、框架/角色/Skill 观察、权限事实、策略审批、运行时绑定、周期发现、部署读回与审计导出 | Python/FastAPI，生产 PostgreSQL + OIDC/JWKS；独立部署；可见性和读回不自动构成业务授权或行为证明 |
 | [Secure Agent](secure-agent/README.md) | 研究参考应用：规划、Skill 选择、受约束工具执行与完成核验 | Python 标准库 + 本地运行时；显式 fixture 或已配置模型，不能执行任意 Skill 代码 |
 
+
+2026-10-06 的[DGX 真实业务测评](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)已验证分析助手中的 Agent 与明确绑定的已安装 Skill 权限；[企业闭环](../third-party-evaluation/20261006/reports/enterprise-chain-report.md)另验证原生发现、审批、后端限制及回滚。两条链各有候选、身份与效果证据；分析助手属于独立 Research Engine 项目，不等于本仓 Secure Agent 参考应用。
+
 ## 如何选择
 
 安装使用从[签名包指南](../docs/signed-release-packaging.md)开始；改本地产品从 AgentShield 和 Web 开始；企业治理从 Control API、[Edge](../edge/agent/README.md)与[Connectors](../connectors/README.md)开始；研究复现从 [REPRODUCIBILITY](../REPRODUCIBILITY.md)开始。源码构建、正式发行和冻结研究快照各自有身份，不能互相替代验收。

@@ -1,0 +1,21 @@
+{
+  "batch": "research-permissions-authority-loss-message-001",
+  "started_unix": 1791285372.4066281,
+  "previous_pid": 2814391,
+  "checks": {
+    "recovery_and_frontend_ready": true,
+    "protected_route_retained": true,
+    "actual_port": true,
+    "new_process_identity": true
+  },
+  "passed": true,
+  "preparation_notes": [
+    "Relative environment reference rejected before mutation; corrected to absolute.",
+    "An initial all-running-row check stopped before mutation: one historical July lease expired, not a live task. Expired row retained unchanged."
+  ],
+  "precutover_live_leases": 0,
+  "expired_running_rows_unchanged": 1,
+  "api_pid": 2952550,
+  "api_start_ticks": "259719629",
+  "finished_unix": 1791285375.1535149
+}

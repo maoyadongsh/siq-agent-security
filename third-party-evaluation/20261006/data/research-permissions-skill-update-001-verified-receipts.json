@@ -1,0 +1,461 @@
+{
+  "fixture": "research-permissions-skill-update-001",
+  "public_key": "CtnHQ2DZ13OJFkBZrXw9HjoBiAAyr3H4OPdMNRDWk5w=",
+  "binary_sha256": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "receipts": [
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "research-permissions-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "e75a338d50aa8192a34566e6eafed2bb912255bd0f3f019f8fb5c8317dc169eb"
+        }
+      ],
+      "record_type": "decision",
+      "task_seq": 1,
+      "receipt_id": "rcp-075e6480c2a8-090333.050769",
+      "chain_id": "local",
+      "seq": 0,
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "9fb06315e5e8ef88be6285f727a65566db9853a8c1e0fa4d9d8ce43f1687151c",
+      "sig": "c64f3087d0a8b6621c2dd486a28fc7c6ae1b02c912d23ef0e0d200452981f67d35c1493bc07ea67295c15218c45957f1596c85dec462a7caf10b14486c15f307",
+      "issued_at": "2026-10-06T09:03:33Z",
+      "platform": "hermes",
+      "session_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-574672b1f1aacb5a:siq_analysis:7b8a5272af1d32f262f700788c09df3570392ae399e66d1d900dba8e12064689",
+      "action_id": "act-2f11b6adac01d229cc9e9e19",
+      "agent_id": "hri-7c9be62a8a245dc2ce06ca0350898b2a",
+      "task_id": "task-ri-bd7218fba46619c9687637329549aa0b9e678baf2db38be801a158313d8ac80d",
+      "runtime_task_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-574672b1f1aacb5a:siq_analysis:c4e3407bc2d4657a9d9b5f93e8e370d3cc3556b580fcc2d2c7c7ef1f6ac1e819",
+      "intent_id": "int-ri-bd7218fba46619c9687637329549aa0b9e678baf2db38be801a158313d8ac80d",
+      "intent_digest": "a42325ca3fb1a01aff0d81eb06b74064d3600bff6b243df6328778adfe610b4d",
+      "intent_binding": "bound",
+      "authority_revision": "ab1f6a2d6cc52e162455d28d12de1cb9c448ec46ad59477a13d442eeffd0282b",
+      "tool": "read_file",
+      "tool_call_id": "call_183e718ad4e6430b870ef3c5",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "075e6480c2a88c5d1a0cdbca00ba4841654bbf12ef609618ad6386b056f13ec2",
+      "params_excerpt": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/synthetic.txt",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "granted by grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "reason_code": "allow",
+      "matched_grant_id": "grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "matched_fact_ids": [
+        "pf-p-3-6dc3eae8",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 23,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:research-permissions-reader@dcf6e32c9b1c",
+        "content_hash": "dcf6e32c9b1c1610ee5747cded47a7e0198f5121e7789a71ac12db7fb1b73a1b",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-34d26d58d2984411e55d433b06f71089",
+        "call_binding": "d35ee92074ce5341799385fd35cb3bf12229256cb032dcfc2f04a50fa4608b0b"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "deny",
+      "effective_action": "deny",
+      "principal": {
+        "type": "user",
+        "id": "research-permissions-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "b678c13c1b2dfacfe8439437fbbb97fa25dd2e5a758beada6cc1724def726233"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-2f11b6adac01d229cc9e9e19",
+      "task_seq": 2,
+      "receipt_id": "rcp-8aa91d32d578-090333.143175",
+      "chain_id": "local",
+      "seq": 1,
+      "prev_hash": "9fb06315e5e8ef88be6285f727a65566db9853a8c1e0fa4d9d8ce43f1687151c",
+      "hash": "8a063aeeb5be3df21c8f37962218715f0de4226e223c3fcafbbffa9ade5c2dbb",
+      "sig": "8f47e9e931ea16865e0392309a26c3e5eaa5398298d0abf7319b9c1328a8bc5209829fddbdece375bfa649812f197ca40dfc202b56fbd27e3f3b15f7f8f88102",
+      "issued_at": "2026-10-06T09:03:33Z",
+      "platform": "hermes",
+      "session_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-574672b1f1aacb5a:siq_analysis:7b8a5272af1d32f262f700788c09df3570392ae399e66d1d900dba8e12064689",
+      "action_id": "act-ff4ee2fd66cdae995ef3fc92",
+      "agent_id": "hri-7c9be62a8a245dc2ce06ca0350898b2a",
+      "task_id": "task-ri-bd7218fba46619c9687637329549aa0b9e678baf2db38be801a158313d8ac80d",
+      "runtime_task_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-574672b1f1aacb5a:siq_analysis:c4e3407bc2d4657a9d9b5f93e8e370d3cc3556b580fcc2d2c7c7ef1f6ac1e819",
+      "intent_id": "int-ri-bd7218fba46619c9687637329549aa0b9e678baf2db38be801a158313d8ac80d",
+      "intent_digest": "a42325ca3fb1a01aff0d81eb06b74064d3600bff6b243df6328778adfe610b4d",
+      "intent_binding": "bound",
+      "authority_revision": "ab1f6a2d6cc52e162455d28d12de1cb9c448ec46ad59477a13d442eeffd0282b",
+      "tool": "write_file",
+      "tool_call_id": "call_ea797cdf680b4b2c8233d54e",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "params_digest": "8aa91d32d578702a4c5862b01c6147ed1277357b77c288976b68332cc67dc842",
+      "params_excerpt": "CANDIDATE_WRITE_ATTEMPT\n/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/analysis/runs/qwen-request-574672b1f1aacb5a/permission-result.md",
+      "action": "deny",
+      "advisory_action": null,
+      "reason": "filesystem target /home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/analysis/runs/qwen-request-574672b1f1aacb5a/permission-result.md outside granted paths (default deny)",
+      "reason_code": "grant_scope_violation",
+      "matched_grant_id": "grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "matched_fact_ids": [],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 23,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:research-permissions-reader@dcf6e32c9b1c",
+        "content_hash": "dcf6e32c9b1c1610ee5747cded47a7e0198f5121e7789a71ac12db7fb1b73a1b",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-34d26d58d2984411e55d433b06f71089",
+        "call_binding": "820fa1a93208d259ba22919321d6963bf99999b987952cff26b647e3ac271b52"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "research-permissions-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "e75a338d50aa8192a34566e6eafed2bb912255bd0f3f019f8fb5c8317dc169eb"
+        }
+      ],
+      "record_type": "observation",
+      "decision_receipt_id": "rcp-075e6480c2a8-090333.050769",
+      "task_seq": 1,
+      "receipt_id": "rcp-075e6480c2a8-090333.050769-obs",
+      "chain_id": "local",
+      "seq": 2,
+      "prev_hash": "8a063aeeb5be3df21c8f37962218715f0de4226e223c3fcafbbffa9ade5c2dbb",
+      "hash": "03ab4d48c5b88a847d8ac70631224ff00a9759dfc82d265746bcff4d935b4a13",
+      "sig": "43317f2b90c1a6ee1bd763aad1a46249e6ed1c9276d849a6a60d7214cf1a69d5a7d8e832ef29784a45207352f4dc08ba9db1ae01d552168ff78042c9f988d600",
+      "issued_at": "2026-10-06T09:03:33Z",
+      "platform": "hermes",
+      "session_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-574672b1f1aacb5a:siq_analysis:7b8a5272af1d32f262f700788c09df3570392ae399e66d1d900dba8e12064689",
+      "action_id": "act-2f11b6adac01d229cc9e9e19",
+      "agent_id": "hri-7c9be62a8a245dc2ce06ca0350898b2a",
+      "task_id": "task-ri-bd7218fba46619c9687637329549aa0b9e678baf2db38be801a158313d8ac80d",
+      "runtime_task_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-574672b1f1aacb5a:siq_analysis:c4e3407bc2d4657a9d9b5f93e8e370d3cc3556b580fcc2d2c7c7ef1f6ac1e819",
+      "intent_id": "int-ri-bd7218fba46619c9687637329549aa0b9e678baf2db38be801a158313d8ac80d",
+      "intent_digest": "a42325ca3fb1a01aff0d81eb06b74064d3600bff6b243df6328778adfe610b4d",
+      "intent_binding": "bound",
+      "authority_revision": "ab1f6a2d6cc52e162455d28d12de1cb9c448ec46ad59477a13d442eeffd0282b",
+      "tool": "read_file",
+      "tool_call_id": "call_183e718ad4e6430b870ef3c5",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "18a2f4f342d086ece708bc80c972140dbc76354633abeab6c41fe6a1e712ba44",
+      "params_excerpt": "{\"content\": \"1|Synthetic evaluation company, no real financial data.\\n2|2024 revenue: 200 million CNY.\\n3|2025 revenue: 240 million CNY.\\n4|Revenue growth = (240 - 200) / 200 = 20%.\\n5|\", \"total_lines\": 4, \"file_size\": 158, \"truncated\": false, \"is_binary\": false, \"is_image\": false}",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "correlated observation of tool result",
+      "reason_code": "observation_accepted",
+      "matched_grant_id": "grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "matched_fact_ids": [
+        "pf-p-3-6dc3eae8",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": null,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:research-permissions-reader@dcf6e32c9b1c",
+        "content_hash": "dcf6e32c9b1c1610ee5747cded47a7e0198f5121e7789a71ac12db7fb1b73a1b",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-34d26d58d2984411e55d433b06f71089",
+        "call_binding": "d35ee92074ce5341799385fd35cb3bf12229256cb032dcfc2f04a50fa4608b0b"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "research-permissions-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "e75a338d50aa8192a34566e6eafed2bb912255bd0f3f019f8fb5c8317dc169eb"
+        }
+      ],
+      "record_type": "decision",
+      "task_seq": 1,
+      "receipt_id": "rcp-075e6480c2a8-090542.072501",
+      "chain_id": "local",
+      "seq": 3,
+      "prev_hash": "03ab4d48c5b88a847d8ac70631224ff00a9759dfc82d265746bcff4d935b4a13",
+      "hash": "11ae215c31b19f08b84100ea05f3284a2d2d8674e12d05bf6a89f2a64b85d658",
+      "sig": "8ef784d66abcecb0ae2a3e72074243a08fa9b19ba283098204f9f1d0b9af2d7627a1a851d01222020abd9d7735bcb4941c1b8b617756b6a62c98c3bc5ef6f20d",
+      "issued_at": "2026-10-06T09:05:42Z",
+      "platform": "hermes",
+      "session_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-590e8685fca47d19:siq_analysis:a9f12fcc7c589db6e10a3120b130a8a58f60388765948c2cc2312b8166143c20",
+      "action_id": "act-62019db8123d69987abd0d33",
+      "agent_id": "hri-7c9be62a8a245dc2ce06ca0350898b2a",
+      "task_id": "task-ri-ad3e601b2ab1147df1e64ec3d6c3c36fa2d1ec64c723cd0c10a9b6a27c682b6a",
+      "runtime_task_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-590e8685fca47d19:siq_analysis:3e64e926b9e76ce2ed133e8d1115f16ebc4e22c589a6252dde6af4eb27422c95",
+      "intent_id": "int-ri-ad3e601b2ab1147df1e64ec3d6c3c36fa2d1ec64c723cd0c10a9b6a27c682b6a",
+      "intent_digest": "cd9ce631e6bef808ecfbb6b90e31d2985918fad2506bdfc082a5c3ad42223bea",
+      "intent_binding": "bound",
+      "authority_revision": "b7f89b63d9dda4ad96820c46687d8c682273f17ad5a0557efe83f3833d1d7966",
+      "tool": "read_file",
+      "tool_call_id": "call_45985b1e7b7f43908826feb8",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "075e6480c2a88c5d1a0cdbca00ba4841654bbf12ef609618ad6386b056f13ec2",
+      "params_excerpt": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/synthetic.txt",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "granted by grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "reason_code": "allow",
+      "matched_grant_id": "grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "matched_fact_ids": [
+        "pf-p-3-6dc3eae8",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 36,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:research-permissions-reader@dcf6e32c9b1c",
+        "content_hash": "dcf6e32c9b1c1610ee5747cded47a7e0198f5121e7789a71ac12db7fb1b73a1b",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-a44f37f8f1d91901209e7d82bd7d891d",
+        "call_binding": "0388054dc4ea0f8efcee4456ee86e1ffd54648147e3f75b3fd96c9ebcf98c178"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "deny",
+      "effective_action": "deny",
+      "principal": {
+        "type": "user",
+        "id": "research-permissions-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "0db6c7abd4f5fce4cce40b249af13811a9d70c8c33382626c128cb2ecf573235"
+        }
+      ],
+      "record_type": "decision",
+      "parent_action_id": "act-62019db8123d69987abd0d33",
+      "task_seq": 2,
+      "receipt_id": "rcp-d4c5ba7959dd-090542.182507",
+      "chain_id": "local",
+      "seq": 4,
+      "prev_hash": "11ae215c31b19f08b84100ea05f3284a2d2d8674e12d05bf6a89f2a64b85d658",
+      "hash": "905c63e2d4a22853e7db58acd567f36fa324419178664ff144bab2f981993934",
+      "sig": "5cf5bdabfa58603730faacb78d123d81f310643a6fcdd6e9041832bd25b83330d993a2e62e4cc58fac1dc185eb652d4139d6c302752c18f7f3d3106a5c36830d",
+      "issued_at": "2026-10-06T09:05:42Z",
+      "platform": "hermes",
+      "session_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-590e8685fca47d19:siq_analysis:a9f12fcc7c589db6e10a3120b130a8a58f60388765948c2cc2312b8166143c20",
+      "action_id": "act-991ba9fd8f1fd556a3e110c3",
+      "agent_id": "hri-7c9be62a8a245dc2ce06ca0350898b2a",
+      "task_id": "task-ri-ad3e601b2ab1147df1e64ec3d6c3c36fa2d1ec64c723cd0c10a9b6a27c682b6a",
+      "runtime_task_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-590e8685fca47d19:siq_analysis:3e64e926b9e76ce2ed133e8d1115f16ebc4e22c589a6252dde6af4eb27422c95",
+      "intent_id": "int-ri-ad3e601b2ab1147df1e64ec3d6c3c36fa2d1ec64c723cd0c10a9b6a27c682b6a",
+      "intent_digest": "cd9ce631e6bef808ecfbb6b90e31d2985918fad2506bdfc082a5c3ad42223bea",
+      "intent_binding": "bound",
+      "authority_revision": "b7f89b63d9dda4ad96820c46687d8c682273f17ad5a0557efe83f3833d1d7966",
+      "tool": "write_file",
+      "tool_call_id": "call_7b170a89d2ce4d6c89f69cb0",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "params_digest": "d4c5ba7959dd0b6068ad4b3217bdee7d29bf2c839597e4d8e677696fcc5f1b8d",
+      "params_excerpt": "CANDIDATE_WRITE_ATTEMPT\n/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/analysis/runs/qwen-request-590e8685fca47d19/permission-result.md",
+      "action": "deny",
+      "advisory_action": null,
+      "reason": "filesystem target /home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi6f344783246d2425/analysis/runs/qwen-request-590e8685fca47d19/permission-result.md outside granted paths (default deny)",
+      "reason_code": "grant_scope_violation",
+      "matched_grant_id": "grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "matched_fact_ids": [],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": 28,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:research-permissions-reader@dcf6e32c9b1c",
+        "content_hash": "dcf6e32c9b1c1610ee5747cded47a7e0198f5121e7789a71ac12db7fb1b73a1b",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-a44f37f8f1d91901209e7d82bd7d891d",
+        "call_binding": "9da55eeed6cbc8434a3abd3a3fe74b3fb7574176ffe1045bd42ddc39fa70a1c2"
+      }
+    },
+    {
+      "authority_status": "valid",
+      "policy_action": "allow",
+      "effective_action": "allow",
+      "principal": {
+        "type": "user",
+        "id": "research-permissions-operator"
+      },
+      "resource_refs": [
+        {
+          "domain": "filesystem",
+          "digest": "e75a338d50aa8192a34566e6eafed2bb912255bd0f3f019f8fb5c8317dc169eb"
+        }
+      ],
+      "record_type": "observation",
+      "decision_receipt_id": "rcp-075e6480c2a8-090542.072501",
+      "task_seq": 1,
+      "receipt_id": "rcp-075e6480c2a8-090542.072501-obs",
+      "chain_id": "local",
+      "seq": 5,
+      "prev_hash": "905c63e2d4a22853e7db58acd567f36fa324419178664ff144bab2f981993934",
+      "hash": "03968466b333f21d9d3276ef6614f15dff67cbb93407223f707286935dcae51f",
+      "sig": "68ab039fbbde3d856d882069965886a45e052e8330fb0da200afb86d2609d0521a5115bb0fabb04afb1ec2f81bc5c5393a52f9bf5d790917c262d64d8e473b01",
+      "issued_at": "2026-10-06T09:05:42Z",
+      "platform": "hermes",
+      "session_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-590e8685fca47d19:siq_analysis:a9f12fcc7c589db6e10a3120b130a8a58f60388765948c2cc2312b8166143c20",
+      "action_id": "act-62019db8123d69987abd0d33",
+      "agent_id": "hri-7c9be62a8a245dc2ce06ca0350898b2a",
+      "task_id": "task-ri-ad3e601b2ab1147df1e64ec3d6c3c36fa2d1ec64c723cd0c10a9b6a27c682b6a",
+      "runtime_task_id": "siq:openshell:pool:8b168cf2b16ae0dfeefcacba:qwen-request-590e8685fca47d19:siq_analysis:3e64e926b9e76ce2ed133e8d1115f16ebc4e22c589a6252dde6af4eb27422c95",
+      "intent_id": "int-ri-ad3e601b2ab1147df1e64ec3d6c3c36fa2d1ec64c723cd0c10a9b6a27c682b6a",
+      "intent_digest": "cd9ce631e6bef808ecfbb6b90e31d2985918fad2506bdfc082a5c3ad42223bea",
+      "intent_binding": "bound",
+      "authority_revision": "b7f89b63d9dda4ad96820c46687d8c682273f17ad5a0557efe83f3833d1d7966",
+      "tool": "read_file",
+      "tool_call_id": "call_45985b1e7b7f43908826feb8",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "params_digest": "18a2f4f342d086ece708bc80c972140dbc76354633abeab6c41fe6a1e712ba44",
+      "params_excerpt": "{\"content\": \"1|Synthetic evaluation company, no real financial data.\\n2|2024 revenue: 200 million CNY.\\n3|2025 revenue: 240 million CNY.\\n4|Revenue growth = (240 - 200) / 200 = 20%.\\n5|\", \"total_lines\": 4, \"file_size\": 158, \"truncated\": false, \"is_binary\": false, \"is_image\": false}",
+      "action": "allow",
+      "advisory_action": null,
+      "reason": "correlated observation of tool result",
+      "reason_code": "observation_accepted",
+      "matched_grant_id": "grt-si-6d0bc00bf241d007a343217d954416e4364b20133da420c14e2a372c1e1514fc",
+      "matched_fact_ids": [
+        "pf-p-3-6dc3eae8",
+        "pf-p-1-811cbc58"
+      ],
+      "matched_rule_ids": [],
+      "taint_labels": [],
+      "trifecta": {
+        "private_data": false,
+        "untrusted_input": false,
+        "egress": false
+      },
+      "enforcement_mode": "block",
+      "policy_revision": null,
+      "sandbox_id": null,
+      "model_key": null,
+      "engine": {
+        "version": "0.0.0-dev",
+        "rulepack_version": 1
+      },
+      "decision_latency_ms": null,
+      "hold": null,
+      "skill_attribution": {
+        "skill_id": "local_dir:research-permissions-reader@dcf6e32c9b1c",
+        "content_hash": "dcf6e32c9b1c1610ee5747cded47a7e0198f5121e7789a71ac12db7fb1b73a1b",
+        "status": "verified",
+        "evidence_level": "controlled_task",
+        "context_id": "sec-a44f37f8f1d91901209e7d82bd7d891d",
+        "call_binding": "0388054dc4ea0f8efcee4456ee86e1ffd54648147e3f75b3fd96c9ebcf98c178"
+      }
+    }
+  ]
+}

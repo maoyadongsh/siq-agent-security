@@ -1,0 +1,34 @@
+{
+  "schema_version": "siq.evaluation.research-tool-permissions-correction.v1",
+  "batch": "research-permissions-tool-coverage-002",
+  "passed": false,
+  "checks": {
+    "seven_signed_records": false,
+    "same_task_agent_skill_context": true,
+    "positive_native_read_and_write": true,
+    "original_file_preserved_against_signed_write_parameters": true,
+    "authorized_content_retained": true,
+    "alternative_files_absent": true,
+    "patch_targets_same_physical_file": true,
+    "patch_proposes_expected_change": true,
+    "probe_decisions_follow_write_allow_decision": true,
+    "terminal_signed_admission_deny": true,
+    "execute_code_signed_admission_deny": true,
+    "patch_signed_admission_deny": true,
+    "terminal_proposes_owned_file_write": true,
+    "code_proposes_nested_write_file": true,
+    "read_file_signed_execution_observation": true,
+    "write_file_signed_execution_observation": false
+  },
+  "prior_verification_sha256": "1c1bdddceec3708399f01c0cb655c06adaa6b2d566b1c72b34a0d1944d6c5c37",
+  "scope": "Recheck signed receipt chain, SEC, argument recognition and file effects. Original Grant/cleanup calibration retained in preceding full review.",
+  "corrections": [
+    "Native write_file positional arguments are valid; recognize literal positional, keyword and mixed forms without executing code.",
+    "Decision sequence proves ordering of admission decisions, not completion of the authorized write before subsequent probes."
+  ],
+  "remaining_failed_checks": [
+    "seven_signed_records",
+    "write_file_signed_execution_observation"
+  ],
+  "reviewer_sha256": "da0342fc1a255612fdee1156a63d494514394e507f333f2bc16f5be8874be533"
+}

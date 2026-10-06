@@ -48,6 +48,8 @@ Preflight intentionally does not upgrade `deployment_verified` based on health a
 
 ## Flagship runtime lock and doctor
 
+The 2026-10-06 [DGX permission closeout](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md) used the real Research Engine business API, local Qwen, Hermes and OpenShell with synthetic company documents. Authorized reads/scoped writes, installed-Skill permissions, revocation and relay recovery have scoped file/receipt evidence. The daily Agent entry and dedicated Skill acceptance entry are distinct; explicit host SEC binding is not automatic attribution of arbitrary Skills. Follow the [campaign reproduction guide](../../third-party-evaluation/20261006/README-PERMISSIONS.md) for these batches; the archived deployment commands below keep their own model and candidate identities.
+
 The Hermes + OpenShell flagship candidate has a separate immutable input lock:
 
 ```text
@@ -140,12 +142,12 @@ mismatch, or a resource recovery hold all fail the job. Passing this gate means
 the isolated candidate was verified; `production_eligible` and
 `deployment_verified` remain `false`.
 
-The current local worktrees intentionally do not pass this gate: they contain
-the in-progress flagship changes, the live gateway still has the SP-02 recovery
-hold, and the locked model is not online. The Hermes source also contains the
-aiohttp `RequestKey` compatibility repair found by the CI-01 regression suite;
-the candidate image and exact Hermes lock must be rebuilt/refreshed around that
-repair before a native candidate run can pass.
+The earlier CI-01 snapshot recorded dirty flagship worktrees, an SP-02 recovery
+hold and a locked-model mismatch; those are historical observations, not a live
+health statement. The 2026-10-06 campaign used its own candidate manifests and
+completed environment cleanup. It did not rerun or satisfy this separate native
+candidate CI gate. Recheck every lock, actual model and gateway before running
+this gate; never replace a failed lock with evidence from another candidate.
 
 For isolated real-tool execution and evidence export, follow the
 [Secure Agent commands](../../apps/secure-agent/README.md). Every run uses a new

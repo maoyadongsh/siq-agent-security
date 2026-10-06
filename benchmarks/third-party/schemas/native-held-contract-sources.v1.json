@@ -1,0 +1,30 @@
+{
+  "schema_version": "siq-native-held-reviewed-sources/v1",
+  "candidate_commit": "5470ab3780f2228d77b0dd856553ea9e666de815",
+  "candidate_binary_sha256": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "review_basis": "original candidate inventory frozen before calibration; explicit preregistration applies only to future protocols carrying this registry",
+  "sources": {
+    "packages/contracts/hold-status-request.v1.schema.json": "ca1ed83a939f4ee498da9236dd6c007378deb8c7a3ce1f83a529d58101cc552f",
+    "packages/contracts/hold-status.v1.schema.json": "f15e0300d8ed96f9c6597993fe025fc742b02da49f1eff3fdbfde9e53a539804",
+    "packages/contracts/hold-execution-reserve.v1.schema.json": "0422a5df166d12074ec1ec1727080fa6da47b51d30f6d6b440eba8436d14523b",
+    "packages/contracts/intent-revocation.v1.schema.json": "16a37ece78615993252acb7f6411f53877d98fe3656609a942f229c85e245718",
+    "packages/contracts/intent-binding-revocation.v1.schema.json": "ced440e865c8cdf40f461bd1428691099479f241cd5f368aa2fbdb5c4f88be03",
+    "packages/contracts/skill-execution-context-revocation.v1.schema.json": "3cc927026ccdaa164f1fab931525e2c1328f7762dff83d60b7507db4dcec6670",
+    "apps/agentshield/internal/receipt/hold_status.go": "36b39f3df97d2b99dfdb64a68535d2bed25fdc4f453aed39094afeaaec49888d",
+    "apps/agentshield/internal/receipt/hold_execution.go": "71216502d2bb990818c8613a87d4edae11cd690c77778fa4dc5408ab67e0e8e5",
+    "apps/agentshield/internal/receipt/hold_execution_recheck.go": "74533efff01ad49a2967d6c006323cbacfba9194554f74f14640538a4ade94e9",
+    "apps/agentshield/internal/server/runtime_identity_auth.go": "c2329161fb52428107973b887cf90637f59764e8067d28fcda7b225efe88ca0e",
+    "apps/agentshield/internal/runtimeidentity/session.go": "4eed2716dbb8c80da6370188927b4720cd40336d470b956ed4b90b09d6ecab28",
+    "apps/agentshield/internal/intent/revocation.go": "e29d1369b89edbfff5661700f69591e97ee372ee650d19a6af74fe2f9bdda0c6",
+    "apps/agentshield/internal/intent/intent_revocation.go": "0bd5136fbf6aba5301fa87b205e86faa77da9f5a8e7a3ccd67eb0b642e8d1b1f",
+    "apps/agentshield/internal/canon/canon.go": "75f2bf733e047589f3c4645290428067386ffd6d4cfc3c194c6d3c883c10f422",
+    "packages/contracts/intent-grant-binding.v1.schema.json": "c95e835548750930f7f874958a7fb5a4a5f2adbdeedcea9e40eb41a2d27e10e7",
+    "packages/contracts/local-runtime-identity-revoke.v1.schema.json": "59ab7ffc32b8964f23774e6fdd91f40475544fccea51141e0f16f0e5f49fb846",
+    "packages/contracts/local-skill-execution-context-revoke.v1.schema.json": "e9adb5413e766aaeb0462699f933df04a580566a4452e88ee81f946cf6350e9a",
+    "packages/contracts/local-runtime-session-enrolled.v1.schema.json": "3839513fcdc0e551b322dab942df33faa487050b4e2ecc9f916ba3e209a3563e",
+    "apps/agentshield/internal/receipt/engine.go": "c0e6ed673166a30ee4d200cc8433010de8861039b2d0faaaea18cc7e36c93d3a",
+    "apps/agentshield/internal/receipt/action_state.go": "6714d23fef63134a4619b3f248eaecb25fb2e6f1c8bfcac3fe261dad0b7ff77f",
+    "apps/agentshield/internal/skillcontext/store.go": "a6e46f21d2d5fbfe6eb7591086216e52748f370457d9998a55a840fb4faa49d8",
+    "adapters/runtime/hermes-agentshield/__init__.py": "025d794d8313b692b445aef5520038965591c1cce74ecd17a34e5caae56b6e4b"
+  }
+}

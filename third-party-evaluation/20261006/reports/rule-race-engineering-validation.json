@@ -1,0 +1,59 @@
+{
+  "checked_at": "2026-10-06T06:26:48.838664+00:00",
+  "changed_candidate_sources": [
+    "apps/control-api/app/rules.py",
+    "apps/control-api/app/worker.py"
+  ],
+  "added_candidate_sources": [
+    "apps/control-api/app/tests/test_rule_scan_transactions.py"
+  ],
+  "candidate_runtime_equal": true,
+  "concurrency_harness_and_scorer_unchanged": true,
+  "full_worker_same_candidate": true,
+  "new_transaction_tests": 2,
+  "focused_tests": 91,
+  "full_API": {
+    "passed": 2312,
+    "skipped": 1,
+    "seconds": 105.05,
+    "exit_code": 0,
+    "skip": "optional SIQ_BATCH_WIRE_SAMPLE browser capture absent"
+  },
+  "framework": {
+    "passed": 684,
+    "subtests": 118,
+    "seconds": 46.43,
+    "exit_code": 0
+  },
+  "logs": {
+    "focused": {
+      "path": "private/rule-race-focused-tests.log",
+      "sha256": "d395c2a9e04fc31ab4dfb296b3a8d82a5eebb2c773310978a61614e591f535ea"
+    },
+    "full_API": {
+      "path": "private/rulefix1-control-api-tests.log",
+      "sha256": "8f12b5370a2bf0a7cf00c03256cf306edd2e8a416366535dce5b5c41edf9e0af"
+    },
+    "framework": {
+      "path": "reports/rule-race-framework-tests.txt",
+      "sha256": "161d78a273915bbbbab32feede2d81c2bf35ddd381d40deb626671bfbc07ba2c"
+    }
+  },
+  "changed_sources_ruff": true,
+  "git_diff_check": true,
+  "contract": {
+    "ref": "packages/contracts/enterprise-risk-rule-lifecycle.v2.md",
+    "sha256": "1fd1021fc6495b09b5f500e339617ad5765b06c72cdab39ab5d315ee479b9b09"
+  },
+  "actual_evidence_negative_rejections": {
+    "rule-race-002": 12,
+    "rulefix-worker-001": 12
+  },
+  "supplemental_reviewer_correction": {
+    "original_source": "protocols/rule-race-002-review/manifest.json",
+    "original_error": "reports/rule-race-002-review-initial-error.txt",
+    "corrected_source": "protocols/rule-race-002-review-v2/manifest.json",
+    "reason": "Synthetic extra finding lacked its later resolved history and triggered generator StopIteration; corrected negative fixture, product and frozen scorer unchanged."
+  },
+  "full_journey_closed": false
+}

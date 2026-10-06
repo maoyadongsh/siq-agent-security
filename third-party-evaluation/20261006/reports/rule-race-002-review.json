@@ -1,0 +1,49 @@
+{
+  "run_id": "rule-race-002",
+  "native_source_and_raw_cli_verified": true,
+  "extra_HTTP_count": 15,
+  "race_HTTP_count": 6,
+  "other_tenant_HTTP_count": 1,
+  "preparation_HTTP_count": 8,
+  "raw_reaper_outputs_joined": 1,
+  "strict_evidence_checks": {
+    "HTTP_labels_unique": true,
+    "first_create_response_join": true,
+    "first_create_strict_overlap": true,
+    "refresh_accept_response_join": true,
+    "refresh_accept_strict_overlap": true,
+    "refresh_resolve_response_join": true,
+    "refresh_resolve_strict_overlap": true,
+    "other_tenant_join": true,
+    "later_scan_join": true,
+    "fresh_findings_SQL_identity": true,
+    "resolve_stage_findings_SQL_identity": true,
+    "initial_creation_audit_join": true,
+    "initial_creation_outbox_join": true
+  },
+  "frozen_checks": {
+    "risk_rules_first_overlap": true,
+    "risk_rules_first_unique": true,
+    "risk_rules_other_tenant": true,
+    "risk_rules_fresh_preparation": true,
+    "risk_rules_refresh_accept": true,
+    "risk_rules_refresh_resolve": true,
+    "risk_rules_later_recurrence": true,
+    "risk_rules_cleanup": true
+  },
+  "actual_evidence_negative_rejections": {
+    "duplicate_first_finding": true,
+    "false_creation_count": true,
+    "missing_waiter": true,
+    "other_tenant_delayed": true,
+    "accepted_state_overwritten": true,
+    "resolution_erased": true,
+    "old_resolution_reopened": true,
+    "extra_HTTP_missing": true,
+    "creation_event_borrowed": true,
+    "effective_forged": true,
+    "barrier_left": true,
+    "cleanup_reaper_missed": true
+  },
+  "scope": "author controlled overlap and real HTTP/SQL evidence; not external witness or performance claim"
+}

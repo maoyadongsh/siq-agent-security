@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "run_verifications": [
+    {
+      "run_id": "personal-runtime-browser-001",
+      "manifest_sha256": "d5e7dcca197b847fcacdcd65f1a45496bc25c4470f76050e13ba491645b227be",
+      "exit_code": 2,
+      "outcome": 2
+    },
+    {
+      "run_id": "personal-runtime-browser-navigation-002",
+      "manifest_sha256": "36d17ac0a9c36b6fce69d6798d47c6d0654ddf50ac93c1fa1fd7cb7ee5dfa473",
+      "exit_code": 2,
+      "outcome": 2
+    },
+    {
+      "run_id": "personal-runtime-browser-presentation-003",
+      "manifest_sha256": "fcc3e4ba2e2b191d8b63db4aa957a8a6c697127b46452b4bd1da6e47017e94b2",
+      "exit_code": 0,
+      "outcome": 0
+    }
+  ],
+  "frozen_tools_and_contracts_unchanged": true,
+  "prior_ledger_keys_preserved": true,
+  "plan_links_match_hashes": true,
+  "report_links_checked": 10,
+  "goal_status": "active"
+}

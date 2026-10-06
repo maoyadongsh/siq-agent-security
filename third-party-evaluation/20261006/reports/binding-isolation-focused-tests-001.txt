@@ -1,0 +1,19 @@
+test_all_controls_actually_write_twice (test_binding_isolation.BindingIsolationTests.test_all_controls_actually_write_twice) ... ok
+test_all_eight_actual_cases (test_binding_isolation.BindingIsolationTests.test_all_eight_actual_cases) ... ok
+test_contract_scope_change_rejected (test_binding_isolation.BindingIsolationTests.test_contract_scope_change_rejected) ... ok
+test_cross_session_hold_substitution_rejected (test_binding_isolation.BindingIsolationTests.test_cross_session_hold_substitution_rejected) ... ok
+test_four_real_sigkill_histories (test_binding_isolation.BindingIsolationTests.test_four_real_sigkill_histories) ... ok
+test_global_revoke_blocks_both_sessions (test_binding_isolation.BindingIsolationTests.test_global_revoke_blocks_both_sessions) ... ok
+test_missing_frozen_module_rejected (test_binding_isolation.BindingIsolationTests.test_missing_frozen_module_rejected) ... ok
+test_mutation_event_cannot_be_hidden_in_summary (test_binding_isolation.BindingIsolationTests.test_mutation_event_cannot_be_hidden_in_summary) ... ok
+test_observation_result_digest_cannot_change (test_binding_isolation.BindingIsolationTests.test_observation_result_digest_cannot_change) ... ok
+test_per_session_oracle_cannot_swap_identity (test_binding_isolation.BindingIsolationTests.test_per_session_oracle_cannot_swap_identity) ... ok
+test_resurrected_rebind_fails_predicate (test_binding_isolation.BindingIsolationTests.test_resurrected_rebind_fails_predicate) ... ok
+test_revoke_cannot_happen_after_reserve (test_binding_isolation.BindingIsolationTests.test_revoke_cannot_happen_after_reserve) ... ok
+test_selective_revoke_preserves_other_session (test_binding_isolation.BindingIsolationTests.test_selective_revoke_preserves_other_session) ... ok
+test_signed_decision_cannot_move_between_sessions (test_binding_isolation.BindingIsolationTests.test_signed_decision_cannot_move_between_sessions) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.075s
+
+OK

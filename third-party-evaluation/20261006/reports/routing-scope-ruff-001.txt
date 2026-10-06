@@ -1,0 +1,22 @@
+I001 [*] Import block is un-sorted or un-formatted
+ --> third-party-evaluation/20261006/private/candidates/5470ab3780f2-routingscopefix1/apps/secure-agent/tests/test_source_upgrade.py:2:1
+  |
+1 |   """Negative regression for source classification lost before later context sends."""
+2 | / from dataclasses import replace
+3 | | import unittest
+4 | | from unittest.mock import patch
+5 | |
+6 | | import test_model_egress as fixtures
+7 | | from secure_agent.contracts import AgentError, ContactCandidate, DataSensitivity
+  | |________________________________________________________________________________^
+help: Organize imports
+  |
+1 | """Negative regression for source classification lost before later context sends."""
+2 + import unittest
+3 | from dataclasses import replace
+  - import unittest
+4 | from unittest.mock import patch
+  |
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.

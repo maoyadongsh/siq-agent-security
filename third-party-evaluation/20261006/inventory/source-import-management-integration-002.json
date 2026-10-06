@@ -1,0 +1,26 @@
+{
+  "reviewed_at": "2026-10-06T04:40:33.161442+00:00",
+  "run_id": "source-import-management-002",
+  "manifest_sha256": "f159ed575b0e7ed8e68e01feaeaf700f86e8765844f235d548f46ba367526c56",
+  "artifacts": {
+    "reports/source-import-management-report.md": "212fa6e5066132f7f1a896d123010ca3be8f7629e404eda64c7dc3d56bffa1b5",
+    "reports/source-import-management-002-review.json": "0bb0cad1e09c032d4785f807eaf78df82a8c7cf76b76753fdff80ab119537b04",
+    "reports/source-import-management-002-source-joins.json": "4b006b08c5bf70f4e27118172ec3b334834c09fa75d06d82e8a84ef19e948177",
+    "reports/source-import-management-002-export-review.json": "7617bda99da520875e773192f3b48911fd0e8b760d494560cb465ff7dd252b45",
+    "reports/source-import-engineering-validation.json": "ea2e2c3827466ebf08f22af7db9a50da4e07e1b42f2f9e3dff42c69fce19f0c8",
+    "reports/source-import-document-review.json": "174efedf1d2d9e36509a240f4e1eaee6b0bafa8bb30bdba9c5b2e91913a3078f"
+  },
+  "checks": 123,
+  "signed_documents": 6,
+  "HTTP": 23,
+  "negative_rejections": 12,
+  "source_joins": 16,
+  "framework_tests": 601,
+  "framework_subtests": 118,
+  "model_calls": 0,
+  "native_host_calls": 0,
+  "independent_task_blocks_added": 0,
+  "product_changed": false,
+  "full_journey_closed": false,
+  "next_task": "SRC06 native ZIP installation journey, then real public HTTPS and remaining source boundaries"
+}

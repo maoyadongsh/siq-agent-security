@@ -13,7 +13,7 @@ import logging
 import os
 import time
 from collections.abc import Callable
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 
@@ -82,10 +82,14 @@ def reap_expired_risk_acceptance(session) -> int:
     now = utcnow()
     rows = list(
         session.scalars(
-            select(Finding).where(
+            select(Finding)
+            .where(
                 Finding.status == "risk_accepted",
                 Finding.risk_acceptance.is_not(None),
             )
+            # Another disposition/reaper owns locked rows until its atomic commit.
+            # Leave those rows for a later cycle rather than act on stale state.
+            .with_for_update(skip_locked=True)
         )
     )
     reopened = 0
@@ -98,7 +102,8 @@ def reap_expired_risk_acceptance(session) -> int:
         except ValueError:
             continue
         if expires_at.tzinfo is not None:
-            expires_at = expires_at.replace(tzinfo=None)
+            # Compare instants in database UTC, not the input offset's wall time.
+            expires_at = expires_at.astimezone(UTC).replace(tzinfo=None)
         if expires_at < now:
             finding.status = "open"
             audit(
@@ -228,7 +233,8 @@ def reap_break_glass_reviews(session) -> int:
 
 
 def run_rules(session) -> dict:
-    tenants = list(session.scalars(select(Tenant).where(Tenant.status == "active")))
+    # Rule upserts retain tenant transaction locks until the final commit.
+    tenants = list(session.scalars(select(Tenant).where(Tenant.status == "active").order_by(Tenant.id)))
     total = {"created": 0, "updated": 0}
     for tenant in tenants:
         results = evaluate_all(session, tenant.id)

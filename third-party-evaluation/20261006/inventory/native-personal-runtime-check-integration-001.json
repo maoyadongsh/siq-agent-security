@@ -1,0 +1,55 @@
+{
+  "schema_version": "siq-personal-runtime-check-integration/v1",
+  "checked_at": "2026-10-06T03:27:37.841552+00:00",
+  "previous_goal_turn": "progress: same-candidate onboarding completed and evidence/plan integrated",
+  "run_id": "native-personal-runtime-check-001",
+  "manifest_sha256": "2b826474a7f092bbd36024a56068bdf7a29efaf6aaae695b47a9e04392e4b677",
+  "management_HTTP_calls": 70,
+  "outer_protocol_requests": 5,
+  "internal_product_protocol_requests": null,
+  "internal_protocol_count_reason": "not separately captured",
+  "real_model_inference_calls": 0,
+  "unique_signed_receipts": 10,
+  "signed_runtime_check_revisions": 7,
+  "owned_processes": [
+    {
+      "identity": {
+        "pid": 3838043,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256890339"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3838168,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256890481"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3838844,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256891012"
+      },
+      "state": "absent"
+    }
+  ],
+  "new_owned_containers": 0,
+  "independent_task_blocks_added": 0,
+  "checks_passed": 48,
+  "external_syscall_effect_observer_for_runtime_check": false,
+  "authority_joins": {
+    "personal-onboarding-B2": {
+      "signed_receipts": 10,
+      "additional_selfcheck_receipts": 5,
+      "signed_record_revisions": 7,
+      "temporary_authority_documents": 3,
+      "product_selfcheck_passed": true,
+      "scope": "signature and identity joins, not independent observation of ephemeral physical effects"
+    }
+  },
+  "scope": "same actual instance onboarding plus separate product self-check session; RB09/Q4 partial"
+}

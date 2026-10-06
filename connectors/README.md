@@ -4,6 +4,8 @@
 
 ## 已有模块
 
+2026-10-06 [企业实测](../third-party-evaluation/20261006/reports/enterprise-chain-report.md)已用原生 Edge 和 Hermes Connector 完成受控配置发现、签名上传、资产确认并接续后端治理。该证据不覆盖全部 12 个 Connector 或全机发现率；同批合成 Edge 负向协议与原生采集结果分别登记。
+
 | 模块 | 采集对象 | 解释与部署边界 |
 | --- | --- | --- |
 | [hermes](hermes/) | Hermes 配置与工具集 | 声明的 toolsets 不能冒充 effective 权限 |

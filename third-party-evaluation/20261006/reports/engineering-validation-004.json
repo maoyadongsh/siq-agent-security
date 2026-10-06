@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-10-05T19:15:59.199052+00:00",
+  "framework_unittests": {
+    "passed": 26,
+    "failed": 0,
+    "command": "python3 -m unittest discover -s benchmarks/third-party/tests -v"
+  },
+  "ruff_changed_files_exit_code": 0,
+  "git_diff_check_exit_code": 0,
+  "owned_tp07_containers_remaining": 0,
+  "governance_offline_verifier": {
+    "001": "expected_rejection_sequence_gap",
+    "002": "integrity_consistent_42_of_43",
+    "003": "integrity_consistent_43_of_43"
+  },
+  "verifier_sources": {
+    "verify_governance.py": "52d82639873b1acc024ef52d93679d134d2424445c755010a1f889bace46960f",
+    "tests/test_governance_verifier.py": "d15cc1b4cefe12352e3da3e0e225195d20dfbf6e08ec625014008ee9f72c11c6"
+  }
+}

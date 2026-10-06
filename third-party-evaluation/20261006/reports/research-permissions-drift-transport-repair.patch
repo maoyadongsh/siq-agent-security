@@ -1,0 +1,28 @@
+--- apps/api/services/agent_chat_runtime_impl.py before drift fix
++++ apps/api/services/agent_chat_runtime_impl.py after drift fix
+@@ -7834,6 +7834,25 @@
+         state.status = "timed_out"
+         state.error = "hermes_run_timed_out"
+         return TIMEOUT_MESSAGE
++    except httpx.TransportError:
++        # A supervisor can cut the stream when current authority becomes
++        # invalid. A broken connection is not a successful terminal event and
++        # must never replay the task or publish a partial answer as complete.
++        state.runtime_terminal_confirmed = await _stop_and_confirm_routed_run(
++            run_id,
++            profile=profile,
++            route=run_route,
++        )
++        state.terminal_result = RunTerminalResult(
++            run_id=run_id,
++            status="failed",
++            error_code="hermes_transport_interrupted",
++            retryable=False,
++            diagnostic="Agent runtime connection interrupted before terminal confirmation",
++        )
++        state.status = "failed"
++        state.error = "hermes_transport_interrupted"
++        return RUN_FAILED_MESSAGE
+     finally:
+         if state.status != "postprocessing":
+             siq_security_export.emit_run_event(state, event_type="agent_run.terminal")

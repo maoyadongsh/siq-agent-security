@@ -1,0 +1,1 @@
+AUTHORIZED_STAGE_ONE; permission fixture

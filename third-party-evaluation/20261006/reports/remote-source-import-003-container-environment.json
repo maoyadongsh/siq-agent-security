@@ -1,0 +1,50 @@
+{
+  "run_id": "remote-source-import-003",
+  "started_at": "2026-10-06T04:57:43.143330+00:00",
+  "image_id": "sha256:4f8d1afed6d58037c680221ca6dd9fb4737b7ecfa7d4809ca809fdc0c7d9b786",
+  "image_architecture": "arm64",
+  "network_environment": "container_doh_dns",
+  "containers": [
+    {
+      "role": "dns",
+      "id": "99fe0a68eb7088752a14ebfb0f8c9490e965a2038de65cc867320cd9f8539262"
+    },
+    {
+      "role": "product",
+      "id": "b929402db80a6f91897d2f92daf6973d483f0f39bc42b684da016b394b773781"
+    }
+  ],
+  "error_type": null,
+  "product_exit_code": 0,
+  "host_processes": [
+    {
+      "pid": 254725,
+      "start_ticks": "257448694"
+    },
+    {
+      "pid": 254804,
+      "start_ticks": "257448733"
+    },
+    {
+      "pid": 254834,
+      "start_ticks": "257448736"
+    }
+  ],
+  "network_id": "9f84ea533ac67775005890436a339965a99fe1378192a4104fb81f993efd0007",
+  "resolver_ip": "192.168.48.2",
+  "removal": [
+    {
+      "id": "b929402db80a6f91897d2f92daf6973d483f0f39bc42b684da016b394b773781",
+      "exit_code": 0
+    },
+    {
+      "id": "99fe0a68eb7088752a14ebfb0f8c9490e965a2038de65cc867320cd9f8539262",
+      "exit_code": 0
+    }
+  ],
+  "network_remove_exit_code": 0,
+  "owned_containers_absent": true,
+  "owned_network_absent": true,
+  "host_processes_absent": true,
+  "finished_at": "2026-10-06T04:57:50.586344+00:00"
+}

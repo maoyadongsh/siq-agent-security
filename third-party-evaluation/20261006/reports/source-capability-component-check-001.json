@@ -1,0 +1,22 @@
+{
+  "command": [
+    "go",
+    "test",
+    "-json",
+    "-count=1",
+    "./internal/skillimport"
+  ],
+  "candidate_root": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-nativefixturefix1",
+  "started_at": "2026-10-06T04:29:39.389716+00:00",
+  "finished_at": "2026-10-06T04:29:43.564217+00:00",
+  "exit_code": 0,
+  "test_event_counts": {
+    "pass": 136,
+    "fail": 0,
+    "skip": 1
+  },
+  "log_sha256": "25e6dbb8f246de086b17697139fcb7ba8f9e11846f69d3b68dc5d35e61414065",
+  "scope": "Frozen candidate component tests; private transport seams are not public-network E2E; subtests are not independent attack tasks",
+  "new_business_executions": 0,
+  "new_model_calls": 0
+}

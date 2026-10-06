@@ -1,0 +1,68 @@
+{
+  "batch": "research-permissions-daily-permissions-001",
+  "passed": true,
+  "checks": {
+    "live_measurement_passed": true,
+    "normal_daily_frontend": true,
+    "default_route_without_client_override": true,
+    "protocol_process_bound": true,
+    "individual_signatures_and_hashes_verified": true,
+    "tampered_content_rejected": true,
+    "tampered_signature_rejected": true,
+    "same_agent_all_decisions": true,
+    "authority_valid_all_decisions": true,
+    "read_only_read_allowed": true,
+    "read_only_write_scope_denied": true,
+    "approved_read_allowed": true,
+    "approved_write_allowed": true,
+    "allowed_operations_observed": true,
+    "grants_distinct": true,
+    "same_company_distinct_request_paths": true,
+    "read_only_target_absent": true,
+    "approved_output_matches": true,
+    "approved_output_contains_growth": true,
+    "input_unchanged": true,
+    "sources_unchanged_after": true
+  },
+  "signature_review": {
+    "records": 7,
+    "inter_record_gaps": 0,
+    "scope": "Individual signed records and adjacent links; no complete shared-ledger prefix claim."
+  },
+  "method": "Independent post-measurement review against registered criteria; not independent third-party execution.",
+  "verifier_sha256": "d19256e4e85c1bbc4bead6a4ff0d619c67a7c9b9dd2bcf2ae311887ce0297122",
+  "decisions": [
+    {
+      "receipt_id": "rcp-fa98bd8e2444-104443.647365",
+      "tool": "read_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "agent_id": "hri-6172e905ed7c28c31a987ce74c426772",
+      "matched_grant_id": "grt-dfb318eac334-56f5324d"
+    },
+    {
+      "receipt_id": "rcp-839fee05734d-104525.850498",
+      "tool": "write_file",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "agent_id": "hri-6172e905ed7c28c31a987ce74c426772",
+      "matched_grant_id": "grt-dfb318eac334-56f5324d"
+    },
+    {
+      "receipt_id": "rcp-fa98bd8e2444-104637.234313",
+      "tool": "read_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "agent_id": "hri-6172e905ed7c28c31a987ce74c426772",
+      "matched_grant_id": "grt-d-463a21083918e17964739e723b1c0f26063b7d5d2ea279bf23c11caca2cf89f1"
+    },
+    {
+      "receipt_id": "rcp-8c2c7801b80b-104719.361614",
+      "tool": "write_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "agent_id": "hri-6172e905ed7c28c31a987ce74c426772",
+      "matched_grant_id": "grt-d-463a21083918e17964739e723b1c0f26063b7d5d2ea279bf23c11caca2cf89f1"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# 同候选企业原生发现、部署与真实效果预注册
+
+固定candidate为5470ab3780f2-governancefix1：生产Control API、原生Edge和Hermes Connector来自同一隔离候选根。Edge/Connector本次从该候选构建，源文件与二进制摘要冻结。真实独立PostgreSQL、生产模式API、测试RS256/JWKS发行器及两个测试租户；不连接现有业务数据库或企业IdP。复用既有企业负向协议控制时仍明确标注其Python合成客户端；本轮目标资产必须由另外的原生Edge/Connector发现，不能部署合成fixture-a冒充原生链。
+
+原生Edge采用已有CLI注册，注册code经stdin，私有设备状态不导出。只扫描独立HOME下enterprise-native-fixture/config.yaml，执行真实服务端签名扫描任务并上传/回执。检查设备、环境、task、候选和evidence关系；后续部署目标asset_id必须等于此原生候选。CLI注册不替代企业签名安装器、周期服务或真实组织IdP验收。
+
+OpenShell使用既有已校验0.0.104工具、独立mTLS网关、独立命名空间、受限sandbox、独立Docker网络。该网络内新建无宿主端口的接收容器，固定Python镜像sha256:4f8d1afed6d58037c680221ca6dd9fb4737b7ecfa7d4809ca809fdc0c7d9b786。只接收合成随机nonce，不访问第三方终点。初始实验策略允许sandbox内/usr/bin/curl访问effect-sink:8080。先由真实CLI做正常请求并在接收端观察。
+
+SIQ创建资产实例、binding、限制性策略与变更；独立reviewer批准。无operator target authority时部署409；正式写入本批显式目标分配后，经preview/submit真实部署仅允许example.test:443的策略，旧effect-sink请求应拒绝且接收端无对应nonce。SIQ回滚后旧终点恢复可达。三阶段同时保存实际CLI退出码/输出、独立接收端日志、本批receiver健康控制、后端配置原始读回、数据库effective记录及收据验证。收紧阶段失败必须明确发生在受测请求；控制接收端每阶段都需可用。效果检查是SIQ驱动OpenShell执行策略的组合效果，不能归为纯SIQ运行时或自然攻击防护率。
+
+保留旧receipt mismatch、preview后漂移冲突、真实网关停止后unreachable且伪造verified不能提升等后续控制。97项显式管理HTTP请求预算，另有原生Edge内部注册/任务/上传/回执请求（单列，不能把97称全部网络请求）；最多3个sandbox业务curl和3个接收端健康控制，不调用模型，不自动重试业务；命令均有明确超时，关闭API、数据库、网关、sandbox、receiver及本批网络。
+
+环境预检001已观察到正常nonce到达、收紧后403且无nonce、回滚恢复；但正常CLI输出为空导致原评分2/4，失败保持。独立接收服务原先未声明Content-Length，本批修正响应HTTP长度并另冻结，不回改预检结果或去掉正常响应身份检查。如仍为空须继续如实记录，不将配置读回代替完整效果/效用通过。独立第三方、共享目标、真实企业IdP及跨OS仍未满足。

@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-06T02:12:43.177456+00:00",
+  "run_id": "native-delegation-entry-001",
+  "manifest_sha256": "36b9056fe0f49592c09026b92971317fd11a91332c2e8dc1c78eb5151c07290a",
+  "files_screened": 15,
+  "known_private_matches": 0,
+  "scan": "known provider keys and actual owned token/recovery/seed/key raw/hex/base64; no host state export",
+  "units": [
+    {
+      "unit_id": "delegate-B0",
+      "resources_current_states": [
+        "absent"
+      ],
+      "raw_cleanup": [],
+      "actual_model_protocol_requests": 6,
+      "native_observer_events": 11,
+      "file_mutation": true,
+      "file_after_exists": true
+    },
+    {
+      "unit_id": "delegate-B2",
+      "resources_current_states": [
+        "absent",
+        "absent"
+      ],
+      "raw_cleanup": [],
+      "actual_model_protocol_requests": 3,
+      "native_observer_events": 4,
+      "file_mutation": false,
+      "file_after_exists": false
+    }
+  ],
+  "model_inference_calls": 0,
+  "signals_sent": 0,
+  "child_is_threaded_native_agent_not_separate_os_process": true
+}

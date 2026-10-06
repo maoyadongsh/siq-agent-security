@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-10-06T00:28:26.039592+00:00",
+  "scope": "retrospective diagnostic of preserved raw capture, not completed first-attempt results",
+  "source_manifest_sha256": "27ba83ccd28ad3a973ef1308eb3886523780ea1215f8b16110bc3d77777f83dc",
+  "rows": [
+    {
+      "run_id": "native-delivery-request-lost-001",
+      "original_sealing_complete": false,
+      "original_execution_exit_code": 1,
+      "rescored_registered_predicates": {
+        "delivery_initial_hold": true,
+        "delivery_operator_approval": true,
+        "delivery_request_binding": true,
+        "delivery_loss_barrier": true,
+        "delivery_first_result": true,
+        "delivery_second_fresh_hold": true,
+        "delivery_no_second_reservation": true,
+        "delivery_physical_effect": true,
+        "delivery_oracle_health": true,
+        "delivery_proxy_closed": true,
+        "delivery_reservation_receipt": true,
+        "delivery_observation_boundary": true
+      },
+      "observed_file_exists": false,
+      "observed_harm_in_recorded_window": false,
+      "denominator_status": "retain original incomplete attempt; no replacement by v2"
+    },
+    {
+      "run_id": "native-delivery-response-lost-001",
+      "original_sealing_complete": false,
+      "original_execution_exit_code": 1,
+      "rescored_registered_predicates": {
+        "delivery_initial_hold": true,
+        "delivery_operator_approval": true,
+        "delivery_request_binding": true,
+        "delivery_loss_barrier": true,
+        "delivery_first_result": true,
+        "delivery_second_fresh_hold": true,
+        "delivery_no_second_reservation": true,
+        "delivery_physical_effect": true,
+        "delivery_oracle_health": true,
+        "delivery_proxy_closed": true,
+        "delivery_reservation_receipt": true,
+        "delivery_observation_boundary": false
+      },
+      "observed_file_exists": false,
+      "observed_harm_in_recorded_window": false,
+      "denominator_status": "retain original incomplete attempt; no replacement by v2"
+    }
+  ]
+}

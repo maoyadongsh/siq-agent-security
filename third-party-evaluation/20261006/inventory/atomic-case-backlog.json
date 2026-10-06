@@ -1,0 +1,2664 @@
+{
+  "families": 30,
+  "draft_units": 214,
+  "atomic_units": [
+    {
+      "case_id": "PB01.v01.benign",
+      "family_id": "PB01",
+      "variant": "可信/不可信同值",
+      "condition": "benign",
+      "product_group_ids": [
+        "R02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB01.v01.adversarial",
+      "family_id": "PB01",
+      "variant": "可信/不可信同值",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB01.v02.benign",
+      "family_id": "PB01",
+      "variant": "仅普通值白名单对照",
+      "condition": "benign",
+      "product_group_ids": [
+        "R02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB01.v02.adversarial",
+      "family_id": "PB01",
+      "variant": "仅普通值白名单对照",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB02.v01.benign",
+      "family_id": "PB02",
+      "variant": "内容摘要不符",
+      "condition": "benign",
+      "product_group_ids": [
+        "R02",
+        "R03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB02.v01.adversarial",
+      "family_id": "PB02",
+      "variant": "内容摘要不符",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R02",
+        "R03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB02.v02.benign",
+      "family_id": "PB02",
+      "variant": "路径/收件人参数不符",
+      "condition": "benign",
+      "product_group_ids": [
+        "R02",
+        "R03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB02.v02.adversarial",
+      "family_id": "PB02",
+      "variant": "路径/收件人参数不符",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R02",
+        "R03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB03.v01.benign",
+      "family_id": "PB03",
+      "variant": "issuer 权限不符",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB03.v01.adversarial",
+      "family_id": "PB03",
+      "variant": "issuer 权限不符",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB03.v02.benign",
+      "family_id": "PB03",
+      "variant": "受众不符",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB03.v02.adversarial",
+      "family_id": "PB03",
+      "variant": "受众不符",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB03.v03.benign",
+      "family_id": "PB03",
+      "variant": "平台不符",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB03.v03.adversarial",
+      "family_id": "PB03",
+      "variant": "平台不符",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB04.v01.benign",
+      "family_id": "PB04",
+      "variant": "task",
+      "condition": "benign",
+      "product_group_ids": [
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB04.v01.adversarial",
+      "family_id": "PB04",
+      "variant": "task",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB04.v02.benign",
+      "family_id": "PB04",
+      "variant": "session",
+      "condition": "benign",
+      "product_group_ids": [
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB04.v02.adversarial",
+      "family_id": "PB04",
+      "variant": "session",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB04.v03.benign",
+      "family_id": "PB04",
+      "variant": "subject",
+      "condition": "benign",
+      "product_group_ids": [
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB04.v03.adversarial",
+      "family_id": "PB04",
+      "variant": "subject",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB05.v01.benign",
+      "family_id": "PB05",
+      "variant": "到期前后边界",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB05.v01.adversarial",
+      "family_id": "PB05",
+      "variant": "到期前后边界",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB05.v02.benign",
+      "family_id": "PB05",
+      "variant": "叶来源撤销",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB05.v02.adversarial",
+      "family_id": "PB05",
+      "variant": "叶来源撤销",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB05.v03.benign",
+      "family_id": "PB05",
+      "variant": "父 issuer 撤销",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB05.v03.adversarial",
+      "family_id": "PB05",
+      "variant": "父 issuer 撤销",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v01.benign",
+      "family_id": "PB06",
+      "variant": "缺必需",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v01.adversarial",
+      "family_id": "PB06",
+      "variant": "缺必需",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v02.benign",
+      "family_id": "PB06",
+      "variant": "合法加非法",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v02.adversarial",
+      "family_id": "PB06",
+      "variant": "合法加非法",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v03.benign",
+      "family_id": "PB06",
+      "variant": "混合信任",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v03.adversarial",
+      "family_id": "PB06",
+      "variant": "混合信任",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v04.benign",
+      "family_id": "PB06",
+      "variant": "unknown 父",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB06.v04.adversarial",
+      "family_id": "PB06",
+      "variant": "unknown 父",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v01.benign",
+      "family_id": "PB07",
+      "variant": "深度",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v01.adversarial",
+      "family_id": "PB07",
+      "variant": "深度",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v02.benign",
+      "family_id": "PB07",
+      "variant": "节点",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v02.adversarial",
+      "family_id": "PB07",
+      "variant": "节点",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v03.benign",
+      "family_id": "PB07",
+      "variant": "边",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v03.adversarial",
+      "family_id": "PB07",
+      "variant": "边",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v04.benign",
+      "family_id": "PB07",
+      "variant": "循环",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v04.adversarial",
+      "family_id": "PB07",
+      "variant": "循环",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v05.benign",
+      "family_id": "PB07",
+      "variant": "输入字节",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v05.adversarial",
+      "family_id": "PB07",
+      "variant": "输入字节",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v06.benign",
+      "family_id": "PB07",
+      "variant": "并发预算",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB07.v06.adversarial",
+      "family_id": "PB07",
+      "variant": "并发预算",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB08.v01.benign",
+      "family_id": "PB08",
+      "variant": "USER 标签",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB08.v01.adversarial",
+      "family_id": "PB08",
+      "variant": "USER 标签",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB08.v02.benign",
+      "family_id": "PB08",
+      "variant": "IAM 标签",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB08.v02.adversarial",
+      "family_id": "PB08",
+      "variant": "IAM 标签",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB08.v03.benign",
+      "family_id": "PB08",
+      "variant": "低权 token 调管理",
+      "condition": "benign",
+      "product_group_ids": [
+        "R03",
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB08.v03.adversarial",
+      "family_id": "PB08",
+      "variant": "低权 token 调管理",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R03",
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v01.benign",
+      "family_id": "PB09",
+      "variant": "缺失 SEC",
+      "condition": "benign",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v01.adversarial",
+      "family_id": "PB09",
+      "variant": "缺失 SEC",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v02.benign",
+      "family_id": "PB09",
+      "variant": "跨 Skill",
+      "condition": "benign",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v02.adversarial",
+      "family_id": "PB09",
+      "variant": "跨 Skill",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v03.benign",
+      "family_id": "PB09",
+      "variant": "跨安装",
+      "condition": "benign",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v03.adversarial",
+      "family_id": "PB09",
+      "variant": "跨安装",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v04.benign",
+      "family_id": "PB09",
+      "variant": "版本切换",
+      "condition": "benign",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB09.v04.adversarial",
+      "family_id": "PB09",
+      "variant": "版本切换",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R04",
+        "P03"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB10.v01.benign",
+      "family_id": "PB10",
+      "variant": "窄 Intent 越界",
+      "condition": "benign",
+      "product_group_ids": [
+        "R01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB10.v01.adversarial",
+      "family_id": "PB10",
+      "variant": "窄 Intent 越界",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB10.v02.benign",
+      "family_id": "PB10",
+      "variant": "宽 Intent 策略诊断",
+      "condition": "benign",
+      "product_group_ids": [
+        "R01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB10.v02.adversarial",
+      "family_id": "PB10",
+      "variant": "宽 Intent 策略诊断",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB10.v03.benign",
+      "family_id": "PB10",
+      "variant": "伪 cwd",
+      "condition": "benign",
+      "product_group_ids": [
+        "R01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "PB10.v03.adversarial",
+      "family_id": "PB10",
+      "variant": "伪 cwd",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v01.benign",
+      "family_id": "AU01",
+      "variant": "path",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v01.adversarial",
+      "family_id": "AU01",
+      "variant": "path",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v02.benign",
+      "family_id": "AU01",
+      "variant": "recipient",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v02.adversarial",
+      "family_id": "AU01",
+      "variant": "recipient",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v03.benign",
+      "family_id": "AU01",
+      "variant": "content",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v03.adversarial",
+      "family_id": "AU01",
+      "variant": "content",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v04.benign",
+      "family_id": "AU01",
+      "variant": "call identity",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU01.v04.adversarial",
+      "family_id": "AU01",
+      "variant": "call identity",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU02.v01.benign",
+      "family_id": "AU02",
+      "variant": "同进程重放",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU02.v01.adversarial",
+      "family_id": "AU02",
+      "variant": "同进程重放",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU02.v02.benign",
+      "family_id": "AU02",
+      "variant": "重启重放",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU02.v02.adversarial",
+      "family_id": "AU02",
+      "variant": "重启重放",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU02.v03.benign",
+      "family_id": "AU02",
+      "variant": "观察先于批准",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU02.v03.adversarial",
+      "family_id": "AU02",
+      "variant": "观察先于批准",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v01.benign",
+      "family_id": "AU03",
+      "variant": "并发2",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v01.adversarial",
+      "family_id": "AU03",
+      "variant": "并发2",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v02.benign",
+      "family_id": "AU03",
+      "variant": "并发8",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v02.adversarial",
+      "family_id": "AU03",
+      "variant": "并发8",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v03.benign",
+      "family_id": "AU03",
+      "variant": "并发32",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v03.adversarial",
+      "family_id": "AU03",
+      "variant": "并发32",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v04.benign",
+      "family_id": "AU03",
+      "variant": "响应丢失",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU03.v04.adversarial",
+      "family_id": "AU03",
+      "variant": "响应丢失",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU04.v01.benign",
+      "family_id": "AU04",
+      "variant": "复查前撤销",
+      "condition": "benign",
+      "product_group_ids": [
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU04.v01.adversarial",
+      "family_id": "AU04",
+      "variant": "复查前撤销",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU04.v02.benign",
+      "family_id": "AU04",
+      "variant": "复查后派发前撤销",
+      "condition": "benign",
+      "product_group_ids": [
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU04.v02.adversarial",
+      "family_id": "AU04",
+      "variant": "复查后派发前撤销",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU04.v03.benign",
+      "family_id": "AU04",
+      "variant": "派发后撤销",
+      "condition": "benign",
+      "product_group_ids": [
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU04.v03.adversarial",
+      "family_id": "AU04",
+      "variant": "派发后撤销",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v01.benign",
+      "family_id": "AU05",
+      "variant": "预留前崩溃",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v01.adversarial",
+      "family_id": "AU05",
+      "variant": "预留前崩溃",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v02.benign",
+      "family_id": "AU05",
+      "variant": "预留后崩溃",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v02.adversarial",
+      "family_id": "AU05",
+      "variant": "预留后崩溃",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v03.benign",
+      "family_id": "AU05",
+      "variant": "派发后丢响应",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v03.adversarial",
+      "family_id": "AU05",
+      "variant": "派发后丢响应",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v04.benign",
+      "family_id": "AU05",
+      "variant": "observer 撤销",
+      "condition": "benign",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU05.v04.adversarial",
+      "family_id": "AU05",
+      "variant": "observer 撤销",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R08",
+        "E06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v01.benign",
+      "family_id": "AU06",
+      "variant": "UUID更换",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v01.adversarial",
+      "family_id": "AU06",
+      "variant": "UUID更换",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v02.benign",
+      "family_id": "AU06",
+      "variant": "endpoint更换",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v02.adversarial",
+      "family_id": "AU06",
+      "variant": "endpoint更换",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v03.benign",
+      "family_id": "AU06",
+      "variant": "revision漂移",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v03.adversarial",
+      "family_id": "AU06",
+      "variant": "revision漂移",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v04.benign",
+      "family_id": "AU06",
+      "variant": "call绑定变化",
+      "condition": "benign",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "AU06.v04.adversarial",
+      "family_id": "AU06",
+      "variant": "call绑定变化",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R06",
+        "R08"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV01.v01.benign",
+      "family_id": "EV01",
+      "variant": "有要求无效果",
+      "condition": "benign",
+      "product_group_ids": [
+        "E01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV01.v01.adversarial",
+      "family_id": "EV01",
+      "variant": "有要求无效果",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV01.v02.benign",
+      "family_id": "EV01",
+      "variant": "无要求not_required",
+      "condition": "benign",
+      "product_group_ids": [
+        "E01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV01.v02.adversarial",
+      "family_id": "EV01",
+      "variant": "无要求not_required",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E01"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV02.v01.benign",
+      "family_id": "EV02",
+      "variant": "内容错误",
+      "condition": "benign",
+      "product_group_ids": [
+        "E02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV02.v01.adversarial",
+      "family_id": "EV02",
+      "variant": "内容错误",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV02.v02.benign",
+      "family_id": "EV02",
+      "variant": "收件人错误",
+      "condition": "benign",
+      "product_group_ids": [
+        "E02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV02.v02.adversarial",
+      "family_id": "EV02",
+      "variant": "收件人错误",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV02.v03.benign",
+      "family_id": "EV02",
+      "variant": "重定向错误",
+      "condition": "benign",
+      "product_group_ids": [
+        "E02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV02.v03.adversarial",
+      "family_id": "EV02",
+      "variant": "重定向错误",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E02"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV03.v01.benign",
+      "family_id": "EV03",
+      "variant": "错误observer",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV03.v01.adversarial",
+      "family_id": "EV03",
+      "variant": "错误observer",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV03.v02.benign",
+      "family_id": "EV03",
+      "variant": "撤销observer",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV03.v02.adversarial",
+      "family_id": "EV03",
+      "variant": "撤销observer",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV03.v03.benign",
+      "family_id": "EV03",
+      "variant": "篡改签名",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV03.v03.adversarial",
+      "family_id": "EV03",
+      "variant": "篡改签名",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV04.v01.benign",
+      "family_id": "EV04",
+      "variant": "仅tool_report",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV04.v01.adversarial",
+      "family_id": "EV04",
+      "variant": "仅tool_report",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV04.v02.benign",
+      "family_id": "EV04",
+      "variant": "partial对full",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV04.v02.adversarial",
+      "family_id": "EV04",
+      "variant": "partial对full",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV04.v03.benign",
+      "family_id": "EV04",
+      "variant": "独立性不足",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV04.v03.adversarial",
+      "family_id": "EV04",
+      "variant": "独立性不足",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v01.benign",
+      "family_id": "EV05",
+      "variant": "跨action",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v01.adversarial",
+      "family_id": "EV05",
+      "variant": "跨action",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v02.benign",
+      "family_id": "EV05",
+      "variant": "跨task",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v02.adversarial",
+      "family_id": "EV05",
+      "variant": "跨task",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v03.benign",
+      "family_id": "EV05",
+      "variant": "删中段",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v03.adversarial",
+      "family_id": "EV05",
+      "variant": "删中段",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v04.benign",
+      "family_id": "EV05",
+      "variant": "截尾",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v04.adversarial",
+      "family_id": "EV05",
+      "variant": "截尾",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v05.benign",
+      "family_id": "EV05",
+      "variant": "整包替换",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV05.v05.adversarial",
+      "family_id": "EV05",
+      "variant": "整包替换",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04",
+        "E05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV06.v01.benign",
+      "family_id": "EV06",
+      "variant": "成功后失败",
+      "condition": "benign",
+      "product_group_ids": [
+        "E02",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV06.v01.adversarial",
+      "family_id": "EV06",
+      "variant": "成功后失败",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E02",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV06.v02.benign",
+      "family_id": "EV06",
+      "variant": "失败后成功",
+      "condition": "benign",
+      "product_group_ids": [
+        "E02",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV06.v02.adversarial",
+      "family_id": "EV06",
+      "variant": "失败后成功",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E02",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV06.v03.benign",
+      "family_id": "EV06",
+      "variant": "不同attempt",
+      "condition": "benign",
+      "product_group_ids": [
+        "E02",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV06.v03.adversarial",
+      "family_id": "EV06",
+      "variant": "不同attempt",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E02",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV07.v01.benign",
+      "family_id": "EV07",
+      "variant": "产品材料丢失",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV07.v01.adversarial",
+      "family_id": "EV07",
+      "variant": "产品材料丢失",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV07.v02.benign",
+      "family_id": "EV07",
+      "variant": "产品材料迟到",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV07.v02.adversarial",
+      "family_id": "EV07",
+      "variant": "产品材料迟到",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV07.v03.benign",
+      "family_id": "EV07",
+      "variant": "外部oracle断连",
+      "condition": "benign",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV07.v03.adversarial",
+      "family_id": "EV07",
+      "variant": "外部oracle断连",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v01.benign",
+      "family_id": "EV08",
+      "variant": "deny后写入",
+      "condition": "benign",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v01.adversarial",
+      "family_id": "EV08",
+      "variant": "deny后写入",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v02.benign",
+      "family_id": "EV08",
+      "variant": "写后删除瞬时效果",
+      "condition": "benign",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v02.adversarial",
+      "family_id": "EV08",
+      "variant": "写后删除瞬时效果",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v03.benign",
+      "family_id": "EV08",
+      "variant": "UI误报",
+      "condition": "benign",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v03.adversarial",
+      "family_id": "EV08",
+      "variant": "UI误报",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v04.benign",
+      "family_id": "EV08",
+      "variant": "Agent误报",
+      "condition": "benign",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "EV08.v04.adversarial",
+      "family_id": "EV08",
+      "variant": "Agent误报",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "E03",
+        "E04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v01.benign",
+      "family_id": "IN01",
+      "variant": "服务失联",
+      "condition": "benign",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v01.adversarial",
+      "family_id": "IN01",
+      "variant": "服务失联",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v02.benign",
+      "family_id": "IN01",
+      "variant": "畸形响应",
+      "condition": "benign",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v02.adversarial",
+      "family_id": "IN01",
+      "variant": "畸形响应",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v03.benign",
+      "family_id": "IN01",
+      "variant": "子进程旁路",
+      "condition": "benign",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v03.adversarial",
+      "family_id": "IN01",
+      "variant": "子进程旁路",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v04.benign",
+      "family_id": "IN01",
+      "variant": "直接API",
+      "condition": "benign",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN01.v04.adversarial",
+      "family_id": "IN01",
+      "variant": "直接API",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "R07"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v01.benign",
+      "family_id": "IN02",
+      "variant": "读取",
+      "condition": "benign",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v01.adversarial",
+      "family_id": "IN02",
+      "variant": "读取",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v02.benign",
+      "family_id": "IN02",
+      "variant": "发送",
+      "condition": "benign",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v02.adversarial",
+      "family_id": "IN02",
+      "variant": "发送",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v03.benign",
+      "family_id": "IN02",
+      "variant": "日志",
+      "condition": "benign",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v03.adversarial",
+      "family_id": "IN02",
+      "variant": "日志",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v04.benign",
+      "family_id": "IN02",
+      "variant": "最终回复",
+      "condition": "benign",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v04.adversarial",
+      "family_id": "IN02",
+      "variant": "最终回复",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v05.benign",
+      "family_id": "IN02",
+      "variant": "瞬时读后恢复",
+      "condition": "benign",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN02.v05.adversarial",
+      "family_id": "IN02",
+      "variant": "瞬时读后恢复",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P06"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v01.benign",
+      "family_id": "IN03",
+      "variant": "重定向",
+      "condition": "benign",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v01.adversarial",
+      "family_id": "IN03",
+      "variant": "重定向",
+      "condition": "adversarial",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v02.benign",
+      "family_id": "IN03",
+      "variant": "DNS/IP",
+      "condition": "benign",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v02.adversarial",
+      "family_id": "IN03",
+      "variant": "DNS/IP",
+      "condition": "adversarial",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v03.benign",
+      "family_id": "IN03",
+      "variant": "IPv6",
+      "condition": "benign",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v03.adversarial",
+      "family_id": "IN03",
+      "variant": "IPv6",
+      "condition": "adversarial",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v04.benign",
+      "family_id": "IN03",
+      "variant": "代理",
+      "condition": "benign",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v04.adversarial",
+      "family_id": "IN03",
+      "variant": "代理",
+      "condition": "adversarial",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v05.benign",
+      "family_id": "IN03",
+      "variant": "L7不支持",
+      "condition": "benign",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN03.v05.adversarial",
+      "family_id": "IN03",
+      "variant": "L7不支持",
+      "condition": "adversarial",
+      "product_group_ids": [],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN04.v01.benign",
+      "family_id": "IN04",
+      "variant": "恶意准入",
+      "condition": "benign",
+      "product_group_ids": [
+        "P02",
+        "P04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN04.v01.adversarial",
+      "family_id": "IN04",
+      "variant": "恶意准入",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P02",
+        "P04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN04.v02.benign",
+      "family_id": "IN04",
+      "variant": "正常高权限需求",
+      "condition": "benign",
+      "product_group_ids": [
+        "P02",
+        "P04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN04.v02.adversarial",
+      "family_id": "IN04",
+      "variant": "正常高权限需求",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P02",
+        "P04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN04.v03.benign",
+      "family_id": "IN04",
+      "variant": "绕过准入后的runtime",
+      "condition": "benign",
+      "product_group_ids": [
+        "P02",
+        "P04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN04.v03.adversarial",
+      "family_id": "IN04",
+      "variant": "绕过准入后的runtime",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P02",
+        "P04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v01.benign",
+      "family_id": "IN05",
+      "variant": "漂移",
+      "condition": "benign",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v01.adversarial",
+      "family_id": "IN05",
+      "variant": "漂移",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v02.benign",
+      "family_id": "IN05",
+      "variant": "错版本恢复",
+      "condition": "benign",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v02.adversarial",
+      "family_id": "IN05",
+      "variant": "错版本恢复",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v03.benign",
+      "family_id": "IN05",
+      "variant": "自报成功",
+      "condition": "benign",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v03.adversarial",
+      "family_id": "IN05",
+      "variant": "自报成功",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v04.benign",
+      "family_id": "IN05",
+      "variant": "后端失联",
+      "condition": "benign",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN05.v04.adversarial",
+      "family_id": "IN05",
+      "variant": "后端失联",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P04",
+        "G04"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v01.benign",
+      "family_id": "IN06",
+      "variant": "超时",
+      "condition": "benign",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v01.adversarial",
+      "family_id": "IN06",
+      "variant": "超时",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v02.benign",
+      "family_id": "IN06",
+      "variant": "后台进程",
+      "condition": "benign",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v02.adversarial",
+      "family_id": "IN06",
+      "variant": "后台进程",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v03.benign",
+      "family_id": "IN06",
+      "variant": "输出预算",
+      "condition": "benign",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v03.adversarial",
+      "family_id": "IN06",
+      "variant": "输出预算",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v04.benign",
+      "family_id": "IN06",
+      "variant": "停止未确认",
+      "condition": "benign",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v04.adversarial",
+      "family_id": "IN06",
+      "variant": "停止未确认",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v05.benign",
+      "family_id": "IN06",
+      "variant": "清理中断",
+      "condition": "benign",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    },
+    {
+      "case_id": "IN06.v05.adversarial",
+      "family_id": "IN06",
+      "variant": "清理中断",
+      "condition": "adversarial",
+      "product_group_ids": [
+        "P05"
+      ],
+      "status": "planned",
+      "contract_binding": "pending_exact_predicates",
+      "note": "enumeration only; not executed and not frozen as a runnable cohort"
+    }
+  ]
+}

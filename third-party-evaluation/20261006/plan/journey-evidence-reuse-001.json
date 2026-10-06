@@ -1,0 +1,633 @@
+{
+  "schema_version": "siq-journey-reuse-specification/v1",
+  "scope": "18 journey reviewed relevance and residual requirements; no automatic closure",
+  "source_order_ref": "plan/product-acceptance-execution-order.json",
+  "journeys": [
+    {
+      "journey_id": "RB01",
+      "feature_ids": [
+        "F10",
+        "F24"
+      ],
+      "original_report_refs": [
+        "reports/business-comparison-controls-report.md",
+        "reports/business-comparison-models-report.md",
+        "reports/business-pii-recovery-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "原参考应用B0/A-PROV/B2正常、同值错误来源与真实模型业务",
+          "runs": [
+            "business-comparison-controls-001",
+            "business-comparison-local-001",
+            "business-comparison-step5-001"
+          ],
+          "reuse_limit": "固定提议与模型实测分母分开；不提升为Hermes原生或独立确认"
+        },
+        {
+          "variant_scope": "PII后操作员新任务恢复",
+          "runs": [
+            "business-pii-recovery-001",
+            "business-pii-recovery-002"
+          ],
+          "reuse_limit": "原001不完整保留；不能解释为模型自主恢复或同会话降密"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "真实模型自主恢复、更多独立业务任务、确认集和逐任务语义效用"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB02",
+      "feature_ids": [
+        "F11",
+        "F12",
+        "F24"
+      ],
+      "original_report_refs": [
+        "reports/business-comparison-controls-report.md",
+        "reports/provenance-bindings-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "同值来源三臂对照",
+          "runs": [
+            "business-comparison-controls-001"
+          ],
+          "reuse_limit": "只复用明确来源因果切片"
+        },
+        {
+          "variant_scope": "收件人/正文最终值及作用域替换",
+          "runs": [
+            "provenance-bindings-001",
+            "provenance-bindings-002",
+            "issuer-ingress-001",
+            "issuer-ingress-002"
+          ],
+          "reuse_limit": "API组件，与原应用/原生来源链分列；首次失败不删除"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "文件路径、合法派生/混合父节点、过期撤销全变体、原生显式来源桥"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB03",
+      "feature_ids": [
+        "F15",
+        "F16",
+        "F24"
+      ],
+      "original_report_refs": [
+        "reports/business-observer-calibration-report.md",
+        "reports/observer-recovery-report.md",
+        "reports/business-chain-controls-001-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "真实接收、完成与观察器异常",
+          "runs": [
+            "business-chain-controls-001",
+            "business-observer-calibration-001"
+          ],
+          "reuse_limit": "效果、完成和业务语义分别计量"
+        },
+        {
+          "variant_scope": "观察者撤销和崩溃接管组件",
+          "runs": [
+            "observer-recovery-001",
+            "observer-recovery-002"
+          ],
+          "reuse_limit": "只复用组件证据；不等于原应用/原生接管"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "文件假写/删后、迟到错action证据、完整混淆矩阵及UI同任务关联"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB04",
+      "feature_ids": [
+        "F10",
+        "F12",
+        "F14",
+        "F24"
+      ],
+      "original_report_refs": [
+        "reports/native-contract-binding-report.md",
+        "reports/native-host-resume-report.md",
+        "reports/native-batch-approval-report.md",
+        "reports/binding-isolation-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "五授权四时点原生对照",
+          "runs": [
+            "native-contract-grant-before-status-001",
+            "native-contract-grant-before-status-control-001",
+            "native-contract-grant-before-reserve-001",
+            "native-contract-grant-before-reserve-control-001",
+            "native-contract-grant-after-reserve-001",
+            "native-contract-grant-after-reserve-control-001",
+            "native-contract-grant-after-write-001",
+            "native-contract-grant-after-write-control-001",
+            "native-contract-sec-before-status-001",
+            "native-contract-sec-before-status-control-001",
+            "native-contract-sec-before-reserve-001",
+            "native-contract-sec-before-reserve-control-001",
+            "native-contract-sec-after-reserve-001",
+            "native-contract-sec-after-reserve-control-001",
+            "native-contract-sec-after-write-001",
+            "native-contract-sec-after-write-control-001",
+            "native-contract-identity-before-status-001",
+            "native-contract-identity-before-status-control-001",
+            "native-contract-identity-before-reserve-001",
+            "native-contract-identity-before-reserve-control-001",
+            "native-contract-identity-after-reserve-001",
+            "native-contract-identity-after-reserve-control-001",
+            "native-contract-identity-after-write-001",
+            "native-contract-identity-after-write-control-001",
+            "native-contract-intent-before-status-001",
+            "native-contract-intent-before-status-control-001",
+            "native-contract-intent-before-reserve-001",
+            "native-contract-intent-before-reserve-control-001",
+            "native-contract-intent-after-reserve-001",
+            "native-contract-intent-after-reserve-control-001",
+            "native-contract-intent-after-write-001",
+            "native-contract-intent-after-write-control-001",
+            "native-contract-binding-before-status-001",
+            "native-contract-binding-before-status-control-001",
+            "native-contract-binding-before-reserve-001",
+            "native-contract-binding-before-reserve-control-001",
+            "native-contract-binding-after-reserve-001",
+            "native-contract-binding-after-reserve-control-001",
+            "native-contract-binding-after-write-001",
+            "native-contract-binding-after-write-control-001"
+          ],
+          "reuse_limit": "预留后效果保留harm；合同检查通过不等于预防成功"
+        },
+        {
+          "variant_scope": "原会话恢复与批准批量提议",
+          "runs": [
+            "native-host-before-reserve-002",
+            "native-host-before-reserve-control-002",
+            "native-host-after-reserve-002",
+            "native-host-after-reserve-control-002",
+            "native-host-after-write-002",
+            "native-host-after-write-control-002",
+            "native-host-after-observe-002",
+            "native-host-after-observe-control-002",
+            "native-batch-1-control-001",
+            "native-batch-1-control-002",
+            "native-batch-2-lost-002",
+            "native-batch-1-control-003",
+            "native-batch-2-control-003",
+            "native-batch-2-lost-003",
+            "native-batch-8-control-003",
+            "native-batch-8-lost-003",
+            "native-batch-32-control-003",
+            "native-batch-32-lost-003"
+          ],
+          "reuse_limit": "历史校准与主批分开；宿主去重不能归因SIQ并发"
+        },
+        {
+          "variant_scope": "同Intent多绑定撤销和重启",
+          "runs": [
+            "binding-isolation-001"
+          ],
+          "reuse_limit": "API组件，同UID/原生SEC隔离未验收"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "真正同时抵达同一批准预留边界的原生竞争；实例生命周期"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB05",
+      "feature_ids": [
+        "F07",
+        "F08",
+        "F09",
+        "F13",
+        "F21",
+        "F38"
+      ],
+      "original_report_refs": [
+        "reports/native-effects-report.md",
+        "reports/native-semantic-support-model-report.md",
+        "reports/native-terminal-authorization-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "原生文件/终端实际效果及合法终端边界",
+          "runs": [
+            "native-effects-controls-001",
+            "native-effects-shell-001",
+            "native-terminal-authorization-001"
+          ],
+          "reuse_limit": "terminal全拒绝下合法效用为0；file回退不提升terminal效用"
+        },
+        {
+          "variant_scope": "真实模型引用支持v2",
+          "runs": [
+            "native-semantic-support-local-001",
+            "native-semantic-support-step5-001"
+          ],
+          "reuse_limit": "保留部分业务失败；自然私有读提议为0不能证明攻击拦截收益"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "网络、来源桥、更多业务确认任务"
+        },
+        {
+          "kind": "observed_candidate_capability_limit",
+          "requirement": "当前required Intent将未知terminal文本效果全部拒绝，细粒度合法终端业务不可用"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB06",
+      "feature_ids": [
+        "F22",
+        "F34"
+      ],
+      "original_report_refs": [
+        "reports/progress-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "OpenShell目标策略部署/回滚组件",
+          "runs": [
+            "governance-backend-001",
+            "governance-backend-002",
+            "governance-backend-003"
+          ],
+          "reuse_limit": "专属测试namespace；配置读回不证明隔离或独占"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "同一候选真实业务允许→拒绝→恢复链，绑定目标/版本/执行加载身份"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB07",
+      "feature_ids": [
+        "F08",
+        "F21"
+      ],
+      "original_report_refs": [
+        "reports/project-function-understanding.md"
+      ],
+      "evidence_blocks": [],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "公开Hermes委派入口、父子身份收缩/回收；先核对能力，不能凭未测标unsupported"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB08",
+      "feature_ids": [
+        "F13",
+        "F23"
+      ],
+      "original_report_refs": [
+        "reports/project-function-understanding.md"
+      ],
+      "evidence_blocks": [],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "ROUTE01–16默认入口/显式配置请求观察、故障不回退和真正模型链；草稿不能计通过"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB09",
+      "feature_ids": [
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F19",
+        "F28"
+      ],
+      "original_report_refs": [
+        "reports/discovery-browser-report.md",
+        "reports/source-identity-report.md",
+        "reports/native-lifecycle-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "资产发现及UI",
+          "runs": [
+            "discovery-http-003",
+            "discovery-browser-001",
+            "discovery-browser-002"
+          ],
+          "reuse_limit": "发现不等于受保护；初始UI失败保留"
+        },
+        {
+          "variant_scope": "安装更新原生与来源身份",
+          "runs": [
+            "native-lifecycle-001",
+            "native-lifecycle-002",
+            "native-lifecycle-003",
+            "lifecycle-attacks-004"
+          ],
+          "reuse_limit": "不同候选/阶段只并列，不拼成一条完整链"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "固定候选发现→准入→审批→安装→真实工具跨步骤同身份"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB10",
+      "feature_ids": [
+        "F02",
+        "F06",
+        "F39"
+      ],
+      "original_report_refs": [
+        "reports/progress-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "管理API及UI权限",
+          "runs": [
+            "management-http-001",
+            "management-http-003",
+            "management-browser-001",
+            "management-browser-002"
+          ],
+          "reuse_limit": "保留首次失败；API/UI命令状态不代替后续实际工具"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "按目标逐项关联批量预览/CAS/审计及实际工具效果，非原子批次语义"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB11",
+      "feature_ids": [
+        "F15",
+        "F17",
+        "F18"
+      ],
+      "original_report_refs": [
+        "reports/progress-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "管理审计/受限读取与UI",
+          "runs": [
+            "management-http-003",
+            "management-browser-002"
+          ],
+          "reuse_limit": "仅具体已执行管理端点，不能覆盖全部原文保留时钟"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "同任务UI/API/原签名链、原文采集与保留双时钟、到期清理、截尾检测"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB12",
+      "feature_ids": [
+        "F25",
+        "F26",
+        "F27",
+        "F28"
+      ],
+      "original_report_refs": [
+        "reports/progress-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "企业JWT/PG治理和Edge",
+          "runs": [
+            "governance-http-001",
+            "governance-http-002",
+            "governance-http-003",
+            "governance-edge-001"
+          ],
+          "reuse_limit": "自有测试issuer不冒充真实企业IdP；Edge登记不等于业务目标执行"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "固定候选身份→设备→候选→批准→实际目标的完整链"
+        },
+        {
+          "kind": "environment_not_established",
+          "requirement": "真实企业IdP及其角色/撤销配置需专属接入；现有材料只证明测试issuer"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB13",
+      "feature_ids": [
+        "F29",
+        "F30",
+        "F35"
+      ],
+      "original_report_refs": [
+        "reports/progress-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "策略审批并发原缺陷及修复候选",
+          "runs": [
+            "governance-race-001",
+            "governance-race-002",
+            "governance-race-fix1-001"
+          ],
+          "reuse_limit": "原与修复候选分别保留，不合成一个版本通过"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "策略从预览到授权目标执行和回滚的跨步骤候选一致性"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB14",
+      "feature_ids": [
+        "F31",
+        "F32",
+        "F33",
+        "F34",
+        "F35"
+      ],
+      "original_report_refs": [
+        "reports/progress-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "后端部署回滚与UI",
+          "runs": [
+            "governance-backend-003",
+            "governance-ui-001",
+            "governance-ui-002",
+            "governance-ui-003",
+            "governance-ui-004",
+            "governance-ui-005"
+          ],
+          "reuse_limit": "UI状态/配置不是执行隔离"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "实际共享目标影响、加载版本与执行效果的完整企业闭环"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB15",
+      "feature_ids": [
+        "F09",
+        "F10",
+        "F13",
+        "F14",
+        "F19"
+      ],
+      "original_report_refs": [
+        "reports/native-lifecycle-report.md",
+        "reports/native-revocation-report.md",
+        "reports/binding-isolation-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "更新及撤销旧身份",
+          "runs": [
+            "native-lifecycle-001",
+            "native-lifecycle-002",
+            "native-lifecycle-003",
+            "native-sec-control-001",
+            "native-sec-revocation-001",
+            "native-identity-control-revocation-001",
+            "native-identity-revocation-001",
+            "native-identity-revocation-002",
+            "binding-isolation-001"
+          ],
+          "reuse_limit": "API绑定与原生SEC/身份证据分别引用"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "同链安装字节/Grant/SEC/会话；跨版本攻击及取消/失败恢复"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB16",
+      "feature_ids": [
+        "F01",
+        "F07",
+        "F20",
+        "F37",
+        "F38"
+      ],
+      "original_report_refs": [
+        "reports/adapter-removal-report.md",
+        "reports/native-resilience-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "适配器卸载、活动hook与断连恢复",
+          "runs": [
+            "native-adapter-removal-001",
+            "native-active-hook-001",
+            "native-service-down-001",
+            "native-service-down-002"
+          ],
+          "reuse_limit": "Linux作者侧受控宿主范围"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "正式发行签名/升级链与源码包核验，不以Linux卸载替代"
+        },
+        {
+          "kind": "environment_not_established",
+          "requirement": "原生Windows/macOS测试环境尚无本轮封存执行证据"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB17",
+      "feature_ids": [
+        "F08",
+        "F36"
+      ],
+      "original_report_refs": [
+        "reports/project-function-understanding.md"
+      ],
+      "evidence_blocks": [],
+      "remaining": [
+        {
+          "kind": "environment_not_established",
+          "requirement": "跨仓业务专属环境的版本化API→Hermes→OpenShell完整闭环；历史演示仅作检索"
+        }
+      ]
+    },
+    {
+      "journey_id": "RB18",
+      "feature_ids": [
+        "F40"
+      ],
+      "original_report_refs": [
+        "reports/progress-report.md"
+      ],
+      "evidence_blocks": [
+        {
+          "variant_scope": "既有组件微基准材料",
+          "runs": [
+            "A-fixturefix2-001"
+          ],
+          "reuse_limit": "旧组件延迟与模型端到端成本分开；不能合成负载曲线"
+        }
+      ],
+      "remaining": [
+        {
+          "kind": "not_yet_executed",
+          "requirement": "固定业务工作量配对端到端成本、长尾、失败分母和至少20独立确认任务"
+        }
+      ]
+    }
+  ]
+}

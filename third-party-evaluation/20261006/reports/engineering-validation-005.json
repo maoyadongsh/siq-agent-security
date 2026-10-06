@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-10-05T19:22:31.981231+00:00",
+  "framework_unittests": {
+    "passed": 29,
+    "failed": 0
+  },
+  "ruff_changed_files_exit_code": 0,
+  "git_diff_check_exit_code": 0,
+  "owned_tp07_containers_remaining": 0,
+  "edge_offline_verifier": {
+    "http_cases": 73,
+    "assertions_passed": 102,
+    "assertions_total": 102
+  },
+  "verifier_sources": {
+    "verify_governance.py": "8af666519d9dfd6702fa9958c297b898670b18854a847cab91d06b842f777d08",
+    "edge_governance_scoring.py": "3c5ef5021315db37f40912ddca1be154dd0d7045b52a887881b2b483992c7ffb",
+    "tests/test_governance_verifier.py": "cf90f946262e4efdb46fc657d5d7ed6710e4eced61d1b373fc4eb4199c2700ed"
+  }
+}

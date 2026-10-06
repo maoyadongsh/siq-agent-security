@@ -1,0 +1,25 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> benchmarks/third-party/review_native_delegation.py:2:1
+   |
+ 1 |   """Verify explicit signed parent delegation authority and preserve original outcomes."""
+ 2 | / import argparse
+ 3 | | import base64
+ 4 | | import hashlib
+ 5 | | import json
+ 6 | | from pathlib import Path
+ 7 | |
+ 8 | | from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+ 9 | |
+10 | | from native_configuration_review import review_scope
+11 | | from review_native_terminal import signature_payload, verify_document
+12 | | from verify_native_business import verify
+   | |_________________________________________^
+help: Organize imports
+  |
+8 | from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+  -
+9 | from native_configuration_review import review_scope
+  |
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.

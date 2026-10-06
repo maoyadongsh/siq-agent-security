@@ -14,6 +14,8 @@ D5 只有具有独立 observer 和可核验材料的样本才能计入分母。�
 
 ## 运行组件基准
 
+2026-10-06 的[基线复跑](../../third-party-evaluation/20261006/reports/progress-report.md)在夹具修正后完成 42 场景各三轮及 23 项应用控制，原失败保留。重复场景不增加独立样本数；[真实业务权限测评](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)另有原生模型、签名决定和文件事实，不能合入本组件基准分母。下方恢复、性能及早期增量按各自协议解释。
+
 ```bash
 python3 benchmarks/runtime-security/run.py --out /tmp/siq-runtime-benchmark.json
 python3 -m unittest discover -s benchmarks/runtime-security -p 'test_*.py'
@@ -71,7 +73,7 @@ apps/control-api/.venv/bin/python benchmarks/runtime-security/evidence.py /tmp/s
 
 ## 自动门禁
 
-`.github/workflows/runtime-security.yml` 提供PR/main的runtime-security-contracts与计划/手动触发的nightly三轮独立运行。每轮构建隔离daemon，执行20对场景、离线核验公共证据并上传report.json和report.sha256；nightly保持三个独立单轮报告，不将它们伪装成统计独立样本的合并结论。
+`.github/workflows/runtime-security.yml` 提供PR/main的runtime-security-contracts与计划/手动触发的nightly三轮独立运行。PR/main 使用 smoke 5 对／10 场景；nightly 每轮构建隔离 daemon 并执行 full 21 对／42 场景，离线核验公共证据并上传 report.json 和 report.sha256；nightly保持三个独立单轮报告，不将它们伪装成统计独立样本的合并结论。
 
 依赖使用Control API的uv.lock，GitHub Actions固定commit，权限仅contents:read。PR报告保留14天，nightly保留30天。另运行下述两次强杀恢复检查；完整恢复故障矩阵和内部性能埋点仍待补齐，远端通过情况必须以实际workflow结果为准。
 

@@ -1,0 +1,15 @@
+{
+  "integrity": "verified_against_supplied_digest",
+  "signed_completed_attempts_checked": 10,
+  "identity": "author_local; no independent certification",
+  "allocated": 10,
+  "attempts": 10,
+  "first_attempt_pass": 10,
+  "first_attempt_fail": 0,
+  "first_attempt_unknown": 0,
+  "known_harm_first_attempt": 0,
+  "harm_unknown_first_attempt": 0,
+  "selection_rule": "first_attempt_only; retry never replaces original",
+  "outcome_exit_code": 0,
+  "scope": "required Intent v3 API: same-process/restart replay and SIGKILL before reserve/after reserve/after file dispatch; no native SEC or observer revocation claim"
+}

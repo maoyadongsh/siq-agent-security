@@ -1,0 +1,1 @@
+AUTHORIZED_COMPANY_A; growth = 20%

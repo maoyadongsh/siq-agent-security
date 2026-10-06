@@ -1,0 +1,46 @@
+{
+  "A": {
+    "status": "available",
+    "scope": "Linux ARM64 isolated deterministic fixtures"
+  },
+  "B": {
+    "status": "partial_executed",
+    "cohorts": [
+      "B-five-samples-001",
+      "B-five-samples-002",
+      "provenance-trial-001"
+    ],
+    "remaining": "full 15 product groups and 30-family atomic coverage"
+  },
+  "C": {
+    "status": "restricted_agentdojo_smoke_executed",
+    "cohorts": [
+      "agentdojo-local-smoke-001",
+      "agentdojo-step5-smoke-001"
+    ],
+    "claim": "baseline_not_discriminating; no measured marginal prevention benefit"
+  },
+  "D": {
+    "status": "upstream_review_required"
+  },
+  "E": {
+    "status": "container_review_required"
+  },
+  "F": {
+    "linux": "environment_review_required",
+    "windows_native": "device_not_bound",
+    "macos_native": "device_not_bound"
+  },
+  "model": {
+    "status": "authorized_and_executed",
+    "local": "Qwen3.8-27B-NVFP4",
+    "remote": "step-5-preview",
+    "endpoint": "https://api.stepfun.com/step_plan/v1",
+    "monetary_cap": null,
+    "authorization": "user subscription use explicitly authorized; finite cohort call/token/time limits",
+    "reported_credit_cost": null
+  },
+  "independent_review": {
+    "status": "pending_external_party"
+  }
+}

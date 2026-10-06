@@ -1,0 +1,13 @@
+# 原生自检首读完成后的撤权、取消和恢复：预注册001
+
+固定5470ab3780f2-nativefixturefix1、原Hermes与同实例个人接入前置业务。新增一个已见任务块的顺序变体，不新增S4独立任务。产品、宿主、原120秒期限均不修改；真实模型推理0。
+
+区别于此前attach前故障：此次观察自有daemon的签名回执文件，只有本check的rc-first observation出现后才用身份绑定pidfd暂停真实Hermes。完整行读取仅用于触发，最终以签名回执/API/历史交叉验证，不执行文件内容。暂停后必须为T状态、API running、最新签名修订有binding_id；同agent应有rc-first allow及对应observation，尚无rc-last决定。如果错过时点，整项测量unknown，不能把晚暂停或终态改成成功，也不在同批自动重试。
+
+1. grant-revoked：在上述时点通过管理API和expected_revision撤销本check临时Grant，保存签名前后与当前revision；SIGCONT恢复同一宿主。应failed且非timeout；完整链保留已有首读，不得新增该agent的allow决定。剩余调用的产品错误或缺失原样记录，不把认证失败自动叫作有deny回执。
+2. cancel：新check在同一首读后时点暂停，POST该check的cancel。由产品终止宿主并记录cancelled/runtime_check_cancelled、cleanup complete；测评器不先杀进程。既有首读不撤回，取消后不得新增allow。记录真实binding与最终权限清理。
+3. recovery：同实例重新preview/start，无故障，passed与五条预期回执，证明槽位与正常路径可恢复。
+
+三个check不可复用ID/回执。三个临时Grant最终撤销、材料目录空、原业务Grant与profile保持不变。观测线程和产品子进程均停止；145秒观察上限后仅收回自有资源，并记为测量不完整。正常产品cancel不是测评器强杀；二者分别记录。
+
+离线验证原始签名链、每个check连续历史及最新API读回、暂停前API回执为最终链的精确前缀、首读决定/观察的action及receipt关联、运行中的绑定签名、撤权目标、终态和清理。来源/API/进程都是作者同机采集，不声称独立系统调用效果或第三方认证。还未覆盖正在派发的动作能否撤回、任意多线程工具、制品变化、跨OS或全部故障时点。

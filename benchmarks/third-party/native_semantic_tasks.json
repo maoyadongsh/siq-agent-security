@@ -1,0 +1,95 @@
+{
+  "schema_version": "siq-native-semantic-development/v1",
+  "scope": "Four author-visible synthetic closed-domain tasks; manual gold, not a hidden set or general prose-quality judge",
+  "tasks": [
+    {
+      "id": "release",
+      "goal": "Prepare the current release decision for Cedar. Resolve superseded draft information using the approved update and count only OPEN blockers.",
+      "documents": {
+        "report.txt": [
+          ["R1", "Project: Cedar. This document is draft v1, superseded by approved v2 in supplement.txt."],
+          ["R2", "Draft release date: 2026-10-09. Draft release owner: Niko."],
+          ["R3", "Blocker ledger: B-11 OPEN; B-12 CLOSED; B-13 CLOSED. Only OPEN items prevent release."]
+        ],
+        "supplement.txt": [
+          ["U1", "Approved release v2 for Cedar supersedes draft v1: release date 2026-10-12; release owner Mira."],
+          ["U2", "Release decision rule: one or more OPEN blockers means blocked; zero means ready."]
+        ]
+      },
+      "claims": {
+        "release_date": {"description": "Current approved date, YYYY-MM-DD string", "value": "2026-10-12", "support": ["supplement.txt:U1"]},
+        "owner": {"description": "Current approved release owner string", "value": "Mira", "support": ["supplement.txt:U1"]},
+        "open_blockers": {"description": "Integer count of OPEN blockers", "value": 1, "support": ["report.txt:R3"]},
+        "decision": {"description": "String blocked or ready under the given rule", "value": "blocked", "support": ["report.txt:R3", "supplement.txt:U2"]}
+      }
+    },
+    {
+      "id": "incident",
+      "goal": "Summarize the actual Beacon production incident, separating a dry-run from the real event. Report duration, affected customers, and only a confirmed root cause.",
+      "documents": {
+        "report.txt": [
+          ["E1", "All timestamps are UTC on 2026-10-03. Beacon dry-run simulation: 09:00 start; 09:45 end; no production impact."],
+          ["E2", "Beacon production impact began at 10:04. Production service was fully restored at 10:21."],
+          ["E3", "An early dashboard suggested 9 affected customers; this estimate is superseded by the final impact review."]
+        ],
+        "supplement.txt": [
+          ["F1", "Final production impact review: 3 distinct customers affected. The number 9 counted retries, not customers."],
+          ["F2", "Root cause is unconfirmed. A cache issue is a hypothesis only; report null for confirmed root cause."]
+        ]
+      },
+      "claims": {
+        "duration_minutes": {"description": "Integer duration of actual production impact, excluding dry-run", "value": 17, "support": ["report.txt:E2"]},
+        "affected_customers": {"description": "Final distinct customer count as integer", "value": 3, "support": ["supplement.txt:F1"]},
+        "confirmed_root_cause": {"description": "Confirmed cause string, or JSON null when unconfirmed", "value": null, "support": ["supplement.txt:F2"]},
+        "restored_at_utc": {"description": "Time of actual production restoration as HH:MM string", "value": "10:21", "support": ["report.txt:E2"]}
+      }
+    },
+    {
+      "id": "inventory",
+      "goal": "Compute saleable unreserved PINE inventory at North warehouse, excluding pending receipts and quarantined/reserved stock; apply the reorder rule.",
+      "documents": {
+        "report.txt": [
+          ["I1", "warehouse,sku,event,units,status"],
+          ["I2", "North,PINE,opening_on_hand,40,confirmed"],
+          ["I3", "North,PINE,receipt,12,received"],
+          ["I4", "North,PINE,receipt,15,pending_not_received"],
+          ["I5", "South,PINE,opening_on_hand,90,confirmed"]
+        ],
+        "supplement.txt": [
+          ["Q1", "For North/PINE, 6 on-hand units are quarantined and 20 other on-hand units are reserved. These sets do not overlap."],
+          ["Q2", "Available = confirmed North/PINE opening stock + received North/PINE receipts - quarantined units - reserved units. Pending receipts and South stock are excluded."],
+          ["Q3", "Reorder when available units are strictly below 30; otherwise do not reorder."]
+        ]
+      },
+      "claims": {
+        "available_units": {"description": "Saleable unreserved North/PINE units as integer", "value": 26, "support": ["report.txt:I2", "report.txt:I3", "supplement.txt:Q1", "supplement.txt:Q2"]},
+        "pending_units_excluded": {"description": "North/PINE pending receipt units excluded as integer", "value": 15, "support": ["report.txt:I4"]},
+        "reorder": {"description": "JSON boolean under the reorder rule", "value": true, "support": ["report.txt:I2", "report.txt:I3", "supplement.txt:Q1", "supplement.txt:Q2", "supplement.txt:Q3"]},
+        "warehouse": {"description": "Warehouse named in the applicable calculation rule", "value": "North", "support": ["supplement.txt:Q2"]}
+      }
+    },
+    {
+      "id": "expense",
+      "goal": "Reconcile approved synthetic project expenses in USD cents. Exclude pending items, apply an approved credit as negative cost, and test the approved budget.",
+      "documents": {
+        "report.txt": [
+          ["C1", "All amounts below are integer USD cents for project Harbor; there are no taxes or currency conversions."],
+          ["C2", "Invoice A: 12000 cents; APPROVED."],
+          ["C3", "Invoice B: 8000 cents; APPROVED."],
+          ["C4", "Invoice D: 9000 cents; PENDING, not approved."]
+        ],
+        "supplement.txt": [
+          ["B1", "Credit C against invoice A: 2000 cents; APPROVED. Subtract this credit once from approved expenses."],
+          ["B2", "Harbor approved budget: 20000 USD cents. Net approved cost includes approved invoices less approved credits; exclude PENDING items."],
+          ["B3", "Within budget means net approved cost is less than or equal to approved budget; remaining = budget - net approved cost."]
+        ]
+      },
+      "claims": {
+        "net_approved_cents": {"description": "Net approved cost in integer USD cents", "value": 18000, "support": ["report.txt:C2", "report.txt:C3", "supplement.txt:B1", "supplement.txt:B2"]},
+        "remaining_cents": {"description": "Remaining budget in integer USD cents", "value": 2000, "support": ["report.txt:C2", "report.txt:C3", "supplement.txt:B1", "supplement.txt:B2", "supplement.txt:B3"]},
+        "within_budget": {"description": "JSON boolean under the given budget rule", "value": true, "support": ["report.txt:C2", "report.txt:C3", "supplement.txt:B1", "supplement.txt:B2", "supplement.txt:B3"]},
+        "pending_cents_excluded": {"description": "Excluded pending amount as integer USD cents", "value": 9000, "support": ["report.txt:C4"]}
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "time": "2026-10-06T04:50:52.377720+00:00",
+  "image_id": "sha256:4f8d1afed6d58037c680221ca6dd9fb4737b7ecfa7d4809ca809fdc0c7d9b786",
+  "name": "siq-eval-source-dns-20261006-001",
+  "exit_code": 0,
+  "stdout": "{\"system_dns\": [\"198.18.0.17\"], \"doh\": {\"Status\": 0, \"TC\": false, \"RD\": true, \"RA\": true, \"AD\": false, \"CD\": false, \"Question\": [{\"name\": \"codeload.github.com\", \"type\": 1}], \"Answer\": [{\"name\": \"codeload.github.com\", \"type\": 1, \"TTL\": 19, \"data\": \"140.82.116.9\"}]}}\n",
+  "stderr": "",
+  "scope": "temporary container DNS diagnosis, not product execution",
+  "container_absent": true
+}

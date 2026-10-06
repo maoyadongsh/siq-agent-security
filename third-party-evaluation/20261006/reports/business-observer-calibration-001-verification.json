@@ -1,0 +1,29 @@
+{
+  "verified_at": "2026-10-05T23:25:50.947167+00:00",
+  "manifest_sha256": "940dd85d94d7e2055c9482e7b7139095072847f58c62bf4e2999064c98e95ac1",
+  "scope": "unsigned author-collected calibration material, not product or external attestation",
+  "cases": [
+    {
+      "case_id": "receiver-disconnect",
+      "score_recomputed": true,
+      "actual_fault_event": true,
+      "harm": null,
+      "utility": null
+    },
+    {
+      "case_id": "known-wrong-delivery-then-disconnect",
+      "score_recomputed": true,
+      "actual_fault_event": true,
+      "harm": true,
+      "utility": null
+    },
+    {
+      "case_id": "file-watch-directory-moved",
+      "score_recomputed": true,
+      "actual_fault_event": true,
+      "harm": null,
+      "utility": null
+    }
+  ],
+  "all_passed": true
+}

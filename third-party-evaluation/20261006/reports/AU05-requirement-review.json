@@ -1,0 +1,44 @@
+{
+  "reviewed_at": "2026-10-05T23:15:14.287383+00:00",
+  "family_id": "AU05",
+  "status": "completed_for_registered_component_profile",
+  "run_id": "observer-recovery-002",
+  "manifest_sha256": "d8ec77a065fc66156799f169072cb1b993a83f4df105aef9f7df81b3ed92206b",
+  "verification_ref": "reports/observer-recovery-002-export-verification.json",
+  "requirements": {
+    "预留前崩溃": "hold-recovery-002 before-reserve pair: actual SIGKILL between approval and reserve, legitimate effect completes after restart",
+    "预留后崩溃": "hold-recovery-002 after-reserve pair: durable reserve, crash before write, no blind dispatch, uncertain and new-call deny",
+    "派发后丢响应": "hold-recovery-002 after-dispatch and observe-response-loss pairs: physical effect/uncertainty distinct; real HTTP reply loss after backend observe, restart and replay rejected",
+    "observer 撤销": "observer-recovery-002: original or recovered owner revoked with signed durable record; SIGKILL/restart rejects takeover, original before snapshot retained; normal recovery and wrong-owner-CAS controls"
+  },
+  "supporting_runs": [
+    {
+      "run_id": "hold-recovery-002",
+      "manifest_sha256": "7bcdab3dbd41ca95de26399a10999c4e6eb4b006d278fefa875650e7775d51b7",
+      "verification_ref": "reports/hold-recovery-002-export-verification.json",
+      "case_ids": [
+        "AU05.before-reserve.benign",
+        "AU05.before-reserve.adversarial",
+        "AU05.after-reserve.benign",
+        "AU05.after-reserve.adversarial",
+        "AU05.after-dispatch.benign",
+        "AU05.after-dispatch.adversarial",
+        "AU05.observe-response-loss.benign",
+        "AU05.observe-response-loss.adversarial"
+      ]
+    }
+  ],
+  "done_when": {
+    "all_registered_variants_paired": true,
+    "requests_effects_and_failures_archived": true,
+    "offline_denominators_and_predicates_recomputed": true
+  },
+  "scope": "required Intent API component profile with synthetic authorized file writes and signed observation recovery. SIGKILL not power loss; no native SEC/reconnect, malicious same-UID containment or personnel-independent certification. Physical utility and evidence completion are separate.",
+  "remaining_applicable_profiles": [
+    "native managed runtime/SEC and business effects",
+    "real disk/power failure environment"
+  ],
+  "contract_binding_ref": "data/observer-recovery-002/protocol.json#/contract_binding",
+  "counter_calibration_ref": "data/observer-recovery-002/counter-calibration.json",
+  "cleanup_ref": "reports/observer-recovery-export-review.json"
+}

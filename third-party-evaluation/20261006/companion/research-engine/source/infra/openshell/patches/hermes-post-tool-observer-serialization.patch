@@ -1,0 +1,143 @@
+diff --git a/hermes_cli/plugins.py b/hermes_cli/plugins.py
+index 9028e28530..c909465a12 100644
+--- a/hermes_cli/plugins.py
++++ b/hermes_cli/plugins.py
+@@ -3790,7 +3790,7 @@ class PluginManager:
+         # In-flight / recently-timed-out hook callbacks. Keyed by
+         # (hook_name, id(cb)) so a stuck policy hook cannot spawn a new
+         # abandoned daemon thread on every subsequent fire.
+-        self._hook_running_callbacks: Dict[tuple, object] = {}
++        self._hook_running_callbacks: Dict[tuple, threading.Event] = {}
+         self._hook_timeout_suppressed_until: Dict[tuple, float] = {}
+         self._hook_timeout_lock = threading.Lock()
+         self._hook_timeout_suppression_seconds = _HOOK_TIMEOUT_SUPPRESSION_SECONDS
+@@ -5576,6 +5576,9 @@ class PluginManager:
+         is abandoned (not joined) so we do not reintroduce the #6622 hang.
+         Timed-out or still-running ``pre_tool_call`` callbacks fail closed
+         with a block directive; other bounded hooks fail open (skip).
++        Concurrent ``post_tool_call`` observations wait for the preceding
++        callback within the same timeout budget, rather than dropping healthy
++        parallel tool completions. A stalled callback still has one worker.
+ 
+         ``subagent_stop`` (and any hook in ``_HOOK_CALLER_THREAD_HOOKS``)
+         always runs on the caller thread to preserve the documented parent-
+@@ -5612,61 +5615,89 @@ class PluginManager:
+             callback_key = (hook_name, id(cb))
+             try:
+                 if use_timeout:
+-                    token = object()
+-                    now = time.monotonic()
+-                    with self._hook_timeout_lock:
+-                        suppressed_until = self._hook_timeout_suppressed_until.get(
+-                            callback_key
+-                        )
+-                        running = callback_key in self._hook_running_callbacks
+-                        if (
+-                            suppressed_until is not None and suppressed_until > now
+-                        ) or running:
+-                            logger.warning(
+-                                "Hook '%s' callback %s skipped after previous "
+-                                "timeout or while still running",
+-                                hook_name,
+-                                callback_name,
++                    done = threading.Event()
++                    deadline = time.monotonic() + timeout
++                    admitted = False
++                    while True:
++                        now = time.monotonic()
++                        with self._hook_timeout_lock:
++                            suppressed_until = self._hook_timeout_suppressed_until.get(
++                                callback_key
+                             )
+-                            if fail_closed:
+-                                results.append(_pre_tool_call_timeout_block())
+-                            continue
+-                        if suppressed_until is not None:
+-                            self._hook_timeout_suppressed_until.pop(callback_key, None)
+-                        self._hook_running_callbacks[callback_key] = token
++                            running = self._hook_running_callbacks.get(callback_key)
++                            if suppressed_until is not None and suppressed_until > now:
++                                break
++                            if running is None:
++                                if hook_name == "post_tool_call" and now >= deadline:
++                                    break
++                                self._hook_timeout_suppressed_until.pop(callback_key, None)
++                                self._hook_running_callbacks[callback_key] = done
++                                admitted = True
++                                break
++                        # No extra worker is spawned while the prior callback
++                        # is active. Keep policy-hook fail-closed behavior and
++                        # other hook contracts unchanged.
++                        if hook_name != "post_tool_call" or not running.wait(
++                            timeout=max(0.0, deadline - time.monotonic())
++                        ):
++                            break
++                    if not admitted:
++                        logger.warning(
++                            "Hook '%s' callback %s skipped after previous "
++                            "timeout or while still running",
++                            hook_name,
++                            callback_name,
++                        )
++                        if fail_closed:
++                            results.append(_pre_tool_call_timeout_block())
++                        continue
+ 
+                     context = contextvars.copy_context()
+-                    done = threading.Event()
+                     outcome: Dict[str, Any] = {}
+                     failure: Dict[str, BaseException] = {}
+ 
+                     def _runner(
+                         _cb: Callable[..., Any] = cb,
+                         _key: tuple = callback_key,
+-                        _token: object = token,
++                        _done: threading.Event = done,
++                        _context: contextvars.Context = context,
++                        _payload: Dict[str, Any] = kwargs,
++                        _outcome: Dict[str, Any] = outcome,
++                        _failure: Dict[str, BaseException] = failure,
+                     ) -> None:
+                         try:
+                             # Route through _invoke_hook_callback so the
+                             # additive-payload signature filtering (narrow
+                             # legacy callbacks) applies on the worker too.
+-                            outcome["value"] = context.run(
+-                                self._invoke_hook_callback, _cb, kwargs
++                            _outcome["value"] = _context.run(
++                                self._invoke_hook_callback, _cb, _payload
+                             )
+                         except BaseException as exc:
+-                            failure["exc"] = exc
++                            _failure["exc"] = exc
+                         finally:
+                             with self._hook_timeout_lock:
+-                                if self._hook_running_callbacks.get(_key) is _token:
++                                if self._hook_running_callbacks.get(_key) is _done:
+                                     self._hook_running_callbacks.pop(_key, None)
+-                            done.set()
++                            _done.set()
+ 
+                     thread = threading.Thread(
+                         target=_runner,
+                         name=f"hermes-hook-{callback_name}"[:40],
+                         daemon=True,
+                     )
+-                    thread.start()
+-                    if not done.wait(timeout=timeout):
++                    try:
++                        thread.start()
++                    except Exception:
++                        with self._hook_timeout_lock:
++                            if self._hook_running_callbacks.get(callback_key) is done:
++                                self._hook_running_callbacks.pop(callback_key, None)
++                        done.set()
++                        raise
++                    remaining = (
++                        max(0.0, deadline - time.monotonic())
++                        if hook_name == "post_tool_call" else timeout
++                    )
++                    if not done.wait(timeout=remaining):
+                         # Do not join — that would reintroduce the #6622 hang.
+                         with self._hook_timeout_lock:
+                             self._hook_timeout_suppressed_until[callback_key] = (

@@ -1,0 +1,14 @@
+SIM102 Use a single `if` statement instead of nested `if` statements
+   --> benchmarks/third-party/native_hold_boundary.py:252:5
+    |
+250 |           if revokes[0]['request'] != {'expected_revision': data['grant_before_revoke']['state_revision'], 'actor_id': 'evaluation-oper…
+251 |               raise ValueError('revocation revision differs')
+252 | /     if data['attack']:
+253 | |         if not events['operator_approved']['monotonic_ns'] < revokes[0]['monotonic_ns'] < events[revoked_event]['monotonic_ns']:
+    | |________________________________________________________________________________________________________________________________^
+254 |               raise ValueError('revocation precedes approval or follows boundary')
+255 |       for w in data['wire']:
+    |
+help: Combine `if` statements using `and`
+
+Found 1 error.

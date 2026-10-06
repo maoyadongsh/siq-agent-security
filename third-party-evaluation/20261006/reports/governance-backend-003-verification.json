@@ -1,0 +1,13 @@
+{
+  "integrity_verified": true,
+  "run_id": "governance-backend-003",
+  "passed": true,
+  "http_cases": 92,
+  "checks": 129,
+  "checks_passed": 129,
+  "missing": [],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

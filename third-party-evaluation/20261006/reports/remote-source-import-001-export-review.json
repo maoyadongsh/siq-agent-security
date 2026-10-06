@@ -1,0 +1,26 @@
+{
+  "verified": {
+    "verified": true,
+    "all_passed": false,
+    "passed": 28,
+    "total": 56,
+    "unique_signed_documents": 2,
+    "http_requests": 8,
+    "scope": "author-run actual public HTTPS import and digest/path controls; sampled TCP peers plus signed archive metadata; no publisher certification or native installation"
+  },
+  "exported_files": [
+    "protocol.json",
+    "journal.jsonl",
+    "http.jsonl",
+    "result.json",
+    "score.json",
+    "summary.json",
+    "manifest.json"
+  ],
+  "manifest_sha256": "0ad4f728966d498ad8328dc16ef2058141bde2439d808088ba71f9f95f922776",
+  "known_private_values_checked": 4,
+  "private_value_matches": 0,
+  "recorded_daemon_state": "absent",
+  "container_environment_sha256": null,
+  "scope": "exact allowlist export, author-run evidence, private state and daemon logs excluded"
+}

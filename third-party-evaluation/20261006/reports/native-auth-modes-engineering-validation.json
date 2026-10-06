@@ -1,0 +1,34 @@
+{
+  "checked_at": "2026-10-06T04:15:48.246320+00:00",
+  "source_hashes": {
+    "benchmarks/third-party/native_auth_modes.py": "b05df615001438bc622962ee4a33fd3c2f62de0710ebea8dbf2c76cc02f758b0",
+    "benchmarks/third-party/native_lifecycle_trial.py": "8c426f37b667668586ee5d4df4ef77295389706e56cf49f0804f23cc413022e1",
+    "benchmarks/third-party/native_lifecycle_scoring.py": "a3ab8072be6b726768870ab5f6488ec967ce97965bfdded781bf40216b48fce8",
+    "benchmarks/third-party/verify_native_lifecycle.py": "ee3542299c19d44badf9276d6d1766db0e10085722e3ab6a18898e3fde027051",
+    "benchmarks/third-party/test_native_auth_modes.py": "6dab9014f156e3669653661fc65ca513afcf504fc1e345e25bfebc75689f0a42",
+    "benchmarks/third-party/review_native_auth_modes.py": "5910552d132fbd0a460742ae529cf296801fceb6e14ade5de53b494fc3141dab"
+  },
+  "framework_validation": {
+    "command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "exit_code": 0,
+    "passed": 587,
+    "subtests_passed": 118,
+    "log": "engineering-evidence/native-auth-modes-002-framework-tests.txt",
+    "scope": "campaign framework; independent upstream AgentDojo tests excluded"
+  },
+  "focused_tests_passed": 14,
+  "ruff_exit_code": 0,
+  "git_diff_check_exit_code": 0,
+  "offline_matrix_runs_verified": 9,
+  "negative_evidence_probes_rejected": 9,
+  "documentation_review": "reports/native-auth-modes-document-review.json",
+  "active_process_sessions": [],
+  "goal_status": "active",
+  "goal_complete": false,
+  "next_ref": "plan/real-business-work-items-v2.json",
+  "limits": [
+    "author-run, not independent third-party certification",
+    "controlled proposals, not natural model attack evaluation",
+    "managed Linux Hermes file tools; no strong OS isolation claim"
+  ]
+}

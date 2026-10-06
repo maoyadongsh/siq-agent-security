@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-06T05:53:00.432525+00:00",
+  "run_id": "enterprise-risk-boundaries-002",
+  "artifact_sha256": {
+    "reports/risk-boundaries-report.md": "52f03daa98c2979c090b2ab59e45c17ef7d7a6428c10cdf872450c95bce6e0a2",
+    "reports/risk-boundaries-engineering-validation.json": "4f21d12e31b78dd40c577722fd32845547acdbde162b87dd1e682826a1bac900",
+    "reports/risk-boundaries-document-review.json": "51e500419dc6ea818810cf68f4e5a2f84aa53dbcfb5d4fca6e082193d680fed7",
+    "reports/risk-boundaries-product-before.txt": "3d10a6dbc2fb76137cbb9aa102a5e9a31835c3ce30972c2e821c6f05845c1d1f",
+    "reports/risk-boundaries-product-after.txt": "c2cec386ac4050667d0ba91b5d572056df0c4bcca425470a8890aa4eed44e867",
+    "reports/risk-boundaries-framework-tests.txt": "0764d226c9ee3d079f3d8625776ee1812a45ac5991e61dfb89ed1b2af70c841b",
+    "reports/enterprise-risk-boundaries-001-verification.json": "4ae0d53bbdef21f9a66c8b91990d7da60efc13fac0617be4098dde35eff338a5",
+    "reports/enterprise-risk-boundaries-001-export-verification.json": "4ae0d53bbdef21f9a66c8b91990d7da60efc13fac0617be4098dde35eff338a5",
+    "reports/enterprise-risk-boundaries-001-review.json": "3987cb1ef4a6c8c651fd89d5073f3c23fe68e2a709d94c48f42969aa8ffcec68",
+    "reports/enterprise-risk-boundaries-001-export-review.json": "28a8ff3c6722f53c0fd60bea1ead35126a3efc70e833ce48c249e84284640d97",
+    "inventory/anchors/enterprise-risk-boundaries-001.json": "d88b4ec50dadfce6328adf387e077f564ec95e0b86e93cbc3441f91eb07b9088",
+    "plan/enterprise-risk-boundaries-001.md": "d4a024271d2609085fbef06bc71e9d471ae4fc370fd42182ab20e030618aa421",
+    "reports/enterprise-risk-boundaries-002-verification.json": "0a9ebfb4299706841c28605e42cf52aa7bafc92b4bd1f7488983acb79d523b76",
+    "reports/enterprise-risk-boundaries-002-export-verification.json": "0a9ebfb4299706841c28605e42cf52aa7bafc92b4bd1f7488983acb79d523b76",
+    "reports/enterprise-risk-boundaries-002-review.json": "96d7c437be03daf88d9f2bcfbd858a9edcf9ada23ed8ce88e7afb6f15c1bf69b",
+    "reports/enterprise-risk-boundaries-002-export-review.json": "b12fe3968b4d372c38b4d5f03feb0060fea43c9dd14cc7e2690d7163c3360f7d",
+    "inventory/anchors/enterprise-risk-boundaries-002.json": "b496407644bde3460384d10715fbbb34aeb04886d0d3e5bb95749121df52b9fd",
+    "plan/enterprise-risk-boundaries-002.md": "8b6c06de10e3317c91a2ac4f4bac253a16fd695170ffa8e38f0bfdb73f4e05b5"
+  },
+  "first_attempt": {
+    "passed": 132,
+    "checks": 150,
+    "preserved": true
+  },
+  "final_checks": 150,
+  "explicit_HTTP_requests": 99,
+  "all_attempt_HTTP_requests": 198,
+  "model_calls": 0,
+  "independent_task_blocks_added": 0,
+  "product_tests_passed": 2287,
+  "product_tests_skipped": 1,
+  "framework_tests": 669,
+  "framework_subtests": 118,
+  "full_journey_closed": false,
+  "next": "legal expiry-reopen full risk lifecycle on current candidate; prior accepted-to-accepted harness step incompatible with repaired terminal guard; then concurrency and remaining RB13"
+}

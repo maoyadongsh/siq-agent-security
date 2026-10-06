@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-10-06T05:30:37.734722+00:00",
+  "scope": "evaluation harness and documentation only; no product source changes in this cohort",
+  "framework": {
+    "command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "exit_code": 0,
+    "passed": 669,
+    "subtests_passed": 118,
+    "log": "reports/enterprise-authority-framework-tests-001.txt",
+    "sha256": "9e8220bf056f5aac70131565502f88e0023db23a3cedf658ddb92acb6fa7fe67"
+  },
+  "new_focused_tests": {
+    "passed": 15,
+    "negative_variants": 14
+  },
+  "ruff_edited_sources": true,
+  "git_diff_check": true,
+  "harness_sources": {
+    "enterprise_authority.py": "0b6fcb9ee138b7169a6973db734d16319ba66971d44bd5d1f8989433bc24918f",
+    "enterprise_authority_trial.py": "fb87dbe4df0c03c7975c70f20e65b7d6d595326e06f6e3b01cdf65cca3aa3f19",
+    "backend_governance.py": "d8c62ea7d9f4c37441da4a760f7777d22d1be31678d16017b2a0e09adb88a842",
+    "governance_trial.py": "cdfa52dcea23201cb2d6a41930b79e224e34ef21a127911c188d3128119761d5",
+    "verify_governance.py": "05feafdec5c612f56c3fa55ea8bb02e416e6749a7ae6f3e2195ca6e59f02f85d",
+    "review_enterprise_authority.py": "9fceff7e1f10a6e46c15e64fc821371095c6225b4f28ee7e65fe5e5662a53b13",
+    "tests/test_enterprise_authority.py": "715bbfac72eb21b2da610017e75a88badb177aa0d39e98a2c9441f202a23b3a5"
+  },
+  "frozen_review_note": "review-001 executed successfully; working copy later changed only import formatting for Ruff; frozen review sources and results retained",
+  "live_run": {
+    "run_id": "enterprise-authority-001",
+    "http_requests": 113,
+    "checks_passed": 176,
+    "checks_total": 176,
+    "first_attempt_complete": true
+  },
+  "raw_review": {
+    "additional_policy_command_joins": 28,
+    "additional_business_health_receiver_joins": 6,
+    "actual_authority_negative_rejections": 12,
+    "base_effect_negative_rejections": 6
+  },
+  "not_run": [
+    "real customer IdP",
+    "second native business process sharing the sandbox",
+    "shared authorization intersection (unimplemented)",
+    "last-check-to-write race",
+    "new model attack confirmation set",
+    "other OS",
+    "external independent execution"
+  ]
+}

@@ -6,7 +6,12 @@
 
 | 记录 | 已归档结果 | 范围 |
 | --- | --- | --- |
-| 0.4.0 正式发行（当前记录） | 官方验签/Linux ARM64 启动通过，3/3 篡改拒绝，8/8 回读 | `2cd6116`；[独立发行记录](../docs/evidence/releases/0.4.0/README.md)，不计入下方原有 15 条 catalog，也不扩展其他平台原生验收 |
+| 0.4.1 当前正式发行 | 四目标验签、Linux ARM64 最终包启动与 3/3 篡改拒绝、8/8 资产回读 | `a620a31b`；[发行记录](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)，Windows 源码 CI 与正式包业务验收分开 |
+| DGX Agent／Skill 权限收口 | 10 个主批次、67 条签名及 20 项文件检查 | [最终报告](../third-party-evaluation/20261006/reports/research-permissions-final-report.md)；真实业务入口、专属 Skill 入口与多候选边界单列 |
+| 企业原生治理与效果 | 原生 Edge 发现、审批、目标授权、OpenShell 实际限制及回滚 | [企业链路](../third-party-evaluation/20261006/reports/enterprise-chain-report.md)；测试身份源与受控网络，不是客户生产验收 |
+| AgentDojo 公开开发试点 | 240 单元完成，未显示本批 SIQ 增量邮件防护 | [试点](../third-party-evaluation/20261006/reports/agentdojo-pilot20-report.md)；无顶层发送调用，不能计为 240 次成功防御 |
+| Windows／WorkBuddy 历史附件 | 复核原 22 次业务尝试，保留失败与人工续跑限制 | [历史附件](../third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)；本轮未重跑、非 0.4.1 验收 |
+| 0.4.0 正式发行（历史记录） | 官方验签/Linux ARM64 启动通过，3/3 篡改拒绝，8/8 回读 | `2cd6116`；[独立发行记录](../docs/evidence/releases/0.4.0/README.md)，不计入下方原有 15 条 catalog，也不扩展其他平台原生验收 |
 | 0.3.0 包检查 | 14/14 | `83fde2d`；官方根、内容/程序 pin、六条拒绝、Linux ARM64 bootstrap/控制台/停止与包内空状态启动步骤 |
 | 0.3.0 远端回读 | 8/8 资产一致 | 与已验候选逐字节比较，实际公开下载与签名 URL 暂存；Latest 是回读时状态 |
 | 0.3.0 源码 CI | 5/5 工作流成功 | 不是五项测试，不能与历史 31 项必需检查合并分母 |
@@ -15,6 +20,9 @@
 | Linux OpenShell D05 | 365 pass / 7 partial / 1 blocked / 0 fail，共 373 步 | 同第六代候选；不是 373/373 全通过 |
 | Linux UI 会话修复 | Web 117/117；真实浏览器定向 2/2 | 第八代局部候选 `a85c76b0…`；不继承第六代系统级验收 |
 | V5 固定控制 | 23/23；正常 5/5；不安全目标实际执行 0/13 | 不同分母，不合成为总体拦截率；保留研究原始定义 |
+
+
+2026-10-06 新条目通过原报告与独立活动目录追溯，未追加到历史 15 条 catalog，不改写其摘要与分母。[后续方案](../docs/research/SIQ_后续第三方测评实施方案_20261006-200416.md)中的 SafeClawBench／Skill 供应链／独立隐藏集为拟实施，尚无新成绩；外部独立执行仍未登记。
 
 ## 原方案指定的补充对照
 
@@ -30,7 +38,7 @@
 | Windows Hermes 原生 CLI | 5 项记录案例 | `72140795…`；合成模型；无桌面、独立第二轮或吊销后重启验收 |
 | Windows WorkBuddy 5.5.6 桌面 | 2 次原生任务记录，含安装 Skill 读写 | `6841a495…`；不是完整验收率；早期超时保留，审批恢复/桌面升级未验证 |
 
-旧报告“待签”与取消前的任务状态保留原文，现行状态以[当前任务](../docs/development/current.md)、[主线整合](../docs/development/main-branch-integration-20260926.md)、[全面验收](../docs/development/enterprise-comprehensive-acceptance-review-20260926.md)及[平台页](../platforms/README.md)解释。当前主线 CI 通过仍不改变任何历史候选的原生验收或发行身份；一次记录被多处链接不增加独立重复次数。
+旧报告“待签”与取消前的任务状态保留原文，现行状态以[当前任务](../docs/development/current.md)、[主线整合](../docs/development/main-branch-integration-20260926.md)、[全面验收](../docs/development/enterprise-comprehensive-acceptance-review-20260926.md)及[平台页](../platforms/README.md)解释。所引记录的主线 CI 通过仍不改变任何历史候选的原生验收或发行身份；一次记录被多处链接不增加独立重复次数。
 
 各行精确证据路径、SHA-256、候选与未记录字段见 catalog。源提交、证据提交、集成提交和实际程序摘要是不同身份；dirty 候选不得补造 clean SHA。历史 Windows 原生/WSL 与 macOS 协作者记录见[平台页](../platforms/README.md)，其他未纳入机器索引的结果继续留在原台账，目录不声称穷尽全部测试。
 

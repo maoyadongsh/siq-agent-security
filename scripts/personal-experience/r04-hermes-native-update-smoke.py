@@ -282,10 +282,10 @@ class Harness(r01.Harness):
             )
             stale_records = self.receipts()[stale_before:]
             fixture.require(
-                (stale_refusal.get("reason_code") or stale_refusal.get("error")) == "unauthorized"
+                (stale_refusal.get("reason_code") or stale_refusal.get("error")) == "scoped_decision_credential_required"
                 and not stale_records
                 and target.read_bytes() == (source / "SKILL.md").read_bytes(),
-                "V1 scoped credential remained usable after confirmed V2 update",
+                "V1 stale credential refusal had unexpected reason, receipts or target effect",
             )
             old_row = next(
                 row for row in self.api("/v1/runtime-identities")["items"] if row["identity_id"] == old_identity

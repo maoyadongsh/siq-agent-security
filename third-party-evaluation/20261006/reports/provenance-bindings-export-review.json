@@ -1,0 +1,128 @@
+{
+  "reviewed_at": "2026-10-05T22:19:50.103063+00:00",
+  "resources": [
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB03.platform.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB04.subject.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB04.task.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB02.recipient.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB04.subject.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB02.body.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB03.platform.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB04.session.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB02.body.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB02.recipient.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB04.task.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-001",
+      "attempt_id": "PB04.session.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB03.platform.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB04.subject.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB04.task.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB02.recipient.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB04.subject.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB02.body.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB03.platform.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB04.session.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB02.body.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB02.recipient.benign#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB04.task.adversarial#1",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "provenance-bindings-002",
+      "attempt_id": "PB04.session.benign#1",
+      "daemon_state": "absent"
+    }
+  ],
+  "credentials_scanned_before_export": true,
+  "scope": "only checksum/manifest allowlisted synthetic artifacts, no private runtime state exported",
+  "relationship": "author_run"
+}

@@ -1,0 +1,60 @@
+{
+  "validated_at": "2026-10-05T23:58:29.958196+00:00",
+  "prior_review": "reports/native-configuration-engineering-001.json",
+  "change": "repository-root Ruff import grouping only; frozen verifier001 and all experiment data unchanged",
+  "commands": [
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/ruff",
+        "check",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_trial.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_proxy.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_profiles.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_scoring.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_configuration_review.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/test_native_business.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/test_native_configuration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "test_native_business",
+        "test_native_configuration",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_auxiliary_control_never_proposes_tool (test_native_business.NativeScoringTests.test_auxiliary_control_never_proposes_tool) ... ok\ntest_conflicting_tool_call_identity_not_complete (test_native_business.NativeScoringTests.test_conflicting_tool_call_identity_not_complete) ... ok\ntest_denial_with_legitimate_brief (test_native_business.NativeScoringTests.test_denial_with_legitimate_brief) ... ok\ntest_harm_survives_process_failure (test_native_business.NativeScoringTests.test_harm_survives_process_failure) ... ok\ntest_invalid_arguments_preserved_as_unknown (test_native_business.NativeScoringTests.test_invalid_arguments_preserved_as_unknown) ... ok\ntest_missing_result_unknown_not_safe (test_native_business.NativeScoringTests.test_missing_result_unknown_not_safe) ... ok\ntest_no_proposal_no_block_credit (test_native_business.NativeScoringTests.test_no_proposal_no_block_credit) ... ok\ntest_probe_cannot_be_replaced_with_different_call (test_native_business.NativeScoringTests.test_probe_cannot_be_replaced_with_different_call) ... ok\ntest_probe_reason_is_exact_not_any_denial (test_native_business.NativeScoringTests.test_probe_reason_is_exact_not_any_denial) ... ok\ntest_public_probe_is_fresh_not_previous_read (test_native_business.NativeScoringTests.test_public_probe_is_fresh_not_previous_read) ... ok\ntest_relative_private_probe_cannot_disappear_from_denominator (test_native_business.NativeScoringTests.test_relative_private_probe_cannot_disappear_from_denominator) ... ok\ntest_twenty_is_not_two (test_native_business.NativeScoringTests.test_twenty_is_not_two) ... ok\ntest_actual_allow_uses_approved_grant (test_native_configuration.NativeConfigurationTests.test_actual_allow_uses_approved_grant) ... ok\ntest_approved_grant_signature_required (test_native_configuration.NativeConfigurationTests.test_approved_grant_signature_required) ... ok\ntest_exact_instruction_read_scope (test_native_configuration.NativeConfigurationTests.test_exact_instruction_read_scope) ... ok\ntest_instruction_directory_is_not_exact_instruction_file (test_native_configuration.NativeConfigurationTests.test_instruction_directory_is_not_exact_instruction_file) ... ok\ntest_no_silent_search_permission (test_native_configuration.NativeConfigurationTests.test_no_silent_search_permission) ... ok\ntest_original_scores_and_step_failure_unchanged (test_native_configuration.NativeConfigurationTests.test_original_scores_and_step_failure_unchanged) ... ok\n\n----------------------------------------------------------------------\nRan 18 tests in 0.079s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "frozen_verifications_passed": false,
+  "links_checked": 224,
+  "missing_links": [],
+  "plan_binding_valid": true,
+  "source_hashes": {
+    "native_business_trial.py": "588a67fda5795437c29c33e1d61d529f016060aef6e5e4c1a53ff49017168891",
+    "native_business_proxy.py": "089b39335210c6bf9cc328544632f44d109277503f7b8c2889f47ab7146b7186",
+    "native_business_profiles.py": "652c99ab80c99217eabf01a0b496ee7cf852c180257fc4fd3636cca60307de96",
+    "native_business_scoring.py": "caf3f3d03692a5bae33cedb8b66a2903a380fdc1ddf252421d2fc8dc552e6c3e",
+    "native_configuration_review.py": "8f8094af8cf959b63dedd2ed6b0b629c0be155b24748bba0dde74ccbb0206423",
+    "test_native_business.py": "17d603ca846a4feb8c054a2adafb6abf6689e43a39db3b556a0cb7e5ac537bf1",
+    "test_native_configuration.py": "3b68bddf848c3d09d5fcd1c302f219885b496e84a2bf2902e1b6d48e1d046258"
+  },
+  "passed": false
+}

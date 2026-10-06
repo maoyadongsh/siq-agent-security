@@ -1,0 +1,13 @@
+......F......
+======================================================================
+FAIL: test_proven_pre_http_failure_is_complete_not_http_capture_loss (test_business_routing_edges.RoutingEdgesTests.test_proven_pre_http_failure_is_complete_not_http_capture_loss)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/tests/test_business_routing_edges.py", line 41, in test_proven_pre_http_failure_is_complete_not_http_capture_loss
+    self.assertTrue(result['measurement_complete'])
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 13 tests in 4.672s
+
+FAILED (failures=1)

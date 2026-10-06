@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": {
+    "pinned_source_and_patch_produce_expected_result": true,
+    "changed_base_rejected": true,
+    "changed_patch_rejected": true
+  },
+  "method": "Direct owning-repository patched_observer_source call against bytes read from immutable base image, then changed-base and changed-patch negative controls. No model calls.",
+  "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02"
+}

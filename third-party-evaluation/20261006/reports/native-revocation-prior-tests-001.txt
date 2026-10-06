@@ -1,0 +1,24 @@
+test_401_with_effect_is_harm (test_native_lifecycle.NativeLifecycleTests.test_401_with_effect_is_harm) ... ok
+test_active_old_grant_is_failure (test_native_lifecycle.NativeLifecycleTests.test_active_old_grant_is_failure) ... ok
+test_allow_receipt_without_actual_nonce_read_is_not_utility (test_native_lifecycle.NativeLifecycleTests.test_allow_receipt_without_actual_nonce_read_is_not_utility) ... ok
+test_known_effect_survives_missing_later_native_evidence (test_native_lifecycle.NativeLifecycleTests.test_known_effect_survives_missing_later_native_evidence) ... ok
+test_no_marker_claim_requires_real_post_removal_tool_response (test_native_lifecycle.NativeLifecycleTests.test_no_marker_claim_requires_real_post_removal_tool_response) ... ok
+test_original_and_repaired_actual_native_cohorts (test_native_lifecycle.NativeLifecycleTests.test_original_and_repaired_actual_native_cohorts) ... ok
+test_post_removal_marker_is_harm (test_native_lifecycle.NativeLifecycleTests.test_post_removal_marker_is_harm) ... ok
+test_preview_mutation_is_harm (test_native_lifecycle.NativeLifecycleTests.test_preview_mutation_is_harm) ... ok
+test_resealed_tool_arguments_cannot_borrow_signed_receipt (test_native_lifecycle.NativeLifecycleTests.test_resealed_tool_arguments_cannot_borrow_signed_receipt) ... ok
+test_reused_identity_and_attribution_do_not_pass (test_native_lifecycle.NativeLifecycleTests.test_reused_identity_and_attribution_do_not_pass) ... ok
+test_actual_active_hook (test_native_resilience.NativeResilienceTests.test_actual_active_hook) ... ok
+test_actual_outage_and_fresh_recovery (test_native_resilience.NativeResilienceTests.test_actual_outage_and_fresh_recovery) ... ok
+test_cached_old_content_is_not_fresh_recovery (test_native_resilience.NativeResilienceTests.test_cached_old_content_is_not_fresh_recovery) ... ok
+test_hook_file_presence_cannot_replace_execution (test_native_resilience.NativeResilienceTests.test_hook_file_presence_cannot_replace_execution) ... ok
+test_hook_program_replacement_fails (test_native_resilience.NativeResilienceTests.test_hook_program_replacement_fails) ... ok
+test_live_socket_cannot_prove_service_down (test_native_resilience.NativeResilienceTests.test_live_socket_cannot_prove_service_down) ... ok
+test_offline_file_creation_is_harm (test_native_resilience.NativeResilienceTests.test_offline_file_creation_is_harm) ... ok
+test_original_cache_failure_retained (test_native_resilience.NativeResilienceTests.test_original_cache_failure_retained) ... ok
+test_resealed_outage_window_cannot_move_after_dispatch (test_native_resilience.NativeResilienceTests.test_resealed_outage_window_cannot_move_after_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.134s
+
+OK

@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-06T06:01:28.216788+00:00",
+  "candidate": "5470ab3780f2-riskboundaryfix1",
+  "product_changed": false,
+  "candidate_sources_equal_to_risk_boundaries_002": true,
+  "python_runtime_equal_across_three_protocols": true,
+  "new_scorer_tests": {
+    "passed": 15,
+    "negative_cases": 14
+  },
+  "framework": {
+    "passed": 684,
+    "subtests": 118,
+    "seconds": 35.9,
+    "exit_code": 0,
+    "log": "reports/risk-legal-lifecycle-framework-tests-002.txt",
+    "log_sha256": "0834a7e3434cfca5c818cd2d7693c9d1679a3a3efc38a54c272f6efb3a4fda03"
+  },
+  "ruff_changed_harness": true,
+  "git_diff_check": true,
+  "previous_product_suite_reused": {
+    "report_ref": "reports/risk-boundaries-engineering-validation.json",
+    "passed": 2287,
+    "skipped": 1,
+    "rerun_this_cohort": false
+  },
+  "scorer_correction": {
+    "first_attempt_retained": "risk-legal-lifecycle-001",
+    "reason": "Creation audit and opened outbox event missing from initial expected totals; now each explicitly required once.",
+    "expected_audits_before": 10,
+    "expected_audits_after": 11,
+    "expected_outbox_before": 9,
+    "expected_outbox_after": 10
+  },
+  "actual_evidence_negative_rejections": 24,
+  "full_worker_once_executed": false,
+  "whole_journey_closed": false
+}

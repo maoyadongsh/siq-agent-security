@@ -1,0 +1,7 @@
+{
+  "command": "python -m unittest discover -s benchmarks/third-party -p test_research_permissions_protocol_gate.py -v",
+  "passed": 5,
+  "failed": 0,
+  "returncode": 0,
+  "negative_CLI_ref": "research-permissions-protocol-gate-negative-001.json"
+}

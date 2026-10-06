@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-06T05:31:12.967614+00:00",
+  "run_id": "enterprise-authority-001",
+  "artifact_sha256": {
+    "reports/enterprise-authority-report.md": "982f7911e0fd9a74fb1ec369519010243b617b3bad456aeec684afb42bf8ce4d",
+    "reports/enterprise-authority-001-review.json": "6d63582bac9912388158a5423684c2854e72008eac15b7a48f65079d118ea34e",
+    "reports/enterprise-authority-001-verification.json": "09972319c191f28ae76a623285a9512d472a580412fca6a2e5e5a96fe535104a",
+    "reports/enterprise-authority-001-export-verification.json": "09972319c191f28ae76a623285a9512d472a580412fca6a2e5e5a96fe535104a",
+    "reports/enterprise-authority-001-export-review.json": "316e26b861aac3bd88a4a714b6a32b25897a065f9a560385a24750600d5b7f29",
+    "reports/enterprise-authority-engineering-validation.json": "239dfb5bb4238302d3e1c3f59ffff9ea881a471f26798b8f505fb333989e68aa",
+    "reports/enterprise-authority-framework-tests-001.txt": "9e8220bf056f5aac70131565502f88e0023db23a3cedf658ddb92acb6fa7fe67",
+    "reports/enterprise-authority-document-review.json": "0964abe7bc9dab487640af9535e9df4a91f0876319c7f3a9eae9277a4658c417",
+    "inventory/anchors/enterprise-authority-001.json": "44c6b815e5e2396c7cbfe6a09a76555b239e311a5379bf7a87a0d7f56485664b",
+    "plan/enterprise-authority-001.md": "dafc44717ecaf9173a25fbea2ccf50e0bc562053059471d72ee77ba038f89d50"
+  },
+  "checks": 176,
+  "explicit_HTTP_requests": 113,
+  "authority_fault_variants": 6,
+  "authority_fault_HTTP_requests": 12,
+  "sandbox_business_commands": 9,
+  "receiver_health_controls": 9,
+  "real_model_calls": 0,
+  "independent_task_blocks_added": 0,
+  "framework_tests": 669,
+  "framework_subtests": 118,
+  "shared_target_intersection": "unimplemented",
+  "full_journey_closed": false,
+  "next": "remaining enterprise batch/recovery, continuous discovery and risk/evidence journeys; external conditions remain explicit"
+}

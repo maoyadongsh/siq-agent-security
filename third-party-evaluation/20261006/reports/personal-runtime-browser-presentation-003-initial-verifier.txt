@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/personal-runtime-browser-presentation-003-protocol/harness-source/verify_personal_runtime_browser.py", line 107, in <module>
+    result = verify(args.run, args.expected_manifest_sha256)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/personal-runtime-browser-presentation-003-protocol/harness-source/verify_personal_runtime_browser.py", line 92, in verify
+    joins = verify_joins(o, evidence)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/personal-runtime-browser-presentation-003-protocol/harness-source/verify_personal_runtime_browser.py", line 50, in verify_joins
+    require(o['activity_detail']['receipts'] == selected, 'activity detail is not exact signed receipt sequence')
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/personal-runtime-browser-presentation-003-protocol/harness-source/personal_onboarding_authority.py", line 21, in require
+    raise ValueError(message)
+ValueError: activity detail is not exact signed receipt sequence

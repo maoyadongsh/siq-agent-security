@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-10-06T04:33:05.344712+00:00",
+  "scope": "Functional reconciliation and next-cohort specification, no new business E2E",
+  "artifact_sha256": {
+    "reports/source-capability-review-001.md": "7117bfc5062ad650cf15e2efca322bd293eb73c4295621173a3abd96eb91e714",
+    "plan/product-grounded-evaluation-revision-001.md": "b0308529db1124392b8b77a11285b57ef0df30fc242ad133588547444bca78ab",
+    "plan/source-import-work-items-001.json": "87a197fee40e501894f226b28f6e35b6f094b00c3de53931917ba24e63dc5bc4",
+    "inventory/function-review-refresh-004.json": "949bfa4595662943577dab5bab184c248d17db3680748ef65c9e6689c5c9f014",
+    "reports/source-capability-component-check-001.json": "77ee2c84fc97aa9f1d65602ae3dc277646dfb7b709a3c2dd1bd1f3c0ba39eae1",
+    "reports/source-capability-component-check-001.jsonl": "25e6dbb8f246de086b17697139fcb7ba8f9e11846f69d3b68dc5d35e61414065",
+    "reports/source-capability-document-review-001.json": "a552ec0ce4828ffc29c1165d700ae87205c980c8287d42d3f2159ca7f8c14d2f"
+  },
+  "component_checks": {
+    "top_level_pass": 44,
+    "pass_including_subtests": 136,
+    "skipped_live_preflight": 1
+  },
+  "source_rechecks": 465,
+  "historical_input_rechecks": 14,
+  "candidate_source_comparison": 42,
+  "changed_product_files": 0,
+  "new_business_runs": 0,
+  "real_model_calls": 0,
+  "full_goal_complete": false,
+  "next_task": "Implement and freeze SRC source import cohort; reuse existing source identity evidence, keep production Git gated and remote public-network success separate"
+}

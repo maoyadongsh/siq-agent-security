@@ -1,0 +1,92 @@
+{
+  "validated_at": "2026-10-05T23:47:04.639373+00:00",
+  "commands": [
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "test_native_business",
+        "-v"
+      ],
+      "cwd": "/home/maoyd/siq/siq-agent-security/benchmarks/third-party",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_auxiliary_control_never_proposes_tool (test_native_business.NativeScoringTests.test_auxiliary_control_never_proposes_tool) ... ok\ntest_conflicting_tool_call_identity_not_complete (test_native_business.NativeScoringTests.test_conflicting_tool_call_identity_not_complete) ... ok\ntest_denial_with_legitimate_brief (test_native_business.NativeScoringTests.test_denial_with_legitimate_brief) ... ok\ntest_harm_survives_process_failure (test_native_business.NativeScoringTests.test_harm_survives_process_failure) ... ok\ntest_invalid_arguments_preserved_as_unknown (test_native_business.NativeScoringTests.test_invalid_arguments_preserved_as_unknown) ... ok\ntest_missing_result_unknown_not_safe (test_native_business.NativeScoringTests.test_missing_result_unknown_not_safe) ... ok\ntest_no_proposal_no_block_credit (test_native_business.NativeScoringTests.test_no_proposal_no_block_credit) ... ok\ntest_twenty_is_not_two (test_native_business.NativeScoringTests.test_twenty_is_not_two) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/ruff",
+        "check",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_trial.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_proxy.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_scoring.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/verify_native_business.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/export_native_business.py",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/test_native_business.py"
+      ],
+      "cwd": "/home/maoyd/siq/siq-agent-security",
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_business_trial.py",
+        "--help"
+      ],
+      "cwd": "/home/maoyd/siq/siq-agent-security",
+      "exit_code": 0,
+      "stdout": "usage: native_business_trial.py [-h] {freeze,run} ...\n\nReal Hermes CLI, installed SIQ Skill/SEC and independent briefing effects.\n\npositional arguments:\n  {freeze,run}\n\noptions:\n  -h, --help    show this help message and exit\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/verify_native_business.py",
+        "--help"
+      ],
+      "cwd": "/home/maoyd/siq/siq-agent-security",
+      "exit_code": 0,
+      "stdout": "usage: verify_native_business.py [-h] --expected-manifest-sha256\n                                 EXPECTED_MANIFEST_SHA256\n                                 run\n\nOffline native CLI evidence verification without re-running host or model.\n\npositional arguments:\n  run\n\noptions:\n  -h, --help            show this help message and exit\n  --expected-manifest-sha256 EXPECTED_MANIFEST_SHA256\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/export_native_business.py",
+        "--help"
+      ],
+      "cwd": "/home/maoyd/siq/siq-agent-security",
+      "exit_code": 0,
+      "stdout": "usage: export_native_business.py [-h] --campaign CAMPAIGN --run-id RUN_ID\n                                 --expected-manifest-sha256\n                                 EXPECTED_MANIFEST_SHA256\n\nAllowlisted local export of native synthetic evidence, excluding host state.\n\noptions:\n  -h, --help            show this help message and exit\n  --campaign CAMPAIGN\n  --run-id RUN_ID\n  --expected-manifest-sha256 EXPECTED_MANIFEST_SHA256\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/maoyd/siq/siq-agent-security",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "links_checked": 168,
+  "missing_links": [],
+  "work_items": 18,
+  "plan_binding_valid": true,
+  "source_hashes": {
+    "native_business_trial.py": "9b603d45ef6e042743a88b5913c3fd2c941a4ef762b461dd865fb917b46571f5",
+    "native_business_proxy.py": "7578022fa082f99100f56bd3791a6e0162f7fb4bdeea0fb901d617c21d4aae52",
+    "native_business_scoring.py": "7689761c94ce1c1911e7609f7179e542e1bd06dc7bcf3618ed3d73840e2a1078",
+    "verify_native_business.py": "68e87a9edc35e0b08714a66608e06354222e5d05154d4c52efcd37e2a1d58902",
+    "export_native_business.py": "56739336a91c57821f157ced44abb24570b811b3856b10e16ac770fd9f4e8e61",
+    "test_native_business.py": "0a035b047e78d9527f2ba6496f6d5aa916ab1a06776ea5b46fa735a485b2f43c"
+  },
+  "passed": true,
+  "scope": "eight harness tests and documentation/CLI checks; not additional product attacks; preserves prior controls and Step utility failure"
+}

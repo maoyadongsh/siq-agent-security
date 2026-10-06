@@ -1,0 +1,225 @@
+...FFFF...FF...                                                          [100%]
+=================================== FAILURES ===================================
+___________ test_equivalent_expiry_instants_and_repeat_audit[-1-330] ___________
+
+client = <starlette.testclient.TestClient object at 0xf09dd9f05760>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf09dd8c26b40>
+minutes = 330, delta_seconds = -1
+
+    @pytest.mark.parametrize('minutes', [-480, -210, 0, 330, 480])
+    @pytest.mark.parametrize('delta_seconds', [-1, 0, 1])
+    def test_equivalent_expiry_instants_and_repeat_audit(client, monkeypatch, minutes, delta_seconds):
+        now = datetime(2026, 10, 6, 12, tzinfo=UTC)
+        monkeypatch.setattr('app.worker.utcnow', lambda: now.replace(tzinfo=None))
+        expires = now + timedelta(seconds=delta_seconds)
+        encoded = expires.astimezone(timezone(timedelta(minutes=minutes))).isoformat()
+        finding_id = 'tz-' + uuid4().hex
+        tenant_id = 'risk-expiry-timezone-tests'
+        with session_scope() as session:
+            if session.get(Tenant, tenant_id) is None:
+                session.add(Tenant(id=tenant_id, name='Timezone fixture'))
+                session.flush()
+            session.add(Finding(id=finding_id, tenant_id=tenant_id, rule_id='expiry-fixture',
+                                severity='info', status='risk_accepted', owner_user_id='fixture-owner',
+                                risk_acceptance={'reason': 'test', 'expires_at': encoded}))
+        for _ in range(2):
+            with session_scope() as session:
+                reap_expired_risk_acceptance(session)
+        expected = delta_seconds < 0
+        with session_scope() as session:
+            finding = session.get(Finding, finding_id)
+>           assert finding.status == ('open' if expected else 'risk_accepted')
+E           AssertionError: assert 'risk_accepted' == 'open'
+E             
+E             - open
+E             + risk_accepted
+
+app/tests/test_risk_expiry_timezone.py:35: AssertionError
+___________ test_equivalent_expiry_instants_and_repeat_audit[-1-480] ___________
+
+client = <starlette.testclient.TestClient object at 0xf09dd9f05760>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf09dd828b5f0>
+minutes = 480, delta_seconds = -1
+
+    @pytest.mark.parametrize('minutes', [-480, -210, 0, 330, 480])
+    @pytest.mark.parametrize('delta_seconds', [-1, 0, 1])
+    def test_equivalent_expiry_instants_and_repeat_audit(client, monkeypatch, minutes, delta_seconds):
+        now = datetime(2026, 10, 6, 12, tzinfo=UTC)
+        monkeypatch.setattr('app.worker.utcnow', lambda: now.replace(tzinfo=None))
+        expires = now + timedelta(seconds=delta_seconds)
+        encoded = expires.astimezone(timezone(timedelta(minutes=minutes))).isoformat()
+        finding_id = 'tz-' + uuid4().hex
+        tenant_id = 'risk-expiry-timezone-tests'
+        with session_scope() as session:
+            if session.get(Tenant, tenant_id) is None:
+                session.add(Tenant(id=tenant_id, name='Timezone fixture'))
+                session.flush()
+            session.add(Finding(id=finding_id, tenant_id=tenant_id, rule_id='expiry-fixture',
+                                severity='info', status='risk_accepted', owner_user_id='fixture-owner',
+                                risk_acceptance={'reason': 'test', 'expires_at': encoded}))
+        for _ in range(2):
+            with session_scope() as session:
+                reap_expired_risk_acceptance(session)
+        expected = delta_seconds < 0
+        with session_scope() as session:
+            finding = session.get(Finding, finding_id)
+>           assert finding.status == ('open' if expected else 'risk_accepted')
+E           AssertionError: assert 'risk_accepted' == 'open'
+E             
+E             - open
+E             + risk_accepted
+
+app/tests/test_risk_expiry_timezone.py:35: AssertionError
+___________ test_equivalent_expiry_instants_and_repeat_audit[0--480] ___________
+
+client = <starlette.testclient.TestClient object at 0xf09dd9f05760>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf09dd828ba10>
+minutes = -480, delta_seconds = 0
+
+    @pytest.mark.parametrize('minutes', [-480, -210, 0, 330, 480])
+    @pytest.mark.parametrize('delta_seconds', [-1, 0, 1])
+    def test_equivalent_expiry_instants_and_repeat_audit(client, monkeypatch, minutes, delta_seconds):
+        now = datetime(2026, 10, 6, 12, tzinfo=UTC)
+        monkeypatch.setattr('app.worker.utcnow', lambda: now.replace(tzinfo=None))
+        expires = now + timedelta(seconds=delta_seconds)
+        encoded = expires.astimezone(timezone(timedelta(minutes=minutes))).isoformat()
+        finding_id = 'tz-' + uuid4().hex
+        tenant_id = 'risk-expiry-timezone-tests'
+        with session_scope() as session:
+            if session.get(Tenant, tenant_id) is None:
+                session.add(Tenant(id=tenant_id, name='Timezone fixture'))
+                session.flush()
+            session.add(Finding(id=finding_id, tenant_id=tenant_id, rule_id='expiry-fixture',
+                                severity='info', status='risk_accepted', owner_user_id='fixture-owner',
+                                risk_acceptance={'reason': 'test', 'expires_at': encoded}))
+        for _ in range(2):
+            with session_scope() as session:
+                reap_expired_risk_acceptance(session)
+        expected = delta_seconds < 0
+        with session_scope() as session:
+            finding = session.get(Finding, finding_id)
+>           assert finding.status == ('open' if expected else 'risk_accepted')
+E           AssertionError: assert 'open' == 'risk_accepted'
+E             
+E             - risk_accepted
+E             + open
+
+app/tests/test_risk_expiry_timezone.py:35: AssertionError
+___________ test_equivalent_expiry_instants_and_repeat_audit[0--210] ___________
+
+client = <starlette.testclient.TestClient object at 0xf09dd9f05760>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf09dd8104830>
+minutes = -210, delta_seconds = 0
+
+    @pytest.mark.parametrize('minutes', [-480, -210, 0, 330, 480])
+    @pytest.mark.parametrize('delta_seconds', [-1, 0, 1])
+    def test_equivalent_expiry_instants_and_repeat_audit(client, monkeypatch, minutes, delta_seconds):
+        now = datetime(2026, 10, 6, 12, tzinfo=UTC)
+        monkeypatch.setattr('app.worker.utcnow', lambda: now.replace(tzinfo=None))
+        expires = now + timedelta(seconds=delta_seconds)
+        encoded = expires.astimezone(timezone(timedelta(minutes=minutes))).isoformat()
+        finding_id = 'tz-' + uuid4().hex
+        tenant_id = 'risk-expiry-timezone-tests'
+        with session_scope() as session:
+            if session.get(Tenant, tenant_id) is None:
+                session.add(Tenant(id=tenant_id, name='Timezone fixture'))
+                session.flush()
+            session.add(Finding(id=finding_id, tenant_id=tenant_id, rule_id='expiry-fixture',
+                                severity='info', status='risk_accepted', owner_user_id='fixture-owner',
+                                risk_acceptance={'reason': 'test', 'expires_at': encoded}))
+        for _ in range(2):
+            with session_scope() as session:
+                reap_expired_risk_acceptance(session)
+        expected = delta_seconds < 0
+        with session_scope() as session:
+            finding = session.get(Finding, finding_id)
+>           assert finding.status == ('open' if expected else 'risk_accepted')
+E           AssertionError: assert 'open' == 'risk_accepted'
+E             
+E             - risk_accepted
+E             + open
+
+app/tests/test_risk_expiry_timezone.py:35: AssertionError
+___________ test_equivalent_expiry_instants_and_repeat_audit[1--480] ___________
+
+client = <starlette.testclient.TestClient object at 0xf09dd9f05760>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf09dd828b590>
+minutes = -480, delta_seconds = 1
+
+    @pytest.mark.parametrize('minutes', [-480, -210, 0, 330, 480])
+    @pytest.mark.parametrize('delta_seconds', [-1, 0, 1])
+    def test_equivalent_expiry_instants_and_repeat_audit(client, monkeypatch, minutes, delta_seconds):
+        now = datetime(2026, 10, 6, 12, tzinfo=UTC)
+        monkeypatch.setattr('app.worker.utcnow', lambda: now.replace(tzinfo=None))
+        expires = now + timedelta(seconds=delta_seconds)
+        encoded = expires.astimezone(timezone(timedelta(minutes=minutes))).isoformat()
+        finding_id = 'tz-' + uuid4().hex
+        tenant_id = 'risk-expiry-timezone-tests'
+        with session_scope() as session:
+            if session.get(Tenant, tenant_id) is None:
+                session.add(Tenant(id=tenant_id, name='Timezone fixture'))
+                session.flush()
+            session.add(Finding(id=finding_id, tenant_id=tenant_id, rule_id='expiry-fixture',
+                                severity='info', status='risk_accepted', owner_user_id='fixture-owner',
+                                risk_acceptance={'reason': 'test', 'expires_at': encoded}))
+        for _ in range(2):
+            with session_scope() as session:
+                reap_expired_risk_acceptance(session)
+        expected = delta_seconds < 0
+        with session_scope() as session:
+            finding = session.get(Finding, finding_id)
+>           assert finding.status == ('open' if expected else 'risk_accepted')
+E           AssertionError: assert 'open' == 'risk_accepted'
+E             
+E             - risk_accepted
+E             + open
+
+app/tests/test_risk_expiry_timezone.py:35: AssertionError
+___________ test_equivalent_expiry_instants_and_repeat_audit[1--210] ___________
+
+client = <starlette.testclient.TestClient object at 0xf09dd9f05760>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xf09dd81061e0>
+minutes = -210, delta_seconds = 1
+
+    @pytest.mark.parametrize('minutes', [-480, -210, 0, 330, 480])
+    @pytest.mark.parametrize('delta_seconds', [-1, 0, 1])
+    def test_equivalent_expiry_instants_and_repeat_audit(client, monkeypatch, minutes, delta_seconds):
+        now = datetime(2026, 10, 6, 12, tzinfo=UTC)
+        monkeypatch.setattr('app.worker.utcnow', lambda: now.replace(tzinfo=None))
+        expires = now + timedelta(seconds=delta_seconds)
+        encoded = expires.astimezone(timezone(timedelta(minutes=minutes))).isoformat()
+        finding_id = 'tz-' + uuid4().hex
+        tenant_id = 'risk-expiry-timezone-tests'
+        with session_scope() as session:
+            if session.get(Tenant, tenant_id) is None:
+                session.add(Tenant(id=tenant_id, name='Timezone fixture'))
+                session.flush()
+            session.add(Finding(id=finding_id, tenant_id=tenant_id, rule_id='expiry-fixture',
+                                severity='info', status='risk_accepted', owner_user_id='fixture-owner',
+                                risk_acceptance={'reason': 'test', 'expires_at': encoded}))
+        for _ in range(2):
+            with session_scope() as session:
+                reap_expired_risk_acceptance(session)
+        expected = delta_seconds < 0
+        with session_scope() as session:
+            finding = session.get(Finding, finding_id)
+>           assert finding.status == ('open' if expected else 'risk_accepted')
+E           AssertionError: assert 'open' == 'risk_accepted'
+E             
+E             - risk_accepted
+E             + open
+
+app/tests/test_risk_expiry_timezone.py:35: AssertionError
+=============================== warnings summary ===============================
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED app/tests/test_risk_expiry_timezone.py::test_equivalent_expiry_instants_and_repeat_audit[-1-330]
+FAILED app/tests/test_risk_expiry_timezone.py::test_equivalent_expiry_instants_and_repeat_audit[-1-480]
+FAILED app/tests/test_risk_expiry_timezone.py::test_equivalent_expiry_instants_and_repeat_audit[0--480]
+FAILED app/tests/test_risk_expiry_timezone.py::test_equivalent_expiry_instants_and_repeat_audit[0--210]
+FAILED app/tests/test_risk_expiry_timezone.py::test_equivalent_expiry_instants_and_repeat_audit[1--480]
+FAILED app/tests/test_risk_expiry_timezone.py::test_equivalent_expiry_instants_and_repeat_audit[1--210]

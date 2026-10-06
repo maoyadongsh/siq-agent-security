@@ -1,0 +1,26 @@
+{
+  "verified": {
+    "verified": true,
+    "all_passed": true,
+    "passed": 158,
+    "total": 158,
+    "unique_signed_documents": 24,
+    "http_requests": 18,
+    "scope": "six exact/plus-one local ZIP boundaries and same rejected-ID recovery; management API only; no native or model attack claim"
+  },
+  "exported_files": [
+    "protocol.json",
+    "journal.jsonl",
+    "http.jsonl",
+    "result.json",
+    "score.json",
+    "summary.json",
+    "manifest.json"
+  ],
+  "manifest_sha256": "78873325ecd7dbba3c8b394a919e82774909f89f09d1c5c8de7e4aabb67d69a4",
+  "known_private_values_checked": 4,
+  "private_value_matches": 0,
+  "recorded_daemon_state": "absent",
+  "container_environment_sha256": null,
+  "scope": "exact allowlist export, author-run evidence, private state and daemon logs excluded"
+}

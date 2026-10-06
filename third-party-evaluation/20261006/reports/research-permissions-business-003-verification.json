@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq.evaluation.research-permission-review.v1",
+  "batch": "research-permissions-business-003",
+  "passed": true,
+  "checks": {
+    "live_run_passed": true,
+    "independent_ed25519_and_hash_chain_verified": true,
+    "tampered_content_rejected": true,
+    "tampered_signature_rejected": true,
+    "native_read_allow": true,
+    "native_write_scope_deny": true,
+    "read_observation_present": true
+  },
+  "receipt_count": 3,
+  "claim_scope": "Agent native read/write; per-Skill unproven",
+  "decisions": [
+    {
+      "receipt_id": "rcp-eb50e5dcbfaa-065849.861525",
+      "tool_call_id": "call_ab0e7d348e644be4bd685f13",
+      "tool": "read_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-dfb318eac334-09b6836b",
+      "agent_id": "hri-b0caf0485d10014ce6baf48bc6318397"
+    },
+    {
+      "receipt_id": "rcp-985c4f2e8f81-065911.653816",
+      "tool_call_id": "call_a14272ad9bb94667afb5b279",
+      "tool": "write_file",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-dfb318eac334-09b6836b",
+      "agent_id": "hri-b0caf0485d10014ce6baf48bc6318397"
+    }
+  ]
+}

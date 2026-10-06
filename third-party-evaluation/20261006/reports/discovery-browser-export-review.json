@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-05T21:05:47.715795+00:00",
+  "checked_files": 203,
+  "credential_or_private_key_hits": [],
+  "owned_resources": [
+    {
+      "run": "discovery-browser-001",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-browser-001",
+      "kind": "browser_cli_service",
+      "pid": 1250445,
+      "state": "absent"
+    },
+    {
+      "run": "discovery-browser-002",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-browser-002",
+      "kind": "browser_cli_service",
+      "pid": 1260742,
+      "state": "absent"
+    }
+  ],
+  "visual_review": [
+    "002/frameworks",
+    "002/roles",
+    "002/skills",
+    "002/registered"
+  ],
+  "visual_limit": "viewport screenshots; full row projection checked against accessibility snapshots"
+}

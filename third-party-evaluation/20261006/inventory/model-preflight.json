@@ -1,0 +1,27 @@
+[
+  {
+    "name": "qwen-local",
+    "error": "URLError"
+  },
+  {
+    "name": "gemma-local",
+    "error": "URLError"
+  },
+  {
+    "name": "step-plan",
+    "http_status": 200,
+    "models": [
+      "step-3.7-flash",
+      "step-router-v1",
+      "stepaudio-2.5-chat",
+      "stepaudio-2.5-tts",
+      "stepaudio-2.5-asr",
+      "stepaudio-2.5-realtime",
+      "step-image-edit-2",
+      "step-3.5-flash-2603",
+      "step-3.5-flash",
+      "step-5-preview"
+    ],
+    "response_sha256": "1f8e8971a28f6f25870415547cca773e0736b9f0b871b7db7cc9e22b2a3c8681"
+  }
+]

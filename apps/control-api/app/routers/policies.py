@@ -13,6 +13,7 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.adapters.openshell.cli_backend import OpenShellCliBackend
@@ -282,7 +283,22 @@ def create_change_request(
         {"change_request_id": cr.id, "policy_id": policy.id},
         resource_ref=cr.id,
     )
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError as exc:
+        session.rollback()
+        # A concurrent request may commit this globally unique key after the
+        # initial lookup. Recover only that PostgreSQL uniqueness conflict;
+        # audit, foreign-key and other integrity failures must still fail closed.
+        constraint = getattr(getattr(exc.orig, "diag", None), "constraint_name", None)
+        if constraint != "change_request_idempotency_key_key":
+            raise
+        existing = session.scalar(select(ChangeRequest).where(ChangeRequest.idempotency_key == body.idempotency_key))
+        if existing is None:
+            raise
+        if existing.tenant_id != identity.tenant_id:
+            raise HTTPException(status_code=404, detail="not_found") from None
+        return existing
     session.refresh(cr)
     return cr
 
@@ -294,7 +310,10 @@ def approve_change_request(
     identity: Identity = Depends(get_identity),
 ):
     cr = session.scalar(
-        select(ChangeRequest).where(ChangeRequest.id == cr_id, ChangeRequest.tenant_id == identity.tenant_id)
+        select(ChangeRequest)
+        .where(ChangeRequest.id == cr_id, ChangeRequest.tenant_id == identity.tenant_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")
@@ -381,7 +400,10 @@ def reject_change_request(
     identity: Identity = Depends(get_identity),
 ):
     cr = session.scalar(
-        select(ChangeRequest).where(ChangeRequest.id == cr_id, ChangeRequest.tenant_id == identity.tenant_id)
+        select(ChangeRequest)
+        .where(ChangeRequest.id == cr_id, ChangeRequest.tenant_id == identity.tenant_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
     )
     if cr is None:
         raise HTTPException(status_code=404, detail="not_found")

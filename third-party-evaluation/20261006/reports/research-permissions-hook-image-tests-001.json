@@ -1,0 +1,7 @@
+{
+  "image_id": "sha256:807db3f748f031074362462af7f00e7b41365a0d7cb9cc7c62ce8f212b7cd278",
+  "test_source_sha256": "7d1554fa12369880359db9f655f2af077f9ecc6888909db50ea2c16e24ab8754",
+  "returncode": 0,
+  "stdout": "{\"passed\": true, \"checks\": [{\"test\": \"test_late_worker_cannot_complete_or_overwrite_next_callback\", \"passed\": true}, {\"test\": \"test_parallel_post_tool_observations_keep_context_and_results\", \"passed\": true}, {\"test\": \"test_waiting_observer_times_out_without_spawning_duplicate_worker\", \"passed\": true}], \"model_calls\": 0}\n",
+  "stderr": "Hook 'post_tool_call' callback late timed out after 0.1s \u2014 skipping\nHook 'post_tool_call' callback observer skipped after previous timeout or while still running\n"
+}

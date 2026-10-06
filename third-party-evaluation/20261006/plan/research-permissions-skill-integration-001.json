@@ -1,0 +1,30 @@
+{
+  "schema_version": "siq.evaluation.skill-integration-notes.v1",
+  "created_unix": 1791270848.7400231,
+  "status": "implementation_required_not_tested",
+  "scope": "RG04/RG05 within real Research/Hermes/OpenShell chain",
+  "findings": [
+    {
+      "source": "apps/agentshield/internal/receipt/engine.go",
+      "fact": "SEC Grant conflicting with the Runtime Identity enrolled Intent selected Grant must hard deny skill_context_grant_conflict; do not loosen this to make two Skills pass."
+    },
+    {
+      "source": "scripts/personal-experience/installed-skill-runtime-native-smoke.py",
+      "fact": "Public flow exists: import -> permission draft -> approve -> install plan -> apply -> activate -> runtime identity -> enrolled session -> admin-issued SEC."
+    },
+    {
+      "source_repository": "siq-research-engine",
+      "source": "scripts/openshell/snapshot_siq_analysis_runtime.py",
+      "fact": "Runtime snapshot explicitly requires the current project siq_analysis source; cannot substitute an unrelated profile and call it the same business entry."
+    }
+  ],
+  "implementation_requirements": [
+    "Use one owned discovered Agent with two actual installed Skills; record real source and installed content digests.",
+    "Select the matching installed Skill Grant for each runtime identity and matching SEC; same Agent may have distinct bounded identities/tasks.",
+    "Bind actual loaded Skill bytes in the OpenShell runtime to the recorded installation; a host-only installation plus a claimed Skill name is insufficient.",
+    "Trusted host/controller may approve and issue contexts; model and sandbox must not receive admin/recovery credentials or approval authority.",
+    "If a test-only synchronization hook is needed to expose native session/task identity, label it and verify unmodified product decisions and real tool dispatch separately.",
+    "Negative controls: unapproved import, Skill A identity with Skill B SEC, revoked context, content drift, out-of-scope write; include normal read/write controls."
+  ],
+  "user_authorization": "Directly repair and optimize discovered issues; claims require observed evidence, not merely target outcome."
+}

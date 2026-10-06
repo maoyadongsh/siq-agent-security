@@ -1,0 +1,171 @@
+{
+  "schema_version": "siq.research-business-batch-inventory.v1",
+  "count": 27,
+  "definition": "Completed reports with proof.business_HTTP_attempted=true, including failed and diagnostic batches; not HTTP request/model call count or pass rate.",
+  "rows": [
+    {
+      "batch": "research-permissions-business-002",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-business-002.json"
+    },
+    {
+      "batch": "research-permissions-business-003",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-business-003.json"
+    },
+    {
+      "batch": "research-permissions-business-004",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-business-004.json"
+    },
+    {
+      "batch": "research-permissions-business-005",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-business-005.json"
+    },
+    {
+      "batch": "research-permissions-business-006",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-business-006.json"
+    },
+    {
+      "batch": "research-permissions-business-007",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-business-007.json"
+    },
+    {
+      "batch": "research-permissions-business-revoke-001",
+      "launcher_passed": false,
+      "independent_verification_passed": false,
+      "report": "reports/research-permissions-business-revoke-001.json"
+    },
+    {
+      "batch": "research-permissions-business-revoke-002",
+      "launcher_passed": true,
+      "independent_verification_passed": false,
+      "report": "reports/research-permissions-business-revoke-002.json"
+    },
+    {
+      "batch": "research-permissions-business-revoke-003",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-business-revoke-003.json"
+    },
+    {
+      "batch": "research-permissions-cross-company-001",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-cross-company-001.json"
+    },
+    {
+      "batch": "research-permissions-cross-company-002",
+      "launcher_passed": true,
+      "independent_verification_passed": false,
+      "report": "reports/research-permissions-cross-company-002.json"
+    },
+    {
+      "batch": "research-permissions-cross-company-004",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-cross-company-004.json"
+    },
+    {
+      "batch": "research-permissions-relay-recovery-001",
+      "launcher_passed": false,
+      "independent_verification_passed": false,
+      "report": "reports/research-permissions-relay-recovery-001.json"
+    },
+    {
+      "batch": "research-permissions-relay-recovery-002",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-relay-recovery-002.json"
+    },
+    {
+      "batch": "research-permissions-skill-business-002",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-skill-business-002.json"
+    },
+    {
+      "batch": "research-permissions-skill-drift-001",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-skill-drift-001.json"
+    },
+    {
+      "batch": "research-permissions-skill-drift-002",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-skill-drift-002.json"
+    },
+    {
+      "batch": "research-permissions-skill-replacement-003",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-skill-replacement-003.json"
+    },
+    {
+      "batch": "research-permissions-skill-replacement-004",
+      "launcher_passed": false,
+      "independent_verification_passed": false,
+      "report": "reports/research-permissions-skill-replacement-004.json"
+    },
+    {
+      "batch": "research-permissions-skill-replacement-005",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-skill-replacement-005.json"
+    },
+    {
+      "batch": "research-permissions-skill-revoke-001",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-skill-revoke-001.json"
+    },
+    {
+      "batch": "research-permissions-skill-update-001",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-skill-update-001.json"
+    },
+    {
+      "batch": "research-permissions-tool-coverage-002",
+      "launcher_passed": true,
+      "independent_verification_passed": false,
+      "report": "reports/research-permissions-tool-coverage-002.json"
+    },
+    {
+      "batch": "research-permissions-tool-coverage-003",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-tool-coverage-003.json"
+    },
+    {
+      "batch": "research-permissions-tool-utility-001",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-tool-utility-001.json"
+    },
+    {
+      "batch": "research-permissions-tool-utility-002",
+      "launcher_passed": false,
+      "independent_verification_passed": null,
+      "report": "reports/research-permissions-tool-utility-002.json"
+    },
+    {
+      "batch": "research-permissions-tool-utility-003",
+      "launcher_passed": true,
+      "independent_verification_passed": true,
+      "report": "reports/research-permissions-tool-utility-003.json"
+    }
+  ],
+  "recorded_at": "2026-10-06T10:20:50.480339+00:00",
+  "predecessor": "inventory/research-permissions-business-batches-005.json"
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "siq.evaluation.research-skill-business-review.v1",
+  "batch": "research-permissions-skill-business-003",
+  "passed": true,
+  "checks": {
+    "base_receipts_and_effects_verified": true,
+    "live_run_passed": true,
+    "two_loaded_skills": true,
+    "distinct_skills": true,
+    "research-permissions-reader_exact_installed_source_image_and_loaded_hash": true,
+    "research-permissions-reader_context_matches_install_and_grant": true,
+    "research-permissions-reader_every_decision_has_verified_skill_context": true,
+    "research-permissions-reader_native_loader_independent_reproduction": true,
+    "research-permissions-writer_exact_installed_source_image_and_loaded_hash": true,
+    "research-permissions-writer_context_matches_install_and_grant": true,
+    "research-permissions-writer_every_decision_has_verified_skill_context": true,
+    "research-permissions-writer_native_loader_independent_reproduction": true
+  },
+  "claim_scope": "two installed Skills, sequential trusted task selection, real analysis API/Hermes/OpenShell",
+  "limits": [
+    "evaluation-only host SEC synchronizer",
+    "not automatic arbitrary Skill switching",
+    "not daily deployment promotion",
+    "not concurrent root identities"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "scope": "Offline prebuild from exact historical Skill bytes; actual live installation/identity remains separate.",
+  "image_id": "sha256:35f2762e08ce85ed95fbe610243377c1d955e42bbc4d397cfaac897aa422011d",
+  "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:e0dbce9c1ba371f9c7354541",
+  "candidate_input_sha256": "e0dbce9c1ba371f9c73545411265af87021b2266322fb77c6ab2be6662ce3217",
+  "record_path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/preflight/research-permissions-skill-drift-003-image/candidate-image.json",
+  "sync_sha256": "1694a73ab6df9530b0390d34f1ba561ab4ac291c605cfda4de54557612c4942b",
+  "post_build_reporting_error": "Initial caller expected tuple but build returns Path; image build/gates completed. Read and independently validated existing artifact without rebuilding.",
+  "verified": true
+}

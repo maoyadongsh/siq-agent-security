@@ -1,0 +1,61 @@
+{
+  "scope": "owned network environment preflight, not SIQ deployment evidence",
+  "create_exit_code": 0,
+  "probe_exit_code": 0,
+  "effect_before": {
+    "stage": "before",
+    "receiver_id": "6450e98092f5ce722e1644457eb35503f998a9f89059006661296a1e5d431432",
+    "target": "tp07-978c0243135e",
+    "control_path": "/control/before-b1da202f2335dd71b8499ad0",
+    "business_path": "/business/before-b1da202f2335dd71b8499ad0",
+    "control_exit_code": 0,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "receiver_stdout": "{\"ready\": true}\n{\"path\": \"/control/before-b1da202f2335dd71b8499ad0\"}\n{\"path\": \"/business/before-b1da202f2335dd71b8499ad0\"}\n"
+  },
+  "deny_apply_exit_code": 0,
+  "effect_applied": {
+    "stage": "applied",
+    "receiver_id": "6450e98092f5ce722e1644457eb35503f998a9f89059006661296a1e5d431432",
+    "target": "tp07-978c0243135e",
+    "control_path": "/control/applied-09394831bb6bb7fea98d101a",
+    "business_path": "/business/applied-09394831bb6bb7fea98d101a",
+    "control_exit_code": 0,
+    "exit_code": 22,
+    "stdout": "",
+    "stderr": "curl: (22) The requested URL returned error: 403\n",
+    "receiver_stdout": "{\"ready\": true}\n{\"path\": \"/control/before-b1da202f2335dd71b8499ad0\"}\n{\"path\": \"/business/before-b1da202f2335dd71b8499ad0\"}\n{\"path\": \"/control/applied-09394831bb6bb7fea98d101a\"}\n"
+  },
+  "restore_apply_exit_code": 0,
+  "effect_rolled_back": {
+    "stage": "rolled_back",
+    "receiver_id": "6450e98092f5ce722e1644457eb35503f998a9f89059006661296a1e5d431432",
+    "target": "tp07-978c0243135e",
+    "control_path": "/control/rolled_back-b7083baa4d051699c9731ee1",
+    "business_path": "/business/rolled_back-b7083baa4d051699c9731ee1",
+    "control_exit_code": 0,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "receiver_stdout": "{\"ready\": true}\n{\"path\": \"/control/before-b1da202f2335dd71b8499ad0\"}\n{\"path\": \"/business/before-b1da202f2335dd71b8499ad0\"}\n{\"path\": \"/control/applied-09394831bb6bb7fea98d101a\"}\n{\"path\": \"/control/rolled_back-b7083baa4d051699c9731ee1\"}\n{\"path\": \"/business/rolled_back-b7083baa4d051699c9731ee1\"}\n"
+  },
+  "checks": {
+    "enterprise_effect_before": false,
+    "enterprise_effect_blocked": true,
+    "enterprise_effect_restored": false,
+    "enterprise_same_receiver": true
+  },
+  "cleanup": {
+    "receiver_removed": true,
+    "gateway_stopped": true,
+    "containers": [
+      {
+        "container_id": "1f69f3aeb025",
+        "removed": true
+      }
+    ],
+    "container_inventory_checked": true,
+    "network_removed": true
+  }
+}

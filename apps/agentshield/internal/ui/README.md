@@ -15,6 +15,8 @@ make -C apps/agentshield ui
 
 ## 当前个人流程
 
+2026-10-06 [浏览器专项](../../../../third-party-evaluation/20261006/reports/personal-runtime-browser-report.md)记录真实接入、自检、活动关联和卸载；[状态专项](../../../../third-party-evaluation/20261006/reports/native-runtime-snapshot-report.md)区分配置快照、实例授权和临时自检身份。界面展示通过不能代替业务 Grant、安装身份或实际文件效果；本轮文档更新不重建嵌入资产。
+
 | 入口 | 关键行为 | 结果的解释 |
 | --- | --- | --- |
 | 我的智能体、权限、安全与审计 | 盘点框架/角色/Skill、确认资产、批量撤权、发现并接入具体宿主实例 | 四主入口不删除高级工作台；文件/连接/运行验证分层，配置成功不等于工具已保护 |

@@ -1,0 +1,29 @@
+{
+  "scope": "Q3 actual native delegation parent gate and completed child effect controls; plan integration",
+  "framework": {
+    "command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "passed": 551,
+    "subtests_passed": 118,
+    "log": "engineering-evidence/native-delegation-framework-tests-006.txt",
+    "excluded": "upstream_tests requires separate AgentDojo environment; broad initial attempt collection failure preserved in tests-005"
+  },
+  "ruff_exit_code": 0,
+  "diff_check_exit_code": 0,
+  "supplemental_negative_controls": 7,
+  "frozen_verifier_original_exit_codes": [
+    2,
+    0
+  ],
+  "plan_digest_checks": [
+    "real-business-work-items-v2.json",
+    "product-acceptance-execution-order.json"
+  ],
+  "local_links_checked": 64,
+  "other_delegation_helper_restored": true,
+  "source_snapshot": "engineering-evidence/native-delegation-final-source-001/manifest.json",
+  "report": "reports/native-delegation-controls-report.md",
+  "integration": "inventory/native-delegation-wait-controls-integration-001.json",
+  "product_changed": false,
+  "host_changed": false,
+  "goal_status": "active"
+}

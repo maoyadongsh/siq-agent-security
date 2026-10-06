@@ -1,0 +1,298 @@
+FFFFFFFF.FFFF..                                                          [100%]
+=================================== FAILURES ===================================
+__________________ test_invalid_acceptance_is_atomic[change0] __________________
+app/tests/test_risk_acceptance_boundaries.py:42: in test_invalid_acceptance_is_atomic
+    assert response.status_code==422,response.text
+E   AssertionError: {"id":"risk-boundary-75d630a32172408e873d5495f6c5d393","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"","due_at":null,"risk_acceptance":{"reason":"temporary acceptance","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.082290+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.073390","last_seen_at":"2026-10-06T05:47:00.115660"}
+E   assert 200 == 422
+E    +  where 200 = <Response [200 OK]>.status_code
+------------------------------ Captured log setup ------------------------------
+WARNING  siq-agent-security:main.py:75 dev 模式：自动建表 + dev-tenant 种子数据（仅限本地开发）
+__________________ test_invalid_acceptance_is_atomic[change1] __________________
+app/tests/test_risk_acceptance_boundaries.py:42: in test_invalid_acceptance_is_atomic
+    assert response.status_code==422,response.text
+E   AssertionError: {"id":"risk-boundary-197e1763165147589c144af4920d8bfa","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"   ","due_at":null,"risk_acceptance":{"reason":"temporary acceptance","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.165444+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.159041","last_seen_at":"2026-10-06T05:47:00.169085"}
+E   assert 200 == 422
+E    +  where 200 = <Response [200 OK]>.status_code
+__________________ test_invalid_acceptance_is_atomic[change2] __________________
+app/tests/test_risk_acceptance_boundaries.py:42: in test_invalid_acceptance_is_atomic
+    assert response.status_code==422,response.text
+E   AssertionError: {"id":"risk-boundary-e7d6f1c203ea46769095fea9d571354f","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","due_at":null,"risk_acceptance":{"reason":"temporary acceptance","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.190679+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.183217","last_seen_at":"2026-10-06T05:47:00.193793"}
+E   assert 200 == 422
+E    +  where 200 = <Response [200 OK]>.status_code
+__________________ test_invalid_acceptance_is_atomic[change3] __________________
+app/tests/test_risk_acceptance_boundaries.py:42: in test_invalid_acceptance_is_atomic
+    assert response.status_code==422,response.text
+E   AssertionError: {"id":"risk-boundary-df2239f0ba5e4ca6bdcbb64b4fae9477","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"user\nother","due_at":null,"risk_acceptance":{"reason":"temporary acceptance","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.215222+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.207666","last_seen_at":"2026-10-06T05:47:00.218871"}
+E   assert 200 == 422
+E    +  where 200 = <Response [200 OK]>.status_code
+__________________ test_invalid_acceptance_is_atomic[change4] __________________
+app/tests/test_risk_acceptance_boundaries.py:42: in test_invalid_acceptance_is_atomic
+    assert response.status_code==422,response.text
+E   AssertionError: {"id":"risk-boundary-87a7e08bdcfe49afa3b75fc2edd8b770","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"risk-owner","due_at":null,"risk_acceptance":{"reason":"   ","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.241662+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.231715","last_seen_at":"2026-10-06T05:47:00.245198"}
+E   assert 200 == 422
+E    +  where 200 = <Response [200 OK]>.status_code
+__________________ test_invalid_acceptance_is_atomic[change5] __________________
+app/tests/test_risk_acceptance_boundaries.py:42: in test_invalid_acceptance_is_atomic
+    assert response.status_code==422,response.text
+E   AssertionError: {"id":"risk-boundary-b319e1b4a17b4c91ac13d0a1afc81ec0","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"risk-owner","due_at":null,"risk_acceptance":{"reason":"\t\n","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.264544+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.257505","last_seen_at":"2026-10-06T05:47:00.267251"}
+E   assert 200 == 422
+E    +  where 200 = <Response [200 OK]>.status_code
+__________________ test_invalid_acceptance_is_atomic[change6] __________________
+app/tests/test_risk_acceptance_boundaries.py:41: in test_invalid_acceptance_is_atomic
+    response=client.post(f'/api/v1/findings/{fid}/accept-risk',headers=tenant_a,json={**body(),**change})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:556: in post
+    return super().post(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:455: in request
+    return super().request(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:354: in handle_request
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/main.py:108: in request_id_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py:88: in __call__
+    await self.app(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:2734: in app
+    await route.handle(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:1780: in handle
+    await self.original_router.handle(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:2789: in handle
+    await included_router._handle_selected(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:1800: in _handle_selected
+    await original_route.handle(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:1279: in handle
+    await app(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:706: in app
+    raw_response = await run_endpoint_function(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:354: in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py:2641: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py:1033: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+app/routers/findings.py:178: in accept_risk
+    if body.expires_at.astimezone(UTC).replace(tzinfo=None) < utcnow():
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   OverflowError: date value out of range
+__________________ test_invalid_acceptance_is_atomic[change7] __________________
+app/tests/test_risk_acceptance_boundaries.py:41: in test_invalid_acceptance_is_atomic
+    response=client.post(f'/api/v1/findings/{fid}/accept-risk',headers=tenant_a,json={**body(),**change})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:556: in post
+    return super().post(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:455: in request
+    return super().request(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:354: in handle_request
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/main.py:108: in request_id_middleware
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py:88: in __call__
+    await self.app(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:2734: in app
+    await route.handle(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:1780: in handle
+    await self.original_router.handle(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:2789: in handle
+    await included_router._handle_selected(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:1800: in _handle_selected
+    await original_route.handle(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:1279: in handle
+    await app(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:706: in app
+    raw_response = await run_endpoint_function(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/routing.py:354: in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/starlette/concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py:2641: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py:1033: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+app/routers/findings.py:178: in accept_risk
+    if body.expires_at.astimezone(UTC).replace(tzinfo=None) < utcnow():
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   OverflowError: date value out of range
+____________ test_object_location_precedes_permission[foreign-404] _____________
+app/tests/test_risk_acceptance_boundaries.py:52: in test_object_location_precedes_permission
+    assert response.status_code==expected,response.text
+E   AssertionError: {"detail":"forbidden"}
+E   assert 403 == 404
+E    +  where 403 = <Response [403 Forbidden]>.status_code
+____________ test_object_location_precedes_permission[missing-404] _____________
+app/tests/test_risk_acceptance_boundaries.py:52: in test_object_location_precedes_permission
+    assert response.status_code==expected,response.text
+E   AssertionError: {"detail":"forbidden"}
+E   assert 403 == 404
+E    +  where 403 = <Response [403 Forbidden]>.status_code
+___________ test_terminal_risk_cannot_be_overwritten[risk_accepted] ____________
+app/tests/test_risk_acceptance_boundaries.py:60: in test_terminal_risk_cannot_be_overwritten
+    assert response.status_code==409,response.text
+E   AssertionError: {"id":"risk-boundary-9d371f47ea9649cd8a0f69137e58653e","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"risk-owner","due_at":null,"risk_acceptance":{"reason":"temporary acceptance","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.823609+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.817290","last_seen_at":"2026-10-06T05:47:00.826012"}
+E   assert 200 == 409
+E    +  where 200 = <Response [200 OK]>.status_code
+______________ test_terminal_risk_cannot_be_overwritten[resolved] ______________
+app/tests/test_risk_acceptance_boundaries.py:60: in test_terminal_risk_cannot_be_overwritten
+    assert response.status_code==409,response.text
+E   AssertionError: {"id":"risk-boundary-a53a8d4c592e4d69903afdd9515eac88","rule_id":"boundary-fixture","rule_version":1,"severity":"info","domain":null,"asset_id":null,"evidence_ids":[],"impact":null,"remediation":null,"status":"risk_accepted","owner_user_id":"risk-owner","due_at":null,"risk_acceptance":{"reason":"temporary acceptance","accepted_by":"user-a","expires_at":"2026-10-06T06:47:00.842053+00:00"},"analyzer_version":null,"confidence":null,"matches":[],"first_seen_at":"2026-10-06T05:47:00.835310","last_seen_at":"2026-10-06T05:47:00.844780"}
+E   assert 200 == 409
+E    +  where 200 = <Response [200 OK]>.status_code
+=============================== warnings summary ===============================
+../../third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-riskfix1py312/apps/control-api/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change0]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change1]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change2]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change3]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change4]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change5]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change6]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_invalid_acceptance_is_atomic[change7]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_object_location_precedes_permission[foreign-404]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_object_location_precedes_permission[missing-404]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_terminal_risk_cannot_be_overwritten[risk_accepted]
+FAILED app/tests/test_risk_acceptance_boundaries.py::test_terminal_risk_cannot_be_overwritten[resolved]
+12 failed, 3 passed, 1 warning in 1.96s

@@ -1,0 +1,64 @@
+{
+  "schema_version": "siq.research-daily-entry-inventory.v1",
+  "recorded_unix": 1791284008.1289654,
+  "after_batch": "research-permissions-daily-permissions-001",
+  "api_pid": 2716725,
+  "api_start_ticks": "259521394",
+  "api_environment": {
+    "SIQ_BACKEND_PORT": "18081",
+    "SIQ_OPENSHELL_REQUEST_BACKEND": "qwen38",
+    "SIQ_OPENSHELL_REQUEST_DEPLOYMENT": "host",
+    "SIQ_OPENSHELL_DATA_CLASSIFICATION": "confidential_local",
+    "SIQ_OPENSHELL_LOCAL_GRANT_ADMIN_ENABLED": "1"
+  },
+  "unchanged_peer_pids": {
+    "frontend_15173": 464005,
+    "host_hermes_18651": 2755074,
+    "siq_authority_47611": 1458311
+  },
+  "peer_processes_present": true,
+  "backend": {
+    "status_code": 200,
+    "status": "ok",
+    "openshell_recovery": {
+      "enabled": true,
+      "required": true,
+      "ready": true
+    },
+    "qwen_request_recovery": {
+      "enabled": true,
+      "ready": true,
+      "last_scan": {
+        "examined": 0,
+        "deferred": 0,
+        "released": 0,
+        "failed": 0,
+        "replaced": 0,
+        "foreign": 0
+      }
+    }
+  },
+  "frontend": {
+    "status_code": 200,
+    "status": "ok",
+    "openshell_recovery": {
+      "enabled": true,
+      "required": true,
+      "ready": true
+    },
+    "qwen_request_recovery": {
+      "enabled": true,
+      "ready": true,
+      "last_scan": {
+        "examined": 0,
+        "deferred": 0,
+        "released": 0,
+        "failed": 0,
+        "replaced": 0,
+        "foreign": 0
+      }
+    }
+  },
+  "nonexpired_running_business_leases": 0,
+  "scope": "Current protected local default API after verified Agent pair; no automatic existing-company grants or arbitrary Skill attribution claim."
+}

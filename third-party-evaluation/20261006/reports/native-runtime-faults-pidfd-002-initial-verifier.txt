@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/native-runtime-faults-pidfd-002-protocol/harness-source/verify_native_runtime_faults.py", line 93, in <module>
+    result = verify(args.run, args.expected_manifest_sha256)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/native-runtime-faults-pidfd-002-protocol/harness-source/verify_native_runtime_faults.py", line 84, in verify
+    results[unit['unit_id']] = joins(raw, evidence)
+                               ^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/native-runtime-faults-pidfd-002-protocol/harness-source/verify_native_runtime_faults.py", line 49, in joins
+    document = next(x for x in items if x[idfield] == latest[idfield])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration

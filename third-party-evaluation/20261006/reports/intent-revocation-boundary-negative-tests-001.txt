@@ -1,0 +1,13 @@
+test_both_cohorts_retain_their_actual_harms (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_both_cohorts_retain_their_actual_harms) ... ok
+test_both_post_reserve_harms_remain_with_utility (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_both_post_reserve_harms_remain_with_utility) ... ok
+test_both_pre_reserve_boundaries_have_no_effect (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_both_pre_reserve_boundaries_have_no_effect) ... ok
+test_frozen_contract_correction_does_not_rewrite_first (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_frozen_contract_correction_does_not_rewrite_first) ... ok
+test_revocation_readback_and_original_immutability_checked (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_revocation_readback_and_original_immutability_checked) ... ok
+test_revocation_route_cannot_target_other_binding (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_revocation_route_cannot_target_other_binding) ... ok
+test_signed_binding_cannot_relabel_session (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_signed_binding_cannot_relabel_session) ... ok
+test_signed_revocation_cannot_target_other_authority (test_intent_revocation_boundary.IntentRevocationBoundaryTests.test_signed_revocation_cannot_target_other_authority) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.178s
+
+OK

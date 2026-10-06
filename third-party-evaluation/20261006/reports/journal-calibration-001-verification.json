@@ -1,0 +1,13 @@
+{
+  "integrity": "verified_against_supplied_digest",
+  "scope": "evaluation infrastructure calibration, not product security results",
+  "allocated": 2,
+  "attempts": 3,
+  "first_attempt_pass": 1,
+  "first_attempt_fail": 0,
+  "first_attempt_unknown": 1,
+  "known_harm_first_attempt": 1,
+  "harm_unknown_first_attempt": 0,
+  "selection_rule": "first_attempt_only; retry never replaces original",
+  "outcome_exit_code": 2
+}

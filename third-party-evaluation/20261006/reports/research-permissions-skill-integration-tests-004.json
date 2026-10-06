@@ -1,0 +1,12 @@
+{
+  "recorded_at": "2026-10-06T07:49:26.916618+00:00",
+  "command": "apps/api/.venv/bin/python -m pytest scripts/openshell/tests/test_research_skill_sync.py scripts/openshell/tests/test_research_permission_skill_image.py scripts/openshell/tests/test_agentshield_runtime_binding.py apps/api/tests/test_qwen38_request_http.py -q",
+  "cwd": "/home/maoyd/siq-research-engine",
+  "exit_code": 0,
+  "passed": 61,
+  "warnings": 78,
+  "warning_kind": "existing datetime.utcnow Pydantic default factory deprecations",
+  "elapsed_seconds": 30.92,
+  "scope": "evaluation synchronization/image gates, runtime binding, business output-path HTTP tests",
+  "not_run": "full Research check_all.sh"
+}

@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-10-05T19:51:08.752705+00:00",
+  "files_scanned": 195,
+  "credential_matches": 0,
+  "private_key_pem_matches": 0,
+  "jwt_matches": 0,
+  "broken_links": [],
+  "publication": "local_only",
+  "owned_resources": {
+    "container:tp07": {
+      "exit_code": 0,
+      "remaining_ids": []
+    },
+    "container:tp07-readback": {
+      "exit_code": 0,
+      "remaining_ids": []
+    },
+    "network:tp07-readback": {
+      "exit_code": 0,
+      "remaining_ids": []
+    }
+  },
+  "manual_image_review": [
+    "self-review",
+    "approved-desktop",
+    "approved-mobile",
+    "cross-tenant",
+    "disconnected"
+  ],
+  "frozen_metadata_note": "UI v4/v5 inherited an obsolete generic Edge limit saying no UI journey; appended scope, assertions and actual captures explicitly include UI. This metadata defect is documented without rewriting frozen protocols; future freezer removes it."
+}

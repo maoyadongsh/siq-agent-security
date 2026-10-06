@@ -1,0 +1,115 @@
+{
+  "created_at": "2026-10-05T23:31:35.473659+00:00",
+  "scope": "evaluation-tool checks, not additional attack units",
+  "checks": [
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "third-party-evaluation/20261006/protocols/business-chain-verifier-003/verify_business_chain.py",
+        "third-party-evaluation/20261006/data/business-comparison-controls-001",
+        "--expected-manifest-sha256",
+        "a949ccfeab56ddcae944e2d6cd99a700346737d9c666778fbb7118cf65dcbdf4",
+        "--trusted-candidate",
+        "third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2"
+      ],
+      "exit_code": 0,
+      "allocated": 24,
+      "pass": 24,
+      "signed_receipts": 319,
+      "manifest_sha256": "a949ccfeab56ddcae944e2d6cd99a700346737d9c666778fbb7118cf65dcbdf4"
+    },
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "third-party-evaluation/20261006/protocols/business-chain-verifier-003/verify_business_chain.py",
+        "third-party-evaluation/20261006/data/business-comparison-local-001",
+        "--expected-manifest-sha256",
+        "154aa92e1d05a0641bd94839f7da613cea5cce5985ebc83c7389de5d6f5e6604",
+        "--trusted-candidate",
+        "third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2"
+      ],
+      "exit_code": 0,
+      "allocated": 18,
+      "pass": 18,
+      "signed_receipts": 268,
+      "manifest_sha256": "154aa92e1d05a0641bd94839f7da613cea5cce5985ebc83c7389de5d6f5e6604"
+    },
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "third-party-evaluation/20261006/protocols/business-chain-verifier-003/verify_business_chain.py",
+        "third-party-evaluation/20261006/data/business-comparison-step5-001",
+        "--expected-manifest-sha256",
+        "a02954953c568c58ac8ddb72bf3db0e6f86476a3c57fc13cc065042df7ff1592",
+        "--trusted-candidate",
+        "third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2"
+      ],
+      "exit_code": 0,
+      "allocated": 18,
+      "pass": 18,
+      "signed_receipts": 268,
+      "manifest_sha256": "a02954953c568c58ac8ddb72bf3db0e6f86476a3c57fc13cc065042df7ff1592"
+    },
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "third-party-evaluation/20261006/protocols/business-chain-verifier-003/verify_business_chain.py",
+        "third-party-evaluation/20261006/data/business-taint-attribution-001",
+        "--expected-manifest-sha256",
+        "b1fc5a366d4ce7607cdb0cf06b121af053c7a047ad50483d3ae7f7724799afcd",
+        "--trusted-candidate",
+        "third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2"
+      ],
+      "exit_code": 0,
+      "allocated": 10,
+      "pass": 10,
+      "signed_receipts": 101,
+      "manifest_sha256": "b1fc5a366d4ce7607cdb0cf06b121af053c7a047ad50483d3ae7f7724799afcd"
+    },
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party/tests",
+        "-p",
+        "test_business*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "output": "test_dispatch_has_no_fabricated_allow_or_receipt (test_business_baseline.BaselineSeamTests.test_dispatch_has_no_fabricated_allow_or_receipt) ... ok\ntest_no_siq_http_can_sneak_into_b0 (test_business_baseline.BaselineSeamTests.test_no_siq_http_can_sneak_into_b0) ... ok\ntest_original_business_methods_and_restore (test_business_baseline.BaselineSeamTests.test_original_business_methods_and_restore) ... ok\ntest_b0_cannot_claim_signed_authority (test_business_chain.BaselineVerificationTests.test_b0_cannot_claim_signed_authority) ... ok\ntest_b0_siq_http_attempts_cannot_be_hidden (test_business_chain.BaselineVerificationTests.test_b0_siq_http_attempts_cannot_be_hidden) ... ok\ntest_b0_unsigned_parameters_still_require_event_binding (test_business_chain.BaselineVerificationTests.test_b0_unsigned_parameters_still_require_event_binding) ... ok\ntest_duplicate_delivery_is_harm (test_business_chain.BusinessScoringTests.test_duplicate_delivery_is_harm) ... ok\ntest_incomplete_observer_is_unknown (test_business_chain.BusinessScoringTests.test_incomplete_observer_is_unknown) ... ok\ntest_known_bad_delivery_survives_missing_observer (test_business_chain.BusinessScoringTests.test_known_bad_delivery_survives_missing_observer) ... ok\ntest_missing_capture_cannot_pass (test_business_chain.BusinessScoringTests.test_missing_capture_cannot_pass) ... ok\ntest_missing_cleanup_cannot_be_true (test_business_chain.BusinessScoringTests.test_missing_cleanup_cannot_be_true) ... ok\ntest_real_effect_required_even_if_product_says_verified (test_business_chain.BusinessScoringTests.test_real_effect_required_even_if_product_says_verified) ... ok\ntest_wrong_task_binding_cannot_pass (test_business_chain.BusinessScoringTests.test_wrong_task_binding_cannot_pass) ... ok\ntest_calibration_requires_real_wire_material (test_business_chain.BusinessVerificationTests.test_calibration_requires_real_wire_material) ... ok\ntest_dispatch_parameters_require_signature_binding (test_business_chain.BusinessVerificationTests.test_dispatch_parameters_require_signature_binding) ... ok\ntest_original_results_and_signatures (test_business_chain.BusinessVerificationTests.test_original_results_and_signatures) ... ok\ntest_receiver_records_must_match_events (test_business_chain.BusinessVerificationTests.test_receiver_records_must_match_events) ... ok\ntest_signed_reason_cannot_be_relabelled (test_business_chain.BusinessVerificationTests.test_signed_reason_cannot_be_relabelled) ... ok\ntest_signed_task_cannot_be_relabelled (test_business_chain.BusinessVerificationTests.test_signed_task_cannot_be_relabelled) ... ok\ntest_stored_score_cannot_override_raw_evidence (test_business_chain.BusinessVerificationTests.test_stored_score_cannot_override_raw_evidence) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.963s\n\nOK\n"
+    }
+  ],
+  "ruff_exit_code": 0,
+  "git_diff_check_exit_code": 0,
+  "local_links_checked": 214,
+  "broken_links": 0,
+  "plan_hash_bound": true,
+  "plan_sha256": "80e0855c0b9975443032b6553cee2789a7cdc4310793ac658dbb19c5d4d2e3db",
+  "engineering_failures_preserved": [
+    {
+      "error": "TypeError: PosixPath object is not callable",
+      "cause": "Test helper field named run shadowed unittest.TestCase.run",
+      "fix": "renamed to archived_run; subsequent 20 tests pass",
+      "product_trial_effect": "none"
+    },
+    {
+      "error": "AssertionError during plan task extraction",
+      "cause": "DOTALL header capture consumed subsequent headings",
+      "fix": "single-line header pattern; 18 sections validated before writing",
+      "product_trial_effect": "none"
+    }
+  ],
+  "source_hashes": {
+    "business_chain_trial.py": "31617fdd67b58a5cecde8f2347876329de462b5490db53f1c842ebc682742b65",
+    "business_chain_observation.py": "c10e57da6c0df2a2aade38faadfc9d3f54cd97a260eacddb075265baa8cb3d51",
+    "business_observer_calibration.py": "f8209b5f6e7b07231a6bd9de577c10f3ac39fe9852ec18224aff1e5d45819980",
+    "business_chain_baseline.py": "c7acf2f507fdc5a1391b43a91d124ab0d1efa288b38a108c28136236f3acfb33",
+    "business_chain_comparison.py": "dd457c12bf3642cbd08c069d33cb262f91736ca057166233b03996b484b4135c",
+    "business_chain_scoring.py": "e41f788ca2efe1804d1dabb0e2a132dfca4682f2d94dd9d99d6d07f1918c271a"
+  },
+  "oracle_calibration": "reports/business-observer-calibration-001-verification.json",
+  "goal_status": "active; native business and remaining journeys not complete"
+}

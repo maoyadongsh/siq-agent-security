@@ -111,6 +111,15 @@ func (s *Store) EnrollContext(token, session string) (Record, intent.Binding, er
 	}
 	c, b, err := s.intents.ResolveBinding(r.Platform, session, r.AgentID)
 	if err != nil {
+		// ResolveBinding can return verified historical metadata together with
+		// an inactive old Grant. A different identity still cannot take over
+		// that session; report the proven conflict rather than a service fault.
+		// Missing/unverified binding metadata remains unavailable.
+		id, task := sessionNames(r, session)
+		if b != nil && b.Platform == r.Platform && b.AgentID == r.AgentID && b.SessionID == session &&
+			(b.IntentID != id || b.TaskID != task) {
+			return Record{}, intent.Binding{}, ErrConflict
+		}
 		return Record{}, intent.Binding{}, ErrUnavailable
 	}
 	if b != nil {

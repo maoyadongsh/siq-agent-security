@@ -1,0 +1,5 @@
+# Linux pidfd故障注入兼容修正002
+
+继承native-runtime-faults-001.md全部范围和预期。001首试前置27项业务检查通过，但故障观察器因本机Python未编入os.pidfd_open及signal.pidfd_send_signal抛AttributeError，未完成暂停，结果unknown保留，锚454a177d4dd7c06bd01b997b559c44a08823c92e1dd48996bf906272fd3eac2e。它没有测成产品超时。
+
+本批采用既有process_resources.py已经使用的Linux asm-generic syscall 434/424，通过ctypes持有pidfd并发送信号，仅支持核对过的aarch64/x86_64。先在测评器自有sleep子进程验证实际停止、恢复、退出；不退回未经身份绑定的裸PID信号。产品二进制、Hermes、超时120秒和测评预期均不改。新冻结、原失败不覆盖。

@@ -1,0 +1,13 @@
+RUF059 Unpacked variable `d` is never used
+   --> benchmarks/third-party/tests/test_issuer_ingress.py:123:9
+    |
+122 |     def test_absent_receiver_is_unknown_and_positive_harm_survives_unhealthy_observer(self):
+123 |         d, u, r, _ = self.material()
+    |         ^
+124 |         with tempfile.TemporaryDirectory() as temporary:
+125 |             target = Path(temporary)
+    |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+Found 1 error.
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).

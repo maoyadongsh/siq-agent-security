@@ -1,0 +1,53 @@
+{
+  "checked_at": "2026-10-05T23:24:15.082933+00:00",
+  "scope": "required Intent API Grant revocation across status/reserve/external file write; expected residual window retains harm, no native SEC",
+  "framework_tests": {
+    "passed": 227,
+    "exit_code": 0,
+    "log": "reports/revocation-boundary-framework-tests-001.txt",
+    "scope_note": "includes concurrently maintained business-chain tests; phase adds 8 methods"
+  },
+  "new_test_methods": 8,
+  "ruff": {
+    "scope": "phase files only",
+    "exit_code": 0,
+    "log": "reports/revocation-boundary-ruff-001.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/revocation-boundary-diff-check-001.txt"
+  },
+  "cohorts": {
+    "revocation-boundary-001": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 8,
+      "identity": "author_local; no independent certification",
+      "allocated": 8,
+      "attempts": 8,
+      "first_attempt_pass": 8,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 1,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "required Intent v3/block API component; Grant revocation before status, between status/reserve, after reserve/before actual write, after write; last-check window measured, no native SEC or atomic external dispatch claim"
+    }
+  },
+  "contract_predicates": 104,
+  "actual_file_effects": 6,
+  "known_harm": 1,
+  "model_calls": 0,
+  "product_changed": false,
+  "findings": [
+    "F036"
+  ],
+  "export_review": "reports/revocation-boundary-export-review.json",
+  "snapshot": "engineering-evidence/revocation-boundary-tools-001/manifest.json",
+  "snapshot_sha256": "45238f3372e88fbaefb2aa3c8a5672077183d7cfc0945aac81cd701fdb3dffab",
+  "remaining": [
+    "Intent/instance/SEC revocation",
+    "native business dispatch boundary",
+    "other mechanism and business profiles"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "run_id": "risk-worker-cycle-001",
+  "native_source_and_raw_cli_verified": true,
+  "raw_worker_outputs_joined": 8,
+  "observed_webhook_bodies_joined": 16,
+  "frozen_checks": {
+    "risk_worker_native_truth": true,
+    "risk_worker_complete_cycles": true,
+    "risk_worker_open_idempotent": true,
+    "risk_worker_ack_preserved": false,
+    "risk_worker_accept_preserved": false,
+    "risk_worker_expiry_identity": false,
+    "risk_worker_expiry_idempotent": false,
+    "risk_worker_resolved_recurrence": false,
+    "risk_worker_audit_lifecycle": true,
+    "risk_worker_notifications": true,
+    "risk_worker_no_effective": true,
+    "risk_worker_receiver_cleanup": true
+  },
+  "actual_evidence_negative_rejections": {},
+  "scope": "author supplemental review; actual loopback notifications; no independent witness, concurrency or long-running scheduler assurance"
+}

@@ -4,6 +4,8 @@
 
 ## 当前宿主路线
 
+2026-10-06 [Hermes／DGX 权限实测](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)已进入真实分析助手工具链，[三模式原生专项](../../third-party-evaluation/20261006/reports/native-auth-modes-report.md)验证受管身份失效及决策服务不可达时拒绝。[Windows／WorkBuddy](../../third-party-evaluation/20261006/reports/research-permissions-windows-history-001.md)只引用历史原生业务。本轮没有新增 OpenClaw 或 macOS 同候选业务验收，不扩大既有适配范围。
+
 | 适配器 | 接入形式 | 当前边界 |
 | --- | --- | --- |
 | [Hermes](hermes-agentshield/README.md) | Python pre/post 插件、实例身份与原生会话桥接 | Linux/macOS/Windows 范围；hold 阻断后需同操作重试并取得唯一预留 |

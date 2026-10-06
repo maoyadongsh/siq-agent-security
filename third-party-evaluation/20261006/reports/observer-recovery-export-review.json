@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-05T23:15:14.282682+00:00",
+  "scope": "manifest whitelist; owned runtime/recovery tokens and signing seeds checked raw/hex/base64; provider key scan performed at export; observer bearers never serialized",
+  "runs": {
+    "observer-recovery-001": {
+      "manifest_sha256": "7be2d89127b564d6e5e76061ac3379a5b111229600c61050925adeed6522d1ff",
+      "allocated": 6,
+      "cleanup_confirmed": 6,
+      "verification_exit_code": 1,
+      "checks_total": 99,
+      "checks_passed": 97,
+      "sigkill_restarts": 8,
+      "files_checked": 72,
+      "owned_credential_matches": 0
+    },
+    "observer-recovery-002": {
+      "manifest_sha256": "d8ec77a065fc66156799f169072cb1b993a83f4df105aef9f7df81b3ed92206b",
+      "allocated": 6,
+      "cleanup_confirmed": 6,
+      "verification_exit_code": 0,
+      "checks_total": 101,
+      "checks_passed": 101,
+      "sigkill_restarts": 8,
+      "files_checked": 72,
+      "owned_credential_matches": 0
+    }
+  }
+}

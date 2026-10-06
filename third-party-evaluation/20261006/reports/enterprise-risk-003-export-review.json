@@ -1,0 +1,15 @@
+{
+  "run_id": "enterprise-risk-003",
+  "export_files": 11,
+  "known_private_values_checked": 2,
+  "private_value_matches": [],
+  "credential_pattern_matches": [],
+  "api_pids_absent": {
+    "535564": true
+  },
+  "owned_containers_absent": {
+    "bb55b7aba66513f890d236e4b77e1ac05b116f8a9d1b68eab06dfe1635cf3730": true
+  },
+  "native_temporary_root_absent": true,
+  "scope": "known-value and pattern scans; exact owned resource readback; not exhaustive classification"
+}

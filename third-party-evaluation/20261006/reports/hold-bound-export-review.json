@@ -1,0 +1,33 @@
+{
+  "reviewed_at": "2026-10-05T22:44:26.310603+00:00",
+  "scope": "registered artifacts only; owned credentials excluded; author-local custody",
+  "cohorts": {
+    "hold-bound-concurrency-001": {
+      "manifest_sha256": "d51e6d9eddf61ecbc6582f81f59c1e1f4de70ecb9e2574980cfa8f89ca298102",
+      "files_checked": 48,
+      "owned_sensitive_value_matches": 0,
+      "cleanup_confirmed": 14,
+      "allocated": 14,
+      "verification_exit": 2,
+      "secret_scan_scope": "owned runtime/recovery tokens and signing seed in raw/hex/base64; separate export also checks provider key files"
+    },
+    "hold-bound-concurrency-002": {
+      "manifest_sha256": "59e149b7e005bcde7c432148c9cc77bf68654f67f3c5720f0853b2e8232d0a60",
+      "files_checked": 62,
+      "owned_sensitive_value_matches": 0,
+      "cleanup_confirmed": 14,
+      "allocated": 14,
+      "verification_exit": 2,
+      "secret_scan_scope": "owned runtime/recovery tokens and signing seed in raw/hex/base64; separate export also checks provider key files"
+    },
+    "hold-bound-concurrency-003": {
+      "manifest_sha256": "d060d69d7c5ec2a9444d9c064d7ece8febb0ef9dbbbb7a4525f23a81df214659",
+      "files_checked": 118,
+      "owned_sensitive_value_matches": 0,
+      "cleanup_confirmed": 14,
+      "allocated": 14,
+      "verification_exit": 0,
+      "secret_scan_scope": "owned runtime/recovery tokens and signing seed in raw/hex/base64; separate export also checks provider key files"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "recorded_at": "2026-10-05T22:46:56.202694+00:00",
+  "record_type": "operator_transcription_of_isolated_diagnostic_tool_output_not_original_cohort_HTTP_trace",
+  "product_changed": false,
+  "diagnostics": [
+    {
+      "private_root": "private/debug/hold-bound-001",
+      "call": "POST /v1/intents",
+      "observed_error": "HTTP /v1/intents: expected 201, got 400; intent_invalid_constraint",
+      "cause": "eq instead of equals",
+      "finding": "F031"
+    },
+    {
+      "private_root": "private/debug/hold-bound-002",
+      "observed_error": "native_session_epoch_required",
+      "cause": "diagnostic used non-native-shaped session, corrected in next diagnostic",
+      "cohort_finding": false
+    },
+    {
+      "private_root": "private/debug/hold-bound-003",
+      "call": "POST /v1/hold-status",
+      "observed_error": "HTTP /v1/hold-status: expected 200, got 400; invalid request",
+      "cause": "parameter_provenance not in strict status contract",
+      "finding": "F032"
+    },
+    {
+      "private_root": "private/debug/hold-bound-004",
+      "result": "17/17 registered normal-case predicates passed after fixture corrections",
+      "counted_in_cohort": false
+    }
+  ],
+  "diagnostic_process_cleanup": "each diagnostic used finally h.stop; no product changes"
+}

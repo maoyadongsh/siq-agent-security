@@ -1,0 +1,42 @@
+{
+  "schema_version": "siq.research-daily-entry-protocol.v1",
+  "batch": "research-permissions-daily-entry-002",
+  "recorded_unix": 1791282793.6398861,
+  "api_pid": null,
+  "api_start_ticks": null,
+  "frontend": "http://127.0.0.1:18083",
+  "backend": "http://127.0.0.1:18081",
+  "existing_host_gateway": "http://127.0.0.1:18651/v1/runs",
+  "max_chat_attempts": 1,
+  "max_model_tasks": 0,
+  "http_timeout_seconds": 300,
+  "automatic_retry": false,
+  "mutation_scope": "Create and later disable one synthetic analyst account and own local input/output files; no existing account or service configuration changes. Public login creates tokens, no JWT fabrication. Retain audit/history for own test account.",
+  "tasks": [
+    "Explicit OpenShell selection, synthetic marker with no requested tools.",
+    "Default route, one read of owned synthetic input and one write of owned output."
+  ],
+  "success_criteria": "Existing selection refusal remains denied and returns 403 runtime_access_denied through real normal login/HTTP; owned account disabled and token invalidated. No model task expected.",
+  "security_claim": "No SIQ enforcement conclusion inferred from default task output alone. This is an integration baseline.",
+  "loaded_source_identity_unverified": true,
+  "research_source_sha256": {
+    "scripts/openshell/prove_research_daily_entry.py": "76a4823eb99d504af3bdd5acbcaf61d371c037b9368abc3d65bf8d6372f057a3",
+    "scripts/openshell/tests/test_research_daily_entry.py": "7d3059f9c37b3ccf1f90d87e52bab35040a2af0785b725f450138f2ef238cc3a",
+    "apps/api/routers/agent_user_router.py": "19666c261f57fafbe6ad9f71a15267c528cc19922e33d516d5a81fe6cf7812b6",
+    "apps/api/routers/auth.py": "def3c63b0171dbe1afd76897eda4625aa27243d2a6a8f3f49411b22b462d8e80",
+    "apps/api/services/auth_service.py": "8599ae4ec45524ff7e4474f39a7c860c073cf5e4e861dff1d131818482b2aa6f",
+    "apps/api/services/auth_dependencies.py": "f1d88a199de9099757214a2d9b1fb94b7f1c29291af2392b4de8984e1eaf992d",
+    "apps/api/services/hermes_client.py": "17671303fd6a1ad175fc4d04dd85efa091b6e8371c51987b48594578af96d204",
+    "apps/api/services/qwen38_request_selector.py": "7a0b88d34e10aeb78d090c40240767e96527c9e78c57a416e6a46b6c56cf0eee",
+    "apps/api/services/agent_chat_runtime_impl.py": "89c60b35c53d3fd8c7cb366a988a3fe3e35121b557333385db0604f9966885e2",
+    "apps/api/services/runtime_coordination.py": "4c675810c32475dc1cc297d0dd6b4ebc821c1a1171a63399ace68b93d5369664",
+    "apps/api/database.py": "f89e58d304288de92f5fd3de76d817ecdabd74c2b95ac8d06d5db6c71ab26210",
+    "apps/api/main.py": "6e0c713c6c296da787eb9de4c9d4cbe356bd11c4092890ce0741e1c5d9ff2de3",
+    "apps/api/services/hermes_runtime_http_errors.py": "f487bf5cce289a77999c570cfe714afcc72c32a65822108aee0e68f66ba20b70",
+    "apps/api/tests/test_hermes_runtime_http_errors.py": "b93e23bf2de1e74e3d51bb82ae61ec840ec379e51fb2652ce7fb0d7f4c25b66d",
+    "apps/api/tests/test_qwen38_http_errors.py": "7adb1058e40545ffccb0049d9fc9158b177860722de5f4aec579c8ae443d1f38",
+    "apps/api/tests/test_qwen38_request_selector.py": "dcc85ec972adf65e3acb21934ba87619145f1ecbdcd220994d5b48eb5941664b"
+  },
+  "probe_mode": "routing-only",
+  "measurement_scope": "Separate preflight API with current code and existing owning business DB; not the daily frontend and not an OpenShell success claim."
+}

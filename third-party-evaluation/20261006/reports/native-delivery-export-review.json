@@ -1,0 +1,255 @@
+{
+  "checked_at": "2026-10-06T00:28:26.029966+00:00",
+  "known_credential_matches": 0,
+  "files_checked": 196,
+  "daemon_identity_checks": [
+    {
+      "run_id": "native-delivery-request-control-002",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558227485726326,
+        "observations": [
+          {
+            "monotonic_ns": 2558227503303713,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-delivery-request-lost-002",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558227550991746,
+        "observations": [
+          {
+            "monotonic_ns": 2558227567987129,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-delivery-response-control-002",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558243108750830,
+        "observations": [
+          {
+            "monotonic_ns": 2558243126219192,
+            "members": [
+              {
+                "pid": 2657888,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657889,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657890,
+                "start_ticks": "255824138"
+              }
+            ]
+          },
+          {
+            "monotonic_ns": 2558243243683263,
+            "members": [
+              {
+                "pid": 2657888,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657889,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657890,
+                "start_ticks": "255824138"
+              }
+            ]
+          },
+          {
+            "monotonic_ns": 2558243361050774,
+            "members": [
+              {
+                "pid": 2657888,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657889,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657890,
+                "start_ticks": "255824138"
+              }
+            ]
+          },
+          {
+            "monotonic_ns": 2558243478737375,
+            "members": [
+              {
+                "pid": 2657888,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657889,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657890,
+                "start_ticks": "255824138"
+              }
+            ]
+          },
+          {
+            "monotonic_ns": 2558243596417575,
+            "members": [
+              {
+                "pid": 2657888,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657889,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657890,
+                "start_ticks": "255824138"
+              }
+            ]
+          },
+          {
+            "monotonic_ns": 2558243713875183,
+            "members": [
+              {
+                "pid": 2657888,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657889,
+                "start_ticks": "255824137"
+              },
+              {
+                "pid": 2657890,
+                "start_ticks": "255824138"
+              }
+            ]
+          },
+          {
+            "monotonic_ns": 2558243831259222,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-delivery-response-lost-002",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558243706814676,
+        "observations": [
+          {
+            "monotonic_ns": 2558243723142231,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-delivery-request-control-001",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558084111939997,
+        "observations": [
+          {
+            "monotonic_ns": 2558084130282334,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-delivery-request-lost-001",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558084111953213,
+        "observations": [
+          {
+            "monotonic_ns": 2558084143338590,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-delivery-response-control-001",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558104375190225,
+        "observations": [
+          {
+            "monotonic_ns": 2558104405025944,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    },
+    {
+      "run_id": "native-delivery-response-lost-001",
+      "same_daemon_identity_live": false,
+      "cleanup": {
+        "remaining_group_members": [],
+        "daemon_stopped": true,
+        "observation_version": 1,
+        "grace_seconds": 5,
+        "window_start_ns": 2558103762053311,
+        "observations": [
+          {
+            "monotonic_ns": 2558103791775670,
+            "members": []
+          }
+        ],
+        "policy": "observe only; persistent members fail cleanup; no signals sent"
+      }
+    }
+  ],
+  "scope": "only sealed top-level exports, incomplete preservation archive and phase tooling; no state/credentials export",
+  "snapshot_sha256": "4a22431617143289d18961af6c03fe78287ee5558c960110b5b622d79c995487"
+}

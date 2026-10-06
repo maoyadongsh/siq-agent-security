@@ -1,0 +1,33 @@
+{
+  "scope": "author-run same-candidate local API-native variant; not whole RB09 or independent certification",
+  "framework": {
+    "passed": 565,
+    "subtests_passed": 118,
+    "log_ref": "engineering-evidence/native-personal-onboarding-framework-tests-001.txt"
+  },
+  "new_focused_tests": 4,
+  "negative_probes_rejected": 7,
+  "product_changes_this_slice": false,
+  "goal_status": "active",
+  "runtime_check_journey_executed": false,
+  "reference_hashes": {
+    "reports/native-personal-onboarding-report.md": "f45d2e69e966079b6dbc5716ac1cf31b9d7eb6223a4c86a4193f8ca9b9ac7d9b",
+    "inventory/native-personal-onboarding-integration-001.json": "1abd495ec5b6867c4f4742800abfc988ff8d3da1e27dfa3bd1580a38b8a4b2a4",
+    "inventory/native-personal-onboarding-readiness-source-001.json": "070d7cfb6d9a826d5f2cb4efabf1a0b32b6fa8abace30ce6b380391c9fdd5f1f",
+    "reports/native-personal-onboarding-format-002-authority-negatives-002.json": "b61d49a710d5982a59880f56aa0c5e45c8e4adfbbd6ec7a44a61a617be6e6fba",
+    "engineering-evidence/native-personal-onboarding-review-tools-002/review-manifest.json": "90afb4d371121ce59c6ad3cc23cc3a9e111c02ce06921fe9682e11ddd6626c8b",
+    "plan/revision-history/native-personal-onboarding-001/manifest.json": "aee1c4259f29f1516ded5932cd85af6f489c47a303b4f00fe01bf733ede9ffb2",
+    "reports/native-personal-onboarding-final-checks-001.json": "bfc08dd0c4ac1de3e938ced0b6f5718b72cb116a5075ed8dd6ed7cf1ba4e4d87",
+    "engineering-evidence/native-personal-onboarding-lint-001.txt": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "run_anchors": {
+    "native-personal-onboarding-001": "b3abfef8ae8952a28b086b4a049cb43c4db928c169f6630e038a31fc96106da9",
+    "native-personal-onboarding-format-002": "c1b2e49c502da8933f6d5d6db018ed9097012688aa1c38e10c746d2049378d2a"
+  },
+  "final_document_checks": {
+    "new_markdown_lines_no_trailing_whitespace": true,
+    "files_checked": 8,
+    "scoped_git_diff_check": true,
+    "ruff_passed": true
+  }
+}

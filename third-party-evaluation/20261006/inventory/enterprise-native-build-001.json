@@ -1,0 +1,17 @@
+{
+  "candidate_root": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1",
+  "builds": [
+    {
+      "module": "edge/agent",
+      "exit_code": 0,
+      "binary": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/enterprise-native-build-001/edge-agent",
+      "sha256": "766d8730ffea9028b61439c6a1741c9c1f152e012cbd92f33fa6eba1732eb531"
+    },
+    {
+      "module": "connectors/hermes",
+      "exit_code": 0,
+      "binary": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/enterprise-native-build-001/siq-connector-hermes",
+      "sha256": "f07ab0c012c1f383c79bf4e202b0cd4a1636717dbadb96d28ff5dc58469d5e70"
+    }
+  ]
+}

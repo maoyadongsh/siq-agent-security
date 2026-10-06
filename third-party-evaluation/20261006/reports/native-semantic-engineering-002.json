@@ -1,0 +1,118 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_business.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.002s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_configuration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.179s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_effect_controls.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.186s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_parameter_digest.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_semantic.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.003s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_semantic_review.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/ruff",
+        "check",
+        "benchmarks/third-party/native_semantic.py",
+        "benchmarks/third-party/native_semantic_review.py",
+        "benchmarks/third-party/native_business_trial.py",
+        "benchmarks/third-party/native_business_profiles.py",
+        "benchmarks/third-party/native_business_scoring.py",
+        "benchmarks/third-party/native_configuration_review.py",
+        "benchmarks/third-party/test_native_semantic.py",
+        "benchmarks/third-party/test_native_semantic_review.py"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    }
+  ],
+  "test_methods": 54,
+  "source_hashes": {
+    "benchmarks/third-party/native_semantic.py": "92ba069fd1e95635d2d5ba7a4a4043ccba69b1c37c5aaf3a0c7b84b133a38974",
+    "benchmarks/third-party/native_semantic_review.py": "c31e1fc739c1dbf01b9fe322943c6aa509487eb72abec7671b0d8ca19f462422",
+    "benchmarks/third-party/native_semantic_tasks.json": "61b620f5eb8f1571d6b608798fed504caa2f0e5fbd346d9b7479800bd3fbec68"
+  },
+  "passed": true
+}

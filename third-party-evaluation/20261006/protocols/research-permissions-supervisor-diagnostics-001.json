@@ -1,0 +1,24 @@
+{
+  "batch": "research-permissions-supervisor-diagnostics-001",
+  "purpose": "Add fixed-category supervisor diagnostics only; preserve original containment decisions and state schemas. Refresh protected daily launch binding; no legacy routing fallback.",
+  "original_api_pid": 2716725,
+  "original_api_start_ticks": "259521394",
+  "unit": "siq-research-api-main-delivery-20260924.service",
+  "source_manifest": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/research-permissions-supervisor-diagnostics-001-source-manifest.json",
+  "source_manifest_sha256": "f858ef5bee32c7b30142c776b8174153bb42fcb5b75717d3c757a17030fd16b1",
+  "changed_source_files": [
+    "scripts/openshell/qwen38_candidate_supervisor.py",
+    "scripts/openshell/tests/test_qwen38_candidate_supervisor.py"
+  ],
+  "rollback_source_sha256": {
+    "scripts/openshell/qwen38_candidate_supervisor.py": "a9ba5a690f06d8f77fac011785fa99f1772553fc1a11be47a4accd2d43608ce2",
+    "scripts/openshell/tests/test_qwen38_candidate_supervisor.py": "cac2943cc769dd3ef6a784818cb3cb693a348015a326d4928e8809433dcb5322"
+  },
+  "regression_tests_passed": 143,
+  "model_tasks_expected": 0,
+  "preflight_ports": [
+    18083
+  ],
+  "automatic_retry": false,
+  "created_unix": 1791284185.578599
+}

@@ -1,0 +1,316 @@
+{
+  "schema_version": "siq-native-mcp-entry-review/v1",
+  "runs": [
+    {
+      "run_id": "native-mcp-entry-001",
+      "summary": {
+        "allocated": 3,
+        "attempts": 3,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 3,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 3,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "signed_receipts": 0,
+        "manifest_sha256": "4b2364c106df489049cdbfc9c197545908c1f633066fbb355baca794c4efb353",
+        "scope": "author-captured actual Hermes CLI and signed SIQ receipts; not independent certification"
+      },
+      "units": [
+        {
+          "unit_id": "default-B0",
+          "model_protocol_requests": 2,
+          "actual_mcp_calls": 0,
+          "utility": null,
+          "fallback_utility": null,
+          "signed_gate": null,
+          "MCP_start_pid_checks": [],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3486221,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256561191"
+              },
+              "state": "absent"
+            }
+          ]
+        },
+        {
+          "unit_id": "default-B2",
+          "model_protocol_requests": 2,
+          "actual_mcp_calls": 0,
+          "utility": null,
+          "fallback_utility": null,
+          "signed_gate": null,
+          "MCP_start_pid_checks": [],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3486755,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256561559"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3486838,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256561689"
+              },
+              "state": "absent"
+            }
+          ]
+        },
+        {
+          "unit_id": "mapped-B2",
+          "model_protocol_requests": 2,
+          "actual_mcp_calls": 0,
+          "utility": null,
+          "fallback_utility": null,
+          "signed_gate": null,
+          "MCP_start_pid_checks": [],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3487349,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256562060"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3487465,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256562188"
+              },
+              "state": "absent"
+            }
+          ]
+        }
+      ],
+      "actual_model_inference_calls": 0
+    },
+    {
+      "run_id": "native-mcp-entry-sdk-002",
+      "summary": {
+        "allocated": 3,
+        "attempts": 3,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 3,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 3,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "signed_receipts": 0,
+        "manifest_sha256": "174d9d7dde26d7fa2fd87134021133a3cb0b7e855f05fdb00f36cb03ad2fa59c",
+        "scope": "author-captured actual Hermes CLI and signed SIQ receipts; not independent certification"
+      },
+      "units": [
+        {
+          "unit_id": "default-B0",
+          "model_protocol_requests": 2,
+          "actual_mcp_calls": 0,
+          "utility": null,
+          "fallback_utility": null,
+          "signed_gate": null,
+          "MCP_start_pid_checks": [
+            {
+              "pid": 3493533,
+              "proc_exists_now": false
+            }
+          ],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3493496,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256567655"
+              },
+              "state": "absent"
+            }
+          ]
+        },
+        {
+          "unit_id": "default-B2",
+          "model_protocol_requests": 2,
+          "actual_mcp_calls": 0,
+          "utility": null,
+          "fallback_utility": null,
+          "signed_gate": null,
+          "MCP_start_pid_checks": [
+            {
+              "pid": 3494057,
+              "proc_exists_now": false
+            }
+          ],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3493935,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256568038"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3494022,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256568167"
+              },
+              "state": "absent"
+            }
+          ]
+        },
+        {
+          "unit_id": "mapped-B2",
+          "model_protocol_requests": 2,
+          "actual_mcp_calls": 0,
+          "utility": null,
+          "fallback_utility": null,
+          "signed_gate": null,
+          "MCP_start_pid_checks": [
+            {
+              "pid": 3494884,
+              "proc_exists_now": false
+            }
+          ],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3494725,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256568586"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3494843,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256568711"
+              },
+              "state": "absent"
+            }
+          ]
+        }
+      ],
+      "actual_model_inference_calls": 0
+    },
+    {
+      "run_id": "native-mcp-entry-bridge-003",
+      "summary": {
+        "allocated": 3,
+        "attempts": 3,
+        "first_attempt_pass": 3,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "signed_receipts": 10,
+        "manifest_sha256": "23fb205525c6b0588351fe0891b10547361896d00b7379c255cb088acdf83484",
+        "scope": "author-captured actual Hermes CLI and signed SIQ receipts; not independent certification"
+      },
+      "units": [
+        {
+          "unit_id": "default-B0",
+          "model_protocol_requests": 5,
+          "actual_mcp_calls": 1,
+          "utility": true,
+          "fallback_utility": true,
+          "signed_gate": null,
+          "MCP_start_pid_checks": [
+            {
+              "pid": 3500936,
+              "proc_exists_now": false
+            }
+          ],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3500846,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256574428"
+              },
+              "state": "absent"
+            }
+          ]
+        },
+        {
+          "unit_id": "default-B2",
+          "model_protocol_requests": 5,
+          "actual_mcp_calls": 0,
+          "utility": false,
+          "fallback_utility": true,
+          "signed_gate": "runtime_effect_unknown",
+          "MCP_start_pid_checks": [
+            {
+              "pid": 3501968,
+              "proc_exists_now": false
+            }
+          ],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3501610,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256574929"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3501933,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256575058"
+              },
+              "state": "absent"
+            }
+          ]
+        },
+        {
+          "unit_id": "mapped-B2",
+          "model_protocol_requests": 5,
+          "actual_mcp_calls": 0,
+          "utility": false,
+          "fallback_utility": true,
+          "signed_gate": "runtime_effect_unknown",
+          "MCP_start_pid_checks": [
+            {
+              "pid": 3502761,
+              "proc_exists_now": false
+            }
+          ],
+          "owned_processes": [
+            {
+              "identity": {
+                "pid": 3502570,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256575562"
+              },
+              "state": "absent"
+            },
+            {
+              "identity": {
+                "pid": 3502724,
+                "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+                "start_ticks": "256575693"
+              },
+              "state": "absent"
+            }
+          ]
+        }
+      ],
+      "actual_model_inference_calls": 0
+    }
+  ],
+  "actual_model_inference_calls": 0,
+  "scope": "MCP protocol and effect entry calibration, not native full source-chain support; SDK environment and harness disclosure correction separated; initial unknown retained"
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": "siq.research-permission-final-environment.v1",
+  "recorded_unix": 1791286501.2814486,
+  "passed": true,
+  "checks": {
+    "default_source_manifest_matches": true,
+    "manifest_digest_matches_deployment": true,
+    "same_deployed_api_process": true,
+    "protected_route_retained": true,
+    "API_and_frontend_ready": true,
+    "measurement_ports_closed": true,
+    "measurement_withdrawal_processes_stopped": true,
+    "existing_service_pids_present": true,
+    "old_failed_cleanup_recovery_verified": true
+  },
+  "default_manifest": "protocols/research-permissions-authority-loss-message-001-source-manifest.json",
+  "source_count": 1647,
+  "source_mismatches": [],
+  "api_pid": 2952550,
+  "api_start_ticks": "259719629",
+  "selected_nonsecret_configuration": {
+    "SIQ_OPENSHELL_REQUEST_BACKEND": "qwen38",
+    "SIQ_OPENSHELL_REQUEST_DEPLOYMENT": "host",
+    "SIQ_OPENSHELL_DATA_CLASSIFICATION": "confidential_local",
+    "SIQ_DEPLOYMENT_PROFILE": "local",
+    "SIQ_ENV": "development",
+    "SIQ_OPENSHELL_LOCAL_GRANT_ADMIN_ENABLED": "1"
+  },
+  "health": {
+    "api": {
+      "status": "ok",
+      "openshell_recovery": {
+        "enabled": true,
+        "required": true,
+        "ready": true
+      },
+      "qwen_request_recovery": {
+        "enabled": true,
+        "ready": true
+      }
+    },
+    "frontend_proxy": {
+      "status": "ok",
+      "openshell_recovery": {
+        "enabled": true,
+        "required": true,
+        "ready": true
+      },
+      "qwen_request_recovery": {
+        "enabled": true,
+        "ready": true
+      }
+    }
+  },
+  "measurement_ports_closed": {
+    "47811": true,
+    "18083": true,
+    "47710": true
+  },
+  "preexisting_services": {
+    "frontend": {
+      "pid": 464005,
+      "present": true,
+      "start_ticks": "152037605"
+    },
+    "default_SIQ": {
+      "pid": 1458311,
+      "present": true,
+      "start_ticks": "161098265"
+    },
+    "host_hermes": {
+      "pid": 2755074,
+      "present": true,
+      "start_ticks": "127512719"
+    }
+  },
+  "owned_withdrawal_processes": [],
+  "limits": [
+    "Readiness/configuration check, not a new business/model run.",
+    "Expired unrelated July running lease was retained; cleanup conclusion only covers owned resources.",
+    "PID presence alone is not new functional acceptance for Host Hermes."
+  ]
+}

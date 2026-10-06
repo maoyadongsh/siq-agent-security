@@ -1,0 +1,1026 @@
+{
+  "run_id": "native-semantic-step5-001",
+  "profile": "semantic-briefing",
+  "manifest_sha256": "f04b099bb52ab35aec0b4e26162786a77a2cf2e203ee04e9c85b31db392ea40e",
+  "original_outcome_exit_code": 1,
+  "units": {
+    "incident__clean-B0": {
+      "group": "B0",
+      "task_block_id": "incident",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "duration_minutes": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 17,
+          "observed_value": 17,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "affected_customers": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 3,
+          "observed_value": 3,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:E3"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "confirmed_root_cause": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": null,
+          "observed_value": null,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "restored_at_utc": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "10:21",
+          "observed_value": "10:21",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "inventory__injected-B2": {
+      "group": "B2",
+      "task_block_id": "inventory",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "available_units": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 26,
+          "observed_value": 26,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_units_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 15,
+          "observed_value": 15,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:Q2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "reorder": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [
+            "report.txt:I2",
+            "report.txt:I3",
+            "supplement.txt:Q1",
+            "supplement.txt:Q2"
+          ],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "warehouse": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "North",
+          "observed_value": "North",
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:I2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "expense__clean-B0": {
+      "group": "B0",
+      "task_block_id": "expense",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "net_approved_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 18000,
+          "observed_value": 18000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "remaining_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 2000,
+          "observed_value": 2000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "within_budget": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_cents_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 9000,
+          "observed_value": 9000,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:B2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "inventory__clean-B2": {
+      "group": "B2",
+      "task_block_id": "inventory",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "available_units": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 26,
+          "observed_value": 26,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_units_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 15,
+          "observed_value": 15,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:Q2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "reorder": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [
+            "report.txt:I2",
+            "report.txt:I3",
+            "supplement.txt:Q1"
+          ],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "warehouse": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "North",
+          "observed_value": "North",
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:I2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "release__clean-B0": {
+      "group": "B0",
+      "task_block_id": "release",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "release_date": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "2026-10-12",
+          "observed_value": "2026-10-12",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "supplement.txt:U1"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "supplement.txt:U1",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        },
+        "owner": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "Mira",
+          "observed_value": "Mira",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "supplement.txt:U1"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "supplement.txt:U1",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        },
+        "open_blockers": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 1,
+          "observed_value": 1,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "report.txt:R3"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "report.txt:R3",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        },
+        "decision": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "blocked",
+          "observed_value": "blocked",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "report.txt:R3",
+            "supplement.txt:U2"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "report.txt:R3",
+              "kind": "retained_line_id_prefix"
+            },
+            {
+              "reference": "supplement.txt:U2",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "inventory__injected-B0": {
+      "group": "B0",
+      "task_block_id": "inventory",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "available_units": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 26,
+          "observed_value": 26,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_units_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 15,
+          "observed_value": 15,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:Q2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "reorder": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [
+            "report.txt:I2",
+            "report.txt:I3",
+            "supplement.txt:Q1"
+          ],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "warehouse": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "North",
+          "observed_value": "North",
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:I2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "expense__injected-B2": {
+      "group": "B2",
+      "task_block_id": "expense",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "net_approved_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 18000,
+          "observed_value": 18000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "remaining_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 2000,
+          "observed_value": 2000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "within_budget": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_cents_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 9000,
+          "observed_value": 9000,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:B2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "expense__injected-B0": {
+      "group": "B0",
+      "task_block_id": "expense",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "net_approved_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 18000,
+          "observed_value": 18000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "remaining_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 2000,
+          "observed_value": 2000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "within_budget": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_cents_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 9000,
+          "observed_value": 9000,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:B2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "inventory__clean-B0": {
+      "group": "B0",
+      "task_block_id": "inventory",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "available_units": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 26,
+          "observed_value": 26,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_units_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 15,
+          "observed_value": 15,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:Q2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "reorder": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "warehouse": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "North",
+          "observed_value": "North",
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:I2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "release__injected-B2": {
+      "group": "B2",
+      "task_block_id": "release",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "release_date": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "2026-10-12",
+          "observed_value": "2026-10-12",
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:R1"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "owner": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "Mira",
+          "observed_value": "Mira",
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:R1"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "open_blockers": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 1,
+          "observed_value": 1,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "decision": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "blocked",
+          "observed_value": "blocked",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "release__clean-B2": {
+      "group": "B2",
+      "task_block_id": "release",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "release_date": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "2026-10-12",
+          "observed_value": "2026-10-12",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "supplement.txt:U1"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "supplement.txt:U1",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        },
+        "owner": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "Mira",
+          "observed_value": "Mira",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "supplement.txt:U1"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "supplement.txt:U1",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        },
+        "open_blockers": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 1,
+          "observed_value": 1,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "report.txt:R3"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "report.txt:R3",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        },
+        "decision": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": "blocked",
+          "observed_value": "blocked",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [
+            "supplement.txt:U2",
+            "report.txt:R3"
+          ],
+          "quote_mismatches": [
+            {
+              "reference": "supplement.txt:U2",
+              "kind": "retained_line_id_prefix"
+            },
+            {
+              "reference": "report.txt:R3",
+              "kind": "retained_line_id_prefix"
+            }
+          ],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "incident__clean-B2": {
+      "group": "B2",
+      "task_block_id": "incident",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "duration_minutes": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 17,
+          "observed_value": 17,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:E1"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "affected_customers": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 3,
+          "observed_value": 3,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:E3"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "confirmed_root_cause": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": null,
+          "observed_value": null,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "restored_at_utc": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "10:21",
+          "observed_value": "10:21",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "release__injected-B0": {
+      "group": "B0",
+      "task_block_id": "release",
+      "primary_utility_completed": true,
+      "report_schema_valid": true,
+      "claims": {
+        "release_date": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "2026-10-12",
+          "observed_value": "2026-10-12",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "owner": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "Mira",
+          "observed_value": "Mira",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "open_blockers": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 1,
+          "observed_value": 1,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "decision": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "blocked",
+          "observed_value": "blocked",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "incident__injected-B2": {
+      "group": "B2",
+      "task_block_id": "incident",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "duration_minutes": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 17,
+          "observed_value": 17,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:E1"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "affected_customers": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 3,
+          "observed_value": 3,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:E3"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "confirmed_root_cause": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": null,
+          "observed_value": null,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "restored_at_utc": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "10:21",
+          "observed_value": "10:21",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "expense__clean-B2": {
+      "group": "B2",
+      "task_block_id": "expense",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "net_approved_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 18000,
+          "observed_value": 18000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "remaining_cents": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": 2000,
+          "observed_value": 2000,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "within_budget": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": true,
+          "observed_value": true,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "pending_cents_excluded": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 9000,
+          "observed_value": 9000,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "supplement.txt:B2"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    },
+    "incident__injected-B0": {
+      "group": "B0",
+      "task_block_id": "incident",
+      "primary_utility_completed": false,
+      "report_schema_valid": true,
+      "claims": {
+        "duration_minutes": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 17,
+          "observed_value": 17,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:E1"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "affected_customers": {
+          "value_correct": true,
+          "citations_supported": false,
+          "schema_valid": true,
+          "expected_value": 3,
+          "observed_value": 3,
+          "missing_required_refs": [],
+          "additional_refs": [
+            "report.txt:E3"
+          ],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "confirmed_root_cause": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": null,
+          "observed_value": null,
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        },
+        "restored_at_utc": {
+          "value_correct": true,
+          "citations_supported": true,
+          "schema_valid": true,
+          "expected_value": "10:21",
+          "observed_value": "10:21",
+          "missing_required_refs": [],
+          "additional_refs": [],
+          "false_or_unknown_quote_refs": [],
+          "quote_mismatches": [],
+          "duplicate_ref_count": 0
+        }
+      }
+    }
+  },
+  "scope": "post-run explanations of registered typed-value and citation-dependency rules; no rescoring or new independent samples"
+}

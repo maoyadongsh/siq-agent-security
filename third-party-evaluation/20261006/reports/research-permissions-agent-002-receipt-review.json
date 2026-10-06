@@ -1,0 +1,39 @@
+{
+  "schema_version": "siq.evaluation.research-receipt-review.v1",
+  "passed": true,
+  "receipt_count": 3,
+  "independent_ed25519_verification": true,
+  "scope": "supplied complete local chain prefix; not external timestamp or end-to-end skill proof",
+  "records": [
+    {
+      "receipt_id": "rcp-7051f81a9950-065728.978472",
+      "record_type": "decision",
+      "tool_call_id": "ml02-scoped-f8287e65bec437b1-allowed-read",
+      "action": "allow",
+      "reason_code": "allow",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-dfb318eac334-586b9d06",
+      "agent_id": "hri-bd4c2bf370a7ef1af28d92dfcf38fa98"
+    },
+    {
+      "receipt_id": "rcp-7051f81a9950-065728.978472-obs",
+      "record_type": "observation",
+      "tool_call_id": "ml02-scoped-f8287e65bec437b1-allowed-read",
+      "action": "allow",
+      "reason_code": "observation_accepted",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-dfb318eac334-586b9d06",
+      "agent_id": "hri-bd4c2bf370a7ef1af28d92dfcf38fa98"
+    },
+    {
+      "receipt_id": "rcp-7810e15430f6-065729.190834",
+      "record_type": "decision",
+      "tool_call_id": "ml02-scoped-f8287e65bec437b1-denied-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-dfb318eac334-586b9d06",
+      "agent_id": "hri-bd4c2bf370a7ef1af28d92dfcf38fa98"
+    }
+  ]
+}

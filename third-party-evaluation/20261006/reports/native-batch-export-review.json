@@ -1,0 +1,221 @@
+{
+  "checked_at": "2026-10-06T01:05:57.564879+00:00",
+  "runs": [
+    "native-batch-1-control-001",
+    "native-batch-1-control-002",
+    "native-batch-2-lost-002",
+    "native-batch-1-control-003",
+    "native-batch-2-control-003",
+    "native-batch-2-lost-003",
+    "native-batch-8-control-003",
+    "native-batch-8-lost-003",
+    "native-batch-32-control-003",
+    "native-batch-32-lost-003"
+  ],
+  "sealed_files_checked": 199,
+  "all_external_anchors_match": true,
+  "known_credential_scan": "per-run export-review: zero matches, state excluded",
+  "owned_process_identities": [
+    {
+      "run": "native-batch-1-control-001",
+      "identity": {
+        "pid": 2885192,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256014750"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-1-control-001",
+      "identity": {
+        "pid": 2885180,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256014713"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-1-control-002",
+      "identity": {
+        "pid": 2893118,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256021201"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-1-control-002",
+      "identity": {
+        "pid": 2892974,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256021166"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-2-lost-002",
+      "identity": {
+        "pid": 2893254,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256021311"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-2-lost-002",
+      "identity": {
+        "pid": 2893230,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256021276"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-1-control-003",
+      "identity": {
+        "pid": 2909665,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256035078"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-1-control-003",
+      "identity": {
+        "pid": 2909636,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256035044"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-2-control-003",
+      "identity": {
+        "pid": 2909896,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256035195"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-2-control-003",
+      "identity": {
+        "pid": 2909861,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256035161"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-2-lost-003",
+      "identity": {
+        "pid": 2904913,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256031187"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-2-lost-003",
+      "identity": {
+        "pid": 2904866,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256031150"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-8-control-003",
+      "identity": {
+        "pid": 2910179,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256035312"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-8-control-003",
+      "identity": {
+        "pid": 2910137,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256035279"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-8-lost-003",
+      "identity": {
+        "pid": 2917815,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256039871"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-8-lost-003",
+      "identity": {
+        "pid": 2917721,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256039837"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-32-control-003",
+      "identity": {
+        "pid": 2917961,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256039987"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-32-control-003",
+      "identity": {
+        "pid": 2917894,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256039954"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-32-lost-003",
+      "identity": {
+        "pid": 2918261,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256040104"
+      },
+      "state": "absent",
+      "signal_sent": false
+    },
+    {
+      "run": "native-batch-32-lost-003",
+      "identity": {
+        "pid": 2918200,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256040072"
+      },
+      "state": "absent",
+      "signal_sent": false
+    }
+  ],
+  "signals_sent": 0
+}

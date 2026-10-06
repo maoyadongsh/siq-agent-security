@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-05T21:35:36.355337+00:00",
+  "checked_files": 31,
+  "credential_or_private_key_hits": [],
+  "owned_resources": [
+    {
+      "resource": "daemon-start-1.json",
+      "state": "absent"
+    },
+    {
+      "resource": "daemon-start-2.json",
+      "state": "absent"
+    }
+  ],
+  "native_cli_exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "scope": "synthetic local fixtures; private state and keys not exported"
+}

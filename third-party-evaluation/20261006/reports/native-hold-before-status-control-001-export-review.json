@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-05T23:49:06.197482+00:00",
+  "manifest_sha256": "01bb24433cbb44a9825da458bcbb8abc10397e5f720541b88d4ec7c285e0b7ff",
+  "files_checked": 20,
+  "known_credential_matches": 0,
+  "cleanup": {
+    "remaining_group_members": [
+      {
+        "pid": 2318463,
+        "start_ticks": "255577082"
+      },
+      {
+        "pid": 2318464,
+        "start_ticks": "255577082"
+      },
+      {
+        "pid": 2318465,
+        "start_ticks": "255577082"
+      }
+    ],
+    "daemon_stopped": true
+  },
+  "outcome_exit_code": 1,
+  "whitelist": "sealed top-level artifacts only; no state directory"
+}

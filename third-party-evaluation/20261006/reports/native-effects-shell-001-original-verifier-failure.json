@@ -1,0 +1,7 @@
+{
+  "manifest_sha256": "2534b7510ffa5590020631ac68f5c95bcbe69a0c48ab5042a879342ce85c5a42",
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/native-effects-shell-001-protocol/harness-source/verify_native_business.py\", line 79, in <module>\n    result = verify(args.run, args.expected_manifest_sha256)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/native-effects-shell-001-protocol/harness-source/verify_native_business.py\", line 62, in verify\n    raise ValueError('native model proposal and signed decision differ')\nValueError: native model proposal and signed decision differ\n",
+  "classification": "postrun verifier bug: Go json.Marshal HTML escaping differs from generic Python canonical JSON; original verifier and scores preserved"
+}

@@ -1,0 +1,305 @@
+{
+  "schema_version": "siq.research-permission-final-requirement-audit.v1",
+  "recorded_unix": 1791286719.4130433,
+  "passed": true,
+  "reviewer": "Codex, project-side; no independent institution or external human review asserted",
+  "scope_authority": "Latest explicit user request: DGX Spark + Hermes + OpenShell + real Research Agent/Skill permissions; Windows historical only; initial broad tracks preserved/deferred by plan section5, not counted complete.",
+  "requirements": [
+    {
+      "id": "RG01",
+      "requirement": "从分析助手真实业务入口启动一次本地模型任务",
+      "required_observations": "API请求、公司/用户范围、sandbox与实际Hermes镜像、模型请求、终态和资源回收",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Original frontend15173/defaultAPI18081, no client runtime_target override; authenticated accounts, actual two local-model runs/image/run ledger and finalizer readback. Not merely connectivity or a dedicated API substitute.",
+      "evidence_refs": [
+        "reports/research-permissions-daily-permissions-001.json",
+        "reports/research-permissions-daily-permissions-001-verification.json",
+        "protocols/research-permissions-daily-permissions-001.json",
+        "data/research-permissions-daily-permissions-001-verified-receipts.json",
+        "reports/research-permissions-business-003.json",
+        "inventory/research-daily-entry-003.json",
+        "inventory/research-daily-entry-004.json",
+        "reports/research-permissions-daily-permissions-001-report.md",
+        "reports/research-permissions-daily-permissions-001-readback.json",
+        "reports/research-permissions-daily-permissions-001-source-check.json",
+        "reports/research-permissions-daily-entry-001-report.md",
+        "reports/research-permissions-daily-entry-002-report.md",
+        "reports/research-permissions-launch-001-report.md",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG02",
+      "requirement": "Agent只读授权：同目录读成功、写拒绝；批准窄写权限后同一写操作成功",
+      "required_observations": "同实例/资源、Grant版本、工具最终参数、签名决定、前后文件字节",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Same Agent RO read succeeds/write denied then new narrow approved Grant write succeeds; actual current files and signed decisions. Same company/path rule, distinct physical per-request directories disclosed; target inside OS-writable run scope.",
+      "evidence_refs": [
+        "reports/research-permissions-daily-permissions-001.json",
+        "reports/research-permissions-daily-permissions-001-verification.json",
+        "protocols/research-permissions-daily-permissions-001.json",
+        "data/research-permissions-daily-permissions-001-verified-receipts.json",
+        "reports/research-permissions-business-003-verification.json",
+        "reports/research-permissions-agent-002.json",
+        "reports/research-permissions-business-007.json",
+        "reports/research-permissions-business-007-verification.json",
+        "data/research-permissions-business-007-output.md",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG03",
+      "requirement": "Agent跨目录/跨公司读写拒绝",
+      "required_observations": "授权公司A正常读写，B使用专属合成canary；目标事件/文件快照",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Actual A allowed read/write and B denied read/write; original independent OS syscall and public API controls identify overlapping protection. Current B canary unchanged and positive A/OS files checked.",
+      "evidence_refs": [
+        "reports/research-permissions-cross-company-004.json",
+        "reports/research-permissions-cross-company-004-verification.json",
+        "protocols/research-permissions-cross-company-004.json",
+        "data/research-permissions-cross-company-004-verified-receipts.json",
+        "reports/research-permissions-agent-002.json",
+        "reports/research-permissions-cross-company-004-report.md",
+        "reports/research-permissions-cross-company-004-source-check.json",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG04",
+      "requirement": "同Agent的Skill A只读、Skill B仅指定输出写入",
+      "required_observations": "两个真实安装/内容摘要/Grant与SEC或实际支持的绑定；同动作在A拒绝、B允许",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Actual installed/activated Reader and Writer, native loader digest rechecked in immutable image, exact signed Grant/SEC/agent/session/task and effect difference. Trusted selected-task synchronizer limitation retained.",
+      "evidence_refs": [
+        "reports/research-permissions-skill-business-003.json",
+        "reports/research-permissions-skill-business-003-skill-verification.json",
+        "protocols/research-permissions-skill-business-003.json",
+        "data/research-permissions-skill-business-003-verified-receipts.json",
+        "reports/research-permissions-skill-install-001.json",
+        "reports/research-permissions-skill-install-001-verification.json",
+        "inventory/research-permissions-skill-image-001.json",
+        "reports/research-permissions-skill-business-002.json",
+        "reports/research-permissions-skill-business-002-skill-verification.json",
+        "data/research-permissions-skill-business-002-output.md",
+        "reports/research-permissions-skill-business-003-verification.json",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG05",
+      "requirement": "Skill未批准、内容漂移/更新扩权、旧上下文重用",
+      "required_observations": "安装内容/状态、最终调用归属、拒绝原因、无非授权效果；合法当前版本对照",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Candidate unapproved/approved-not-installed cases retain old skill scope; actual replacement/current-version utility verified, stale identity/session/install contexts rejected by public API. Post-positive-read/write installed-content change invalidates same child credential and contains task with unchanged file. Original drift criteria failures and replacement003 unresolved cause retained; no false second native signed deny.",
+      "evidence_refs": [
+        "reports/research-permissions-skill-update-001.json",
+        "reports/research-permissions-skill-update-001-verification.json",
+        "protocols/research-permissions-skill-update-001.json",
+        "data/research-permissions-skill-update-001-verified-receipts.json",
+        "reports/research-permissions-skill-replacement-005.json",
+        "reports/research-permissions-skill-replacement-005-verification.json",
+        "protocols/research-permissions-skill-replacement-005.json",
+        "data/research-permissions-skill-replacement-005-verified-receipts.json",
+        "reports/research-permissions-skill-drift-containment-002.json",
+        "reports/research-permissions-skill-drift-containment-002-verification.json",
+        "protocols/research-permissions-skill-drift-containment-002.json",
+        "data/research-permissions-skill-drift-containment-002-verified-receipts.json",
+        "reports/research-permissions-skill-drift-001-report.md",
+        "reports/research-permissions-skill-drift-001.json",
+        "reports/research-permissions-skill-drift-001-recovery.json",
+        "reports/research-permissions-skill-drift-002-report.md",
+        "reports/research-permissions-skill-drift-002-diagnostic.json",
+        "reports/research-permissions-skill-update-001-report.md",
+        "protocols/research-permissions-skill-update-001-verifier-amendment-001.json",
+        "reports/research-permissions-skill-replacement-005-report.md",
+        "reports/research-permissions-skill-replacement-005-source-check.json",
+        "reports/research-permissions-skill-replacement-003-report.md",
+        "reports/research-permissions-skill-replacement-004-report.md",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG06",
+      "requirement": "撤销Agent/Skill权限并继续同任务",
+      "required_observations": "撤销前正向、撤销版本、下一调用拒绝、报告/读取API状态及执行回收时间",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "SEC004 same task/physical file two actual writes with signed revoke between allow and deny. Separate business003 control returns403 for old/new access, SSE authority loss, child401 and bounded finalizer release without new effect. Pre-fix residual write and late observer deficiency retained.",
+      "evidence_refs": [
+        "reports/research-permissions-skill-revoke-004.json",
+        "reports/research-permissions-skill-revoke-004-verification.json",
+        "protocols/research-permissions-skill-revoke-004.json",
+        "data/research-permissions-skill-revoke-004-verified-receipts.json",
+        "reports/research-permissions-business-revoke-003.json",
+        "reports/research-permissions-business-revoke-003-verification.json",
+        "protocols/research-permissions-business-revoke-003.json",
+        "data/research-permissions-business-revoke-003-verified-receipts.json",
+        "reports/research-permissions-agent-002.json",
+        "reports/research-permissions-skill-revoke-001.json",
+        "reports/research-permissions-skill-revoke-001-verification.json",
+        "reports/research-permissions-skill-revoke-001-report.md",
+        "reports/research-permissions-business-revoke-003-report.md",
+        "reports/research-permissions-business-revoke-001-report.md",
+        "reports/research-permissions-business-revoke-002-report.md",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG07",
+      "requirement": "实际工具覆盖与绕行：file、terminal、嵌套/委派实际可用入口",
+      "required_observations": "提供给模型/实际调用工具，直达工具与解释器对同目标的行为",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Fourteen actual model-visible tool names/fifteen proposals, allowed structured read/write/patch effects, denied out-of-scope and ungranted alternatives. Current readonly file and absent interpreter/delegate probes checked; granted interpreter utility unavailable, consistent with original criterion requiring unsupported paths be disclosed.",
+      "evidence_refs": [
+        "reports/research-permissions-tool-utility-003.json",
+        "reports/research-permissions-tool-utility-003-verification.json",
+        "protocols/research-permissions-tool-utility-003.json",
+        "data/research-permissions-tool-utility-003-verified-receipts.json",
+        "inventory/research-permissions-tool-coverage-001.json",
+        "reports/research-permissions-tool-coverage-003-report.md",
+        "reports/research-permissions-tool-coverage-003-verification.json",
+        "reports/research-permissions-hook-concurrency-002.json",
+        "inventory/research-tool-utility-source-review-001.json",
+        "reports/research-permissions-tool-utility-003-report.md",
+        "reports/research-permissions-tool-utility-003-source-check.json",
+        "reports/research-permissions-tool-utility-002-report.md",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG08",
+      "requirement": "决策服务/relay失联及恢复",
+      "required_observations": "本批owned relay断连后工具拒绝，恢复后合法操作正常；当前身份仍复验",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Owned relay becomes unresponsive via process pause, actual native denied write and unchanged file, same relay resumes, actual write succeeds. Distinguishes unsigned fail-closed denial from signed normal records; no broader crash/network claim.",
+      "evidence_refs": [
+        "reports/research-permissions-relay-recovery-002.json",
+        "reports/research-permissions-relay-recovery-002-verification.json",
+        "protocols/research-permissions-relay-recovery-002.json",
+        "data/research-permissions-relay-recovery-002-verified-receipts.json",
+        "reports/research-permissions-relay-recovery-002-report.md",
+        "reports/research-permissions-relay-recovery-002-source-check.json",
+        "reports/research-permissions-relay-recovery-001-report.md",
+        "plan/relay-recovery-method-001.md",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    },
+    {
+      "id": "RG09",
+      "requirement": "真实业务交付及权限审计可读性",
+      "required_observations": "正常分析资料→真实工具→指定分析输出；业务run、Agent、Skill、决定/观察、文件结果映射",
+      "original_done_when_preserved": true,
+      "status": "verified_with_explicit_scope_and_limits",
+      "passed": true,
+      "review": "Actual synthetic analysis input-to-file delivery, run/Agent/Skill/Grant/SEC/receipt mapping, final report, executable reproduction instructions, archive references, failure/fix/limitations and historical Windows appendix. Financial quality and independent certification not claimed.",
+      "evidence_refs": [
+        "reports/research-permissions-daily-permissions-001.json",
+        "reports/research-permissions-daily-permissions-001-verification.json",
+        "protocols/research-permissions-daily-permissions-001.json",
+        "data/research-permissions-daily-permissions-001-verified-receipts.json",
+        "reports/research-permissions-skill-business-003.json",
+        "reports/research-permissions-skill-business-003-skill-verification.json",
+        "protocols/research-permissions-skill-business-003.json",
+        "data/research-permissions-skill-business-003-verified-receipts.json",
+        "reports/research-permissions-business-003-verification.json",
+        "reports/research-permissions-business-007-verification.json",
+        "data/research-permissions-business-007-output.md",
+        "reports/research-permissions-skill-business-002-skill-verification.json",
+        "reports/research-permissions-skill-business-003-verification.json",
+        "reports/research-permissions-final-report.md",
+        "reports/research-permissions-closeout-evidence-002.json"
+      ]
+    }
+  ],
+  "additional_deliverables": {
+    "project_README_functions_reviewed": [
+      "reports/project-function-understanding.md",
+      "reports/function-traceability-table.md"
+    ],
+    "historical_demo_and_Windows_separate": [
+      "reports/historical-business-review-001.json",
+      "reports/research-permissions-windows-history-001.md"
+    ],
+    "independent_measurement_folder_and_reproduction": [
+      "README-PERMISSIONS.md",
+      "reports/research-permissions-final-report.md"
+    ],
+    "preserved_failure_and_repair_evidence": [
+      "reports/research-permissions-business-revoke-001-report.md",
+      "reports/research-permissions-business-revoke-003-report.md",
+      "reports/research-permissions-authority-loss-message-001-report.md",
+      "reports/research-permissions-final-confirmation-adjustments-001.json",
+      "reports/research-permissions-skill-revoke-002-report.md",
+      "reports/research-permissions-skill-revoke-003-report.md",
+      "reports/research-permissions-closeout-evidence-001.json"
+    ],
+    "current_signatures_and_effects": [
+      "reports/research-permissions-closeout-evidence-002.json",
+      "reports/research-permissions-final-effects-001.json"
+    ],
+    "current_environment_and_owned_cleanup": [
+      "reports/research-permissions-final-environment-001.json",
+      "reports/research-permissions-business-002-recovery.json",
+      "reports/research-permissions-skill-drift-001-recovery.json"
+    ],
+    "actual_batch_accounting": [
+      "inventory/research-permissions-business-batches-008.json"
+    ]
+  },
+  "artifact_sha256": {
+    "reports/project-function-understanding.md": "d0cde1167b5562ca563350e81abfcdb31789dd9e7dea72b94c91130cda3f91fe",
+    "reports/function-traceability-table.md": "0b00a1da7cd5e31c04e0a2b13ed5e42a5c7986c3e968c7a7993d0ca4a186e72b",
+    "reports/historical-business-review-001.json": "1437068af07d7389a1d4cbcd17473104995ab6342d41e1de8878d2c908018ea8",
+    "reports/research-permissions-windows-history-001.md": "b6b59a5b0d5f746e1de671b25dca4346c2fba7d4ae209ac140fb2160e94a8c5d",
+    "README-PERMISSIONS.md": "be7c4897faa216bb327540031c79bc6212bf0ad525e28c41063a3d9ff73a451b",
+    "reports/research-permissions-final-report.md": "e1d571c6f4ceabc5b5983acded6bbf967dac625a287de6c47db9a8e5bff33d71",
+    "reports/research-permissions-business-revoke-001-report.md": "aaa57ef6003a232f604e7756e8f938ead58c0ed8eef3da0d10829cf8c6df67a7",
+    "reports/research-permissions-business-revoke-003-report.md": "788759026460721789b643a08c7d2b65e68a9592a6aa8da489ba0c7dc38c3c49",
+    "reports/research-permissions-authority-loss-message-001-report.md": "017139e03380ffa55202e13bb776ccab34aff5b3ed86bca00af3779c8f0fa56b",
+    "reports/research-permissions-final-confirmation-adjustments-001.json": "df47f01d235652259f1fb0c8b9ed5724006bc2cc8239cfb9886c89eff94cf920",
+    "reports/research-permissions-skill-revoke-002-report.md": "d89bf9f694253ecb632dc4600946d472162a374d0c12f3125c756959a5e8aa95",
+    "reports/research-permissions-skill-revoke-003-report.md": "ff9007b36daf24a368f080aae57c9d1a6e5784eef208e1e9232bcf4f6d007ef5",
+    "reports/research-permissions-closeout-evidence-001.json": "7a9de4929d3a9ee629bf26ee847d5ab267b2e88325065473b0a126bef6fd4044",
+    "reports/research-permissions-closeout-evidence-002.json": "cf751c48e2179cf8f7cbfa34363b69e1f2792f6242585ed8ea0846c0bcc81af1",
+    "reports/research-permissions-final-effects-001.json": "0ef1364ba79e06d9b45da1a4546da4cd2dcd64be13f8adcc0d8033c4a611b1fb",
+    "reports/research-permissions-final-environment-001.json": "3910e7aa4bea6a77af4b0ea5f96b220e49d3c5f9658b75c0377b519617de8a67",
+    "reports/research-permissions-business-002-recovery.json": "03a00cf48249141ed5126bfdc707f9ef12f2acac506d4de52ed2a640f2e0d686",
+    "reports/research-permissions-skill-drift-001-recovery.json": "6f52e25a5da6cc100b68193625aad77055d49257b61979df117c7b87bca7c2a1",
+    "inventory/research-permissions-business-batches-008.json": "3e56c7b9a4c5a305eefe2670e12283641bc5f45efadc13ce4a0973f78b0a3cdb"
+  },
+  "non_goals_or_unproven_limits": [
+    "Default automatic arbitrary Skill attribution",
+    "Arbitrary interpreter fine-grained permitted utility",
+    "All in-flight revocation/late-observer races",
+    "Production IAM and broad release reliability",
+    "Full financial analysis accuracy",
+    "New Windows/macOS runs",
+    "Independent third-party certification"
+  ],
+  "conditional_hold_scope": "Selected RG runs used direct Grant allow/deny and revocation; no enabled hold/resume flow was counted as tested. Original broader hold evidence remains separately recorded.",
+  "source_identity": "Each batch retains its own frozen candidate; consolidated evidence does not assert all cases rerun against one final release artifact.",
+  "historical_failures_unchanged": true
+}

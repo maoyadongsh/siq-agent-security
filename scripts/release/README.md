@@ -4,6 +4,8 @@
 
 ## 验证现有签名包
 
+2026-10-06 已核对 GitHub Latest 仍为 0.4.1（2026-09-28 发布，固定 a620a31b）。[新权限测评](../../third-party-evaluation/20261006/reports/research-permissions-final-report.md)及后续测评分支不是新发行包；不得用这些运行结果修改已发布八资产或替代同版本原生验收。下面命令复验指定版本，不自动追踪未来 Latest。
+
 先将指定 Release 的八份附件下载到一个新目录。`SOURCE-INFO.json` 中的源码身份只是描述性元数据；核对预期 tag/commit 后显式传入，不能把元数据当作源码构建证明。
 
 ```bash
@@ -44,7 +46,7 @@ ZIP 逐文件回读核对并保留可执行位；外层 SHA256SUMS 同时覆盖 
 不生成 `release.json` 或签名，
 不能交给生产安装器直接安装。参数、清单范围和限制见
 [enterprise-release-candidate/v1](../../packages/contracts/enterprise-release-candidate.v1.md)。
-工作树增量必须先完成评审和源码冻结，不能使用旧提交宣称包含最新开发成果。个人客户端 `0.4.1` 已从固定提交 `a620a31b` 生成、签发、公开回读并设为 Latest，证据见 [0.4.1 发行记录](../../docs/evidence/releases/0.4.1/README.md)；后续 `main` 增量不能重标为该包。企业 Edge/Connector 继续使用独立候选与签后组包流程，个人客户端 Release 不替代企业签发。
+工作树增量必须先完成评审和源码冻结，不能使用旧提交宣称包含最新开发成果。个人客户端 `0.4.1` 已从固定提交 `a620a31b` 生成、签发、公开回读并设为 Latest，证据见 [0.4.1 发行记录](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)；后续 `main` 增量不能重标为该包。企业 Edge/Connector 继续使用独立候选与签后组包流程，个人客户端 Release 不替代企业签发。
 
 企业候选还包含 `publisher-signing-input.json`：原发行公钥、源码提交与二进制 pin
 组成的精确规范化 Ed25519 待签名字节，不是签名包。受控环境经授权签发后，可用独立
@@ -72,7 +74,7 @@ python3 -m unittest discover -s scripts/release -p 'test_*.py' -v
 python3 -m ruff check scripts/release
 ```
 
-[仓库整理阶段复验](../../docs/evidence/repository-reorganization-20260919/README.md)与[0.4.1 发行记录](../../docs/evidence/releases/0.4.1/README.md)分别记账；重复验证不增加独立环境数量。
+[仓库整理阶段复验](../../docs/evidence/repository-reorganization-20260919/README.md)与[0.4.1 发行记录](https://github.com/maoyadongsh/siq-agent-security/blob/3eb1739d9cf1592b246393e2fbe0ea9545b65dfe/docs/evidence/releases/0.4.1/README.md)分别记账；重复验证不增加独立环境数量。
 
 ## Skill 源码说明的原生检查
 
