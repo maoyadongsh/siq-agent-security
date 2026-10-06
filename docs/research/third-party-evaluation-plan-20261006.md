@@ -25,7 +25,7 @@
 
 历史广义轨道：worker顺序周期、风险处置及规则并发曾完成指定变体修复复测；确认集、企业通知故障/UI、真实客户IdP、跨OS与机构独立执行等剩余设计已由用户当前收口范围延期，不能读作本轮待执行清单。默认Hermes来源传播不完整、部分合法终端/委派不可用、共享沙箱细粒度隔离未建立等能力边界，须依据各自候选报告，不通过调整评分或替换业务入口掩盖。
 
-已执行材料见[产品测评总览](../../third-party-evaluation/20261006/reports/product-evaluation-overview.md)和[阶段报告](../../third-party-evaluation/20261006/reports/progress-report.md)。本轮由作者侧执行，尚非独立第三方认证。原TP00–TP10、历史协议、首次失败和候选差异继续保留；下列广义实施设计供后续重新立项使用，当前完成范围由用户指定的RG01–09决定，历史状态以对应冻结报告为准。此次整理了重复、过时的首页接续说明，整理前全文保留在[修订备份](../../third-party-evaluation/20261006/plan/revision-history/risk-legal-lifecycle-002/files/docs/research/third-party-evaluation-plan-20261006.md)。
+已执行材料见[产品测评总览](../../third-party-evaluation/20261006/reports/product-evaluation-overview.md)和[阶段报告](../../third-party-evaluation/20261006/reports/progress-report.md)。本轮由作者侧执行，尚非独立第三方认证。原TP00–TP10、历史协议、首次失败和候选差异继续保留；下列广义实施设计供后续重新立项使用，当前完成范围由用户指定的RG01–09决定，历史状态以对应冻结报告为准。此次整理了重复、过时的首页接续说明，整理前全文保留在本机修订备份 `third-party-evaluation/20261006/plan/revision-history/risk-legal-lifecycle-002/files/docs/research/third-party-evaluation-plan-20261006.md`（未纳入公开仓库）；公开读者可查阅上述阶段报告及本文件的 Git 修订历史。
 
 本次复核与实施补充：见[功能深入复核](../../third-party-evaluation/20261006/reports/product-capability-reassessment-005.md)、[实施方案v3](../../third-party-evaluation/20261006/plan/product-grounded-acceptance-v3.md)和[机器验收登记](../../third-party-evaluation/20261006/plan/product-acceptance-register-v3.json)。v3保存当时规划的AC01–12、20种开发业务、臂数和停止条件；它不覆盖用户后续指定的DGX权限收口范围。TP05/06扩量仍为延期设计，不借本轮权限案例标记完成。
 

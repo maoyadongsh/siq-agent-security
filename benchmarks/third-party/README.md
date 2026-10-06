@@ -8,11 +8,13 @@
 
 `oracles/` 负责评测方效果采集，`product_observers/` 向真实 SIQ 提交产品观察，`analysis/scoring.py` 只依据评测记录评分。未知值保留 `null`，已观察到的违规效果不因后续取证失败而抹除。验签通过与产品防护通过分别报告。
 
-工程校准：
+工程校准（完整本机封存材料环境）：
 
 ```bash
 python3 -m unittest discover -s benchmarks/third-party/tests -v
 ```
+
+此历史测试集会读取 `20261006/data/`、`protocols/` 中的冻结夹具，个别用例还需要 `private/` 内的隔离 SDK 和 Hermes Python 环境。公开仓库只包含经选择的发布材料，直接在全新克隆中运行上面的完整命令会因缺少档案而失败；该失败不能解释为产品越权，也不能计作测试通过。公开读者优先按[权限复现说明](../../third-party-evaluation/20261006/README-PERMISSIONS.md)核对已发布材料；完整历史校准需另行准备相同锚定档案，不应提交私有运行状态来补齐。
 
 模型密钥从仅当前用户可读的私有文件读取，不能写入协议、命令参数值、报告或日志。临时 daemon、凭据和外部工具副本均在活动目录的 `private/` 内，公共审阅副本只按封套白名单导出。
 
