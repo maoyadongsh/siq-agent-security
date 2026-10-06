@@ -358,7 +358,7 @@
       ],
       "kind": "navigation-index",
       "owner_role": "evaluations maintainers",
-      "strategy": "new thin navigation and versioned catalogs; existing evidence and runtime stay in place",
+      "strategy": "unified evaluation navigation, reader reports and batch entries; frozen campaign evidence retains original paths",
       "consumers": [
         "README.md",
         "README.en.md",
@@ -377,7 +377,7 @@
       ],
       "kind": "evaluation-evidence",
       "owner_role": "evaluation maintainers",
-      "strategy": "maintain current README navigation; retain protocols, original failures and signed evidence; exclude private runtime state from publication",
+      "strategy": "legacy frozen campaign archive and report compatibility entries; new reader reports are under evaluations/reports; preserve signed evidence and private-state exclusions",
       "consumers": [
         "README.md",
         "README.en.md",
@@ -2551,6 +2551,58 @@
       "validation": [
         "release signature and public readback",
         "repository link and frozen-evidence guard"
+      ]
+    },
+    {
+      "path": "evaluations/reports/README.md",
+      "action": "add",
+      "reason": "Unify report discovery while preserving frozen campaign evidence and source identities",
+      "consumers": [
+        "evaluation readers",
+        "report rebuilders"
+      ],
+      "validation": [
+        "repository navigation guard",
+        "byte identity and report redirect checks"
+      ]
+    },
+    {
+      "path": "evaluations/reports/relocation-20261006.json",
+      "action": "add",
+      "reason": "Unify report discovery while preserving frozen campaign evidence and source identities",
+      "consumers": [
+        "evaluation readers",
+        "report rebuilders"
+      ],
+      "validation": [
+        "repository navigation guard",
+        "byte identity and report redirect checks"
+      ]
+    },
+    {
+      "path": "evaluations/campaigns/README.md",
+      "action": "add",
+      "reason": "Unify report discovery while preserving frozen campaign evidence and source identities",
+      "consumers": [
+        "evaluation readers",
+        "report rebuilders"
+      ],
+      "validation": [
+        "repository navigation guard",
+        "byte identity and report redirect checks"
+      ]
+    },
+    {
+      "path": "third-party-evaluation/README.md",
+      "action": "add",
+      "reason": "Unify report discovery while preserving frozen campaign evidence and source identities",
+      "consumers": [
+        "evaluation readers",
+        "report rebuilders"
+      ],
+      "validation": [
+        "repository navigation guard",
+        "byte identity and report redirect checks"
       ]
     }
   ],

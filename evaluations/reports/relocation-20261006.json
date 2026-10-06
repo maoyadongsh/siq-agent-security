@@ -1,0 +1,96 @@
+{
+  "schema": "siq-report-relocation/v1",
+  "source_commit": "37b3003a3115ba923857eba942dcddbdaceaec2f",
+  "scope": "Directory organization only; no new experiments or changed results.",
+  "files": [
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/README.md",
+      "new_path": "evaluations/reports/comprehensive-20261006/README.md",
+      "source_sha256": "b96bc21c2e485cd365feaffde2f6d796ad458f16e3fb1eb5ed56d0f1549e893e",
+      "destination_sha256": "9cf7ab265c2fdd7128eb1fc28f0b88d96b65ed9d799b5d5ada7be0c1a94af7fa",
+      "byte_preserved": false
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/SHA256SUMS",
+      "new_path": "evaluations/reports/comprehensive-20261006/SHA256SUMS",
+      "source_sha256": "74a3e94907e452b31e897bf0749a86d3d2db9212a2273de9378e600c867861ff",
+      "destination_sha256": "d26c80d51eba1e5bc31e44dcc137b83d85d3f6dfe65d0f4a597e64c47c5738f2",
+      "byte_preserved": false
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/SIQ_测评证据与历史复核附录_20261006-204632.html",
+      "new_path": "evaluations/reports/comprehensive-20261006/SIQ_测评证据与历史复核附录_20261006-204632.html",
+      "source_sha256": "2622eeb6d532cf7642a7f92d61109114ade3937dc33ae28ffc61967d0bf7c514",
+      "destination_sha256": "2622eeb6d532cf7642a7f92d61109114ade3937dc33ae28ffc61967d0bf7c514",
+      "byte_preserved": true
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/SIQ_综合功能与智能体安全测评报告_20261006-204632.html",
+      "new_path": "evaluations/reports/comprehensive-20261006/SIQ_综合功能与智能体安全测评报告_20261006-204632.html",
+      "source_sha256": "31a8440730a01382b94f933f2684002e035468c0d0f0a7e9c45ec88f52afafbb",
+      "destination_sha256": "31a8440730a01382b94f933f2684002e035468c0d0f0a7e9c45ec88f52afafbb",
+      "byte_preserved": true
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/SIQ_综合测评报告_离线阅读包_20261006-204632.zip",
+      "new_path": "evaluations/reports/comprehensive-20261006/SIQ_综合测评报告_离线阅读包_20261006-204632.zip",
+      "source_sha256": "b66101da9150f8799371ddf3c7321f8d41bb32cdf08cfd0740cea81d0d67cff4",
+      "destination_sha256": "b66101da9150f8799371ddf3c7321f8d41bb32cdf08cfd0740cea81d0d67cff4",
+      "byte_preserved": true
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/build_report.py",
+      "new_path": "evaluations/reports/comprehensive-20261006/build_report.py",
+      "source_sha256": "f2c2b101ee11bed7ad68a5e4680e3bec34f226221bfd36bf1c74d2aba68644e6",
+      "destination_sha256": "52ade8daa1a1f9b60bc5b229d8a02df0455581a1f37a182423f374fcf86c9e14",
+      "byte_preserved": false
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/evidence-index.json",
+      "new_path": "evaluations/reports/comprehensive-20261006/evidence-index.json",
+      "source_sha256": "117b2873d54749ebd58fbfdfea5b199025e99adc3e0add8d2fa4ceb8501e679a",
+      "destination_sha256": "117b2873d54749ebd58fbfdfea5b199025e99adc3e0add8d2fa4ceb8501e679a",
+      "byte_preserved": true
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/fonts.css",
+      "new_path": "evaluations/reports/comprehensive-20261006/fonts.css",
+      "source_sha256": "1808971f3160ac6077af1c99051dda2be0c73075c2daba3b322608361bfc5e0d",
+      "destination_sha256": "1808971f3160ac6077af1c99051dda2be0c73075c2daba3b322608361bfc5e0d",
+      "byte_preserved": true
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/report.css",
+      "new_path": "evaluations/reports/comprehensive-20261006/report.css",
+      "source_sha256": "63f48ad1a407bbfb483d87641bbeb0f56d45e7cf8086dee1b185ed0977fe7f90",
+      "destination_sha256": "63f48ad1a407bbfb483d87641bbeb0f56d45e7cf8086dee1b185ed0977fe7f90",
+      "byte_preserved": true
+    },
+    {
+      "old_path": "third-party-evaluation/comprehensive-report-20261006-204632/validation.json",
+      "new_path": "evaluations/reports/comprehensive-20261006/validation.json",
+      "source_sha256": "b3db72006e16eaf587257010fec14587032732982bea2c1b0e2eb106d463000d",
+      "destination_sha256": "b3db72006e16eaf587257010fec14587032732982bea2c1b0e2eb106d463000d",
+      "byte_preserved": true
+    },
+    {
+      "old_path": "docs/hermes-openshell-siq-security-experiment-20260917.md",
+      "new_path": "evaluations/reports/hermes-openshell-siq-20260917/hermes-openshell-siq-security-experiment-20260917.md",
+      "source_sha256": "4db62f187284b28a44ba1e80a14381aa1fd88b545bb57373ba6c4fc8fc14e5f9",
+      "original_author": "shangjiarui",
+      "original_commit": "40896ad009c6fae5cdc2b3f687adde94cf3ea0b8",
+      "destination_sha256": "4db62f187284b28a44ba1e80a14381aa1fd88b545bb57373ba6c4fc8fc14e5f9",
+      "byte_preserved": true
+    }
+  ],
+  "validation": {
+    "kind": "packaging_and_navigation_only_not_new_security_evaluation",
+    "repository_guard": "passed: 21 asset groups, 233 documents, 1771 local links; original catalogs 36/15 unchanged",
+    "repository_guard_tests": "13 passed",
+    "metadata_and_research_ledger": "passed",
+    "sha256sums": "8/8 passed",
+    "rebuild": "canonical and legacy entry points reproduce both HTML files and evidence-index.json byte for byte; 339 records, 35 citations",
+    "browser": "Chromium: both legacy URLs redirect with query and fragment retained; appendix returns to main; 390px viewport has no horizontal overflow",
+    "secret_scan": "gitleaks: evaluations directory, no findings"
+  }
+}
