@@ -2199,6 +2199,8 @@ ADR-028 核心存储约束：实例记录最多 512 项、单条 16 KiB；`runti
 
 自动会话核心按 identity ID 与原生 session ID 派生稳定 Intent/task ID；权限包络复用 Grant 工具允许/人批集合并保留 deny 优先，列举已知效果但不允许 unknown，具体资源与条件仍由所选 Grant 裁决。首次签发与绑定分步追加，中断后只复用完全匹配且未过期的原包络；重试不延长期限，撤销或新身份不能重新接管旧会话。此处核心包实现不等于 HTTP 路由、适配器、安装事务或 UI 已接通；须由后续证据分别确认。
 
+2026-10-06 实测错误分类修正：旧 Grant 因 Skill 更新失效后，新身份登记同一旧 session，若解析器已返回验签成功且完整 tuple 匹配的历史 Binding，并确认其 Intent/task 属于另一身份，则保持拒绝并返回既有 `409/runtime_identity_authority_conflict`。旧 Grant 不可用不能将这个已确定的身份冲突掩盖成 503。无法验证历史 Binding 的存储/完整性错误仍返回不可用；不覆盖旧绑定、不恢复旧权限、不延长期限，新身份必须使用新 session。原 Skill 更新失败批次保留，修复制品另设摘要和实测批次。
+
 ADR-028 HTTP 接入增量：`GET/POST /v1/runtime-identities` 仅管理会话访问，发行返回脱敏身份摘要和客户端凭据路径（不读回秘密），查询返回 issued/revoked/grant_unavailable，runtime_state 始终 unverified。`POST /v1/runtime-identities/{ri}/revoke` 要求版本和操作者。`POST /v1/runtime-sessions` 只接受实例凭据和真实 session_id；派生身份由服务端输出。新增请求严格拒绝缺省、null、重复/未知字段、大小写别名及超过 16 KiB 正文。既有六类决策端点在解析平台/主体/会话后验证凭据范围；身份字段大小写别名或重复拒绝。全局决策凭据保留旧主体兼容，但不得访问 hri-/rca- 保留主体。运行自检的短期启动凭据只认证活动检查已绑定的真实 session；失效即拒绝，不能代替普通实例或管理权限。
 
 ### 按请求监督器的自身身份查询与撤销（E102）
