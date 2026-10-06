@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-06T03:04:01.346915+00:00",
+  "previous_goal_turn": "progress: native original business readback and isolated host repair verified",
+  "scope": "actual native string capture, explicit selection API diagnostics and passive default pre-hook fields; no downstream constrained parameter execution",
+  "frozen_export_verification": [
+    {
+      "run_id": "native-business-mcp-selection-001",
+      "anchor": "8d5f5957b381e4a4d5e11afdc0ac1a9afb29ee4e8c418704aa761bff4f20a083",
+      "exit_code": 1
+    },
+    {
+      "run_id": "native-business-mcp-selection-runtime-002",
+      "anchor": "c5558c768e2372136acadc3986904529541caddca2a6ac5dfca551bcac1cfe54",
+      "exit_code": 0
+    }
+  ],
+  "framework": {
+    "command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "passed": 561,
+    "subtests_passed": 118,
+    "log": "engineering-evidence/native-business-mcp-selection-framework-tests-001.txt",
+    "excluded": "unchanged AgentDojo upstream_tests requiring separate environment"
+  },
+  "new_focused_tests": 3,
+  "negative_mutations_rejected": 6,
+  "negative_probe_strength": "duplicated observation events and outer artifact hashes updated in copies before review",
+  "ruff_passed": true,
+  "scoped_diff_check_passed": true,
+  "new_index_links_checked": 6,
+  "plan_hashes_checked": true,
+  "prior_progress_entries_preserved": true,
+  "original_credential_failure_preserved": true,
+  "credential_reference_bound_to_original_issued_instance": true,
+  "original_native_business_utility_completed": true,
+  "corrected_native_business_utility_completed": true,
+  "selected_parameter_utility": false,
+  "default_parameter_bridge_present": false,
+  "actual_Intent_schema": "intent/v2",
+  "owned_containers_absent": 2,
+  "owned_processes_reconciled": true,
+  "model_protocol_requests": 8,
+  "model_inference_calls": 0,
+  "explicit_API_diagnostics": 10,
+  "product_changed": false,
+  "host_installation_changed": false,
+  "artifact_sha256": {
+    "engineering-evidence/native-business-mcp-selection-framework-tests-001.txt": "fcb0f4120576851418911d40a77b430a61d0f159749e5e773bebfbdba9c8be17",
+    "engineering-evidence/reconcile-native-business-mcp-selection-001.py": "c8ee7a7241b7caa4871adb9d6bb42be31ebc44f791c1f07ca26ceae0fd1677ac",
+    "engineering-evidence/native-business-mcp-selection-review-tools-001/review-manifest.json": "ad685b5dac0b41088c106a773689d431504f491597ac1022eb5851d21ce98db9",
+    "reports/native-business-mcp-selection-runtime-002-authority-negatives.json": "c31b213150233ca1862206237d8c57c6533f3868e7107ef02728286dc9e18a7e",
+    "inventory/native-business-mcp-selection-integration-001.json": "c56e9907b0fb1f5e43fa1a0b104f336f777fb1d9d1336e0bcff57a94a100ea43"
+  },
+  "report": "reports/native-business-mcp-selection-report.md",
+  "goal_status": "active",
+  "next": "Q4/RB09 same-candidate personal discovery/admission/installation/native-tool chain; preserve Q3 bridge and Q5/Q6/TP/S4 requirements"
+}

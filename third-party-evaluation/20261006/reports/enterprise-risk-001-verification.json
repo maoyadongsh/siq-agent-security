@@ -1,0 +1,13 @@
+{
+  "integrity_verified": true,
+  "run_id": "enterprise-risk-001",
+  "passed": false,
+  "http_cases": 107,
+  "checks": 161,
+  "checks_passed": 157,
+  "missing": [],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

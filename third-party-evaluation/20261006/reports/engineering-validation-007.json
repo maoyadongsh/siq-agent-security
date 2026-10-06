@@ -1,0 +1,49 @@
+{
+  "recorded_at": "2026-10-05T19:42:01.440719+00:00",
+  "checks": [
+    {
+      "name": "backend-framework-tests",
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party/tests",
+        "-q"
+      ],
+      "exit_code": 0,
+      "output": "----------------------------------------------------------------------\nRan 35 tests in 1.963s\n\nOK\n"
+    },
+    {
+      "name": "backend-ruff",
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2/apps/control-api/.venv/bin/ruff",
+        "check",
+        "benchmarks/third-party/governance_trial.py",
+        "benchmarks/third-party/backend_governance.py",
+        "benchmarks/third-party/verify_governance.py",
+        "benchmarks/third-party/report_campaign.py",
+        "benchmarks/third-party/tests/test_backend_governance.py"
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "name": "backend-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "runtime_scope": "production HTTP/PostgreSQL to real mTLS OpenShell deployment/readback/rollback, no behavior isolation claim",
+  "verifier_sources": {
+    "verify_governance.py": "e354304e48ed23d3322c72968942eb1911d197878a736c78a6ce2d9057473518",
+    "backend_governance.py": "8d2c8f7033c3ee65009588ab004e4e872095c3af4fcfde6af626eab39769bb92",
+    "tests/test_backend_governance.py": "4cb163e4a8fe3e4f0dda8b76f13d7ea945127f04cc4526b739eb5d9fb58d9ea0"
+  }
+}

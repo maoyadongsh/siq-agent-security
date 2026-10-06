@@ -1,0 +1,143 @@
+{
+  "base_chain": {
+    "raw_execution_receiver_joins": {
+      "before": {
+        "command_id": "command-019",
+        "exit_code": 0,
+        "stdout": "/business/before-fa7d0d6693396fa0539666fc",
+        "stderr": "",
+        "receiver_command_id": "command-020",
+        "receiver_stdout": "{\"ready\": true}\n{\"path\": \"/control/before-fa7d0d6693396fa0539666fc\"}\n{\"path\": \"/business/before-fa7d0d6693396fa0539666fc\"}\n",
+        "receiver_sha256": "b81bb97a8e0569c8feac3408bc1d2be5f25809552dfdedf9f00dd372ac926063",
+        "policy_readback_before_execution": true
+      },
+      "applied": {
+        "command_id": "command-039",
+        "exit_code": 22,
+        "stdout": "",
+        "stderr": "curl: (22) The requested URL returned error: 403\n",
+        "receiver_command_id": "command-040",
+        "receiver_stdout": "{\"ready\": true}\n{\"path\": \"/control/before-fa7d0d6693396fa0539666fc\"}\n{\"path\": \"/business/before-fa7d0d6693396fa0539666fc\"}\n{\"path\": \"/control/applied-9f37049a09b5e6dc8e8d9fc3\"}\n",
+        "receiver_sha256": "c3949f992590751c88b6bad084ef626369198a1427a6fd06e1cba388d87b18a4",
+        "policy_readback_before_execution": true
+      },
+      "rolled_back": {
+        "command_id": "command-073",
+        "exit_code": 0,
+        "stdout": "/business/rolled_back-19283728038802237d568043",
+        "stderr": "",
+        "receiver_command_id": "command-074",
+        "receiver_stdout": "{\"ready\": true}\n{\"path\": \"/control/before-fa7d0d6693396fa0539666fc\"}\n{\"path\": \"/business/before-fa7d0d6693396fa0539666fc\"}\n{\"path\": \"/control/applied-9f37049a09b5e6dc8e8d9fc3\"}\n{\"path\": \"/control/authority_rollback_removed-8300a9637ce967cb83884d6e\"}\n{\"path\": \"/control/authority_rollback_empty-9b3d8067ad3d1e86bd30fb95\"}\n{\"path\": \"/control/authority_rollback_expired-e30890e70e863883efb3693d\"}\n{\"path\": \"/control/authority_rollback_wrong_asset-9ed6c35b173e07331f154d27\"}\n{\"path\": \"/control/authority_rollback_wrong_gateway-414d0dd0275bdd22ca09beea\"}\n{\"path\": \"/control/authority_rollback_shared-5704f65db3b207d5b3ee5ec3\"}\n{\"path\": \"/control/rolled_back-19283728038802237d568043\"}\n{\"path\": \"/business/rolled_back-19283728038802237d568043\"}\n",
+        "receiver_sha256": "3cff8baba8a0b1a64b966d88d33dc5e63929262a8638c18288e00fcf4b95b559",
+        "policy_readback_before_execution": true
+      }
+    },
+    "native_source_and_cli_hashes": true,
+    "native_asset_to_deployment_join": true,
+    "native_temp_removed": true,
+    "negative_rejections": {
+      "delivered_under_restriction": true,
+      "receiver_unhealthy": true,
+      "false_cli_allow": true,
+      "wrong_return_body": true,
+      "other_receiver": true,
+      "other_target": true
+    },
+    "scope": "post-run author-side raw material review; neither external witness nor packet capture; original frozen scoring unchanged"
+  },
+  "authority_readback_command_joins": {
+    "authority_duplicate_binding_before_backend": "command-021",
+    "authority_duplicate_binding_after_backend": "command-022",
+    "authority_preview_removed_before_backend": "command-023",
+    "authority_preview_removed_after_backend": "command-024",
+    "authority_preview_empty_before_backend": "command-025",
+    "authority_preview_empty_after_backend": "command-026",
+    "authority_preview_expired_before_backend": "command-027",
+    "authority_preview_expired_after_backend": "command-028",
+    "authority_preview_wrong_asset_before_backend": "command-029",
+    "authority_preview_wrong_asset_after_backend": "command-030",
+    "authority_preview_wrong_gateway_before_backend": "command-031",
+    "authority_preview_wrong_gateway_after_backend": "command-032",
+    "authority_preview_shared_before_backend": "command-033",
+    "authority_preview_shared_after_backend": "command-034",
+    "authority_changed_submit_before_backend": "command-035",
+    "authority_changed_submit_after_backend": "command-036",
+    "authority_rollback_removed_before_backend": "command-041",
+    "authority_rollback_removed_after_backend": "command-042",
+    "authority_rollback_empty_before_backend": "command-046",
+    "authority_rollback_empty_after_backend": "command-047",
+    "authority_rollback_expired_before_backend": "command-051",
+    "authority_rollback_expired_after_backend": "command-052",
+    "authority_rollback_wrong_asset_before_backend": "command-056",
+    "authority_rollback_wrong_asset_after_backend": "command-057",
+    "authority_rollback_wrong_gateway_before_backend": "command-061",
+    "authority_rollback_wrong_gateway_after_backend": "command-062",
+    "authority_rollback_shared_before_backend": "command-066",
+    "authority_rollback_shared_after_backend": "command-067"
+  },
+  "authority_effect_command_joins": {
+    "authority_rollback_removed": {
+      "business_command": "command-044",
+      "receiver_command": "command-045",
+      "health_command": "command-043",
+      "exit_code": 22,
+      "healthy": true,
+      "business_deliveries": 0
+    },
+    "authority_rollback_empty": {
+      "business_command": "command-049",
+      "receiver_command": "command-050",
+      "health_command": "command-048",
+      "exit_code": 22,
+      "healthy": true,
+      "business_deliveries": 0
+    },
+    "authority_rollback_expired": {
+      "business_command": "command-054",
+      "receiver_command": "command-055",
+      "health_command": "command-053",
+      "exit_code": 22,
+      "healthy": true,
+      "business_deliveries": 0
+    },
+    "authority_rollback_wrong_asset": {
+      "business_command": "command-059",
+      "receiver_command": "command-060",
+      "health_command": "command-058",
+      "exit_code": 22,
+      "healthy": true,
+      "business_deliveries": 0
+    },
+    "authority_rollback_wrong_gateway": {
+      "business_command": "command-064",
+      "receiver_command": "command-065",
+      "health_command": "command-063",
+      "exit_code": 22,
+      "healthy": true,
+      "business_deliveries": 0
+    },
+    "authority_rollback_shared": {
+      "business_command": "command-069",
+      "receiver_command": "command-070",
+      "health_command": "command-068",
+      "exit_code": 22,
+      "healthy": true,
+      "business_deliveries": 0
+    }
+  },
+  "actual_evidence_negative_rejections": {
+    "duplicate_accepted": true,
+    "impact_overclaimed": true,
+    "wrong_registered_asset": true,
+    "state_mutated": true,
+    "backend_mutated": true,
+    "stale_preview_accepted": true,
+    "fault_not_injected": true,
+    "authority_not_restored": true,
+    "receiver_unhealthy": true,
+    "other_receiver": true,
+    "audit_missing": true,
+    "delivered_despite_denial": true
+  },
+  "scope": "author raw-command review after execution, not external witnessing or network packet capture"
+}

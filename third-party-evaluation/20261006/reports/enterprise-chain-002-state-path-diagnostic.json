@@ -1,0 +1,77 @@
+{
+  "kind": "post-run permission-only inspection, no credential contents",
+  "ancestors": [
+    {
+      "path": "/",
+      "mode": "0o755",
+      "uid": 0,
+      "group_or_other_writable": false
+    },
+    {
+      "path": "/home",
+      "mode": "0o755",
+      "uid": 0,
+      "group_or_other_writable": false
+    },
+    {
+      "path": "/home/maoyd",
+      "mode": "0o755",
+      "uid": 1000,
+      "group_or_other_writable": false
+    },
+    {
+      "path": "/home/maoyd/siq",
+      "mode": "0o775",
+      "uid": 1000,
+      "group_or_other_writable": true
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security",
+      "mode": "0o775",
+      "uid": 1000,
+      "group_or_other_writable": true
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation",
+      "mode": "0o775",
+      "uid": 1000,
+      "group_or_other_writable": true
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006",
+      "mode": "0o775",
+      "uid": 1000,
+      "group_or_other_writable": true
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private",
+      "mode": "0o700",
+      "uid": 1000,
+      "group_or_other_writable": false
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/runs",
+      "mode": "0o700",
+      "uid": 1000,
+      "group_or_other_writable": false
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/runs/enterprise-chain-002",
+      "mode": "0o700",
+      "uid": 1000,
+      "group_or_other_writable": false
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/runs/enterprise-chain-002/native-edge-private",
+      "mode": "0o700",
+      "uid": 1000,
+      "group_or_other_writable": false
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/runs/enterprise-chain-002/native-edge-private/state",
+      "mode": "0o700",
+      "uid": 1000,
+      "group_or_other_writable": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+    "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/management-http-001-protocol/harness-source/management_trial.py",
+    "--execute",
+    "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/management-http-001-protocol/protocol.json"
+  ],
+  "exit_code": 1,
+  "stdout": "{\"allocated\": 5, \"attempts\": 5, \"first_attempt_pass\": 3, \"first_attempt_fail\": 2, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 1, \"manifest_sha256\": \"92c51943e0b3a916da84256e42902e7be4afc98dede4313a6774dd8e2950cccd\"}\n",
+  "stderr": ""
+}

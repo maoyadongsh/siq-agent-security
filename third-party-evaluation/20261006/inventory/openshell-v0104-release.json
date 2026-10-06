@@ -1,0 +1,38 @@
+{
+  "release": "https://github.com/NVIDIA/OpenShell/releases/tag/v0.0.104",
+  "assets": [
+    {
+      "url": "https://github.com/NVIDIA/OpenShell/releases/download/v0.0.104/openshell-aarch64-unknown-linux-musl.tar.gz",
+      "sha256": "c55d4096e82b6044e246ce26fb8fd7df9f1a701ff8b117dc3d84f0761e7a5082",
+      "bytes": 8146162,
+      "files": [
+        {
+          "name": "openshell",
+          "sha256": "db48d58c258dc504cb4135e95d6c49ca514541dbdeb757a4ed67b95a7b0a826f"
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/NVIDIA/OpenShell/releases/download/v0.0.104/openshell-gateway-aarch64-unknown-linux-gnu.tar.gz",
+      "sha256": "d0197aace3f9783804b66882027d4a3f41b50e327e36c1fd225b54b3d1964dd1",
+      "bytes": 27778445,
+      "files": [
+        {
+          "name": "openshell-gateway",
+          "sha256": "5756d28200291b0f55b8abf28c183923f76c5c255bcca5ca3e3d0b2571671125"
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/NVIDIA/OpenShell/releases/download/v0.0.104/openshell-sandbox-aarch64-unknown-linux-gnu.tar.gz",
+      "sha256": "df5491cfeba8f9195cb03c85d5d79753edfcdc23e4658e1b002338c744fece9b",
+      "bytes": 9248059,
+      "files": [
+        {
+          "name": "openshell-sandbox",
+          "sha256": "4e8b70c8ff5b92e49750f24e8e71bc927e337df52212ade3c5ca672ecb9be52c"
+        }
+      ]
+    }
+  ]
+}

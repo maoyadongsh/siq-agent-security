@@ -1,0 +1,81 @@
+{
+  "schema_version": "siq.research-rg05-historical-runtime-review.v1",
+  "recorded_unix": 1791283946.2136095,
+  "scope": "Read-only review of owning Research persisted cleanup records and original supervisor invocation journals; not a rerun or new denial proof.",
+  "cases": [
+    {
+      "batch": "research-permissions-skill-drift-002",
+      "run_id": "qwen-request-7c823ef52488671e",
+      "source_record_sha256": {
+        "supervisor-state.json": "55372558c109b9ec5e37b0df06416ea27375ad1b81f673bc0f1aa437d37347e4",
+        "request-finalization.json": "d59692a340190f7444acd41e7eb3b5d4363d658e712721d958203ef70d22ec9b",
+        "request-supervision.json": "bbf6de6df8631f2e6ddfcb618243ac321db36d5f333acb903d3f31805ea33c85",
+        "request-sandbox.json": "4e928e3c9a9c58076ddc97dd7b5d22158e7d3baa50938f1cef3507531cf7264f"
+      },
+      "states": {
+        "supervisor-state.json": {
+          "phase": "contained",
+          "ticks": 0,
+          "checked_at": 1791273408
+        },
+        "request-finalization.json": {
+          "phase": "released"
+        },
+        "request-supervision.json": {
+          "phase": "contained"
+        },
+        "request-sandbox.json": {
+          "phase": "contained"
+        }
+      },
+      "invocation_id": "d3b9b4d1d1ad49dfbf1e917e49fdf02e",
+      "journal_records": 2,
+      "journal_categorical_events": [
+        {
+          "timestamp_microseconds": "1791273408217885",
+          "categories": [
+            "supervisor_failed_closed"
+          ]
+        }
+      ],
+      "cause_proved": false
+    },
+    {
+      "batch": "research-permissions-skill-replacement-003",
+      "run_id": "qwen-request-ede1db36cbcc8843",
+      "source_record_sha256": {
+        "supervisor-state.json": "6ebc419572bf56e2a1b636a3aa45cdb50e0cc723c7116c7724d099e290c6a3a6",
+        "request-finalization.json": "ef1114b100b8ced8ab813ffff49845e4725033a199747947177e189f7739b0e2",
+        "request-supervision.json": "efd32c74836611877e6ea17f5c4c3f76c7c46a08d1de7aa3639b5944dbe14742",
+        "request-sandbox.json": "b6e8fa6535ffbefff3ebcf85be849d2ec42b4d2c0ddd35201e2c8eabce3beb05"
+      },
+      "states": {
+        "supervisor-state.json": {
+          "phase": "contained",
+          "ticks": 0,
+          "checked_at": 1791278397
+        },
+        "request-finalization.json": {
+          "phase": "released"
+        },
+        "request-supervision.json": {
+          "phase": "contained"
+        },
+        "request-sandbox.json": {
+          "phase": "contained"
+        }
+      },
+      "invocation_id": "ae875e7b14514c2fa60d25431d5cccb3",
+      "journal_records": 2,
+      "journal_categorical_events": [
+        {
+          "timestamp_microseconds": "1791278397308609",
+          "categories": [
+            "supervisor_failed_closed"
+          ]
+        }
+      ],
+      "cause_proved": false
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "run_id": "enterprise-risk-002",
+  "native_asset_source_and_output_joins": true,
+  "worker_raw_outputs_joined": 9,
+  "timezones_and_instants_verified": true,
+  "time_windows": {
+    "west": {
+      "early": {
+        "started_relative_to_expiry_seconds": -3.909052,
+        "finished_relative_to_expiry_seconds": -3.361879,
+        "reopened": 0,
+        "status_after": "risk_accepted"
+      },
+      "late": {
+        "started_relative_to_expiry_seconds": 0.174957,
+        "finished_relative_to_expiry_seconds": 0.834196,
+        "reopened": 1,
+        "status_after": "open"
+      },
+      "repeat": {
+        "started_relative_to_expiry_seconds": 0.885076,
+        "finished_relative_to_expiry_seconds": 1.514958,
+        "reopened": 0,
+        "status_after": "open"
+      }
+    },
+    "east": {
+      "early": {
+        "started_relative_to_expiry_seconds": -3.948837,
+        "finished_relative_to_expiry_seconds": -3.595622,
+        "reopened": 0,
+        "status_after": "risk_accepted"
+      },
+      "late": {
+        "started_relative_to_expiry_seconds": 0.180918,
+        "finished_relative_to_expiry_seconds": 0.526725,
+        "reopened": 1,
+        "status_after": "open"
+      },
+      "repeat": {
+        "started_relative_to_expiry_seconds": 0.574738,
+        "finished_relative_to_expiry_seconds": 0.905594,
+        "reopened": 0,
+        "status_after": "open"
+      }
+    },
+    "utc": {
+      "early": {
+        "started_relative_to_expiry_seconds": -3.953009,
+        "finished_relative_to_expiry_seconds": -3.685576,
+        "reopened": 0,
+        "status_after": "risk_accepted"
+      },
+      "late": {
+        "started_relative_to_expiry_seconds": 0.177542,
+        "finished_relative_to_expiry_seconds": 0.491347,
+        "reopened": 1,
+        "status_after": "open"
+      },
+      "repeat": {
+        "started_relative_to_expiry_seconds": 0.536911,
+        "finished_relative_to_expiry_seconds": 0.824826,
+        "reopened": 0,
+        "status_after": "open"
+      }
+    }
+  },
+  "original_checks": {
+    "risk_native_rule_truth": true,
+    "risk_rule_idempotency": true,
+    "risk_pagination_truth": true,
+    "risk_rejected_writes_no_effect": true,
+    "risk_acceptance_audited": true,
+    "risk_audit_failure_atomic": true,
+    "risk_resolution_evidence": true,
+    "risk_export_rejection_no_audit": true,
+    "risk_export_scope_count": true,
+    "risk_export_activity_scope": true,
+    "risk_west_not_early": true,
+    "risk_west_on_time": true,
+    "risk_west_repeat_idempotent": true,
+    "risk_east_not_early": true,
+    "risk_east_on_time": true,
+    "risk_east_repeat_idempotent": true,
+    "risk_utc_not_early": true,
+    "risk_utc_on_time": true,
+    "risk_utc_repeat_idempotent": true
+  },
+  "actual_evidence_negative_rejections": {
+    "unknown_falsely_effective": true,
+    "duplicate_rules": true,
+    "pagination_duplicate": true,
+    "pagination_truncation_hidden": true,
+    "acceptance_audit_lost": true,
+    "audit_failure_state_changed": true,
+    "resolution_reference_lost": true,
+    "export_truncation_hidden": true,
+    "foreign_export_record": true,
+    "premature_reopen": true,
+    "missed_reopen": true,
+    "missing_expiry_audit": true
+  },
+  "negative_scope": "only evaluated on passing cohort; failing original is not reused as a false positive control",
+  "limits": [
+    "author supplemental review, not external witness",
+    "controlled reaper invocation; no continuous scheduler or webhook claim"
+  ]
+}

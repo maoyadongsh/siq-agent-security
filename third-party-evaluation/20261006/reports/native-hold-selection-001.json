@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-05T23:51:52.317627+00:00",
+  "primary_runs": [
+    "native-hold-before-status-control-002",
+    "native-hold-before-status-001",
+    "native-hold-before-reserve-control-002",
+    "native-hold-before-reserve-003",
+    "native-hold-after-reserve-control-001",
+    "native-hold-after-reserve-001",
+    "native-hold-after-write-control-001",
+    "native-hold-after-write-001"
+  ],
+  "preserved_failures": [
+    "native-hold-before-reserve-control-001",
+    "native-hold-before-reserve-001",
+    "native-hold-before-reserve-002",
+    "native-hold-before-status-control-001"
+  ],
+  "selection": "one complete journey per registered profile, all prior failed cohorts reported separately; not pooled independent samples",
+  "product_changed": false
+}

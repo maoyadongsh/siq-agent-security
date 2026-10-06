@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-06T00:09:53.601648+00:00",
+  "runs": [
+    "native-held-intent-before-status-control-001",
+    "native-held-intent-before-status-001",
+    "native-held-intent-before-reserve-control-001",
+    "native-held-intent-before-reserve-001",
+    "native-held-intent-after-reserve-control-001",
+    "native-held-intent-after-reserve-001",
+    "native-held-intent-after-write-control-001",
+    "native-held-intent-after-write-001",
+    "native-held-binding-before-status-control-001",
+    "native-held-binding-before-status-001",
+    "native-held-binding-before-reserve-control-001",
+    "native-held-binding-before-reserve-001",
+    "native-held-binding-after-reserve-control-001",
+    "native-held-binding-after-reserve-001",
+    "native-held-binding-after-write-control-001",
+    "native-held-binding-after-write-001"
+  ],
+  "files_checked": 346,
+  "known_credential_matches": 0,
+  "daemon_liveness": {
+    "native-held-intent-before-status-control-001": "absent",
+    "native-held-intent-before-status-001": "absent",
+    "native-held-intent-before-reserve-control-001": "absent",
+    "native-held-intent-before-reserve-001": "absent",
+    "native-held-intent-after-reserve-control-001": "absent",
+    "native-held-intent-after-reserve-001": "absent",
+    "native-held-intent-after-write-control-001": "absent",
+    "native-held-intent-after-write-001": "absent",
+    "native-held-binding-before-status-control-001": "absent",
+    "native-held-binding-before-status-001": "absent",
+    "native-held-binding-before-reserve-control-001": "absent",
+    "native-held-binding-before-reserve-001": "absent",
+    "native-held-binding-after-reserve-control-001": "absent",
+    "native-held-binding-after-reserve-001": "absent",
+    "native-held-binding-after-write-control-001": "absent",
+    "native-held-binding-after-write-001": "absent"
+  },
+  "signals_sent": 0,
+  "scope": "sealed top-level files and verifier snapshot; private state excluded; no external publishing"
+}

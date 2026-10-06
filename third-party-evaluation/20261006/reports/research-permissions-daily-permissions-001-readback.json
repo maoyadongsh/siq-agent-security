@@ -1,0 +1,56 @@
+{
+  "batch": "research-permissions-daily-permissions-001",
+  "recorded_unix": 1791283740.956527,
+  "database_driver": "postgresql+psycopg",
+  "accounts": [
+    {
+      "user_id": 19,
+      "is_active": false,
+      "token_version": 1,
+      "audit_actions": [
+        "EVALUATION_ACCOUNT_CREATED",
+        "LOGIN",
+        "EVALUATION_ACCOUNT_DISABLED"
+      ]
+    },
+    {
+      "user_id": 20,
+      "is_active": false,
+      "token_version": 1,
+      "audit_actions": [
+        "EVALUATION_ACCOUNT_CREATED",
+        "LOGIN",
+        "EVALUATION_ACCOUNT_DISABLED"
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "qwen-request-e58dd20d52902ec9",
+      "gateway_run_id": "run_b20f5af08d9d4084a27b11a05bab0de9",
+      "status": "succeeded",
+      "image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+      "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:e36eb3b8b69ce07e36b64a2e",
+      "finalizer_phase": "released",
+      "execution_user_id": "20",
+      "scope": "1b46fa5ca55028d303bcda95"
+    },
+    {
+      "run_id": "qwen-request-6eda4bcabb5cb53b",
+      "gateway_run_id": "run_f48e0b20a6114345b6bcb16d57b0c58e",
+      "status": "succeeded",
+      "image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+      "image_ref": "siq/hermes-openshell-siq-analysis-qwen38:e36eb3b8b69ce07e36b64a2e",
+      "finalizer_phase": "released",
+      "execution_user_id": "20",
+      "scope": "1b46fa5ca55028d303bcda95"
+    }
+  ],
+  "checks": {
+    "two_successful_default_request_runs": true,
+    "both_actual_base_images_match": true,
+    "all_finalizers_released": true,
+    "accounts_disabled_with_token_bump": true
+  },
+  "passed": true
+}

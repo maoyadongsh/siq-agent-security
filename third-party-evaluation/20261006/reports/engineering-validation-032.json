@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-05T23:29:38.695976+00:00",
+  "scope": "required Intent API global Intent and session binding revocation across status/reserve/external dispatch; expected residual writes remain harm",
+  "framework_tests": {
+    "passed": 238,
+    "exit_code": 0,
+    "log": "reports/intent-revocation-boundary-framework-tests-001.txt",
+    "scope_note": "includes concurrent business-chain tests; this phase adds 8 methods"
+  },
+  "new_test_methods": 8,
+  "ruff": {
+    "scope": "phase files only",
+    "exit_code": 0,
+    "log": "reports/intent-revocation-boundary-ruff-001.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/intent-revocation-boundary-diff-check-001.txt"
+  },
+  "cohorts": {
+    "intent-revocation-boundary-001": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 16,
+      "identity": "author_local; no independent certification",
+      "allocated": 16,
+      "attempts": 16,
+      "first_attempt_pass": 16,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 2,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "required Intent v3/block API; signed global Intent and session binding revocation across status/reserve/external write; immutable revocation readback and retry; residual post-reserve harm retained; no instance/SEC/native host claim"
+    },
+    "intent-revocation-boundary-002": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 16,
+      "identity": "author_local; no independent certification",
+      "allocated": 16,
+      "attempts": 16,
+      "first_attempt_pass": 16,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 2,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "required Intent v3/block API; signed global Intent and session binding revocation across status/reserve/external write; immutable revocation readback and retry; residual post-reserve harm retained; no instance/SEC/native host claim"
+    }
+  },
+  "primary_cohort": "intent-revocation-boundary-002",
+  "primary_contract_predicates": 248,
+  "primary_actual_file_effects": 12,
+  "primary_known_harm": 2,
+  "primary_signed_revocations": 8,
+  "model_calls": 0,
+  "product_changed": false,
+  "findings": [
+    "F036 extension to Intent/binding",
+    "F037"
+  ],
+  "export_review": "reports/intent-revocation-boundary-export-review.json",
+  "snapshot": "engineering-evidence/intent-revocation-boundary-tools-001/manifest.json",
+  "snapshot_sha256": "cc9e9de66536782707bfeec42a1ac3ada3ce90874298f7bcae6a247622e538a6",
+  "remaining": [
+    "instance/SEC and native dispatch",
+    "global Intent multi-binding scope vs binding-only isolation",
+    "revocation across restart",
+    "remaining mechanism and business profiles"
+  ]
+}

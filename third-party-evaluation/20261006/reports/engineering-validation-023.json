@@ -1,0 +1,59 @@
+{
+  "checked_at": "2026-10-05T22:19:50.107435+00:00",
+  "scope": "signed provenance receiver binding pairs and mechanism requirement reconciliation; product unchanged",
+  "framework_tests": {
+    "passed": 153,
+    "exit_code": 0,
+    "log": "reports/provenance-bindings-framework-tests-002.txt"
+  },
+  "ruff": {
+    "exit_code": 0
+  },
+  "diff_check": {
+    "exit_code": 0
+  },
+  "cohorts": {
+    "provenance-bindings-001": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 12,
+      "identity": "author_local; no independent certification",
+      "allocated": 12,
+      "attempts": 12,
+      "first_attempt_pass": 11,
+      "first_attempt_fail": 1,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 1,
+      "scope": "six signed provenance binding pairs; receiver effects; no model/native host or same-UID isolation claim"
+    },
+    "provenance-bindings-002": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 12,
+      "identity": "author_local; no independent certification",
+      "allocated": 12,
+      "attempts": 12,
+      "first_attempt_pass": 12,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "six signed provenance binding pairs; receiver effects; no model/native host or same-UID isolation claim"
+    }
+  },
+  "coverage_audit": {
+    "mechanism_families": 30,
+    "required_variants": 107,
+    "minimum_paired_draft_units": 214,
+    "completed_family_claim": false
+  },
+  "source_freeze": "engineering-evidence/provenance-bindings-tools-001",
+  "limitations": [
+    "first failure retained",
+    "no model or native host proof in receiver cohort",
+    "no entire family closure inferred"
+  ]
+}

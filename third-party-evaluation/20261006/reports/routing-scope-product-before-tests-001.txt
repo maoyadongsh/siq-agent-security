@@ -1,0 +1,108 @@
+test_dgx_unavailable_never_sends_sensitive_content (test_model_egress.ModelEgressTest.test_dgx_unavailable_never_sends_sensitive_content) ... ok
+test_internal_and_secret_require_explicit_policy (test_model_egress.ModelEgressTest.test_internal_and_secret_require_explicit_policy) ... ok
+test_local_failure_never_falls_back_to_remote (test_model_egress.ModelEgressTest.test_local_failure_never_falls_back_to_remote) ... ok
+test_me01_public_remote_research_allowed_by_policy (test_model_egress.ModelEgressTest.test_me01_public_remote_research_allowed_by_policy) ... ok
+test_me02_direct_confidential_remote_call_rejected_before_transport (test_model_egress.ModelEgressTest.test_me02_direct_confidential_remote_call_rejected_before_transport) ... ok
+test_me03_confidential_local_allowed_and_remote_plan_minimized (test_model_egress.ModelEgressTest.test_me03_confidential_local_allowed_and_remote_plan_minimized) ... ok
+test_me04_timeout_does_not_migrate_or_retry (test_model_egress.ModelEgressTest.test_me04_timeout_does_not_migrate_or_retry) ... ok
+test_me05_explicit_switch_audits_allowed_and_denied (test_model_egress.ModelEgressTest.test_me05_explicit_switch_audits_allowed_and_denied) ... ok
+test_me06_model_cannot_downgrade_classification (test_model_egress.ModelEgressTest.test_me06_model_cannot_downgrade_classification) ... ok
+test_me07_injected_remote_escalation_stays_local (test_model_egress.ModelEgressTest.test_me07_injected_remote_escalation_stays_local) ... ok
+test_me08_diagnostics_never_include_credentials_or_payload (test_model_egress.ModelEgressTest.test_me08_diagnostics_never_include_credentials_or_payload) ... ok
+test_unknown_classification_fails_closed (test_model_egress.ModelEgressTest.test_unknown_classification_fails_closed) ... ok
+test_dgx_unavailable_never_sends_sensitive_content (test_source_upgrade.SourceUpgradeTest.test_dgx_unavailable_never_sends_sensitive_content) ... ok
+test_internal_and_secret_require_explicit_policy (test_source_upgrade.SourceUpgradeTest.test_internal_and_secret_require_explicit_policy) ... ok
+test_local_failure_does_not_clear_observed_source (test_source_upgrade.SourceUpgradeTest.test_local_failure_does_not_clear_observed_source) ... FAIL
+test_local_failure_never_falls_back_to_remote (test_source_upgrade.SourceUpgradeTest.test_local_failure_never_falls_back_to_remote) ... ok
+test_me01_public_remote_research_allowed_by_policy (test_source_upgrade.SourceUpgradeTest.test_me01_public_remote_research_allowed_by_policy) ... ok
+test_me02_direct_confidential_remote_call_rejected_before_transport (test_source_upgrade.SourceUpgradeTest.test_me02_direct_confidential_remote_call_rejected_before_transport) ... ok
+test_me03_confidential_local_allowed_and_remote_plan_minimized (test_source_upgrade.SourceUpgradeTest.test_me03_confidential_local_allowed_and_remote_plan_minimized) ... ok
+test_me04_timeout_does_not_migrate_or_retry (test_source_upgrade.SourceUpgradeTest.test_me04_timeout_does_not_migrate_or_retry) ... ok
+test_me05_explicit_switch_audits_allowed_and_denied (test_source_upgrade.SourceUpgradeTest.test_me05_explicit_switch_audits_allowed_and_denied) ... ok
+test_me06_model_cannot_downgrade_classification (test_source_upgrade.SourceUpgradeTest.test_me06_model_cannot_downgrade_classification) ... ok
+test_me07_injected_remote_escalation_stays_local (test_source_upgrade.SourceUpgradeTest.test_me07_injected_remote_escalation_stays_local) ... ok
+test_me08_diagnostics_never_include_credentials_or_payload (test_source_upgrade.SourceUpgradeTest.test_me08_diagnostics_never_include_credentials_or_payload) ... ok
+test_new_task_resets_source_history (test_source_upgrade.SourceUpgradeTest.test_new_task_resets_source_history) ... ok
+test_same_task_rebind_cannot_clear_source_history (test_source_upgrade.SourceUpgradeTest.test_same_task_rebind_cannot_clear_source_history) ... FAIL
+test_secret_denial_cannot_be_followed_by_public_context_send (test_source_upgrade.SourceUpgradeTest.test_secret_denial_cannot_be_followed_by_public_context_send) ... FAIL
+test_source_upgrade_blocks_explicit_remote_switch (test_source_upgrade.SourceUpgradeTest.test_source_upgrade_blocks_explicit_remote_switch) ... FAIL
+test_source_upgrade_keeps_context_local (test_source_upgrade.SourceUpgradeTest.test_source_upgrade_keeps_context_local) ... FAIL
+test_unknown_classification_fails_closed (test_source_upgrade.SourceUpgradeTest.test_unknown_classification_fails_closed) ... ok
+
+======================================================================
+FAIL: test_local_failure_does_not_clear_observed_source (test_source_upgrade.SourceUpgradeTest.test_local_failure_does_not_clear_observed_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/unittest/mock.py", line 1387, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-routingscopefix1/apps/secure-agent/tests/test_source_upgrade.py", line 34, in test_local_failure_does_not_clear_observed_source
+    self.assertEqual([r['model'] for r in self.server.requests], ['local-test'])
+AssertionError: Lists differ: ['remote-test'] != ['local-test']
+
+First differing element 0:
+'remote-test'
+'local-test'
+
+- ['remote-test']
++ ['local-test']
+
+======================================================================
+FAIL: test_same_task_rebind_cannot_clear_source_history (test_source_upgrade.SourceUpgradeTest.test_same_task_rebind_cannot_clear_source_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/unittest/mock.py", line 1387, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-routingscopefix1/apps/secure-agent/tests/test_source_upgrade.py", line 41, in test_same_task_rebind_cannot_clear_source_history
+    self.assertEqual(self.server.requests[-1]['model'], 'local-test')
+AssertionError: 'remote-test' != 'local-test'
+- remote-test
++ local-test
+
+
+======================================================================
+FAIL: test_secret_denial_cannot_be_followed_by_public_context_send (test_source_upgrade.SourceUpgradeTest.test_secret_denial_cannot_be_followed_by_public_context_send)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-routingscopefix1/apps/secure-agent/tests/test_source_upgrade.py", line 53, in test_secret_denial_cannot_be_followed_by_public_context_send
+    with self.assertRaisesRegex(AgentError, 'model_egress_denied'):
+AssertionError: AgentError not raised
+
+======================================================================
+FAIL: test_source_upgrade_blocks_explicit_remote_switch (test_source_upgrade.SourceUpgradeTest.test_source_upgrade_blocks_explicit_remote_switch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/unittest/mock.py", line 1387, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-routingscopefix1/apps/secure-agent/tests/test_source_upgrade.py", line 24, in test_source_upgrade_blocks_explicit_remote_switch
+    with self.assertRaisesRegex(AgentError, 'model_egress_denied'):
+AssertionError: AgentError not raised
+
+======================================================================
+FAIL: test_source_upgrade_keeps_context_local (test_source_upgrade.SourceUpgradeTest.test_source_upgrade_keeps_context_local)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/.local/share/uv/python/cpython-3.12-linux-aarch64-gnu/lib/python3.12/unittest/mock.py", line 1387, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-routingscopefix1/apps/secure-agent/tests/test_source_upgrade.py", line 17, in test_source_upgrade_keeps_context_local
+    self.assertEqual([r['model'] for r in self.server.requests], ['local-test', 'local-test'])
+AssertionError: Lists differ: ['local-test', 'remote-test'] != ['local-test', 'local-test']
+
+First differing element 1:
+'remote-test'
+'local-test'
+
+- ['local-test', 'remote-test']
+?                 ^^^ ^^
+
++ ['local-test', 'local-test']
+?                 ^ ^^^
+
+
+----------------------------------------------------------------------
+Ran 30 tests in 1.044s
+
+FAILED (failures=5)

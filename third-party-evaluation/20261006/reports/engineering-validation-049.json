@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-06T02:13:53.395155+00:00",
+  "previous_goal_turn": "engineering048 added immutable policy/TCP execution evidence; progress",
+  "scope": "Q3 actual public native delegate_task entry and legal child utility versus required Intent parent gate",
+  "run_id": "native-delegation-entry-001",
+  "manifest_sha256": "36b9056fe0f49592c09026b92971317fd11a91332c2e8dc1c78eb5151c07290a",
+  "units": 2,
+  "complete": 2,
+  "checks_passed": 2,
+  "legitimate_utility": {
+    "B0": true,
+    "B2": false
+  },
+  "actual_native_children": {
+    "B0": 1,
+    "B2": 0
+  },
+  "signed_receipts": 1,
+  "actual_model_protocol_requests": 9,
+  "model_inference_calls": 0,
+  "finding_id": "F055",
+  "native_same_os_process": true,
+  "child_authority_inheritance_tested": false,
+  "new_focused_tests": 12,
+  "framework_tests": 432,
+  "framework_log": "reports/native-delegation-framework-tests-001.txt",
+  "focused_log": "reports/native-delegation-focused-tests-001.txt",
+  "tool_snapshot": {
+    "manifest": "engineering-evidence/native-delegation-tools-001/manifest.json",
+    "sha256": "901f752dacde90f84ecdd08a694a485d4582776aebf43e756e5c8f751547f271"
+  },
+  "supplemental_review": "reports/native-delegation-lineage-review-001.json",
+  "export_review": "reports/native-delegation-export-review.json",
+  "product_changed": false,
+  "host_changed": false,
+  "goal_status": "active",
+  "remaining": "Q3 reachable malicious child/native network/source bridge; Q4-Q6 and full TP/S4; current CLI required-Intent delegate utility unavailable",
+  "metadata_erratum": "reports/native-delegation-protocol-metadata-erratum-001.json",
+  "future_freeze_metadata_snapshot": "engineering-evidence/native-delegation-tools-metadata-002/manifest.json"
+}

@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-10-06T02:35:43.235788+00:00",
+  "previous_goal_turn": "progress: native delegation child lifecycle and plan integration verified",
+  "scope": "real native MCP entry, SDK prerequisite, deferred tool routing, explicit permission and first unknown-effect gate; no source-chain completion claim",
+  "frozen_export_verification": [
+    {
+      "run_id": "native-mcp-entry-001",
+      "anchor": "4b2364c106df489049cdbfc9c197545908c1f633066fbb355baca794c4efb353",
+      "exit_code": 2
+    },
+    {
+      "run_id": "native-mcp-entry-sdk-002",
+      "anchor": "174d9d7dde26d7fa2fd87134021133a3cb0b7e855f05fdb00f36cb03ad2fa59c",
+      "exit_code": 2
+    },
+    {
+      "run_id": "native-mcp-entry-bridge-003",
+      "anchor": "23fb205525c6b0588351fe0891b10547361896d00b7379c255cb088acdf83484",
+      "exit_code": 0
+    }
+  ],
+  "framework": {
+    "command": "python -m pytest benchmarks/third-party --ignore=benchmarks/third-party/upstream_tests -q",
+    "passed": 555,
+    "subtests_passed": 118,
+    "log": "engineering-evidence/native-mcp-entry-framework-tests-002.txt",
+    "original_failure_log": "engineering-evidence/native-mcp-entry-framework-tests-001.txt",
+    "fixture_fix": "child READY synchronization before reading /proc cmdline; security PID verification unchanged",
+    "excluded": "AgentDojo upstream_tests require separate environment, unchanged this slice"
+  },
+  "new_focused_tests": 4,
+  "negative_mutations_rejected": 6,
+  "ruff_passed": true,
+  "scoped_diff_check_passed": true,
+  "new_local_links_checked": 10,
+  "plan_hashes_checked": true,
+  "product_changed": false,
+  "host_installation_changed": false,
+  "isolated_sdk_installed": true,
+  "report": "reports/native-mcp-entry-report.md",
+  "integration": "inventory/native-mcp-entry-integration-001.json",
+  "goal_status": "active",
+  "remaining": "Q3 existing-contract business MCP source path; Q4-Q6/TP/S4 full scope preserved"
+}

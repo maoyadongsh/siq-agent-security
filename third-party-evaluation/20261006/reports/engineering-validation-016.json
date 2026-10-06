@@ -1,0 +1,105 @@
+{
+  "checked_at": "2026-10-05T21:20:35.590073+00:00",
+  "scope": "Linux Hermes public CLI normal install/update/removal, native post-removal fail-closed, local deterministic model; no Go product change",
+  "framework_tests": {
+    "passed": 104,
+    "exit_code": 0,
+    "log": "reports/native-lifecycle-framework-tests-001.txt"
+  },
+  "ruff": {
+    "scope": "benchmarks/third-party",
+    "exit_code": 0
+  },
+  "legacy_fixture_lint": {
+    "codes": [
+      "EXE001",
+      "RUF059"
+    ],
+    "preexisting_in_frozen_baseline": true,
+    "evidence": "reports/native-lifecycle-legacy-baseline-lint.json",
+    "note": "Existing shebang mode and unused unpacked variable are not introduced by the expected 401 reason fix."
+  },
+  "diff_check": {
+    "exit_code": 0
+  },
+  "cohorts": {
+    "native-lifecycle-001": {
+      "exit_code": 2,
+      "manifest_sha256": "d59e1b0e410749ff6e55745f91730d6dbe12adb3eb69eecd9d75d6dcde5dc0e5",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 1,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 1,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "independent_predicates_passed": 11,
+        "independent_predicates_observed": 11,
+        "independent_predicates_registered": 16,
+        "http_requests": 43,
+        "native_processes": 1,
+        "model_requests": 4,
+        "signed_receipts_verified": 2,
+        "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+      }
+    },
+    "native-lifecycle-002": {
+      "exit_code": 0,
+      "manifest_sha256": "bc30c64173de88c20af4de1e5cb7101c4685c1862fc8bad2c5175307901bae80",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 16,
+        "independent_predicates_observed": 16,
+        "independent_predicates_registered": 16,
+        "http_requests": 60,
+        "native_processes": 2,
+        "model_requests": 8,
+        "signed_receipts_verified": 4,
+        "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+      }
+    },
+    "native-lifecycle-003": {
+      "exit_code": 0,
+      "manifest_sha256": "bc341b5bccfdb174ac948f3fd6b341a8b08be4d89a10a52d4ebdfc965f2e428a",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 18,
+        "independent_predicates_observed": 18,
+        "independent_predicates_registered": 18,
+        "http_requests": 60,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+      }
+    }
+  },
+  "source_snapshot_manifest_sha256": "ba2f409624994804418b10fc523fdd06d9ea2b8ce8d713b3a52fccaf12a5a186",
+  "fixture_identity": "inventory/candidates/nativefixturefix1/candidate.json",
+  "native_matrix": "inventory/native-lifecycle-matrix-001.json",
+  "export_review": "reports/native-lifecycle-export-review.json",
+  "document_review": "reports/native-lifecycle-document-review.json",
+  "remaining": "Expanded permissions/source replacement, ownership conflicts, interrupted uninstall/restart, remaining E06 and native matrices, broader TP02/TP03/TP05+ work. Goal active."
+}

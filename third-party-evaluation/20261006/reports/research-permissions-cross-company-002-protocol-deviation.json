@@ -1,0 +1,9 @@
+{
+  "batch": "research-permissions-cross-company-002",
+  "recorded_unix": 1791275236.3476534,
+  "pre_run_protocol_frozen": false,
+  "formal_acceptance_eligible": false,
+  "cause": "Preparation assertion failed before protocol write. The shell continued to the next command, which started the live launcher. Existing launcher lacked mandatory protocol validation.",
+  "live_handle": 86414,
+  "handling": "Allow owned run to finish and clean up; preserve actual outcomes as diagnostic only. Add launcher protocol/hash gate before next pre-registered batch. No retrospective pre-registration."
+}

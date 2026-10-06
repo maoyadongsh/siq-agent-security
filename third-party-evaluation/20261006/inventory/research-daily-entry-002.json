@@ -1,0 +1,64 @@
+{
+  "schema_version": "siq.research-daily-entry-inventory.v1",
+  "recorded_unix": 1791280821.7635143,
+  "scope": "read-only process, selected non-secret environment flags and unauthenticated health checks; not a business permission result",
+  "entries": [
+    {
+      "port": 8000,
+      "pid": 2691,
+      "cwd": "/home/maoyd/report-finder-service",
+      "ownership": "different_service"
+    },
+    {
+      "port": 18181,
+      "pid": 11359,
+      "cwd": "/home/maoyd/gpcapital/apps/api",
+      "ownership": "different_project_directory"
+    },
+    {
+      "port": 18081,
+      "pid": 453532,
+      "cwd": "/home/maoyd/siq-research-engine/apps/api",
+      "ownership": "target_research_default_port",
+      "selected_environment": {
+        "SIQ_OPENSHELL_REQUEST_BACKEND": "legacy",
+        "SIQ_OPENSHELL_REQUEST_DEPLOYMENT": "host",
+        "SIQ_OPENSHELL_POOL_RECOVERY_ENABLED": "1",
+        "SIQ_OPENSHELL_POOL_RECOVERY_REQUIRED": "1"
+      },
+      "health": {
+        "status": "ok",
+        "openshell_recovery_enabled": true,
+        "openshell_recovery_ready": true,
+        "qwen_request_recovery_enabled": true,
+        "qwen_request_recovery_ready": true
+      }
+    },
+    {
+      "port": 18088,
+      "pid": 2330015,
+      "cwd": "/home/maoyd/siq-research-engine/apps/api",
+      "qwen_recovery_enabled": false,
+      "qwen_recovery_ready": false
+    },
+    {
+      "port": 18089,
+      "pid": 6695,
+      "cwd": "/home/maoyd/siq-research-engine/apps/api",
+      "qwen_recovery_enabled": false,
+      "qwen_recovery_ready": false
+    }
+  ],
+  "source_sha256": {
+    "/home/maoyd/siq-research-engine/start_all.sh": "deda67c53d0aca99c76d6245067dd3f913390408c3a5e73e5dd79de1f4ee53c9",
+    "/home/maoyd/siq-research-engine/infra/env/local.example": "8884f840497b9e3d547533ff1a7bd62056e9c633580009ab13779de1ae21e39d",
+    "/home/maoyd/siq-research-engine/apps/api/services/qwen38_request_selector.py": "7a0b88d34e10aeb78d090c40240767e96527c9e78c57a416e6a46b6c56cf0eee",
+    "/home/maoyd/siq-research-engine/apps/api/services/qwen38_request_deployment.py": "726785b6d14fd15a9512f1b680a4694bfac464f03f51ca44bd624f31491372e8"
+  },
+  "findings": [
+    "Target project default port resolves to 18081; previous generic 8000/18181 listener evidence does not identify its business entry.",
+    "Live 18081 process selects legacy request backend. Dedicated measurement uses qwen38 with isolated_candidate deployment. Qwen recovery health ready does not prove qwen38 request selection.",
+    "Default-entry actual task/identity/Skill enforcement remains unmeasured; do not propagate dedicated-deployment conclusions."
+  ],
+  "next_action": "Inspect legacy versus qwen38 routing and current default runtime/identity bindings; test controlled default-entry business resources through normal authentication without modifying unrelated services."
+}

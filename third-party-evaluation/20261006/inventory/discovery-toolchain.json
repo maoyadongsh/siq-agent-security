@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-10-05T20:58:52.130784+00:00",
+  "platform": "Linux aarch64",
+  "strace_version": "6.8",
+  "strace_sha256": "33b3ea325915f1213dc477d80e0f0b2b09ffeff5e81d98b25a35320fbcbcaf42",
+  "traced_syscalls": "%file,getdents64",
+  "follow_children": true,
+  "kill_on_tracer_exit": true,
+  "candidate_digest": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "secrets_in_trace": "not captured: no read/write buffers or authentication argv",
+  "boundaries": "owned fixture HOME only; no OS confinement claim"
+}

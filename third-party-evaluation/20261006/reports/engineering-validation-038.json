@@ -1,0 +1,188 @@
+{
+  "checked_at": "2026-10-06T00:28:26.042568+00:00",
+  "previous_goal_turn": "progress: engineering037 forty explicitly preregistered native contract journeys",
+  "scope": "native reserve transport loss and fresh second retry; no native concurrent dispatch claim",
+  "framework_tests": {
+    "passed": 298,
+    "exit_code": 0,
+    "log": "reports/native-delivery-framework-tests-001.txt"
+  },
+  "new_test_methods": 10,
+  "prior_native_tests": {
+    "passed": 69,
+    "log": "reports/native-delivery-prior-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "log": "reports/native-delivery-ruff-003.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/native-delivery-diff-check-001.txt"
+  },
+  "primary_runs": [
+    "native-delivery-request-control-002",
+    "native-delivery-request-lost-002",
+    "native-delivery-response-control-002",
+    "native-delivery-response-lost-002"
+  ],
+  "retained_original_controls": [
+    "native-delivery-request-control-001",
+    "native-delivery-response-control-001"
+  ],
+  "cohorts": {
+    "native-delivery-request-control-002": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 30,
+      "independent_predicates_observed": 30,
+      "independent_predicates_registered": 30,
+      "http_requests": 65,
+      "native_processes": 3,
+      "model_requests": 15,
+      "signed_receipts_verified": 9,
+      "scope": "real Hermes reserve transport loss and fresh unapproved retry; no concurrent dispatcher or crash recovery claim"
+    },
+    "native-delivery-request-lost-002": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 30,
+      "independent_predicates_observed": 30,
+      "independent_predicates_registered": 30,
+      "http_requests": 65,
+      "native_processes": 3,
+      "model_requests": 15,
+      "signed_receipts_verified": 8,
+      "scope": "real Hermes reserve transport loss and fresh unapproved retry; no concurrent dispatcher or crash recovery claim"
+    },
+    "native-delivery-response-control-002": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 30,
+      "independent_predicates_observed": 30,
+      "independent_predicates_registered": 30,
+      "http_requests": 65,
+      "native_processes": 3,
+      "model_requests": 15,
+      "signed_receipts_verified": 9,
+      "scope": "real Hermes reserve transport loss and fresh unapproved retry; no concurrent dispatcher or crash recovery claim"
+    },
+    "native-delivery-response-lost-002": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 30,
+      "independent_predicates_observed": 30,
+      "independent_predicates_registered": 30,
+      "http_requests": 65,
+      "native_processes": 3,
+      "model_requests": 15,
+      "signed_receipts_verified": 10,
+      "scope": "real Hermes reserve transport loss and fresh unapproved retry; no concurrent dispatcher or crash recovery claim"
+    },
+    "native-delivery-request-control-001": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 30,
+      "independent_predicates_observed": 30,
+      "independent_predicates_registered": 30,
+      "http_requests": 65,
+      "native_processes": 3,
+      "model_requests": 15,
+      "signed_receipts_verified": 9,
+      "scope": "real Hermes reserve transport loss and fresh unapproved retry; no concurrent dispatcher or crash recovery claim"
+    },
+    "native-delivery-response-control-001": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 1,
+      "attempts": 1,
+      "first_attempt_pass": 1,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 0,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "independent_predicates_passed": 30,
+      "independent_predicates_observed": 30,
+      "independent_predicates_registered": 30,
+      "http_requests": 65,
+      "native_processes": 3,
+      "model_requests": 15,
+      "signed_receipts_verified": 9,
+      "scope": "real Hermes reserve transport loss and fresh unapproved retry; no concurrent dispatcher or crash recovery claim"
+    }
+  },
+  "manifest_anchors": {
+    "native-delivery-request-control-002": "353c617fd91da5717bf88d2b7fa3dbf2d7604c1af9ad3209db4e0cc81ea6afd7",
+    "native-delivery-request-lost-002": "7e76bf627fa07e4ad5471fef1654d51e93497dba6ebf1936405513eefdd38d2f",
+    "native-delivery-response-control-002": "dff8ad09a4a67020f363900afa2ecb4ef23ce3c9f1e15e0d68315a480e431928",
+    "native-delivery-response-lost-002": "33bae6c84745f4e7316c05553062579becfeb816d7277a2c8bee0bf316a821d8",
+    "native-delivery-request-control-001": "e660b3ed9ec6c9dcb62be5edaead4877acc56244605e8d7eea047198cc6d8ba6",
+    "native-delivery-response-control-001": "16e3c82292025faff98c7db75f0bacba70412ce259c6f1bbf6dbfa05c7f721ff"
+  },
+  "totals": {
+    "signed_receipts_verified": 36,
+    "model_requests": 60,
+    "native_processes": 12,
+    "independent_predicates_passed": 120,
+    "known_harm_first_attempt": 0
+  },
+  "primary_actual_writes": 2,
+  "primary_post_retry_additional_mutations": 0,
+  "paid_model_calls": 0,
+  "product_changed": false,
+  "candidate_changed": false,
+  "findings": [
+    "F045"
+  ],
+  "incomplete_originals_ref": "reports/native-delivery-incomplete-review.json",
+  "snapshot": "engineering-evidence/native-delivery-tools-001/manifest.json",
+  "snapshot_sha256": "4a22431617143289d18961af6c03fe78287ee5558c960110b5b622d79c995487",
+  "export_review": "reports/native-delivery-export-review.json",
+  "remaining": [
+    "native 2/8/32 concurrency with real dispatch scheduling",
+    "native crash recovery",
+    "multi-binding isolation and restart persistence",
+    "remaining mechanism/host/business and independent execution"
+  ]
+}

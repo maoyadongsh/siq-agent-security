@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "directory.tree_digest": true,
+    "directory.source_kind": true,
+    "directory.locator": true,
+    "zip.tree_digest": true,
+    "zip.source_kind": true,
+    "zip.locator": true,
+    "retry.tree_digest": true,
+    "retry.source_kind": true,
+    "retry.locator": true,
+    "source_changed_read.tree_digest": true,
+    "source_changed_new.tree_digest": true,
+    "source_changed_new.source_kind": true,
+    "source_changed_new.locator": true,
+    "payload_restore.tree_digest": true,
+    "analysis_restore.tree_digest": true,
+    "record_restore.tree_digest": true
+  },
+  "all_passed": true,
+  "scope": "post-run direct local source-kind, locator and canonical file-tree digest review"
+}

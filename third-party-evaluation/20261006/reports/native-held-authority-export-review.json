@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-05T23:59:46.556865+00:00",
+  "runs": [
+    "native-held-sec-before-status-control-001",
+    "native-held-sec-before-status-001",
+    "native-held-sec-before-reserve-control-001",
+    "native-held-sec-before-reserve-001",
+    "native-held-sec-after-reserve-control-001",
+    "native-held-sec-after-reserve-001",
+    "native-held-sec-after-write-control-001",
+    "native-held-sec-after-write-001",
+    "native-held-identity-before-status-control-001",
+    "native-held-identity-before-status-001",
+    "native-held-identity-before-reserve-control-001",
+    "native-held-identity-before-reserve-001",
+    "native-held-identity-after-reserve-control-001",
+    "native-held-identity-after-reserve-001",
+    "native-held-identity-after-write-control-001",
+    "native-held-identity-after-write-001"
+  ],
+  "files_checked": 343,
+  "known_credential_matches": 0,
+  "daemon_liveness": {
+    "native-held-sec-before-status-control-001": "absent",
+    "native-held-sec-before-status-001": "absent",
+    "native-held-sec-before-reserve-control-001": "absent",
+    "native-held-sec-before-reserve-001": "absent",
+    "native-held-sec-after-reserve-control-001": "absent",
+    "native-held-sec-after-reserve-001": "absent",
+    "native-held-sec-after-write-control-001": "absent",
+    "native-held-sec-after-write-001": "absent",
+    "native-held-identity-before-status-control-001": "absent",
+    "native-held-identity-before-status-001": "absent",
+    "native-held-identity-before-reserve-control-001": "absent",
+    "native-held-identity-before-reserve-001": "absent",
+    "native-held-identity-after-reserve-control-001": "absent",
+    "native-held-identity-after-reserve-001": "absent",
+    "native-held-identity-after-write-control-001": "absent",
+    "native-held-identity-after-write-001": "absent"
+  },
+  "scope": "sealed top-level captures and verifier source only; no private state export; signed record verification plus author-local digest custody",
+  "signals_sent": 0
+}

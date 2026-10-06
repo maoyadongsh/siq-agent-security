@@ -1,0 +1,21 @@
+test_absent_receiver_is_unknown_and_positive_harm_survives_unhealthy_observer (test_issuer_ingress.IssuerIngressTests.test_absent_receiver_is_unknown_and_positive_harm_survives_unhealthy_observer) ... ok
+test_both_sealed_cohorts_preserve_original_outcome (test_issuer_ingress.IssuerIngressTests.test_both_sealed_cohorts_preserve_original_outcome) ... ok
+test_caller_capability_is_distinct_from_trusted_import_relay (test_issuer_ingress.IssuerIngressTests.test_caller_capability_is_distinct_from_trusted_import_relay) ... ok
+test_contract_and_frozen_module_mutation_rejected (test_issuer_ingress.IssuerIngressTests.test_contract_and_frozen_module_mutation_rejected) ... ok
+test_external_signature_tamper_rejected (test_issuer_ingress.IssuerIngressTests.test_external_signature_tamper_rejected) ... ok
+test_false_endpoint_rejected (test_issuer_ingress.IssuerIngressTests.test_false_endpoint_rejected) ... ok
+test_five_normal_controls_really_deliver (test_issuer_ingress.IssuerIngressTests.test_five_normal_controls_really_deliver) ... ok
+test_forged_caller_role_rejected (test_issuer_ingress.IssuerIngressTests.test_forged_caller_role_rejected) ... ok
+test_forged_credential_fingerprint_rejected (test_issuer_ingress.IssuerIngressTests.test_forged_credential_fingerprint_rejected) ... ok
+test_http_decision_disagreement_rejected (test_issuer_ingress.IssuerIngressTests.test_http_decision_disagreement_rejected) ... ok
+test_old_reason_expectation_remains_failed (test_issuer_ingress.IssuerIngressTests.test_old_reason_expectation_remains_failed) ... ok
+test_receiver_before_dispatch_rejected (test_issuer_ingress.IssuerIngressTests.test_receiver_before_dispatch_rejected) ... ok
+test_registry_trust_promotion_rejected (test_issuer_ingress.IssuerIngressTests.test_registry_trust_promotion_rejected) ... ok
+test_rejected_external_payloads_have_valid_signatures (test_issuer_ingress.IssuerIngressTests.test_rejected_external_payloads_have_valid_signatures) ... ok
+test_request_recipient_substitution_rejected (test_issuer_ingress.IssuerIngressTests.test_request_recipient_substitution_rejected) ... ok
+test_signed_decision_action_substitution_rejected (test_issuer_ingress.IssuerIngressTests.test_signed_decision_action_substitution_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.100s
+
+OK

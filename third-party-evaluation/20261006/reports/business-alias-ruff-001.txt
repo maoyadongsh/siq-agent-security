@@ -1,0 +1,13 @@
+PLW1510 `subprocess.run` without explicit `check` argument
+   --> benchmarks/third-party/tests/test_business_alias.py:131:22
+    |
+129 | …     (root / 'manifest.json').write_text(json.dumps(manifest))
+130 | …     anchor = hashlib.sha256((root / 'manifest.json').read_bytes()).hexdigest()
+131 | …     result = subprocess.run([sys.executable, str(verifier), str(root), '--expected-manifest-sha256', anchor], capture_output=True, …
+    |                ^^^^^^^^^^^^^^
+132 | …     self.assertNotEqual(result.returncode, 0)
+133 | …     self.assertEqual(result.stdout, '')
+    |
+help: Add explicit `check=False`
+
+Found 1 error.

@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-05T20:46:30.944933+00:00",
+  "scope": "P06 actual Chromium embedded UI, controlled cross-origin probes, storage and logout; product unchanged",
+  "framework_tests": {
+    "command": "python -m unittest discover -s benchmarks/third-party/tests -v",
+    "passed": 73,
+    "exit_code": 0,
+    "log": "reports/browser-management-framework-tests-001.txt"
+  },
+  "ruff": {
+    "command": "ruff check benchmarks/third-party",
+    "exit_code": 0
+  },
+  "javascript_parse": {
+    "command": "node --check benchmarks/third-party/browser_management_probe.js",
+    "exit_code": 0
+  },
+  "diff_check": {
+    "command": "git diff --check -- benchmarks/third-party third-party-evaluation/20261006",
+    "exit_code": 0
+  },
+  "cohorts": {
+    "management-browser-001": {
+      "exit_code": 1,
+      "manifest_sha256": "29bb03a4f541c73331a84fa0cd88a04627934e65589816e244f37bef3462fdad",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 1,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 1,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1,
+        "browser_predicates_passed": 28,
+        "browser_predicates_observed": 29,
+        "browser_predicates_registered": 29,
+        "response_body_timeouts": 0,
+        "opaque_or_unavailable_bodies": 3,
+        "scope": "actual Chromium UI and controlled cross-origin pages; same-UID and browser sandbox isolation not claimed"
+      }
+    },
+    "management-browser-002": {
+      "exit_code": 0,
+      "manifest_sha256": "11cd7b0e95f8a4f1ae5e18bfbfd3c32a2c89c0775da0a1a6ce39bac625d8bb0a",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "browser_predicates_passed": 29,
+        "browser_predicates_observed": 29,
+        "browser_predicates_registered": 29,
+        "response_body_timeouts": 1,
+        "opaque_or_unavailable_bodies": 3,
+        "scope": "actual Chromium UI and controlled cross-origin pages; same-UID and browser sandbox isolation not claimed"
+      }
+    }
+  },
+  "source_snapshot_manifest_sha256": "58dd6136fb2511fa86dceba346a553038f3bd64ab85d4bd65de8cafc8b2f305a",
+  "toolchain": "inventory/management-browser-toolchain.json",
+  "export_review": "reports/browser-management-export-review.json",
+  "remaining": "P01/P04/P05/E06, native OS/browser matrices, remaining TP02/TP03/TP05+ work. Body capture exceptions are explicit and do not support complete response-body leak claims."
+}

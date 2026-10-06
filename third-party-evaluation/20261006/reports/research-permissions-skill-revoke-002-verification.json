@@ -1,0 +1,28 @@
+{
+  "batch": "research-permissions-skill-revoke-002",
+  "passed": false,
+  "reason": "End-to-end reply blocked by financial_evidence_missing; original result remains FAIL. Separate diagnostic projected observed write_target_path and current hash in memory, without rewriting raw proof.",
+  "verified_partial_checks": {
+    "five_receipts_hash_chain_and_signatures": true,
+    "context_grant_revocation_signatures": true,
+    "revoked_exact_context": true,
+    "authorized_write_then_SIQ_revoked_deny": true,
+    "same_agent_session_task": true,
+    "signed_exact_same_file_resource": true,
+    "signed_exact_path_excerpt": true,
+    "signed_allowed_skill_attribution": true,
+    "signed_permission_and_install_binding": true,
+    "chronological_revocation_between_writes": true,
+    "positive_checkpoint_matches_signed_call": true,
+    "signed_write_observation": true,
+    "original_file_bytes_preserved": true,
+    "authorized_content_only": true,
+    "actual_unauthorized_overwrite_attempt": true,
+    "positive_read_before_writes": true
+  },
+  "signed_receipt_count": 5,
+  "original_failure": "candidate_business_result_unconfirmed",
+  "output_path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi58c24b40d4ccef39/analysis/runs/qwen-request-6084fde0bb86e549/permission-result.md",
+  "current_output_sha256": "f624984f7b54be69be415475ba26d796118f8aba1eea8289cc39a00d9da746f0",
+  "source_freeze_ref": "reports/research-permissions-skill-revoke-002-source-check.json"
+}

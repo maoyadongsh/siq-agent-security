@@ -1,0 +1,101 @@
+{
+  "checked_at": "2026-10-06T01:55:00.487815+00:00",
+  "candidate_before": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2",
+  "candidate_after": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-routingscopefix1",
+  "runtime_python_files": 17,
+  "changed_runtime_files": [
+    "apps/secure-agent/secure_agent/routing.py"
+  ],
+  "files": [
+    {
+      "path": "apps/secure-agent/secure_agent/__init__.py",
+      "before_sha256": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768",
+      "after_sha256": "128f0ae6e0ce861dd91223d04e16d5c780f7ca54ccdeb13b249a749ab8e8b768"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/__main__.py",
+      "before_sha256": "bd43f81160891cc2ea6405c3874e6c0068d8ce10a6abda13b6d271430f9dc7f3",
+      "after_sha256": "bd43f81160891cc2ea6405c3874e6c0068d8ce10a6abda13b6d271430f9dc7f3"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/application.py",
+      "before_sha256": "af6399fadef50f9ec563851cabd579c986bbcb6cb3069cc85284a7f253a06c97",
+      "after_sha256": "af6399fadef50f9ec563851cabd579c986bbcb6cb3069cc85284a7f253a06c97"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/authority.py",
+      "before_sha256": "77eb47f233e25299970d1d2181c1b6f65b6e635751c7c534b36c1316a5596c6f",
+      "after_sha256": "77eb47f233e25299970d1d2181c1b6f65b6e635751c7c534b36c1316a5596c6f"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/confidential.py",
+      "before_sha256": "f1c38a911238fb214c2b22274ff7b9e5283c75e4cfe31b954e1c87f9e6987925",
+      "after_sha256": "f1c38a911238fb214c2b22274ff7b9e5283c75e4cfe31b954e1c87f9e6987925"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/contracts.py",
+      "before_sha256": "6266090bb1bc3b5e04db6010b515541c4237bc55c283989e06f76cec04e83b75",
+      "after_sha256": "6266090bb1bc3b5e04db6010b515541c4237bc55c283989e06f76cec04e83b75"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/fixtures.py",
+      "before_sha256": "35739042ca01aa35571edb7ab2d6b99908a0e915a45eedaef15f6d89cfaa9c69",
+      "after_sha256": "35739042ca01aa35571edb7ab2d6b99908a0e915a45eedaef15f6d89cfaa9c69"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/gateway.py",
+      "before_sha256": "51579756583a92ac5db71520dd15b9af4e1228dd980f68aa43e13dcdac9def1e",
+      "after_sha256": "51579756583a92ac5db71520dd15b9af4e1228dd980f68aa43e13dcdac9def1e"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/hardware.py",
+      "before_sha256": "a97f804e18f4fc0e1a352cbc8089482ff6edde7ae03535a54229eadaf68940d1",
+      "after_sha256": "a97f804e18f4fc0e1a352cbc8089482ff6edde7ae03535a54229eadaf68940d1"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/model_policy.py",
+      "before_sha256": "86da77bcc51fc2fee0e344480e1886cb1985daf78f8c1ec99043b4e5250cabab",
+      "after_sha256": "86da77bcc51fc2fee0e344480e1886cb1985daf78f8c1ec99043b4e5250cabab"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/models.py",
+      "before_sha256": "fa25ad369884c89bd3a416c6ab98d3c2c118d0fe7bd24ed387ab9828e502a43c",
+      "after_sha256": "fa25ad369884c89bd3a416c6ab98d3c2c118d0fe7bd24ed387ab9828e502a43c"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/routing.py",
+      "before_sha256": "89626091ec7d40b991337be80e46ea9dbc2e0f7f1cb9498c2fc6a2d7a171db76",
+      "after_sha256": "f374be3cbe1fbc756faabb28135d18a42d03ed405f3b2d9a0fdab61f33b674fd"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/runtime.py",
+      "before_sha256": "33debe5bfe9a9782731606c7eb3f8f9e737e3adf42fad032f5ad80a2fd35e416",
+      "after_sha256": "33debe5bfe9a9782731606c7eb3f8f9e737e3adf42fad032f5ad80a2fd35e416"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/security.py",
+      "before_sha256": "9e37348f44b0853cc0d215512ae9c79cbf268b85f23dbe4ad36f3a28b9d92e69",
+      "after_sha256": "9e37348f44b0853cc0d215512ae9c79cbf268b85f23dbe4ad36f3a28b9d92e69"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/service.py",
+      "before_sha256": "b9162ea3972c7008cbd7b4db5229bcb8f6be35dad53b57128fa5b09726cd3347",
+      "after_sha256": "b9162ea3972c7008cbd7b4db5229bcb8f6be35dad53b57128fa5b09726cd3347"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/skills.py",
+      "before_sha256": "ebb49e2e0302e107b4a022752c83387a6c00d4339f4a8a7266b84f1aba2d47f6",
+      "after_sha256": "ebb49e2e0302e107b4a022752c83387a6c00d4339f4a8a7266b84f1aba2d47f6"
+    },
+    {
+      "path": "apps/secure-agent/secure_agent/tools.py",
+      "before_sha256": "7a3ffb23d573e815f6b5b717f931cdf55d1c6a7c3b00ab1b2771933eb9741b39",
+      "after_sha256": "7a3ffb23d573e815f6b5b717f931cdf55d1c6a7c3b00ab1b2771933eb9741b39"
+    }
+  ],
+  "additional_files": [
+    "apps/secure-agent/tests/test_source_upgrade.py",
+    "docs/evaluation/routing-source-upgrade.md"
+  ],
+  "scope": "secure-agent runtime Python source comparison, not all repository tree or model weights"
+}

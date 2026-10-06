@@ -1,0 +1,54 @@
+{
+  "recorded_at": "2026-10-06T01:29:33.985293+00:00",
+  "candidate_root": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2",
+  "source_manifest_ref": "engineering-evidence/routing-entry-source-review-001/manifest.json",
+  "source_manifest_sha256": "619496b01797bdc78349ebce97f08161101e773fa8078581a3122ba762e9575a",
+  "execution_performed": false,
+  "model_calls": 0,
+  "facts": [
+    {
+      "entry": "SecureApplication.__init__ -> application_router",
+      "source": "apps/secure-agent/secure_agent/application.py",
+      "line": 69,
+      "observation": "plain provider goes through original wrapper; already constructed Router returns unchanged"
+    },
+    {
+      "entry": "ModelPolicy defaults",
+      "source": "apps/secure-agent/secure_agent/model_policy.py",
+      "observation": "public_research_local=False, internal_remote=False, secret_local=False"
+    },
+    {
+      "entry": "application_router defaults",
+      "source": "apps/secure-agent/secure_agent/routing.py",
+      "observation": "SIQ_PUBLIC_RESEARCH_LOCAL defaults true; SIQ_INTERNAL_REMOTE and SIQ_SECRET_LOCAL default false; values must be true/false"
+    },
+    {
+      "entry": "ModelRouter._select",
+      "source": "apps/secure-agent/secure_agent/routing.py",
+      "observation": "public_research_local overrides INTERNAL remote allowance; SECRET disallowed unless secret_local; no automatic exception fallback"
+    },
+    {
+      "entry": "ModelRouter.plan",
+      "source": "apps/secure-agent/secure_agent/routing.py",
+      "observation": "remote planning for nonPUBLIC replaces metadata with exact operator aliases; can still make a redacted planning call"
+    },
+    {
+      "entry": "research versus recipient",
+      "source": "apps/secure-agent/secure_agent/routing.py",
+      "observation": "research uses highest task/source sensitivity; recipient uses task sensitivity, so do not infer context classification from research"
+    },
+    {
+      "entry": "OrnithProvider and _chat",
+      "source": "apps/secure-agent/secure_agent/models.py",
+      "observation": "literal loopback required; nonPUBLIC local calls demand real DGX/GB10 check, not provider naming"
+    }
+  ],
+  "required_before_execution": [
+    "freeze actual request-level entry and exact failure reasons",
+    "positive/negative request capture calibration",
+    "independent verifier",
+    "actual request/output/wallclock hard limits",
+    "controlled cohort before real-model cohort"
+  ],
+  "ready_to_run": false
+}

@@ -1,0 +1,43 @@
+{
+  "batch": "research-permissions-skill-replacement-003",
+  "full_batch_passed": false,
+  "native_effect_checks": {
+    "two_native_decisions_and_observations": true,
+    "exact_output_bytes": true,
+    "all_current_skill_attribution": true,
+    "read_file_exact_target_allowed": true,
+    "read_file_linked_observation": true,
+    "write_file_exact_target_allowed": true,
+    "write_file_linked_observation": true,
+    "write_exact_parameters": true
+  },
+  "native_effect_checks_passed": true,
+  "signed_records": 4,
+  "signed_authority_documents_verified": 8,
+  "management_rejections": {
+    "stale_decision": {
+      "status": 401,
+      "reason": "scoped_decision_credential_required"
+    },
+    "old_credential_enroll": {
+      "status": 401,
+      "reason": "runtime_identity_required"
+    },
+    "new_identity_old_session": {
+      "status": 409,
+      "reason": "runtime_identity_authority_conflict"
+    },
+    "old_install_context": {
+      "status": 409,
+      "reason": "skill_context_grant_changed"
+    },
+    "new_install_old_session_context": {
+      "status": 409,
+      "reason": "skill_context_session_unbound"
+    }
+  },
+  "failure": "business final reply and completion failed; original output retained",
+  "frozen_image_id_match": false,
+  "not_a_full_acceptance": true,
+  "review_revision_reason": "Supplemental review input corrected: company is output.parents[3], not analysis directory output.parents[2]. Original partial review retained. Full frozen verifier already derives company from validated relative path."
+}

@@ -1,0 +1,176 @@
+{
+  "checked_at": "2026-10-05T20:57:15.703637+00:00",
+  "checked_files": 84,
+  "credential_or_private_key_hits": [],
+  "owned_resources": [
+    {
+      "run": "discovery-http-001",
+      "case": "invalid",
+      "resource": "resource-1.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-001",
+      "case": "invalid",
+      "resource": "resource-1.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-001",
+      "case": "scope",
+      "resource": "resource-2.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-001",
+      "case": "scope",
+      "resource": "resource-2.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-001",
+      "case": "scope",
+      "resource": "resource-1.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-001",
+      "case": "scope",
+      "resource": "resource-1.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-001",
+      "case": "scope",
+      "resource": "resource-3.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-001",
+      "case": "scope",
+      "resource": "resource-3.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "invalid",
+      "resource": "resource-1.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "invalid",
+      "resource": "resource-1.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "scope",
+      "resource": "resource-2.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "scope",
+      "resource": "resource-2.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "scope",
+      "resource": "resource-1.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "scope",
+      "resource": "resource-1.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "scope",
+      "resource": "resource-3.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-002",
+      "case": "scope",
+      "resource": "resource-3.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "invalid",
+      "resource": "resource-1.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "invalid",
+      "resource": "resource-1.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "scope",
+      "resource": "resource-2.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "scope",
+      "resource": "resource-2.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "scope",
+      "resource": "resource-1.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "scope",
+      "resource": "resource-1.json",
+      "kind": "daemon",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "scope",
+      "resource": "resource-3.json",
+      "kind": "tracer",
+      "state": "absent"
+    },
+    {
+      "run": "discovery-http-003",
+      "case": "scope",
+      "resource": "resource-3.json",
+      "kind": "daemon",
+      "state": "absent"
+    }
+  ],
+  "scope": "sealed allowlist, no authentication headers/pairing codes/state/log export"
+}

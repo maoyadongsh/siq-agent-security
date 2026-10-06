@@ -1,0 +1,63 @@
+{
+  "updated_at": "2026-10-05T21:56:07.782136+00:00",
+  "rows": [
+    {
+      "row_id": "linux-aarch64-hermes-nativefixturefix1",
+      "status": "in_progress",
+      "execution_os": "Linux",
+      "architecture": "aarch64",
+      "host": "Hermes installed local checkout",
+      "host_head": "42f0c8179e30cf6ba4cba0a8f2852e609f717773",
+      "host_cli_sha256": "4e623fce245c1fe6e70ae0edd3248b376ceaf94d560d63f5881cc7a3415ec609",
+      "host_code_file_count": 4883,
+      "product_binary_sha256": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+      "fixture_candidate": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-nativefixturefix1",
+      "backend": "local native plugin and scoped runtime identity; no OS sandbox claim",
+      "cohort": "native-lifecycle-003",
+      "model_driver": "deterministic loopback model fixture, no generative-model comparison",
+      "completed_evidence": [
+        "managed install/activate/public CLI plugin enable",
+        "V1 and V2 native read results with fresh planted marker",
+        "explicit update and old scoped credential HTTP 401",
+        "new V2 grant/identity/context/content attribution",
+        "owned Skill removal and unavailable runtime identity",
+        "post-removal native call fails closed before signed decision; no read marker",
+        "four signed receipts verified",
+        "other profile unchanged; host source snapshot unchanged; owned process group clean",
+        "lifecycle-attacks-001: expanded permissions and candidate approval do not enlarge old native instance; two signed scope denials",
+        "prepared-copy substitution/changed actor/forged plan/unconfirmed update/target drift refused",
+        "unknown-file removal preserves files but revokes authority; explicit retry and stale replay safe",
+        "lifecycle-attacks-002: actual SIGKILL daemon at cleanup_pending; restart retains revoked grant and owned/unknown files",
+        "lifecycle-attacks-003: local origin change cannot replace same imported snapshot; approved imported blob tampering refused before preparation and commit",
+        "lifecycle-attacks-004: same bytes, distinct import/grant; cross-grant unconsumed challenge rejected, original proof still usable, new grant pending and update refused",
+        "native-active-hook-001: enabled benign third-party pre-LLM plugin executes in V1/V2/post Skill removal and code unchanged",
+        "native-service-down-002: same V2 conversation outage denies read/write with no file effect; same-port state restart returns fresh marker and signed allow; promoted pending records separately scoped",
+        "native-adapter-removal-001: real native adapter-wide uninstall; stale preview refuses file changes while identity revoked; four owned files removed after fresh confirmation; unknown file/backup/user config and active third-party hook preserved; explicit unprotected read after uninstall"
+      ],
+      "not_completed": [
+        "remote Git/HTTPS source identity replacement and publisher authentication",
+        "adapter transaction interruption, broader hook/config conflicts and malicious-plugin behavior",
+        "tool pending, in-transaction interruption, disk failure and other crash windows",
+        "independent revoke and same-session dispatch race",
+        "network effects, approval/tool pending and unknown-resume legs",
+        "Windows/macOS/other hosts and OS isolation rows"
+      ],
+      "artifact_refs": [
+        "reports/native-lifecycle-003-verification.json",
+        "data/native-lifecycle-003/protocol.json",
+        "data/native-lifecycle-003/model-requests.jsonl",
+        "data/native-lifecycle-003/receipts.json",
+        "reports/lifecycle-attacks-report.md",
+        "reports/lifecycle-attacks-002-verification.json",
+        "data/lifecycle-attacks-002/crash.json",
+        "reports/lifecycle-attacks-003-verification.json",
+        "reports/source-identity-report.md",
+        "reports/lifecycle-attacks-004-verification.json",
+        "reports/native-resilience-report.md",
+        "reports/native-service-down-002-verification.json",
+        "reports/adapter-removal-report.md",
+        "reports/native-adapter-removal-001-verification.json"
+      ]
+    }
+  ]
+}

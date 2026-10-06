@@ -1,0 +1,55 @@
+{
+  "checked_at": "2026-10-06T06:16:33.472894+00:00",
+  "changed_candidate_sources": [
+    "apps/control-api/app/routers/findings.py",
+    "apps/control-api/app/worker.py"
+  ],
+  "added_candidate_sources": [
+    "apps/control-api/app/tests/test_risk_disposition_transactions.py"
+  ],
+  "candidate_runtime_equal": true,
+  "harness_and_scorer_unchanged": true,
+  "new_transaction_tests": 14,
+  "focused_tests": 89,
+  "full_API": {
+    "passed": 2310,
+    "skipped": 1,
+    "seconds": 103.29,
+    "exit_code": 0,
+    "skip": "optional SIQ_BATCH_WIRE_SAMPLE browser capture absent"
+  },
+  "framework": {
+    "passed": 684,
+    "subtests": 118,
+    "seconds": 43.16,
+    "exit_code": 0
+  },
+  "logs": {
+    "focused": {
+      "path": "private/risk-race-focused-tests.log",
+      "sha256": "1794e6ec281b611456dde65f2a872d8961578497d8491a5982fa0fd55c96e692"
+    },
+    "full_API": {
+      "path": "private/riskracefix1-control-api-tests.log",
+      "sha256": "e7d73ac5e3b4559e0c990963ab297b3a0828be1fbab2b5dbae2f299dc4aa9426"
+    },
+    "framework": {
+      "path": "reports/risk-race-framework-tests.txt",
+      "sha256": "b55752c9b9fdd60f1cd5b7f9e684dcc187d28b6857712ff3b2393ea44c066d76"
+    }
+  },
+  "changed_sources_ruff": true,
+  "git_diff_check": true,
+  "contract": {
+    "ref": "packages/contracts/enterprise-risk-concurrency.v1.md",
+    "sha256": "4abe2ac823ccf1abd05215a0942613af6098c03bc19e0f3d836fb79658aa2328"
+  },
+  "negative_race_regression": {
+    "old_failed_groups": 4,
+    "new_passed_groups": 5,
+    "frozen_HARNESS_same": true
+  },
+  "actual_evidence_negative_rejections": 12,
+  "supplemental_skip_timing_required": true,
+  "full_journey_closed": false
+}

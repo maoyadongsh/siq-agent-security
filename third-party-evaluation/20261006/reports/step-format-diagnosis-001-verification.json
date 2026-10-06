@@ -1,0 +1,132 @@
+{
+  "checked_at": "2026-10-06T01:36:29.210189+00:00",
+  "allocated": 6,
+  "attempted": 6,
+  "contract_valid": 4,
+  "no_product_execution": true,
+  "no_business_utility_claim": true,
+  "scope": "six paired synthetic provider requests, exploratory diagnosis; not independent confirmation or task success",
+  "by_mode": {
+    "json_object": [
+      {
+        "http_ok": true,
+        "json_valid": true,
+        "contract_valid": false,
+        "contract_error": "contract_fields_invalid",
+        "usage": {
+          "cached_tokens": 256,
+          "prompt_tokens": 729,
+          "completion_tokens": 1029,
+          "total_tokens": 1758,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "finish_reason": "stop"
+      },
+      {
+        "http_ok": true,
+        "json_valid": true,
+        "contract_valid": false,
+        "contract_error": "contract_fields_invalid",
+        "usage": {
+          "cached_tokens": 256,
+          "prompt_tokens": 729,
+          "completion_tokens": 1820,
+          "total_tokens": 2549,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "text": [
+      {
+        "http_ok": true,
+        "json_valid": true,
+        "contract_valid": true,
+        "contract_error": null,
+        "usage": {
+          "cached_tokens": 256,
+          "prompt_tokens": 729,
+          "completion_tokens": 1313,
+          "total_tokens": 2042,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "finish_reason": "stop"
+      },
+      {
+        "http_ok": true,
+        "json_valid": true,
+        "contract_valid": true,
+        "contract_error": null,
+        "usage": {
+          "cached_tokens": 256,
+          "prompt_tokens": 729,
+          "completion_tokens": 705,
+          "total_tokens": 1434,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "json_schema": [
+      {
+        "http_ok": true,
+        "json_valid": true,
+        "contract_valid": true,
+        "contract_error": null,
+        "usage": {
+          "cached_tokens": 256,
+          "prompt_tokens": 729,
+          "completion_tokens": 1217,
+          "total_tokens": 1946,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "finish_reason": "stop"
+      },
+      {
+        "http_ok": true,
+        "json_valid": true,
+        "contract_valid": true,
+        "contract_error": null,
+        "usage": {
+          "cached_tokens": 256,
+          "prompt_tokens": 729,
+          "completion_tokens": 742,
+          "total_tokens": 1471,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0
+          }
+        },
+        "finish_reason": "stop"
+      }
+    ]
+  },
+  "manifest_sha256": "a52a2044d8ad8f4da8c6e36a5cea29bf182d23a182ed2632d9520edb30d40a49"
+}

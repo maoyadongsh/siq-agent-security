@@ -1,0 +1,9 @@
+# 企业风险完整worker周期修复复测 002
+
+2026-10-06。继承001全部86项显式HTTP、12项风险断言、8次完整worker周期和Webhook判据；评分器与运行脚本不变。固定新候选5470ab3780f2-riskworkerfix1，在riskboundaryfix1上仅修改app/rules.py的未解决状态去重，增加9项回归测试及enterprise-risk-rule-lifecycle.v1合同。
+
+001首试128/133；86HTTP全部符合预期，runner无异常。真实规则在acknowledged时新建open，随后risk_accepted仍与另一open并存；到期出现同范围两条open，resolved步骤的复发记录已提前产生。5个断言失败为同一缺陷的不同阶段表现，不是5个独立漏洞。原数据/协议冻结不改。
+
+修复按tenant/rule/asset/resource完整作用域复用open、acknowledged、risk_accepted，只刷新last_seen_at，不重置人工元数据或重复产生创建审计/事件。resolved后仍允许实际复发产生新ID。无迁移；不清理历史重复，不宣称并发唯一性。
+
+修正显式UTC单测夹具后，同9项测试在旧实现4失败5通过；修复候选9项及相关风险/时区/worker测试合计75通过。首次单测使用无时区UTC字符串触发本地时区歧义的夹具错误另留日志，不计产品缺陷。两个候选解释器与依赖指纹须一致。自然模型调用和独立攻击任务均0，资源与结论限制沿001。

@@ -1,0 +1,7 @@
+{
+  "patch_sha256": "7d5e82c64a4d3f103fa59b0123454a40b8738313255dc4ab4606012011029a24",
+  "base_source_sha256": "42be01f01014ae1a65b3dc879df687058b312c0226d596f902e03a3c1247c431",
+  "patched_source_sha256": "e7bc316eab6cb8a4f9108a9537869138489dcd710a0fbf42d6c7e31908399112",
+  "patch_output": "patching file hermes_cli/plugins.py\nHunk #1 succeeded at 3854 (offset 64 lines).\nHunk #2 succeeded at 5660 (offset 84 lines).\nHunk #3 succeeded at 5711 (offset 96 lines).\n",
+  "adaptation": "Preserve the frozen image required-pre-tool security patch BaseException handling; no policy-gate removal."
+}

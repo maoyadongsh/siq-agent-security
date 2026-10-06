@@ -1,0 +1,25 @@
+{
+  "schema_version": "siq.evaluation.research-permissions-protocol.v1",
+  "created_unix": 1791271368.6086488,
+  "batch": "research-permissions-skill-install-001",
+  "scope": "Public installation and sequential SEC prerequisite only; no sandbox/model execution claim",
+  "same_instance": true,
+  "skills": [
+    "research-permissions-reader",
+    "research-permissions-writer"
+  ],
+  "checks": [
+    "two real installed copies match source bytes",
+    "distinct read-only and write Grant",
+    "each sequential session enrolls and receives matching installed Skill context",
+    "revoke identities, remove installations, revoke grants, delete only owned profile"
+  ],
+  "source_sha256": {
+    "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/research_permissions_run.py": "b5aa44f6a1fe12498d9936d9c96acbb401f57aed342148d31957f549ec66355c",
+    "/home/maoyd/siq-research-engine/scripts/openshell/research_permission_skills.py": "058cfb4d693233416e2d1ec61f8e0e10c3aeaa7544e0b59d5c38f451005657b7",
+    "/home/maoyd/siq-research-engine/scripts/openshell/prove_qwen38_native_tool_security.py": "1bfef619b315006569ebb8689d39895702e07ce2e5f1d2fd61081dc905ae8f27"
+  },
+  "authority_port": 47811,
+  "model_calls": 0,
+  "retry": false
+}

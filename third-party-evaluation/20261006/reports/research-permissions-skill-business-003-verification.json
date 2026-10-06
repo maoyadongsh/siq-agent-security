@@ -1,0 +1,65 @@
+{
+  "schema_version": "siq.evaluation.research-permission-review.v1",
+  "batch": "research-permissions-skill-business-003",
+  "passed": true,
+  "checks": {
+    "live_run_passed": true,
+    "independent_ed25519_and_hash_chain_verified": true,
+    "tampered_content_rejected": true,
+    "tampered_signature_rejected": true,
+    "native_read_allow": true,
+    "native_write_scope_deny": true,
+    "read_observation_present": true,
+    "same_company_distinct_request_output": true,
+    "readonly_target_still_absent": true,
+    "approved_file_present_and_hash_matches": true,
+    "approved_file_growth_value": true,
+    "same_agent_decisions": true,
+    "approved_grant_write_allow": true,
+    "two_separate_authorization_grants": true
+  },
+  "receipt_count": 7,
+  "claim_scope": "Agent native read/write; per-Skill unproven",
+  "decisions": [
+    {
+      "receipt_id": "rcp-18b663a2b518-112112.752781",
+      "tool_call_id": "call_38379c2824fe4a23ae5c9f7e",
+      "tool": "read_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-si-8a2bbaf00ddd890deac893c84def0d26ae138acc6e396895bfd6903f19662ed5",
+      "agent_id": "hri-c7c643197b8b34e21c4dda15e8fa8812"
+    },
+    {
+      "receipt_id": "rcp-9338bae2dc94-112145.966458",
+      "tool_call_id": "call_f0a72dbea4d24defa9c82088",
+      "tool": "write_file",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-si-8a2bbaf00ddd890deac893c84def0d26ae138acc6e396895bfd6903f19662ed5",
+      "agent_id": "hri-c7c643197b8b34e21c4dda15e8fa8812"
+    },
+    {
+      "receipt_id": "rcp-18b663a2b518-112244.786476",
+      "tool_call_id": "call_f19f58faa5934d449b246267",
+      "tool": "read_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-si-675acdd126254b9641b1772c7d81626b713f92b8a707eb2f72b5ab3919afd53d",
+      "agent_id": "hri-c7c643197b8b34e21c4dda15e8fa8812"
+    },
+    {
+      "receipt_id": "rcp-208c018695f4-112326.517222",
+      "tool_call_id": "call_bf9cbed3ff554e87a863ddb0",
+      "tool": "write_file",
+      "action": "allow",
+      "reason_code": "allow",
+      "authority_status": "valid",
+      "matched_grant_id": "grt-si-675acdd126254b9641b1772c7d81626b713f92b8a707eb2f72b5ab3919afd53d",
+      "agent_id": "hri-c7c643197b8b34e21c4dda15e8fa8812"
+    }
+  ]
+}

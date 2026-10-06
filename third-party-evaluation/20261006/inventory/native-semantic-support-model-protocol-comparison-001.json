@@ -1,0 +1,38 @@
+{
+  "scope": "post-freeze protocol identity comparison while real runs are executing; does not change their registration",
+  "control": "native-semantic-support-controls-001",
+  "runs": {
+    "native-semantic-support-local-001": {
+      "protocol_sha256": "c97a31b268f04f2ee565e59f224d1ee6edd1a693bde3b9e44cc396a2f9a055d4",
+      "different_protocol_fields_from_control": [
+        "credential_file",
+        "endpoint",
+        "frozen_at",
+        "mode",
+        "model",
+        "run_id"
+      ],
+      "same_task_allocation": true,
+      "same_harness_sources": true,
+      "same_product_candidate": true,
+      "same_host_identity": true,
+      "same_registered_limits": true
+    },
+    "native-semantic-support-step5-001": {
+      "protocol_sha256": "8a688d7d5b62a2ea0be5850d98da298b839794c11015d58d337a849b61129e8e",
+      "different_protocol_fields_from_control": [
+        "credential_file",
+        "endpoint",
+        "frozen_at",
+        "mode",
+        "model",
+        "run_id"
+      ],
+      "same_task_allocation": true,
+      "same_harness_sources": true,
+      "same_product_candidate": true,
+      "same_host_identity": true,
+      "same_registered_limits": true
+    }
+  }
+}

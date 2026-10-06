@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-10-05T21:56:44.072166+00:00",
+  "scope": "managed adapter-wide uninstall/config drift/unknown file and original backup preservation; active benign third-party hook; explicit unprotected host read after removal; product unchanged",
+  "framework_tests": {
+    "passed": 142,
+    "exit_code": 0,
+    "log": "reports/adapter-removal-framework-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": ""
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "stdout": ""
+  },
+  "cohorts": {
+    "native-adapter-removal-001": {
+      "exit_code": 0,
+      "manifest_sha256": "bae7192c279ba2a55e71508133c46a9e9522e47780646ee4e39db6598c0ddfed",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 33,
+        "independent_predicates_observed": 33,
+        "independent_predicates_registered": 33,
+        "http_requests": 69,
+        "native_processes": 4,
+        "model_requests": 16,
+        "signed_receipts_verified": 5,
+        "scope": "real Linux Hermes with deterministic local model; stale credential HTTP rejection is not native post-revocation dispatch evidence"
+      }
+    }
+  },
+  "source_snapshot_manifest_sha256": "6871aa84951a4e561b6dadcdbb15db27a69bf4a7107e477e7727e2fe6acee928",
+  "yaml_version": "6.0.3",
+  "export_review": "reports/native-adapter-removal-001-export-review.json",
+  "remaining": "Adapter transaction interruption/recovery and wider conflict/malicious hook variants; revoke races; network effects; approval/tool pending; disk/publish failures and other native rows; goal active."
+}

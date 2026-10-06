@@ -1,0 +1,35 @@
+{
+  "scope": "supplemental findings; original failures and scores retained",
+  "findings": [
+    {
+      "id": "NB-PATH-CACHE-01",
+      "kind": "evaluation_fixture",
+      "status": "fixed_new_protocol",
+      "original_run": "native-path-controls-001",
+      "new_run": "native-path-controls-002",
+      "affected_initial_units": 5,
+      "change": "fresh public probe file; no product/cache changes"
+    },
+    {
+      "id": "NB-PATH-CWD-01",
+      "kind": "native_host_compatibility",
+      "status": "open_observed",
+      "run": "native-path-controls-002",
+      "unit": "relative_public_other_cwd-B0",
+      "observation": "File not found despite supplied TERMINAL_CWD; actual resource base not established; no SIQ benefit credited"
+    },
+    {
+      "id": "NB-PATH-RELATIVE-01",
+      "kind": "adapter_resource_contract",
+      "status": "open_absolute_configuration_available",
+      "observation": "Legitimate relative read succeeds in normal-cwd B0, SIQ denies unavailable resource; no product relaxation"
+    },
+    {
+      "id": "NB-SKILL-SCOPE-01",
+      "kind": "evaluation_configuration",
+      "status": "exact_read_scope_calibrated",
+      "run": "native-skill-read-controls-001",
+      "observation": "one installed instruction read scope added via ordinary approval; other Skill and private business denied; write/replacement not covered"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "checked_at": "2026-10-05T21:08:24.077906+00:00",
+  "scope": "P01 actual Linux Chromium UI, matching DOM/accessibility/API seeded assets; no product modification",
+  "framework_tests": {
+    "passed": 94,
+    "exit_code": 0,
+    "log": "reports/discovery-browser-framework-tests-002.txt",
+    "previous_passed": 93,
+    "previous_log": "reports/discovery-browser-framework-tests-001.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "command": "ruff check benchmarks/third-party"
+  },
+  "diff_check": {
+    "exit_code": 0
+  },
+  "cohorts": {
+    "discovery-browser-001": {
+      "exit_code": 2,
+      "manifest_sha256": "41a90fabe30b65b26a8ba4eca736467fc5ba9cf3e41c6b253de7afd1bae6cbd3",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 0,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 1,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 1,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "executor_interrupted": true,
+        "browser_predicates_passed": 34,
+        "browser_predicates_observed": 36,
+        "browser_predicates_registered": 36,
+        "stages": [
+          "frameworks",
+          "roles",
+          "skills",
+          "rescanned",
+          "preview",
+          "registered",
+          "reloaded"
+        ],
+        "scope": "actual Linux Chromium discovery UI and seeded config assets; no native host or OS confinement claim"
+      }
+    },
+    "discovery-browser-002": {
+      "exit_code": 0,
+      "manifest_sha256": "b51cfd358663a3cdf45ffbcffa3f92f700c603d3d8487a6b616f16d014948bc7",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "executor_interrupted": false,
+        "browser_predicates_passed": 36,
+        "browser_predicates_observed": 36,
+        "browser_predicates_registered": 36,
+        "stages": [
+          "frameworks",
+          "roles",
+          "skills",
+          "rescanned",
+          "preview",
+          "registered",
+          "reloaded"
+        ],
+        "scope": "actual Linux Chromium discovery UI and seeded config assets; no native host or OS confinement claim"
+      }
+    }
+  },
+  "source_snapshot_manifest_sha256": "8957f1bf73720caf6bd7ee7a2d49df17c7e12ff38175c0c72ca75038cac1e6cd",
+  "toolchain": "inventory/discovery-browser-toolchain.json",
+  "export_review": "reports/discovery-browser-export-review.json",
+  "document_review": "reports/discovery-browser-document-review.json",
+  "remaining": "P04/P05 actual update/revocation/uninstall effects, E06 faults, native matrices, remaining TP02/TP03/TP05+ work; goal active",
+  "source_note": "Final scorer additionally preserves harm from framework API when later UI stages are absent, covered by a negative test; recorded cohort scores unchanged."
+}

@@ -1,0 +1,31 @@
+{
+  "type": "observed_audit_limitation",
+  "status": "confirmed_for_this_block_mode_path",
+  "candidate": "5470ab3780f2-nativefixturefix1",
+  "run_id": "bound-runtime-faults-001",
+  "manifest_sha256": "29a0335fff7235e39d71fda314c48a7557a9842a4c201d8956eb2ba72217d1b0",
+  "receipt_ids": [
+    "rcp-e5746f8d682c-pending",
+    "rcp-27c05f4597a6-pending"
+  ],
+  "count": 2,
+  "missing_fields": [
+    "agent_id",
+    "tool_call_id",
+    "record_type",
+    "intent_id",
+    "task_id",
+    "matched_grant_id"
+  ],
+  "observed": "two signed promoted pending deny records share the revoked check session; no subsequent same-session allow",
+  "limitation": "cannot reconstruct full per-action/agent/Intent authority from these pending records",
+  "reason_limit": "generic no response text does not prove daemon outage or exact HTTP status; adapter decision responses were not separately captured",
+  "prior_related_ref": "reports/native-resilience-report.md",
+  "source_hashes": {
+    "apps/agentshield/internal/receipt/engine.go": "c0e6ed673166a30ee4d200cc8433010de8861039b2d0faaaea18cc7e36c93d3a",
+    "apps/agentshield/internal/server/runtime_identity_auth.go": "c2329161fb52428107973b887cf90637f59764e8067d28fcda7b225efe88ca0e",
+    "adapters/runtime/hermes-agentshield/__init__.py": "025d794d8313b692b445aef5520038965591c1cce74ecd17a34e5caae56b6e4b"
+  },
+  "next_validation": "separate authenticated rejection from transport outage across supported enforcement modes; preserve required Authority and real effect oracle",
+  "product_changed": false
+}

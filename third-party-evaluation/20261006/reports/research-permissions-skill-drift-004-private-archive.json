@@ -1,0 +1,20 @@
+{
+  "batch": "research-permissions-skill-drift-004",
+  "files": [
+    {
+      "source": "/home/maoyd/siq-research-engine/var/openshell/qwen38/business-api-e126-v6143/api.log",
+      "archive": "private/runs/research-permissions-skill-drift-004/research-api-evidence/api.log",
+      "sha256": "91c730f3bb2ab73b3367a77a7b544aec43cf6bc413eee04cca151a7863a917fe",
+      "bytes": 465,
+      "mode": "0o600"
+    },
+    {
+      "source": "/home/maoyd/siq-research-engine/var/openshell/qwen38/business-api-e126-v6143/business-response.json",
+      "archive": "private/runs/research-permissions-skill-drift-004/research-api-evidence/business-response.json",
+      "sha256": "262add7cb322bf31bb619c6444f923265f4ec577b700dc7b394ab9fc76157583",
+      "bytes": 183,
+      "mode": "0o600"
+    }
+  ],
+  "scope": "Owned synthetic business response and diagnostic log only; credential/environment references not copied."
+}

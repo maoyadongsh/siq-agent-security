@@ -1,0 +1,839 @@
+{
+  "checked_at": "2026-10-06T06:38:11.910520+00:00",
+  "scope": "Document links, counts, digest graph, preserved prior ledgers and backups; not product behavior tests.",
+  "passed": true,
+  "check_count": 154,
+  "checks": [
+    {
+      "check": "12 distinct acceptance requirements",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "40 feature IDs covered",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "18 journey IDs covered",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "plan digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "review digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "source_review digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC01 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/source-path-slots-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/source-capability-review-001.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC02 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-business-briefing-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-revocation-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC03 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/business-comparison-controls-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-business-mcp-selection-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC04 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-host-resume-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-batch-approval-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC05 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/business-comparison-controls-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/business-observer-calibration-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC06 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-effects-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-terminal-authorization-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-delegation-controls-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC07 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/business-model-routing-fixed-candidate-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/business-model-routing-boundaries-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC08 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/enterprise-chain-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/enterprise-authority-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC09 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/rule-concurrency-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/risk-worker-cycle-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC10 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/personal-runtime-browser-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/progress-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC11 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-lifecycle-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/adapter-removal-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/native-resilience-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "AC12 not falsely ready",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/project-function-understanding.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reuse link reports/progress-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "new document local links",
+      "passed": true,
+      "detail": [
+        {
+          "document": "third-party-evaluation/20261006/plan/product-grounded-acceptance-v3.md",
+          "target": "../reports/product-capability-reassessment-005.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/plan/product-grounded-acceptance-v3.md",
+          "target": "product-acceptance-register-v3.json",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "../plan/product-grounded-acceptance-v3.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "../inventory/function-review-refresh-005.json",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "historical-business-review-001.json",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "business-comparison-controls-report.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "native-effects-report.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "native-semantic-support-model-report.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "native-delegation-controls-report.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "enterprise-chain-report.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "rule-concurrency-report.md",
+          "exists": true
+        },
+        {
+          "document": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+          "target": "../plan/product-acceptance-register-v3.json",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "check": "20 distinct development specs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "pilot denominator",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "no new experiments claimed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger campaign_id",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger goal_status",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger user_model_authorization",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger functional_review_revision",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_chain_calibration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger observer_recovery",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger grant_revocation_boundary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger intent_revocation_boundary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_baseline_comparison",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_revocation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_business_briefing",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_hold_boundary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_configuration_calibration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_held_authority",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_held_intent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_effect_controls",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_contract_binding",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_delivery",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_semantic_calibration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_crash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_pii_recovery",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_semantic_support_models",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_host_resume",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_batch_approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_terminal_authorization",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger binding_isolation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger feature_led_plan_reconciliation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger issuer_ingress",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger journey_evidence_reuse",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_model_routing",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger routing_source_scope",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_alias_substitution",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_model_routing_fixed_candidate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_routing_sourcefix_live",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_routing_edges",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_delegation_preparation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger business_model_routing_boundaries",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_delegation_entry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_delegation_wait_controls",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_mcp_entry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_business_mcp",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_business_mcp_selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_personal_onboarding",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_personal_runtime_check",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger personal_runtime_browser",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_runtime_faults",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger bound_runtime_faults",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_auth_modes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_runtime_snapshot",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger source_capability_review",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger source_import_management",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger native_zip_onboarding",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger remote_source_import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger source_budget_boundaries",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger source_path_slots",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_native_chain",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_target_authority",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_risk_lifecycle",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_risk_boundaries",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_risk_legal_lifecycle",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_risk_worker_cycle",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_risk_concurrency",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "preserved ledger enterprise_rule_concurrency",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP00 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP01 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP02 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP03 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP04 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP05 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP06 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP07 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP08 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP09 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "TP10 results/state retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/REPRODUCE.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/REPRODUCE.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/reports/project-function-understanding.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/reports/project-function-understanding.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/reports/product-evaluation-overview.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/reports/product-evaluation-overview.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/reports/progress-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/reports/progress-report.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/plan/real-business-evaluation-v2.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/plan/real-business-evaluation-v2.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/plan/product-acceptance-execution-order.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/plan/product-acceptance-execution-order.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/plan/product-acceptance-execution-order.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/plan/real-business-work-items-v2.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/implementation-progress.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/plan/CODEX_HANDOFF.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/plan/CODEX_HANDOFF.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/plan/product-grounded-evaluation-revision-001.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation third-party-evaluation/20261006/plan/product-grounded-evaluation-revision-001.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup third-party-evaluation/20261006/plan/source-import-work-items-001.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup docs/research/third-party-evaluation-plan-20261006.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation docs/research/third-party-evaluation-plan-20261006.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "backup docs/research/third-party-evaluation-20261006/CODEX_HANDOFF.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "current navigation docs/research/third-party-evaluation-20261006/CODEX_HANDOFF.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "execution plan digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "active plan digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "work items plan digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "work items order digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "active register digest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "source items plan digest",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

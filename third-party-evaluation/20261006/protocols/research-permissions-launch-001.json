@@ -1,0 +1,19 @@
+{
+  "schema_version": "siq.research-api-launch-protocol.v1",
+  "batch": "research-permissions-launch-001",
+  "original_api_pid": 453532,
+  "original_api_start_ticks": "152027542",
+  "source_manifest": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/research-permissions-launch-001-source-manifest.json",
+  "source_manifest_sha256": "f93a6b99e5a6e66212f95e2d35fa986eb30ac6cc7e032d53a706561eb4cb52fc",
+  "modes": [
+    "protected",
+    "rollback"
+  ],
+  "staging_port": 18083,
+  "maximum_starts": 2,
+  "max_model_tasks": 0,
+  "automatic_retry": false,
+  "source_files": 1644,
+  "source_archive_sha256": "d617c1d91657f015e86733cb265a23e32f1441d93e8f89f4537a11ac8a3fe13a",
+  "scope": "Only own staging processes; no daily service mutation. Recovery disabled on staging. Normal anonymous request must remain 401."
+}

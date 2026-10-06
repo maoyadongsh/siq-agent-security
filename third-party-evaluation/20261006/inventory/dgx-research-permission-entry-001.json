@@ -1,0 +1,58 @@
+{
+  "schema_version": "siq-research-permission-entry/v1",
+  "recorded_at": "2026-10-06T06:49:29.944968+00:00",
+  "scope": "Read-only source and local environment inventory; not behavioral permission verification.",
+  "user_selected_project": "/home/maoyd/siq-research-engine",
+  "hardware": {
+    "machine": "aarch64",
+    "gpu": "NVIDIA GB10, 580.126.09, [N/A]"
+  },
+  "research_head": "47c0eda39119662a8f230c7a3b3bea97216abab6",
+  "research_dirty_entry_count": 535,
+  "research_status_sha256": "5bb10d1875e331777015be0de36a8425ae27e07da1a0d5c96e5094d4925bb756",
+  "research_source_sha256": {
+    "README.md": "ac200562d8216b340def5962de128549016db74beee16c5cc401dd3fd2ee4569",
+    "AGENTS.md": "61481c7191fd87f390de9ba4544bdd099682cd51da5718d9c5efb871ffe07618",
+    "apps/api/services/hermes_client.py": "7697ae3d3df6d4621965add11be6ad507c715df8de2a959b999aa675f7025cc5",
+    "apps/api/services/openshell_pool_adapter.py": "c0ab8bec2df8f02d5b41f3a0a2297f7e3c26bdf9a9bb07438d4dff1bcbf3bf05",
+    "scripts/openshell/prove_qwen38_business_api.py": "c31042efb471c7e053a8ee8c1197bccd24519cb7f776559251ef809a772853d3",
+    "scripts/openshell/prove_qwen38_native_tool_security.py": "1bfef619b315006569ebb8689d39895702e07ce2e5f1d2fd61081dc905ae8f27",
+    "scripts/openshell/prove_qwen38_scoped_sandbox.py": "9ef73c61f3df4d6c6478c6f0667893fbbed9afc5a1cc7ac15b475ff4ee5e9605",
+    "scripts/openshell/prove_qwen38_revoke_api.py": "c5464a65bbcd4eef454a8b64d0d7fd181ab7e9f41213f8ba45620920c33f8a4d",
+    "scripts/openshell/agentshield_request_identity.py": "8dcfff33fac37a0ca5610b0222b5c7958890c4bcb409837750cb14212cc5e679",
+    "scripts/openshell/agentshield_runtime_binding.py": "3610e385b1f677d776b3805605ca15b2abc7dca5c43093067b04dd8c8aee1c7b",
+    "scripts/openshell/qwen38_candidate_tool_security.py": "a7a5ba24fd2276a45f7bcbdd32f5c798620cbfebadc24302788804630f8ff19e",
+    "infra/openshell/sandbox/qwen38_candidate/agentshield-adapter.lock.json": "7a57fddc3d57a254fe8f1a2fb386dd5394b028ecfd61db8e04d08d9f0d138324",
+    "agents/hermes/profiles/siq_analysis/AGENTS.md": "838a545a00bf17f0a23fbba19ad9c78c11a1ed04349250660388560a96f701ca"
+  },
+  "security_readme_sha256": "cbfcdeb844963e1f38d9ab4b5d5ce6b04cea319e9313e152b12a4abb04edbd72",
+  "loopback_tcp_listening": {
+    "47611": true,
+    "47811": false,
+    "8005": true,
+    "17671": true,
+    "17771": true,
+    "8000": true,
+    "18181": true
+  },
+  "tcp_probe_is_not_business_readiness": true,
+  "findings": [
+    {
+      "id": "ENTRY01",
+      "status": "source_confirmed",
+      "fact": "Default BusinessScenario asks the real model to use no tools; it is connectivity/cleanup evidence, not read/write permission proof."
+    },
+    {
+      "id": "ENTRY02",
+      "status": "source_confirmed",
+      "fact": "SyntheticAuthority admits a Skill but issues an agent_instance Grant; this alone does not prove distinct installed-Skill runtime permissions."
+    },
+    {
+      "id": "ENTRY03",
+      "status": "requires_runtime_identity_freeze",
+      "fact": "README historical versions, current dirty source, candidate locks and running images must not be conflated."
+    }
+  ],
+  "new_business_executions": 0,
+  "new_model_calls": 0
+}

@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-10-06T05:00:44.933020+00:00",
+  "run_id": "remote-source-import-003",
+  "anchor": "82c33f686dd70525782a76fd328f4869ecf263116b75d90ed528d418f18a4cab",
+  "artifact_sha256": {
+    "reports/remote-source-import-report.md": "dcfcd4783c91a2181dcda3ce086000e61bcdcd30e4450bb71af6e004c6a8d7c1",
+    "reports/remote-source-import-003-review.json": "755017d539948e1da5e621aa3b50ae4852e41e8a4b642122c0e1774d167814da",
+    "reports/remote-source-import-engineering-validation.json": "f694e123e6cc9b85db661debd1e5e982eb20f6834da6e97c6682fe6a370f06f6",
+    "reports/remote-source-import-document-review.json": "1121c06f9e70e0ac55116e36a00637e9f3a3edbc1574f7d3e036392b91340c2d",
+    "reports/remote-source-import-review-001-error.json": "f03a35040271a504de19175d56962ad44f73c7384bb1c0a1aeda1d2364efd441",
+    "reports/remote-source-import-001-verification.json": "430d1cc2a91ab6765f3625255f8b25bdff54e11c980e8f010b8cd176d67afbaf",
+    "reports/remote-source-import-001-export-review.json": "45c5fcc9b15275d7ee2b86efb8aa8799b58f99ca6c36b255485db9b50b202b69",
+    "inventory/anchors/remote-source-import-001.json": "a22e2bdcf16ea98925a4ad7b2f0ba41b80feb3662b1c457b59b790dd46250b9c",
+    "reports/remote-source-import-002-verification.json": "9206a67239a5f83dd6abf2ee7dcc404e2f1c33cc8c7557746853a4c4f64734e6",
+    "reports/remote-source-import-002-export-review.json": "eaa7f6f9bd23c550d419f225035a94fcc324710079782eec1e424ed1bc98b840",
+    "inventory/anchors/remote-source-import-002.json": "a8ce9993fac2fc9c2d0b135d983c4e9a4f1f55ec7b74ad2e3f8f3acf950ecab6",
+    "reports/remote-source-import-002-container-environment.json": "ab302e7da859ca506d928e792001be1f5be163f7ddca9af968f2ed7ae6f57fa0",
+    "reports/remote-source-import-002-container-logs.json": "3ee5bd7391f90d67b9392c7a0cbcf6845ea1a101f00c8f54faed61edc782c23c",
+    "reports/remote-source-import-003-verification.json": "7585169182c6fd2b10b85c0d9564b8959c25988a1647bb7abffeb45ba5438e72",
+    "reports/remote-source-import-003-export-review.json": "8c6b8fd4266242ef93c13e717e371d34a772d0e95e5e15a99188f811dc26cbac",
+    "inventory/anchors/remote-source-import-003.json": "e219cd70bcb6592bf1f11a4fff8bd54e832242fafcf09b32af27ef65440a0443",
+    "reports/remote-source-import-003-container-environment.json": "f488538de124ba5ddc529bf99a083c01a9b6d0da35db51652be914ac791cc12d",
+    "reports/remote-source-import-003-container-logs.json": "d9f6da15a3b2beeaa90d6392ee87de732dc4123f98c7b7bded96e51f01f2d5c0"
+  },
+  "checks": 71,
+  "unique_signed_documents": 6,
+  "management_HTTP": 8,
+  "all_attempt_management_HTTP": 24,
+  "failed_runs_preserved": [
+    "remote-source-import-001",
+    "remote-source-import-002"
+  ],
+  "native_host_runs": 0,
+  "real_model_calls": 0,
+  "negative_probe_types": 12,
+  "framework_tests": 621,
+  "framework_subtests": 118,
+  "independent_task_blocks_added": 0,
+  "full_journey_closed": false,
+  "next": "source budget/origin boundary matrix, then enterprise same-candidate chain"
+}

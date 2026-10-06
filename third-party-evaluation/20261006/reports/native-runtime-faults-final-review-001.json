@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "runs": [
+    {
+      "run_id": "native-runtime-faults-001",
+      "anchor": "454a177d4dd7c06bd01b997b559c44a08823c92e1dd48996bf906272fd3eac2e",
+      "exit_code": 2,
+      "first_attempt_unknown": 1
+    },
+    {
+      "run_id": "native-runtime-faults-pidfd-002",
+      "anchor": "bb813dbaa3e8e69dc7bf8564beb1fe857fec73c3c596a13c611b38f0152fdd5a",
+      "exit_code": 0,
+      "first_attempt_unknown": 0
+    }
+  ],
+  "frozen_materials_unchanged": true,
+  "prior_ledger_entries_unchanged": true,
+  "plan_hashes_match": true,
+  "recorded_processes_absent": 7,
+  "report_links_checked": 9,
+  "mutable_harness_sources": {
+    "native_runtime_faults.py": "47b6055db2fe6f2af537de7c267189d8b319432cc96e0efae3854c60a29cf73e",
+    "verify_native_runtime_faults.py": "e9306fbb025a863312f0437d34f917fa15320012b99b8a8ca3ba691c7d4e1614",
+    "test_native_runtime_faults.py": "709bb75e8c0d376e7a55fd0384f33f2c6ab011aa7afa956e63e18de555835af4",
+    "review_native_runtime_faults.py": "7778abf01b760f65020b1208caec6f6e990fd3a7c954faaada141057915bb076",
+    "review_fault_authority.py": "1569247bbae12bbebf0233f8cbf65444ff70788716b15ff4bca0c5d9c785a05c"
+  },
+  "goal_status": "active",
+  "scope": "pre-attach fault variant complete, full RB09 and total campaign incomplete"
+}

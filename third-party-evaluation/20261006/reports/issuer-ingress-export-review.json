@@ -1,0 +1,229 @@
+{
+  "checked_at": "2026-10-06T01:23:49.784742+00:00",
+  "runs": [
+    {
+      "run_id": "issuer-ingress-001",
+      "manifest_sha256": "80c1c40f4c129c6ed69c9c57eadb763000196945841899f86ad09d4caa406e51",
+      "sealed_files_checked": 86,
+      "known_credential_matches": 0,
+      "actual_secret_files_checked": 33,
+      "verification": {
+        "integrity": "verified_against_supplied_digest",
+        "signed_completed_attempts_checked": 10,
+        "identity": "author_local; no independent certification",
+        "allocated": 10,
+        "attempts": 10,
+        "first_attempt_pass": 5,
+        "first_attempt_fail": 5,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 1,
+        "scope": "required Intent v3/block API; externally signed payload from restricted issuer, trusted administrative import relay, and separate low-capability caller denial; actual loopback delivery; not native, audience-field or multi-tenant certification"
+      }
+    },
+    {
+      "run_id": "issuer-ingress-002",
+      "manifest_sha256": "a9595f6e4bff7397ad369b7aef6e3dd48f0666ca72b54712a7c7e914abd82ef0",
+      "sealed_files_checked": 86,
+      "known_credential_matches": 0,
+      "actual_secret_files_checked": 33,
+      "verification": {
+        "integrity": "verified_against_supplied_digest",
+        "signed_completed_attempts_checked": 10,
+        "identity": "author_local; no independent certification",
+        "allocated": 10,
+        "attempts": 10,
+        "first_attempt_pass": 10,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "scope": "required Intent v3/block API; externally signed payload from restricted issuer, trusted administrative import relay, and separate low-capability caller denial; actual loopback delivery; not native, audience-field or multi-tenant certification"
+      }
+    }
+  ],
+  "scan": "sealed whitelist; plain/hex/base64 exact state tokens, signing seeds, raw external Ed25519 private keys and provider keys; no secret content included",
+  "process_identities": [
+    {
+      "identity": {
+        "pid": 3022385,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256135658"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3023728,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256136482"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3023640,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256136390"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3023502,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256136304"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3023337,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256136214"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3023155,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256136126"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3023097,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256136034"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3022768,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256135770"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3022504,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256135681"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3023011,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256135947"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3022895,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256135857"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3031473,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256143749"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3032697,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256144583"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3032591,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256144493"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3032542,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256144406"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3032469,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256144318"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3032288,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256144228"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3032122,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256144138"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3031802,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256143866"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3031480,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256143775"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3032059,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256144048"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 3031938,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256143958"
+      },
+      "state": "absent"
+    }
+  ],
+  "signals_sent": 0
+}

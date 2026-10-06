@@ -1,0 +1,22 @@
+{
+  "full_batch_passed": false,
+  "permission_receipt_checks": {
+    "six_signed_records": true,
+    "four_decisions": true,
+    "single_skill_context": true,
+    "same_agent_session_task_skill": true,
+    "A_output_content": true,
+    "B_canary_unchanged": true,
+    "A_read_exact_target_decision": true,
+    "A_read_linked_observation": true,
+    "A_write_exact_target_decision": true,
+    "A_write_linked_observation": true,
+    "B_read_exact_target_decision": true,
+    "B_write_exact_target_decision": true,
+    "A_actual_bytes_match_signed_write": true,
+    "B_write_proposes_actual_overwrite": true
+  },
+  "permission_receipt_checks_passed": true,
+  "correction": "Observation copies decision action_id and parent_action_id; parent_action_id is ancestry, not the decision action. params_digest describes result. See receipt/action_state.go. Original diagnostic revisions preserved.",
+  "remaining": "B API not reached; financial guard marker failure retained."
+}

@@ -1,0 +1,95 @@
+{
+  "run_id": "enterprise-risk-001",
+  "native_asset_source_and_output_joins": true,
+  "worker_raw_outputs_joined": 9,
+  "timezones_and_instants_verified": true,
+  "time_windows": {
+    "west": {
+      "early": {
+        "started_relative_to_expiry_seconds": -3.9142,
+        "finished_relative_to_expiry_seconds": -3.575642,
+        "reopened": 1,
+        "status_after": "open"
+      },
+      "late": {
+        "started_relative_to_expiry_seconds": 0.175007,
+        "finished_relative_to_expiry_seconds": 0.496301,
+        "reopened": 0,
+        "status_after": "open"
+      },
+      "repeat": {
+        "started_relative_to_expiry_seconds": 0.554341,
+        "finished_relative_to_expiry_seconds": 0.88426,
+        "reopened": 0,
+        "status_after": "open"
+      }
+    },
+    "east": {
+      "early": {
+        "started_relative_to_expiry_seconds": -3.95098,
+        "finished_relative_to_expiry_seconds": -3.610922,
+        "reopened": 0,
+        "status_after": "risk_accepted"
+      },
+      "late": {
+        "started_relative_to_expiry_seconds": 0.177859,
+        "finished_relative_to_expiry_seconds": 0.508965,
+        "reopened": 0,
+        "status_after": "risk_accepted"
+      },
+      "repeat": {
+        "started_relative_to_expiry_seconds": 0.55837,
+        "finished_relative_to_expiry_seconds": 0.865138,
+        "reopened": 0,
+        "status_after": "risk_accepted"
+      }
+    },
+    "utc": {
+      "early": {
+        "started_relative_to_expiry_seconds": -3.952018,
+        "finished_relative_to_expiry_seconds": -3.64706,
+        "reopened": 0,
+        "status_after": "risk_accepted"
+      },
+      "late": {
+        "started_relative_to_expiry_seconds": 0.171416,
+        "finished_relative_to_expiry_seconds": 0.529405,
+        "reopened": 1,
+        "status_after": "open"
+      },
+      "repeat": {
+        "started_relative_to_expiry_seconds": 0.573108,
+        "finished_relative_to_expiry_seconds": 0.881179,
+        "reopened": 0,
+        "status_after": "open"
+      }
+    }
+  },
+  "original_checks": {
+    "risk_native_rule_truth": true,
+    "risk_rule_idempotency": true,
+    "risk_pagination_truth": true,
+    "risk_rejected_writes_no_effect": true,
+    "risk_acceptance_audited": true,
+    "risk_audit_failure_atomic": true,
+    "risk_resolution_evidence": true,
+    "risk_export_rejection_no_audit": true,
+    "risk_export_scope_count": true,
+    "risk_export_activity_scope": true,
+    "risk_west_not_early": false,
+    "risk_west_on_time": false,
+    "risk_west_repeat_idempotent": true,
+    "risk_east_not_early": true,
+    "risk_east_on_time": false,
+    "risk_east_repeat_idempotent": false,
+    "risk_utc_not_early": true,
+    "risk_utc_on_time": true,
+    "risk_utc_repeat_idempotent": true
+  },
+  "actual_evidence_negative_rejections": {},
+  "negative_scope": "only evaluated on passing cohort; failing original is not reused as a false positive control",
+  "limits": [
+    "author supplemental review, not external witness",
+    "controlled reaper invocation; no continuous scheduler or webhook claim"
+  ]
+}

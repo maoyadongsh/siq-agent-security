@@ -1,0 +1,13 @@
+{
+  "integrity_verified": true,
+  "run_id": "enterprise-risk-boundaries-001",
+  "passed": false,
+  "http_cases": 99,
+  "checks": 150,
+  "checks_passed": 132,
+  "missing": [],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

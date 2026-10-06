@@ -1,0 +1,88 @@
+{
+  "reviewed_at": "2026-10-05T22:36:38.858848+00:00",
+  "resources": [
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "authorized_delete_unsupported",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "service_down",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "normal_query",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "malformed_allow",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "no_guard",
+      "daemon_state": "not_started"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "query_delete_denied",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "legacy_mail_gate",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-001",
+      "scenario": "wrong_task_allow",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "authorized_delete_unsupported",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "service_down",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "normal_query",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "malformed_allow",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "no_guard",
+      "daemon_state": "not_started"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "query_delete_denied",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "legacy_mail_gate",
+      "daemon_state": "absent"
+    },
+    {
+      "run_id": "agentdojo-delete-replay-002",
+      "scenario": "wrong_task_allow",
+      "daemon_state": "absent"
+    }
+  ],
+  "credentials_scanned_before_export": true,
+  "scope": "manifest allowlist; byte-identical synthetic captures; no private runtime state",
+  "relationship": "author_run"
+}

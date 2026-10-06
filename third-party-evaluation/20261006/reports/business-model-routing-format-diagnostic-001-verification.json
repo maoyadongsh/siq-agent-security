@@ -1,0 +1,82 @@
+{
+  "manifest_sha256": "afe6706c00908b9abe3cf3e484f54a8e369d59ae28e7213233a63201f0a2a15d",
+  "checks": {
+    "artifact_hashes": true,
+    "public-default-local-json_schema": true,
+    "public-default-local-text": true,
+    "confidential-default-json_schema": true,
+    "confidential-default-text": true
+  },
+  "passed": true,
+  "details": [
+    {
+      "unit_id": "public-default-local-json_schema",
+      "format_only_changed": true,
+      "contract_valid": true,
+      "usage": {
+        "cached_tokens": 256,
+        "prompt_tokens": 729,
+        "completion_tokens": 492,
+        "total_tokens": 1221,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    },
+    {
+      "unit_id": "public-default-local-text",
+      "format_only_changed": true,
+      "contract_valid": true,
+      "usage": {
+        "cached_tokens": 256,
+        "prompt_tokens": 729,
+        "completion_tokens": 981,
+        "total_tokens": 1710,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    },
+    {
+      "unit_id": "confidential-default-json_schema",
+      "format_only_changed": true,
+      "contract_valid": true,
+      "usage": {
+        "cached_tokens": 256,
+        "prompt_tokens": 649,
+        "completion_tokens": 608,
+        "total_tokens": 1257,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    },
+    {
+      "unit_id": "confidential-default-text",
+      "format_only_changed": true,
+      "contract_valid": true,
+      "usage": {
+        "cached_tokens": 256,
+        "prompt_tokens": 649,
+        "completion_tokens": 482,
+        "total_tokens": 1131,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      }
+    }
+  ],
+  "scope": "format-only component diagnosis; no business effects or model-response repair"
+}

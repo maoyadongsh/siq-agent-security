@@ -1,0 +1,17 @@
+{
+  "protocol_sha256": "bd6bc3979e630d9cf104e04ff128751303d392336bfd77e24de41627443b1759",
+  "runs": {
+    "before": {
+      "image_id": "sha256:e13efb6c60a2fc660adbd7d8643bd3453c5b8dca97be3bffbd58fc9189913598",
+      "returncode": 0,
+      "stdout": "{\"schema_version\": \"siq.hermes-hook-concurrency-diagnostic.v2\", \"plugin_source_sha256\": \"42be01f01014ae1a65b3dc879df687058b312c0226d596f902e03a3c1247c431\", \"observed\": [[\"first\", \"first\"]], \"results\": {\"second\": [], \"first\": [\"first\"]}, \"wait_observed\": false, \"checks\": {\"both_callbacks_delivered\": false, \"return_values_correct\": false, \"workers_terminal\": true}, \"passed\": false, \"model_calls\": 0}\n",
+      "stderr": "Hook 'post_tool_call' callback observer skipped after previous timeout or while still running\n"
+    },
+    "after": {
+      "image_id": "sha256:807db3f748f031074362462af7f00e7b41365a0d7cb9cc7c62ce8f212b7cd278",
+      "returncode": 0,
+      "stdout": "{\"schema_version\": \"siq.hermes-hook-concurrency-diagnostic.v2\", \"plugin_source_sha256\": \"e7bc316eab6cb8a4f9108a9537869138489dcd710a0fbf42d6c7e31908399112\", \"observed\": [[\"first\", \"first\"], [\"second\", \"second\"]], \"results\": {\"first\": [\"first\"], \"second\": [\"second\"]}, \"wait_observed\": true, \"checks\": {\"both_callbacks_delivered\": true, \"return_values_correct\": true, \"workers_terminal\": true}, \"passed\": true, \"model_calls\": 0}\n",
+      "stderr": ""
+    }
+  }
+}

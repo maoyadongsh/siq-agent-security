@@ -1,0 +1,57 @@
+{
+  "checked_at": "2026-10-06T04:49:47.561090+00:00",
+  "method": "current system getaddrinfo, no resolver change",
+  "lookups": [
+    {
+      "host": "api.github.com",
+      "addresses": [
+        {
+          "address": "198.18.0.29",
+          "python_is_global": false,
+          "benchmarking_range": true
+        }
+      ]
+    },
+    {
+      "host": "codeload.github.com",
+      "addresses": [
+        {
+          "address": "198.18.0.17",
+          "python_is_global": false,
+          "benchmarking_range": true
+        }
+      ]
+    },
+    {
+      "host": "github.com",
+      "addresses": [
+        {
+          "address": "198.18.0.5",
+          "python_is_global": false,
+          "benchmarking_range": true
+        }
+      ]
+    },
+    {
+      "host": "raw.githubusercontent.com",
+      "addresses": [
+        {
+          "address": "198.18.0.20",
+          "python_is_global": false,
+          "benchmarking_range": true
+        }
+      ]
+    },
+    {
+      "host": "cdn.jsdelivr.net",
+      "addresses": [
+        {
+          "address": "198.18.0.21",
+          "python_is_global": false,
+          "benchmarking_range": true
+        }
+      ]
+    }
+  ],
+  "scope": "environment diagnosis after product URL-blocked; not independent proof of prior exact DNS responses"
+}

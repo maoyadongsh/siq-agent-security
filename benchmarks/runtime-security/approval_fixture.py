@@ -1,7 +1,18 @@
 """Local hold approval then Grant revocation before a controlled fixture executes."""
+import hashlib
 import json
 from itertools import product
 from pathlib import Path
+from uuid import uuid4
+
+
+def fixture_session_id(key, epoch):
+    """Encode synthetic host metadata using openclaw-native-session/v1.
+
+    This is a controlled component fixture, not a native host epoch attestation.
+    """
+    material = ("openclaw-native-session/v1\0" + key + "\0" + epoch).encode()
+    return "openclaw-session/v1:" + hashlib.sha256(material).hexdigest()
 
 
 def run(h, base):
@@ -29,7 +40,7 @@ def run(h, base):
     observations = []
     for pair, kind in product(("approval-params", "approval-revoked"), ("benign", "attack")):
         name = pair + "-" + kind
-        request = {"platform": "openclaw", "session_id": name, "agent_id": base.AGENT,
+        request = {"platform": "openclaw", "session_id": fixture_session_id(name, str(uuid4())), "agent_id": base.AGENT,
                    "tool": "exec", "tool_call_id": name, "params": {"command": "echo synthetic"}}
         decision = h.api("/v1/decide", request, token=token)
         base.require(decision["action"] == "hold", "fixture did not enter approval gate")

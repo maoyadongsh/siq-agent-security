@@ -1,0 +1,11 @@
+test_local_failure_does_not_clear_observed_source (test_source_upgrade.SourceUpgradeTest.test_local_failure_does_not_clear_observed_source) ... ok
+test_new_task_resets_source_history (test_source_upgrade.SourceUpgradeTest.test_new_task_resets_source_history) ... ok
+test_same_task_rebind_cannot_clear_source_history (test_source_upgrade.SourceUpgradeTest.test_same_task_rebind_cannot_clear_source_history) ... ok
+test_secret_denial_cannot_be_followed_by_public_context_send (test_source_upgrade.SourceUpgradeTest.test_secret_denial_cannot_be_followed_by_public_context_send) ... ok
+test_source_upgrade_blocks_explicit_remote_switch (test_source_upgrade.SourceUpgradeTest.test_source_upgrade_blocks_explicit_remote_switch) ... ok
+test_source_upgrade_keeps_context_local (test_source_upgrade.SourceUpgradeTest.test_source_upgrade_keeps_context_local) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.515s
+
+OK

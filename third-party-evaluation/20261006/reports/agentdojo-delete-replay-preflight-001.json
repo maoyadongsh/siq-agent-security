@@ -1,0 +1,9 @@
+{
+  "recorded_at": "2026-10-05T22:31:52.007760+00:00",
+  "initial_launch": "terminal import failure before run directory or journal creation",
+  "error": "ModuleNotFoundError: jsonschema",
+  "model_calls": 0,
+  "product_calls": 0,
+  "resolution": "UV temporary overlay cryptography==50.0.0 and jsonschema==4.26.0; upstream lockfile unchanged",
+  "retry_semantics": "environment provisioning, no allocated case attempt had started"
+}

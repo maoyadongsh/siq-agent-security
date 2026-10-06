@@ -1,0 +1,15 @@
+{
+  "run_id": "rulefix-worker-001",
+  "known_private_values_checked": 2,
+  "private_value_matches": [],
+  "credential_pattern_matches": [],
+  "api_pids_absent": {
+    "812931": true
+  },
+  "owned_container_ids_absent": {
+    "08492df86e8101114e27071a0bdf02d8602d510de0fd78cf4b73809a9c43c8ba": true
+  },
+  "native_temp_absent": true,
+  "scope": "known-value/pattern scan and exact owned-resource readback; not exhaustive classification",
+  "owned_webhook_closed": true
+}

@@ -1,0 +1,80 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_business.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_configuration.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.114s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_effect_controls.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.145s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_parameter_digest.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party",
+        "-p",
+        "test_native_semantic.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.002s\n\nOK\n"
+    }
+  ],
+  "all_pass": true
+}

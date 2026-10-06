@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-05T23:27:57.006953+00:00",
+  "scope": "manifest whitelist; owned runtime/recovery tokens and signing seeds raw/hex/base64; provider key scan at export",
+  "runs": {
+    "intent-revocation-boundary-001": {
+      "manifest_sha256": "7c1261ffce570c74a94f694036ae8743ae5ba6f8711923f99b29fd5ab6024c9f",
+      "allocated": 16,
+      "cleanup_confirmed": 16,
+      "files_checked": 134,
+      "owned_credential_matches": 0,
+      "checks_total": 248,
+      "checks_passed": 248,
+      "actual_file_effects": 12,
+      "known_harm": 2,
+      "signed_revocations": 8
+    },
+    "intent-revocation-boundary-002": {
+      "manifest_sha256": "28b76757f9e0450ca42388f2ad5de87daba8d80273a1bb292a5d23df4c88e472",
+      "allocated": 16,
+      "cleanup_confirmed": 16,
+      "files_checked": 134,
+      "owned_credential_matches": 0,
+      "checks_total": 248,
+      "checks_passed": 248,
+      "actual_file_effects": 12,
+      "known_harm": 2,
+      "signed_revocations": 8
+    }
+  }
+}

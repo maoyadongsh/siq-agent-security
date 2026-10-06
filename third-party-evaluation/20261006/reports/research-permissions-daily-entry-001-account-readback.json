@@ -1,0 +1,13 @@
+{
+  "batch": "research-permissions-daily-entry-001",
+  "account_is_disabled": true,
+  "token_version": 1,
+  "audit_actions": [
+    "EVALUATION_ACCOUNT_CREATED",
+    "LOGIN",
+    "EVALUATION_ACCOUNT_DISABLED"
+  ],
+  "database_driver": "postgresql+psycopg",
+  "nonexpired_running_lease_count": 0,
+  "query_scope": "One owned evaluation account and aggregate active-lease count; no other user contents."
+}

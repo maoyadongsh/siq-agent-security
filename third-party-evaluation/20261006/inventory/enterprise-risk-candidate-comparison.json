@@ -1,0 +1,16 @@
+{
+  "original_sources": 434,
+  "final_sources": 435,
+  "changed_existing_sources": [
+    "apps/control-api/app/worker.py"
+  ],
+  "added_sources": [
+    "apps/control-api/app/tests/test_risk_expiry_timezone.py"
+  ],
+  "riskfix_candidates_source_identical": true,
+  "risk_scorer_unchanged": true,
+  "expected_HTTP_unchanged": true,
+  "runtime_003_matches_preserved_001": true,
+  "runtime_003_matches_preregistered": true,
+  "original_runtime_inventory_posthoc": true
+}

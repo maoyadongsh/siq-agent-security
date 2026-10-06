@@ -1,0 +1,9 @@
+{
+  "batch": "research-permissions-business-revoke-002",
+  "protocol_sha256": "fecf0e06b55037c3d90e9f69e1aa9b53fa38ca998608ac21597429415d4a8d99",
+  "frozen_sources": 226,
+  "repair_tests_passed": 110,
+  "tests_command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest apps/api/tests/test_openshell_grant_revocation.py apps/api/tests/test_openshell_data_grant_api.py apps/api/tests/test_agent_runtime_read_access.py apps/api/tests/test_qwen38_request_identity.py apps/api/tests/test_qwen38_request_origin.py apps/api/tests/test_qwen38_request_api.py -q",
+  "tests_seconds": 52.03,
+  "live_started": false
+}

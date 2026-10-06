@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-10-06T01:04:19.983318+00:00",
+  "run_id": "native-terminal-authorization-001",
+  "manifest_sha256": "3a3381dc98c6e99063215ddd1cd4af7116a67022dac5d6839018274d10ea1947",
+  "reviewer": "engineering-evidence/native-terminal-authorization-tools-001/source/review_native_terminal.py",
+  "exit_code": 1,
+  "error_type": "cryptography.exceptions.InvalidSignature",
+  "location": "review_native_terminal.py:45",
+  "cause": "new supplemental reviewer used common.canonical ensure_ascii=False for signed Intent with Chinese purpose; product local_canonical/v1 uses ensure_ascii=True",
+  "primary_frozen_verification": "passed: 20 signed receipts, 8 complete expected checks",
+  "raw_scores_changed": false,
+  "next_action": "freeze corrected supplemental reviewer; preserve original snapshot and primary results"
+}

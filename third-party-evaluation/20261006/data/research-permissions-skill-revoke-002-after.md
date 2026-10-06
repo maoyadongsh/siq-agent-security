@@ -1,0 +1,1 @@
+AUTHORIZED_STAGE_ONE; revenue growth = 20%

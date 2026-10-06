@@ -1,0 +1,363 @@
+{
+  "schema_version": "siq.research-permission-closeout-evidence.v1",
+  "recorded_unix": 1791287071.056924,
+  "passed": true,
+  "cases": {
+    "RG01": [
+      "daily-permissions-001"
+    ],
+    "RG02": [
+      "daily-permissions-001"
+    ],
+    "RG03": [
+      "cross-company-004"
+    ],
+    "RG04": [
+      "skill-business-003"
+    ],
+    "RG05": [
+      "skill-update-001",
+      "skill-replacement-005",
+      "skill-drift-containment-002"
+    ],
+    "RG06": [
+      "skill-revoke-004",
+      "business-revoke-003"
+    ],
+    "RG07": [
+      "tool-utility-003"
+    ],
+    "RG08": [
+      "relay-recovery-002"
+    ],
+    "RG09": [
+      "daily-permissions-001",
+      "skill-business-003"
+    ]
+  },
+  "rows": [
+    {
+      "batch": "research-permissions-business-revoke-003",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 4,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-business-revoke-003.json",
+        "verification": "reports/research-permissions-business-revoke-003-verification.json",
+        "protocol": "protocols/research-permissions-business-revoke-003.json",
+        "receipts": "data/research-permissions-business-revoke-003-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "5c69be2de567cc8b597f21102b41eee9ddc040e26365f38645f679b67bb8da96",
+        "verification": "b0062aef466a5e703a72abd556a8a1a7035e5523a8b2ac2d879a65d2d94ba1c2",
+        "protocol": "7d68cb79c536aca27333bae0b4edd0f1be8145297317545ac72314e440e0f189",
+        "receipts": "42a80ad632ce7ae5a9c5725f74f68a1a1f6580161dfd45a680aa494cde86d6a1"
+      }
+    },
+    {
+      "batch": "research-permissions-cross-company-004",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 6,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-cross-company-004.json",
+        "verification": "reports/research-permissions-cross-company-004-verification.json",
+        "protocol": "protocols/research-permissions-cross-company-004.json",
+        "receipts": "data/research-permissions-cross-company-004-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "46c406a9ee38d14fafdfe8afc44c3692acf3d4078836751ed0c3fdc7ce11c7bc",
+        "verification": "62d98a49a3aefdc8c56fe3f76c8fa6108c7c49bf3e19222e5bed524e75f4f705",
+        "protocol": "11581b3bfeb847cae05a05add4404fb0b54d0a3479cc109c09e98dc42c54cdd4",
+        "receipts": "3007401eb2cb74f2b42b89c07b7ce974edfbdce97511b29f43ae843f84e6a4bb"
+      }
+    },
+    {
+      "batch": "research-permissions-daily-permissions-001",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 7,
+      "signature_scope": "Individual signed records and adjacent links; no complete shared-ledger prefix claim.",
+      "current_file_checks": [
+        {
+          "location": "proof.permission_phases.readonly",
+          "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticDaily9481f8ae98bb424b/analysis/runs/qwen-request-e58dd20d52902ec9/permission-result.md",
+          "kind": "current_file_absent",
+          "passed": true
+        },
+        {
+          "location": "proof.permission_phases.write_approved",
+          "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticDaily9481f8ae98bb424b/analysis/runs/qwen-request-6eda4bcabb5cb53b/permission-result.md",
+          "kind": "current_file_hash",
+          "passed": true
+        }
+      ],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-daily-permissions-001.json",
+        "verification": "reports/research-permissions-daily-permissions-001-verification.json",
+        "protocol": "protocols/research-permissions-daily-permissions-001.json",
+        "receipts": "data/research-permissions-daily-permissions-001-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "bb688bab8349217b852dc114e2705f88e0fc9d6f1236d849bc7e85222f2a3c48",
+        "verification": "93c4df67df6c72daae36dc8c9083a5bb041b70b8d8b1a20f35132069547dfe98",
+        "protocol": "9618f943f634e32c65621a3d2d24bc47fc941ab6c7e090a06e0f1f12c5f43dd5",
+        "receipts": "bfa4c5a8eb6256338f4bf406a6bfa63a9447053978abf2c51273d4355333accb"
+      }
+    },
+    {
+      "batch": "research-permissions-relay-recovery-002",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 6,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-relay-recovery-002.json",
+        "verification": "reports/research-permissions-relay-recovery-002-verification.json",
+        "protocol": "protocols/research-permissions-relay-recovery-002.json",
+        "receipts": "data/research-permissions-relay-recovery-002-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "09dd61ce3fe8ac9d9c9b41748629bd3b24675ead3d1699949ffccd0b443d6890",
+        "verification": "030392b533ac73b6d85305f01f533c452d25d8a06c36a3595655d65764f2bf8e",
+        "protocol": "443283b7ae350a7e804cdf5b309c2e1a220bab9b72867ebd0f20390f25b67e2f",
+        "receipts": "7afc243ccfabb79e72da4adcfda03e15f89d8f257d4a3260ee5269f077194c44"
+      }
+    },
+    {
+      "batch": "research-permissions-skill-business-003",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 7,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [
+        {
+          "location": "proof.permission_phases.readonly",
+          "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApid3a1222544ed18d3/analysis/runs/qwen-request-55edb39067a420f2/permission-result.md",
+          "kind": "current_file_absent",
+          "passed": true
+        },
+        {
+          "location": "proof.permission_phases.write_approved",
+          "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApid3a1222544ed18d3/analysis/runs/qwen-request-8b19f424d3fb8416/permission-result.md",
+          "kind": "current_file_hash",
+          "passed": true
+        }
+      ],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-skill-business-003.json",
+        "verification": "reports/research-permissions-skill-business-003-skill-verification.json",
+        "protocol": "protocols/research-permissions-skill-business-003.json",
+        "receipts": "data/research-permissions-skill-business-003-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "e14d8929ff4f854698f36feafd664a18f8d3e44f59e52c2ebe868b716187900c",
+        "verification": "c75b46bc095bcf41078e4d9b151c977f419cc43db958e148328ed78242406f04",
+        "protocol": "8b9ca77617d14165bf5f4be8ceb3f500d99750b0ef55f65f0383c9caa04c3736",
+        "receipts": "56d182e34e28a6fda25cbd7cd7508411c927e888ca3856e8907040f56ba9c249"
+      }
+    },
+    {
+      "batch": "research-permissions-skill-drift-containment-002",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 4,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [
+        {
+          "location": "proof",
+          "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi7f003d5f2943935f/analysis/runs/qwen-request-aaa1d3122f77503b/permission-result.md",
+          "kind": "current_file_hash",
+          "passed": true
+        }
+      ],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-skill-drift-containment-002.json",
+        "verification": "reports/research-permissions-skill-drift-containment-002-verification.json",
+        "protocol": "protocols/research-permissions-skill-drift-containment-002.json",
+        "receipts": "data/research-permissions-skill-drift-containment-002-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "3805d20b687f632c6e4ec2d54a1192e340525ee34f3f76136993cc486927078f",
+        "verification": "9afbd22dcd4ee9e6bc8cd7369f504081f8f86e96b10363063d22e23c808c191c",
+        "protocol": "10f927ba08a46deeaf7cb986456cf4ea76e8d5f572ca10c4b97111a406c56a26",
+        "receipts": "c6c37b7102c68e17bdcc8d4baf81236604a63f11da0e7dbdba9bce99dabe79c7"
+      }
+    },
+    {
+      "batch": "research-permissions-skill-replacement-005",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 4,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [
+        {
+          "location": "proof.replacement_positive",
+          "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApi4f50023c5a6736ea/analysis/runs/qwen-request-88fae0dab05b3252/permission-result.md",
+          "kind": "current_file_hash",
+          "passed": true
+        }
+      ],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-skill-replacement-005.json",
+        "verification": "reports/research-permissions-skill-replacement-005-verification.json",
+        "protocol": "protocols/research-permissions-skill-replacement-005.json",
+        "receipts": "data/research-permissions-skill-replacement-005-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "001dcd661dcd6083eae624e16e4b552713a4d7c696683ec18e1c72e42acf3ffa",
+        "verification": "ccd241755c177bb33070a875aa8f627b364e0e5c387d81f30f6e7fe3382996e9",
+        "protocol": "cc4e5009281a121d5304c6f60d5b4c4f26eabb67facb67d26adb9d9dcc19d877",
+        "receipts": "7932295429491d7c0fe6bdc5cfd9597cf03ac0e9096b95887ebe2be1c149895a"
+      }
+    },
+    {
+      "batch": "research-permissions-skill-revoke-004",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 5,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [
+        {
+          "location": "proof",
+          "path": "/home/maoyd/siq-research-engine/data/wiki/companies/600000-SyntheticApie059b6098c431aee/analysis/runs/qwen-request-3c278ceb27f06fef/permission-result.md",
+          "kind": "current_file_hash",
+          "passed": true
+        }
+      ],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-skill-revoke-004.json",
+        "verification": "reports/research-permissions-skill-revoke-004-verification.json",
+        "protocol": "protocols/research-permissions-skill-revoke-004.json",
+        "receipts": "data/research-permissions-skill-revoke-004-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "d65512d14dadd6e64e09882bb5d4675456a7b11c10e32d6f45e5ee1854f109fe",
+        "verification": "2707dce4b982d1bd63833e044c566145240d256e42e96b9f3b4898f7552934a8",
+        "protocol": "d7a02baf5c8ea87ae9e96fdd6acf3684ddd4068c0a1a48e446779df4880219cb",
+        "receipts": "6a1d08aa3f01d290cf98b19169b3996ef9c55727d396673c9534a0438d8e32ef"
+      }
+    },
+    {
+      "batch": "research-permissions-skill-update-001",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 6,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-skill-update-001.json",
+        "verification": "reports/research-permissions-skill-update-001-verification.json",
+        "protocol": "protocols/research-permissions-skill-update-001.json",
+        "receipts": "data/research-permissions-skill-update-001-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "a5adc5d826d1b21c4b48a14b80636fdce71d76840b142a1c047fda44a41dabcf",
+        "verification": "10f2e1f1f95bfc0cecac627672255a0de1cb0206e0815a29807437b06830d583",
+        "protocol": "dc3b22b96e14cc8b11c4dcb33e4ea9c499b3eb2d451e890626cefe5ebb4ede2d",
+        "receipts": "790b1ca669bce511c41f89ade52d1146d110402fb4417c208fb083eae7ebf192"
+      }
+    },
+    {
+      "batch": "research-permissions-tool-utility-003",
+      "passed": true,
+      "checks": {
+        "execution_passed": true,
+        "independent_review_passed": true,
+        "all_review_checks_true": true,
+        "signed_receipts_reverified": true,
+        "current_exported_effect_paths_match": true,
+        "protocol_digest_matches_run": true
+      },
+      "receipt_count": 18,
+      "signature_scope": "Complete owned receipt chain prefix, individual hashes and signatures.",
+      "current_file_checks": [],
+      "artifact_refs": {
+        "execution": "reports/research-permissions-tool-utility-003.json",
+        "verification": "reports/research-permissions-tool-utility-003-verification.json",
+        "protocol": "protocols/research-permissions-tool-utility-003.json",
+        "receipts": "data/research-permissions-tool-utility-003-verified-receipts.json"
+      },
+      "artifact_sha256": {
+        "execution": "b35bb7189cad3697c61491f5bed505c338c58db16ca078adfe38bd09b7c970b0",
+        "verification": "4ae088777e8262a353c41fcd6c1178c2f66606845651dd4281c304daba0bb1bc",
+        "protocol": "8f5cf96ba994b759c274f0ea5683f18ba47f8ff18c85a8f8f7160ad542ad5ccb",
+        "receipts": "24502e3c25d6292d907da5759753a3d79649e1f5b4b76d4c513ded4c7662b833"
+      }
+    }
+  ],
+  "scope": "Final read-only artifact integrity/signature/current-effect check. Requirement coverage also needs the human-reviewed final report; no new model task or independent institution certification.",
+  "limitations": [
+    "Current-file review covers exported output_path/output_sha256 and absent-target fields only.",
+    "Other case-specific effects and semantics retain their separate verification reports.",
+    "Historical source versions are represented by each frozen protocol; they need not equal the later repaired worktree."
+  ]
+}

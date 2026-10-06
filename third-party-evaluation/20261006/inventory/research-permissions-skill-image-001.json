@@ -1,0 +1,38 @@
+{
+  "schema_version": "siq.evaluation.research-skill-image-inventory.v1",
+  "created_unix": 1791271368.60705,
+  "image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+  "inspection": {
+    "profile_skill_directory_exists": false,
+    "shared_skill_directory_exists": false,
+    "profile_entries": [
+      "AGENTS.md",
+      "BOOTSTRAP.md",
+      "HEARTBEAT.md",
+      "IDENTITY.md",
+      "README.md",
+      "SOUL.md",
+      "TOOLS.md",
+      "USER.md",
+      "cache",
+      "checkpoints",
+      "config.yaml",
+      "cron",
+      "logs",
+      "memories",
+      "plugins",
+      "profile.yaml",
+      "rules",
+      "scripts",
+      "sessions",
+      "subagents",
+      "templates",
+      "tests",
+      "workspace"
+    ]
+  },
+  "inspection_code_sha256": "bbc7fc79a84816cd1e20d4d44512827287d26be9250994ca94097b207ff29b25",
+  "source_mount_compiler_sha256": "8c7fbe30ddbd009ab9ec9c663c32900d7e399b31a9a36b79c6b699afeb7623bd",
+  "conclusion": "Selected image has no analysis profile Skills; current scoped mounts cover company, outputs and mutable session state, not installed Skills. Existing Agent results do not prove Skill execution.",
+  "next_action": "Install two controlled Skills through the public SIQ API, then deliver and verify their exact bytes in the candidate runtime with matched SEC and runtime identity."
+}

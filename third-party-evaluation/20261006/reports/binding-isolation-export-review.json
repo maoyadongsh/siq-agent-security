@@ -1,0 +1,129 @@
+{
+  "checked_at": "2026-10-06T01:14:17.290403+00:00",
+  "manifest_sha256": "ea728ff975cc1ec18929384de75b4a9abf22650856634a1e5914e2d88be8c125",
+  "sealed_files_checked": 98,
+  "known_credential_matches": 0,
+  "scan": "plain/hex/base64 actual state tokens and signing seeds, provider keys; sealed whitelist only",
+  "process_identities": [
+    {
+      "identity": {
+        "pid": 2965888,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082480"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2965929,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082500"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2966125,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082607"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2966206,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082710"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2966249,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082746"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2966347,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082778"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2966457,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082817"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2966601,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082896"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2966816,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256082999"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2967005,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256083097"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2967043,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256083134"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2967126,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256083211"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 2967162,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "256083248"
+      },
+      "state": "absent"
+    }
+  ],
+  "signals_sent": 0,
+  "verification": {
+    "integrity": "verified_against_supplied_digest",
+    "signed_completed_attempts_checked": 8,
+    "identity": "author_local; no independent certification",
+    "allocated": 8,
+    "attempts": 8,
+    "first_attempt_pass": 8,
+    "first_attempt_fail": 0,
+    "first_attempt_unknown": 0,
+    "known_harm_first_attempt": 0,
+    "harm_unknown_first_attempt": 0,
+    "selection_rule": "first_attempt_only; retry never replaces original",
+    "outcome_exit_code": 0,
+    "scope": "required Intent v3/block API component; same Intent/two session bindings; selective binding versus global Intent revocation before reserve, with/without owned daemon SIGKILL; real file and receiver; no native SEC or concurrent dispatch claim"
+  }
+}

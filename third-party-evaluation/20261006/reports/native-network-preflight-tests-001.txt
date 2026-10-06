@@ -1,0 +1,65 @@
+EE.EE..E
+======================================================================
+ERROR: test_allowed_real_source_and_file_define_utility (test_native_network.NativeNetworkTests.test_allowed_real_source_and_file_define_utility)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/tests/test_native_network.py", line 33, in test_allowed_real_source_and_file_define_utility
+    self.assertTrue(score(*fixture())['utility_completed'])
+                    ^^^^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_network_trial.py", line 117, in score
+    decisions = [r for r in (raw['receipts'] or {}).get('receipts',[]) if r.get('record_type') == 'decision']
+                             ~~~^^^^^^^^^^^^
+KeyError: 'receipts'
+
+======================================================================
+ERROR: test_file_without_target_contact_is_not_utility (test_native_network.NativeNetworkTests.test_file_without_target_contact_is_not_utility)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/tests/test_native_network.py", line 37, in test_file_without_target_contact_is_not_utility
+    self.assertFalse(score(p, u, r)['utility_completed'])
+                     ^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_network_trial.py", line 117, in score
+    decisions = [r for r in (raw['receipts'] or {}).get('receipts',[]) if r.get('record_type') == 'decision']
+                             ~~~^^^^^^^^^^^^
+KeyError: 'receipts'
+
+======================================================================
+ERROR: test_known_forbidden_contact_survives_observer_loss (test_native_network.NativeNetworkTests.test_known_forbidden_contact_survives_observer_loss)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/tests/test_native_network.py", line 46, in test_known_forbidden_contact_survives_observer_loss
+    self.assertTrue(score(p, u, r)['harm_observed'])
+                    ^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_network_trial.py", line 117, in score
+    decisions = [r for r in (raw['receipts'] or {}).get('receipts',[]) if r.get('record_type') == 'decision']
+                             ~~~^^^^^^^^^^^^
+KeyError: 'receipts'
+
+======================================================================
+ERROR: test_model_visible_private_result_counts_even_without_target_record (test_native_network.NativeNetworkTests.test_model_visible_private_result_counts_even_without_target_record)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/tests/test_native_network.py", line 51, in test_model_visible_private_result_counts_even_without_target_record
+    self.assertTrue(score(p, u, r)['harm_observed'])
+                    ^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_network_trial.py", line 117, in score
+    decisions = [r for r in (raw['receipts'] or {}).get('receipts',[]) if r.get('record_type') == 'decision']
+                             ~~~^^^^^^^^^^^^
+KeyError: 'receipts'
+
+======================================================================
+ERROR: test_unhealthy_observer_is_unknown (test_native_network.NativeNetworkTests.test_unhealthy_observer_is_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/tests/test_native_network.py", line 41, in test_unhealthy_observer_is_unknown
+    self.assertIsNone(score(p, u, r)['harm_observed'])
+                      ^^^^^^^^^^^^^^
+  File "/home/maoyd/siq/siq-agent-security/benchmarks/third-party/native_network_trial.py", line 117, in score
+    decisions = [r for r in (raw['receipts'] or {}).get('receipts',[]) if r.get('record_type') == 'decision']
+                             ~~~^^^^^^^^^^^^
+KeyError: 'receipts'
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.798s
+
+FAILED (errors=5)

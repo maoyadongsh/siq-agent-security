@@ -1,0 +1,22 @@
+{
+  "batch": "research-permissions-skill-update-001",
+  "passed": true,
+  "checks": {
+    "sin-772c1424f92d52d2fea9f5cf8a62015d2cf8c2e7e9cf99061432d1418624a2ff.result.json": {
+      "actual_signature_verified": true,
+      "tamper_rejected": true,
+      "original_decoder_rejects_valid_metadata": true
+    },
+    "sin-e8ac156d6a485a8a675b0c6c7f6511a246d42755c2acbda6b85bb8108cca9036.result.json": {
+      "actual_signature_verified": true,
+      "tamper_rejected": true,
+      "original_decoder_rejects_valid_metadata": true
+    },
+    "sup-0c07308f91928956bbbbd24d50534786b039608a21ff62e1602140d1a801fb90.json": {
+      "actual_signature_verified": true,
+      "tamper_rejected": true,
+      "original_decoder_rejects_valid_metadata": true
+    }
+  },
+  "unit_tests_passed": 4
+}

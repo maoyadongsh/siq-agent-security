@@ -1,0 +1,62 @@
+{
+  "checked_at": "2026-10-06T05:42:53.172634+00:00",
+  "product_change": "aware risk expiry converted to UTC before naive comparison; no schema or state-machine contract change",
+  "product_tests": {
+    "new_tests_before": {
+      "passed": 9,
+      "failed": 6
+    },
+    "focused_after": {
+      "passed": 51,
+      "exit_code": 0
+    },
+    "full_Python_3_13": {
+      "passed": 2272,
+      "skipped": 1,
+      "exit_code": 0,
+      "log_sha256": "2c4ab420040ef7ef5b49e17c19884563db5b967665b5b6217749e8d9acec98a7"
+    },
+    "full_Python_3_12": {
+      "passed": 2272,
+      "skipped": 1,
+      "exit_code": 0,
+      "seconds": 100.51,
+      "log_sha256": "dc1b0b016960d44aa4f9efb3758e83e2a25048268240023b77a1815e23e91ebf"
+    },
+    "skip": "optional SIQ_BATCH_WIRE_SAMPLE not set; live Go response contract sample absent in isolated API suite",
+    "skip_detail_ref": "reports/enterprise-risk-optional-sample-check.txt"
+  },
+  "framework": {
+    "passed": 669,
+    "subtests_passed": 118,
+    "exit_code": 0,
+    "log": "reports/enterprise-risk-framework-tests-002.txt",
+    "sha256": "a827ef0f00630423dc03f23a34144d945c915f77da42221ed07e77f5f18fccd4"
+  },
+  "candidate_app_ruff": true,
+  "edited_main_and_harness_ruff": true,
+  "git_diff_check": true,
+  "candidate_comparison_ref": "inventory/enterprise-risk-candidate-comparison.json",
+  "runtime_comparison_ref": "inventory/enterprise-risk-runtime-comparison.json",
+  "first_attempt_preserved": {
+    "run_id": "enterprise-risk-001",
+    "passed": 157,
+    "checks": 161
+  },
+  "repair_cohorts": [
+    {
+      "run_id": "enterprise-risk-002",
+      "passed": 161,
+      "checks": 161,
+      "runtime": "Python3.13 (different from original)"
+    },
+    {
+      "run_id": "enterprise-risk-003",
+      "passed": 161,
+      "checks": 161,
+      "runtime": "Python3.12 (matches preserved original)"
+    }
+  ],
+  "new_model_calls": 0,
+  "full_journey_closed": false
+}

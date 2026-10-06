@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-05T21:07:57.795031+00:00",
+  "status": "ready_for_source_and_contract_review_not_executed",
+  "scope": "P04/P05 next implementation; no native execution claimed",
+  "entrypoints": [
+    {
+      "path": "scripts/personal-experience/r04-hermes-native-update-smoke.py",
+      "source_sha256": "47c807f14a3cfa54aa18916eb545dd461c206cef3eabb07daee5d2b142011105",
+      "frozen_candidate_contains_script": true,
+      "frozen_script_sha256": "47c807f14a3cfa54aa18916eb545dd461c206cef3eabb07daee5d2b142011105"
+    },
+    {
+      "path": "scripts/personal-experience/skill-update-browser-smoke.py",
+      "source_sha256": "bfc91e9cca79315ae71da164a9458451a9b0a3e60a0528ac528215a630e81a0c",
+      "frozen_candidate_contains_script": true,
+      "frozen_script_sha256": "bfc91e9cca79315ae71da164a9458451a9b0a3e60a0528ac528215a630e81a0c"
+    },
+    {
+      "path": "scripts/personal-experience/skill-removal-browser-smoke.py",
+      "source_sha256": "4fc81f8aec4dd8ebbc29be193929a8ee17759f5fcf1475b3ee555a605f76449c",
+      "frozen_candidate_contains_script": true,
+      "frozen_script_sha256": "4fc81f8aec4dd8ebbc29be193929a8ee17759f5fcf1475b3ee555a605f76449c"
+    }
+  ],
+  "required_evidence": [
+    "freeze source/host/candidate/toolchain and independent fixture oracles before execution",
+    "actual authorized tool effect before and after update",
+    "expanded permissions and replaced source cannot inherit stale authority",
+    "revoked credential cannot dispatch, independent file/effect evidence",
+    "remove only owned installed content; preserve third-party hooks/unknown files",
+    "interruption and restart preserve evidence and report partial cleanup truthfully"
+  ]
+}

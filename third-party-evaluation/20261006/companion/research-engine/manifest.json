@@ -1,0 +1,450 @@
+{
+  "schema_version": "siq.research-companion-source.v1",
+  "research_base_head": "47c0eda39119662a8f230c7a3b3bea97216abab6",
+  "preexisting_dirty_entries": 535,
+  "delivery_mode": "source snapshots and explicit-base patch; Research worktree and remote branch not changed",
+  "files": [
+    {
+      "path": "apps/api/README.md",
+      "source_sha256": "88b82cf6c8fd6f40a6991c54dd52a0dfd618464ab4fe47a3f4f4abd91de1d434",
+      "base_sha256": "558a025f586a80530ac31dd68f9f973ba77b3b114bef46b89187f2e7986bfda5",
+      "base_origin": "Research HEAD 47c0eda39119662a8f230c7a3b3bea97216abab6 (may include pre-existing delta; not automatically attributable)",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/main.py",
+      "source_sha256": "6e0c713c6c296da787eb9de4c9d4cbe356bd11c4092890ce0741e1c5d9ff2de3",
+      "base_sha256": "be2149eadf7e99ded2be4a933656198105107327731e369f80388944c2e51c4f",
+      "base_origin": "Research HEAD 47c0eda39119662a8f230c7a3b3bea97216abab6 (may include pre-existing delta; not automatically attributable)",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/routers/openshell_data_grants.py",
+      "source_sha256": "0b78de51fd5275a97aefc0f776808033c9ab2097dddf9b022fdf897d064a0edb",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/services/agent_chat_runtime_impl.py",
+      "source_sha256": "c94e0fe5a1d65e63d40123f8c92b6cb3b9d4a901b76c2618a5bd1f7e14169ec8",
+      "base_sha256": "8a3becf2bf5a99959f060ab514913b55687a0c9f4240c9010ddd6f8872667247",
+      "base_origin": "protocols/research-permissions-skill-drift-002-sources/apps/api/services/agent_chat_runtime_impl.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/services/hermes_client.py",
+      "source_sha256": "17671303fd6a1ad175fc4d04dd85efa091b6e8371c51987b48594578af96d204",
+      "base_sha256": "7697ae3d3df6d4621965add11be6ad507c715df8de2a959b999aa675f7025cc5",
+      "base_origin": "local prechange backup",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/services/hermes_runtime_http_errors.py",
+      "source_sha256": "f487bf5cce289a77999c570cfe714afcc72c32a65822108aee0e68f66ba20b70",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/services/openshell_grant_revocation.py",
+      "source_sha256": "d94544e04296e53956843f962636e3ffb61c886bfdf360d879d20c3d84560f64",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/services/qwen38_request_heartbeat.py",
+      "source_sha256": "23fbde20333a7f483ee23c3980cd7e8672224947da60fecfc77b8f70654b157d",
+      "base_sha256": "a27e7796ceff5c6a14658d62df965931dc7a006c50577b44788ff6a761b550c2",
+      "base_origin": "protocols/research-permissions-skill-drift-001-sources/apps/api/services/qwen38_request_heartbeat.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_agent_runtime_active_runs.py",
+      "source_sha256": "0fea369317b90a0cf9b8bd2cd1fd3a54c385a32e95e18e3759e1a7258aced1a7",
+      "base_sha256": "b259414cb0f871c7911c68cbf7663ba8e25c4347650cb6f065b2662e18bdba6a",
+      "base_origin": "protocols/research-permissions-skill-drift-002-sources/apps/api/tests/test_agent_runtime_active_runs.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_agent_runtime_authority_loss.py",
+      "source_sha256": "8a10a8fc2bab1d6ec8e6148b15398df2eb7f0536d0c5678ff4135f1141d19b3f",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_hermes_runtime_http_errors.py",
+      "source_sha256": "b93e23bf2de1e74e3d51bb82ae61ec840ec379e51fb2652ce7fb0d7f4c25b66d",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_openshell_data_grant_api.py",
+      "source_sha256": "c24b3587cd84d0c9d65c1ad6750271fc3553637398c4507ab2ba5f7771317810",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_openshell_grant_revocation.py",
+      "source_sha256": "753265549e5a019f13c0739cd1811f56ebb3d1de6b572b3aa83bce6a55002c21",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_qwen38_request_heartbeat.py",
+      "source_sha256": "775241cc412e5fe3532b8a5978d5781423e0b0ac53530fce74ed2781fe45e853",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_qwen38_request_http.py",
+      "source_sha256": "7c3098f44b27fc54c3985f8e496b60ca0f5bcdc6a21785b05811b4dddc4aa2c2",
+      "base_sha256": "7c3098f44b27fc54c3985f8e496b60ca0f5bcdc6a21785b05811b4dddc4aa2c2",
+      "base_origin": "protocols/research-permissions-business-006-sources/test_qwen38_request_http.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "apps/api/tests/test_qwen38_request_selector.py",
+      "source_sha256": "dcc85ec972adf65e3acb21934ba87619145f1ecbdcd220994d5b48eb5941664b",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "docs/runbooks/openshell/qwen38-isolated-candidate.md",
+      "source_sha256": "81f6a761171b0b38b5347eb2a0652f27b5dc8df536d34a8667276cdd51f1793c",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "docs/runbooks/openshell/research-permission-daily-entry.md",
+      "source_sha256": "6cd5e1e16ebba207da22866cd9a6baf7fb998b5043de42006471d96a4401df79",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "infra/openshell/patches/hermes-post-tool-observer-serialization.patch",
+      "source_sha256": "7d5e82c64a4d3f103fa59b0123454a40b8738313255dc4ab4606012011029a24",
+      "base_sha256": "7d5e82c64a4d3f103fa59b0123454a40b8738313255dc4ab4606012011029a24",
+      "base_origin": "protocols/research-permissions-tool-coverage-003-sources/infra/openshell/patches/hermes-post-tool-observer-serialization.patch",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/agentshield_runtime_binding.py",
+      "source_sha256": "b1e6ff12d58ff593dfb6ede41cb35d4d34aab84889b468a85b63e7edab57981f",
+      "base_sha256": "b1e6ff12d58ff593dfb6ede41cb35d4d34aab84889b468a85b63e7edab57981f",
+      "base_origin": "protocols/research-permissions-skill-business-001-sources/scripts/openshell/agentshield_runtime_binding.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/fixtures/research_cross_company_os_probe.py",
+      "source_sha256": "eac248efa12bfe4a7657395a324533b294642237e5e932a05fb78b0d89dfe628",
+      "base_sha256": "eac248efa12bfe4a7657395a324533b294642237e5e932a05fb78b0d89dfe628",
+      "base_origin": "protocols/research-permissions-cross-company-001-sources/scripts/openshell/fixtures/research_cross_company_os_probe.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/fixtures/research_skill_sync.py",
+      "source_sha256": "c019f47f96b8c3a9ed232d70e22f4cb9bd59ce97bd5f43efbf724c218ac4f95e",
+      "base_sha256": "81422cc2c1b717ebe5670c473a0122b62fbd2d9e505ce29f037b8c5b6f3cc5a5",
+      "base_origin": "protocols/research-permissions-skill-business-001-sources/scripts/openshell/fixtures/research_skill_sync.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_agent_permissions.py",
+      "source_sha256": "7eb84b5f9db5a737962b3d53cb4c1ff26ccdb372b0f330f1e408a179316d0b4e",
+      "base_sha256": "7eb84b5f9db5a737962b3d53cb4c1ff26ccdb372b0f330f1e408a179316d0b4e",
+      "base_origin": "protocols/research-permissions-skill-drift-001-sources/scripts/openshell/prove_research_agent_permissions.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_business_grant_revoke.py",
+      "source_sha256": "469ef343e957ffa53d83a0b8fa8672521eb7ac61c08e1d69b6c00ed94395afad",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_business_permissions.py",
+      "source_sha256": "2de67d788f2eae643c79ef02b7d1ef299997d634a88c42d45a65cfe0ca1b272b",
+      "base_sha256": "04894fbc752da04789c5705e07c4d91947218835d1656c8ab1d506daeb3be5a6",
+      "base_origin": "protocols/research-permissions-business-004-sources/prove_research_business_permissions.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_cross_company_permissions.py",
+      "source_sha256": "a9f635090b2a42d43c4ad0baceeb97a5f6b2fab830643795ca5c62d679b1d1fe",
+      "base_sha256": "30f525fb7cbca560488b0c162e5816caca6431042d8b49075d0ab6bc4da36e41",
+      "base_origin": "protocols/research-permissions-cross-company-001-sources/scripts/openshell/prove_research_cross_company_permissions.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_daily_entry.py",
+      "source_sha256": "76a4823eb99d504af3bdd5acbcaf61d371c037b9368abc3d65bf8d6372f057a3",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_daily_permissions.py",
+      "source_sha256": "6f7c828c11cc87d49c649e0766ea92ceb015ca49c8c3417dafeaab94dbf8a0f6",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_relay_recovery.py",
+      "source_sha256": "f1b5a2803c74d9caef3a92aa253c7f6c442280617c1981204e95a0c7aff88310",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_skill_business.py",
+      "source_sha256": "4b508b070556c3b07d39b1b9fbfb319f2a5858b9a53936338708f2dc3f442387",
+      "base_sha256": "29e24c639115fa67046cbbba9c782a338e8c50056b8dc9b8aef4556e842b44ba",
+      "base_origin": "protocols/research-permissions-skill-business-001-sources/scripts/openshell/prove_research_skill_business.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_skill_drift.py",
+      "source_sha256": "a7ca9e1345b0cbce1b3c4d0a572bbcb55a064f537fd38cc4f4644794a8803256",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_skill_drift_authority.py",
+      "source_sha256": "c23d8a1f489cd0c2386f64c82b190931b226d7bae3919c7598a4b8c080402318",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_skill_drift_containment.py",
+      "source_sha256": "a50b479ebee69594ae37aecc08f0bec686b78599ec6fb8b31b0590506e9dbfe0",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_skill_replacement.py",
+      "source_sha256": "be137925a5b3b60813af665312d34f8c19f50b057663ac19d0875686aee0aeb8",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_skill_update_permissions.py",
+      "source_sha256": "8ac8caa030e2b13729e4d82ab8d7e7ed165a4c3fcc76957941d560e3d1034bfa",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_skill_withdrawal.py",
+      "source_sha256": "9b66a1b3fa8f0b02639440e22ecfde4c1491b979748cdbde5ac14f560179cb49",
+      "base_sha256": "67a2a7b119b1ec882658218050f3592c352e0f63646c8198ee22d96af6ef28a9",
+      "base_origin": "protocols/research-permissions-skill-drift-001-sources/scripts/openshell/prove_research_skill_withdrawal.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_tool_permissions.py",
+      "source_sha256": "52526b77503a6277a262393ce3af258abca80c264bb0d80a9f44d9dea08eb402",
+      "base_sha256": "52526b77503a6277a262393ce3af258abca80c264bb0d80a9f44d9dea08eb402",
+      "base_origin": "protocols/research-permissions-tool-coverage-001-sources/scripts/openshell/prove_research_tool_permissions.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/prove_research_tool_utility.py",
+      "source_sha256": "356a0be4601d8af2d607f373d64acbdb0c511e2ba0a99e28d2d19f87cd42767f",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/qwen38_candidate_supervisor.py",
+      "source_sha256": "fc43b69a7f59e2e0d9de8d4581fdd42b952fc04acdc82f7e2ecdbcacd4653921",
+      "base_sha256": "a9ba5a690f06d8f77fac011785fa99f1772553fc1a11be47a4accd2d43608ce2",
+      "base_origin": "protocols/research-permissions-skill-drift-001-sources/scripts/openshell/qwen38_candidate_supervisor.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/recover_research_permission_probe.py",
+      "source_sha256": "5a205455232a51aad7154433f1e58a37194b832ecdbad1529c4a8b9f96f52ca5",
+      "base_sha256": "5a205455232a51aad7154433f1e58a37194b832ecdbad1529c4a8b9f96f52ca5",
+      "base_origin": "protocols/research-permissions-skill-drift-002-sources/scripts/openshell/recover_research_permission_probe.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/research_owned_relay_fault.py",
+      "source_sha256": "d4ac4c752bc9354efa462bceb09a9f7ae0618ff902785a8eff18c33363b634b4",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/research_permission_skill_image.py",
+      "source_sha256": "7d82d75613fdbf72bc04681ae56738bea12c5309ceafd019011aa57dbcac26d9",
+      "base_sha256": "2e2d7c881bbbe28bb9b27c183dbe36aae71f7e1b78d985e680efeb30a1dfde21",
+      "base_origin": "protocols/research-permissions-skill-business-001-sources/scripts/openshell/research_permission_skill_image.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/research_permission_skills.py",
+      "source_sha256": "0c5be1ddbec919f2c03718c271ccdca70cfe7fba4a677b9f0fe57799ed1620c3",
+      "base_sha256": "058cfb4d693233416e2d1ec61f8e0e10c3aeaa7544e0b59d5c38f451005657b7",
+      "base_origin": "protocols/research-permissions-skill-install-001-sources/research_permission_skills.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_agentshield_runtime_binding.py",
+      "source_sha256": "b49e3b9ddcef1b9fce5d67030b363eeb7f42fc819920e69c894998f04f9ea5fc",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_qwen38_candidate_supervisor.py",
+      "source_sha256": "76852a2db3cd424f4f2cdd5f86cfca8278094592cbbdcd5b41637cf268436a65",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_cross_company_os_probe.py",
+      "source_sha256": "24134005ef486835d9a49974b92b9ca7ac02fa719a8b7b79e15d83fcd23ccf34",
+      "base_sha256": "24134005ef486835d9a49974b92b9ca7ac02fa719a8b7b79e15d83fcd23ccf34",
+      "base_origin": "protocols/research-permissions-cross-company-001-sources/scripts/openshell/tests/test_research_cross_company_os_probe.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_daily_entry.py",
+      "source_sha256": "7d3059f9c37b3ccf1f90d87e52bab35040a2af0785b725f450138f2ef238cc3a",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_daily_permissions.py",
+      "source_sha256": "0e8d7ecb36785b476cd77474a081ef076e4400e79ce31c05a649a537b50d718f",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_owned_relay_fault.py",
+      "source_sha256": "d21e72ad0a0be44d18e844ff9e34d2ba10e646ff7f3d237f006e4aa1c24c164c",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_permission_skill_image.py",
+      "source_sha256": "841842a7d80de3f172af2ff362d8e5cb9dce1f7231f9f699dbb25d5e0d59906c",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_permission_skills.py",
+      "source_sha256": "1ecea0e0c6bfc1bc3fdf420a33cab293bd9f98523c0e72ef113f410ad49fa97e",
+      "base_sha256": "1ecea0e0c6bfc1bc3fdf420a33cab293bd9f98523c0e72ef113f410ad49fa97e",
+      "base_origin": "protocols/research-permissions-skill-drift-002-sources/scripts/openshell/tests/test_research_permission_skills.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_relay_recovery.py",
+      "source_sha256": "c980fcd21a2a95d20e64378f61cb54b7559f20cd54bcdf97f6da90a41d484bf6",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_skill_drift.py",
+      "source_sha256": "d77f1c7f3b051c27d1704ea994ec8a1eee8b72c1e2a12204437743c6b82ae542",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_skill_drift_authority.py",
+      "source_sha256": "2dda1f3018814765c28bcc26561f645f043ed61146637a9d26530dde0b8ce600",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_skill_drift_containment.py",
+      "source_sha256": "0437b0e0417a19a2eddb06dc699fc962b9749a77841346fc644e1745a91a397d",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_skill_replacement.py",
+      "source_sha256": "2292c11691690f213254e44a010eca51097af32d2a15f76a9b51e45df9ec3fa2",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_skill_sync.py",
+      "source_sha256": "c08f1ae6617903bc37581517f8a2b58f3a0ce6dc843714ffc61af4b757aa60d9",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_skill_update_permissions.py",
+      "source_sha256": "823188225fb86a0b9ba969bde4379852553c969ba50d8ac7738d522b6ad8ec94",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_skill_withdrawal.py",
+      "source_sha256": "6e035c555b7de9a578aefebba77e2b9f4586b997fea958cdfe726fd5d90c147f",
+      "base_sha256": "58f5c28680f0d444733f5a723e40fe755ba1a4048bed310aa963ed61812aaf57",
+      "base_origin": "protocols/research-permissions-skill-drift-002-sources/scripts/openshell/tests/test_research_skill_withdrawal.py",
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/openshell/tests/test_research_tool_utility.py",
+      "source_sha256": "2befe709cef0b713d3272e58e2f559f48514b04c58f8b49486e9126709aaf41a",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/ops/launch_research_permission_api.py",
+      "source_sha256": "5b0398337a8961a7de25f7ca791fb191bf4c3cb448cd880acdc309077f50be15",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/ops/prove_research_permission_launch.py",
+      "source_sha256": "eade8b97e8ef69747964474792611a3cdca9bbb2325b67ead76ebb5a315751b9",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    },
+    {
+      "path": "scripts/ops/tests/test_launch_research_permission_api.py",
+      "source_sha256": "f8f2f40c04e9ba91913df3735664ca38f6ef92673dc5d94f3a39ae6374ed5df3",
+      "base_sha256": null,
+      "base_origin": null,
+      "classification": "current evaluation source snapshot; pre-existing dependencies explicitly retained where inseparable"
+    }
+  ],
+  "warning": "Not a standalone Research release. Some modified files depend on the pre-existing dirty Qwen deployment. Base origins vary by file; verify hashes before applying, do not blindly apply to clean Research HEAD. Full local frozen source archives remain private."
+}

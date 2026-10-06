@@ -1,0 +1,17 @@
+{
+  "batch": "research-permissions-authority-loss-message-001",
+  "source_manifest": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/protocols/research-permissions-authority-loss-message-001-source-manifest.json",
+  "source_manifest_sha256": "239cdba1a04cb8f13e20fba179a816233c1c956f31976d1de19e9622bc8627e6",
+  "source_count": 1647,
+  "changed_sources": [
+    "apps/api/services/agent_chat_runtime_impl.py"
+  ],
+  "new_tests": [
+    "apps/api/tests/test_agent_runtime_authority_loss.py"
+  ],
+  "api_pid_before": 2814391,
+  "api_start_ticks_before": "259606013",
+  "archive_sha256": "6d9ae3f6fac8cb76ac9e97bee9e9110a49cbbe0bca48e40877d820f6b55297c5",
+  "change": "Classify dispatched-run ownership loss as failed and nonretryable; retain real admission conflict behavior and original fencing/cleanup.",
+  "rollback": "Restore exact previous owned source bytes and protected dropin; do not switch to legacy Host."
+}

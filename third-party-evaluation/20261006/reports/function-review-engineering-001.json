@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-10-05T23:02:16.154431+00:00",
+  "scope": "functional review and evaluation documentation only",
+  "product_code_changed_by_this_revision": false,
+  "model_calls": 0,
+  "new_business_trials": 0,
+  "validation_report": "reports/function-review-validation-001.json",
+  "ruff": {
+    "returncode": 0,
+    "output": "All checks passed!\n"
+  },
+  "git_diff_check": {
+    "returncode": 0,
+    "output": ""
+  },
+  "full_product_tests": "not rerun: this revision modifies evaluation documentation and read-only inventory tools only",
+  "artifacts": {
+    "reports/project-function-understanding.md": "c398d0afdaf83d916247e601513feac2b461ae85a89f62dded28caa2709c4205",
+    "reports/function-traceability-table.md": "56dc8f3b0c95da34203e1bdcc68ed592a25ae81f72d5661d7648c770b82540b8",
+    "reports/function-review-validation-001.json": "8c7df1965f076a1bd31dd2b3952a12684867f1d8a6fb43b751173d94ca232df4",
+    "reports/historical-business-review-001.json": "1437068af07d7389a1d4cbcd17473104995ab6342d41e1de8878d2c908018ea8",
+    "inventory/function-traceability-v2.json": "8fce1d6787c3122408eb55ae431fee954cfd3fabf360638165707943258e7014",
+    "inventory/product-surface-review-001.json": "27e9647ce90e3c500bc58ab9348b6a223b0ee732e5f8ca740f22661ddcc844c3",
+    "inventory/product-surface-candidate-001.json": "1de893332995bce834a1406de1739dc5a50d0def8cf115b357fa149b84ed9135",
+    "inventory/product-surface-candidate-diff-001.json": "fe54c19effb1f54eb1958dee5ccd51a584329c99e4b834f4dbef355a567a869c",
+    "plan/real-business-evaluation-v2.md": "d0335587157ac899c2864d11eb0ad4993ea9e127bc75ac627715180a148c095a",
+    "plan/real-business-work-items-v2.json": "25ef3da43dd8d383e5f96b3314c90fbfdc961b2093e0780754648b44c68320b2"
+  },
+  "goal_status": "active"
+}

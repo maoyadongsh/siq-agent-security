@@ -1,0 +1,100 @@
+{
+  "schema_version": "siq-plan-integration/v1",
+  "recorded_at": "2026-10-06T06:38:29.366158+00:00",
+  "scope": "Function review and execution plan v1.5/v3; no new product/model experiment.",
+  "files": [
+    {
+      "path": "third-party-evaluation/20261006/README.md",
+      "sha256": "ec3fa3afd20330907749984611db54833760364694a412e125421e3af5742f38"
+    },
+    {
+      "path": "third-party-evaluation/20261006/REPRODUCE.md",
+      "sha256": "de4d2febd6c823c3aa6ae4fb076df1bb60d84607ff3c7e37290f8d4fa63c94ac"
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/project-function-understanding.md",
+      "sha256": "3bb43d3e453d485aa4c40fd298895b2ee3963d21ff76b16c3e4ed1e0ad2c5e3a"
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/product-evaluation-overview.md",
+      "sha256": "ad2fe1572c781feb663614d2e0d42bf576be083abf59ef8b2ec15d2e8949afed"
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/progress-report.md",
+      "sha256": "dd5b999cceefa89d774bea8b173616ffd394f5f32ab6c163f9fbb4ac49bb6299"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/real-business-evaluation-v2.md",
+      "sha256": "4541909a6b15b0e27492f8b85e7103bf06a5bd893ef9c4aa165b0be3eae9b657"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/product-acceptance-execution-order.md",
+      "sha256": "0c2056ce9376eb21e994dcfe0eb47e6e3df8e69283cfca4fac53e935be18269c"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/product-acceptance-execution-order.json",
+      "sha256": "dbefb325354b7b9e3a9ffdc19dd77250693ff994bffc9ce0723e0a3e84f2070d"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/real-business-work-items-v2.json",
+      "sha256": "e4f5afede8e5b532fd89dd4e6a2a6a8b339d19b644453ecc858ee0ce7fdedaad"
+    },
+    {
+      "path": "third-party-evaluation/20261006/implementation-progress.json",
+      "sha256": "a6c5053c526072aa1c9953b354ae5cc4cdc959a5f4f164bc23a5ecc6c710176e"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/CODEX_HANDOFF.md",
+      "sha256": "4153531dcffa78cd14ec8416b356983812638146defedca7da237fbca01bfc16"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/product-grounded-evaluation-revision-001.md",
+      "sha256": "2be9b59e02c972790d1bb4e8e499068fa98787932af9529ba4af5c988eccc17e"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/source-import-work-items-001.json",
+      "sha256": "500455383a7346daaee27205cb1542616df4a4fe9d757a44a4907ade9c1590c6"
+    },
+    {
+      "path": "docs/research/third-party-evaluation-plan-20261006.md",
+      "sha256": "3df5e632e86a809da6535b4b0cc329c0a26f0dc2ddc06a93642cd02171c4ba72"
+    },
+    {
+      "path": "docs/research/third-party-evaluation-20261006/CODEX_HANDOFF.md",
+      "sha256": "65c50224421178140026d3c2dbc8c7ab067a335a60ace83700c81c7c2521cbdd"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/product-grounded-acceptance-v3.md",
+      "sha256": "5e9787c029004ecd643572275476a5654a9433458990c92baa426abc5d3bc2d5"
+    },
+    {
+      "path": "third-party-evaluation/20261006/plan/product-acceptance-register-v3.json",
+      "sha256": "7d8810b98244dd7aed9ab3268ba73cf5894572d1bfaecef55eca4e6f2a42b73c"
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/product-capability-reassessment-005.md",
+      "sha256": "b7e11d79e410035a7216dc19fc341e3f81bb70a8343285e9381bd749f249e754"
+    },
+    {
+      "path": "third-party-evaluation/20261006/inventory/function-review-refresh-005.json",
+      "sha256": "c31173468ecf89f704423b53bf69bbafeededc60ab047b37e85a88e12f9fd5e1"
+    },
+    {
+      "path": "third-party-evaluation/20261006/reports/function-plan-005-document-validation.json",
+      "sha256": "09acbfc6e4f4c0c2886ae95313af335aee6f2893938dce14d7a3c3113237fb22"
+    }
+  ],
+  "validation_ref": "reports/function-plan-005-document-validation.json",
+  "document_checks_passed": 154,
+  "git_diff_check": "passed",
+  "new_business_executions": 0,
+  "new_model_calls": 0,
+  "goal_status": "active",
+  "remaining_priority": [
+    "P1 precise requirement/variant reconciliation",
+    "P2 20 distinct product development tasks, real Qwen/Step5 pilot",
+    "P3 remaining lifecycle/notification/UI variants",
+    "P4 disjoint confirmation set",
+    "P5 external benchmark and independent reproduction prerequisites"
+  ]
+}

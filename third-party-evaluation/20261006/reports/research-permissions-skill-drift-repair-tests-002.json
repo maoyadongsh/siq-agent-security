@@ -1,0 +1,13 @@
+{
+  "recorded_unix": 1791273523.302463,
+  "command": "apps/api/.venv/bin/python -m pytest apps/api/tests/test_agent_runtime_active_runs.py -q",
+  "exit_code": 0,
+  "passed": 46,
+  "warnings": 275,
+  "elapsed_seconds": 1.31,
+  "scope": "Final transport failure wording and terminal-state regressions; no live claim for final wording",
+  "source_sha256": {
+    "apps/api/services/agent_chat_runtime_impl.py": "ddeaddfedb02761771ff1db0d2c04f11f1558ad3efc0733c24473d35f3bdadaa",
+    "apps/api/tests/test_agent_runtime_active_runs.py": "0fea369317b90a0cf9b8bd2cd1fd3a54c385a32e95e18e3759e1a7258aced1a7"
+  }
+}

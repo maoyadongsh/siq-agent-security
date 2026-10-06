@@ -1,0 +1,549 @@
+{
+  "schema_version": "siq-product-acceptance-register/v3",
+  "created_at": "2026-10-06T06:37:26.569521+00:00",
+  "scope": "Author-side design and reconciliation plan; no new experiments or promotion of prior results.",
+  "plan_ref": "plan/product-grounded-acceptance-v3.md",
+  "review_ref": "reports/product-capability-reassessment-005.md",
+  "source_review_ref": "inventory/function-review-refresh-005.json",
+  "feature_count": 40,
+  "journey_count": 18,
+  "acceptance_gates": [
+    {
+      "acceptance_id": "AC01",
+      "title": "发现、准入与安装",
+      "feature_ids": [
+        "F03",
+        "F04",
+        "F05",
+        "F07",
+        "F19",
+        "F28"
+      ],
+      "journey_ids": [
+        "RB09"
+      ],
+      "task_ids": [
+        "TP03",
+        "TP07"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/source-path-slots-report.md",
+        "reports/source-capability-review-001.md"
+      ],
+      "remaining_action": "逐来源核对发现/安装/实际加载与工具效果，保留生产Git关闭事实",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC02",
+      "title": "当前授权与执行归属",
+      "feature_ids": [
+        "F06",
+        "F08",
+        "F09",
+        "F10",
+        "F12",
+        "F13"
+      ],
+      "journey_ids": [
+        "RB05",
+        "RB15"
+      ],
+      "task_ids": [
+        "TP03",
+        "TP08"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/native-business-briefing-report.md",
+        "reports/native-revocation-report.md"
+      ],
+      "remaining_action": "同候选安装字节、Grant、SEC与原生调用绑定；旧身份/跨版本变体对账",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC03",
+      "title": "参数来源",
+      "feature_ids": [
+        "F11",
+        "F12"
+      ],
+      "journey_ids": [
+        "RB02"
+      ],
+      "task_ids": [
+        "TP03",
+        "TP05",
+        "TP06"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/business-comparison-controls-report.md",
+        "reports/native-business-mcp-selection-report.md"
+      ],
+      "remaining_action": "复核来源桥覆盖和单谓词消融，再扩独立任务",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC04",
+      "title": "审批撤权与恢复",
+      "feature_ids": [
+        "F06",
+        "F14",
+        "F39"
+      ],
+      "journey_ids": [
+        "RB04",
+        "RB10",
+        "RB15"
+      ],
+      "task_ids": [
+        "TP03",
+        "TP07",
+        "TP08"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/native-host-resume-report.md",
+        "reports/native-batch-approval-report.md"
+      ],
+      "remaining_action": "核对真实重叠预留、当前权限及逐时间窗剩余变体",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC05",
+      "title": "业务交付与效果核验",
+      "feature_ids": [
+        "F15",
+        "F16",
+        "F24"
+      ],
+      "journey_ids": [
+        "RB01",
+        "RB03",
+        "RB11"
+      ],
+      "task_ids": [
+        "TP02",
+        "TP03",
+        "TP05",
+        "TP06"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/business-comparison-controls-report.md",
+        "reports/business-observer-calibration-report.md"
+      ],
+      "remaining_action": "将语义gold和独立效果oracle扩到多任务，完成观察故障矩阵",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC06",
+      "title": "原生工具与委派",
+      "feature_ids": [
+        "F21",
+        "F08",
+        "F13"
+      ],
+      "journey_ids": [
+        "RB05",
+        "RB07"
+      ],
+      "task_ids": [
+        "TP03",
+        "TP08"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/native-effects-report.md",
+        "reports/native-terminal-authorization-report.md",
+        "reports/native-delegation-controls-report.md"
+      ],
+      "remaining_action": "逐工具登记合法/越权/嵌套覆盖；已全拒绝入口不继续攻击文本扩量",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC07",
+      "title": "参考应用模型路由",
+      "feature_ids": [
+        "F23"
+      ],
+      "journey_ids": [
+        "RB08"
+      ],
+      "task_ids": [
+        "TP03",
+        "TP05"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/business-model-routing-fixed-candidate-report.md",
+        "reports/business-model-routing-boundaries-report.md"
+      ],
+      "remaining_action": "保留同候选请求级证据，逐缺失默认入口/故障/分级范围对账",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC08",
+      "title": "企业身份到部署回滚",
+      "feature_ids": [
+        "F22",
+        "F25",
+        "F26",
+        "F27",
+        "F28",
+        "F31",
+        "F32",
+        "F33",
+        "F34"
+      ],
+      "journey_ids": [
+        "RB06",
+        "RB12",
+        "RB14"
+      ],
+      "task_ids": [
+        "TP07"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/enterprise-chain-report.md",
+        "reports/enterprise-authority-report.md"
+      ],
+      "remaining_action": "单目标既有链复用，补UI/持续发现等精确变体；客户IdP/共享治理分列",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC09",
+      "title": "企业风险与通知",
+      "feature_ids": [
+        "F29",
+        "F30",
+        "F35"
+      ],
+      "journey_ids": [
+        "RB13"
+      ],
+      "task_ids": [
+        "TP07"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/rule-concurrency-report.md",
+        "reports/risk-worker-cycle-report.md"
+      ],
+      "remaining_action": "同rulefix1候选补通知失败、重试、重复处理及UI，不重复顺序worker",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC10",
+      "title": "管理、审计及原文",
+      "feature_ids": [
+        "F02",
+        "F17",
+        "F18",
+        "F39"
+      ],
+      "journey_ids": [
+        "RB10",
+        "RB11"
+      ],
+      "task_ids": [
+        "TP02",
+        "TP07"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/personal-runtime-browser-report.md",
+        "reports/progress-report.md"
+      ],
+      "remaining_action": "逐项撤权后的工具效果、两时钟原文与源记录/导出完整性对账",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC11",
+      "title": "更新发行与服务生命周期",
+      "feature_ids": [
+        "F01",
+        "F07",
+        "F19",
+        "F20",
+        "F37",
+        "F38"
+      ],
+      "journey_ids": [
+        "RB15",
+        "RB16"
+      ],
+      "task_ids": [
+        "TP07",
+        "TP08"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/native-lifecycle-report.md",
+        "reports/adapter-removal-report.md",
+        "reports/native-resilience-report.md"
+      ],
+      "remaining_action": "按原生OS和签名包冻结升级/回滚/卸载，不用交叉编译代替",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    },
+    {
+      "acceptance_id": "AC12",
+      "title": "业务集成与性能",
+      "feature_ids": [
+        "F36",
+        "F40"
+      ],
+      "journey_ids": [
+        "RB17",
+        "RB18"
+      ],
+      "task_ids": [
+        "TP02",
+        "TP07",
+        "TP08"
+      ],
+      "claim_status": "partial",
+      "ready_to_run": false,
+      "not_ready_reason": "Gate definition is not a frozen runnable allocation; reconcile exact variants and candidate before running.",
+      "reuse_candidates": [
+        "reports/project-function-understanding.md",
+        "reports/progress-report.md"
+      ],
+      "remaining_action": "版本化业务链与真实资源/工作量配对；历史撤权不升级为本轮验收",
+      "closure_requires": [
+        "candidate_and_exact_variant_bound",
+        "positive_utility_and_adversarial_or_fault_pair",
+        "real_entry_and_tool_coverage",
+        "independent_effect_and_business_oracle",
+        "raw_failures_unknowns_and_offline_verification",
+        "scope_and_limitations_recorded"
+      ]
+    }
+  ],
+  "original_tasks_snapshot": [
+    {
+      "task_id": "TP00",
+      "inherited_status": "completed",
+      "artifact_ref_count": 5,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP01",
+      "inherited_status": "completed_with_findings",
+      "artifact_ref_count": 3,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP02",
+      "inherited_status": "in_progress",
+      "artifact_ref_count": 150,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP03",
+      "inherited_status": "in_progress",
+      "artifact_ref_count": 146,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP04",
+      "inherited_status": "in_progress",
+      "artifact_ref_count": 23,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP05",
+      "inherited_status": "in_progress",
+      "artifact_ref_count": 42,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP06",
+      "inherited_status": "planned",
+      "artifact_ref_count": 0,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP07",
+      "inherited_status": "in_progress",
+      "artifact_ref_count": 132,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP08",
+      "inherited_status": "in_progress",
+      "artifact_ref_count": 96,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP09",
+      "inherited_status": "planned",
+      "artifact_ref_count": 0,
+      "closure_reaudited": false
+    },
+    {
+      "task_id": "TP10",
+      "inherited_status": "in_progress",
+      "artifact_ref_count": 138,
+      "closure_reaudited": false
+    }
+  ],
+  "phases": [
+    {
+      "id": "P0",
+      "status": "completed_document_review_only",
+      "output_refs": [
+        "reports/product-capability-reassessment-005.md",
+        "inventory/function-review-refresh-005.json"
+      ]
+    },
+    {
+      "id": "P1",
+      "status": "planned",
+      "deliverable": "reports/acceptance-variant-reconciliation.json"
+    },
+    {
+      "id": "P2",
+      "status": "planned",
+      "deliverable": "datasets/development20/",
+      "minimum_unique_task_blocks": 20,
+      "models": [
+        "Qwen3.8-27B-NVFP4",
+        "step-5-preview"
+      ],
+      "main_arms": [
+        "B0",
+        "B2"
+      ],
+      "conditions": [
+        "clean",
+        "injected"
+      ],
+      "repeats": 1,
+      "units_per_model": 80,
+      "independent_task_blocks_across_models": 20,
+      "source_ablation": "Only separately registered applicable subset with isolated-predicate proof"
+    },
+    {
+      "id": "P3",
+      "status": "planned_scoped_remaining_variants"
+    },
+    {
+      "id": "P4",
+      "status": "planned_new_confirmation_tasks",
+      "independent_blind_execution": "external_pending",
+      "development_reuse_forbidden": true
+    },
+    {
+      "id": "P5",
+      "status": "planned_remaining_original_requirements_and_delivery"
+    }
+  ],
+  "new_business_executions": 0,
+  "new_model_calls": 0,
+  "total_goal_complete": false,
+  "plan_sha256": "5e9787c029004ecd643572275476a5654a9433458990c92baa426abc5d3bc2d5",
+  "review_sha256": "b7e11d79e410035a7216dc19fc341e3f81bb70a8343285e9381bd749f249e754",
+  "source_review_sha256": "c31173468ecf89f704423b53bf69bbafeededc60ab047b37e85a88e12f9fd5e1"
+}

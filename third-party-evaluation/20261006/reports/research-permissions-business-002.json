@@ -1,0 +1,41 @@
+{
+  "schema_version": "siq.evaluation.research-permissions-run.v1",
+  "batch": "research-permissions-business-002",
+  "mode": "business",
+  "passed": false,
+  "scope": "dedicated_real_research_deployment_synthetic_company",
+  "binary_sha256": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "relay_sha256": "946cd90af62f76886fff5573161f633a94a7308ad2cce267345ab638b370a29f",
+  "started_unix": 1791269706.9733605,
+  "checks": {
+    "owned_daemon_initialized": true,
+    "owned_daemon_ready": true,
+    "live_proof_passed": false,
+    "owned_daemon_stopped": true,
+    "owned_authority_port_closed": true
+  },
+  "secret_values_exported": false,
+  "proof_exit_code": 1,
+  "proof": {
+    "schema": "siq.qwen38.candidate-api-proof.v1",
+    "passed": false,
+    "scope": "isolated_real_business_HTTP_with_synthetic_authority",
+    "production_ready": false,
+    "checks": {
+      "fresh_database_migrations": true,
+      "request_recovery_ready": true,
+      "legacy_recovery_disabled": true,
+      "business_settled_before_api_stop": true,
+      "candidate_listener_closed": true,
+      "business_runtime_cleanup_confirmed": false,
+      "temporary_database_removed": false,
+      "existing_service_identity_unchanged": true
+    },
+    "business_HTTP_attempted": true,
+    "business_HTTP_status": 503,
+    "failure": "candidate_business_http_failed",
+    "remaining_running_execution_count": 0
+  },
+  "proof_sha256": "3d3aa5dfde26c8a4ae54cd431128dbfe78803e3c51a55f703ed02922d3510b2c",
+  "finished_unix": 1791269721.9129791
+}

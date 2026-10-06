@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-10-05T19:57:45.514580+00:00",
+  "checks": [
+    {
+      "name": "race-framework-tests",
+      "exit_code": 0,
+      "output": "----------------------------------------------------------------------\nRan 41 tests in 2.045s\n\nOK\n"
+    },
+    {
+      "name": "race-ruff",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "name": "race-diff-check",
+      "exit_code": 0,
+      "output": ""
+    }
+  ]
+}

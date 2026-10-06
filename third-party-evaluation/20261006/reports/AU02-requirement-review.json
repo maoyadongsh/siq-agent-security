@@ -1,0 +1,38 @@
+{
+  "reviewed_at": "2026-10-05T23:03:55.536421+00:00",
+  "family_id": "AU02",
+  "status": "completed_for_registered_component_profile",
+  "run_id": "effect-time-002",
+  "manifest_sha256": "e59328dedb5f5c850d66d99941ffd4a351592dabb00cfeef9f0882023d40b545",
+  "verification_ref": "reports/effect-time-002-export-verification.json",
+  "requirements": {
+    "同进程重放": "hold-recovery-002 AU02.same-process-replay pair: one real write; exact consumed reservation replay 409",
+    "重启重放": "hold-recovery-002 AU02.restart-replay pair: actual SIGKILL/new process, signed history, real single write; exact replay 409",
+    "观察先于批准": "effect-time-002: actual receiver timestamp before approval or before reserve, delayed authenticated submission after reserve, same-process/restart paired controls; unauthorized_effect_observed and conflicting retained"
+  },
+  "supporting_runs": [
+    {
+      "run_id": "hold-recovery-002",
+      "manifest_sha256": "7bcdab3dbd41ca95de26399a10999c4e6eb4b006d278fefa875650e7775d51b7",
+      "verification_ref": "reports/hold-recovery-002-export-verification.json",
+      "case_ids": [
+        "AU02.same-process-replay.benign",
+        "AU02.same-process-replay.adversarial",
+        "AU02.restart-replay.benign",
+        "AU02.restart-replay.adversarial"
+      ]
+    }
+  ],
+  "done_when": {
+    "all_registered_variants_paired": true,
+    "raw_requests_effects_and_failures_archived": true,
+    "offline_predicates_and_denominators_recomputed": true
+  },
+  "scope": "Required Intent/block component profile: write_file reservation replay plus timestamped network effect detection; no native SEC/same-UID isolation/personnel independence. Early effects deliberately occurred; detection is not prevention.",
+  "remaining_applicable_profiles": [
+    "native managed runtime/SEC and target business effect integration"
+  ],
+  "contract_binding_ref": "data/effect-time-002/protocol.json#/contract_binding",
+  "counter_calibration_ref": "data/effect-time-002/counter-calibration.json",
+  "cleanup_ref": "reports/effect-time-export-review.json"
+}

@@ -1,0 +1,21 @@
+{
+  "batch": "research-permissions-skill-drift-containment-001",
+  "passed": false,
+  "reason": "Business reply falsely reported concurrent request instead of executed-run failure. Original predeclared case remains FAIL.",
+  "verified_partial_evidence": {
+    "signed_receipt_count": 4,
+    "signed_context_valid": true,
+    "same_child_self_statuses": [
+      200,
+      401
+    ],
+    "complete_prefix_preserved": true,
+    "file_bytes_unchanged": true,
+    "unauthorized_content_absent": true,
+    "business_failed": true,
+    "finalizer_released": true,
+    "cleanup": true
+  },
+  "source_freeze_ref": "reports/research-permissions-skill-drift-containment-001-source-check.json",
+  "product_fix_ref": "reports/research-permissions-authority-loss-message-001-deployment.json"
+}

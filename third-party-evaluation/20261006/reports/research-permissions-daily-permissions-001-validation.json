@@ -1,0 +1,20 @@
+{
+  "batch": "research-permissions-daily-permissions-001",
+  "research_tests": {
+    "command": "PYTHONPATH=apps/api:. apps/api/.venv/bin/python -m pytest -q scripts/openshell/tests/test_research_daily_permissions.py scripts/ops/tests/test_launch_research_permission_api.py",
+    "passed": 10
+  },
+  "security_verifier_tests": {
+    "command": "python -m pytest -q benchmarks/third-party/test_research_daily_permissions_verify.py",
+    "passed": 3
+  },
+  "live_launch_preflight": "reports/research-permissions-launch-001.json",
+  "independent_actual_effect_review": "reports/research-permissions-daily-permissions-001-verification.json",
+  "owning_project_readback": "reports/research-permissions-daily-permissions-001-readback.json",
+  "git_diff_check": "passed in both edited repositories",
+  "limits": [
+    "No full monorepo check_all.sh rerun in this increment.",
+    "Preflight/staging health alone is not counted as business protection.",
+    "No independent third-party execution or certification."
+  ]
+}

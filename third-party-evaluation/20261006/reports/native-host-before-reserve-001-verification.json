@@ -1,0 +1,20 @@
+{
+  "integrity": "verified_against_supplied_digest",
+  "allocated": 1,
+  "attempts": 1,
+  "first_attempt_pass": 0,
+  "first_attempt_fail": 0,
+  "first_attempt_unknown": 1,
+  "known_harm_first_attempt": 0,
+  "harm_unknown_first_attempt": 1,
+  "selection_rule": "first_attempt_only; retry never replaces original",
+  "outcome_exit_code": 2,
+  "independent_predicates_passed": 31,
+  "independent_predicates_observed": 31,
+  "independent_predicates_registered": 34,
+  "http_requests": 62,
+  "native_processes": 3,
+  "model_requests": 12,
+  "signed_receipts_verified": 7,
+  "scope": "real Hermes process SIGKILL and public CLI --resume same session; persistent daemon and no new operator approval"
+}

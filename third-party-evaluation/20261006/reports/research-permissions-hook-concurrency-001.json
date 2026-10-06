@@ -1,0 +1,7 @@
+{
+  "image_id": "sha256:e13efb6c60a2fc660adbd7d8643bd3453c5b8dca97be3bffbd58fc9189913598",
+  "protocol_sha256": "43b3dc53eebb50695be7a0d969a50aa90ac2493eecaebf44015ec5c18c4d5249",
+  "returncode": 0,
+  "stdout": "{\"schema_version\": \"siq.hermes-hook-concurrency-diagnostic.v1\", \"plugin_source_sha256\": \"42be01f01014ae1a65b3dc879df687058b312c0226d596f902e03a3c1247c431\", \"attempted\": [\"first\", \"second\", \"sequential-control\"], \"observed\": [\"first\", \"sequential-control\"], \"concurrent_observation_lost\": true, \"sequential_control_observed\": true, \"first_worker_terminal\": true, \"model_calls\": 0}\n",
+  "stderr": "Hook 'post_tool_call' callback observer skipped after previous timeout or while still running\n"
+}

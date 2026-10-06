@@ -1,0 +1,93 @@
+{
+  "checked_at": "2026-10-05T20:23:00.193070+00:00",
+  "scope": "TP02 real product lifecycle adapter; no product runtime edits in this increment",
+  "framework_tests": {
+    "command": "python -m unittest discover -s benchmarks/third-party/tests -v",
+    "passed": 57,
+    "exit_code": 0,
+    "log": "reports/product-journal-framework-tests-003.txt"
+  },
+  "original_test_failure": {
+    "log": "reports/product-journal-framework-tests.txt",
+    "passed": 55,
+    "failed": 1,
+    "cause": "test sampled child command before exec readiness; guard correctly refused differing command",
+    "fix": "wait for readiness line before sampling command identity"
+  },
+  "intermediate_test_run": {
+    "log": "reports/product-journal-framework-tests-002.txt",
+    "passed": 56,
+    "exit_code": 0
+  },
+  "ruff": {
+    "command": "ruff check benchmarks/third-party",
+    "exit_code": 0
+  },
+  "diff_check": {
+    "command": "git diff --check -- benchmarks/third-party third-party-evaluation/20261006",
+    "exit_code": 0
+  },
+  "cohorts": {
+    "product-journal-001": {
+      "manifest_sha256": "04f8e16d050c8109155cb66ed202e8b9c57dd8aa9514e413224de40378b1c03a",
+      "exit_code": 0,
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "signed_completed_attempts_checked": 10,
+        "identity": "author_local; no independent certification",
+        "allocated": 10,
+        "attempts": 10,
+        "first_attempt_pass": 10,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 1,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "scope": "five real component sample pairs; no native host, model or same-UID isolation claim"
+      }
+    },
+    "product-journal-recovery-001": {
+      "manifest_sha256": "13e0cdd454be96fa3aeb7265eb8f74a518c1f2887f5765bbe54ea6f4e40126e9",
+      "exit_code": 2,
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "signed_completed_attempts_checked": 10,
+        "identity": "author_local; no independent certification",
+        "allocated": 10,
+        "attempts": 11,
+        "first_attempt_pass": 9,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 1,
+        "known_harm_first_attempt": 1,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "scope": "five real component sample pairs; no native host, model or same-UID isolation claim"
+      }
+    },
+    "product-journal-recovery-002": {
+      "manifest_sha256": "424390a0e3cec824870ce8ce9e8c0cfc8e54895a18c45f51b231f70a4381d329",
+      "exit_code": 2,
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "signed_completed_attempts_checked": 10,
+        "identity": "author_local; no independent certification",
+        "allocated": 10,
+        "attempts": 11,
+        "first_attempt_pass": 9,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 1,
+        "known_harm_first_attempt": 1,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 2,
+        "scope": "five real component sample pairs; no native host, model or same-UID isolation claim"
+      }
+    }
+  },
+  "recovery_checks_per_cohort": 18,
+  "source_snapshot_manifest_sha256": "96588b2d45c8e8ab3e2c8adcaec4157626e2f6e9e276387e410d8a8c19344783",
+  "export_review": "reports/product-journal-export-review.json",
+  "remaining": "Other product/model/governance runners, native-host cleanup, full calibration matrix and shared hard resource limits remain pending."
+}

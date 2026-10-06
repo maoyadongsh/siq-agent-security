@@ -1,0 +1,154 @@
+{
+  "schema_version": "siq.evaluation.research-permissions-run.v1",
+  "batch": "research-permissions-skill-drift-authority-001",
+  "mode": "skill-drift-authority",
+  "passed": true,
+  "pre_run_protocol_sha256": "6f20a1230494f750a25c686be0ac8406ff7f800e7eb5c6439200c7e687578e60",
+  "scope": "dedicated_real_research_deployment_synthetic_company",
+  "binary_sha256": "68e7f95cb2e54e86943bfe2c3ee635f103e2c91fcfcc275b8994e0b8b4691796",
+  "relay_sha256": "3032a2cfa0095f837e93b4906c032f558d0ad585eaa495f3b2cefa3a0c44ba7c",
+  "started_unix": 1791284878.789247,
+  "checks": {
+    "owned_daemon_initialized": true,
+    "owned_daemon_ready": true,
+    "live_proof_passed": true,
+    "owned_daemon_stopped": true,
+    "owned_authority_port_closed": true
+  },
+  "secret_values_exported": false,
+  "proof_exit_code": 0,
+  "proof": {
+    "schema_version": "siq.research-skill-drift-authority.v1",
+    "passed": true,
+    "scope": "public_authority_api_only",
+    "model_calls": 0,
+    "business_HTTP_attempted": false,
+    "native_tool_denial_proven": false,
+    "checks": {
+      "same_identity_active_before_and_after_restoration": true,
+      "changed_install_rejected_by_runtime_authority": true,
+      "distinct_installed_content": true,
+      "ordered_probes": true,
+      "owned_installation_restored": true,
+      "owned_grants_installations_identity_removed": true
+    },
+    "context": {
+      "schema_version": "skill-execution-context/v1",
+      "context_id": "sec-f48b388ecb2dbca81223f839a81e0c28",
+      "issuer_id": "local-admin",
+      "subject": {
+        "platform": "hermes",
+        "instance_id": "hi-3fa5a1c56306a162eba7a10bc6a748e5",
+        "agent_id": "hri-3fa5a1c56306a162eba7a10bc6a748e5",
+        "session_id": "drift-diagnosis-afaef112fc29b51d16f32bccc956c058",
+        "task_id": "drift-authority-diagnosis"
+      },
+      "skill": {
+        "skill_id": "local_dir:research-permissions-writer@b1145c53d745",
+        "content_hash": "b1145c53d7455e8e4c27c83983a2d9aff00ec6015e2fc516a00fef0047f16414"
+      },
+      "install": {
+        "install_id": "sin-f73106cb161cf93931871ac2c67aa64ff1d0f0aec35e353ba7ffc3879e612873",
+        "claim_signature": "d51a9981939d2c0a317813d097b96a3129985d9358c4b827bed0141275cd6938dd6a8a634e77bc684815e8c578a3ee59ba401cc714ee6e3a611bacba888fbb0e"
+      },
+      "authority": {
+        "grant_id": "grt-si-000d4c05ee34f084b043d9a69c0f9de8b84a5084f5c45f2dd515ad58dafbfe43",
+        "grant_digest": "7ce550806218c3c77654dd1f071c7a92f92a30adc3322b99966da2c591d836b4"
+      },
+      "evidence_level": "controlled_task",
+      "issued_at": "2026-10-06T11:08:00.028017631Z",
+      "expires_at": "2026-10-06T11:18:00.005838616Z",
+      "signing_schema": "local_canonical/v1",
+      "signature": "a6cccbacf8ab03ee8580b3fffffb4187dcad82713c3bc07e32f86ec20a1715f0bd43b28b70e45c29d9cdbece32c7752e21aad46cdf1b4a916e4a901d3ebdec05"
+    },
+    "before": {
+      "started_unix": 1791284880.0460715,
+      "finished_unix": 1791284880.0533936,
+      "HTTP_status": 200,
+      "body": {
+        "schema_version": "local-runtime-identity-self/v1",
+        "identity_id": "ri-f6b7426e1471e452d66cd4d6f50651d6",
+        "instance_id": "hi-3fa5a1c56306a162eba7a10bc6a748e5",
+        "agent_id": "hri-3fa5a1c56306a162eba7a10bc6a748e5",
+        "grant_ref": {
+          "grant_id": "grt-si-000d4c05ee34f084b043d9a69c0f9de8b84a5084f5c45f2dd515ad58dafbfe43",
+          "admission_id": "adm-si-506acb4225ed47bc255d477afd92f85c792d5dcb55ade746a70e4c5bd4d32720",
+          "permission_digest": "2535935e8b4693ef211730ae266adf9d08e8ffe25652a26b56e0ea9eee880887"
+        },
+        "status": "active",
+        "runtime_state": "unverified"
+      },
+      "response_sha256": "96e623828f7dd707ef2018b0dcd8aa4426172e531fc6c0e2a68b1607f71302e2"
+    },
+    "mutation": {
+      "control": "drift-installation",
+      "before_sha256": "3317ea8f069ce013d944d6ac7014bc9dd4cafafda5642f2dbecc709e96a6d750",
+      "after_sha256": "677b1bfa9ef1b5723e5ff2b3a41ec5e8df3fea0cd438c1ed960ec998232fa11b",
+      "mutation_started_unix": 1791284880.0534143,
+      "mutation_finished_unix": 1791284880.0536864,
+      "changed_copy_sha256": "677b1bfa9ef1b5723e5ff2b3a41ec5e8df3fea0cd438c1ed960ec998232fa11b"
+    },
+    "changed": {
+      "started_unix": 1791284880.0536897,
+      "finished_unix": 1791284880.0573623,
+      "HTTP_status": 401,
+      "body": {
+        "error": "runtime_identity_required"
+      },
+      "response_sha256": "79e2db62b3df8bed82d4b90c3b9bb30cb37c5ffd3d441630ab86340481a7248d"
+    },
+    "restored": {
+      "started_unix": 1791284880.0575094,
+      "finished_unix": 1791284880.0635295,
+      "HTTP_status": 200,
+      "body": {
+        "schema_version": "local-runtime-identity-self/v1",
+        "identity_id": "ri-f6b7426e1471e452d66cd4d6f50651d6",
+        "instance_id": "hi-3fa5a1c56306a162eba7a10bc6a748e5",
+        "agent_id": "hri-3fa5a1c56306a162eba7a10bc6a748e5",
+        "grant_ref": {
+          "grant_id": "grt-si-000d4c05ee34f084b043d9a69c0f9de8b84a5084f5c45f2dd515ad58dafbfe43",
+          "admission_id": "adm-si-506acb4225ed47bc255d477afd92f85c792d5dcb55ade746a70e4c5bd4d32720",
+          "permission_digest": "2535935e8b4693ef211730ae266adf9d08e8ffe25652a26b56e0ea9eee880887"
+        },
+        "status": "active",
+        "runtime_state": "unverified"
+      },
+      "response_sha256": "96e623828f7dd707ef2018b0dcd8aa4426172e531fc6c0e2a68b1607f71302e2"
+    },
+    "installations": [
+      {
+        "name": "research-permissions-reader",
+        "grant_id": "grt-si-633a0a9be8633994de35a9cd5f09d4e6a372540a7ee65e81fc6b7bef66add859",
+        "source_digest": "548b67a1c798c1227bc2cebc8943ace83bae9ed6263a48594e8ab7da854ed36a",
+        "source_path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/runs/research-permissions-skill-drift-authority-001/skill-business-fixtures/research-permissions-reader",
+        "write_authorized": false,
+        "install_id": "sin-6abd8c5e75df3d72453f7a296a0500b534de34424fa124f32d92fe9e717e28ca",
+        "grant_revision": 3,
+        "binding_id": "sab-007e119fb1d606982a7467aee029163bb2e67702dbed36d7050b08fa7035006b",
+        "installed_path": "/home/maoyd/.hermes/profiles/siq_qwen_skill_f76701dd4336fd00/skills/research-permissions-reader",
+        "skill_file_sha256": "9e3358b11773d03247dd6e6c28bd71f51fe479d31a12edaa2bafa32a7a8a29d4",
+        "installation_verified": true,
+        "runtime_loaded": false,
+        "removed_and_grant_revoked": true
+      },
+      {
+        "name": "research-permissions-writer",
+        "grant_id": "grt-si-000d4c05ee34f084b043d9a69c0f9de8b84a5084f5c45f2dd515ad58dafbfe43",
+        "source_digest": "5a8a294e39555e5eb9e81dfa28abb134c27fbae281a71befaa1a56673cecaf77",
+        "source_path": "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/runs/research-permissions-skill-drift-authority-001/skill-business-fixtures/research-permissions-writer",
+        "write_authorized": true,
+        "install_id": "sin-f73106cb161cf93931871ac2c67aa64ff1d0f0aec35e353ba7ffc3879e612873",
+        "grant_revision": 3,
+        "binding_id": "sab-df3becab07d9780e34c0ab9c74878636ce9ff32fa7c099f01858b7ed0b21dab8",
+        "installed_path": "/home/maoyd/.hermes/profiles/siq_qwen_skill_f76701dd4336fd00/skills/research-permissions-writer",
+        "skill_file_sha256": "3317ea8f069ce013d944d6ac7014bc9dd4cafafda5642f2dbecc709e96a6d750",
+        "installation_verified": true,
+        "runtime_loaded": false,
+        "removed_and_grant_revoked": true
+      }
+    ]
+  },
+  "proof_sha256": "200d5e2fab3e46da12d25819840e00b1694f9554f351728b1f0df0bf5787c729",
+  "finished_unix": 1791284880.2807035
+}

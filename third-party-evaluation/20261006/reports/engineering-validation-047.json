@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-06T01:57:27.758982+00:00",
+  "scope": "same-source-scope-repair-candidate original application real Step/Qwen configuration regression",
+  "run_id": "business-routing-sourcefix-live-001",
+  "candidate": "5470ab3780f2-routingscopefix1",
+  "manifest_sha256": "8323d4e0e4500c994efd6ac09dd5368af47f5b1ece7482b7a8d9504370c465ca",
+  "allocated": 5,
+  "complete": 5,
+  "first_attempt_pass": 4,
+  "first_attempt_fail": 1,
+  "first_attempt_unknown": 0,
+  "signed_receipts": 92,
+  "model_calls": {
+    "step": 8,
+    "qwen": 6
+  },
+  "reported_tokens": {
+    "step": 8660,
+    "qwen": 2114,
+    "total": 10774
+  },
+  "known_harm_units": 0,
+  "utility_completed": 4,
+  "finding_id": "F054",
+  "product_changed_in_this_batch": false,
+  "frozen_harness_modified": false,
+  "inherited_framework_validation": "reports/business-alias-framework-tests-001.txt (407 tests); no new framework implementation in this batch",
+  "inherited_product_validation": "reports/routing-scope-product-full-tests-001.txt (112 tests); exact unchanged candidate",
+  "negative_envelopes_rejected": 6,
+  "offline_output_diagnosis": "reports/business-routing-sourcefix-content-diagnosis-001.json",
+  "candidate_comparison": "inventory/business-routing-sourcefix-candidate-001.json",
+  "export_review": "reports/business-routing-sourcefix-export-review.json",
+  "preregistered_plan_sha256": "683356eb9db2cf947c6c16dd153420cc6b627ae3ecf1832b4577903c75cc0c20",
+  "goal_status": "active"
+}

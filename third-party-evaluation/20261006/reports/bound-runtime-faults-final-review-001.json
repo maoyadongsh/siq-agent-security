@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "run_id": "bound-runtime-faults-001",
+  "manifest_sha256": "29a0335fff7235e39d71fda314c48a7557a9842a4c201d8956eb2ba72217d1b0",
+  "verifications": [
+    {
+      "tool": "protocols/bound-runtime-faults-001-protocol/harness-source/verify_bound_runtime_faults.py",
+      "exit_code": 0,
+      "outcome": 0
+    },
+    {
+      "tool": "engineering-evidence/bound-runtime-faults-review-tools-001/review_bound_runtime_faults.py",
+      "exit_code": 0,
+      "outcome": 0
+    },
+    {
+      "tool": "engineering-evidence/bound-runtime-faults-session-review-tools-002/review_bound_runtime_faults.py",
+      "exit_code": 0,
+      "outcome": 0
+    }
+  ],
+  "frozen_materials_unchanged": true,
+  "prior_ledger_entries_unchanged": true,
+  "plan_hashes_match": true,
+  "recorded_processes_absent": 5,
+  "report_links_checked": 9,
+  "audit_limitation_preserved": true,
+  "mutable_harness_sources": {
+    "native_runtime_faults.py": "1b6c8f980cbe11a16831f554832cabd8e8ce3fbc8609da30661a7d014780ee04",
+    "bound_runtime_faults.py": "b2296fd93d2753ab9c99f6b1301f65dfdf84dd009bc4a4387faa98fd7e2178f5",
+    "verify_bound_runtime_faults.py": "0305fc65a7c29c1e97bd8e1418a9ea7ee82183684345e4fca10620b27cefba0f",
+    "test_bound_runtime_faults.py": "2355f1d3585728d01433e378485363e582b3fb159b674ca5b72adf6ceb7a9995",
+    "review_bound_runtime_faults.py": "7276afdd3e2a8b3211fbc39d3f6ee31211a0fbc6f6c7e1012ed02ec9399bc09d"
+  },
+  "goal_status": "active",
+  "scope": "one post-first-read variant complete; whole RB09 and campaign incomplete"
+}

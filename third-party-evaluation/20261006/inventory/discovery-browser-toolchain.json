@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-05T21:07:57.791704+00:00",
+  "inherited_toolchain": {
+    "recorded_at": "2026-10-05T20:45:24.123883+00:00",
+    "cli_version": "0.1.22",
+    "files": {
+      "browser": {
+        "path": "/home/maoyd/.cache/ms-playwright/chromium-1246/chrome-linux-arm64/chrome",
+        "sha256": "70280bc5c112dedbce376390c110f15067b78b2eb704cf92dc81cf0321cc33fd"
+      },
+      "wrapper": {
+        "path": "/home/maoyd/.codex/skills/playwright/scripts/playwright_cli.sh",
+        "sha256": "aa3fdff5d0e4556177f4dfd5f04117e772aa54f94b6a2e34b6c0edf629c6b9b5"
+      },
+      "cli_package": {
+        "path": "/home/maoyd/.npm/_npx/31e32ef8478fbf80/node_modules/@playwright/cli/package.json",
+        "sha256": "1c545fd0ee14db9faed985aebfd205f9d6c2b2da5fbc8d142a7af8e26ee9c510"
+      },
+      "cli_core": {
+        "path": "/home/maoyd/.npm/_npx/31e32ef8478fbf80/node_modules/playwright-core/lib/coreBundle.js",
+        "sha256": "cd6730be1bbcff00771a0fc1390f200306d28428ce68e305420ca623cb39cdeb"
+      }
+    },
+    "execution": "CLI wrapper with npm_config_offline=true; isolated named session; unchanged embedded candidate UI",
+    "chromium_sandbox": false,
+    "scope": "controlled localhost evaluation, no browser sandbox claim"
+  },
+  "scope": "P01 discovery with same CLI and Chromium; fixture HOME, no models",
+  "source_snapshot": "engineering-evidence/discovery-browser-tools-001/manifest.json"
+}

@@ -1,0 +1,14 @@
+{
+  "run_id": "rule-race-002",
+  "known_private_values_checked": 2,
+  "private_value_matches": [],
+  "credential_pattern_matches": [],
+  "api_pids_absent": {
+    "809453": true
+  },
+  "owned_container_ids_absent": {
+    "741bd893013700f872bd9bc2dc6f2f381357a9d8574ba8a4d448fcff0891f3f3": true
+  },
+  "native_temp_absent": true,
+  "scope": "known-value/pattern scan and exact owned-resource readback; not exhaustive classification"
+}

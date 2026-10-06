@@ -1,0 +1,40 @@
+{
+  "batch": "research-permissions-daily-permissions-001",
+  "started_unix": 1791283390.534809,
+  "previous_pid": 453532,
+  "precutover_live_leases": 0,
+  "source_manifest_sha256": "c0bca19e83a11fccece2d3a78f0055ad673f064e4b3dbf7a522cf97b13a34a6f",
+  "checks": {
+    "frontend_health_ready": true,
+    "protected_backend_loaded": true,
+    "host_authority_selected": true
+  },
+  "protected_started": true,
+  "health": {
+    "status": "ok",
+    "uptime_seconds": 1,
+    "requests_total": 0,
+    "request_errors_total": 0,
+    "answer_traces_total": 0,
+    "openshell_recovery": {
+      "enabled": true,
+      "required": true,
+      "ready": true
+    },
+    "qwen_request_recovery": {
+      "enabled": true,
+      "ready": true,
+      "last_scan": {
+        "examined": 0,
+        "deferred": 0,
+        "released": 0,
+        "failed": 0,
+        "replaced": 0,
+        "foreign": 0
+      }
+    }
+  },
+  "api_pid": 2716725,
+  "api_start_ticks": "259521394",
+  "finished_unix": 1791283392.7802193
+}

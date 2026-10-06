@@ -1,0 +1,58 @@
+{
+  "checked_at": "2026-10-06T02:11:37.560149+00:00",
+  "run_id": "native-delegation-entry-001",
+  "manifest_sha256": "36b9056fe0f49592c09026b92971317fd11a91332c2e8dc1c78eb5151c07290a",
+  "signed_receipts": 1,
+  "units": {
+    "delegate-B0": {
+      "native_pid": 3351507,
+      "parent_session": "20261006_100929_114af6",
+      "parent_task": "5c0e20b7-c8ff-4690-9be9-218b8683a4c6",
+      "child_session": "20261006_100931_3f03b2",
+      "child_task": "sa-0-27c0f630",
+      "same_os_process_distinct_native_agent": true,
+      "offered": {
+        "parent-delegate": [
+          "delegate_task",
+          "patch",
+          "read_file",
+          "search_files",
+          "write_file"
+        ],
+        "child-read": [
+          "patch",
+          "read_file",
+          "search_files",
+          "write_file"
+        ],
+        "child-write": [
+          "patch",
+          "read_file",
+          "search_files",
+          "write_file"
+        ]
+      },
+      "lineage_verified": true
+    },
+    "delegate-B2": {
+      "native_pid": 3352629,
+      "parent_session": "20261006_100936_66d46d",
+      "parent_task": "6cf7527d-4e58-4a0e-b985-79058f15078e",
+      "permission_intent_task": "task-ri-b2bd05040d4ad6394d469eb125abe79575c32377339288bc2c0ed79ddce7063f",
+      "child_issued_sec": false,
+      "offered": {
+        "parent-delegate": [
+          "delegate_task",
+          "patch",
+          "read_file",
+          "search_files",
+          "write_file"
+        ]
+      },
+      "parent_attribution_verified": true,
+      "child_authorization_inheritance_tested": false
+    }
+  },
+  "primary_scores_unchanged": true,
+  "scope": "author-side same-process native parent/child identity and actual dispatch; not OS isolation or B2 child authority completion"
+}

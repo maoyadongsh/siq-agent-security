@@ -1,0 +1,95 @@
+{
+  "created_at": "2026-10-05T23:17:12.237473+00:00",
+  "scope": "evaluation tooling and archival validation; does not add business experiment units",
+  "checks": [
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "benchmarks/third-party/tests",
+        "-p",
+        "test_business_chain.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "output": "test_duplicate_delivery_is_harm (test_business_chain.BusinessScoringTests.test_duplicate_delivery_is_harm) ... ok\ntest_incomplete_observer_is_unknown (test_business_chain.BusinessScoringTests.test_incomplete_observer_is_unknown) ... ok\ntest_known_bad_delivery_survives_missing_observer (test_business_chain.BusinessScoringTests.test_known_bad_delivery_survives_missing_observer) ... ok\ntest_missing_capture_cannot_pass (test_business_chain.BusinessScoringTests.test_missing_capture_cannot_pass) ... ok\ntest_missing_cleanup_cannot_be_true (test_business_chain.BusinessScoringTests.test_missing_cleanup_cannot_be_true) ... ok\ntest_real_effect_required_even_if_product_says_verified (test_business_chain.BusinessScoringTests.test_real_effect_required_even_if_product_says_verified) ... ok\ntest_wrong_task_binding_cannot_pass (test_business_chain.BusinessScoringTests.test_wrong_task_binding_cannot_pass) ... ok\ntest_calibration_requires_real_wire_material (test_business_chain.BusinessVerificationTests.test_calibration_requires_real_wire_material) ... ok\ntest_dispatch_parameters_require_signature_binding (test_business_chain.BusinessVerificationTests.test_dispatch_parameters_require_signature_binding) ... ok\ntest_original_results_and_signatures (test_business_chain.BusinessVerificationTests.test_original_results_and_signatures) ... ok\ntest_receiver_records_must_match_events (test_business_chain.BusinessVerificationTests.test_receiver_records_must_match_events) ... ok\ntest_signed_reason_cannot_be_relabelled (test_business_chain.BusinessVerificationTests.test_signed_reason_cannot_be_relabelled) ... ok\ntest_signed_task_cannot_be_relabelled (test_business_chain.BusinessVerificationTests.test_signed_task_cannot_be_relabelled) ... ok\ntest_stored_score_cannot_override_raw_evidence (test_business_chain.BusinessVerificationTests.test_stored_score_cannot_override_raw_evidence) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 0.525s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "third-party-evaluation/20261006/protocols/business-chain-verifier-002/verify_business_chain.py",
+        "third-party-evaluation/20261006/data/business-chain-controls-001",
+        "--expected-manifest-sha256",
+        "a0c8e0e3dceccd3c59b64e6bc790e7bb2cb374016e075200223fdec10b705b7a",
+        "--trusted-candidate",
+        "third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2"
+      ],
+      "exit_code": 0,
+      "signed_receipts": 265,
+      "first_attempt_pass": 12,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "third-party-evaluation/20261006/protocols/business-chain-local-001-protocol/harness-source/verify_business_chain.py",
+        "third-party-evaluation/20261006/data/business-chain-local-001",
+        "--expected-manifest-sha256",
+        "adf3e0cf311b4070e96dc94628e96b44908c2e097fd727f47587d51b70c1f5e5",
+        "--trusted-candidate",
+        "third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2"
+      ],
+      "exit_code": 0,
+      "signed_receipts": 202,
+      "first_attempt_pass": 10,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/home/maoyd/siq/siq-agent-security/third-party-evaluation/20261006/private/candidates/5470ab3780f2-governancefix1/apps/control-api/.venv/bin/python",
+        "third-party-evaluation/20261006/protocols/business-chain-step5-001-protocol/harness-source/verify_business_chain.py",
+        "third-party-evaluation/20261006/data/business-chain-step5-001",
+        "--expected-manifest-sha256",
+        "77b6b50bf3e9bf8c14bda1a7d859001d0ae084908d849249ac039659f8975df1",
+        "--trusted-candidate",
+        "third-party-evaluation/20261006/private/candidates/5470ab3780f2-fixturefix2"
+      ],
+      "exit_code": 0,
+      "signed_receipts": 202,
+      "first_attempt_pass": 10,
+      "stderr": ""
+    }
+  ],
+  "ruff": {
+    "exit_code": 0,
+    "files": [
+      "business_chain_trial.py",
+      "business_chain_observation.py",
+      "business_chain_scoring.py",
+      "verify_business_chain.py",
+      "export_business_chain.py",
+      "tests/test_business_chain.py"
+    ]
+  },
+  "git_diff_check_exit_code": 0,
+  "local_links_checked": 180,
+  "broken_links": 0,
+  "work_item_plan_hash_matches": true,
+  "source_hashes": {
+    "business_chain_trial.py": "aa93409e3aa609190c7282cbd75b7d280b289e2c5a6c19d6f6bb36d23e009d89",
+    "business_chain_observation.py": "c10e57da6c0df2a2aade38faadfc9d3f54cd97a260eacddb075265baa8cb3d51",
+    "business_chain_scoring.py": "61cade792e1f7e98bbf2ed59d10363a36ae5424668c0103c01fc362b8a61ba27",
+    "verify_business_chain.py": "f7eb8e804b259b111d34bbbc2d12800bd91b4cc4517c2858a5b7fe1f7bc96b26",
+    "export_business_chain.py": "8f86442337c1affeb40728067a8b3aad5bde86380a22763c00bcf77b6c804654",
+    "tests/test_business_chain.py": "87ffbe38e327fa30c9b1c0d811838cddd28c0174e0a82d7c8247c1ec435e076a"
+  },
+  "plan_sha256": "1c22777a142165c90c9c709bead7682580fc15fd5089ef875f3d3c6d772c63ee",
+  "limitations": [
+    "All runs author-operated, not third-party attestation",
+    "B0 and native Hermes business not executed in these batches",
+    "Actual observer disconnection calibration and report semantic scoring pending"
+  ]
+}

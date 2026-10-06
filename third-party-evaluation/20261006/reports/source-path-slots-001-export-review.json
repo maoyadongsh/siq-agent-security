@@ -1,0 +1,26 @@
+{
+  "verified": {
+    "verified": true,
+    "all_passed": true,
+    "passed": 629,
+    "total": 629,
+    "unique_signed_documents": 128,
+    "http_requests": 71,
+    "scope": "path component/total and central-directory boundary; 64-slot store plus failed-new/reuse/conflict/read controls; management only"
+  },
+  "exported_files": [
+    "protocol.json",
+    "journal.jsonl",
+    "http.jsonl",
+    "result.json",
+    "score.json",
+    "summary.json",
+    "manifest.json"
+  ],
+  "manifest_sha256": "4660db5bf54487b49bebdce457386d82176494d05631fb1446ed6da13e707921",
+  "known_private_values_checked": 4,
+  "private_value_matches": 0,
+  "recorded_daemon_state": "absent",
+  "container_environment_sha256": null,
+  "scope": "exact allowlist export, author-run evidence, private state and daemon logs excluded"
+}

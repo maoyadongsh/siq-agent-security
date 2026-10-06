@@ -1,0 +1,124 @@
+{
+  "checked_at": "2026-10-06T00:27:06.919163+00:00",
+  "manifest_sha256": "dff8ad09a4a67020f363900afa2ecb4ef23ce3c9f1e15e0d68315a480e431928",
+  "files_checked": 20,
+  "known_credential_matches": 0,
+  "cleanup": {
+    "remaining_group_members": [],
+    "daemon_stopped": true,
+    "observation_version": 1,
+    "grace_seconds": 5,
+    "window_start_ns": 2558243108750830,
+    "observations": [
+      {
+        "monotonic_ns": 2558243126219192,
+        "members": [
+          {
+            "pid": 2657888,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657889,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657890,
+            "start_ticks": "255824138"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558243243683263,
+        "members": [
+          {
+            "pid": 2657888,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657889,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657890,
+            "start_ticks": "255824138"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558243361050774,
+        "members": [
+          {
+            "pid": 2657888,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657889,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657890,
+            "start_ticks": "255824138"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558243478737375,
+        "members": [
+          {
+            "pid": 2657888,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657889,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657890,
+            "start_ticks": "255824138"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558243596417575,
+        "members": [
+          {
+            "pid": 2657888,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657889,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657890,
+            "start_ticks": "255824138"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558243713875183,
+        "members": [
+          {
+            "pid": 2657888,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657889,
+            "start_ticks": "255824137"
+          },
+          {
+            "pid": 2657890,
+            "start_ticks": "255824138"
+          }
+        ]
+      },
+      {
+        "monotonic_ns": 2558243831259222,
+        "members": []
+      }
+    ],
+    "policy": "observe only; persistent members fail cleanup; no signals sent"
+  },
+  "outcome_exit_code": 0,
+  "whitelist": "sealed top-level artifacts only; no state directory"
+}

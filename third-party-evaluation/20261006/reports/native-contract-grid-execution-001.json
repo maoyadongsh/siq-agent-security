@@ -1,0 +1,246 @@
+{
+  "finished_at": "2026-10-06T00:17:44.819058+00:00",
+  "grid_protocol_sha256": "5871352ea000ecc2ad61280529ab99d3e763c73081d45cb4510b9190d18628cf",
+  "runs": [
+    {
+      "run_id": "native-contract-grant-before-status-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 65, \"model_requests\": 14, \"manifest_sha256\": \"51cc90a2419b31b6a5963bf8781d08c1f181d6847a72d7bf913088e1acfaff43\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-grant-before-status-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"ac3a5f6438cb11879ffb40c10ee25b2d46ded010ce8c6acedca52947f2f77336\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-grant-before-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 65, \"model_requests\": 14, \"manifest_sha256\": \"1401333c5a3daa5828827ef38b5540c0804bb9fad921028b6150edbf0c1daf8c\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-grant-before-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"c60af6146172f1c7ff00262755b97746e9f7f67ab21fe3212d6b501e9b85aec1\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-grant-after-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 65, \"model_requests\": 14, \"manifest_sha256\": \"d7e4e5611a0b5d037d437402e3c5f433473d999eb5975db77d3eb9fdb3d80af0\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-grant-after-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 1, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"936e2a750947254e3154c467b244bd31932756a7228405a64cc83056d18d9579\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-grant-after-write-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 65, \"model_requests\": 14, \"manifest_sha256\": \"473f3485b902b73586af09cbfdbe4f777348383a29467330ef2e3cb92b5370b9\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-grant-after-write-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"456ff918429ad4dbc7875ddc02f7a9b185704913d18079a90eeecb4def8fb5f8\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-before-status-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"a626fbecc4f33b52f1b368d6d9e61a80069f218eab4cc3e33d95e97e10044768\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-before-status-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"1829cda638557b08945505dc0c9b07782d0b2dabd064896d8e819fa20f578d0d\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-before-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"16d952769c0129bcde6cd86429bc77389fa10608464161d2611744073c6c8fe3\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-before-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"51f89565e5c7774590e760baf9f6b7ea33558488e0d9183ab1d34c3ce601f34c\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-after-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"a432b1718681f78a191198612864263881c92385ac25b9c6f818514b7351346e\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-after-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 1, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"84c98a3bad9185d2ceb11c9093243659063fd88fc4b015effc320e059efd7cc9\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-after-write-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"b06edf2284dc86210334090d4fb7c2f74e52ca04add3615deca77a887b420ccf\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-sec-after-write-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"634d91e2f4f95438789f88602766dc258d19ed690cad5171814c01f02bbe67f4\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-before-status-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"60e92521442254e02a902643e77d8b40523e987e2984e3595219f366915f4cd1\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-before-status-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"a8e877e3a2fa4fe2cc1e94c074ef7710172a3e1b3d229d1501b1c8b56c9e276d\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-before-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"48d618a694abe237307b5127c88a101de49e62e45f3afafc68fdd90200f5bff3\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-before-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"44b68c911c3d8b963c082e4f965a0f1c2f725efa78964cbaf65b0d8bf09cdb09\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-after-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"79eb6233abac18b9e056ee60996dc80ee90f3df0054f3f97d60fb753f0108cc6\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-after-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 1, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"34413599b26f12e3740879a80991fbecdc4fd44e65e0a125e26e457c1d820abc\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-after-write-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 66, \"model_requests\": 14, \"manifest_sha256\": \"35f13d4b8c7285af305d9433e115f0861ca2a3689036e92ba676fc5a8daad0b2\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-identity-after-write-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 67, \"model_requests\": 14, \"manifest_sha256\": \"e0ec4ceb43a42c15dc6170cb066dec95c5541a748c284d10bd7787b77295d3de\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-before-status-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"3a4c9c699c2201613c08b5bc2052ccd8717ee7b2d019332f9141cd190089c2f4\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-before-status-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"ba53d2d5ada7a993d274dae6ed2eb728cc06ecd73996b94ddd4cf4ac65d16245\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-before-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"57f0c3cef1a9c165ba6320d1ae1b917cfc361237bd1155f17b84f78d4bbde191\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-before-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"e119311cb39c20ea16997eff26d324eed172da5eb984fb0031b6f4b124ab9753\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-after-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"8fb9efbfcc0bea232ad48198160ec42011c6ddce21f6125708398c9d5fdea9fc\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-after-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 1, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"f1c792ec0b901ddfd950a13eb35fdaae8181ee108fa7f5416e8a1f8d8e93a5a5\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-after-write-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"6249a984b8cda3ff6338ecbdc14bee8ba4fd5dcac6490c46a30d92eb657afdc0\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-intent-after-write-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"670c8b19871072d7279698c19054f223dde24c3688eb03dfcf5ddfb32e3f91e4\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-before-status-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"628f857118a27269ab66d103167bb3fb4ba18f24caadc9dfcea6a26d184c5023\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-before-status-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"c5389f33ee75b136cffd7f1f6bb6a4f8bf812b530e896262a42d49a217f1204e\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-before-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"9cc5c51d39570ad0724e1cf767833b0c1c3b972ce82da272f0718ef518ecad7f\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-before-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"a0eef966eb962296cc9dbcd86c065e4fbc2633287947a2540236cfc47f0e476f\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-after-reserve-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"922b2a9324666a55b6aa13adbf36eef283f597f71e9f9a70837892637aca718a\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-after-reserve-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 1, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"81e3c18bdc91f00c7bc5a080ccbd89c9134d8e7d7842f21e07d4cbbc4a82afff\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-after-write-control-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 71, \"model_requests\": 14, \"manifest_sha256\": \"3f3a0222066b2949a8c2e4f81089fbf5b76b9ca180cef531da87a4226df7203f\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-contract-binding-after-write-001",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 73, \"model_requests\": 14, \"manifest_sha256\": \"d61283e43ee1e8c41c3abed6f31a2a6911a9b32c70c422e2554bd6d4590ba5ed\"}\n",
+      "stderr": ""
+    }
+  ]
+}

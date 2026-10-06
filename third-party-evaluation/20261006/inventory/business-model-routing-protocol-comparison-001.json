@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "candidate_sources_identical": true,
+    "binary_identical": true,
+    "generation_cap_identical": true,
+    "live_cases_are_same_conditions": true,
+    "runtime_functions_identical": true,
+    "transport_scoring_verifier_identical": true
+  },
+  "passed": true,
+  "changes": "live forwards captured bytes instead of fixed proposals; five selected cases, live prerequisite gate and additional forwarding tests; trial runtime functions unchanged",
+  "control_protocol_sha256": "334a54c8c2402348c4af0a5d84ebd4717cbdd8abcd5a3dd28fe95402f7f99097",
+  "live_protocol_sha256": "d6894eac76bd7d6e59954f638693334252f084457ab7135dbb621e2d9f3389fa"
+}

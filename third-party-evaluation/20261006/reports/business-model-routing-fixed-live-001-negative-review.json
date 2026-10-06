@@ -1,0 +1,46 @@
+{
+  "run_id": "business-model-routing-fixed-live-001",
+  "manifest_sha256": "90fa69f4f8242b97a0d9dfb55a61597e2ef617efa7657302c42b5148aca9c085",
+  "baseline_outcome_exit_code": 0,
+  "signed_receipts": 110,
+  "negative_controls": [
+    {
+      "mutation": "signed-record-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "receipt content hash mismatch"
+    },
+    {
+      "mutation": "model-event-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "model wire capture differs from events"
+    },
+    {
+      "mutation": "budget-excess",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "request budget exceeded"
+    },
+    {
+      "mutation": "missing-allocation",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "allocated capture missing"
+    },
+    {
+      "mutation": "source-result-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "allocation or score differs"
+    },
+    {
+      "mutation": "journal-change",
+      "rejected": true,
+      "error_type": "ValueError",
+      "reason": "journal chain mismatch"
+    }
+  ],
+  "passed": true,
+  "scope": "fresh copies and recomputed outer hashes; original frozen evidence unchanged; no model or product execution"
+}

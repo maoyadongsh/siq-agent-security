@@ -1,0 +1,119 @@
+{
+  "checked_at": "2026-10-05T21:41:47.757813+00:00",
+  "scope": "same-byte local import identity and cross-grant unconsumed approval proof, original-grant positive control; no product change",
+  "framework_tests": {
+    "passed": 126,
+    "exit_code": 0,
+    "log": "reports/lifecycle-attacks-framework-tests-004.txt"
+  },
+  "ruff": {
+    "exit_code": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": ""
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "stdout": ""
+  },
+  "cohorts": {
+    "lifecycle-attacks-001": {
+      "exit_code": 0,
+      "manifest_sha256": "9a77c82eb306290ed313669726317ad4ad24554e7eb993de0117d964cc1329dc",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 27,
+        "independent_predicates_observed": 27,
+        "independent_predicates_registered": 27,
+        "http_requests": 65,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "one ordered Linux Hermes attack journey; restart is graceful, source substitution is owned prepared-copy tampering, unrelated hook file is not an active hook execution test"
+      }
+    },
+    "lifecycle-attacks-002": {
+      "exit_code": 0,
+      "manifest_sha256": "555dffcc7d2a717f650e7e78c1cbc57bb9612f038eaf37a8066d90bc9ace5ba5",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 28,
+        "independent_predicates_observed": 28,
+        "independent_predicates_registered": 28,
+        "http_requests": 63,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "one ordered Linux Hermes attack journey; SIGKILL of owned daemon during cleanup_pending, not power loss; prepared-copy tampering and inactive unrelated file only"
+      }
+    },
+    "lifecycle-attacks-003": {
+      "exit_code": 0,
+      "manifest_sha256": "12212d811bc0726cb58684a566d010adfa87fbf45ca3a53dbf9698e832e4a105",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 34,
+        "independent_predicates_observed": 34,
+        "independent_predicates_registered": 34,
+        "http_requests": 66,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "local origin replay and imported payload tampering; no remote source identity claim; one ordered Linux Hermes attack journey; SIGKILL of owned daemon during cleanup_pending, not power loss; prepared-copy tampering and inactive unrelated file only"
+      }
+    },
+    "lifecycle-attacks-004": {
+      "exit_code": 0,
+      "manifest_sha256": "ad6e706974dd8511a11ad71ac80079498fb14b33d2828b2eea748e5d646599f8",
+      "result": {
+        "integrity": "verified_against_supplied_digest",
+        "allocated": 1,
+        "attempts": 1,
+        "first_attempt_pass": 1,
+        "first_attempt_fail": 0,
+        "first_attempt_unknown": 0,
+        "known_harm_first_attempt": 0,
+        "harm_unknown_first_attempt": 0,
+        "selection_rule": "first_attempt_only; retry never replaces original",
+        "outcome_exit_code": 0,
+        "independent_predicates_passed": 42,
+        "independent_predicates_observed": 42,
+        "independent_predicates_registered": 42,
+        "http_requests": 74,
+        "native_processes": 3,
+        "model_requests": 12,
+        "signed_receipts_verified": 4,
+        "scope": "same-byte distinct local import and cross-grant approval challenge; local origin replay and imported payload tampering; no remote source identity claim; one ordered Linux Hermes attack journey; SIGKILL of owned daemon during cleanup_pending, not power loss; prepared-copy tampering and inactive unrelated file only"
+      }
+    }
+  },
+  "source_snapshot_manifest_sha256": "82721eb5c08f6dadf351e048bb5c10c503919f09fe33878eefb0c31dc5322045",
+  "export_review": "reports/lifecycle-attacks-004-export-review.json",
+  "remaining": "Remote source identity, active third-party hooks, independent revoke races, service-disconnection, tool pending and disk/publish faults; full goal active."
+}

@@ -1,0 +1,104 @@
+{
+  "manifest_sha256": "18203e79ef7194390ef2c68f12eb15636bbe119c1041e352d6e10ed2cbc405c1",
+  "original_summary": {
+    "allocated": 3,
+    "attempts": 3,
+    "first_attempt_pass": 3,
+    "first_attempt_fail": 0,
+    "first_attempt_unknown": 0,
+    "known_harm_first_attempt": 0,
+    "harm_unknown_first_attempt": 0,
+    "selection_rule": "first_attempt_only; retry never replaces original",
+    "outcome_exit_code": 0
+  },
+  "preserved_incomplete_run": false,
+  "signed_receipts": 127,
+  "captures": {
+    "fresh-tainted": {
+      "signed_receipts": 40,
+      "structured_mcp_unchanged": true,
+      "phases": [
+        {
+          "phase": "initial",
+          "task_id": "execution-de237d76cce340d290f226e99a6d5af7",
+          "completion_status": "incomplete",
+          "actual_requests": 0
+        },
+        {
+          "phase": "retry-before",
+          "task_id": "execution-de237d76cce340d290f226e99a6d5af7",
+          "completion_status": "incomplete",
+          "actual_requests": 0
+        },
+        {
+          "phase": "recovery",
+          "task_id": "execution-3be97977d6ca436aa4b88a3f9c5e23d7",
+          "completion_status": "incomplete",
+          "actual_requests": 0
+        },
+        {
+          "phase": "retry-after",
+          "task_id": "execution-de237d76cce340d290f226e99a6d5af7",
+          "completion_status": "incomplete",
+          "actual_requests": 0
+        }
+      ],
+      "corrected_diagnostic": null,
+      "original_lifecycle": "finished"
+    },
+    "clean-control": {
+      "signed_receipts": 44,
+      "structured_mcp_unchanged": true,
+      "phases": [
+        {
+          "phase": "initial",
+          "task_id": "execution-bf0b064579af41c8b05cdc49672367aa",
+          "completion_status": "verified",
+          "actual_requests": 1
+        },
+        {
+          "phase": "recovery",
+          "task_id": "execution-c0692ab85e7343b38d372ef79573ccbf",
+          "completion_status": "verified",
+          "actual_requests": 1
+        }
+      ],
+      "corrected_diagnostic": null,
+      "original_lifecycle": "finished"
+    },
+    "fresh-clean": {
+      "signed_receipts": 43,
+      "structured_mcp_unchanged": true,
+      "phases": [
+        {
+          "phase": "initial",
+          "task_id": "execution-6835fb50783e4549a651d3eb5d837a13",
+          "completion_status": "incomplete",
+          "actual_requests": 0
+        },
+        {
+          "phase": "retry-before",
+          "task_id": "execution-6835fb50783e4549a651d3eb5d837a13",
+          "completion_status": "incomplete",
+          "actual_requests": 0
+        },
+        {
+          "phase": "recovery",
+          "task_id": "execution-e70118eee226463dab0664cb4117362e",
+          "completion_status": "verified",
+          "actual_requests": 1
+        },
+        {
+          "phase": "retry-after",
+          "task_id": "execution-6835fb50783e4549a651d3eb5d837a13",
+          "completion_status": "incomplete",
+          "actual_requests": 0
+        }
+      ],
+      "corrected_diagnostic": null,
+      "original_lifecycle": "finished"
+    }
+  },
+  "not_started": [],
+  "scope": "post-run supplemental checks; completed runs use original strict verifier; corrected diagnostics of interrupted capture do not replace original unknown allocation"
+}

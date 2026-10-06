@@ -1,0 +1,74 @@
+{
+  "checked_at": "2026-10-06T03:58:04.749838+00:00",
+  "previous_goal_turn": "progress",
+  "run_id": "bound-runtime-faults-001",
+  "manifest_sha256": "29a0335fff7235e39d71fda314c48a7557a9842a4c201d8956eb2ba72217d1b0",
+  "resources": [
+    {
+      "identity": {
+        "pid": 4029348,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257064974"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 4029443,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257065125"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 4030174,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257065677"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 4031053,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257066271"
+      },
+      "state": "absent"
+    },
+    {
+      "identity": {
+        "pid": 4031610,
+        "boot_id": "30ebf9d6-d3d8-4bd7-a93e-439748fbca31",
+        "start_ticks": "257066663"
+      },
+      "state": "absent"
+    }
+  ],
+  "checks_passed": 61,
+  "management_HTTP": 74,
+  "outer_protocol_requests": 5,
+  "internal_product_protocol_requests": null,
+  "real_model_inference_calls": 0,
+  "independent_task_blocks_added": 0,
+  "unique_signed_receipts": 16,
+  "signed_revisions": 19,
+  "session_scope": {
+    "grant-revoked": {
+      "subsequent_session_receipts": 2,
+      "unattributed_receipt_ids": [
+        "rcp-e5746f8d682c-pending",
+        "rcp-27c05f4597a6-pending"
+      ],
+      "scope": "session correlation only for pending rows; not full action/agent/Intent attribution"
+    },
+    "cancel": {
+      "subsequent_session_receipts": 0,
+      "unattributed_receipt_ids": [],
+      "scope": "session correlation only for pending rows; not full action/agent/Intent attribution"
+    }
+  },
+  "new_owned_containers": 0,
+  "fault_independent_harm_oracle": false,
+  "scope": "post-first-read checkpoint plus actual revoke/cancel and recovery; whole RB09 incomplete"
+}

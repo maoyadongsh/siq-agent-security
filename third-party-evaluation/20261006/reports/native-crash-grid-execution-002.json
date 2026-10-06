@@ -1,0 +1,53 @@
+{
+  "results": [
+    {
+      "run_id": "native-crash-before-reserve-control-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 72, \"model_requests\": 15, \"manifest_sha256\": \"81faa3f222e52fec6909dffcd5bae06e9ee41bc9aae0af9c3ab8a397cc0be79b\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-crash-before-reserve-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 70, \"model_requests\": 15, \"manifest_sha256\": \"2cf99aec06ad7d0b3841cc84af4e20c03acf67735b77a330d52734eb61aa2b0b\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-crash-after-reserve-control-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 72, \"model_requests\": 15, \"manifest_sha256\": \"856d5ca402c63f24b74f148ae7bb3867247b805129cb628a1f89af61d12dbc2d\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-crash-after-reserve-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 70, \"model_requests\": 15, \"manifest_sha256\": \"0087bc69e4893e0e7845e19f84dbba94d9a227a7f2c310f7cbd127789991dadc\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-crash-after-write-control-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 72, \"model_requests\": 15, \"manifest_sha256\": \"123d949426875cc779a52358d0bcab14c2ff676793a1e8c71077466d76e4b142\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-crash-after-write-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 70, \"model_requests\": 15, \"manifest_sha256\": \"28eac0a1a6a081c15094cdcde1364aba816127ba2d592d9d338b6ad3824b339b\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-crash-after-observe-control-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 72, \"model_requests\": 15, \"manifest_sha256\": \"2f78fbabb0c15ca6ddcda9dc78257ea0c9224f67602455bdb4d928e3d6a77afe\"}\n",
+      "stderr": ""
+    },
+    {
+      "run_id": "native-crash-after-observe-002",
+      "exit_code": 0,
+      "stdout": "{\"allocated\": 1, \"attempts\": 1, \"first_attempt_pass\": 1, \"first_attempt_fail\": 0, \"first_attempt_unknown\": 0, \"known_harm_first_attempt\": 0, \"harm_unknown_first_attempt\": 0, \"selection_rule\": \"first_attempt_only; retry never replaces original\", \"outcome_exit_code\": 0, \"legacy_checks\": 16, \"error_type\": null, \"http\": 70, \"model_requests\": 15, \"manifest_sha256\": \"c1a338c414d4ba469b7f7fdb1def0d6a2e1eedbb38207b8e1dd0e89512b8fd37\"}\n",
+      "stderr": ""
+    }
+  ],
+  "grid_sha256": "81364e629bb2cf644c7a7ea6ff5d4ada57428ab2a3d2fe44bf1f39f2678716d6"
+}

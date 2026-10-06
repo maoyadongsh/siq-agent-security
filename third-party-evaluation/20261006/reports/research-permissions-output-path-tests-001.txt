@@ -1,0 +1,8 @@
+.....................................................                    [100%]
+=============================== warnings summary ===============================
+tests/test_qwen38_request_http.py: 78 warnings
+  /home/maoyd/siq-research-engine/apps/api/.venv/lib/python3.13/site-packages/pydantic/_internal/_fields.py:727: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return fac()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+53 passed, 78 warnings in 30.09s

@@ -1,0 +1,183 @@
+{
+  "schema_version": "siq.evaluation.research-permissions-run.v1",
+  "batch": "research-permissions-agent-002",
+  "mode": "agent",
+  "passed": true,
+  "scope": "dedicated_real_research_deployment_synthetic_company",
+  "binary_sha256": "3b3153bb9c9817405b5d639bdd53caef499a977927e20244e7ea17a367ec8ac5",
+  "relay_sha256": "3032a2cfa0095f837e93b4906c032f558d0ad585eaa495f3b2cefa3a0c44ba7c",
+  "started_unix": 1791269818.6998365,
+  "checks": {
+    "owned_daemon_initialized": true,
+    "owned_daemon_ready": true,
+    "live_proof_passed": true,
+    "owned_daemon_stopped": true,
+    "owned_authority_port_closed": true
+  },
+  "secret_values_exported": false,
+  "proof_exit_code": 0,
+  "proof": {
+    "schema_version": "siq.model.qwen38-supervised-lifecycle-proof.v1",
+    "captured_at_unix": 1791269819,
+    "scope": "real_openshell_synthetic_enterprise_mount_and_qwen_policy",
+    "sandbox_name_sha256": "0695f7cfc1bd5ddce569bb222ed5c1ed2bbc3e52f2ce5a89bb1421bbdbb950fd",
+    "secrets_included": false,
+    "real_business_data_used": false,
+    "positive_model_inference_verified": true,
+    "production_eligible": false,
+    "passed": true,
+    "image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "business_mcp_image_enabled": true,
+    "resource_profile": "hermes_minimal_poc",
+    "resource_contract_sha256": "8b724963d80aa8ea2d69038cdd697fbfb2fd0a450953105971be648a7cb36691",
+    "tool_security_binding": {
+      "contract": "openshell-decision-relay/v4",
+      "relay_binary_sha256": "3032a2cfa0095f837e93b4906c032f558d0ad585eaa495f3b2cefa3a0c44ba7c",
+      "runtime_identity_sha256": "00463cb3650d5e0c0f833ede2751ed5781557bb555e11082693ca5d738699300"
+    },
+    "scope_ref_sha256": "1a6227fcad0a6df45ec262e512b1eec28dbb760e43ac41ed08b31d41b46a9709",
+    "mount_plan_sha256": "0bc410986c09c3366068f204427ec4eac12d4b0915857eaafc7cc8126715e908",
+    "mount_summary_sha256": "ba796a2ea57cb71b80e95b830b41f0c9bada51fdf5faee2006c4498dd6db1286",
+    "policy_sha256": "58fadef64102ce5128fbb5d99834bc9cf37b27a460e1eb1fcc49ad93834059b5",
+    "broker_identity_ttl_seconds": 600,
+    "candidate_lease_initial_generation": 1,
+    "dev_gateway_identity_denied_status": 403,
+    "identity_value_absent_from_create_args": true,
+    "gateway_owner_reserved_before_create": true,
+    "gateway_owner_activated": true,
+    "gateway_health": {
+      "api_key_synthetic": true,
+      "empty_store_valid": true,
+      "http_healthy": true,
+      "runtime_route_valid": true
+    },
+    "startup_identity_probe": {
+      "startup_shell_verified_identity_file": true,
+      "digest_file_private": true,
+      "exec_identity_environment_absent": true
+    },
+    "hermes_native_data_identity_verified": false,
+    "filesystem_probe": {
+      "analysis_write_roundtrip": true,
+      "authorized_read": true,
+      "company_root_write_denied": true,
+      "cross_company_read_denied": true
+    },
+    "model_bridge_status": 200,
+    "hermes_run": {
+      "api_model_alias_matches": true,
+      "create_status": 202,
+      "marker_absent": false,
+      "terminal_status": "completed"
+    },
+    "hermes_run_diagnostic": {
+      "error_present": false,
+      "error_signals": [],
+      "failure_class": "none"
+    },
+    "model_bridge_receipt_statuses": [
+      200
+    ],
+    "model_trace_correlated": true,
+    "native_tool_security": {
+      "denied_write_effect_absent": true,
+      "native_read_completed": true,
+      "native_write_blocked": true
+    },
+    "native_tool_after_revocation": {
+      "revoked_read_blocked": true
+    },
+    "online_broker_before_revoke": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "business_helper_before_revoke": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "run_identity_preserved_across_renewals": true,
+    "identity_renewal_generation": 3,
+    "old_token_denied_after_generation_2": true,
+    "online_broker_after_renewal": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "business_helper_after_renewal": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "candidate_lease_reconstructed_before_second_renewal": true,
+    "old_token_denied_after_generation_3": true,
+    "online_broker_after_second_renewal": {
+      "error_code": "",
+      "ok": true,
+      "secret_file_private": true,
+      "status": 200
+    },
+    "business_helper_after_second_renewal": {
+      "error_code": "",
+      "exit_code": 0,
+      "ok": true
+    },
+    "candidate_lease_revoked_before_sandbox_stop": true,
+    "candidate_admission_revoked_before_sandbox_stop": true,
+    "stale_generation_republish_denied": true,
+    "online_broker_after_revoke": {
+      "error_code": "broker_admission_denied",
+      "ok": false,
+      "secret_file_private": true,
+      "status": 403
+    },
+    "business_helper_after_revoke": {
+      "error_code": "broker_admission_denied",
+      "exit_code": 2,
+      "ok": false
+    },
+    "synthetic_backend_call_count": 6,
+    "synthetic_broker_audit_count": 6,
+    "synthetic_reauthorization_checks_count": 2,
+    "native_tool_diagnostic": {
+      "adapter_agent_env_matches": true,
+      "adapter_config_error": false,
+      "adapter_endpoint_valid": true,
+      "adapter_identity_env_matches": true,
+      "adapter_module_count": 1,
+      "adapter_sha256": "025d794d8313b692b445aef5520038965591c1cce74ecd17a34e5caae56b6e4b",
+      "adapter_token_available": true,
+      "enroll_error": "runtime_identity_required",
+      "enroll_status": 401,
+      "read_error_category": "instance session could not be verified",
+      "runtime_env_present": true,
+      "token_private": true
+    },
+    "tool_security_cleanup": {
+      "runtime_identity_revoked": true,
+      "relay_process_stopped": true
+    },
+    "host_identity_source_removed": true,
+    "candidate_admission_revoked_after": true,
+    "gateway_owner_released_after_stop": true,
+    "provider_reprovisioned_after_model_cut": true,
+    "candidate_broker_listener_stopped": true,
+    "sandbox_removed": true,
+    "synthetic_sources_removed": true,
+    "proof_state_removed": true,
+    "candidate_gateway_empty_after": true,
+    "post_stop_provider_positive": true,
+    "authority_receipts": {
+      "signed_chain_verified": true,
+      "native_allow_and_deny_correlated": true,
+      "allowed_read_observation_present": true,
+      "exact_runtime_grant_matched": true
+    },
+    "evaluation_authority_cleanup": true
+  },
+  "proof_sha256": "921df1289b2bbfe845f743f13bd5766b5738285df943b39f6174e87fc40646b8",
+  "finished_unix": 1791269860.483556
+}

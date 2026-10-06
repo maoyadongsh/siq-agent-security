@@ -1,0 +1,27 @@
+{
+  "reviewed_at": "2026-10-05T22:32:51.956694+00:00",
+  "family_id": "AU03",
+  "status": "completed_for_registered_component_profile",
+  "run_id": "hold-concurrency-003",
+  "manifest_sha256": "ae66dbfde27770bb10b9f397b794f24b36173dec5ca2a8e1ab6ea660ca61b963",
+  "requirements": {
+    "并发2": "distinct and identical retry ID; paired single-call controls; 2 overlapping requests, 1 reservation/execution",
+    "并发8": "same two modes with 8 overlap; 1 reservation/execution",
+    "并发32": "same two modes with 32 overlap; 1 reservation/execution",
+    "响应丢失": "durable backend 201 followed by real client disconnect; 0 execution, replay409, fresh signed deny, uncertain status"
+  },
+  "contract_binding_ref": "data/hold-concurrency-003/protocol.json#/contract_binding",
+  "counter_calibration_ref": "data/hold-concurrency-003/counter-calibration.json",
+  "verification_ref": "reports/hold-concurrency-003-verification.json",
+  "cleanup_ref": "reports/hold-concurrency-export-review.json",
+  "done_when": {
+    "all_applicable_variants_with_clean_controls": true,
+    "requests_dispatch_external_effects_and_results_archived": true,
+    "offline_verifier_recomputes_all_denominators_and_predicates": true
+  },
+  "scope": "intent_enforcement=optional, enforcement_mode=block, unbound_legacy synthetic API profile only; no bound Intent/SEC, native host, malicious same-UID isolation or independent personnel certification",
+  "remaining_applicable_profiles": [
+    "required Intent with valid task/authority binding",
+    "native managed runtime/SEC concurrency"
+  ]
+}

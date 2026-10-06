@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-05T23:05:47.611041+00:00",
+  "scope": "required Intent API effect timestamp vs approval/reservation; effect detection with real controlled harm, no prevention claim",
+  "framework_tests": {
+    "passed": 192,
+    "exit_code": 0,
+    "log": "reports/effect-time-framework-tests-001.txt"
+  },
+  "new_test_methods": 7,
+  "ruff": {
+    "scope": "phase files only",
+    "exit_code": 0,
+    "log": "reports/effect-time-ruff-002.txt"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "log": "reports/effect-time-diff-check-001.txt"
+  },
+  "cohorts": {
+    "effect-time-001": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 0,
+      "identity": "author_local; no independent certification",
+      "allocated": 8,
+      "attempts": 8,
+      "first_attempt_pass": 0,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 8,
+      "known_harm_first_attempt": 2,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 2,
+      "scope": "AU02 required Intent API: actual loopback effects before approval or before reservation, evidence submitted later, same-process and SIGKILL restart; detection, not prevention"
+    },
+    "effect-time-002": {
+      "integrity": "verified_against_supplied_digest",
+      "signed_completed_attempts_checked": 8,
+      "identity": "author_local; no independent certification",
+      "allocated": 8,
+      "attempts": 8,
+      "first_attempt_pass": 8,
+      "first_attempt_fail": 0,
+      "first_attempt_unknown": 0,
+      "known_harm_first_attempt": 4,
+      "harm_unknown_first_attempt": 0,
+      "selection_rule": "first_attempt_only; retry never replaces original",
+      "outcome_exit_code": 0,
+      "scope": "AU02 required Intent API: actual loopback effects before approval or before reservation, evidence submitted later, same-process and SIGKILL restart; detection, not prevention"
+    }
+  },
+  "completed_cohort_predicates": 104,
+  "actual_SIGKILL_restarts": 4,
+  "model_calls": 0,
+  "product_changed": false,
+  "findings": [
+    "F034"
+  ],
+  "export_review": "reports/effect-time-export-review.json",
+  "snapshot": "engineering-evidence/effect-time-tools-001/manifest.json",
+  "snapshot_sha256": "24b267c647bd0137afb1600ed5ec76feca7e2d0720a51b3eb337aed6d63c49ac",
+  "remaining": [
+    "AU04 revoke/final-check/dispatch boundaries",
+    "AU05 observer revocation and takeover",
+    "native SEC/business profiles"
+  ]
+}

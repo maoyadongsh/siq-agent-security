@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-06T01:41:24.703222+00:00",
+  "runs": [
+    {
+      "run_id": "step-format-diagnosis-001",
+      "manifest_sha256": "a52a2044d8ad8f4da8c6e36a5cea29bf182d23a182ed2632d9520edb30d40a49",
+      "files_checked": 9,
+      "known_credential_matches": 0
+    },
+    {
+      "run_id": "routing-scope-components-001",
+      "manifest_sha256": "1a33f703a6b4f69d7e00728a78d08409027261312cbda311ad14d6054a3a75aa",
+      "files_checked": 19,
+      "known_credential_matches": 0,
+      "servers_closed": 16,
+      "servers_drained": 16,
+      "http_requests": 7
+    },
+    {
+      "run_id": "routing-scope-components-fixed-001",
+      "manifest_sha256": "258677731c533cf23ebeab883e4d9510bc145d3fc8673eac660cdaf36613c92a",
+      "files_checked": 19,
+      "known_credential_matches": 0,
+      "servers_closed": 16,
+      "servers_drained": 16,
+      "http_requests": 7
+    }
+  ],
+  "scan": "known provider key plaintext/hex/base64; synthetic component endpoints hold no credentials; sealed whitelist only",
+  "owned_command_path_matches": [],
+  "signals_sent": 0,
+  "scope": "read-only scan for exact owned candidate/temp/harness command paths, not whole-machine process attribution"
+}

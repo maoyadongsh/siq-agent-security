@@ -1,0 +1,22 @@
+{
+  "integrity_verified": true,
+  "run_id": "governance-backend-001",
+  "passed": false,
+  "http_cases": 84,
+  "checks": 113,
+  "checks_passed": 113,
+  "missing": [
+    "backend_approve_two",
+    "backend_change_two",
+    "backend_preview_two",
+    "backend_rollback",
+    "backend_stale_submit",
+    "backend_unreachable_preview",
+    "backend_unreachable_self_report",
+    "backend_verify_old_receipt"
+  ],
+  "limits": [
+    "recomputes author HTTP and SQL captures, not independent execution attestation",
+    "tokens excluded; real issuer verification needs independent rerun"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-05T22:11:27.416208+00:00",
+  "scope": "AgentDojo scoped 20-task three-arm pilot preparation/calibration/offline verifier and descriptive analysis; live model cohorts still in progress",
+  "framework_tests": {
+    "passed": 147,
+    "exit_code": 0,
+    "log": "reports/agentdojo-pilot20-framework-tests-002.txt"
+  },
+  "ruff": {
+    "exit_code": 0
+  },
+  "diff_check": {
+    "exit_code": 0
+  },
+  "reference_calibration": {
+    "passed": 20,
+    "allocated": 20,
+    "model_calls": 0,
+    "first_attempt_passed": 17,
+    "first_attempt_preserved": true
+  },
+  "old_model_smoke_compatibility": {
+    "local": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 20,
+      "artifact_ref": "reports/agentdojo-local-smoke-pilot-verifier-regression-002.json"
+    },
+    "step5": {
+      "integrity": "verified_against_supplied_digest",
+      "allocated": 20,
+      "artifact_ref": "reports/agentdojo-step5-smoke-pilot-verifier-regression-001.json"
+    }
+  },
+  "source_freeze": "engineering-evidence/agentdojo-pilot20-tools-002",
+  "model_results": "pending seal/export/independent recomputation"
+}

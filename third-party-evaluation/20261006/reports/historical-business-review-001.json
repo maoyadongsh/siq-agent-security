@@ -1,0 +1,189 @@
+{
+  "reviewed_at": "2026-10-05T22:47:00.304527+00:00",
+  "relationship": "author_readonly_historical_review",
+  "sources": {
+    "/home/maoyd/siq-demo-video/evidence/film-qwen/verification.json": "6d0a64d104bc290e12a7a9c146d713d5469c91b340744ee9b2c72df56f6ac4f4",
+    "/home/maoyd/siq-demo-video/evidence/film-qwen/snapshot.json": "773d46c2dbce97be3b66c423509bdaf2e31c2337c0417bf55f49bbc130a88550",
+    "/home/maoyd/siq-demo-video/evidence/film-qwen/public-receipts.json": "64c1689c86ce2acd575fd8cb9acd0807720be51b8525737475516593f3736b8a",
+    "/home/maoyd/siq-demo-video/evidence/film-controls/verification.json": "89316e1feb07a4a8962040962bd939727ba937a5100066e6087a3a2cca502e92",
+    "/home/maoyd/siq-demo-video/evidence/film-controls/snapshot.json": "4247868ceac8bbebb2eac44ff63e3377f60c8be1fde76f4eec15a4c2c3141ed3",
+    "/home/maoyd/siq-demo-video/evidence/film-controls/public-receipts.json": "4f5201a31e83a37a67564aa8bfb50d2b1da44c1d5f25eb5e029c46dcc8b1bd16",
+    "/home/maoyd/siq-demo-video/output/full-v4/README.md": "2f515de79ceb83f53a92b3a9e894c1f07e5fa2069a9e6b0781c7650b0cfcb8aa",
+    "/home/maoyd/siq-demo-video/output/full-v4/script.zh-en.md": "d53cdce8fc126be01d7aafab906f6f9abe5da32a84a14b919a2a9481f07341ca",
+    "/home/maoyd/siq-demo-video/output/full-v4/shot-evidence-index.json": "66410574f5be7d97ff3f9c537b8ec5c7f16231214fcfd8cb724d10c58fc039ab",
+    "/home/maoyd/siq-demo-video/output/full-v4/materials-manifest.json": "6b76cf72b35b0fa8ab99b8c9abc2884e6d4b8edb97c9766e45ccf8450891fddd",
+    "/home/maoyd/siq-demo-video/output/full-v4/contact-sheet.jpg": "61a2e533a443cf61de4342d850fe0609816d3a2a682cfa3c1d94c51e7df2f316",
+    "/home/maoyd/siq-demo-video/output/full-v4/siq-agent-security-full-v4.mp4": "352e65b04d3cfe2331a16875eb699344888ead0e57a17b7dabe3f2d3c78c1be0",
+    "/home/maoyd/siq-demo-video/src/full-v4/evidence.json": "379bafb70f162957a4a8385ee48f6c446eb3cefa2d01ef16a1ebc5874b861321",
+    "/home/maoyd/siq-demo-video/workbuddy-windows/wb-20260927T154657Z-repair1-delivery-v2/files/wb-20260927T154657Z-repair1/experiment-report.md": "c3c4ef9950070a4c0f8261ecc0e2c15283b56143b1f24f2a0b7d2b56ad1c458a"
+  },
+  "video_metadata": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      },
+      {
+        "codec_type": "data",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "488.967000"
+    }
+  },
+  "historical_cohorts": {
+    "film-qwen": {
+      "verified_receipts": 104,
+      "verified_effect_envelopes": 8,
+      "source_sha": "5470ab3780f2228d77b0dd856553ea9e666de815",
+      "tasks": [
+        {
+          "task_id": "a0938c0d1e04440bb78c61424933bc30",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 3,
+          "models": [
+            "Qwen3.8-27B-NVFP4"
+          ],
+          "received_messages": 1
+        },
+        {
+          "task_id": "f66e9708955146dcafe5cb465c549b5b",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 3,
+          "models": [
+            "Qwen3.8-27B-NVFP4"
+          ],
+          "received_messages": 1
+        },
+        {
+          "task_id": "b42b43f5ba0341998aedd8137b903052",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 3,
+          "models": [
+            "Qwen3.8-27B-NVFP4"
+          ],
+          "received_messages": 1
+        },
+        {
+          "task_id": "633399a8d21c4f13839a860b11be471d",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 3,
+          "models": [
+            "Qwen3.8-27B-NVFP4"
+          ],
+          "received_messages": 1
+        }
+      ],
+      "scope": "entire historical service export; not all tasks appeared in film"
+    },
+    "film-controls": {
+      "verified_receipts": 248,
+      "verified_effect_envelopes": 15,
+      "source_sha": "5470ab3780f2228d77b0dd856553ea9e666de815",
+      "tasks": [
+        {
+          "task_id": "a9cf20da14634fad88d690584da8b14a",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 0,
+          "models": [],
+          "received_messages": 1
+        },
+        {
+          "task_id": "aec6ae8cb5204c4e94b95fce8d3fe0c8",
+          "scenario": "same-value",
+          "status": "blocked",
+          "calls": 0,
+          "models": [],
+          "received_messages": 0
+        },
+        {
+          "task_id": "ab88aa46f4be4b0082099bba28cbfe58",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 0,
+          "models": [],
+          "received_messages": 1
+        },
+        {
+          "task_id": "4c3aa548316548e7ac2037ff64d7a794",
+          "scenario": "same-value",
+          "status": "blocked",
+          "calls": 0,
+          "models": [],
+          "received_messages": 0
+        },
+        {
+          "task_id": "c3f4ea2e24014434b50316958a1d0566",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 0,
+          "models": [],
+          "received_messages": 1
+        },
+        {
+          "task_id": "6e32e82345ab431585214085b58d04b4",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 0,
+          "models": [],
+          "received_messages": 1
+        },
+        {
+          "task_id": "8d3a909bfa5a46e886f20b52487fc758",
+          "scenario": "normal",
+          "status": "verified",
+          "calls": 0,
+          "models": [],
+          "received_messages": 1
+        },
+        {
+          "task_id": "4e2e22c100ec4e4dac1a32e70a8da88d",
+          "scenario": "mcp-attack",
+          "status": "blocked",
+          "calls": 0,
+          "models": [],
+          "received_messages": 0
+        },
+        {
+          "task_id": "a441e6cc42a44dd99ae83d681838edb9",
+          "scenario": "same-value",
+          "status": "blocked",
+          "calls": 0,
+          "models": [],
+          "received_messages": 0
+        },
+        {
+          "task_id": "e19e625099f74eea9bba2dab9b86de14",
+          "scenario": "fake-success",
+          "status": "incomplete",
+          "calls": 0,
+          "models": [],
+          "received_messages": 0
+        }
+      ],
+      "scope": "entire historical service export; not all tasks appeared in film"
+    }
+  },
+  "raw_assets_checked": 145,
+  "raw_asset_mismatches": [],
+  "visual_review": "existing V4 contact sheet and evidence-index chronology; no claim of full real-time viewing",
+  "windows_scope": "retained Windows WorkBuddy report and source index; not a new Windows execution or independent signature audit",
+  "new_business_executions": 0
+}

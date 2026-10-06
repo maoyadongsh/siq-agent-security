@@ -1,0 +1,43 @@
+{
+  "schema_version": "siq.research-business-revoke-review.v1",
+  "batch": "research-permissions-business-revoke-001",
+  "passed": false,
+  "checks": {
+    "positive_file_unchanged": false,
+    "checkpoint_matches_original_task": true,
+    "same_business_run_revoked": true,
+    "public_revocation_after_positive_effect": true,
+    "active_read_200_to_403": true,
+    "stream_explicit_authorization_loss": true,
+    "stream_never_claims_success": true,
+    "actual_terminal_failed_within_60_seconds": true,
+    "new_request_denied": true,
+    "checkpoint_release_attempted": true,
+    "signed_grant_matches_context": true,
+    "exactly_two_authorized_decisions": false,
+    "same_agent_skill_session_task": true,
+    "read_file_exact_target_allow": true,
+    "read_file_linked_observation": true,
+    "write_file_exact_target_allow": false,
+    "write_file_linked_observation": false,
+    "signed_write_matches_actual_checkpoint": false,
+    "API_finalizer_released_before_diagnostic_cleanup": true,
+    "sandbox_supervisor_and_forward_absent": true,
+    "child_identity_revoked_before_root_cleanup": true,
+    "old_child_credential_401": true,
+    "root_identity_still_active_before_diagnostic_cleanup": true,
+    "protocol_frozen_before_execution": true,
+    "candidate_matches_frozen_inputs": true,
+    "live_execution_and_cleanup_passed": false,
+    "tampered_decision_rejected": true,
+    "changed_bytes_rejected": true,
+    "wrong_run_rejected": true,
+    "success_after_revoke_rejected": true
+  },
+  "receipt_count": 6,
+  "limits": [
+    "Business authorization withdrawal and task termination; not a signed SIQ next-tool denial claim.",
+    "Controlled installed Skill selection and evaluation host synchronization, dedicated actual deployment.",
+    "Lifecycle HTTP/process evidence is recorded experiment evidence, not cryptographic attestation."
+  ]
+}
