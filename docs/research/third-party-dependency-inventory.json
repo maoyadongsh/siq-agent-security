@@ -2,7 +2,7 @@
   "schema_version": "siq-dependency-inventory/v1",
   "lockfiles": {
     "apps/web/package-lock.json": "a6abdbc68b0a7ebabccd17b51128a7a94969605aa29aae8c3705ad60229fb536",
-    "apps/control-api/uv.lock": "7efdc5f2be26f51b78fc3345c9825a5e8b666388b6cbf924493454341082d478"
+    "apps/control-api/uv.lock": "13e101ad305ed56a5ac4f363ee4e8298d2cf84f566ff8d4520d5a14d7e2fefea"
   },
   "web": [
     {
@@ -2002,13 +2002,13 @@
     },
     {
       "name": "mako",
-      "version": "1.4.1",
+      "version": "1.4.2",
       "license": "MIT",
       "installed_version_matches_lock": true,
       "source": {
         "registry": "https://pypi.org/simple"
       },
-      "sdist_sha256": "sha256:d7904710b662996425a21627710c4777c45053146942cf8a7aebf757c92b8c27",
+      "sdist_sha256": "sha256:7227a060ee3af55a493af61d73d6beef13044b81dba9586736c13945f09464ce",
       "distribution": "separately installed Control API runtime",
       "bundled_in_go_secure_agent_rc": false
     },
