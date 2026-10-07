@@ -1,0 +1,194 @@
+{
+  "schema_version": "optimization-runtime-delivery/v1",
+  "date": "2026-10-08",
+  "task": "OPT-08",
+  "status": "implementing",
+  "business_commits": {
+    "identity": "7c410f6",
+    "model_route": "98fd1cc",
+    "model_bridge": "7eecae8"
+  },
+  "batches": {
+    "identity": {
+      "isolated_tests_passed": 98,
+      "owning_repository_ruff": "passed",
+      "files": {
+        "scripts/openshell/agentshield_runtime_binding.py": "b1e6ff12d58ff593dfb6ede41cb35d4d34aab84889b468a85b63e7edab57981f",
+        "scripts/openshell/agentshield_self_identity.py": "1b3e20d3679060bd4f80acd66873305a5b50e0ea6c45ca92e5e8db9401931cc2",
+        "scripts/openshell/agentshield_request_identity.py": "8dcfff33fac37a0ca5610b0222b5c7958890c4bcb409837750cb14212cc5e679",
+        "scripts/openshell/tests/test_agentshield_runtime_binding.py": "b49e3b9ddcef1b9fce5d67030b363eeb7f42fc819920e69c894998f04f9ea5fc",
+        "scripts/openshell/tests/test_agentshield_self_identity.py": "2333cfdf7bd378279413f16fef772fc8e48ada76338554de1583213ca0817eff",
+        "scripts/openshell/tests/test_agentshield_request_identity.py": "358750dd501f07c3bcd933fa8156b98609639d4c79999476a8fe7bbd1febdc19"
+      },
+      "local_record_sha256": "a97c125a364ec07a60ed99d3a32770710b01d5a91a3c747d6a4a17d70e13774d"
+    },
+    "model_route": {
+      "isolated_tests_passed": 34,
+      "owning_repository_ruff": "passed",
+      "files": {
+        "scripts/openshell/governed_model_route.py": "9f7d3b66eb8b5b81c7f65c44c4f7ac8ae8ac34c0792d6e0c6250e23306770b95",
+        "scripts/openshell/audit_qwen38_local_candidate.py": "1f1d96d582529f6a278e8a22f2bbc9b5a0582f32616782b53c0cfb9ff75edcc8",
+        "scripts/openshell/tests/test_governed_model_route.py": "0eb841017c8b403597d8d45d59586b38309d19a3bc03b2acfdecd904590d1f5f",
+        "scripts/openshell/tests/test_audit_qwen38_local_candidate.py": "ef3ace9090b276a6d7abf97d33bceee135a576dd55200a4cc4699e1b5dfd829e",
+        "scripts/openshell/tests/test_governed_route_delivery.py": "74b962130193adfc37450701ced8bb643f4cfd896c28b22436e873d39589c423",
+        "infra/model-services/governed-model-routes.json": "5e349bc53572961024ac999bcacd9f483c2483c8484c0eca5f2857b505ba72e3",
+        "infra/model-services/governed-model-routes.schema.json": "772ad2efe525957ae1f18e5410d4d52f1fa1ead8d632f0a7a5643741b1b9e7f5",
+        "infra/model-services/qwen3.8/candidate.v1.json": "608ef7bf7a2425f6c1b2d2fed56a5390245985a538a7dd585d5eb91298c2ab2f",
+        "infra/model-services/qwen3.8/governed-route.v1.json": "19e171c8002a8810d0189359bf98c920f0eaa9371771f7002cac23a433811e35",
+        "infra/model-services/qwen3.8/governed-route.v1.schema.json": "455b565a0176039cabd87d437c5433382b1bdf9233c3cd7579e8c93e1f874564"
+      },
+      "local_record_sha256": "50fa6f45c01f2e87bb6c5c7369951bfc0f4435305a53917b07915c3fa1fa079d"
+    },
+    "model_bridge": {
+      "isolated_tests_passed": 82,
+      "owning_repository_ruff": "passed",
+      "files": {
+        "scripts/openshell/bridge_endpoint.py": "074982f7bbe0a7037a45098c2c3da52f1498acc6a955fe947caff0dc486e7f16",
+        "scripts/openshell/authenticated_model_bridge.py": "5eef6534c7c82570d881fae46610ed93b33f1e9a4b21d3812266da31cc608864",
+        "scripts/openshell/model_bridge_stream.py": "2d00fa20c0e3203cd48256320155453e18ecb0ff3a3c057b8268c6e092a50cfe",
+        "scripts/openshell/audit_qwen38_local_candidate.py": "1f1d96d582529f6a278e8a22f2bbc9b5a0582f32616782b53c0cfb9ff75edcc8",
+        "scripts/openshell/tests/test_bridge_endpoint.py": "61c4a2852740172a5ea97c2e60b34ff210fc55055a7a560251045d6778e51200",
+        "scripts/openshell/tests/test_bridge_executable.py": "5ca0375ae292d1df07134ddeb901c456176cdc94f5a299ab262c1b0933faa476",
+        "scripts/openshell/tests/test_authenticated_model_bridge.py": "6de655e17a64071161cc522b5a75054f05067e78147601e184d59fa8a56899db",
+        "scripts/openshell/tests/test_model_bridge_stream.py": "173b1a3319eb46f3e0f5a5ee750ea16dd58d90dd03faffaa117d271d7ab61769",
+        "infra/model-services/qwen3.8/candidate.v1.json": "608ef7bf7a2425f6c1b2d2fed56a5390245985a538a7dd585d5eb91298c2ab2f",
+        "infra/systemd-user/siq-openshell-model-bridge-8005.service": "43e18c4c6272986f63622eff9c2948cc0b294c3e46d50ee908e3c73bc76d920d"
+      },
+      "local_record_sha256": "d559f8762d81e64c7d11fa8559e1704f23143e0c8c4dd462bbb2a7febd587e1c"
+    }
+  },
+  "model_route_worktree_consumer_tests": 13,
+  "old_negative_reproductions": {
+    "nan_temperature_accepted": true,
+    "overflow_uid_accepted_as_root": true
+  },
+  "real_systemd_namespace": {
+    "exit_code": 0,
+    "observed_uid": 65534,
+    "uid_map": [
+      "1000",
+      "1000",
+      "1"
+    ],
+    "checks": {
+      "missing_pin_rejected": true,
+      "wrong_pin_rejected": true,
+      "approved_pin_discovery": true
+    },
+    "implementation_sha256": "074982f7bbe0a7037a45098c2c3da52f1498acc6a955fe947caff0dc486e7f16"
+  },
+  "deployment": {
+    "unit": "siq-openshell-model-bridge-8005.service",
+    "before": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "InvocationID": "9ffd65e5075a428c87725f31506681df"
+    },
+    "started": {
+      "MainPID": "1729200",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "3e3420fcddba43a5a6bf06e727037c29"
+    },
+    "after": {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "ActiveState": "inactive",
+      "InvocationID": "3e3420fcddba43a5a6bf06e727037c29"
+    },
+    "model_before": {
+      "MainPID": "221774",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "22ba25f352414a55b05b3ea4151f5232"
+    },
+    "model_after": {
+      "MainPID": "221774",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "InvocationID": "22ba25f352414a55b05b3ea4151f5232"
+    },
+    "checks": {
+      "unauthorized_rejected": true,
+      "bridge_stopped": true,
+      "model_unchanged": true
+    },
+    "unauthorized_http_status": 401,
+    "pin": "d05634283c0491a37c525e37b0b7735759333e408ec94195e3e5847207daf2ef",
+    "old_unit_sha256": "0d185bbfa4cb7d1001b032585967c2f89bb591aa0f2c173515958cf3654f9bbb",
+    "new_unit_sha256": "43e18c4c6272986f63622eff9c2948cc0b294c3e46d50ee908e3c73bc76d920d"
+  },
+  "preserved_failed_probe": {
+    "memfd_exec_in_user_namespace": "permission_denied",
+    "source_record_sha256": "052194920eb6f97137168faa47fe830e60c3a6a409e867e6878b8ce386519df2",
+    "resolution": "private anonymous O_TMPFILE snapshot; writable descriptors closed before execution; same-UID/host administrator outside guarantee"
+  },
+  "original_static_closure": {
+    "module_count": 109,
+    "remaining_untracked": 54,
+    "remaining_paths": [
+      "apps/api/services/qwen38_request_selector.py",
+      "apps/api/services/qwen38_native_request_gateway.py",
+      "scripts/openshell/build_native_request_image.py",
+      "scripts/openshell/build_native_runtime_config.py",
+      "apps/api/services/qwen38_native_request_profile.py",
+      "apps/api/services/qwen38_recovery_manager.py",
+      "apps/api/services/qwen38_request_builder.py",
+      "apps/api/services/qwen38_request_deployment.py",
+      "apps/api/services/qwen38_native_request_issuer.py",
+      "apps/api/services/qwen38_request_gateway.py",
+      "scripts/openshell/qwen38_request_native.py",
+      "apps/api/services/business_run_result_model.py",
+      "apps/api/services/openshell_data_scope.py",
+      "apps/api/services/qwen38_native_request_launch.py",
+      "apps/api/services/qwen38_request_finalizer.py",
+      "apps/api/services/qwen38_request_heartbeat.py",
+      "apps/api/services/qwen38_request_origin.py",
+      "apps/api/services/qwen38_request_pending.py",
+      "apps/api/services/qwen38_request_recovery.py",
+      "apps/api/services/qwen38_request_startup.py",
+      "apps/api/services/qwen38_request_endpoint.py",
+      "apps/api/services/qwen38_request_issuer.py",
+      "apps/api/services/qwen38_request_queue.py",
+      "apps/api/services/runtime_startup_guard.py",
+      "apps/api/services/qwen38_request_supervision.py",
+      "scripts/openshell/qwen38_candidate_renewal.py",
+      "scripts/openshell/qwen38_candidate_supervisor.py",
+      "scripts/openshell/qwen38_provider_lifecycle.py",
+      "apps/api/services/qwen38_request_http.py",
+      "apps/api/services/qwen38_runtime_lease.py",
+      "apps/api/services/qwen38_request_admission.py",
+      "apps/api/services/qwen38_request_sandbox.py",
+      "apps/api/services/qwen38_request_runtime.py",
+      "scripts/openshell/qwen38_request_identity.py",
+      "scripts/openshell/broker_admission_registry.py",
+      "scripts/openshell/qwen38_candidate_host_guard.py",
+      "scripts/openshell/qwen38_candidate_identity.py",
+      "scripts/openshell/qwen38_candidate_lease.py",
+      "scripts/openshell/qwen38_request_forward.py",
+      "scripts/openshell/qwen38_request_relay.py",
+      "scripts/openshell/qwen38_supervisor_service.py",
+      "scripts/openshell/probe_qwen38_provider.py",
+      "scripts/openshell/qwen38_business_broker.py",
+      "scripts/openshell/qwen38_candidate_gateway_owner.py",
+      "scripts/openshell/qwen38_model_credential.py",
+      "apps/api/services/qwen38_request_assets.py",
+      "scripts/openshell/launch_agentshield_decision_relay.py",
+      "scripts/openshell/request_gateway_candidate.py",
+      "scripts/openshell/validate_gateway_candidate.py",
+      "scripts/openshell/build_qwen38_candidate_image.py",
+      "scripts/openshell/qwen38_candidate_run_guard.py",
+      "scripts/openshell/build_agentshield_decision_relay_config.py",
+      "scripts/openshell/sandbox_resource_governance.py",
+      "scripts/openshell/prepare_qwen38_business_mcp.py"
+    ],
+    "excludes": "dynamic assets, migrations and wider API-router closure"
+  },
+  "scope_limits": [
+    "No new model inference performed.",
+    "Earlier live candidate identities and signed evidence remain unchanged.",
+    "Full isolated checkout and same-candidate business regression not yet completed.",
+    "No remote push or final CI claim."
+  ]
+}
