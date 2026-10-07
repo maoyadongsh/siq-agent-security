@@ -76,3 +76,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3d 固定网关入口](optimization-opt08-gateway-entry-validation-20261007.md)在同一 PID 初始化后进入已有 gateway.run.main，拒绝旧插件环境和任意额外参数；62 项相关 Python、固定镜像真实网关启动 8 项与原生函数 21 项通过。网关启动 socket 为合成协调设施，无模型/在线裁决，不能替代真实业务验收。业务身份客户端、原生宿主监管及日常 API 接线继续实施，OPT-08 与 9/16 不变。
 
 [D3e 业务原生身份客户端](optimization-opt08-business-identity-validation-20261007.md)在业务独立分支新增严格 HTTP 消费者，49 项定向通过；真实 Go HTTP 首次签发/登记/取消与取消后拒绝、运行身份幂等读回及父基线撤销后的精确取消均通过，同次 OpenShell 18 项检查通过。业务提交只含四个新增文件，既有改动保留。日常 builder/Supervisor 与业务授权/模型闭环继续接入，OPT-08 与 9/16 不变。
+
+[D3f 宿主持续服务循环](optimization-opt08-host-loop-validation-20261007.md)已区分正常空闲与连接失败，在固定租约内服务，停止/过期/guard 失效后拒绝转交允许结果；fork 后控制和失败后重启拒绝。88 项相关 Python 通过，最终循环 15 项通过（新增 2 项），Ruff 通过；实际 OpenShell 18 项权限检查、18 条签名回执、宿主效果及线程/沙箱清理通过。业务身份客户端 HTTP 联验保持通过，日常 builder/Supervisor 与模型闭环尚未验收，OPT-08 与 9/16 不变。

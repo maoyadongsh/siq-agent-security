@@ -18,6 +18,7 @@ import urllib.parse
 from pathlib import Path
 
 from .host_runtime import _host_info
+from .native_channel import ChannelIdle
 
 
 class OnlineError(RuntimeError):
@@ -363,3 +364,105 @@ class DecisionRelay:
             return {"action": result["action"], "receipt_id": result["receipt_id"]}
         finally:
             connection.close()
+
+
+class HostLoop:
+    """One bounded worker for an owning launcher's authenticated host channel."""
+
+    def __init__(self, channel, relay, *, expires_at):
+        self._pid = os.getpid()
+        self._channel, self._relay = channel, relay
+        self._stop = threading.Event()
+        self._lock = threading.Lock()
+        self._close_lock, self._channel_closed = threading.Lock(), False
+        self._thread, self._attempted, self._failed = None, False, False
+        if (not isinstance(relay, DecisionRelay) or type(expires_at) is not datetime.datetime
+                or expires_at.tzinfo is not datetime.UTC):
+            raise _failure()
+        remaining = (expires_at - datetime.datetime.now(datetime.UTC)).total_seconds()
+        if not 0 < remaining <= 3600:
+            raise _failure()
+        self._expires, self._until = expires_at, time.monotonic() + remaining
+
+    def _live(self):
+        if (os.getpid() != self._pid or self._stop.is_set()
+                or time.monotonic() >= self._until or datetime.datetime.now(datetime.UTC) >= self._expires):
+            raise _failure()
+        self._relay.publisher.guard.verify()
+        if self._stop.is_set() or time.monotonic() >= self._until or datetime.datetime.now(datetime.UTC) >= self._expires:
+            raise _failure()
+
+    def _dispatch(self, event):
+        try:
+            self._live()
+            result = self._relay.dispatch(event)
+            self._live()
+            return result
+        except Exception:  # noqa: BLE001 - never reflect lifecycle/transport exceptions.
+            self._failed = True
+            self._stop.set()
+            return {"error": "native_host_unavailable"}
+
+    def _run(self):
+        try:
+            while not self._stop.is_set():
+                self._live()
+                try:
+                    self._channel.serve_once(self._dispatch)
+                except ChannelIdle:
+                    continue
+        except Exception:  # noqa: BLE001 - only the categorical liveness result escapes.
+            if not self._stop.is_set():
+                self._failed = True
+        finally:
+            self._stop.set()
+            self._close_channel()
+
+    def _close_channel(self):
+        with self._close_lock:
+            if not self._channel_closed:
+                self._channel_closed = True
+                self._channel.close()
+
+    def start(self):
+        if os.getpid() != self._pid:
+            raise _failure()
+        with self._lock:
+            if self._attempted:
+                raise _failure()
+            self._attempted = True
+            try:
+                self._live()
+                self._thread = threading.Thread(target=self._run, name="siq-native-host", daemon=True)
+                self._thread.start()
+            except Exception:  # noqa: BLE001 - failed startup cannot be retried.
+                self._failed = True
+                self._stop.set()
+                self._close_channel()
+                raise _failure() from None
+        return self
+
+    def assert_running(self):
+        self._live()
+        if self._thread is None or not self._thread.is_alive() or self._failed:
+            raise _failure()
+
+    def close(self):
+        if os.getpid() != self._pid:
+            raise _failure()
+        self._stop.set()
+        with self._lock:
+            self._close_channel()
+            thread = self._thread
+        if thread is not None:
+            if thread is threading.current_thread():
+                raise _failure()
+            thread.join(timeout=6)
+            if thread.is_alive():
+                raise _failure()
+
+    def __enter__(self):
+        return self.start()
+
+    def __exit__(self, *_):
+        self.close()

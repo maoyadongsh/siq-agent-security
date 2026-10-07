@@ -29,6 +29,10 @@ class ChannelError(RuntimeError):
     """Value-free failure: do not log a raw payload or OS exception."""
 
 
+class ChannelIdle(ChannelError):
+    """No connection accepted; no request or sequence was consumed."""
+
+
 def _failure():
     return ChannelError("native_host_channel_unavailable")
 
@@ -193,6 +197,11 @@ class HostChannel:
             raise _failure()
         try:
             connection, _ = self._socket.accept()
+        except TimeoutError:
+            raise ChannelIdle("native_host_channel_idle") from None
+        except OSError:
+            raise _failure() from None
+        try:
             with connection:
                 connection.settimeout(self._timeout)
                 raw, (pid, uid, _) = _receive(connection)

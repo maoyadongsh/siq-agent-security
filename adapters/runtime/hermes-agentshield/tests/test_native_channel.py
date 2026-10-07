@@ -57,6 +57,18 @@ def test_actual_channel_allows_only_current_peer_metadata(host):
     assert observed == [{"kind": "synthetic-call", "ordinal": 0}, {"kind": "synthetic-call", "ordinal": 1}]
 
 
+def test_idle_accept_does_not_consume_sequence_or_dispatch(host):
+    with pytest.raises(channel.ChannelIdle):
+        host.serve_once(lambda _event: pytest.fail("idle channel dispatched"))
+    test_actual_channel_allows_only_current_peer_metadata(host)
+
+
+def test_connected_peer_timeout_is_not_idle(host):
+    with raw_socket(host), pytest.raises(channel.ChannelError) as error:
+        host.serve_once(lambda _event: pytest.fail("empty packet dispatched"))
+    assert not isinstance(error.value, channel.ChannelIdle)
+
+
 def test_concurrent_native_callbacks_keep_independent_responses(host):
     client = channel.HermesChannel(host.path, timeout=.5)
     observed = []

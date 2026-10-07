@@ -1,6 +1,6 @@
 """Join real OpenShell, native Hermes tools and actual Go HTTP Authority."""
 
-import concurrent.futures
+import datetime
 import importlib.util
 import json
 import os
@@ -169,7 +169,7 @@ def prepare(output, command):
 
 
 def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, row, command, exec_log):
-    module, channel, options = runtime_options(prepared, peer=peer, cid=cid, namespace=namespace,
+    module, _, options = runtime_options(prepared, peer=peer, cid=cid, namespace=namespace,
         sandbox=sandbox, init_pid=init_pid, init_groups=init_groups, command=command)
     ready = _owned.ready
     credential = Path(ready["credential_path"]).read_text()
@@ -192,6 +192,7 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
         _owned.verifier.register(ready["subject"], guard, ready["installs"], lifetime=150)
         publisher = _owned.module.Publisher(_owned.config, ready["endpoint"], ready["subject"], guard)
         relay = _owned.module.DecisionRelay(publisher, credential)
+        original_dispatch = relay.dispatch
         controls, events = {}, []
 
         def dispatch(event):
@@ -204,15 +205,18 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
                 ack = wait_json(_owned.root / ("revoked-" + target + ".json"), _owned.process, timeout=3)
                 assert ack == {"revoked": True}, "owned_revocation_failed"
                 controls[target] = True
-            answer = relay.dispatch(event)
+            answer = original_dispatch(event)
             request = event.get("request", {})
             events.append({"kind": event.get("kind", "decision"),
                            "call": event.get("tool_call_id", request.get("tool_call_id")),
                            "accepted": answer.get("accepted"), "action": answer.get("action")})
             return answer
 
+        relay.dispatch = dispatch  # Owned test operator instrumentation only.
+        channel = sys.modules[_owned.module.__package__ + ".native_channel"]
+        expires = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=150)
         with guard.namespace_channel_directory(row["channel_directory"]) as fd:
-            with channel.NamespaceHostChannel(fd, guard.peer, timeout=5) as host, concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+            with channel.NamespaceHostChannel(fd, guard.peer, timeout=5) as host, _owned.module.HostLoop(host, relay, expires_at=expires) as loop:
                 deadline = time.monotonic() + 80
                 while True:
                     rows = [json.loads(line) for line in exec_log.read_text(errors="replace").splitlines()
@@ -221,18 +225,11 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
                         result = rows[-1]
                         break
                     assert time.monotonic() < deadline, "owned_online_result_timeout"
-                    pending = pool.submit(host.serve_once, dispatch)
-                    try:
-                        pending.result(timeout=12)
-                    except channel.ChannelError:
-                        # A final idle accept timeout is expected after the
-                        # client publishes its terminal result to stdout.
-                        rows = [json.loads(line) for line in exec_log.read_text(errors="replace").splitlines()
-                                if line.startswith('{"native_online_verified":')]
-                        if not rows:
-                            raise
-                        result = rows[-1]
-                        break
+                    loop.assert_running()
+                    time.sleep(.1)
+                loop.assert_running()
+            result["host_loop_stopped"] = not loop._thread.is_alive()
+            assert result["host_loop_stopped"]
             (_owned.output / "runtime-result.json").write_text(json.dumps(result, indent=2) + "\n")
             assert result["native_online_verified"] and all(result["checks"].values()), "owned_native_online_check_failed"
             process_root = Path(f"/proc/{peer}/root")

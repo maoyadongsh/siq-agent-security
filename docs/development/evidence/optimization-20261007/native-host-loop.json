@@ -1,0 +1,103 @@
+{
+  "schema_version": "siq.optimization-native-host-loop-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "3f009aab435fe556d0c0adc4889fbc93f1d8c120",
+  "validation": {
+    "related_python_tests_passed": 88,
+    "final_loop_tests_passed": 15,
+    "final_loop_additional_cases": 2,
+    "warning": "Intentional fork refusal test forks with a fixture HTTP thread; Python warns about inherited locks. Child exits successfully under a two-second alarm.",
+    "ruff": "passed"
+  },
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-native-host-loop-01",
+    "namespace": "siq-opt08-d59c17e4ef69",
+    "image_id": "sha256:2cee8fe692b02fb17906ab5798492c3e67114decf1b5a2e0227179a142daf10a",
+    "artifact_sha256": "476ec4fe2e988eb8384b47f03b1780112c8bc0ffbe3e66bd33c907a181feb65b",
+    "runtime_checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "host_loop_stopped": true,
+    "independent_host_effect_check": true,
+    "signed_chain_verified": true,
+    "receipt_count": 18,
+    "receipt_actions": {
+      "allow": 14,
+      "deny": 4
+    },
+    "business_client_start": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "parent_native_policy_checked": true,
+        "child_identity_checked": true,
+        "child_credential_path_checked": true,
+        "session_enrollment_checked": true,
+        "first_child_issued_by_business_client": true,
+        "first_child_session_enrolled": true,
+        "first_child_cancel_confirmed": true,
+        "cancelled_child_readback_refused": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "business_client_cancel_after_baseline_revocation": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "cancel_confirmed": true,
+        "exact_child_cancelled": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "go_integration_seconds": 30.759,
+    "model_calls": 0,
+    "business_entry_acceptance": false
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_online.py": "101193fb2e85e4a28bc08beefcb322e2810bb33928af219c3b0af8622ab220dc",
+    "adapters/runtime/hermes-agentshield/native_channel.py": "3da75bddd49a7ed7fc6b501c4fa23640ec013446449a34dd689c47f0e58f0b99",
+    "adapters/runtime/hermes-agentshield/tests/test_native_host_loop.py": "1a38d565691a59ffdb93326b47fefacfd66ef43ec071ae35ea286d07a003ff27",
+    "adapters/runtime/hermes-agentshield/tests/test_native_channel.py": "f38d02b71802e9d2d2fe0cfec86c518ca240d2f020f4b7eadce2dbab6ae3b4c5",
+    "patches/hermes/openshell_online_probe.py": "63cb2f6c2d00284957332484a2268d4b37bd9fa061837baa971e9cb70b48c369",
+    "packages/contracts/native-host-loop.v1.md": "83eae14982cbba47df1c4a2002a5e2b846ae61e761ee5134bcd26ec664aa33af"
+  },
+  "raw_result_sha256": {
+    "result.json": "54ef8ef96ffdd5b03ad15b2c14c06c3fad94e1333e7b1179c614cd3cef35e6ff",
+    "authority-result.json": "72f341ccf974b0c4288c642801a6cf8314f85debc224d9de83a13a42a4fa9f43",
+    "business-client-start.json": "eba5ab4e0f884f5d8c4d4871b7b584c89c68a5b53a2ebd8aa46ba6355a5bd9eb",
+    "business-client-cancel.json": "c79a85c46e75c7f1a1be4173d2d0f0e66c1d59e053e061d1828f09176ff0f1c8"
+  },
+  "limits": [
+    "Real OpenShell/Hermes tools and Go HTTP Authority are exercised; Skill content and operator actions are synthetic.",
+    "No daily business API or model acceptance in this run.",
+    "HostLoop borrows RuntimeGuard; owning launcher closes guard after its namespace directory context.",
+    "Business Supervisor authorization, lease renewal and precise sandbox containment remain separate obligations.",
+    "No claim of undoing an action already started before cancellation."
+  ]
+}

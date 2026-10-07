@@ -164,7 +164,9 @@
         "docs/development/optimization-opt08-gateway-entry-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/native-gateway-entry.json",
         "docs/development/optimization-opt08-business-identity-validation-20261007.md",
-        "docs/development/evidence/optimization-20261007/native-business-identity-client.json"
+        "docs/development/evidence/optimization-20261007/native-business-identity-client.json",
+        "docs/development/optimization-opt08-host-loop-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-loop.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -181,7 +183,8 @@
         "D3b 已实现受保护 ImageBootstrap：进程一次性初始化、排他私有通道目录、固定跨 PID namespace 凭据、关闭/漂移/fork/超时失败关闭，不读环境替换身份、不接受可替换裁决回调。39项新增启动测试、相关共138项Python通过；实际OpenShell使用该初始化器并核验其制品摘要，18项权限检查通过。该组件不是日常网关启动器，业务API/模型及其余验收仍待接入，9/16保持。",
         "D3c 修复原生 namespace 与真实请求身份不兼容：共用严格 ASCII 组件校验、派生会话不超过256字节。真实HTTP签发子身份、错误namespace拒绝及子凭据运行18项权限检查通过；163项相关Python、Go身份定向与server vet通过。业务请求参数仍为合成，日常业务入口和业务授权生命周期未完成，9/16保持。",
         "D3d 固定hermes-gateway入口在同一PID先初始化再调用真实gateway.run.main，拒绝旧插件环境和任意额外参数。62项相关Python、固定镜像真实离线网关8项和原生函数21项通过；网关探针的启动socket为合成协调设施，不证明在线Authority或业务验收。业务身份客户端/宿主监管与日常API/模型接入仍未完成，9/16保持。",
-        "D3e 在独立业务分支新增原生身份HTTP客户端，49项定向测试通过；真实Go HTTP首次签发/登记/取消与撤销后拒绝、运行身份幂等读回及父基线撤销后精确取消均通过，同次OpenShell18项检查通过。业务改动单独提交，既有用户工作保留。客户端尚未接入日常builder/Supervisor，业务授权/租约与模型闭环继续，9/16不变。"
+        "D3e 在独立业务分支新增原生身份HTTP客户端，49项定向测试通过；真实Go HTTP首次签发/登记/取消与撤销后拒绝、运行身份幂等读回及父基线撤销后精确取消均通过，同次OpenShell18项检查通过。业务改动单独提交，既有用户工作保留。客户端尚未接入日常builder/Supervisor，业务授权/租约与模型闭环继续，9/16不变。",
+        "D3f 已实现固定租约宿主持续循环：空闲等待保持、坏包/已连接超时/停止/到期/guard失效拒绝，fork后控制及失败后重启拒绝；88项相关Python通过，最终循环15项通过（新增2项），Ruff通过。实际OpenShell18项权限检查、18条签名回执及线程/沙箱清理通过；业务客户端HTTP联验保持通过。日常builder/Supervisor、业务授权生命周期和模型闭环尚未验收，9/16不变。"
       ]
     },
     {
