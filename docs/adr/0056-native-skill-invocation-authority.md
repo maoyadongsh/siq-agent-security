@@ -128,3 +128,7 @@ DGX Spark 接入采用固定宿主进程的 Unix `SOCK_SEQPACKET` 元数据通�
 ### D2g：显式在线宿主接线
 
 按 [native-host-online/v1](../../packages/contracts/native-host-online.v1.md)，daemon 通过显式启动开关加载私有连接配置。独立宿主凭据只发布元数据，普通运行时凭据只提交参数；每次必要 Authority 验证经固定私有 Unix socket 回查实际运行，不从客户端选择回查目标或复用先前成功。Engine 的查询器在构造时固定，server 在监听前一次绑定实际 Store；来源解析使用 D2e，运行事实来自 D2f 及实际启动后端。此接线仍不自动开放新身份创建或宣称 OpenShell/业务验收。
+
+### D2h：适配实际 OpenShell 镜像与进程命名空间
+
+实际 OpenShell 0.0.83 探针确认根文件系统可写，而 Hermes 代码/解释器为 root 拥有且非 root 进程无法写入；进程实际具有 NoNewPrivs 和零 effective/permitted/ambient capabilities。按 [native-runtime-image-profile/v1](../../packages/contracts/native-runtime-image-profile.v1.md) 显式支持受保护镜像文件核验，保留旧挂载 profile。宿主通道可在本次拥有的容器临时目录通过受核验 root/directory fd 建立，客户端额外核对响应的跨 PID namespace SCM_CREDENTIALS；无需放宽现有业务挂载合同。限定写入本次沙箱私有临时通道目录及本实例 socket，不修改宿主业务文件或其他容器，不引入提权、mount 操作或内核监控。
