@@ -1,0 +1,182 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "verification_id",
+    "nonce",
+    "binding",
+    "receiver_ipv4",
+    "receiver_port",
+    "allow_path",
+    "deny_path",
+    "attempts",
+    "timeout_ms",
+    "issued_at",
+    "expires_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "openshell-behavior-challenge/v1"
+    },
+    "verification_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 36,
+      "pattern": "^opv-[a-f0-9]{32}$"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "binding": {
+      "$ref": "#/$defs/binding"
+    },
+    "receiver_ipv4": {
+      "type": "string",
+      "format": "ipv4",
+      "maxLength": 15
+    },
+    "receiver_port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "allow_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^/[A-Za-z0-9_./-]+$"
+    },
+    "deny_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^/[A-Za-z0-9_./-]+$"
+    },
+    "attempts": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 10
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 10000
+    },
+    "issued_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+      "format": "date-time"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/openshell-behavior-challenge.v1.schema.json",
+  "title": "Single-use enterprise OpenShell behavior verification challenge",
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "environment_id",
+        "binding_id",
+        "deployment_id",
+        "operation_id",
+        "target",
+        "gateway_fingerprint",
+        "policy_revision",
+        "policy_digest",
+        "image_digest",
+        "probe_sha256",
+        "protected_execution_sha256"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "environment_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "binding_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "deployment_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "operation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "gateway_fingerprint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_digest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "image_digest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 71,
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "probe_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "protected_execution_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "description": "Trusted coordinator issues and durably reserves this bounded challenge. Shape validation alone does not authorize external probes or prove one-time consumption. See ADR-058."
+}
