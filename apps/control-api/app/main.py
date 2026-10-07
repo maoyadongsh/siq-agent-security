@@ -54,6 +54,7 @@ from app.routers import (
     skill_upload,
     threat,
 )
+from app.scan_body_limit import ScanBodyLimit
 from app.security import Identity, ensure_permission, get_identity
 
 logger = logging.getLogger("siq-agent-security")
@@ -87,6 +88,8 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+app.add_middleware(ScanBodyLimit)
 
 # CORS：dev 模式便于本地联调；生产默认同源（空列表），仅显式安全白名单可放开。
 app.add_middleware(

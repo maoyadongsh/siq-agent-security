@@ -17,19 +17,23 @@ from __future__ import annotations
 import ast
 import hashlib
 import re
+import threading
 from dataclasses import dataclass
 
 from app.rulepack import load_rulepack
 
 RULEPACK_VERSION, _RULES, _REDACTION_RULES = load_rulepack()
 ANALYZER_VERSION = f"siq.threat-static.v{RULEPACK_VERSION}"
+RULEPACK_LOCK = threading.RLock()
 
 
 def reload_rulepack() -> None:
     """重新加载规则包并更新模块级版本/规则/脱敏规则（运维热更新、回滚或测试用）。"""
     global RULEPACK_VERSION, ANALYZER_VERSION, _RULES, _REDACTION_RULES
-    RULEPACK_VERSION, _RULES, _REDACTION_RULES = load_rulepack()
-    ANALYZER_VERSION = f"siq.threat-static.v{RULEPACK_VERSION}"
+    loaded = load_rulepack()
+    with RULEPACK_LOCK:
+        RULEPACK_VERSION, _RULES, _REDACTION_RULES = loaded
+        ANALYZER_VERSION = f"siq.threat-static.v{RULEPACK_VERSION}"
 
 # 命中摘要截断长度：只存定位用片段，不存整行/整段原文
 _EXCERPT_MAX = 40

@@ -21,6 +21,14 @@ import pytest
 from fastapi.testclient import TestClient
 
 
+@pytest.fixture(autouse=True)
+def isolated_scan_budget(monkeypatch):
+    # Each test owns a real budget; requests within a test still share limits.
+    from app import scan_budget
+
+    monkeypatch.setattr(scan_budget, "_budget", None)
+
+
 @pytest.fixture(scope="session")
 def client():
     # Contract-only tests do not require the API runtime or its OS dependencies.

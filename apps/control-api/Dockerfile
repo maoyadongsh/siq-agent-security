@@ -26,6 +26,8 @@ FROM python:3.12-slim-bookworm@sha256:782412e85d0f0984994c290652577d4018aff08145
 
 WORKDIR /workspace
 RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin appuser
+RUN apt-get update && apt-get install -y --no-install-recommends bubblewrap \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /workspace/.venv /workspace/.venv
 COPY --from=builder /workspace/alembic.ini /workspace/alembic.ini

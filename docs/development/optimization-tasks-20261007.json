@@ -48,14 +48,16 @@
     {
       "id": "OPT-03",
       "title": "扫描资源预算与限流",
-      "status": "implementing",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [
         "SEC-F08"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/development/optimization-opt03-opt14-validation-20261007.md"
+      ],
       "residual_limits": [
-        "1 MiB Python 样本静态分析峰值约 438 MiB，资源实测触发 OPT-14；进程内限流不宣称强制 CPU/内存隔离或集群限流。"
+        "进程内配额；多副本总预算由部署分配，不宣称共享集群限流。"
       ]
     },
     {
@@ -83,7 +85,7 @@
     {
       "id": "OPT-06",
       "title": "pending提升幂等",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [
         "SEC-F05"
@@ -162,9 +164,11 @@
       "source_tasks": [
         "SEC-F08"
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/development/optimization-opt03-opt14-validation-20261007.md"
+      ],
       "residual_limits": [
-        "1 MiB Python 样本静态分析峰值约 438 MiB，资源实测触发 OPT-14；进程内限流不宣称强制 CPU/内存隔离或集群限流。"
+        "原生 Linux namespace 与资源故障通过；默认 Docker 拒绝 namespace 创建，生产容器部署验收未关闭。"
       ]
     },
     {

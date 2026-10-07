@@ -62,6 +62,10 @@ class Settings:
     task_signing_key_file: str | None
     cors_origins: tuple[str, ...]
     bootstrap_tenant_id: str
+    threat_scan_actor_limit: int = 20
+    threat_scan_tenant_limit: int = 60
+    threat_scan_concurrency: int = 2
+    threat_scan_isolation: str = "bwrap"
     request_id_header: str = "X-Request-ID"
 
     @property
@@ -69,8 +73,21 @@ class Settings:
         return self.database_url.startswith("sqlite")
 
 
+def _bounded_scan_setting(name: str, default: int, maximum: int) -> int:
+    try:
+        value = int(os.getenv(name, str(default)))
+        if 1 <= value <= maximum:
+            return value
+    except ValueError:
+        pass
+    raise RuntimeError(f"{name} must be an integer between 1 and {maximum}")
+
+
 def load_settings() -> Settings:
     dev_mode = _bool("SIQ_AS_DEV")
+    scan_isolation = os.getenv("SIQ_AS_THREAT_SCAN_ISOLATION", "process" if dev_mode else "bwrap")
+    if scan_isolation not in {"process", "bwrap"} or (not dev_mode and scan_isolation != "bwrap"):
+        raise RuntimeError("SIQ_AS_THREAT_SCAN_ISOLATION requires bwrap in production")
     database_url = os.getenv(
         "SIQ_AS_DATABASE_URL",
         "sqlite:///./dev.db" if dev_mode else "",
@@ -166,6 +183,10 @@ def load_settings() -> Settings:
         raise RuntimeError(str(exc)) from exc
 
     return Settings(
+        threat_scan_isolation=scan_isolation,
+        threat_scan_actor_limit=_bounded_scan_setting("SIQ_AS_THREAT_SCAN_ACTOR_LIMIT", 20, 1000),
+        threat_scan_tenant_limit=_bounded_scan_setting("SIQ_AS_THREAT_SCAN_TENANT_LIMIT", 60, 1000),
+        threat_scan_concurrency=_bounded_scan_setting("SIQ_AS_THREAT_SCAN_CONCURRENCY", 2, 16),
         database_url=database_url,
         dev_mode=dev_mode,
         oidc_jwks_url=oidc_jwks_url,

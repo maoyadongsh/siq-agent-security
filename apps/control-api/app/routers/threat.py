@@ -20,6 +20,9 @@ from app.db import get_session
 from app.discovery_identity import asset_evidence_device_filter
 from app.models import AgentAsset, Evidence, Finding, QuarantineCase, RuntimeBinding, utcnow
 from app.outbox import audit, emit_event
+from app.scan_budget import get_scan_budget
+from app.scan_execution import analyze
+from app.scan_transport import ScanFailure
 from app.schemas import (
     QuarantineCaseOut,
     QuarantineReleaseRequest,
@@ -27,7 +30,6 @@ from app.schemas import (
     ThreatScanRequest,
 )
 from app.security import Identity, ensure_permission, get_identity
-from app.threat_analysis import ANALYZER_VERSION, analyze
 
 router = APIRouter(tags=["threat"])
 
@@ -106,39 +108,48 @@ def threat_scan(
         if bound != set(body.evidence_ids):
             raise HTTPException(status_code=422, detail="evidence_not_bound_to_asset")
 
-    if body.encoding == "base64":
+    with get_scan_budget().acquire(identity.tenant_id, identity.actor_id):
+        encoded_limit = 4 * ((MAX_CONTENT_BYTES + 2) // 3) if body.encoding == "base64" else MAX_CONTENT_BYTES
+        if len(body.content) > encoded_limit:
+            raise HTTPException(status_code=422, detail="content_too_large")
+        if body.encoding == "base64":
+            try:
+                raw = base64.b64decode(body.content, validate=True)
+            except (binascii.Error, ValueError):
+                raise HTTPException(status_code=422, detail="invalid_content_encoding") from None
+        else:
+            raw = body.content.encode("utf-8")
+        if len(raw) > MAX_CONTENT_BYTES:
+            raise HTTPException(status_code=422, detail="content_too_large")
+
+        raw_hash = hashlib.sha256(raw).hexdigest()
+        if asset.artifact_digest and asset.artifact_digest != raw_hash:
+            is_bound = False
+            if body.evidence_ids:
+                ev_match = session.scalar(
+                    select(Evidence.id).where(
+                        Evidence.tenant_id == identity.tenant_id,
+                        Evidence.evidence_id.in_(body.evidence_ids),
+                        Evidence.content_hash == raw_hash,
+                        asset_evidence_device_filter(asset),
+                    ).limit(1)
+                )
+                if ev_match:
+                    is_bound = True
+            if not is_bound:
+                raise HTTPException(
+                    status_code=422,
+                    detail="content_not_bound: content hash does not match asset artifact_digest or evidence",
+                )
+        elif not asset.artifact_digest:
+            asset.artifact_digest = raw_hash
+
         try:
-            raw = base64.b64decode(body.content, validate=True)
-        except (binascii.Error, ValueError):
-            raise HTTPException(status_code=422, detail="invalid_content_encoding") from None
-    else:
-        raw = body.content.encode("utf-8")
-    if len(raw) > MAX_CONTENT_BYTES:
-        raise HTTPException(status_code=422, detail="content_too_large")
-
-    raw_hash = hashlib.sha256(raw).hexdigest()
-    if asset.artifact_digest and asset.artifact_digest != raw_hash:
-        is_bound = False
-        if body.evidence_ids:
-            ev_match = session.scalar(
-                select(Evidence.id).where(
-                    Evidence.tenant_id == identity.tenant_id,
-                    Evidence.evidence_id.in_(body.evidence_ids),
-                    Evidence.content_hash == raw_hash,
-                    asset_evidence_device_filter(asset),
-                ).limit(1)
-            )
-            if ev_match:
-                is_bound = True
-        if not is_bound:
-            raise HTTPException(
-                status_code=422,
-                detail="content_not_bound: content hash does not match asset artifact_digest or evidence",
-            )
-    elif not asset.artifact_digest:
-        asset.artifact_digest = raw_hash
-
-    result = analyze(raw, filename=body.filename)
+            scope = (f"{len(identity.tenant_id)}:{identity.tenant_id}"
+                     f"{len(identity.actor_id)}:{identity.actor_id}{asset.id}")
+            result = analyze(raw, filename=body.filename, scope=scope)
+        except ScanFailure as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from None
 
     now = utcnow()
     findings: list[Finding] = []
@@ -160,7 +171,7 @@ def threat_scan(
             # （重新赋值新列表对象，确保 SQLAlchemy JSON 字段变更被正确跟踪）
             existing.matches = [*(existing.matches or []), record][-MAX_MATCH_HISTORY:]
             existing.confidence = match.confidence
-            existing.analyzer_version = ANALYZER_VERSION
+            existing.analyzer_version = result.analyzer_version
             if body.evidence_ids:
                 existing.evidence_ids = sorted(set(existing.evidence_ids) | set(body.evidence_ids))
             findings.append(existing)
@@ -176,7 +187,7 @@ def threat_scan(
             impact=match.impact,
             remediation=match.remediation,
             status="open",
-            analyzer_version=ANALYZER_VERSION,
+            analyzer_version=result.analyzer_version,
             confidence=match.confidence,
             matches=[record],
             first_seen_at=now,
@@ -286,7 +297,7 @@ def threat_scan(
         summary={
             "content_sha256": result.sha256,
             "detected_type": result.detected_type,
-            "analyzer_version": ANALYZER_VERSION,
+            "analyzer_version": result.analyzer_version,
             "match_count": len(result.matches),
             "rule_ids": rule_ids,
         },
@@ -299,7 +310,7 @@ def threat_scan(
             "asset_id": asset.id,
             "content_sha256": result.sha256,
             "detected_type": result.detected_type,
-            "analyzer_version": ANALYZER_VERSION,
+            "analyzer_version": result.analyzer_version,
             "match_count": len(result.matches),
             "rule_ids": rule_ids,
             "quarantine_case_id": quarantine.id if quarantine else None,
@@ -312,7 +323,7 @@ def threat_scan(
         asset_id=asset.id,
         content_sha256=result.sha256,
         detected_type=result.detected_type,
-        analyzer_version=ANALYZER_VERSION,
+        analyzer_version=result.analyzer_version,
         match_count=len(result.matches),
         findings=[f for f in findings],
         quarantine_case=quarantine,
