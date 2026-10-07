@@ -60,8 +60,9 @@ def main():
                       SIQ_AS_OPENSHELL_GATEWAY_INSECURE="0")
     sys.path.insert(0, str(ROOT / "apps/control-api"))
     import yaml
+
     from app.adapters.openshell.behavior_channel import (
-        AgentObservation,
+        AgentObservationV2,
         BehaviorProbeChannel,
     )
     from app.adapters.openshell.behavior_protection import (
@@ -69,7 +70,7 @@ def main():
         RootfulDockerProbeGuard,
     )
     from app.adapters.openshell.behavior_protocol import (
-        BehaviorChallenge,
+        BehaviorChallengeV2,
         challenge_digest,
         validate_behavior_result,
     )
@@ -191,15 +192,21 @@ def main():
         capabilities = backend.probe()
         snapshot = backend.read_effective_policy(target)
         binding = {"tenant_id": "component-tenant", "environment_id": "component-environment",
-            "binding_id": "component-binding", "deployment_id": "component-deployment", "operation_id": "component-apply",
+            "binding_id": "component-binding", "deployment_id": "component-deployment",
+            "operation_id": "component-apply",
             "target": target, "gateway_fingerprint": capabilities.endpoint_fingerprint,
             "policy_revision": snapshot.revision, "policy_digest": snapshot.policy_digest,
             "image_digest": args.image, "probe_sha256": args.probe_sha256,
             "protected_execution_sha256": protected["protected_execution_sha256"]}
+        # Explicit operator-approved profile for this owned v0.0.83 gateway.
+        # Never derive an authorized endpoint from workload HTTP_PROXY.
+        transport = {"mode": "http_connect", "proxy_ipv4": "10.200.0.1", "proxy_port": 3128}
+        result["approved_transport"] = transport
         now = datetime.now(UTC)
-        challenge = BehaviorChallenge.model_validate({"schema_version": "openshell-behavior-challenge/v1",
+        challenge = BehaviorChallengeV2.model_validate({"schema_version": "openshell-behavior-challenge/v2",
             "verification_id": "opv-" + uuid.uuid4().hex, "nonce": secrets.token_hex(32), "binding": binding,
             "receiver_ipv4": host, "receiver_port": port, "allow_path": ALLOW, "deny_path": DENY,
+            "transport": transport,
             "attempts": 3, "timeout_ms": 2000, "issued_at": now.isoformat().replace("+00:00", "Z"),
             "expires_at": (now + timedelta(minutes=5)).isoformat().replace("+00:00", "Z")})
 
@@ -208,7 +215,7 @@ def main():
             observed = guard.verify()
             return {"binding": {**binding, "policy_revision": actual.revision, "policy_digest": actual.policy_digest,
                                 "protected_execution_sha256": observed["protected_execution_sha256"]},
-                    "enforcement_mode": actual.enforcement_mode, "allow_rules": [
+                    "transport": dict(transport), "enforcement_mode": actual.enforcement_mode, "allow_rules": [
                         {"endpoint": rule["endpoint"], "program_path": path}
                         for rule in actual.network for path in rule["binary_paths"]]}
 
@@ -219,7 +226,7 @@ def main():
             execution = run_bounded(argv, **kwargs)
             if execution[0] == 0:
                 try:
-                    report = AgentObservation.model_validate_json(execution[1]).model_dump()
+                    report = AgentObservationV2.model_validate_json(execution[1]).model_dump()
                 except ValueError:
                     report = {"unparseable": True, "stdout_sha256": hashlib.sha256(execution[1].encode()).hexdigest()}
                 result.setdefault("agent_reports", []).append(report)
@@ -235,7 +242,7 @@ def main():
                     item = channel.control(challenge, round_index=round_index, kind=kind)
                 observations.append(item)
                 (out / "observations.json").write_text(json.dumps(observations, indent=2) + "\n")
-        observed = {"schema_version": "openshell-behavior-result/v2", "verification_id": challenge.verification_id,
+        observed = {"schema_version": "openshell-behavior-result/v3", "verification_id": challenge.verification_id,
             "nonce": challenge.nonce, "challenge_sha256": challenge_digest(challenge), "started_at": started,
             "finished_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             "before": before, "after": readback(), "observations": observations}
@@ -258,10 +265,11 @@ def main():
         # Observe the same formerly denied program after explicit authorization.
         updated = challenge.model_dump()
         current_time = datetime.now(UTC)
-        updated.update(verification_id="opv-" + uuid.uuid4().hex, nonce=secrets.token_hex(32), binding=readback()["binding"],
+        updated.update(verification_id="opv-" + uuid.uuid4().hex, nonce=secrets.token_hex(32),
+                       binding=readback()["binding"],
                        issued_at=current_time.isoformat().replace("+00:00", "Z"),
                        expires_at=(current_time + timedelta(minutes=5)).isoformat().replace("+00:00", "Z"))
-        new_challenge = BehaviorChallenge.model_validate(updated)
+        new_challenge = BehaviorChallengeV2.model_validate(updated)
         (out / "explicit-allow-challenge.json").write_text(json.dumps(updated, indent=2) + "\n")
         authorized = channel.run_arm(new_challenge, round_index=0, kind="deny", expected_uid=probe_uid)
         assert authorized["outcome"] == "connected"

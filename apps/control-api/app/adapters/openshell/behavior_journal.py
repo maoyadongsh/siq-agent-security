@@ -23,8 +23,9 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.adapters.openshell.behavior_protocol import (
     BehaviorChallenge,
-    BehaviorResult,
     challenge_digest,
+    parse_behavior_challenge,
+    parse_behavior_result,
     validate_behavior_challenge,
     validate_behavior_result,
 )
@@ -102,7 +103,7 @@ class BehaviorJournal:
 
     def _fact(self, row: OpenShellBehaviorOperation) -> BehaviorFact:
         try:
-            challenge = BehaviorChallenge.model_validate(row.challenge)
+            challenge = parse_behavior_challenge(row.challenge)
         except (ValidationError, ValueError, TypeError):
             raise BehaviorJournalError("behavior_record_invalid") from None
         if (challenge_digest(challenge) != row.challenge_digest or challenge.verification_id != row.id
@@ -127,7 +128,7 @@ class BehaviorJournal:
             raise BehaviorJournalError("behavior_record_invalid")
         if row.result is not None:
             try:
-                result = BehaviorResult.model_validate(row.result).model_dump(mode="json")
+                result = parse_behavior_result(row.result).model_dump(mode="json")
             except (ValidationError, ValueError, TypeError):
                 raise BehaviorJournalError("behavior_record_invalid") from None
             if _digest(result) != row.result_digest:
@@ -205,7 +206,7 @@ class BehaviorJournal:
 
     def prepare(self, challenge: dict, current_readback: dict) -> BehaviorFact:
         try:
-            expected = BehaviorChallenge.model_validate(challenge)
+            expected = parse_behavior_challenge(challenge)
         except (ValidationError, ValueError, TypeError):
             raise BehaviorJournalError("behavior_schema_invalid") from None
         if expected.binding.tenant_id != self.tenant_id or expected.binding.deployment_id != self.deployment_id:
@@ -254,7 +255,7 @@ class BehaviorJournal:
             valid, reason = validate_behavior_challenge(row.challenge, current_readback, now=self._now())
             if not valid:
                 raise BehaviorJournalError(reason)
-            self._live_parent(session, BehaviorChallenge.model_validate(row.challenge))
+            self._live_parent(session, parse_behavior_challenge(row.challenge))
             token = secrets.token_hex(32)
             fact = self._transition(session, row, "running", owner_sha256=hashlib.sha256(token.encode()).hexdigest(),
                                     started_at=self._now().replace(tzinfo=None))
@@ -276,12 +277,12 @@ class BehaviorJournal:
             now = self._now()
             if now.replace(tzinfo=None) >= row.expires_at:
                 return self._transition(session, row, "unknown", reason_code="behavior_deadline_expired")
-            self._live_parent(session, BehaviorChallenge.model_validate(row.challenge))
+            self._live_parent(session, parse_behavior_challenge(row.challenge))
             accepted, reason = validate_behavior_result(
                 result, row.challenge, current_readback, now=now, run_state=row.state,
             )
             try:
-                saved = BehaviorResult.model_validate(result).model_dump(mode="json")
+                saved = parse_behavior_result(result).model_dump(mode="json")
             except (ValidationError, ValueError, TypeError):
                 saved = None  # Never persist arbitrary error output, keys or a client success claim.
             if accepted and _time(saved["started_at"]).replace(tzinfo=None) < row.started_at:

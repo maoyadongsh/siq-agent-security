@@ -1,6 +1,6 @@
 # OpenShell 行为探针
 
-`behavior_probe.go` 是 [ADR-058](../../../docs/adr/0058-enterprise-openshell-behavior-verification.md) 的有界 Linux ELF 观测程序。仅使用 Go 标准库，按固定位置参数执行一次 IPv4 TCP 回显。它不判断策略是否生效。
+`behavior_probe.go` 是 [ADR-058](../../../docs/adr/0058-enterprise-openshell-behavior-verification.md) 的有界 Linux ELF 观测程序。仅使用 Go 标准库，按固定位置参数执行一次 IPv4 TCP 或显式 CONNECT 隧道回显。它不判断策略是否生效。
 
 在仓库根目录构建（Go ≥ 1.22）：
 
@@ -16,4 +16,6 @@ CGO_ENABLED=0 GOWORK=off GOPROXY=off GOOS=linux go build -trimpath -buildvcs=fal
 
 `enforcement_probe_agent.py` 属于旧 v1 历史探针通道，保留其原合同与证据语义。新生产接线使用 ELF 及新通道，不能用脚本路径代替实际 ELF 归因。
 
-当前已有静态 ELF／本机 TCP／通道与独立 Docker 文件保护检查。真实 OpenShell 首次直连三臂中，两条路径都被拒绝；实际出网代理通道与程序路径归因、企业 API 接线仍待完成，不因静态检查通过而提升部署等级。
+显式代理接口为 `probe VERIFICATION_ID NONCE IPV4 PORT TIMEOUT_MS http_connect PROXY_IPV4 PROXY_PORT`，输出遵循 [agent v2 合同](../../../packages/contracts/openshell-behavior-agent.v2.schema.json)。代理地址同样必须经算子批准，程序不读取 HTTP_PROXY；CONNECT 200 后仍必须收到回显。只有 403 与严格匹配目标的 policy_denied 正文记 proxy_denied，其他代理失败不作为策略拒绝依据。响应头和正文分别限制 4096 字节，沿用单次总超时。
+
+真实 OpenShell 初次直连失败记录保留；显式代理已完成同一目标三轮允许／拒绝／前后对照，以及给原拒绝路径授权后连通的反转检查，见 [CONNECT 验证](../../../docs/development/optimization-opt09-connect-validation-20261008.md)。持久台账已兼容新协议，但真实测评尚未经过企业认证协调 API／前端，部署等级保持配置读回。

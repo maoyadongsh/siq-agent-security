@@ -54,3 +54,11 @@ Daemon archive 的接口语义参见 [Docker Engine API](https://docs.docker.com
 4. 前端与部署生命周期：明确配置／行为等级、范围、时间、过期和漂移；正式结果不得沿用组件夹具分母。
 
 本 ADR 不扩大 OS 或同 UID 信任边界，不把自报摘要当作独立信任根，也不放宽任何现有安全门禁。
+
+## 显式 CONNECT 传输增量
+
+真实 OpenShell 原始 TCP 探测未产生允许／拒绝差分，保留其原始 v1 挑战／v2 结果。新增 challenge/v2、result/v3、agent/v2，原版本语义不变。新挑战及前后／当前受信读回显式绑定操作员批准的规范 IPv4 代理地址和端口；不自动读取 HTTP_PROXY、不接受 URL／凭据或重定向，代理变化立即使旧挑战失效。代理身份须由可信部署配置与独立目标核验建立，不以代理自报或工作负载环境作为授权依据。
+
+沙箱内两条路径只向批准代理发起一次 CONNECT，目标仍为同一批准 IPv4 接收端；主机前后对照仍直接连接接收端。代理响应头与错误正文分别限制 4096 字节，共用原截止时间。200 之后必须收到原标识逐字回显才记 connected；403 且有严格 JSON 的 policy_denied 错误、与本目标匹配的 detail 才记 proxy_denied。SSRF 拒绝、其他 403、502／503、畸形响应、EOF 和错回显不算策略生效；连接失败和超时保留原始分类但不能作为 CONNECT 拒绝臂通过依据。记录有界状态码与错误类别，不记录自由错误正文。
+
+新结果逐臂绑定 transport／proxy_endpoint／proxy_status／proxy_error。拒绝臂必须为明确 proxy_denied，允许臂必须 CONNECT 200 且完成回显，主机对照必须 direct_tcp 且成功；相同 ELF、时间／nonce／保护摘要／持久领取／审计边界均保持。独立代理通道验收不等于生产协调、API、前端或部署等级提升。

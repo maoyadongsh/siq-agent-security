@@ -19,6 +19,7 @@ from pydantic import Field, ValidationError
 
 from app.adapters.openshell.behavior_protocol import (
     BehaviorChallenge,
+    BehaviorChallengeV2,
     Digest,
     Endpoint,
     ProbeID,
@@ -42,6 +43,15 @@ class AgentObservation(Wire):
     elapsed_ms: Annotated[int, Field(ge=0, le=11000)]
 
 
+class AgentObservationV2(AgentObservation):
+    schema_version: Literal["openshell-behavior-agent/v2"]
+    outcome: Literal["connected", "timeout", "connection_refused", "connection_reset", "probe_error", "proxy_denied"]
+    transport: Literal["http_connect"]
+    proxy_endpoint: Endpoint
+    proxy_status: Annotated[int, Field(ge=0, le=599)]
+    proxy_error: Literal["", "policy_denied", "other"]
+
+
 def _unique_object(pairs):
     obj = {}
     for key, value in pairs:
@@ -62,9 +72,18 @@ def parse_agent_observation(
         if len(stdout.encode("utf-8")) > 4096:
             raise ValueError("oversized report")
         raw = json.loads(stdout, object_pairs_hook=_unique_object)
-        report = AgentObservation.model_validate(raw)
+        model = AgentObservationV2 if isinstance(challenge, BehaviorChallengeV2) else AgentObservation
+        report = model.model_validate(raw)
     except (ValueError, TypeError, ValidationError, RecursionError):
         raise AdapterError("behavior_agent_report_invalid") from None
+    if isinstance(challenge, BehaviorChallengeV2):
+        if report.proxy_endpoint != f"{challenge.transport.proxy_ipv4}:{challenge.transport.proxy_port}":
+            raise AdapterError("behavior_agent_identity_mismatch")
+        if ((report.outcome == "connected" and (report.proxy_status, report.proxy_error) != (200, ""))
+            or (report.outcome == "proxy_denied"
+                and (report.proxy_status, report.proxy_error) != (403, "policy_denied"))
+            or (report.proxy_error == "policy_denied" and report.outcome != "proxy_denied")):
+            raise AdapterError("behavior_agent_report_invalid")
     expected_path = challenge.allow_path if kind == "allow" else challenge.deny_path
     if (report.verification_id != challenge.verification_id or report.nonce != challenge.nonce
         or report.endpoint != f"{challenge.receiver_ipv4}:{challenge.receiver_port}"
@@ -84,18 +103,24 @@ def _remaining(challenge: BehaviorChallenge, now: datetime) -> float:
     return (expires - now).total_seconds()
 
 
-def _observation(challenge, *, round_index, kind, outcome, elapsed_ms, observed_at):
+def _observation(challenge, *, round_index, kind, outcome, elapsed_ms, observed_at, report=None):
     if type(round_index) is not int or not 0 <= round_index < challenge.attempts:
         raise AdapterError("behavior_round_invalid")
     _remaining(challenge, observed_at)
     inside = kind in ("allow", "deny")
-    return {"round": round_index, "kind": kind, "nonce": challenge.nonce,
+    result = {"round": round_index, "kind": kind, "nonce": challenge.nonce,
             "origin": "sandbox_exec" if inside else "control_plane_host",
             "endpoint": f"{challenge.receiver_ipv4}:{challenge.receiver_port}",
             "program_path": (challenge.allow_path if kind == "allow" else challenge.deny_path) if inside else "",
             "program_sha256": challenge.binding.probe_sha256 if inside else "",
             "outcome": outcome, "elapsed_ms": elapsed_ms,
             "observed_at": observed_at.isoformat(timespec="microseconds").replace("+00:00", "Z")}
+    if isinstance(challenge, BehaviorChallengeV2):
+        result.update(transport="http_connect" if inside else "direct_tcp",
+                      proxy_endpoint=report.proxy_endpoint if inside else "",
+                      proxy_status=report.proxy_status if inside else 0,
+                      proxy_error=report.proxy_error if inside else "")
+    return result
 
 
 class BehaviorProbeChannel:
@@ -114,6 +139,8 @@ class BehaviorProbeChannel:
         path = challenge.allow_path if kind == "allow" else challenge.deny_path
         command = [path, challenge.verification_id, challenge.nonce, challenge.receiver_ipv4,
                    str(challenge.receiver_port), str(challenge.timeout_ms)]
+        if isinstance(challenge, BehaviorChallengeV2):
+            command.extend(["http_connect", challenge.transport.proxy_ipv4, str(challenge.transport.proxy_port)])
         budget = min(remaining, challenge.timeout_ms / 1000 + 5)
         argv = self.build_command(build_exec_args(challenge.binding.target, command, timeout=math.ceil(budget)))
         code, stdout, _ = self.runner(argv, timeout=budget, limit=4096)
@@ -121,7 +148,7 @@ class BehaviorProbeChannel:
             raise AdapterError("behavior_agent_command_failed")
         report = parse_agent_observation(stdout, challenge, kind=kind, expected_uid=expected_uid)
         return _observation(challenge, round_index=round_index, kind=kind, outcome=report.outcome,
-                            elapsed_ms=report.elapsed_ms, observed_at=self.clock())
+                            elapsed_ms=report.elapsed_ms, observed_at=self.clock(), report=report)
 
     def control(self, challenge: BehaviorChallenge, *, round_index: int, kind: str) -> dict:
         if (kind not in ("control_before", "control_after") or type(round_index) is not int

@@ -131,6 +131,61 @@ class BehaviorResult(Wire):
     observations: Annotated[list[BehaviorObservation], Field(min_length=12, max_length=40)]
 
 
+class ConnectTransport(Wire):
+    mode: Literal["http_connect"]
+    proxy_ipv4: Annotated[str, Field(max_length=15)]
+    proxy_port: Annotated[int, Field(ge=1, le=65535)]
+
+    @field_validator("proxy_ipv4")
+    @classmethod
+    def numeric_proxy(cls, value: str) -> str:
+        if str(ipaddress.IPv4Address(value)) != value:
+            raise ValueError("probe_proxy_invalid")
+        return value
+
+
+class BehaviorChallengeV2(BehaviorChallenge):
+    schema_version: Literal["openshell-behavior-challenge/v2"]
+    transport: ConnectTransport
+
+
+class BehaviorReadbackV2(BehaviorReadback):
+    transport: ConnectTransport
+
+
+class BehaviorObservationV3(BehaviorObservation):
+    outcome: Literal["connected", "timeout", "connection_refused", "connection_reset", "dns_failure",
+                     "probe_error", "proxy_denied"]
+    transport: Literal["direct_tcp", "http_connect"]
+    proxy_endpoint: Annotated[str, Field(max_length=21)]
+    proxy_status: Annotated[int, Field(ge=0, le=599)]
+    proxy_error: Literal["", "policy_denied", "other"]
+
+
+class BehaviorResultV3(BehaviorResult):
+    schema_version: Literal["openshell-behavior-result/v3"]
+    before: BehaviorReadbackV2
+    after: BehaviorReadbackV2
+    observations: Annotated[list[BehaviorObservationV3], Field(min_length=12, max_length=40)]
+
+
+def parse_behavior_challenge(value: dict) -> BehaviorChallenge:
+    new = isinstance(value, dict) and value.get("schema_version") == "openshell-behavior-challenge/v2"
+    model = BehaviorChallengeV2 if new else BehaviorChallenge
+    return model.model_validate(value)
+
+
+def parse_behavior_result(value: dict) -> BehaviorResult:
+    new = isinstance(value, dict) and value.get("schema_version") == "openshell-behavior-result/v3"
+    model = BehaviorResultV3 if new else BehaviorResult
+    return model.model_validate(value)
+
+
+def _readback(value: dict, challenge: BehaviorChallenge) -> BehaviorReadback:
+    model = BehaviorReadbackV2 if isinstance(challenge, BehaviorChallengeV2) else BehaviorReadback
+    return model.model_validate(value)
+
+
 def challenge_digest(challenge: BehaviorChallenge) -> str:
     return hashlib.sha256(json.dumps(
         challenge.model_dump(mode="json"), sort_keys=True, ensure_ascii=True, separators=(",", ":"),
@@ -138,6 +193,8 @@ def challenge_digest(challenge: BehaviorChallenge) -> str:
 
 
 def _challenge_check(expected: BehaviorChallenge, current: BehaviorReadback, now: datetime) -> str | None:
+    if isinstance(expected, BehaviorChallengeV2) and current.transport != expected.transport:
+        return "behavior_transport_changed"
     if current.binding != expected.binding:
         return "behavior_current_binding_changed"
     if current.enforcement_mode not in ("block", "unknown"):
@@ -163,8 +220,8 @@ def validate_behavior_challenge(challenge: dict, current_readback: dict, *, now:
     if type(challenge) is not dict or type(current_readback) is not dict:
         return False, "behavior_schema_invalid"
     try:
-        expected = BehaviorChallenge.model_validate(challenge)
-        current = BehaviorReadback.model_validate(current_readback)
+        expected = parse_behavior_challenge(challenge)
+        current = _readback(current_readback, expected)
     except (ValidationError, ValueError, TypeError):
         return False, "behavior_schema_invalid"
     reason = _challenge_check(expected, current, now)
@@ -190,11 +247,13 @@ def validate_behavior_result(
     if any(type(value) is not dict for value in (result, challenge, current_readback)):
         return False, "behavior_schema_invalid"
     try:
-        expected = BehaviorChallenge.model_validate(challenge)
-        observed = BehaviorResult.model_validate(result)
-        current = BehaviorReadback.model_validate(current_readback)
+        expected = parse_behavior_challenge(challenge)
+        observed = parse_behavior_result(result)
+        current = _readback(current_readback, expected)
     except (ValidationError, ValueError, TypeError):
         return False, "behavior_schema_invalid"
+    if isinstance(expected, BehaviorChallengeV2) != isinstance(observed, BehaviorResultV3):
+        return False, "behavior_version_mismatch"
     if observed.verification_id != expected.verification_id or observed.nonce != expected.nonce:
         return False, "behavior_challenge_mismatch"
     if observed.challenge_sha256 != challenge_digest(expected):
@@ -227,7 +286,17 @@ def validate_behavior_result(
             or item.program_path != (program_path if inside else "")
             or item.program_sha256 != (expected.binding.probe_sha256 if inside else "")):
             return False, "behavior_program_identity_mismatch"
-        if item.kind == "deny":
+        if isinstance(expected, BehaviorChallengeV2):
+            proxy = f"{expected.transport.proxy_ipv4}:{expected.transport.proxy_port}"
+            if (item.transport != ("http_connect" if inside else "direct_tcp")
+                or item.proxy_endpoint != (proxy if inside else "")):
+                return False, "behavior_transport_mismatch"
+            if item.kind == "deny":
+                if (item.outcome, item.proxy_status, item.proxy_error) != ("proxy_denied", 403, "policy_denied"):
+                    return False, "behavior_deny_not_observed"
+            elif (item.outcome, item.proxy_status, item.proxy_error) != ("connected", 200 if inside else 0, ""):
+                return False, "behavior_control_or_allow_failed"
+        elif item.kind == "deny":
             if item.outcome not in ("connection_refused", "connection_reset", "timeout"):
                 return False, "behavior_deny_not_observed"
         elif item.outcome != "connected":
