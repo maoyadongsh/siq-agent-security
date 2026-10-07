@@ -35,6 +35,8 @@ OPT-01 首批组件与 OPT-02 生产身份边界已完成本批回归，见[首�
 
 OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20261007.md)、[B1 持久上下文](optimization-opt08-store-validation-20261007.md)、[B2 精确调用](optimization-opt08-call-validation-20261007.md)、[C1 决策交集](optimization-opt08-engine-validation-20261007.md)、[C2a 审批重试](optimization-opt08-hold-validation-20261007.md)、[C2b 版本兼容](optimization-opt08-compat-validation-20261007.md)、[C2c 消费者兼容](optimization-opt08-consumers-validation-20261007.md)、[D1 签名身份策略](optimization-opt08-enrollment-validation-20261007.md)、[D2a 版本化读回](optimization-opt08-readback-validation-20261007.md)、[D2b Linux 宿主通道](optimization-opt08-channel-validation-20261007.md) 已完成各自组件验证。最新前端 1,082 项、相关 Python 合同 300 项、Hermes 身份 69 项、Go 全量和身份/请求定向 race、四目标构建通过。D1 的 340 项合同和 C2c 页面 HTTP 夹具结果按原批次保留。身份固定的必需策略已连接精确调用校验，未配置原生查询的 HTTP 明确拒绝新身份。原 v1 追踪投影明确标记无法表达的原生 Skill 来源 unavailable，完整证明保留在 v3 回执。版本化管理/运行读回已补齐；旧 Hermes 插件拒绝新会话响应。 D2b 经最终 31 项真实 Unix 凭据/进程测试（两个 Python 环境）、292 项相关合同以及固定业务镜像离线容器六项检查验证。可信启动器/制品与只读挂载核验、加载/调用事件、serve 接线和日常业务效果验收仍未完成；新身份的 HTTP 创建入口保持关闭。
 
+[D2c1 文件快照](optimization-opt08-source-validation-20261007.md)已完成组件验证：47 项定向、230 项 Hermes 适配器全套、293 项相关合同通过；覆盖缓存内容漂移、路径替换、实际字节/文本摘要、回调失败和真实凭据通道传输。已核对固定业务镜像的普通/插件加载、缓存、预处理和最终分发位置，但尚未修改这些原生函数。OPT-08 状态不变。
+
 ## 边界
 
 既有 SEC-F01–F04/F07/F09 不因本方案自动插入；与实际修改相关时按原合同处理。RES-01 与 SEC-F10 的 Host Sensor 方向关联，但不自动纳入风险评分或强制执行实现。Windows/macOS 原生验收环境需在相应任务启动时核实，不以 Linux 构建替代。

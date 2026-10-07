@@ -61,6 +61,8 @@ siq-agent-security adapter uninstall hermes --instance <返回的实例ID>
 
 ## 已知限制
 
+优化分支中的 `native_channel.py` 和 `native_source.py` 是待接入的原生宿主组件，现有插件安装器不会自动安装或启用它们。文件快照可以核验实际读取及缓存来源，尚未接入 Hermes 的普通/插件/缓存加载和最终工具分发；组件测试不代表日常 Skill 权限闭环已启用。范围与验证见 [OPT-08 D2c1](../../../docs/development/optimization-opt08-source-validation-20261007.md)。
+
 - L1 安装门禁：Hermes 无装前钩子；用 `siq-agent-security admit <src>` 后再 `hermes skills install`，或让 `siq-agent-security serve` 周期盘点 `~/.hermes/skills` 标出未准入 Skill。
 - `agent_id` 默认取 `HERMES_PROFILE` 或 `default`，需与 grant 的 `subject.id` 一致。
 
