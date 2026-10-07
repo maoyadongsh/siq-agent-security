@@ -1,0 +1,84 @@
+{
+  "schema_version": "siq.native-business-switch-review/v1",
+  "case": "v814",
+  "run_id": "qwen-request-2b1faa6518895924",
+  "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+  "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+  "skill_grants": {
+    "siq-company-evidence": "grt-si-dfd1e7bbfe40ef1c059433dabac0879133e8fbc7566ca79db1298fb1723aa597",
+    "siq-research-draft": "grt-si-e672b5ca29cbe2f35ea736203922a1ec9ec1b2e5a0d6233a6f5d5c69ffa11969"
+  },
+  "checks": {
+    "original_harness_passed": true,
+    "business_HTTP_200": true,
+    "same_session_all_steps": true,
+    "both_loads_allowed": true,
+    "first_load_without_skill": true,
+    "second_load_retains_readonly_context": true,
+    "write_retains_exact_two_grants": true,
+    "readonly_context_not_replaced": true,
+    "write_explicitly_denied": true,
+    "write_context_verified": true,
+    "exact_resource_signed": true,
+    "target_absent_including_symlinks": true,
+    "all_chain_signatures_verified": true,
+    "previous_eight_records_unchanged": true,
+    "model_bridge_correlated_200": true,
+    "source_unchanged": true,
+    "business_finalizer_completed": true,
+    "database_and_runtime_cleaned": true,
+    "owned_gateway_stopped": true,
+    "owned_bridge_stopped": true,
+    "original_model_unchanged": true
+  },
+  "passed": true,
+  "receipt_sequence": [
+    8,
+    9,
+    10
+  ],
+  "decisions": [
+    {
+      "tool": "skill_view",
+      "action": "allow",
+      "contexts": 0,
+      "hash": "f59fdfc828e91b118c8be2c4d423bf7f7fb62c04299b77559f80a8d8a5fbd592"
+    },
+    {
+      "tool": "skill_view",
+      "action": "allow",
+      "contexts": 1,
+      "hash": "173b9552d247ef2ea28ff865bd20029567a1527f4fe2c4262fe2c39d94ba52e8"
+    },
+    {
+      "tool": "write_file",
+      "action": "deny",
+      "contexts": 2,
+      "hash": "a1cfab3379949e77aad82d0b158ff086030437bf90da6216c9bc47b240346376"
+    }
+  ],
+  "resource_sha256": "17b3d337281bd26fb606ecae3f8fd074f4de0ac5af43c22dbe385ca7bdac7911",
+  "target_relative": "data/wiki/companies/600519-贵州茅台/analysis/runs/qwen-request-2b1faa6518895924/permission-proof-v814.txt",
+  "receipt_extension": {
+    "base_file": "native-business-permissions.receipts.jsonl",
+    "base_sha256": "91550c9ccad883bd69f5d3dff4107d9cbc8d66a7bf70a84ca74408e311352df4",
+    "base_head": "438132da43ba461355407d949102e2148f9c7584d1bd7132835b0878c63f66cf",
+    "tail_file": "native-business-switch-v814.receipts.jsonl",
+    "tail_sha256": "bf3ae7c38f18b386299580c56f3aab1337f1078c25af6d7ad438149fb0f19a78",
+    "total_verified_records": 11,
+    "combined_sha256": "3afd534837d0e87194839b3a46e89cb80d4d82253ac553164b4f294322879a28",
+    "head_hash": "a1cfab3379949e77aad82d0b158ff086030437bf90da6216c9bc47b240346376",
+    "public_key_file": "native-business-permissions.public-key.json"
+  },
+  "source_evidence_sha256": {
+    "native-business-api-v814.json": "1710eaa5055695f8e9c9e21f00d11ce2e71372f8c55e0f9f1e9ad1af5d8f12a9",
+    "native-switch-v814-cleanup.json": "0aa7015e054e45c21acf6ffcb1241df47da7d436411023d0ed9f9e69a9326ef4",
+    "run-native-business-switch.py": "92eb76282e83d605299bfb02f25c915eb203e4d5f764e8ead6f558e3ee43a0e3",
+    "run-native-switch-owned.py": "701f63aab26d1e787db1a82956b4544716bf9b63c52deb4125da5ede32cebf70",
+    "review-native-business-switch.py": "75a55eadb14c8adea496cd9a200d46467079cd733106a5f1fa69a1b6e9276413"
+  },
+  "candidate_only": true,
+  "full_lifecycle_acceptance": false,
+  "financial_report_acceptance": false,
+  "production_ready": false
+}
