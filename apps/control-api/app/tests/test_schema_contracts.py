@@ -3384,11 +3384,13 @@ def test_local_state_format_marker_contract() -> None:
         ("local-state-format.v2", "local-state-format-v2"),
         ("local-state-status.v1", "local-state-status"),
         ("local-state-status.v1", "local-state-status-reader4"),
+        ("local-state-status.v1", "local-state-status-reader5"),
         ("local-state-migration-result.v1", "local-state-migration-result"),
         ("local-state-migration-plan.v1", "local-state-migration-plan"),
         ("skill-manifest.v3", "skill-manifest.v3.sample"),
         ("skill-manifest.v3", "skill-manifest.v3.reader3.sample"),
         ("skill-manifest.v3", "skill-manifest.v3.reader4.sample"),
+        ("skill-manifest.v3", "skill-manifest.v3.reader5.sample"),
     ],
 )
 def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:
@@ -3410,6 +3412,17 @@ def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:
     elif schema_name == "skill-manifest.v3":
         capability = data["state_compatibility"]
         assert list(validator.iter_errors(data | {"state_compatibility": capability | {"reader_version": 0}}))
+        from cryptography.exceptions import InvalidSignature
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+        public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+        unsigned = {k: v for k, v in data.items() if k != "signature"}
+        canonical = json.dumps(unsigned, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode()
+        public.verify(bytes.fromhex(data["signature"]), canonical)
+        unsigned["state_compatibility"] = capability | {"reader_version": capability["reader_version"] + 1}
+        changed = json.dumps(unsigned, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode()
+        with pytest.raises(InvalidSignature):
+            public.verify(bytes.fromhex(data["signature"]), changed)
 
 
 def test_d01_task_execution_request_contracts() -> None:

@@ -8,19 +8,25 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"unicode/utf8"
 
 	"siq-agent-security/apps/agentshield/internal/privatefs"
+	"siq-agent-security/apps/agentshield/internal/stateformat"
 	"siq-agent-security/apps/agentshield/internal/statefs"
 )
 
 var errEventCompatibility = errors.New("client-upgrade-check: candidate cannot read local event history or compatibility cannot be established; keep the current service and use a compatible release")
 
-// This check only gates candidates without v2 local event support. It does not
+// This check gates candidates without current native authority support. It does not
 // validate receipt signatures or authorize writes. Service transactions repeat
 // their state-bound candidate check after acquiring their existing Writers.
 func checkLegacyEventCompatibility(dir string) error {
+	return checkEventCompatibility(dir, stateformat.LocalFailureProtocolVersion-1)
+}
+
+func checkEventCompatibility(dir string, protocol int) error {
 	info, err := os.Lstat(dir)
 	if os.IsNotExist(err) {
 		return nil
@@ -38,10 +44,23 @@ func checkLegacyEventCompatibility(dir string) error {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 || (runtime.GOOS != "windows" && info.Mode().Perm()&0077 != 0) {
 			return errEventCompatibility
 		}
 		return snapshot.PinDirectory(name)
+	}
+	// Even an authority record without a receipt makes a downgrade unsafe.
+	// Count any entry, including unfinished publication, without reading secrets.
+	for _, name := range []string{"skill-contexts-v2", "skill-context-revocations-v2", "native-skill-sessions", "native-skill-calls"} {
+		if err := pinDirectory(name); os.IsNotExist(err) {
+			continue
+		} else if err != nil {
+			return errEventCompatibility
+		}
+		entries, err := eventEntries(filepath.Join(dir, name), 0)
+		if err != nil || len(entries) != 0 {
+			return errEventCompatibility
+		}
 	}
 	remaining, entries := int64(256<<20), 10000
 	readLog := func(name string, pending bool) error {
@@ -66,7 +85,7 @@ func checkLegacyEventCompatibility(dir string) error {
 		scanner.Buffer(make([]byte, 4096), 1<<20)
 		for scanner.Scan() {
 			line := bytes.TrimSpace(scanner.Bytes())
-			if len(line) != 0 && !legacyEventLine(line, pending) {
+			if len(line) != 0 && !compatibleEventLine(line, pending, protocol) {
 				return errEventCompatibility
 			}
 		}
@@ -136,6 +155,10 @@ func eventEntries(path string, limit int) ([]os.DirEntry, error) {
 }
 
 func legacyEventLine(raw []byte, pending bool) bool {
+	return compatibleEventLine(raw, pending, stateformat.LocalFailureProtocolVersion-1)
+}
+
+func compatibleEventLine(raw []byte, pending bool, protocol int) bool {
 	if !utf8.Valid(raw) {
 		return false
 	}
@@ -157,16 +180,25 @@ func legacyEventLine(raw []byte, pending bool) bool {
 			return false
 		}
 		switch strings.ToLower(key) {
-		case "schema_version", "local_origin":
-			return false // Not present in historical receipts or pending v1.
+		case "native_invocation":
+			return false // Even null or an alias must not hide unsupported evidence.
+		case "schema_version":
+			var schema string
+			if protocol < stateformat.LocalFailureProtocolVersion || pending || key != "schema_version" || json.Unmarshal(value, &schema) != nil || schema != "runtime-receipt/v2" {
+				return false
+			}
+		case "local_origin":
+			if protocol < stateformat.LocalFailureProtocolVersion || key != "local_origin" {
+				return false
+			}
 		case "schema":
 			var schema string
-			if key != "schema" || !pending || bytes.Equal(value, []byte("null")) || json.Unmarshal(value, &schema) != nil || (schema != "" && schema != "pending_decision/v1") {
+			if key != "schema" || !pending || bytes.Equal(value, []byte("null")) || json.Unmarshal(value, &schema) != nil || (schema != "" && schema != "pending_decision/v1" && !(protocol >= stateformat.LocalFailureProtocolVersion && schema == "pending_decision/v2")) {
 				return false
 			}
 		case "record_type":
 			var kind string
-			if key != "record_type" || json.Unmarshal(value, &kind) != nil || kind == "local_failure" {
+			if key != "record_type" || json.Unmarshal(value, &kind) != nil || (kind == "local_failure" && protocol < stateformat.LocalFailureProtocolVersion) {
 				return false
 			}
 		}

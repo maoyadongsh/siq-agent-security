@@ -103,8 +103,12 @@ func checkStateDeclaration(dir string, m *skillmanifest.Manifest) error {
 		return e
 	}
 	c := m.StateCompatibility
-	if c == nil || c.ReaderVersion < stateformat.LocalFailureProtocolVersion || c.WriterVersion < stateformat.LocalFailureProtocolVersion {
-		if err := checkLegacyEventCompatibility(dir); err != nil {
+	protocol := 1
+	if c != nil {
+		protocol = min(c.ReaderVersion, c.WriterVersion)
+	}
+	if protocol < stateformat.NativeInvocationProtocolVersion {
+		if err := checkEventCompatibility(dir, protocol); err != nil {
 			return err
 		}
 	}

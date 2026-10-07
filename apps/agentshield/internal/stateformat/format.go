@@ -23,8 +23,11 @@ const Budget = 4096
 // Existing storage/profile markers remain unchanged; clientrelease checks the
 // actual journals before permitting a downgrade to a protocol 3 candidate.
 const LocalFailureProtocolVersion = 4
-const ReaderVersion = LocalFailureProtocolVersion
-const WriterVersion = LocalFailureProtocolVersion
+
+// Protocol 5 understands native invocation authority and runtime-receipt/v3.
+const NativeInvocationProtocolVersion = 5
+const ReaderVersion = NativeInvocationProtocolVersion
+const WriterVersion = NativeInvocationProtocolVersion
 const PlanName = "logs/migration-plan.json"
 const MigrationDir = "state-migration-v2"
 
