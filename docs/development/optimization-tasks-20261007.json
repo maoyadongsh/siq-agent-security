@@ -248,11 +248,15 @@
     {
       "id": "OPT-09",
       "title": "OpenShell行为证据",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/development/optimization-opt09-protocol-validation-20261008.md"
+      ],
+      "residual_limits": [
+        "ADR-058及企业OpenShell单次挑战／v2观测合同、纯校验器完成；58项新用例和63项v1回归共121项通过，Ruff通过。覆盖时效／nonce／范围／前后策略与保护身份／三臂和前后可达性约束。全部为合成组件证据；纯校验器不承担持久CAS或认证，生产部署仍只做配置读回。持久协调／真实ELF收集器／API前端接线和真实三臂验收继续，总体9/16保持。"
+      ]
     },
     {
       "id": "OPT-10",

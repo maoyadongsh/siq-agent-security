@@ -17,7 +17,7 @@
 | OPT-06 | pending提升幂等 | done | SEC-F05 |
 | OPT-07 | 策略语义与部署入口 | done | 待结合对应模块继续核对 |
 | OPT-08 | 日常Skill上下文 | implementing | 待结合对应模块继续核对 |
-| OPT-09 | OpenShell行为证据 | planned | 待结合对应模块继续核对 |
+| OPT-09 | OpenShell行为证据 | implementing | 待结合对应模块继续核对 |
 | OPT-10 | 同候选业务回归 | implementing | 待结合对应模块继续核对 |
 | OPT-11 | 连接器可信执行 | implementing | 待结合对应模块继续核对 |
 | OPT-12 | 钩子完整性 | planned | 待结合对应模块继续核对 |
@@ -136,3 +136,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [安装内容漂移真实对照](optimization-opt08-install-drift-validation-20261008.md)：安装内容漂移真实对照v828/v829通过：同一获批写入Skill正常读写成功；读取后受控修改宿主安装SKILL.md内容，后续实际write_file报错、目标不存在，无伪造deny回执。原字节／inode／硬链接关系恢复，源码与模型不变，自有资源清理；新增5条回执，与原18条组成23条链，11份SEC公钥／schema核验通过。仅一组安装源漂移对照，其他生命周期／四臂与干净交付继续，9/16保持。
 
 [同请求Skill切换三次重复](optimization-opt08-switch-repetitions-validation-20261008.md)：同工作候选v830–v832完成三次同请求Skill切换：两次原生加载均允许，实际write_file均因grant_scope_violation拒绝、目标不存在；两个Grant和签名父上下文保留，OpenShell任务目录可写。新增9条回执／6份SEC，完整32条链／17份SEC独立验签、父子绑定与schema通过；公开核验工具5项相关回归及Ruff通过。原模型、业务源码不变，自有资源清理。该组不是并发隔离，干净交付／其余生命周期／四臂／平台验收继续，9/16保持。
+
+[企业OpenShell行为协议与校验器](optimization-opt09-protocol-validation-20261008.md)：ADR-058及企业OpenShell单次挑战／v2观测合同、纯校验器完成；58项新用例和63项v1回归共121项通过，Ruff通过。覆盖时效／nonce／范围／前后策略与保护身份／三臂和前后可达性约束。全部为合成组件证据；纯校验器不承担持久CAS或认证，生产部署仍只做配置读回。持久协调／真实ELF收集器／API前端接线和真实三臂验收继续，总体9/16保持。

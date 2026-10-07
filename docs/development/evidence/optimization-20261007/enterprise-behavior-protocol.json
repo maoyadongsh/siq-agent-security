@@ -1,0 +1,39 @@
+{
+  "schema_version": "optimization-openshell-behavior-protocol-validation/v1",
+  "recorded_at": "2026-10-07T19:38:15.054764+00:00",
+  "base_commit": "e22db29a3bb2ba471ae2ef0b48f7c359878c6a6a",
+  "stage": "OPT-09 protocol and pure candidate observation validator",
+  "result": "component_passed",
+  "validation": {
+    "command": "uv run --frozen pytest -q app/tests/test_openshell_behavior_protocol.py app/tests/test_enforcement_probe.py",
+    "cwd": "apps/control-api",
+    "exit_code": 0,
+    "new_tests": 58,
+    "legacy_tests": 63,
+    "total_passed": 121,
+    "ruff": "passed",
+    "wire_contracts_validated": true,
+    "network_calls": 0,
+    "model_calls": 0,
+    "production_state_mutations": 0
+  },
+  "source_sha256": {
+    "docs/adr/0058-enterprise-openshell-behavior-verification.md": "cdd251a1c3ce163186dc2b3f9b162fec2c9826cb0696af7b8a81765e2951fb07",
+    "packages/contracts/openshell-behavior-challenge.v1.schema.json": "46a5c59d9ef98d519ccbdbfac65b94da0d8caef86a59d927295cd6798a37ea8d",
+    "packages/contracts/openshell-behavior-result.v2.schema.json": "1f868764264293a93bc31a2090f114672b7a20bc12f9b3fc7b796d50af13de45",
+    "apps/control-api/app/adapters/openshell/behavior_protocol.py": "07c5ebe1bd02bac4d77b2f8f3d3e8fa1a033371fd24d372db9678dcce9c36cfb",
+    "apps/control-api/app/tests/test_openshell_behavior_protocol.py": "6fc3d849724aae13571eb353bf442393b9f771abc3da428299fbc5cfbcbf722c"
+  },
+  "unchanged_legacy_and_production_sources": {
+    "apps/control-api/app/adapters/openshell/enforcement_probe.py": true,
+    "apps/control-api/app/adapters/openshell/probe_channel.py": true,
+    "apps/control-api/app/routers/policies.py": true
+  },
+  "limits": [
+    "All observations in tests are synthetic; no real target was probed.",
+    "The pure validator does not authenticate its caller or persist an atomic one-time consumption.",
+    "Persistent coordinator, trusted ELF collector, production API/UI wiring and real three-arm verification remain pending.",
+    "The current enterprise deployment path still performs configuration readback only; no enforcement grade was upgraded.",
+    "OPT-09 and the optimization goal remain incomplete."
+  ]
+}
