@@ -91,6 +91,12 @@ func (e *Engine) ReadHoldStatus(req HoldStatusRequest) (*HoldStatus, error) {
 }
 
 func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time.Time) bool {
+	// Native invocation retries need a separately attested retry call plus live
+	// equality with the original full lineage. C1 is not wired online; until C2
+	// supplies both checks, the legacy single-Grant retry must not authorize it.
+	if d.NativeInvocation != nil {
+		return false
+	}
 	if intent.ValidateNativeSession(req.Platform, req.SessionID) != nil {
 		return false
 	}

@@ -137,6 +137,7 @@ type SkillAttributionLookup func(platform, sessionID, agentID string, claim *Ski
 // but failed verification; the engine must deny (authority class) and never
 // fall back to a baseline grant.
 type SkillContextVerification struct {
+	Native *NativeInvocationVerification
 	// Valid SEC fields (Invalid=false):
 	ContextID     string
 	EvidenceLevel string
@@ -183,6 +184,7 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
+	NativeInvocation    *NativeInvocationEvidence     `json:"native_invocation,omitempty"`
 	SchemaVersion       string                        `json:"schema_version,omitempty"`
 	LocalOrigin         *pending.Record               `json:"local_origin,omitempty"`
 	ParameterProvenance []provenance.ParameterBinding `json:"parameter_provenance,omitempty"`
@@ -288,6 +290,7 @@ type Options struct {
 	// nil → no SEC ever applies and behavior is identical to pre-SEC builds.
 	// A matched-but-invalid SEC denies regardless of enforcement mode.
 	SkillContexts SkillContextLookup
+	NativeCalls   NativeCallLookup
 	// BaselineGrants returns the newest live grant without a skill scope for
 	// the agent; it is the second leg of the SEC permission intersection.
 	BaselineGrants    GrantLookup
@@ -449,7 +452,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	// claim-derived attribution with a verified one; a matched-but-invalid SEC
 	// hard denies later via the authority path, regardless of mode.
 	var sec *SkillContextVerification
-	if !runtimeTaskInvalid {
+	if !runtimeTaskInvalid && parameterErr == nil {
 		sec = e.resolveSkillContext(req)
 	}
 	var resolvedIntent *IntentContract
@@ -465,7 +468,14 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	if sec != nil && !sec.Invalid {
 		// The SEC grant is server-selected authority; a trusted intent binding
 		// that pins a different grant conflicts and invalidates the context.
-		if req.selectedGrant != nil && req.selectedGrant.GrantID != sec.Grant.GrantID {
+		if sec.Native != nil {
+			if !nativeGrantMatches(req.selectedGrant, sec.Native.Evidence.AgentAuthority, req) {
+				sec = &SkillContextVerification{Invalid: true, ReasonCode: "native_skill_agent_conflict"}
+			} else {
+				// Intent keeps its exact baseline; Skill authorities only narrow it.
+				skillAttribution = nativeAttribution(sec)
+			}
+		} else if req.selectedGrant != nil && req.selectedGrant.GrantID != sec.Grant.GrantID {
 			sec = &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_grant_conflict"}
 		} else {
 			req.selectedGrant = sec.Grant
@@ -625,7 +635,10 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	// the final parameter set. If the adapter cannot name the call, the SEC
 	// cannot verify it and the decision must fail closed instead of recording
 	// an unbound verified attribution.
-	if sec != nil && !sec.Invalid {
+	if sec != nil && !sec.Invalid && sec.Native != nil {
+		rec.SchemaVersion, rec.NativeInvocation = "runtime-receipt/v3", sec.Native.Evidence
+	}
+	if sec != nil && !sec.Invalid && skillAttribution != nil {
 		binding, bindingErr := trustedcontext.CallBinding(req.Platform, req.SessionID, req.AgentID, runtimeTaskID, req.Tool, req.ToolCallID, req.Params)
 		if bindingErr != nil {
 			sec = &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_invalid"}
@@ -719,7 +732,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		if rec.AuthorityStatus == "invalid" {
 			authority = runtimeauthz.Authority(rec.AuthorityReasonCode, rec.IntentBinding == "bound")
 		}
-		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req, start) && containsSecretLiteral(e.analyzer, paramsText) {
+		if (sec == nil || sec.Native == nil) && policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req, start) && containsSecretLiteral(e.analyzer, paramsText) {
 			candidate := redactParams(e.analyzer, req.Params)
 			// Redaction is a data transform, never authority to skip host/path
 			// constraints or a per-tool human approval requirement.
@@ -874,6 +887,9 @@ func (e *Engine) resolveSkillAttribution(req Request) *SkillAttribution {
 // then follows the pre-SEC claim path unchanged). Lookup results that violate
 // the contract shape are treated as invalid (fail closed), never trusted.
 func (e *Engine) resolveSkillContext(req Request) *SkillContextVerification {
+	if native, handled := e.resolveNativeInvocation(req); handled {
+		return native
+	}
 	if e.opts.SkillContexts == nil {
 		return nil
 	}
@@ -935,6 +951,9 @@ func skillAttributionMatches(ref grant.SkillRef, a *SkillAttribution) bool {
 // SEC switches evaluation to the permission intersection of the SEC-bound
 // grant and the agent's baseline grant (N05/R01 §3.4).
 func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time, sec *SkillContextVerification) (string, string) {
+	if sec != nil && sec.Native != nil {
+		return e.evaluateNativeIntersection(req, s, descriptor, rec, now, sec)
+	}
 	if sec != nil {
 		return e.evaluateIntersection(req, s, descriptor, rec, now, sec)
 	}

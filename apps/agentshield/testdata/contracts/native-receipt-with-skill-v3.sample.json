@@ -1,0 +1,98 @@
+{
+  "native_invocation": {
+    "call_id": "ncall-da9bb41d2874f5efb496fa9bb52371c1",
+    "call_signature": "9b3e25817dff4dbb6572abb236c683e572d4e5ecf8246194f240564b2137133946090517bdcb48e091be7cae609b44fb61e938a99f382834c1795673456d8707",
+    "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+    "session_signature": "71df09c334f3b4f45242d1df1d4b80e2e802dc592cf9a4d737fa9df8f7abf41f60474b4097ca2f270ce068399fc648f02374d4d510cad77d2667ca6a7e24160c",
+    "request_binding": "afccddd6bce1c40afa4b7a4f645d443f8dd82a59b67586e10ce92b49ca560134",
+    "agent_authority": {
+      "grant_id": "grt-agent-baseline",
+      "grant_digest": "0952967007d319a708f311cddce889f6458416975d66859118a226cbc7cddd23"
+    },
+    "no_skill": false,
+    "contexts": [
+      {
+        "context_id": "sec-f92364d605d38536f788fbcc0389c022",
+        "context_signature": "b53c1dab32a0abb8754967349a59f802f0233c1064889af3b2d7e057d1888e34ced6c174f364e0a0468de936b42a8ccd0ad7c90ea064fe12f9f762a0cae32701",
+        "authority": {
+          "grant_id": "grt-skill-1",
+          "grant_digest": "84ac0eccf876541100b5fb563a17d5e48b08a386a54d93aee93e3e38e34b6da1"
+        }
+      }
+    ]
+  },
+  "schema_version": "runtime-receipt/v3",
+  "authority_status": "valid",
+  "policy_action": "allow",
+  "effective_action": "allow",
+  "principal": {
+    "type": "user",
+    "id": "synthetic-user"
+  },
+  "resource_refs": [
+    {
+      "domain": "filesystem",
+      "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+    }
+  ],
+  "record_type": "decision",
+  "task_seq": 1,
+  "receipt_id": "rcp-e0effaee04ee-120000.000000",
+  "chain_id": "local",
+  "seq": 0,
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "2fd7fff4c010e1d22c805386aff3c8bf2ebe01ac7669f49494c800ce1a6442fe",
+  "sig": "f986fd8c61b73995edf707be121e2ad4d065c95b2692fe648ac3cad94fec370cdfb8f84ee68b45bbbaac6fb3fefa860d6ba1f9f5e6ff98625e3d4fd4b123de07",
+  "issued_at": "2026-09-14T12:00:00Z",
+  "platform": "hermes",
+  "session_id": "sess-1",
+  "action_id": "act-4d0f7184153b61a07c2b5ff8",
+  "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+  "task_id": "trusted-envelope",
+  "runtime_task_id": "task-1",
+  "intent_id": "fixture-intent",
+  "intent_binding": "bound",
+  "authority_revision": "fixture-revision",
+  "tool": "read_file",
+  "tool_call_id": "call-1",
+  "operation": "read",
+  "effects": [
+    "file.read"
+  ],
+  "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+  "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+  "action": "allow",
+  "advisory_action": null,
+  "reason": "granted by exact Agent and Skill authority intersection",
+  "reason_code": "allow",
+  "matched_grant_id": "grt-skill-1",
+  "matched_fact_ids": [
+    "fixture-read"
+  ],
+  "matched_rule_ids": [],
+  "taint_labels": [],
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  },
+  "enforcement_mode": "block",
+  "policy_revision": null,
+  "sandbox_id": null,
+  "model_key": null,
+  "engine": {
+    "version": "native-component-fixture",
+    "rulepack_version": 1
+  },
+  "decision_latency_ms": 0,
+  "hold": null,
+  "skill_attribution": {
+    "skill_id": "marketplace:skill:report-gen@0a1b2c3d4e5f",
+    "version": "1.2.0",
+    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+    "status": "verified",
+    "evidence_level": "controlled_invocation",
+    "context_id": "sec-f92364d605d38536f788fbcc0389c022",
+    "call_binding": "afccddd6bce1c40afa4b7a4f645d443f8dd82a59b67586e10ce92b49ca560134"
+  }
+}
