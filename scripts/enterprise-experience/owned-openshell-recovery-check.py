@@ -10,11 +10,10 @@ import socket
 import subprocess
 import sys
 import time
+import tomllib
 import urllib.request
 import uuid
 from pathlib import Path
-
-import tomllib
 
 
 def main():
@@ -25,7 +24,9 @@ def main():
     parser.add_argument("--web", type=Path)
     parser.add_argument("--behavior-image")
     parser.add_argument("--probe-sha256")
+    parser.add_argument("--behavior-coordinated", action="store_true")
     args = parser.parse_args()
+    assert not args.behavior_coordinated or args.behavior_image
     repo = Path(__file__).resolve().parents[2]
     original = args.gateway_template.resolve(strict=True)
     binary = args.gateway_binary.resolve(strict=True)
@@ -157,11 +158,15 @@ def main():
             if ready:
                 result["live_check_started"] = True
                 if args.behavior_image:
-                    command = [sys.executable, str(repo / "scripts/enterprise-experience/openshell-behavior-live-check.py"),
+                    command = [sys.executable,
+                               str(repo / "scripts/enterprise-experience/openshell-behavior-live-check.py"),
                                str(root / "live"), "--image", args.behavior_image, "--probe-sha256", args.probe_sha256,
                                "--namespace", namespace]
+                    if args.behavior_coordinated:
+                        command.append("--coordinated")
                 else:
-                    command = [sys.executable, str(repo / "scripts/enterprise-experience/openshell-deployment-live-check.py"),
+                    command = [sys.executable,
+                               str(repo / "scripts/enterprise-experience/openshell-deployment-live-check.py"),
                                str(root / "live"), "--web", str(web)]
                 with (root / "acceptance.log").open("wb") as output:
                     accepted = subprocess.run(

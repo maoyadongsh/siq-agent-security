@@ -146,3 +146,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [独立程序保护与首次真实OpenShell探测](optimization-opt09-protection-validation-20261008.md)：独立Docker保护观察器、v1保护事实及ELF低权限检查完成：84项保护／通道、最终46项保护（重叠）及12项真实Docker检查通过；Ruff／Go vet通过。真实OpenShell三次尝试保留：启动capability模板与镜像UID998已修正，003实际保护通过但原始TCP允许／拒绝各三次均refused、六次主机对照成功，校验器正确不予采信。全部自有网关／沙箱／网络清理，原模板及TLS不变；需新增显式代理通道协议并完成真实差分、协调API／前端，OPT-09与9/16保持。
 
 [显式CONNECT与真实OpenShell差分](optimization-opt09-connect-validation-20261008.md)：显式CONNECT挑战v2／结果v3／agent v2及持久台账兼容完成，相关172个不同用例分批通过（初次schema引用失败修复，重叠不累加）；新ELF真实Docker保护12项通过。真实独立OpenShell同目标三轮允许3/3、明确policy_denied拒绝3/3、主机前后对照6/6，接收端9条标识；原拒绝路径显式授权后新挑战连通、再收到1条，旧策略证据失效。9项真实检查及清理通过，公开观测离线核验通过。生产认证协调／目标互斥／可信代理模板／API前端及等级生命周期仍待接线；合成operation绑定不冒充生产端到端，OPT-09与总体9/16保持。
+
+[操作员模板与同次持久协调](optimization-opt09-coordinator-validation-20261008.md)：操作员批准模板与内部持久协调器完成：模板文件／祖先权限及完整目标绑定、每臂授权复核、共享目标互斥、提交后联网、完成事务授权与二次期限检查。57项定向通过；真实专用OpenShell的持久策略下发、同次持久行为收集、重复不重放、数据库绑定撤权、三轮差分及清理共12项通过，独立查询确认唯一accepted/epoch2及三条审计、父操作revision/digest吻合。真实运行使用隔离SQLite与合成审批身份，生产认证API／目标授权链／前端及等级生命周期尚待接线；未提升部署等级，OPT-09与9/16保持。

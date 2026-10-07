@@ -32,6 +32,7 @@ def main():
     parser.add_argument("--image", required=True)
     parser.add_argument("--probe-sha256", required=True)
     parser.add_argument("--namespace", required=True)
+    parser.add_argument("--coordinated", action="store_true")
     args = parser.parse_args()
     assert re.fullmatch(r"sha256:[a-f0-9]{64}", args.image)
     assert re.fullmatch(r"[a-f0-9]{64}", args.probe_sha256)
@@ -84,6 +85,7 @@ def main():
               "target": target, "namespace": args.namespace, "image_digest": args.image,
               "probe_sha256": args.probe_sha256, "cli_sha256": hashlib.sha256(CLI.read_bytes()).hexdigest(),
               "synthetic_operation_binding": True, "deployment_grade_promoted": False, "model_calls": 0}
+    coordinated = None
     server = None
     thread = None
     stop = threading.Event()
@@ -184,11 +186,17 @@ def main():
 
         thread = threading.Thread(target=serve, daemon=True)
         thread.start()
-        policy["network_policies"] = network_rules_to_gateway(
-            [{"effect": "allow", "endpoint": f"{host}:{port}", "binary_paths": [ALLOW]}])
-        policy_file.write_text(yaml.safe_dump(policy, sort_keys=False))
-        cli("policy", "set", target, "--policy", str(policy_file), "--wait", "--timeout", "30")
         backend = OpenShellCliBackend()
+        network = [{"effect": "allow", "endpoint": f"{host}:{port}", "binary_paths": [ALLOW]}]
+        policy["network_policies"] = network_rules_to_gateway(network)
+        policy_file.write_text(yaml.safe_dump(policy, sort_keys=False))
+        if args.coordinated:
+            from behavior_coordinated_fixture import CoordinatedFixture
+            coordinated = CoordinatedFixture(out, backend, target)
+            coordinated.apply(network)
+            checks["real_durable_policy_apply"] = True
+        else:
+            cli("policy", "set", target, "--policy", str(policy_file), "--wait", "--timeout", "30")
         capabilities = backend.probe()
         snapshot = backend.read_effective_policy(target)
         binding = {"tenant_id": "component-tenant", "environment_id": "component-environment",
@@ -198,6 +206,10 @@ def main():
             "policy_revision": snapshot.revision, "policy_digest": snapshot.policy_digest,
             "image_digest": args.image, "probe_sha256": args.probe_sha256,
             "protected_execution_sha256": protected["protected_execution_sha256"]}
+        if coordinated:
+            binding = coordinated.binding(args.image, args.probe_sha256, protected["protected_execution_sha256"])
+            result["synthetic_operation_binding"] = False
+            result["synthetic_database_authority"] = True
         # Explicit operator-approved profile for this owned v0.0.83 gateway.
         # Never derive an authorized endpoint from workload HTTP_PROXY.
         transport = {"mode": "http_connect", "proxy_ipv4": "10.200.0.1", "proxy_port": 3128}
@@ -233,19 +245,24 @@ def main():
             return execution
 
         channel = BehaviorProbeChannel(backend._build_command, runner=observed_runner)
-        for round_index in range(3):
-            assert readback() == before
-            for kind in ("control_before", "allow", "deny", "control_after"):
-                if kind in ("allow", "deny"):
-                    item = channel.run_arm(challenge, round_index=round_index, kind=kind, expected_uid=probe_uid)
-                else:
-                    item = channel.control(challenge, round_index=round_index, kind=kind)
-                observations.append(item)
-                (out / "observations.json").write_text(json.dumps(observations, indent=2) + "\n")
-        observed = {"schema_version": "openshell-behavior-result/v3", "verification_id": challenge.verification_id,
-            "nonce": challenge.nonce, "challenge_sha256": challenge_digest(challenge), "started_at": started,
-            "finished_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
-            "before": before, "after": readback(), "observations": observations}
+        if coordinated:
+            challenge, observed = coordinated.collect(challenge, protection_target)
+            checks["same_run_durable_behavior_and_no_replay"] = True
+            checks["database_revocation_prevents_new_probe"] = True
+        else:
+            for round_index in range(3):
+                assert readback() == before
+                for kind in ("control_before", "allow", "deny", "control_after"):
+                    if kind in ("allow", "deny"):
+                        item = channel.run_arm(challenge, round_index=round_index, kind=kind, expected_uid=probe_uid)
+                    else:
+                        item = channel.control(challenge, round_index=round_index, kind=kind)
+                    observations.append(item)
+                    (out / "observations.json").write_text(json.dumps(observations, indent=2) + "\n")
+            observed = {"schema_version": "openshell-behavior-result/v3", "verification_id": challenge.verification_id,
+                "nonce": challenge.nonce, "challenge_sha256": challenge_digest(challenge), "started_at": started,
+                "finished_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+                "before": before, "after": readback(), "observations": observations}
         accepted, reason = validate_behavior_result(observed, challenge.model_dump(), readback(),
                                                     now=datetime.now(UTC), run_state="running")
         (out / "challenge.json").write_text(json.dumps(challenge.model_dump(), indent=2) + "\n")
@@ -277,6 +294,8 @@ def main():
         checks["same_elf_path_connects_after_explicit_policy_allow"] = True
         result["passed"] = True
     finally:
+        if coordinated is not None:
+            coordinated.close()
         if server is not None:
             stop.set()
             server.close()

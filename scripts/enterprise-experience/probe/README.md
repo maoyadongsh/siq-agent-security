@@ -19,3 +19,5 @@ CGO_ENABLED=0 GOWORK=off GOPROXY=off GOOS=linux go build -trimpath -buildvcs=fal
 显式代理接口为 `probe VERIFICATION_ID NONCE IPV4 PORT TIMEOUT_MS http_connect PROXY_IPV4 PROXY_PORT`，输出遵循 [agent v2 合同](../../../packages/contracts/openshell-behavior-agent.v2.schema.json)。代理地址同样必须经算子批准，程序不读取 HTTP_PROXY；CONNECT 200 后仍必须收到回显。只有 403 与严格匹配目标的 policy_denied 正文记 proxy_denied，其他代理失败不作为策略拒绝依据。响应头和正文分别限制 4096 字节，沿用单次总超时。
 
 真实 OpenShell 初次直连失败记录保留；显式代理已完成同一目标三轮允许／拒绝／前后对照，以及给原拒绝路径授权后连通的反转检查，见 [CONNECT 验证](../../../docs/development/optimization-opt09-connect-validation-20261008.md)。持久台账已兼容新协议，但真实测评尚未经过企业认证协调 API／前端，部署等级保持配置读回。
+
+内部协调器已连接批准模板、持久领取、每臂复核和同事务完成授权；真实专用网关／隔离数据库同次验证见 [持久协调验收](../../../docs/development/optimization-opt09-coordinator-validation-20261008.md)。普通用户入口尚未启用，不将合成审批身份视为生产认证。

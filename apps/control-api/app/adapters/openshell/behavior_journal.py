@@ -268,7 +268,10 @@ class BehaviorJournal:
                 row.owner_sha256, hashlib.sha256(claim.owner_token.encode()).hexdigest())):
             raise BehaviorJournalError("behavior_owner_conflict")
 
-    def finish(self, claim: BehaviorClaim, result: dict, current_readback: dict) -> BehaviorFact:
+    def finish(
+        self, claim: BehaviorClaim, result: dict, current_readback: dict,
+        *, before_accept: Callable[[Session], None] | None = None,
+    ) -> BehaviorFact:
         if not isinstance(claim, BehaviorClaim):
             raise BehaviorJournalError("behavior_owner_conflict")
         with self.sessions.begin() as session:
@@ -287,6 +290,11 @@ class BehaviorJournal:
                 saved = None  # Never persist arbitrary error output, keys or a client success claim.
             if accepted and _time(saved["started_at"]).replace(tzinfo=None) < row.started_at:
                 accepted, reason = False, "behavior_result_predates_claim"
+            if accepted and before_accept is not None:
+                # Database-only live authorization; no probe IO while rows are locked.
+                before_accept(session)
+            if accepted and self._now().replace(tzinfo=None) >= row.expires_at:
+                return self._transition(session, row, "unknown", reason_code="behavior_deadline_expired")
             return self._transition(session, row, "accepted" if accepted else "rejected", reason_code=reason,
                                     result=saved, result_digest=_digest(saved) if saved is not None else None)
 
