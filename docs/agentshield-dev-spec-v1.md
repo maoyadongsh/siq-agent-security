@@ -2691,6 +2691,8 @@ D2c1 增加 `native-skill-source/v1` 文件快照组件，先解决实际读取�
 
 OPT-08 D2d 的宿主应用桥接按 [native-host-bridge/v1](../packages/contracts/native-host-bridge.v1.md) 串接任务、真实来源解析、v2 SEC 及精确调用绑定。所有宿主依赖必需且有界；失效任务不得回退无 Skill。内存事实不从签名文件恢复，重启后缺少可信登记即拒绝。该组件不直接开放 HTTP 发布能力或新身份创建；产品启用仍取决于完整可信启动器与在线接线。
 
+实际安装来源解析按 [native-install-source/v1](../packages/contracts/native-install-source.v1.md) 读取签名清单及当前批准安装的真实文件。可信启动器固定的宿主/容器映射与必需实际挂载校验不能由模型声明替代；源事件不提供宿主路径或 Grant。两次有效安装验证夹住有界文件读取，正文不返回或持久化，仅核对原始与固定解码后的摘要。不改变安装写入例外或旧运行绑定协议。
+
 ## OPT-13：交付入口响应头增量（2026-10-07）
 
 本地 HTTP 服务在 loopback/Host/Origin 检查之前设置统一响应头，覆盖成功、重定向和拒绝响应：CSP 与企业静态入口现有策略一致（self 脚本、self 连接、禁止 frame/object、限制 base/form，样式保留 unsafe-inline），并设置 nosniff、X-Frame-Options DENY、strict-origin-when-cross-origin Referrer-Policy、禁用 camera/microphone/geolocation。不设置 HTTP HSTS，不增加 HTML meta CSP，不扩展 CORS 或改变现有 Host/Origin 检查。
