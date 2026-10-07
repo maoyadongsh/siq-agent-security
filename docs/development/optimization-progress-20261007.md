@@ -115,3 +115,6 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 
 
 [业务配置、数据授权与策略依赖交付](optimization-opt08-config-policy-delivery-validation-20261008.md)：业务配置／数据授权／策略四批交付e8a4acd/2d96fe8/50c1b83/0fd5d5a；隔离35通过1跳过、81通过、76通过、181通过，Ruff通过，最终加强CLI负向单项通过（重叠）。修复出网分类畸形字段TypeError和负向测试提前失败假通过；补齐公开profile资产并交付原未满足的policy消费者。依赖均取已提交版本，最终文件摘要与提交核对；未调用模型或改动真实服务。原109模块仍39个未跟踪，完整交付／最终同候选验收继续，OPT-08与9/16不变。
+
+
+[原生镜像与relay兼容依赖交付](optimization-opt08-image-relay-delivery-validation-20261008.md)：原生镜像与relay兼容依赖交付业务bae0a50/4ac075a，隔离88/22项与Ruff通过；隔离源码实际复核既有业务镜像六项保护检查和四份资产摘要，通过且无模型调用。修复离线检查空集合误通过、relay描述符冲突及check-only虚报非特权。原109模块仍36个未跟踪；基镜像资产、API/监管完整交付与最终候选验收继续，OPT-08与9/16保持。

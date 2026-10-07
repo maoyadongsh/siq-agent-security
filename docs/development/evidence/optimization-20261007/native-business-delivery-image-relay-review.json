@@ -1,0 +1,145 @@
+{
+  "schema_version": "siq.optimization.delivery-review/v1",
+  "date": "2026-10-08",
+  "task": "OPT-08",
+  "batches": [
+    {
+      "commit": "bae0a50fbf8d6c4e6bef016b2f0be861760bb4ba",
+      "local_record": "native-image-delivery-review.json",
+      "review": {
+        "schema_version": "delivery-review/v1",
+        "dependency_base_commit": "0fd5d5ae33ff9cd2ae224e7f1426194d79f32f09",
+        "selected_files": {
+          "scripts/openshell/build_native_request_image.py": "1729917701b245d6027a79a097f9cbe036e663aac642fcef72da3be2b21551a0",
+          "infra/openshell/sandbox/qwen38_candidate/native_entrypoint.py": "c410758bc8a74815181f050a9804b7c2e86909d297963edb9fdbe9eeff222804",
+          "scripts/openshell/tests/test_build_native_request_image.py": "18fbefb31befde809fa9634fa3198984ad104353fb5027e92dd9ba47156c4af3"
+        },
+        "files": {
+          "agents/hermes/profiles/siq_analysis/config.yaml": "f7af844b516f36d343bf2aa85ce0bfc3cb8e32f499d222e4f74bd5c0e968daa3",
+          "infra/model-services/governed-model-routes.json": "5e349bc53572961024ac999bcacd9f483c2483c8484c0eca5f2857b505ba72e3",
+          "infra/model-services/governed-model-routes.schema.json": "772ad2efe525957ae1f18e5410d4d52f1fa1ead8d632f0a7a5643741b1b9e7f5",
+          "infra/model-services/qwen3.8/candidate.v1.json": "608ef7bf7a2425f6c1b2d2fed56a5390245985a538a7dd585d5eb91298c2ab2f",
+          "infra/model-services/qwen3.8/governed-route.v1.json": "19e171c8002a8810d0189359bf98c920f0eaa9371771f7002cac23a433811e35",
+          "infra/model-services/qwen3.8/governed-route.v1.schema.json": "455b565a0176039cabd87d437c5433382b1bdf9233c3cd7579e8c93e1f874564",
+          "infra/openshell/sandbox/qwen38_candidate/native_bootstrap.py": "073abad6aa051c1ae94899b3adec69bfb91adefc7bea2bc54d4b8f547fc9424c",
+          "infra/openshell/sandbox/qwen38_candidate/native_entrypoint.py": "c410758bc8a74815181f050a9804b7c2e86909d297963edb9fdbe9eeff222804",
+          "infra/openshell/sandbox/qwen38_candidate/native_runtime.py": "61a7ebbf15667cb6274fca0b5a94bfd58645f24312caa2bc2798d6195649badc",
+          "infra/openshell/sandbox/qwen38_candidate/validate_runtime.py": "6bfb53da65c2050d9473c26dbb9a3d238fd2ff5780f06f66d455c9ea821b21b1",
+          "scripts/openshell/audit_qwen38_local_candidate.py": "1f1d96d582529f6a278e8a22f2bbc9b5a0582f32616782b53c0cfb9ff75edcc8",
+          "scripts/openshell/build_native_request_image.py": "1729917701b245d6027a79a097f9cbe036e663aac642fcef72da3be2b21551a0",
+          "scripts/openshell/build_native_runtime_config.py": "687470928a434f3abab8f28b0a7754d1d1b72e17b456a144dbbd29ac4660d112",
+          "scripts/openshell/build_siq_analysis_mount_plan.py": "8a6f7601138b9a23ac1e5ec341e2ab2b656d7ca6346c146fcc9343e4d626efad",
+          "scripts/openshell/build_siq_analysis_runtime_config.py": "e4f35c07010f8cfa9f71657537d1247f0d7569f7e17a51e7b12da53e3b709272",
+          "scripts/openshell/enterprise_data_scope.py": "ec0f20d6075e897ab9e66d08a7df2cf283cdc6afc31712980051b5c331abd0ec",
+          "scripts/openshell/governed_model_route.py": "9f7d3b66eb8b5b81c7f65c44c4f7ac8ae8ac34c0792d6e0c6250e23306770b95",
+          "scripts/openshell/native_business_skill_bundle.py": "4d1b113dd97fb9442cb5fb9c2e014a9119a77bfb6256ee9a6d685dce8c9c0be2",
+          "scripts/openshell/qwen38_request_contract.py": "9abb538e40bc18dd084abf0fd278aa2afc7dea74d2698805a56e19c49c8bf1a2",
+          "scripts/openshell/snapshot_siq_analysis_runtime.py": "825e7d23059e708556e56a26c6415417e91d2bfc8eb9869167ad1bc15c2a0cc7",
+          "scripts/openshell/tests/test_build_native_request_image.py": "18fbefb31befde809fa9634fa3198984ad104353fb5027e92dd9ba47156c4af3",
+          "scripts/openshell/tests/test_build_native_runtime_config.py": "36837b09887ddeca49445b045a50a897e7af5ffcfe792a1551bc4ead9b2acadc",
+          "scripts/openshell/tests/test_build_siq_analysis_runtime_config.py": "054df49696067728c460fce539c5578958ef32bbd2a46d589ad155bbd9af7903",
+          "scripts/openshell/tests/test_native_business_skill_bundle.py": "107a0b15551fed606fe2de28c776fdd3e7d25203190aa259ac06c581642dfab4",
+          "scripts/openshell/tests/test_native_request_bootstrap.py": "1aeceb31d3cd5adfcb58c2f345a28411a9c647ae0a6397fb40102f123dcdf52c"
+        },
+        "isolated_pytest": {
+          "exit_code": 0,
+          "output": "........................................................................ [ 81%]\n................                                                         [100%]\n88 passed in 0.40s\n"
+        },
+        "owning_repo_ruff": {
+          "exit_code": 0,
+          "output": "All checks passed!\n"
+        },
+        "no_actual_business_data_or_model_calls": true,
+        "existing_image_offline_readback": {
+          "exit_code": 0,
+          "output": "{\"image_id\": \"sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21\", \"artifact_sha256\": \"070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2\", \"checks\": {\"protected_files\": true, \"protected_ancestors\": true, \"native_config\": true, \"legacy_environment_rejected\": true, \"non_root\": true, \"skill_inventory\": true}, \"isolated_sources_match_image\": true, \"model_calls\": 0}\n",
+          "new_image_build": false,
+          "network": "none",
+          "readonly": true
+        }
+      }
+    },
+    {
+      "commit": "4ac075aa11bb8bfeb5a6a8cff1f90ee3c6dba1e1",
+      "local_record": "native-relay-delivery-review.json",
+      "review": {
+        "schema_version": "delivery-review/v1",
+        "dependency_base_commit": "bae0a50fbf8d6c4e6bef016b2f0be861760bb4ba",
+        "selected_files": {
+          "scripts/openshell/launch_agentshield_decision_relay.py": "34a47269c2476cff41616768a79ebd208d158c681c0df06c500a0360cd040218",
+          "scripts/openshell/build_agentshield_decision_relay_config.py": "45d2e489a860c481ac4f2b9b41cf3cdf3cdfc170ef9a853e4983f8ad335eea9b",
+          "scripts/openshell/tests/test_launch_agentshield_decision_relay.py": "440fda34af706fcde74382b6488ea8319b4234e1c08a0c9ad34b826ae395844c",
+          "scripts/openshell/tests/test_build_agentshield_decision_relay_config.py": "b84a43b6c6130b5f0985e6a063b7dcb3afd3de3e85f9c041eb8581b4890e0f34"
+        },
+        "files": {
+          "scripts/openshell/build_agentshield_decision_relay_config.py": "45d2e489a860c481ac4f2b9b41cf3cdf3cdfc170ef9a853e4983f8ad335eea9b",
+          "scripts/openshell/launch_agentshield_decision_relay.py": "34a47269c2476cff41616768a79ebd208d158c681c0df06c500a0360cd040218",
+          "scripts/openshell/tests/test_build_agentshield_decision_relay_config.py": "b84a43b6c6130b5f0985e6a063b7dcb3afd3de3e85f9c041eb8581b4890e0f34",
+          "scripts/openshell/tests/test_launch_agentshield_decision_relay.py": "440fda34af706fcde74382b6488ea8319b4234e1c08a0c9ad34b826ae395844c"
+        },
+        "isolated_pytest": {
+          "exit_code": 0,
+          "output": "......................                                                   [100%]\n22 passed in 0.05s\n"
+        },
+        "owning_repo_ruff": {
+          "exit_code": 0,
+          "output": "All checks passed!\n"
+        },
+        "no_actual_business_data_or_model_calls": true
+      }
+    }
+  ],
+  "old_image_negative": {
+    "empty_checks_accepted": true
+  },
+  "old_relay_negatives": {
+    "configuration_accepts_listener_overwriting_config_fd": true,
+    "synthetic_root_check_claimed_unprivileged": true
+  },
+  "original_closure_size": 109,
+  "remaining_untracked_in_original_closure": [
+    "apps/api/services/business_run_result_model.py",
+    "apps/api/services/openshell_data_scope.py",
+    "apps/api/services/qwen38_native_request_gateway.py",
+    "apps/api/services/qwen38_native_request_issuer.py",
+    "apps/api/services/qwen38_native_request_launch.py",
+    "apps/api/services/qwen38_native_request_profile.py",
+    "apps/api/services/qwen38_recovery_manager.py",
+    "apps/api/services/qwen38_request_admission.py",
+    "apps/api/services/qwen38_request_assets.py",
+    "apps/api/services/qwen38_request_builder.py",
+    "apps/api/services/qwen38_request_deployment.py",
+    "apps/api/services/qwen38_request_endpoint.py",
+    "apps/api/services/qwen38_request_finalizer.py",
+    "apps/api/services/qwen38_request_gateway.py",
+    "apps/api/services/qwen38_request_heartbeat.py",
+    "apps/api/services/qwen38_request_http.py",
+    "apps/api/services/qwen38_request_issuer.py",
+    "apps/api/services/qwen38_request_origin.py",
+    "apps/api/services/qwen38_request_pending.py",
+    "apps/api/services/qwen38_request_queue.py",
+    "apps/api/services/qwen38_request_recovery.py",
+    "apps/api/services/qwen38_request_runtime.py",
+    "apps/api/services/qwen38_request_sandbox.py",
+    "apps/api/services/qwen38_request_selector.py",
+    "apps/api/services/qwen38_request_startup.py",
+    "apps/api/services/qwen38_request_supervision.py",
+    "apps/api/services/qwen38_runtime_lease.py",
+    "apps/api/services/runtime_startup_guard.py",
+    "scripts/openshell/build_qwen38_candidate_image.py",
+    "scripts/openshell/prepare_qwen38_business_mcp.py",
+    "scripts/openshell/qwen38_candidate_supervisor.py",
+    "scripts/openshell/qwen38_request_forward.py",
+    "scripts/openshell/qwen38_request_identity.py",
+    "scripts/openshell/qwen38_request_native.py",
+    "scripts/openshell/qwen38_request_relay.py",
+    "scripts/openshell/qwen38_supervisor_service.py"
+  ],
+  "remaining_count": 36,
+  "limits": [
+    "Existing image offline inspection, not new build or online business acceptance.",
+    "No model inference or production service changes.",
+    "Relay is legacy compatibility, not native identity-channel evidence.",
+    "Full business dependencies and remote CI remain incomplete."
+  ]
+}
