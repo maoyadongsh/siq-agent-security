@@ -1,0 +1,190 @@
+{
+  "schema_version": "optimization-tasks/v1",
+  "plan": "docs/development/SIQ_Agent_Security_优化开发方案_20261007-102651.md",
+  "branch": "codex/security-optimization-20261007",
+  "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+  "tasks": [
+    {
+      "id": "OPT-00",
+      "title": "基线与既有任务去重",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "main 与 origin/main 均为 c41347579ebe67c7f732d0e523722e489f831039；受跟踪文件起始无修改",
+        "分支 codex/security-optimization-20261007 已创建",
+        "已对照 SEC-F01–SEC-F10；OPT-06 关联 F05，OPT-03/14 关联 F08，OPT-15 的性能子项关联 F06；其余旧项不隐式扩展进本轮",
+        "开发环境 Linux arm64 / Go 1.26.5 / Node 22.22.2；跨平台原生环境在对应工作包核实"
+      ],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-01",
+      "title": "回执链并发一致性",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt01-opt02-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "同一 Chain 对象内同步；不替代 OS/跨进程 Writer；不改变已提交签名行遇 checkpoint 失败语义"
+      ]
+    },
+    {
+      "id": "OPT-02",
+      "title": "生产构建与身份边界",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt01-opt02-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "受控 OIDC/JWKS 测试，不是客户 IdP 联验；前端构建不代替后端授权"
+      ]
+    },
+    {
+      "id": "OPT-03",
+      "title": "扫描资源预算与限流",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F08"
+      ],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-04",
+      "title": "错误输入与分页",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-05",
+      "title": "OpenShell持久化回滚与后端绑定",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-06",
+      "title": "pending提升幂等",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F05"
+      ],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-07",
+      "title": "策略语义与部署入口",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-08",
+      "title": "日常Skill上下文",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-09",
+      "title": "OpenShell行为证据",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-10",
+      "title": "同候选业务回归",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-11",
+      "title": "连接器可信执行",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-12",
+      "title": "钩子完整性",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-13",
+      "title": "交付安全头",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-14",
+      "title": "扫描进程隔离",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F08"
+      ],
+      "evidence": [],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-15",
+      "title": "跨平台验收与有界清理",
+      "status": "planned",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F06"
+      ],
+      "evidence": [],
+      "residual_limits": []
+    }
+  ],
+  "research": [
+    {
+      "id": "RES-01",
+      "status": "planned",
+      "scope": "feasibility only; no automatic implementation"
+    },
+    {
+      "id": "RES-02",
+      "status": "planned",
+      "scope": "feasibility only; no automatic implementation"
+    },
+    {
+      "id": "RES-03",
+      "status": "planned",
+      "scope": "feasibility only; no automatic implementation"
+    }
+  ]
+}
