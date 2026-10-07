@@ -1,0 +1,100 @@
+{
+  "schema_version": "siq.optimization-native-enrollment-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "0f09b942",
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-openshell-enrollment-01",
+    "namespace": "siq-opt08-63203fef95a5",
+    "image_id": "sha256:b8123cf07c5f42c1e5af8ca71072ed5d42c8882fbecb1961c680d05bbac3750e",
+    "artifact_sha256": "2a809f27020453c496aa70fbb12c605ca2debfa94c8c40c359af5a585d1acaae",
+    "management_http_issuance": true,
+    "session_http_enrollment": true,
+    "runtime_state_after_issuance": "unverified",
+    "checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "signed_chain_verified": true,
+    "signed_receipts": 18,
+    "signed_allow": 14,
+    "signed_deny": 4,
+    "independent_host_effect_check": true,
+    "revocations": {
+      "baseline": true,
+      "context": true,
+      "writer": true
+    },
+    "model_calls": 0,
+    "business_entry_acceptance": false,
+    "go_integration_seconds": 23.19
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "validation": {
+    "go_test_all": {
+      "passed_packages": 45,
+      "no_test_packages": 10,
+      "log": "var/optimization-20261007/opt08-enrollment-go.log"
+    },
+    "go_race": {
+      "packages": [
+        "internal/server"
+      ],
+      "selection": "TestNativeEnrollment|TestNativeIdentityCannot|TestNativeOnline",
+      "log": "var/optimization-20261007/opt08-enrollment-race.log"
+    },
+    "go_vet_all": true,
+    "go_build_targets": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "python_contract_tests_passed": 16,
+    "final_test_only_increment": "Added equality to existing normalized v3 issuance sample; focused test passed without regenerating frozen samples."
+  },
+  "source_sha256": {
+    "apps/agentshield/internal/server/runtime_identity.go": "0d9e06c556da745e01de1b3d0cd76791a2589678db9ea2899713ce80ca236430",
+    "apps/agentshield/internal/server/runtime_identity_profile.go": "4fb9d012e681725c6cbce519d49347e0df4c2fc19b6dac760d63d921658efa8c",
+    "apps/agentshield/internal/server/native_runtime.go": "8b30639be7a65d9e643c02fbee5f85d662880eeb848f4252fd5d9c6e8d56ddbd",
+    "apps/agentshield/internal/server/native_enrollment_test.go": "e3dcef97277a14d20071f74cc8f9bb260aa6340d4ddd11fafb085f5411165e55",
+    "apps/agentshield/internal/server/native_identity_gate_test.go": "909d0e446a8761d4d9270756ae3c16c12cf8522bcef7ecba0705debaccd4c367",
+    "apps/agentshield/internal/server/native_identity_readback_test.go": "1ad9600d9553bf35b0fde5373058b4db00cb44341a6a3424422015c4b0fcfc29",
+    "apps/agentshield/internal/server/native_openshell_integration_test.go": "bdb6229087195051c3b7f9436cea1347d57afd03af51f0f1949d1efdfe6b7f18",
+    "packages/contracts/native-runtime-enrollment.v1.md": "ef82df115daf284853c6c7b4bb594a96e2f0b7ce935c8906cb15894622657b20"
+  },
+  "raw_result_sha256": {
+    "result.json": "988a428b4550795ec3a3f07b8f94c9fe50d0b6dfbf2f11581f155fd832ac0cca",
+    "authority-result.json": "aee64f06419ba42034a1b5ac80ffe32763a839fe732b77fa43bd46b5c9120c12"
+  },
+  "limits": [
+    "Real Go server and OpenShell runtime still started by an explicitly owned test harness; not the daily shipping launcher.",
+    "Native root identity and session now issued through actual HTTP endpoints; approved baseline and Skill installation prepared by synthetic test operator.",
+    "Go unit HTTP tests use synthetic runtime verification; actual OpenShell integration separately uses live kernel verification.",
+    "Issuance checks configured host binding and private endpoint integrity, not liveness/attestation of a future process.",
+    "Cross-compilation is not Windows/macOS native validation."
+  ]
+}

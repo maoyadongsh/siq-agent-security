@@ -71,8 +71,8 @@ func TestNativeIdentityReadbacksAndRequestLifecycle(t *testing.T) {
 	}
 	assertPolicy(enrolled)
 	nativeReadbackSample(t, "local-runtime-session-enrolled-native-v3", enrolled)
-	// New root creation over HTTP remains closed. Validate the production
-	// response projector without pretending this is an enabled HTTP enrollment.
+	// This fixture has no online host. Validate its response projector; actual
+	// HTTP issuance is tested separately with an explicitly wired NativeRuntime.
 	summary, err := s.runtimeIdentities.Summary(root.IdentityID)
 	if err != nil {
 		t.Fatal(err)

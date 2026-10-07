@@ -17,8 +17,8 @@ func TestNativeIdentityCannotExecuteBeforeTrustedHostWiring(t *testing.T) {
 			agent, _ := runtimeidentity.AgentID(id)
 			g, rev := selectedGrantFixture(t, s, st, "c", "/work/public", false, agent)
 			req := runtimeidentity.CreateRequest{SchemaVersion: "local-runtime-identity-create/v3", InstanceID: id, GrantID: g.GrantID, ExpectedGrantRevision: rev, ActorID: "fixture-human", SessionTTLSeconds: 300, NativeSkillPolicy: &runtimeidentity.NativeSkillPolicy{Mode: "required", RuntimeArtifactSHA256: strings.Repeat("c", 64)}}
-			if code, _ := call(t, s, "POST", "/v1/runtime-identities", token, req); code != 400 {
-				t.Fatal("new enrollment HTTP prematurely exposed", code)
+			if code, out := call(t, s, "POST", "/v1/runtime-identities", token, req); code != 503 || out["error"] != "native_skill_runtime_unavailable" {
+				t.Fatal("unwired enrollment accepted", code, out)
 			}
 			// Store issuance alone cannot enable native execution over HTTP.
 			r, err := s.runtimeIdentities.Create(req)

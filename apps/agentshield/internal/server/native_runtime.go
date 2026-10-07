@@ -254,6 +254,20 @@ func (n *NativeRuntime) Lookup(req receipt.Request) (bool, *receipt.NativeInvoca
 	}
 	return lookup(req)
 }
+
+// Creation fixes a mandatory policy; it does not attest a not-yet-started
+// process. Tool execution still requires fresh kernel-backed verification.
+func (s *Server) nativeIdentityCreationReady() bool {
+	n := s.d.NativeRuntime
+	if n == nil || !s.d.Engine.NativeCallsConfigured() {
+		return false
+	}
+	n.mu.RLock()
+	bound := n.host != nil && n.lookup != nil && n.identities == s.runtimeIdentities
+	n.mu.RUnlock()
+	return bound && n.checkConnection() == nil
+}
+
 func (s *Server) initNativeRuntime() error {
 	n := s.d.NativeRuntime
 	if n == nil {

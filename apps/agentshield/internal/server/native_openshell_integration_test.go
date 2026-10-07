@@ -5,7 +5,9 @@ package server
 // verifier and OpenShell process. Never part of the shipped daemon.
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -139,21 +141,6 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 		mounts = append(mounts, nativeMount{InstanceID: instance, InstallID: op.InstallID, ClaimSignature: op.ClaimSignature, HostRoot: filepath.Join(s.d.Home, ".hermes", "profiles", "work", "skills", name), RuntimeRoot: input.RuntimeRoot + "/" + name})
 		grantIDs[name] = approved.GrantID
 	}
-	record, err := s.runtimeIdentities.Create(runtimeidentity.CreateRequest{SchemaVersion: "local-runtime-identity-create/v3", InstanceID: instance, GrantID: baseline.GrantID, ExpectedGrantRevision: revision, ActorID: "owned-integration-operator", SessionTTLSeconds: 300, NativeSkillPolicy: &runtimeidentity.NativeSkillPolicy{Mode: "required", RuntimeArtifactSHA256: input.Artifact}})
-	if err != nil {
-		t.Fatal(err)
-	}
-	credentialPath, err := s.runtimeIdentities.CredentialPath(record.IdentityID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	credential, err := os.ReadFile(credentialPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err = s.runtimeIdentities.Enroll(string(credential), input.Session); err != nil {
-		t.Fatal(err)
-	}
 	connection, err := os.ReadFile(filepath.Join(dir, "connection.json"))
 	if err != nil {
 		t.Fatal(err)
@@ -187,6 +174,54 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 	httpServer := &http.Server{Handler: next.Handler(), ReadHeaderTimeout: 5 * time.Second}
 	go func() { _ = httpServer.Serve(listener) }()
 	defer httpServer.Close()
+	// Exercise the real management/session HTTP boundaries; do not issue the
+	// native identity or enroll its session by calling internal stores directly.
+	transport := &http.Transport{Proxy: nil}
+	defer transport.CloseIdleConnections()
+	client := &http.Client{Transport: transport, Timeout: 5 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	post := func(path, credential string, body any, status int) map[string]any {
+		t.Helper()
+		data, err := json.Marshal(body)
+		if err != nil {
+			t.Fatal("owned HTTP request encoding failed")
+		}
+		request, err := http.NewRequest(http.MethodPost, "http://"+listener.Addr().String()+path, bytes.NewReader(data))
+		if err != nil {
+			t.Fatal("owned HTTP request creation failed")
+		}
+		request.Header.Set("Content-Type", "application/json")
+		if credential != "" {
+			request.Header.Set("Authorization", "Bearer "+credential)
+		}
+		response, err := client.Do(request)
+		if err != nil {
+			t.Fatal("owned HTTP request failed")
+		}
+		defer response.Body.Close()
+		raw, err := io.ReadAll(io.LimitReader(response.Body, 65537))
+		var value map[string]any
+		if err != nil || response.StatusCode != status || len(raw) > 65536 || json.Unmarshal(raw, &value) != nil {
+			t.Fatal("owned HTTP response invalid", path, response.StatusCode)
+		}
+		return value
+	}
+	paired := post("/v1/pair", "", map[string]any{"code": testPairingCode}, 200)
+	issued := post("/v1/runtime-identities", paired["session"].(string), runtimeidentity.CreateRequest{
+		SchemaVersion: "local-runtime-identity-create/v3", InstanceID: instance, GrantID: baseline.GrantID,
+		ExpectedGrantRevision: revision, ActorID: "owned-integration-operator", SessionTTLSeconds: 300,
+		NativeSkillPolicy: &runtimeidentity.NativeSkillPolicy{Mode: "required", RuntimeArtifactSHA256: input.Artifact}}, 201)
+	if issued["schema_version"] != "local-runtime-identity-issued/v3" || issued["identity"].(map[string]any)["runtime_state"] != "unverified" {
+		t.Fatal("native issuance overstated runtime status")
+	}
+	credentialPath := issued["credential_path"].(string)
+	credential, err := os.ReadFile(credentialPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	enrolled := post("/v1/runtime-sessions", string(credential), map[string]any{"schema_version": "local-runtime-session-enroll/v1", "session_id": input.Session}, 200)
+	if enrolled["schema_version"] != "local-runtime-session-enrolled/v3" || enrolled["runtime_state"] != "unverified" {
+		t.Fatal("native enrollment overstated runtime status")
+	}
 	write("ready.json", map[string]any{"endpoint": "http://" + listener.Addr().String(), "credential_path": credentialPath, "state_dir": st.Dir, "subject": map[string]string{"platform": "hermes", "instance_id": instance, "agent_id": agent, "session_id": input.Session}, "installs": mounts})
 	// Private, fixture-only operator controls. Nothing is mounted into the
 	// sandbox, and no route or production approval path is added.
@@ -254,5 +289,5 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 	if err != nil || len(chain) == 0 || receipt.Verify(chain, s.d.Key.Public()) != nil {
 		t.Fatal("actual signed receipt chain missing or invalid", err)
 	}
-	write("authority-result.json", map[string]any{"signed_chain_verified": true, "receipt_count": len(chain), "receipts": chain, "revocations": controls})
+	write("authority-result.json", map[string]any{"signed_chain_verified": true, "receipt_count": len(chain), "receipts": chain, "revocations": controls, "management_http_issuance": true, "session_http_enrollment": true})
 }

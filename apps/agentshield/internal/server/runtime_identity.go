@@ -192,6 +192,10 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 		if !runtimeIdentityResponseReady(w, r) {
 			return
 		}
+		if req.NativeSkillPolicy != nil && !s.nativeIdentityCreationReady() {
+			writeJSON(w, 503, map[string]string{"error": "native_skill_runtime_unavailable"})
+			return
+		}
 		record, err := s.runtimeIdentities.Create(req)
 		if err != nil {
 			runtimeIdentityError(w, err)

@@ -134,3 +134,7 @@ DGX Spark 接入采用固定宿主进程的 Unix `SOCK_SEQPACKET` 元数据通�
 实际 OpenShell 0.0.83 探针确认根文件系统可写，而 Hermes 代码/解释器为 root 拥有且非 root 进程无法写入；进程实际具有 NoNewPrivs 和零 effective/permitted/ambient capabilities。按 [native-runtime-image-profile/v1](../../packages/contracts/native-runtime-image-profile.v1.md) 显式支持受保护镜像文件核验，保留旧挂载 profile。宿主通道可在本次拥有的容器临时目录通过受核验 root/directory fd 建立，客户端额外核对响应的跨 PID namespace SCM_CREDENTIALS；无需放宽现有业务挂载合同。限定写入本次沙箱私有临时通道目录及本实例 socket，不修改宿主业务文件或其他容器，不引入提权、mount 操作或内核监控。
 
 OPT-08 D2i：按 [native-decision-relay/v1](../../packages/contracts/native-decision-relay.v1.md)，显式可信启动器可以通过已认证的双向 Unix 通道转交现有 `/v1/decide` 请求，避免为 OpenShell 额外开放宿主网络。固定运行身份凭据仅在宿主持有，模型不能指定端点或凭据；主体与实际进程逐次核验，Go 仍必须唯一绑定已 Prepare 的调用。只返回原裁决 action/receipt_id，任何失败不执行、不重试、不伪造回执；原生命周期与 HTTP 新身份创建门禁不变。
+
+### D3a：显式在线服务的原生身份管理接入
+
+在 D2i/D2j 的实际运行接线与权限生命周期联验之后，按 [native-runtime-enrollment/v1](../../packages/contracts/native-runtime-enrollment.v1.md)开放已定义的创建 v3。此处管理签发用于固定批准基线和制品要求，不要求尚未启动的进程先提供伪造的运行事实。只有显式 native-host 服务、完整绑定依赖和有效私有连接配置可签发；响应仍为 unverified。实际进程不存在、未登记、失效或没有 Prepare 的调用不能执行。旧插件不获得 v3 支持，旧身份不自动迁移，日常业务启动器与业务验收仍须另行完成。

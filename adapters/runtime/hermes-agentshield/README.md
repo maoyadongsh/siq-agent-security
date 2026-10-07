@@ -95,7 +95,7 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 
 新配置可引用由本机管理 API 发行的独立实例身份：`runtime_identity_id`、固定 `agent_id` 和 `token_path`。凭据只在本机文件保存，发行响应提供路径，不返回秘密正文。`pre_tool_call` 使用 Hermes 的真实 `session_id` 调用 `/v1/runtime-sessions`；服务根据身份自动创建权限包络并固定已批准 Grant，适配器不自行生成或签发权限。没有原生 session 时不会用任务 ID 或默认值替代。
 
-原生调用级 Skill 管控正在 OPT-08 中实施。携带必需策略的新身份使用独立的 `local-runtime-session-enrolled/v3` 响应，含 `native_skill_policy`，运行状态仍为 `unverified`。本版旧路径插件只接受精确 v1 登记响应；遇到新版本或旧版本夹带原生策略时，在 block/warn/audit_only 中均拒绝后续工具决策。新身份的管理创建入口尚未开放，不能把此兼容保护视作原生 Skill 宿主接入已完成；进展见 [优化台账](../../../docs/development/optimization-progress-20261007.md)。
+原生调用级 Skill 管控正在 OPT-08 中实施。携带必需策略的新身份使用独立的 `local-runtime-session-enrolled/v3` 响应，含 `native_skill_policy`，运行状态仍为 `unverified`。本版旧路径插件只接受精确 v1 登记响应；遇到新版本或旧版本夹带原生策略时，在 block/warn/audit_only 中均拒绝后续工具决策。D3a 已按 [原生身份管理接入](../../../packages/contracts/native-runtime-enrollment.v1.md)限定开放创建 v3：必须显式启用并完成在线宿主接线，仍需管理会话和已批准基线；签发本身不证明运行保护。本插件不能用于该原生身份，必须通过受保护原生运行路径接入；日常业务尚未验收，进展见 [优化台账](../../../docs/development/optimization-progress-20261007.md)。
 
 同目录的 `native_channel.py` 是正在接入的 Linux 薄元数据通道，使用固定进程句柄及逐包内核凭据，不持有管理密钥，不负责授权。它尚未由本插件导入或安装。`host_runtime.py` 在必需启动后端核验之上检查实际进程、代码与只读挂载，已完成 [D2f 离线联验](../../../docs/development/optimization-opt08-runtime-guard-validation-20261007.md)；认证发布与在线参数绑定已在 [D2g](../../../docs/development/optimization-opt08-online-validation-20261007.md) 接线，日常 OpenShell 仍未完成；不能将受控 Docker 探针称作 OpenShell 业务验收。
 
