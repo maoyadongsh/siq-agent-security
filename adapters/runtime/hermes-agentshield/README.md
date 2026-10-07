@@ -61,7 +61,7 @@ siq-agent-security adapter uninstall hermes --instance <返回的实例ID>
 
 ## 已知限制
 
-优化分支中的 `native_channel.py` 和 `native_source.py` 是待接入的原生宿主组件，现有插件安装器不会自动安装或启用它们。文件快照可以核验实际读取及缓存来源，尚未接入 Hermes 的普通/插件/缓存加载和最终工具分发；组件测试不代表日常 Skill 权限闭环已启用。范围与验证见 [OPT-08 D2c1](../../../docs/development/optimization-opt08-source-validation-20261007.md)。
+优化分支中的 `native_channel.py`、`native_source.py`、`native_dispatch.py` 与 `host_runtime.py` 用于原生宿主接入，现有插件安装器不会自动安装或启用它们。固定镜像补丁已接入普通/插件/缓存读取与最终工具分发；实际安装解析、真实进程和只读挂载分别完成组件验证。认证宿主桥接、OpenShell 和日常业务尚未连通，不能表述为产品权限闭环已验收。进展见 [OPT-08 台账](../../../docs/development/optimization-progress-20261007.md)。
 
 - L1 安装门禁：Hermes 无装前钩子；用 `siq-agent-security admit <src>` 后再 `hermes skills install`，或让 `siq-agent-security serve` 周期盘点 `~/.hermes/skills` 标出未准入 Skill。
 - `agent_id` 默认取 `HERMES_PROFILE` 或 `default`，需与 grant 的 `subject.id` 一致。
@@ -97,7 +97,7 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 
 原生调用级 Skill 管控正在 OPT-08 中实施。携带必需策略的新身份使用独立的 `local-runtime-session-enrolled/v3` 响应，含 `native_skill_policy`，运行状态仍为 `unverified`。本版旧路径插件只接受精确 v1 登记响应；遇到新版本或旧版本夹带原生策略时，在 block/warn/audit_only 中均拒绝后续工具决策。新身份的管理创建入口尚未开放，不能把此兼容保护视作原生 Skill 宿主接入已完成；进展见 [优化台账](../../../docs/development/optimization-progress-20261007.md)。
 
-同目录的 `native_channel.py` 是正在接入的 Linux 薄元数据通道，使用固定进程句柄及逐包内核凭据，不持有管理密钥，不负责授权。它尚未由本插件导入或安装；真实宿主、只读挂载、加载/调用事件及日常接入仍未完成。组件与离线容器证据见 [D2b 验证](../../../docs/development/optimization-opt08-channel-validation-20261007.md)，不能将离线 Python 探针称作 Hermes/OpenShell 业务验收。
+同目录的 `native_channel.py` 是正在接入的 Linux 薄元数据通道，使用固定进程句柄及逐包内核凭据，不持有管理密钥，不负责授权。它尚未由本插件导入或安装。`host_runtime.py` 在必需启动后端核验之上检查实际进程、代码与只读挂载，已完成 [D2f 离线联验](../../../docs/development/optimization-opt08-runtime-guard-validation-20261007.md)；认证应用桥接和日常接入仍未完成，不能将受控 Docker 探针称作 OpenShell 业务验收。
 
 如果用户在 SIQ 隐私设置启用独立原文仓，并为该会话对应任务明确创建唯一的参数或输出 Grant，已管理插件会调用运行时身份专用的 `/v1/raw-task-content/native-captures`。pre hook 仅在工具获准后提交最终参数；post hook 还须以真实 tool_call_id 关联同一允许裁决，宿主为阻断调用触发的 post hook 不采集阻断文本。适配器不持有 task_id、原文 Grant、签名许可或管理凭据。嵌套 JSON 展开为 JSON Pointer 字段，服务端继续整项排除 secret/凭据键和值。不可表示、超限、未授权、重叠授权、不可达或仓异常会放弃本次辅助采集，不改变工具裁决和结果；请求本机等待上限 250ms。该功能默认关闭，也不适用于产品运行自检和旧全局决策凭据。
 

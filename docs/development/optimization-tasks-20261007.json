@@ -144,14 +144,17 @@
         "docs/development/optimization-opt08-host-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/native-host-bridge.json",
         "docs/development/optimization-opt08-install-source-validation-20261007.md",
-        "docs/development/evidence/optimization-20261007/native-install-source.json"
+        "docs/development/evidence/optimization-20261007/native-install-source.json",
+        "docs/development/optimization-opt08-runtime-guard-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-runtime-guard.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
         "D2c1 文件快照组件已验证：47 项定向、230 项 Hermes 适配器全套及 293 项相关合同通过；真实文件元数据可经 D2b 通道传递。组件未接入原生普通/插件/缓存读取，不代表加载或最终调用管控已启用；固定镜像源代码调查明确了缓存、预处理和最终分发接入位置。 此为 D2c1 当批边界，原生函数接线已由后续 D2c2 增量完成。",
         "D2c2 固定镜像原生普通/插件/缓存读取、任务作用域、最终分发和不支持直达路由拒绝已实现；真实 Hermes 函数离线探针 21 项通过，但 Authority 回调为合成夹具，未连接真实 Go 裁决、OpenShell 或业务 API。全适配器首轮 252 通过、1 失败；修复任务结束后的锁阻塞，受影响套件 24 项通过，不重复无关全量。完整可信启动器与在线桥接、同候选日常业务验收仍未完成；新身份 HTTP 创建保持关闭。",
         "D2d 宿主生命周期到 v2 SEC/原生调用 Store/真实 receipt.Engine 的应用桥接已完成组件验证；不同 Skill 的祖先交集、独立任务正向及跨重启调用拒绝通过。一轮 Go 全量 45 包通过、10 包无测试；最终增量相关三包、skillcontext race、vet 与四目标构建通过。运行进程与安装映射仍为夹具回调，Python→认证传输→daemon 尚未连成产品路径；新身份 HTTP 创建保持关闭。",
-        "D2e 已实现实际签名安装/运行授权/真实文件来源解析，发现并修复 Hermes 安装归属硬链接对被单链接读取器拒绝的问题。默认仍单链接；受管模式要求实际安装归属和必需挂载验证。真实 Python 读取器与 Go 安装解析同步联验通过；实际进程和容器挂载回调仍待可信启动器实现，尚未连接产品认证传输与在线裁决。"
+        "D2e 已实现实际签名安装/运行授权/真实文件来源解析，发现并修复 Hermes 安装归属硬链接对被单链接读取器拒绝的问题。默认仍单链接；受管模式要求实际安装归属和必需挂载验证。真实 Python 读取器与 Go 安装解析同步联验通过；实际进程和容器挂载回调仍待可信启动器实现，尚未连接产品认证传输与在线裁决。",
+        "D2f 已实现后端中立的实际进程/代码/只读挂载核验；固定镜像独立 Docker 后端与真实内核凭据通道联验 21 项通过。仅核验本次拥有的离线容器，不是 OpenShell 后端接入或真实业务验收；认证宿主发布、Go serve 接线与日常入口仍待完成。新身份创建保持关闭，主任务完成数仍为 9/16。"
       ]
     },
     {

@@ -47,6 +47,8 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 
 [D2e 实际安装来源](optimization-opt08-install-source-validation-20261007.md)已接入真实导入、批准、安装和运行绑定验证；真实 Python 读取器同步等待 Go 来源校验后返回正文。联验发现并修复了安装归属硬链接对与默认单链接读取限制的冲突：默认保持拒绝，受管模式显式启用且核对签名归属，额外链接仍拒绝。259 项 Hermes 适配器、Go 全量 45 包、两包 race、vet、四目标构建及固定镜像 21 项探针通过。实际进程/只读挂载仍需可信启动器，在线产品入口未启用；OPT-08 和 9/16 完成数保持不变。
 
+[D2f 实际运行核验](optimization-opt08-runtime-guard-validation-20261007.md)已补齐真实进程、代码摘要和内核只读挂载检查，与真实凭据通道联验 21 项通过；错误启动参数、解释器/制品、文件变化、写挂载和覆盖子挂载均拒绝。仅运行本批定向探针与 Ruff，未重复未改动的 Go/Hermes 全套。Docker 后端仅为离线组件验证，OpenShell 启动归属、认证发布、serve 与日常业务仍待接入；OPT-08 状态与 9/16 完成数不变。
+
 ## 边界
 
 既有 SEC-F01–F04/F07/F09 不因本方案自动插入；与实际修改相关时按原合同处理。RES-01 与 SEC-F10 的 Host Sensor 方向关联，但不自动纳入风险评分或强制执行实现。Windows/macOS 原生验收环境需在相应任务启动时核实，不以 Linux 构建替代。

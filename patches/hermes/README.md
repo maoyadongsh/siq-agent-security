@@ -17,3 +17,5 @@ python patches/hermes/build_native_overlay.py \
 上游代码遵循 [MIT License](LICENSE)；此目录的原生片段修改由 SIQ 标识并保留归属。完整容器及其依赖的再分发仍需独立许可证/SBOM 核对。
 
 现有 Hermes 安装使用目标与私密事务归属文件的硬链接对。新 profile 的可信 bootstrap 只有在接入 [实际安装来源解析](../../packages/contracts/native-install-source.v1.md)及实际只读挂载验证后，才可显式传入 `managed_installations=True`；默认不开放此模式，三条及以上链接始终拒绝。
+
+实际进程核验组件及离线探针见 [D2f 验证](../../docs/development/optimization-opt08-runtime-guard-validation-20261007.md)。`run_runtime_guard_probe.py --output /absolute/result.json` 使用固定镜像和本次私有容器核对进程、代码、真实只读挂载与凭据通道；不调用模型，也不代表 OpenShell 日常后端已经接入。
