@@ -2661,3 +2661,8 @@ WorkBuddy Windows 新文件及回滚恢复的排他发布同样使用已验证�
 这是当前升级/回退工作流的数据能力门禁，不是永久提升存储 marker。操作者必须使用当前任务绑定的兼容程序执行回退；手工运行旧 EXE 无此新预检，会在读取 v2 pending 或验证回执时失败关闭。不得删除 pending、回执或回放整个旧状态规避门禁。回退到 reader/writer 3 仅适用于尚无 v2 记录的状态；需要修复时使用支持这些记录的已签名发行。
 
 实例权限草稿的首次创建入口在原 Grant publication 锁与 commit 锁内区分已完成事务和未发布事务。已完成的同一初始 Grant 必须返回修订冲突，由 HTTP 重新验证签名、来源、实例及策略后以 200/reused=true 读回；只有第一次成功发布返回 201/reused=false。通用 CommitGrant 的显式幂等恢复语义保留，未完成事务不靠复用响应掩盖；审计、签名及 Grant 版本不改写。该细化修正已复现的 Windows 并发多次 201，不产生新权限。
+
+
+## OPT-08 原生调用上下文增量（2026-10-07）
+
+按 ADR-056 新增独立 `skill-execution-context/v2`，与既有 v1 同时保留。A 阶段仅实现结构/签名文档，agent_authority 必须为与 Skill authority 不同的精确 Grant 引用；subject 的 Agent ID 由 instance ID 派生且 task 必填，loader 保留宿主复核的原生加载与制品摘要，父上下文引用绑定签名且不可自引用。v2 最长租约一小时，签名文档不授予执行权限；持久化、调用绑定、实时双 Grant/祖先交集与业务加载接入须独立完成后才可启用。不能将 v2 数据类型存在表述为自动 Skill 管控已完成。
