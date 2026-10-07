@@ -94,3 +94,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3m 原生请求规划与资产](evidence/optimization-20261007/native-request-assets.json)已接入显式镜像选择、计划/资产v2、配置摘要绑定、无旧relay的原生策略及恢复版本分离。原有相关86项、新部署/策略10项、完整恢复41项、启动恢复与最终原生资产36项通过（含首轮14项及新增1项）。保留API解释器和安装来源校验，修复测试工具环境收集问题。核对确认旧mount计划本就无配置bind，纠正D3l推测；未启动沙箱/模型。身份签发、监管启动、网关PID/endpoint与真实业务仍待接通，业务源待必要依赖审查，OPT-08与9/16不变。
 
 [D3n 原生业务入口接线](evidence/optimization-20261007/native-request-wiring.json)已连通签发、v6监管、无旧relay的forward、实际宿主PID定位、固定镜像网关、v2端点与原claim builder/私有配置selector。相关签发监管恢复53项、进程/旧forward32项、旧业务链路111项、新旧selector62项、最终原生专项63项通过（分批重叠，不累加）。旧安装包缺少access_scope与新venv硬链接问题在隔离测试环境解决，保留来源校验，未修改日常API环境。自包含进程观察器/测试及合同报告提交业务4a25b38；其余业务增量待必要依赖审查。实际批准业务Skill镜像、私有部署目录及真实模型业务/生命周期尚未验收，OPT-08和9/16保持。
+
+[D3o 业务Skill镜像与实际安装](evidence/optimization-20261007/native-business-skills.json)已加入两项真实业务Skill、固定清单导出、原生配置v2与受保护镜像v2；最终72项定向和17项相关API回归通过。实际镜像6项、启动交接9项检查通过，真实Hermes发现两项业务Skill，同时如实记录skill_manage可见但未获授权。实际serve --native-host/独立宿主通过公开管理API完成两项批准安装、独立Agent基线和制品绑定，8项检查通过；重启同一状态后业务客户端签发/登记/取消子身份，未登记运行拒绝，8项检查通过。未调用模型，未验证真实读写效果；私有状态保留、日常环境未修改。业务依赖闭包与真实业务生命周期仍待完成，9/16不变。

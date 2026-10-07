@@ -1,0 +1,189 @@
+{
+  "schema_version": "siq.optimization.native-business-skills.v1",
+  "task": "OPT-08",
+  "batch": "D3o",
+  "status": "implementing",
+  "candidate_sources_sha256": {
+    "agents/hermes/skills/siq-company-evidence/SKILL.md": "9f594a1bcba6cb9ce50f5c3d1960a1310444511f6a3d882c42a2b1ba847fed37",
+    "agents/hermes/skills/siq-research-draft/SKILL.md": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+    "scripts/openshell/native_business_skill_bundle.py": "4d1b113dd97fb9442cb5fb9c2e014a9119a77bfb6256ee9a6d685dce8c9c0be2",
+    "scripts/openshell/tests/test_native_business_skill_bundle.py": "107a0b15551fed606fe2de28c776fdd3e7d25203190aa259ac06c581642dfab4",
+    "scripts/openshell/build_native_request_image.py": "abcdaccfe8089ceae4089b721bae0b1b7931fe04a2d3d6e4e185473a81fc6336",
+    "scripts/openshell/build_native_runtime_config.py": "687470928a434f3abab8f28b0a7754d1d1b72e17b456a144dbbd29ac4660d112",
+    "infra/openshell/sandbox/qwen38_candidate/native_runtime.py": "61a7ebbf15667cb6274fca0b5a94bfd58645f24312caa2bc2798d6195649badc",
+    "scripts/openshell/tests/test_build_native_request_image.py": "6131860186075bfbe84e3a6c1de56d6ee81d0bb96ea44d5d0e5ebb7391e3ebf2",
+    "scripts/openshell/tests/test_build_native_runtime_config.py": "36837b09887ddeca49445b045a50a897e7af5ffcfe792a1551bc4ead9b2acadc",
+    "docs/architecture/native-skill-bundle-v1.md": "5eb0fa86e0c839573b386afc2f11a31139336218539f4ab4676cb2a917949f24",
+    "docs/architecture/native-skill-supervisor-integration-20261007.md": "48a63563cffab134d1eb03276a7484566820ee965a25a8bad4e86c1190f99049",
+    "docs/reports/native-business-skills-progress-20261007.md": "c1de5c3e744db8f1f1faa855e5f6028cac3cb35569c40a557f52a43f0a9f2155"
+  },
+  "image": {
+    "schema_version": "siq.openshell.native-request-image.v2",
+    "image_id": "sha256:b66855cfa36bb053c8ba9e00639e058a855e6da344615f0d27e0c4a61abbf8d3",
+    "artifact_sha256": "a9257b1f6375a5dcd41972f70938432d62ce2d8cf8ec73d0134d895ed8fcf350",
+    "skill_bundle_sha256": "f1ba92f63565a908a7d65dbb0d1581351a1bc070cd7fa12beb28acd2dd08b6e1",
+    "skills": [
+      {
+        "files": {
+          "SKILL.md": "9f594a1bcba6cb9ce50f5c3d1960a1310444511f6a3d882c42a2b1ba847fed37"
+        },
+        "name": "siq-company-evidence"
+      },
+      {
+        "files": {
+          "SKILL.md": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12"
+        },
+        "name": "siq-research-draft"
+      }
+    ],
+    "checks": {
+      "legacy_environment_rejected": true,
+      "native_config": true,
+      "non_root": true,
+      "protected_ancestors": true,
+      "protected_files": true,
+      "skill_inventory": true
+    },
+    "runtime_state": "unverified",
+    "status": "offline_verified"
+  },
+  "bootstrap_checks": {
+    "api_key_not_in_argv": true,
+    "awaiting_host_only": true,
+    "fixed_gateway_argv": true,
+    "http_not_open_before_host": true,
+    "owned_container_removed": true,
+    "owned_gateway_stopped": true,
+    "private_channel_created": true,
+    "relaunch_rejected": true,
+    "uploaded_key_removed": true
+  },
+  "discovered_business_skills": [
+    "siq-company-evidence",
+    "siq-research-draft"
+  ],
+  "skill_manage_catalogued": true,
+  "skill_manage_execution_verified": false,
+  "authority_stage": {
+    "schema_version": "siq.native-business-authority-stage/v1",
+    "checks": {
+      "public_serve_native_host": true,
+      "public_management_pairing": true,
+      "private_profile_discovery": true,
+      "two_signed_business_installs": true,
+      "protected_image_bytes_match": true,
+      "separate_agent_baseline": true,
+      "identity_pinned_to_artifact": true,
+      "owned_processes_stopped": true
+    },
+    "model_calls": 0,
+    "runtime_state": "unverified",
+    "production_modified": false,
+    "skills": [
+      {
+        "name": "siq-company-evidence",
+        "source_sha256": "9f594a1bcba6cb9ce50f5c3d1960a1310444511f6a3d882c42a2b1ba847fed37",
+        "grant_id": "grt-si-964a0843d93825a072afcbdc3a6720f54aff05e62b9d8da430f1b8b7250f61cb",
+        "install_id": "sin-c06946a2386371262a7e265047fa273b527846b562e707a9b3e5cb63870f9459",
+        "binding_id": "sab-ba28bf826163058a24e1ec4c920b6530a3c812c609948ac3fc822f57a2a3d8ab",
+        "installed_bytes_match": true,
+        "approved": true,
+        "write_enabled": false,
+        "runtime_state": "unverified"
+      },
+      {
+        "name": "siq-research-draft",
+        "source_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+        "grant_id": "grt-si-7cb6f533a473b10be9b2cb8781c58e8b82526a1addfdcb227d73a1e27d232154",
+        "install_id": "sin-7639ade6fea0051e2ba5c47764fd3aa85ed7db89a7d530769f374fe797340a2e",
+        "binding_id": "sab-3829b65e514b1a07a15d144c5597f385cb85296fe70eba492938df22cca6dd40",
+        "installed_bytes_match": true,
+        "approved": true,
+        "write_enabled": true,
+        "runtime_state": "unverified"
+      }
+    ],
+    "image_id": "sha256:b66855cfa36bb053c8ba9e00639e058a855e6da344615f0d27e0c4a61abbf8d3",
+    "artifact_sha256": "a9257b1f6375a5dcd41972f70938432d62ce2d8cf8ec73d0134d895ed8fcf350",
+    "binary_sha256": "af218c9e7dcc6474e8aeb51269670eb2a3ada454c409638336878da397093f2e",
+    "instance_id": "hi-6d6645b4f983872fd054409a83f1ffc4",
+    "process_exit_codes": [
+      0,
+      0
+    ]
+  },
+  "authority_restart": {
+    "schema_version": "siq.native-business-authority-restart/v1",
+    "checks": {
+      "signed_parent_survives_service_restart": true,
+      "approved_skill_grants_and_installed_bytes_preserved": true,
+      "real_business_client_child_issue_and_session_enroll": true,
+      "unregistered_native_runtime_cannot_decide": true,
+      "cancelled_child_rejected": true,
+      "original_parent_remains_active": true,
+      "private_business_profile_prepared": true,
+      "owned_processes_stopped": true
+    },
+    "model_calls": 0,
+    "runtime_state": "unverified",
+    "actual_tools_executed": false,
+    "request_issuer_expiry": "2026-10-07T14:12:37Z",
+    "process_exit_codes": [
+      0,
+      0
+    ]
+  },
+  "validation": {
+    "focused_bundle_config_image_passed": 72,
+    "related_api_assets_deployment_passed": 17,
+    "ruff": "passed",
+    "counts_not_cumulative": true
+  },
+  "local_harness_sha256": {
+    "stage-native-business-authority.py": "44189a8230b588fce977a0fbb0183d29350872f646de663d6a7c6492072d9e85",
+    "probe-native-business-authority-restart.py": "04f0c8144a1875f16918a9474078c43d36c9f9a360f9e05658161fe0a381ab72",
+    "native-business-skills-discovery.py": "a2a132f4f8d78aa18b32f541ace5c36442d77fb7e8caef5fa2cfc3b120439436"
+  },
+  "local_results_sha256": {
+    "native-business-skills-image-01/image.json": "4e5b493e554c9e0a3b75efec645aee368e341e61a1a94bf7c944230ca360fe6c",
+    "native-business-skills-bootstrap-01/result.json": "a1630a0d367f4d4f0393419d26d3ad7bc3b622e101d36a89cf127f7ce9d62e39",
+    "native-skills-discovery-result.json": "0d875440a298ac3580527454960b529ffea63991be39701ecd48e4c29d560370",
+    "native-business-skill-admissions.json": "1196610cc047db49b6b36c97b36c9e0194ed343112e53cfb0ff983f5b8bcc643",
+    "native-skills-assets-regression.log": "2c010b49fd0af2582039d5ab9e9fb9424cb73fb3febad2fc8e4514c299e75523"
+  },
+  "private_result_sha256": {
+    "stage": "008f271585b7c82a71856a5b8b88363d5153a3544e0a267d553ed5374b72eeea",
+    "restart": "b58cfd77b09b8723ae93f27d57335f24e86eec154d2ecc0d635b3850898c4a2a"
+  },
+  "failed_attempts": [
+    "Initial config compiler tests missed agent node in minimal fixture; fixed setdefault",
+    "One test incorrectly reduced legacy toolsets; fixed fixture",
+    "Catalog probe initially expected skill_manage absent; actual listing documented without claiming execution",
+    "First management staging refused nonempty uninitialized state; initialize first",
+    "Second staging refused missing signing identity with new native configuration; create initial identity before configuration",
+    "Third staging refused Skill Grant as native Agent baseline; use existing public instance-drafts endpoint instead"
+  ],
+  "business_report": "docs/reports/native-business-skills-progress-20261007.md",
+  "limits": [
+    "No real daily API/model business acceptance yet; zero model calls in this batch",
+    "No actual runtime read/write/skill_manage effect test on the new business Skills yet",
+    "Candidate state uses a private operator profile; original daily profile and API environment untouched",
+    "Request directory ancestors and fixed Supervisor Python environment require consistent native deployment",
+    "Business wiring still has preexisting untracked dependencies awaiting scoped review and delivery",
+    "Issuer permission is time bounded; revalidate before the next execution, never assume continued authority",
+    "Not third-party human approval or independent third-party verification"
+  ],
+  "overall_accepted_tasks": 9,
+  "overall_tasks": 16,
+  "business_commit": "ca0eb360022d1cfa78418dac2395e23a76aaaaae",
+  "business_committed_files": [
+    "agents/hermes/skills/siq-company-evidence/SKILL.md",
+    "agents/hermes/skills/siq-research-draft/SKILL.md",
+    "docs/architecture/native-skill-bundle-v1.md",
+    "docs/architecture/native-skill-supervisor-integration-20261007.md",
+    "docs/reports/native-business-skills-progress-20261007.md",
+    "scripts/openshell/native_business_skill_bundle.py",
+    "scripts/openshell/tests/test_native_business_skill_bundle.py"
+  ],
+  "full_business_wiring_committed": false
+}
