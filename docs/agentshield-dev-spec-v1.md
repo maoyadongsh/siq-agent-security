@@ -2718,3 +2718,5 @@ OPT-08 D3c：按 [native-session-namespace/v1](../packages/contracts/native-sess
 OPT-08 D3d：按 [native-gateway-entry/v1](../packages/contracts/native-gateway-entry.v1.md)，候选覆盖包新增固定 `hermes-gateway` 入口，先初始化原生通道，再在同一 PID 调用既有 gateway.run.main。拒绝旧插件环境混入，不接受任意模块/命令，ready 仍 unverified；宿主身份、业务授权、租约及真实业务验收独立保持。
 
 OPT-08 D3e：业务原生消费者按 [native-business-identity-client/v1](../packages/contracts/native-business-identity-client.v1.md) 严格校验现有版本化 HTTP 读回，不扩展 Go 管理授权。业务仓库独立客户端保管宿主凭据并支持父权限失效后的精确取消；专属联验输入/探针不是生产路由或业务授权来源。
+
+OPT-08 D3f：按 [native-host-loop/v1](../packages/contracts/native-host-loop.v1.md)，accept 空闲超时与已接受请求失败明确区分；宿主循环在固定业务租约内持续服务已有 DecisionRelay，停止/到期/真实 guard 失效后不转交允许响应。业务 Supervisor 仍负责业务授权、撤权触发和精确容器回收。
