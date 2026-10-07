@@ -362,6 +362,10 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 
 移植 `policy_compiler.compile_policy` 语义：能力表驱动（`BackendCapabilities`）、unknown 视为 unsupported、fs/process → `needs_generation=true`、网络 → 若 `dynamic_network_update=false` 也 `needs_generation`。Go 实现与 Python 对同一 DesiredPolicy 输出的 `artifact_hash` 必须一致（对等测试）。
 
+2026-10-07 OPT-07 增量按 `packages/contracts/desired-policy-update-semantics.v1.md`：省略/null 域不更新；空 filesystem 对象明确清空两条路径列表，空 process 对象是空字段补丁，空 network 列表明确清空网络许可。filesystem 未知字段、非字符串列表或非对象静态段必须拒绝，不静默丢弃。新增共享向量与历史向量分别验证，不改历史签名材料。静态差异仍只产生 generation 需求，不能通过网络部署升级成 effective。
+
+本地管理员 `/v1/openshell/apply` 是明确的网络替换命令，必须提供非 null 的 network 数组；缺少或 null 在后端访问前拒绝，`[]` 才表示明确清空。它不接收企业 DesiredPolicy 静态段，也不代替企业审批。CLI 仍要求显式 allow/binary；会话执行入口由可信 Grant 推导网络集合。
+
 ### 3.8 `internal/receipt` 与决策 API（规格，W1 余量）
 
 #### 3.8.1 HTTP
