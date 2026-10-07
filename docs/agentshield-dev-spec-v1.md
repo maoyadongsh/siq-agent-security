@@ -2704,3 +2704,5 @@ OPT-08 D2d 的宿主应用桥接按 [native-host-bridge/v1](../packages/contract
 OPT-08 D2g 按 [native-host-online/v1](../packages/contracts/native-host-online.v1.md) 增加显式 `serve --native-host` 与宿主专用元数据发布端点。只读取本状态目录内 0600 私有连接配置，通过固定 Unix socket 有界反查运行事实，独立凭据不赋予管理权限。真实 `/v1/decide` 在现有身份认证后对必需原生调用唯一 Bind，使用构造时固定的原生查询器，非 allow/异常关闭在途调用。旧入口和新身份创建门禁保持；组件联验不能代替实际启动器与业务验收。
 
 OPT-08 D2h 按 [native-runtime-image-profile/v1](../packages/contracts/native-runtime-image-profile.v1.md) 显式适配 OpenShell 根文件系统可写、代码由 root 保护的部署。原只读 bind profile 保持不变；镜像 profile 逐次核验实际进程、根拥有且不可被非 root 写入的祖先/代码/Skill 清单，固定镜像与后端归属。通道只在已验证进程目录 fd 内创建，客户端核对每包宿主 PID namespace 投影与 UID/GID；任何替换、凭据不符或核验失败均拒绝。组件探针须使用独立网关和独有沙箱，不改变日常业务网关或宣称业务验收完成。
+
+OPT-08 D2i：按 [native-decision-relay/v1](../packages/contracts/native-decision-relay.v1.md)，显式可信启动器可以通过已认证的双向 Unix 通道转交现有 `/v1/decide` 请求，避免为 OpenShell 额外开放宿主网络。固定运行身份凭据仅在宿主持有，模型不能指定端点或凭据；主体与实际进程逐次核验，Go 仍必须唯一绑定已 Prepare 的调用。只返回原裁决 action/receipt_id，任何失败不执行、不重试、不伪造回执；原生命周期与 HTTP 新身份创建门禁不变。
