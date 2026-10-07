@@ -190,7 +190,9 @@
         "docs/development/optimization-opt08-config-policy-delivery-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/native-business-delivery-config-policy-review.json",
         "docs/development/optimization-opt08-image-relay-delivery-validation-20261008.md",
-        "docs/development/evidence/optimization-20261007/native-business-delivery-image-relay-review.json"
+        "docs/development/evidence/optimization-20261007/native-business-delivery-image-relay-review.json",
+        "docs/development/optimization-opt08-api-authority-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-api-authority-review.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -221,7 +223,8 @@
         "D3v 三批运行依赖提交业务7c410f6/98fd1cc/7eecae8，隔离验证分别98/34/82项通过，Ruff通过；路由消费者13项另计。修复NaN接受及namespace中overflow UID误当root，显式摘要绑定匿名私有执行副本。实际受限systemd三项检查、桥启动/401/精确停止通过，模型未重启；memfd首轮失败保留。原109模块闭包尚有54个未跟踪模块，完整交付/最终同候选业务回归未完成，历史候选证据不改写。",
         "D3w–D3y 三批必要业务依赖交付d40ad53/f50d3b6/f2e8006，隔离38/62/26项与Ruff通过，工作树消费者1/121项另计。修复资源参数覆盖及异常租约phase跳过在线撤权，错误owner记录保留；固定上游两份补丁零fuzz重放并与候选源码摘要一致。未调用实际模型/沙箱或改动真实授权；原109模块闭包仍42个未跟踪，完整交付和最终同候选业务回归待完成。",
         "业务配置／数据授权／策略四批交付e8a4acd/2d96fe8/50c1b83/0fd5d5a；隔离35通过1跳过、81通过、76通过、181通过，Ruff通过，最终加强CLI负向单项通过（重叠）。修复出网分类畸形字段TypeError和负向测试提前失败假通过；补齐公开profile资产并交付原未满足的policy消费者。依赖均取已提交版本，最终文件摘要与提交核对；未调用模型或改动真实服务。原109模块仍39个未跟踪，完整交付／最终同候选验收继续，OPT-08与9/16不变。",
-        "原生镜像与relay兼容依赖交付业务bae0a50/4ac075a，隔离88/22项与Ruff通过；隔离源码实际复核既有业务镜像六项保护检查和四份资产摘要，通过且无模型调用。修复离线检查空集合误通过、relay描述符冲突及check-only虚报非特权。原109模块仍36个未跟踪；基镜像资产、API/监管完整交付与最终候选验收继续，OPT-08与9/16保持。"
+        "原生镜像与relay兼容依赖交付业务bae0a50/4ac075a，隔离88/22项与Ruff通过；隔离源码实际复核既有业务镜像六项保护检查和四份资产摘要，通过且无模型调用。修复离线检查空集合误通过、relay描述符冲突及check-only虚报非特权。原109模块仍36个未跟踪；基镜像资产、API/监管完整交付与最终候选验收继续，OPT-08与9/16保持。",
+        "业务API授权／执行租约及连续迁移依赖交付5be2a77/c8ee0df，隔离迁移24项、API64项及Ruff通过。修复ORM缓存导致账户／grant／执行租约旧状态被复用，以及快照到期瞬间误接受，11项旧负向已复现。真实临时PostgreSQL验证迁移回放与审计失败回滚，容器已清理；未访问日常业务库或模型。主链交付至021，工作区022–024保留；Supervisor集成完整用例留待后批。原109模块仍34个未跟踪，完整交付及最终同候选验收继续，OPT-08与9/16不变。"
       ]
     },
     {

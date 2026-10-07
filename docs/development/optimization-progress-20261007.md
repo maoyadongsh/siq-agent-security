@@ -118,3 +118,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 
 
 [原生镜像与relay兼容依赖交付](optimization-opt08-image-relay-delivery-validation-20261008.md)：原生镜像与relay兼容依赖交付业务bae0a50/4ac075a，隔离88/22项与Ruff通过；隔离源码实际复核既有业务镜像六项保护检查和四份资产摘要，通过且无模型调用。修复离线检查空集合误通过、relay描述符冲突及check-only虚报非特权。原109模块仍36个未跟踪；基镜像资产、API/监管完整交付与最终候选验收继续，OPT-08与9/16保持。
+
+[API授权与迁移交付](optimization-opt08-api-authority-delivery-validation-20261008.md)：业务API授权／执行租约及连续迁移依赖交付5be2a77/c8ee0df，隔离迁移24项、API64项及Ruff通过。修复ORM缓存导致账户／grant／执行租约旧状态被复用，以及快照到期瞬间误接受，11项旧负向已复现。真实临时PostgreSQL验证迁移回放与审计失败回滚，容器已清理；未访问日常业务库或模型。主链交付至021，工作区022–024保留；Supervisor集成完整用例留待后批。原109模块仍34个未跟踪，完整交付及最终同候选验收继续，OPT-08与9/16不变。
