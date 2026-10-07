@@ -2724,3 +2724,5 @@ OPT-08 D3f：按 [native-host-loop/v1](../packages/contracts/native-host-loop.v1
 OPT-08 D3g：按 [native-openshell-backend/v1](../packages/contracts/native-openshell-backend.v1.md)，正式宿主组件逐次核对本机固定 Docker 端点、完整容器/镜像/OpenShell 归属及真实 cgroup/PID namespace；固定只读命令、有界等待，失败永久失效。不能继续依赖测试脚本回调作为日常后端实现，亦不以该组件代替业务授权和原生 RuntimeGuard。
 
 OPT-08 D3h：按 [native-host-session/v1](../packages/contracts/native-host-session.v1.md)，HostSession 统一管理真实后端/guard、业务监管者 pidfd、固定整体期限与最多90秒的业务心跳边界、共享Verifier登记及宿主循环。续期仅来自原可信监管者已完成的业务授权复查，过期不能恢复；关闭失败不得提前释放在途线程资源。进程内编排不是跨进程业务接入的完成证明。
+
+OPT-08 D3i：按 [native-host-control/v1](../packages/contracts/native-host-control.v1.md)，独立私有Unix控制通道只向可信业务监管器开放HostSession生命周期；内核连接/逐包凭据共同派生监管者PID，外层控制凭据与内层运行身份凭据独立且不进入沙箱。固定端点和资源上限，原handle不重启，续期不接管；传输与进程内组件通过仍不等于日常模型业务验收。
