@@ -54,10 +54,13 @@ def validators(contracts: Path) -> dict:
 
 def verify(report: Path, contracts: Path) -> dict:
     document = json.loads(report.read_text())
-    require(document["schema_version"] == "optimization-native-working-repetitions/v1", "schema_unsupported")
+    require(document["schema_version"] in {
+        "optimization-native-working-repetitions/v1", "optimization-native-business-evidence/v1",
+    }, "schema_unsupported")
     verification = document["verification"]
-    raw = artifact(report.parent, document["artifacts"]["receipts"])
-    contexts = json.loads(artifact(report.parent, document["artifacts"]["contexts"]))
+    payloads = {name: artifact(report.parent, entry) for name, entry in document["artifacts"].items()}
+    raw = payloads["receipts"]
+    contexts = json.loads(payloads["contexts"])
     key = Ed25519PublicKey.from_public_bytes(
         base64.b64decode(verification["receipts"]["public_key_base64"], validate=True)
     )

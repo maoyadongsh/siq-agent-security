@@ -1,0 +1,156 @@
+{
+  "date": "2026-10-08",
+  "business_head": "2a70587ab13a33bdaba9b5fa299b4ac8be594a23",
+  "security_source_commit": "78eabcccab0ebdbfe3489b8caf2b246a4f0a10ff",
+  "source_state": "working_tree_with_explicit_uncommitted_inputs",
+  "source_files": 1873,
+  "source_archive_sha256": "8437caadfa769db418d30824a922b936b4446e2dff830705e04d2dcfe9072b14",
+  "source_manifest_sha256": "6d44182dbe25b74ea47deceff2595b210c812579c8331935a34816d3dd33a1e0",
+  "build": {
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_sha256": "db2b7a522f6fe6789c3246b3ef5a4ce7ce32997747cd5153ab0c9f61ef03d7e8",
+    "skill_bundle_sha256": "f1ba92f63565a908a7d65dbb0d1581351a1bc070cd7fa12beb28acd2dd08b6e1",
+    "snapshot_manifest_sha256": "077f7996f9a50ce2f1f527f9376cf774496b502341232aa9b3690c0487080b3d",
+    "checks": {
+      "committed_overlay_and_pinned_hermes": true,
+      "committed_skill_bundle": true,
+      "fresh_native_snapshot": true,
+      "fixed_base_native_image_verified": true,
+      "active_image_records_and_profile_unchanged": true
+    },
+    "image_checks": {
+      "protected_files": true,
+      "protected_ancestors": true,
+      "native_config": true,
+      "legacy_environment_rejected": true,
+      "non_root": true,
+      "skill_inventory": true
+    }
+  },
+  "runtime": {
+    "schema_version": "working-candidate-installed-runtime/v1",
+    "python": "3.13.12",
+    "python_executable_sha256": "2b0644c7d784beddd62218cfce0d8137fd166f74d7d51c2bb660928e7f8a583a",
+    "distribution": "siq-openshell-control",
+    "version": "0.4.0",
+    "source_files_sha256": {
+      "siq_openshell_control/__init__.py": "01f1af7ebf9624ae87aedc68722dfb96a2921ef8dc6bb8f8d049e96c832b4203",
+      "siq_openshell_control/contract.py": "96b19b2dc0ea29e722fff3000f45bed072fc12aefddee9d349afae9c157dc883",
+      "siq_openshell_control/immutable_path_registry.py": "df882f8606421f425561066a7e467b8c127627ca6995d2e425f85e0dc00aa96f",
+      "siq_openshell_control/pool_concurrency.py": "45efe3b401cbfd3b09ea018fa3e6de50e63f864827efe1d227c1c4da9066e679",
+      "siq_openshell_control/pool_registry.py": "8fe4435bc7e7ecea8ce1f86c32cc0c8643de54f02c4c655b2840646638bba1ac",
+      "siq_openshell_control/state.py": "f3bc8682e2c565a235a4362f4a06a1d431d7220689817a7ca670647ff9095826"
+    },
+    "dependencies": {
+      "fastapi": "0.136.1",
+      "uvicorn": "0.46.0",
+      "sqlmodel": "0.0.38",
+      "sqlalchemy": "2.0.49",
+      "pydantic": "2.13.4",
+      "httpx": "0.28.1",
+      "psycopg": "3.3.4"
+    }
+  },
+  "schema_version": "optimization-native-business-evidence/v1",
+  "verification": {
+    "receipts": {
+      "count": 23,
+      "head_hash": "274b297a8d6a2aab3c64ede3fcca433999bfa031ceae425e4c76b6232a5ee925",
+      "public_key_base64": "frRO3gRqqc3I/rijvyVf9DMkYSIaNunT2QQzxTdCrRI="
+    },
+    "signed_context_count": 11,
+    "cases": {
+      "v828-writer-control": {
+        "receipt_hash": "3c74d16800b0571902c6ebc9728688f0dc44df3dd1e3e5c7066a484ced6bcd3d",
+        "tool": "write_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "resource_digest": "4c470b3888c41eec20f84673ec607f9e0aa2cb6b914a09da157c690692d5953a",
+        "request_run_sha256": "fe23dc4076e09521b2d2e876d3e144967457dcb473d74b88c5c9805e8a4605e8"
+      },
+      "v829-pre-drift-read": {
+        "receipt_hash": "274b297a8d6a2aab3c64ede3fcca433999bfa031ceae425e4c76b6232a5ee925",
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "c72458175b3f1a970d676aa7ef2ddd62e5aa4070d7103d4c6df08de90aa88690"
+      }
+    }
+  },
+  "independent_observation": {
+    "schema_version": "native-installation-drift-independent-verification/v1",
+    "passed": true,
+    "cases": {
+      "v828": {
+        "request_run_sha256": "fe23dc4076e09521b2d2e876d3e144967457dcb473d74b88c5c9805e8a4605e8",
+        "write_attempts": 1,
+        "write_decision_receipts": 1,
+        "read_receipt_hash": "cf61e5f5f68f6be602368ebb34764aa006296560e62632f1d9cc75810c08f6d1",
+        "context_signature_verified": true,
+        "all_harness_and_cleanup_checks_passed": true,
+        "file_exists": true,
+        "file_sha256": "94fd23f5cf67ae2578da43e3529cb90124da23968ae5fcced822926aee843194",
+        "signed_write_allowed": true
+      },
+      "v829": {
+        "request_run_sha256": "c72458175b3f1a970d676aa7ef2ddd62e5aa4070d7103d4c6df08de90aa88690",
+        "write_attempts": 1,
+        "write_decision_receipts": 0,
+        "read_receipt_hash": "274b297a8d6a2aab3c64ede3fcca433999bfa031ceae425e4c76b6232a5ee925",
+        "context_signature_verified": true,
+        "all_harness_and_cleanup_checks_passed": true,
+        "file_absent": true,
+        "tool_error_observed": true,
+        "installed_skill_restored": true,
+        "drift": {
+          "read_receipt_hash": "274b297a8d6a2aab3c64ede3fcca433999bfa031ceae425e4c76b6232a5ee925",
+          "request_run_id": "qwen-request-f50c220be2e85234",
+          "context_id": "sec-d50dfc1685e2da1354adba49784ab74a",
+          "before_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+          "after_sha256": "11544ce7f6c36e5592f09393d3ffeb9e5c47a4d65638a52139e183bccc4ffdfc",
+          "same_inode": true,
+          "mutation_completed_monotonic_ns": 99674977761289
+        }
+      }
+    },
+    "same_agent_baseline": true,
+    "same_approved_writer_skill": true,
+    "source_unchanged": true,
+    "candidate_source_sha256": "f64f7ae0be476a98eb75855ba3a7023c37b7aae86800fd07fe8d4823c8cfa27d",
+    "receipt_chain_count": 23,
+    "receipt_chain_head": "274b297a8d6a2aab3c64ede3fcca433999bfa031ceae425e4c76b6232a5ee925",
+    "public_key_base64": "frRO3gRqqc3I/rijvyVf9DMkYSIaNunT2QQzxTdCrRI=",
+    "prior_18_receipts_unchanged": true,
+    "limits": [
+      "SSE error is an unsigned boolean, not a signed fine-grained rejection reason.",
+      "No write decision receipt exists for the rejected post-drift attempt.",
+      "Host approved installation content was modified; protected container image bytes were not rewritten.",
+      "One control and one negative request, not full lifecycle or four-arm acceptance."
+    ]
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-install-drift-v828-v829.receipts.jsonl",
+      "sha256": "250d38a850f2a98e5b211f55dbbb898b6b9fadfabe10c1ab99b172ab32598d4c"
+    },
+    "contexts": {
+      "file": "native-install-drift-v828-v829.contexts.json",
+      "sha256": "fb988ff0e771244b078dde05c5f710f0334d0770044f8fdd9d4016523297e3e6"
+    },
+    "tool_observations": {
+      "file": "native-install-drift-v828-v829.tools.json",
+      "sha256": "64f910f2508a3d099e0c96872dd0376f49fa7ad9e36ee4fe723482b75a128702"
+    }
+  },
+  "private_result_sha256": {
+    "native-business-api-v828.json": "b504b17dd431563f0fb913e0305090df4645e4da4ac5ce3490a529cfeb6363f6",
+    "native-business-api-v829.json": "cdc4601a38562245ad4ee8dd1f7a3d1cf8db622d4ac75ee9e418d7946450e3b0",
+    "native-switch-v828-cleanup.json": "06614beef3f81d863ada0a3dd2f07a003a0d621ea9c2544c0968272b3f12b6b5",
+    "native-switch-v829-cleanup.json": "ac938a1d2ce962b897251e202942ea4e7e22e43e67d5e394d09f75239dbae0ff",
+    "run-native-business-install-drift-v828.py": "e59e31ed613cd858ee3220b3121bf603fcc07296d369aef2e7817c9ea07fb94f",
+    "verify-native-install-drift-v828-v829.py": "0ef0254097709dc89d334b4207a74b86c738dd232272adcee1b1350a836375d9"
+  }
+}

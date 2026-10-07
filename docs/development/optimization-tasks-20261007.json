@@ -200,7 +200,8 @@
         "docs/development/evidence/optimization-20261007/native-request-orchestration-prereview.json",
         "docs/development/optimization-opt08-request-api-delivery-validation-20261008.md",
         "docs/development/optimization-opt08-working-business-validation-20261008.md",
-        "docs/development/optimization-opt08-opt10-repetitions-validation-20261008.md"
+        "docs/development/optimization-opt08-opt10-repetitions-validation-20261008.md",
+        "docs/development/optimization-opt08-install-drift-validation-20261008.md"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -238,7 +239,8 @@
         "请求编排组件预审：独立226文件、61份选定源码／测试，486项通过、Ruff通过。使用HEAD离线构建并核验的控制包，补齐HEAD动态资源；未修改日常API环境。代码尚未提交，聊天API入口及相关完整集成用例仍待交付审查；不能把组件预审视为OPT-08或同候选业务验收。9/16保持。",
         "请求编排与业务API完整依赖交付业务2a70587：110份选定输入的最终隔离API回归523项通过；修复原生请求因缺旧canary字段而漏导出安全生命周期事件，旧反例复现、相关45项通过（与523重叠）。Ruff基线104条、本批102条既有B008、新增0。保留报告归档等无关工作区改动及初始失败；未启动真实业务或调用模型。最终新鲜候选／生命周期／四臂验收继续，OPT-08与9/16保持。",
         "原生真实业务v819–v821：合法读取、只读Skill实际拒写、写入Skill实际可写均通过；6条回执独立验签／链验证及v3 schema通过，文件效果对应。两个写入用例Agent基线相同、OpenShell可写挂载与归一化文件系统策略相同，SIQ按Skill Grant区别裁决。干净源码映射遇systemd 226/NAMESPACE；实测采用冻结工作区1873输入（289项与HEAD不同），前后字节一致，不能冒充干净提交验收。自有资源回收、原模型未重启；每例一次，重复／生命周期／四臂与完整交付继续，9/16保持。",
-        "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。"
+        "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
+        "安装内容漂移真实对照v828/v829通过：同一获批写入Skill正常读写成功；读取后受控修改宿主安装SKILL.md内容，后续实际write_file报错、目标不存在，无伪造deny回执。原字节／inode／硬链接关系恢复，源码与模型不变，自有资源清理；新增5条回执，与原18条组成23条链，11份SEC公钥／schema核验通过。仅一组安装源漂移对照，其他生命周期／四臂与干净交付继续，9/16保持。"
       ]
     },
     {
@@ -257,10 +259,12 @@
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
       "evidence": [
-        "docs/development/optimization-opt08-opt10-repetitions-validation-20261008.md"
+        "docs/development/optimization-opt08-opt10-repetitions-validation-20261008.md",
+        "docs/development/optimization-opt08-install-drift-validation-20261008.md"
       ],
       "residual_limits": [
-        "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。"
+        "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
+        "安装内容漂移真实对照v828/v829通过：同一获批写入Skill正常读写成功；读取后受控修改宿主安装SKILL.md内容，后续实际write_file报错、目标不存在，无伪造deny回执。原字节／inode／硬链接关系恢复，源码与模型不变，自有资源清理；新增5条回执，与原18条组成23条链，11份SEC公钥／schema核验通过。仅一组安装源漂移对照，其他生命周期／四臂与干净交付继续，9/16保持。"
       ]
     },
     {
