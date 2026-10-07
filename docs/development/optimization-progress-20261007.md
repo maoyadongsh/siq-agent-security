@@ -84,3 +84,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3h 业务监管与宿主会话](optimization-opt08-host-session-validation-20261007.md)已统一真实后端/guard、监管者 pidfd、固定期限/90秒内心跳、Verifier 和循环生命周期；过期/退出/停止后拒绝，线程退出未确认时保留在用资源。最终相关91项通过；真实OpenShell18项检查、18条签名回执、4次合成业务续期及会话/沙箱清理通过。另修复线程创建失败后的清理异常，由增量负向验证；live旧宿主模块与最终源码摘要分列。跨进程认证控制、日常API及模型业务仍未验收，OPT-08与9/16不变。
 
 [D3i 跨进程宿主控制](optimization-opt08-host-control-validation-20261007.md)已实现私有认证控制服务及业务独立客户端：监管者 PID 取自内核凭据，控制材料固定、句柄不可复活，处理器与资源有界。53项相关测试、额外2项配额负向及业务21项通过；真实OpenShell由独立业务消费者启动/4次续期/停止，18项权限检查、18条签名回执和清理通过。业务四个新增文件独立提交，未吸收既有工作树修改。独立CLI只验收启动/停止，日常builder/Supervisor/API/模型尚未验收；OPT-08与9/16保持不变。
+
+[D3j 业务Supervisor原生接线](evidence/optimization-20261007/native-business-supervisor.json)已落盘显式v6、RequestNative和准备/运行态区分，真实监管方法先复查业务授权再控制宿主；关闭失败继续containment且不报完整成功。相关135项通过，最终原生专项21项通过（重叠14项，新增7项），Ruff通过。组件使用明确授权/宿主/资源夹具，日常builder/受保护网关/endpoint和模型业务尚未验收。业务必要导入闭包存在27个未跟踪模块，已保留改前快照、盘点并暂不提交依赖不完整的本批业务源码；后续审查必要依赖一并交付，不纳入无关修改。OPT-08与9/16保持。
