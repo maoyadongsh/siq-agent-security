@@ -1,0 +1,40 @@
+{
+  "receipt_id": "rcp-pending-9b060e5889c8132f8e7fd75a4b2e9d6cddbde9eedd0aad62f7627fa89bbfcb31",
+  "chain_id": "local",
+  "seq": 0,
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "b2fff641bb04f60b32f706b7fd7362a79680e524497fef8b2edf9b925d472048",
+  "sig": "f1040158ed30dd87cc57cd2e0a6b66c56a7a0bb39dd1afdc852a5f710459e0f0cede777910c3382554b9e8c5790e5831583edf92656c5ca54bb6303dc8044e04",
+  "issued_at": "2026-10-07T01:00:00Z",
+  "platform": "hermes",
+  "session_id": "pending-unknown",
+  "agent_id": null,
+  "tool": "pending.fail_closed",
+  "tool_call_id": null,
+  "params_digest": "7a27c537e4132664dcc9839182cf04f4073d4633e6d15c9c1b55042fef686136",
+  "params_excerpt": null,
+  "action": "deny",
+  "advisory_action": null,
+  "reason": "promoted pending fail-closed: unavailable",
+  "matched_grant_id": null,
+  "matched_fact_ids": [],
+  "matched_rule_ids": [
+    "pending.fail_closed"
+  ],
+  "taint_labels": [],
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  },
+  "enforcement_mode": "block",
+  "policy_revision": null,
+  "sandbox_id": null,
+  "model_key": null,
+  "engine": {
+    "version": "test",
+    "rulepack_version": 1
+  },
+  "decision_latency_ms": null,
+  "hold": null
+}

@@ -13,8 +13,8 @@
 | OPT-02 | 生产构建与身份边界 | done | 本批新增／现有流程复用 |
 | OPT-03 | 扫描资源预算与限流 | done | SEC-F08 |
 | OPT-04 | 错误输入与分页 | done | 待结合对应模块继续核对 |
-| OPT-05 | OpenShell持久化回滚与后端绑定 | planned | 待结合对应模块继续核对 |
-| OPT-06 | pending提升幂等 | implementing | SEC-F05 |
+| OPT-05 | OpenShell持久化回滚与后端绑定 | implementing | 待结合对应模块继续核对 |
+| OPT-06 | pending提升幂等 | done | SEC-F05 |
 | OPT-07 | 策略语义与部署入口 | planned | 待结合对应模块继续核对 |
 | OPT-08 | 日常Skill上下文 | planned | 待结合对应模块继续核对 |
 | OPT-09 | OpenShell行为证据 | planned | 待结合对应模块继续核对 |
@@ -29,7 +29,7 @@
 
 OPT-01 首批组件与 OPT-02 生产身份边界已完成本批回归，见[首批验证](optimization-opt01-opt02-validation-20261007.md)及[消费者回归](optimization-opt02-consumers-validation-20261007.md)。前端 1,031 项通过；30 组浏览器脚本均有通过记录（首轮 28 组、修复复跑 2 组）。[OPT-04 验证](optimization-opt04-validation-20261007.md)包括控制面 2,346 项通过、1 跳过，PostgreSQL 19 项检查、本地 Go 全量与四目标构建。
 
-[OPT-03 / OPT-14 验证](optimization-opt03-opt14-validation-20261007.md)：控制面 2,372 通过、1 个既有条件跳过；进程配额与原生 Linux worker 故障边界通过。默认 Docker 阻止 namespace 创建，OPT-14 保持 implementing；OPT-06 正在实现来源事件级补录幂等。未推送或完成主线 CI，不作最终发行或全部任务完成结论。
+[OPT-03 / OPT-14 验证](optimization-opt03-opt14-validation-20261007.md)：控制面 2,372 通过、1 个既有条件跳过；进程配额与原生 Linux worker 故障边界通过。默认 Docker 阻止 namespace 创建，OPT-14 保持 implementing；[OPT-06](optimization-opt06-validation-20261007.md) 来源事件幂等、v2 重启恢复及全套相关 race 已通过。OPT-05 正在实现原部署后端绑定与持久操作恢复。未推送或完成主线 CI，不作最终发行或全部任务完成结论。
 
 ## 边界
 

@@ -18,6 +18,9 @@ const LocalRecordLimit = 8192
 
 // Record is one unsigned fail-closed / advisory line.
 type Record struct {
+	// SourceID is assigned by Promote from the append-only source position.
+	// It is never accepted from or serialized into an unsigned pending record.
+	SourceID        string `json:"-"`
 	Schema          string `json:"schema"`
 	RecordedAt      string `json:"recorded_at"`
 	Platform        string `json:"platform"`

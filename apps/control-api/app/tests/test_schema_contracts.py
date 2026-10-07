@@ -4022,3 +4022,19 @@ def test_registered_project_instances_v3_go_sample() -> None:
     row = next(row for row in data["instances"] if row["source"] == "registered_project")
     forged = {**row, "diagnosis": {**row["diagnosis"], "runtime_state": "verified"}}
     assert list(validator.iter_errors({**data, "instances": [forged]}))
+
+
+@pytest.mark.parametrize('version', ['v1', 'v2'])
+def test_pending_source_receipt_retains_existing_wire_contract(version):
+    schema_file = 'receipt.schema.json' if version == 'v1' else 'receipt.v2.schema.json'
+    schema = json.loads((CONTRACTS / schema_file).read_text())
+    sample = CONTRACTS.parents[1] / 'apps/agentshield/testdata/contracts' / f'receipt-pending-source-{version}.json'
+    receipt = json.loads(sample.read_text())
+    Draft7Validator(schema).validate(receipt)
+    assert receipt['receipt_id'].startswith('rcp-pending-')
+    assert len(receipt['receipt_id'].removeprefix('rcp-pending-')) == 64
+    assert 'source_id' not in receipt and 'SourceID' not in receipt
+    if version == 'v2':
+        assert receipt['record_type'] == 'local_failure'
+        assert receipt['local_origin']['signed'] is False
+        assert receipt['action'] == 'unknown'

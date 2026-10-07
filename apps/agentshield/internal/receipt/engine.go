@@ -1212,6 +1212,18 @@ func (e *Engine) AppendPendingObserved(p pending.Record) (*Receipt, error) {
 			rec.ParamsDigest = p.ActionDigest
 		}
 	}
+	if p.SourceID != "" {
+		legacyID := rec.ReceiptID
+		rawSource, err := hex.DecodeString(p.SourceID)
+		if err != nil || len(rawSource) != sha256.Size || hex.EncodeToString(rawSource) != p.SourceID {
+			return nil, fmt.Errorf("receipt: invalid pending source identity")
+		}
+		rec.ReceiptID = "rcp-pending-" + p.SourceID
+		existing, err := e.findPromotedPending(rec, legacyID)
+		if err != nil || existing != nil {
+			return existing, err
+		}
+	}
 	if err := e.opts.Chain.Append(&rec); err != nil {
 		return nil, err
 	}

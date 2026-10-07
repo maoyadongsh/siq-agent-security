@@ -76,7 +76,7 @@
     {
       "id": "OPT-05",
       "title": "OpenShell持久化回滚与后端绑定",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
       "evidence": [],
@@ -85,13 +85,17 @@
     {
       "id": "OPT-06",
       "title": "pending提升幂等",
-      "status": "implementing",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [
         "SEC-F05"
       ],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/development/optimization-opt06-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "旧式无来源记录不能猜测去重；不修复来源日志改写/轮换；大型历史扫描性能留在 OPT-15。"
+      ]
     },
     {
       "id": "OPT-07",

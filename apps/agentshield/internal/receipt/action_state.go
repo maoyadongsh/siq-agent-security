@@ -182,7 +182,7 @@ func (e *Engine) restoreActionState() error {
 	// window. Determine those action IDs from the verified chain first so the
 	// second pass can restore their older decision and approval records.
 	if err := e.opts.Chain.walkVerified(func(r Receipt) error {
-		if r.RecordType == "" {
+		if r.RecordType == "" || r.RecordType == "local_failure" {
 			return nil
 		}
 		switch r.RecordType {
@@ -207,9 +207,9 @@ func (e *Engine) restoreActionState() error {
 		active[id] = true
 	}
 	return e.opts.Chain.walkVerified(func(r Receipt) error {
-		if r.RecordType == "" {
+		if r.RecordType == "" || r.RecordType == "local_failure" {
 			return nil
-		} // historical v1 records never manufacture action authority
+		} // Historical v1 and unsigned local origins never manufacture action authority or sessions.
 		at, err := time.Parse(time.RFC3339, r.IssuedAt)
 		if err != nil {
 			return err

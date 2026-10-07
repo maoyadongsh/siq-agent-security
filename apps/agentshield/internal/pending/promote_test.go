@@ -65,3 +65,24 @@ func TestPromoteCorruptLineStops(t *testing.T) {
 		t.Fatalf("corrupt must stop after first: n=%d nOK=%d err=%v", n, nOK, err)
 	}
 }
+
+func TestPromoteTruncatedSourceDoesNotResetCursor(t *testing.T) {
+	dir := t.TempDir()
+	if err := Append(dir, Record{Platform: "hermes", Outcome: "deny"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Promote(dir, func(Record) error { return nil }); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(dir, "pending", "decisions.jsonl")
+	if err := os.WriteFile(path, nil, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Promote(dir, func(Record) error { t.Fatal("truncated log reached appender"); return nil }); err == nil {
+		t.Fatal("truncation silently accepted")
+	}
+	cursor, err := os.ReadFile(filepath.Join(dir, "pending", cursorFile))
+	if err != nil || string(cursor) != "1\n" {
+		t.Fatalf("cursor changed: %q %v", cursor, err)
+	}
+}
