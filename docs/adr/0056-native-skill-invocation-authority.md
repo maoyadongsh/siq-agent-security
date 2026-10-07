@@ -103,6 +103,10 @@ DGX Spark 接入采用固定宿主进程的 Unix `SOCK_SEQPACKET` 元数据通�
 
 本组件仅支持 Linux；标准库 `os.pidfd_open` 不可用时，可通过 Python 标准库 ctypes 调用当前进程 libc 的同名函数。没有 pidfd 或消息凭据能力时拒绝，不退回普通 PID 查询。该限定例外不增加宿主传感器、系统调用拦截或新 OS 沙箱，也不证明 macOS/Windows 原生管控。拥有 root/capabilities、可替换可信代码或注入宿主进程的攻击者不在此通道保证范围。
 
+### D2c2：原生函数接入
+
+按 [固定 Hermes 原生分发接入 v1](../../packages/contracts/native-hermes-dispatch.v1.md)，对固定业务镜像生成可核验补丁：覆盖原生任务边界、普通/插件 Skill 文件读取、缓存校验及真正 registry handler 前的不可选门禁。补丁只在新的受控制品中使用，不改用户日常工作树或旧插件默认行为。可信回调尚未连接到在线 Authority 时，默认拒绝，不以测试回调声明产品启用。子任务暂缺精确父任务元数据时明确拒绝；不得以相同 session 或推测上下文降级为 root。
+
 ## D2c1：实际 Skill 文件快照
 
 原生加载接入先提供有界的文件快照组件。`native-skill-source/v1` 只记录实际主文件和所读文件的路径摘要、原始字节摘要/长度，以及解码后文本摘要；不包含文件正文、明文路径、Grant、allow 或无 Skill 声明。主文件必须是绝对规范路径的 `SKILL.md`，支持文件必须位于同一目录树。宿主仍须把路径摘要映射到已批准安装，核验完整包和运行制品；一个文件摘要不能替代安装包摘要。
