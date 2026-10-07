@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/openshell-behavior-agent.v1.schema.json",
+  "title": "Bounded ELF behavior probe observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "verification_id", "nonce", "endpoint", "program_path", "program_sha256", "uid", "outcome", "elapsed_ms"],
+  "properties": {
+    "schema_version": {"const": "openshell-behavior-agent/v1"},
+    "verification_id": {"type": "string", "maxLength": 36, "pattern": "^opv-[a-f0-9]{32}$"},
+    "nonce": {"type": "string", "maxLength": 64, "pattern": "^[a-f0-9]{64}$"},
+    "endpoint": {"type": "string", "maxLength": 21, "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}:[0-9]{1,5}$"},
+    "program_path": {"type": "string", "maxLength": 512, "pattern": "^/[A-Za-z0-9_./-]+$"},
+    "program_sha256": {"type": "string", "maxLength": 64, "pattern": "^[a-f0-9]{64}$"},
+    "uid": {"type": "integer", "minimum": 1, "maximum": 4294967294},
+    "outcome": {"enum": ["connected", "timeout", "connection_refused", "connection_reset", "probe_error"]},
+    "elapsed_ms": {"type": "integer", "minimum": 0, "maximum": 11000}
+  }
+}

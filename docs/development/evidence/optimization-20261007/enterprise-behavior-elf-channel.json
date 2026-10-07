@@ -1,0 +1,44 @@
+{
+  "schema_version": "optimization-openshell-behavior-elf-channel-validation/v1",
+  "recorded_at": "2026-10-07T20:22:02.950874+00:00",
+  "base_commit": "3a0118f4b92aeff4577d3633c1122dec6270ad4e",
+  "result": "local_component_passed",
+  "validation": {
+    "pytest": {
+      "tests": 160,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "new_tests": 39,
+    "protocol_tests": 58,
+    "legacy_tests": 63,
+    "ruff": "passed",
+    "go_vet": "passed",
+    "gofmt": "passed",
+    "native_elf": true,
+    "elf_interpreter_absent": true,
+    "two_paths_same_bytes": true,
+    "go_version": "go version go1.26.5 linux/arm64",
+    "tested_elf_sha256": "ff46a09b7829a37453be9473d2017fc5f93e60f8862eac5b21c4fec802dde059",
+    "unprotected_three_round_differential": "12 connected observations; validator rejected behavior_deny_not_observed",
+    "network_scope": "ephemeral loopback TCP receivers only",
+    "model_calls": 0,
+    "openshell_calls": 0,
+    "production_state_mutations": 0
+  },
+  "source_sha256": {
+    "docs/adr/0058-enterprise-openshell-behavior-verification.md": "0f3cb91a24200a9e8a056173303284e9ce4abfee206dbf4458f44649598851ce",
+    "packages/contracts/openshell-behavior-agent.v1.schema.json": "fc4c60e0c7bcf34749f08db23f732422c72648fa7cdaa77801780f2bc3674968",
+    "scripts/enterprise-experience/probe/behavior_probe.go": "2b6610e6c978174ab655e25b6b0880e11084be440e8e1849914f153c824c37de",
+    "scripts/enterprise-experience/probe/README.md": "d853129da310f47725d02b3ff2908473a22c0688a963b800d06d8509f85cf092",
+    "apps/control-api/app/adapters/openshell/behavior_channel.py": "90fbf900b9820e98888966162b07d44a812dae9ede46b60086fc1d4557358225",
+    "apps/control-api/app/tests/test_openshell_behavior_channel.py": "7d8a245b0d36ad12464c2d2cc070504c41dbc09511295f795bd48626b197e511"
+  },
+  "limits": [
+    "The sandbox exec wrapper is substituted with local execution; no real OpenShell policy attribution was verified.",
+    "Program-reported identity is only consistency evidence; independent protected image and executable verification remains pending.",
+    "Persistent coordinator authorization, production API/UI and real target three-arm acceptance remain pending.",
+    "OPT-09 remains implementing; deployment grade is unchanged."
+  ]
+}
