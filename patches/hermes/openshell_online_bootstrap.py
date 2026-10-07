@@ -18,33 +18,24 @@ os.environ["HOME"] = "/tmp/siq-native-online"
 os.environ["HERMES_HOME"] = "/tmp/siq-native-online/hermes"
 os.environ["HERMES_RELAY_ENABLED"] = "false"
 os.environ["TERMINAL_ENV"] = "local"
-Path(os.environ["HERMES_HOME"]).mkdir(mode=0o700, parents=True)
+Path(os.environ["HOME"]).mkdir(mode=0o700)
+Path(os.environ["HERMES_HOME"]).mkdir(mode=0o700)
 
 import siq_native_runtime as native
 from model_tools import handle_function_call
-from siq_native_runtime.native_channel import HermesChannel
+from siq_native_runtime.native_bootstrap import ImageBootstrap
 from siq_native_runtime.native_dispatch import DispatchError
-from siq_native_runtime.native_online import Callbacks
 from tools import skills_tool
 
 skills_tool.SKILLS_DIR = Path("/opt/siq/native-business/skills")
 directory = Path("/tmp/siq-native-online/channel")
-directory.mkdir(mode=0o700)
 subject_agent, namespace, session = sys.argv[1:]
+bootstrap = ImageBootstrap(subject_agent, namespace, str(directory))
 root = Path("/sandbox/native-business")
 root.mkdir(mode=0o700)
 (root / "input.txt").write_text("owned integration input\n")
-print(json.dumps({"native_probe_ready": True, "pid": os.getpid(), "files": [], "channel_directory": str(directory)}), flush=True)
-deadline = time.monotonic() + 60
-while not (directory / "native-host.sock").exists():
-    if time.monotonic() >= deadline:
-        raise SystemExit("native_host_not_ready")
-    time.sleep(.05)
-client = HermesChannel(directory / "native-host.sock", timeout=5,
-                       server_credentials=(0, os.getuid(), os.getgid()))
-mapped = Callbacks.via_host(client)
-runtime = native.Runtime(subject_agent, namespace, mapped.observe, mapped.authorize, mapped.observe)
-native.configure(runtime)
+print(json.dumps({"native_probe_ready": True, "files": [], **bootstrap.ready()}), flush=True)
+bootstrap.configure(timeout=60)
 checks, outcomes = {}, []
 
 

@@ -1,0 +1,74 @@
+{
+  "schema_version": "siq.optimization-native-bootstrap-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "89f0ce96",
+  "python_tests_passed": 138,
+  "bootstrap_tests_passed": 39,
+  "expected_test_warning": "The negative fork-with-held-lock test emits the Python multithreaded-fork deprecation warning; child refusal completes without deadlock.",
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-openshell-bootstrap-01",
+    "namespace": "siq-opt08-0f266e46329b",
+    "image_id": "sha256:6c3a95a4bd2933990e88d489537466ffc547c58dc23fb3bb1c03ec0c2a3260c2",
+    "artifact_sha256": "84b92fd93ec3baea33fabfe92a9c78df4e967d5175001d998ac248e9ca11a9b6",
+    "bootstrap_schema": "native-runtime-bootstrap-ready/v1",
+    "bootstrap_runtime_state": "unverified",
+    "bootstrap_code_verified_by_host": true,
+    "management_http_issuance": true,
+    "session_http_enrollment": true,
+    "checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "signed_chain_verified": true,
+    "signed_receipts": 18,
+    "signed_allow": 14,
+    "signed_deny": 4,
+    "independent_host_effect_check": true,
+    "model_calls": 0,
+    "business_entry_acceptance": false,
+    "go_integration_seconds": 21.849
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/native_bootstrap.py": "204fc584e8dac33d659ec33b063cf8a2996f00e94a7042ff2608cd4c39e0eaba",
+    "adapters/runtime/hermes-agentshield/tests/test_native_bootstrap.py": "40d6542582f584661c5db463cdb878226e04fe7d860ba9dcfc425ec576784a92",
+    "patches/hermes/build_native_overlay.py": "e719147c3d3a5a80ac9586b9bc068425d3f2437a50070aece2faf1d920de24d9",
+    "patches/hermes/openshell_online_bootstrap.py": "40a5cc6b4049e1e2dc00e79bb0e3f799945ab4d9e235045d5a91a54de980ef51",
+    "packages/contracts/native-runtime-bootstrap.v1.md": "4f9551207522ba8760fc86dc946201b899ac7fa0795459248f85d3b1423fa108"
+  },
+  "raw_result_sha256": {
+    "result.json": "be3912a35e4f0ab077d9a9baa80f89ecf3a5aed79c3ef395d1a586ce2ce23a41",
+    "authority-result.json": "4c13bb5adc4df15ec6fed8b74d776380bfc483830754955200d4ea796928f750"
+  },
+  "limits": [
+    "Bootstrap is a protected runtime initializer, not an OpenShell lifecycle manager or business gateway launcher.",
+    "ready/configure do not authenticate a future task; every event still requires the actual kernel-authenticated host and live Go Authority.",
+    "Ordinary Hermes plugin behavior is unchanged; the initializer is not loaded by legacy plugin installation.",
+    "Actual OpenShell integration uses synthetic Skill content and test operator; no model requests or business API acceptance.",
+    "No new Go production changes; no repeated full Go/frontend/control-api or cross-platform builds."
+  ]
+}

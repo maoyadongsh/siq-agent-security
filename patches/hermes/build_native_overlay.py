@@ -95,7 +95,7 @@ def build(source, destination):
             raise ValueError("native_overlay_source_digest_changed")
         output[name] = transform(name, raw.decode()).encode()
     runtime = ROOT / "adapters/runtime/hermes-agentshield"
-    for name in ("native_dispatch.py", "native_source.py", "native_channel.py", "native_online.py"):
+    for name in ("native_dispatch.py", "native_source.py", "native_channel.py", "native_online.py", "native_bootstrap.py"):
         raw = (runtime / name).read_bytes()
         compile(raw, name, "exec")
         output["siq_native_runtime/" + name] = raw

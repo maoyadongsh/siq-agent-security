@@ -68,3 +68,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D2j 并发与撤权联验](optimization-opt08-lifecycle-validation-20261007.md)已在同一实际 OpenShell/Hermes/Go 链路通过 18 项检查：新增同进程并发任务权限隔离、调用重放拒绝、结束后拒绝及 SEC、Skill Grant、Agent 基线三种撤权。23 次工具尝试形成 18 条签名回执（14 allow、4 deny），另 5 次在决策前拒绝，不伪称 deny 回执。宿主独立核对允许文件与拒绝目标；真实集成测试、Ruff、server vet 通过，仅扩充验收夹具，未重复无关全量。测试操作员与 Skill 内容仍为合成材料；业务入口/业务权限撤销、网络、过期/升级/漂移及审批重试尚未完成，任务状态与 9/16 完成数不变。
 
 [D3a 管理 HTTP 接入](optimization-opt08-management-enrollment-validation-20261007.md)已限定开放创建 v3：显式 native-host 服务完整绑定且私有连接有效，管理鉴权、批准基线和 revision 约束保持，读回始终 unverified。真实 OpenShell 18 项检查已改用 HTTP 配对/身份签发/会话登记通过；Go 全量 45 包、server 定向 race、全量 vet、四目标构建及 16 项 Python 合同通过。此增量替代上述 D2“创建入口关闭”的阶段状态；受保护日常启动与业务验收仍未完成，OPT-08 与总体 9/16 保持不变。
+
+[D3b 受保护运行初始化](optimization-opt08-runtime-bootstrap-validation-20261007.md)已提供 ImageBootstrap 并纳入固定覆盖包：一次性配置、排他私有目录、固定跨 PID namespace 响应凭据及目录/端点变化、fork、超时和关闭后的拒绝。新增 39 项启动测试、相关共 138 项 Python 测试通过；实际 OpenShell 使用该初始化器及其制品摘要，18 项权限检查通过。未改 Go 生产逻辑，未重复无关全量。初始化器尚未接入日常网关与业务 API，业务核心文件的既有修改继续保留；OPT-08 与 9/16 不变。

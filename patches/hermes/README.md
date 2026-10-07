@@ -23,3 +23,5 @@ python patches/hermes/build_native_overlay.py \
 在线覆盖包包含 `native_channel.py` 和 `native_online.py`，供受保护 bootstrap 配置回调。`host_online.py` 与宿主凭据不进入覆盖包；Go 与 Python 的各自在线联验见 [D2g](../../docs/development/optimization-opt08-online-validation-20261007.md)。
 
 真实 OpenShell＋Hermes＋Go 联验已覆盖两个合成 Skill 的权限交集、并发任务、重放拒绝及三层撤权，见 [D2j](../../docs/development/optimization-opt08-lifecycle-validation-20261007.md)。原生身份可通过显式在线宿主服务的管理 HTTP 创建 v3，再经运行 HTTP 登记会话，条件见 [native-runtime-enrollment/v1](../../packages/contracts/native-runtime-enrollment.v1.md)。签发与会话读回仍为 `unverified`；未登记实际原生任务不能执行。验收脚本不是日常业务启动器，manifest 的生产启用标记保持关闭。
+
+镜像 profile 可通过新增 `native_bootstrap.ImageBootstrap` 统一配置固定通道和 Runtime，禁止环境替换主体、可替换裁决回调和失败后重试；用法及真实联验见 [D3b](../../docs/development/optimization-opt08-runtime-bootstrap-validation-20261007.md)。初始化器本身必须受制品核验，不能把导入模块或 ready 描述当作运行保护证明。它不启动模型/网关、不管理 OpenShell 生命周期，正式业务入口仍待接入。
