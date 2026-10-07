@@ -114,17 +114,13 @@ def runtime_options(prepared, *, peer, cid, namespace, sandbox, init_pid, init_g
     spec.loader.exec_module(module)
     channel = sys.modules[spec.name + ".native_channel"]
 
-    def backend(pid, uid, gid, artifact):
-        assert (pid, uid, gid, artifact) == (peer, os.getuid(), os.getgid(), prepared["artifact"])
-        fields = ("Id", "Image", "State.Pid", "State.Running", "Config.Labels", "HostConfig.Privileged")
-        raw = command(["/usr/bin/docker", "inspect", "--format", "\n".join("{{json ." + f + "}}" for f in fields), cid], timeout=2)
-        actual = dict(zip(fields, map(json.loads, raw.stdout.decode().splitlines()), strict=True))
-        assert actual["Id"].startswith(cid) and actual["Image"] == prepared["image"]
-        assert actual["State.Pid"] == init_pid and actual["State.Running"] and not actual["HostConfig.Privileged"]
-        assert actual["Config.Labels"]["openshell.ai/sandbox-namespace"] == namespace
-        assert actual["Config.Labels"]["openshell.ai/sandbox-name"] == sandbox
-        assert actual["Config.Labels"].get("openshell.ai/sandbox-id")
-        assert Path(f"/proc/{peer}/cgroup").read_text() == init_groups
+    backend_spec = importlib.util.spec_from_file_location(spec.name + ".host_openshell", ADAPTER / "host_openshell.py")
+    backend_module = importlib.util.module_from_spec(backend_spec)
+    sys.modules[backend_spec.name] = backend_module
+    backend_spec.loader.exec_module(backend_module)
+    backend = backend_module.OpenShellBackend(container_id=cid, image_id=prepared["image"],
+        namespace=namespace, sandbox=sandbox, pid=peer, init_pid=init_pid, uid=os.getuid(), gid=os.getgid(),
+        artifact_sha256=prepared["artifact"], cgroup=init_groups)
 
     options = {"pid": peer, "uid": os.getuid(), "gid": os.getgid(), "artifact_sha256": prepared["artifact"],
                "executable_sha256": prepared["executable"],

@@ -217,7 +217,9 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
         expires = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=150)
         with guard.namespace_channel_directory(row["channel_directory"]) as fd:
             with channel.NamespaceHostChannel(fd, guard.peer, timeout=5) as host, _owned.module.HostLoop(host, relay, expires_at=expires) as loop:
-                deadline = time.monotonic() + 80
+                # The complete batch includes 23 attempts with repeated real
+                # backend checks; this is not an individual request deadline.
+                deadline, next_health = time.monotonic() + 110, 0.0
                 while True:
                     rows = [json.loads(line) for line in exec_log.read_text(errors="replace").splitlines()
                             if line.startswith('{"native_online_verified":')]
@@ -225,7 +227,9 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
                         result = rows[-1]
                         break
                     assert time.monotonic() < deadline, "owned_online_result_timeout"
-                    loop.assert_running()
+                    if time.monotonic() >= next_health:
+                        loop.assert_running()
+                        next_health = time.monotonic() + 1
                     time.sleep(.1)
                 loop.assert_running()
             result["host_loop_stopped"] = not loop._thread.is_alive()

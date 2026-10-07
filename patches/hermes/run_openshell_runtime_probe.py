@@ -174,7 +174,7 @@ network_policies: {}
             attempted = True
             cli('sandbox', 'create', '--name', sandbox, '--from', image, '--cpu', '500m', '--memory', '512Mi',
                 '--no-auto-providers', '--policy', str(policy), '--label', 'siq.acceptance=opt08-native', '--', '/bin/true', timeout=55)
-            containers = command(['/usr/bin/docker', 'ps', '--filter', 'network=' + namespace, '--format', '{{.ID}}']).stdout.decode().split()
+            containers = command(['/usr/bin/docker', 'ps', '--no-trunc', '--filter', 'network=' + namespace, '--format', '{{.ID}}']).stdout.decode().split()
             assert len(containers) == 1
             cid = containers[0]
             fmt = '{{json .Image}}\n{{json .State.Pid}}\n{{json .HostConfig.ReadonlyRootfs}}\n{{json .Config.Labels}}'

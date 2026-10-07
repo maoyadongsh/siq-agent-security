@@ -121,3 +121,5 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 `host_online.py` 仅供可信宿主启动器使用，其独立发布凭据不进入 Hermes；`native_online.py` 只映射内核元数据通道与运行时裁决请求。daemon 须显式 `serve --native-host` 并读到私有连接配置；未配置或核验不可用时不放行原生身份。配置与启用边界见 [在线协议](../../../packages/contracts/native-host-online.v1.md)。
 
 可信启动器可使用 [HostLoop](../../../packages/contracts/native-host-loop.v1.md) 在固定业务租约内持续服务已登记进程，正常空闲继续等待，已连接请求失败、停止、到期或实际 guard 失效均拒绝。循环不续租、不替代业务授权，所属启动器负责在目录上下文退出后关闭 guard 并精确回收沙箱。[真实 OpenShell 联验](../../../docs/development/optimization-opt08-host-loop-validation-20261007.md)已通过，日常业务 builder/Supervisor 与模型闭环仍待验收。
+
+`host_openshell.OpenShellBackend` 提供正式的[本机 OpenShell 后端归属核验](../../../packages/contracts/native-openshell-backend.v1.md)，逐次核对固定 Docker 端点、完整容器/镜像、OpenShell 标签和内核进程归属，不能由模型指定端点或命令。该组件已替代验收脚本回调并通过[真实联验](../../../docs/development/optimization-opt08-openshell-backend-validation-20261007.md)，目前仅支持 Linux rootful Docker；业务监管与跨平台验收状态保持独立。
