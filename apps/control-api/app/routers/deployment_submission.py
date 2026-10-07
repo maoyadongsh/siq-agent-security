@@ -165,6 +165,7 @@ def create_submission(
         change_request_id=prepared.change.id,
         target=prepared.binding.backend_target_id,
         runtime_binding_id=prepared.binding.id,
+        execution_backend=prepared.backend,
         to_revision=f"policy-{prepared.policy.version}",
         status="pending",
     )

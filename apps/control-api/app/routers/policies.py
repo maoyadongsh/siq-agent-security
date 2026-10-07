@@ -650,10 +650,14 @@ def execute_deployment(
         change_request_id=cr.id,
         target=target,
         runtime_binding_id=binding.id,
+        execution_backend=backend,
         to_revision=f"policy-{policy.version}",
         status="pending",
     )
     session.add(deployment)
+    if deployment.execution_backend not in (None, backend):
+        raise HTTPException(409, "deployment_backend_changed")
+    deployment.execution_backend = backend
     session.flush()  # deployment.id 为 insert 期默认，payload 需要真实 ID
     task_payload["deployment_id"] = deployment.id
     expires_at = utcnow() + timedelta(seconds=_task_ttl())
@@ -957,20 +961,35 @@ def _rollback_live_chain(session: Session, identity: Identity, deployment: Deplo
 def rollback_deployment(
     deployment_id: str,
     session: Session = Depends(get_session),
-    identity: Identity = Depends(require_permission("policy:manage")),
+    identity: Identity = Depends(get_identity),
 ):
     deployment = session.scalar(
         select(Deployment).where(Deployment.id == deployment_id, Deployment.tenant_id == identity.tenant_id)
     )
     if deployment is None:
         raise HTTPException(status_code=404, detail="not_found")
+    ensure_permission(identity, "policy:manage")
     if deployment.status not in ("effective", "sent", "failed"):
         raise HTTPException(status_code=409, detail="invalid_state")
 
-    # 真实后端回滚（§14.4）：只恢复本进程本次 apply 绑定的精确前置快照。
+    # The immutable deployment origin selects rollback; current config cannot replace it.
     import os
 
-    backend = os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
+    origin_binding = session.scalar(select(RuntimeBinding).where(
+        RuntimeBinding.id == deployment.runtime_binding_id,
+        RuntimeBinding.tenant_id == identity.tenant_id,
+        RuntimeBinding.environment_id == deployment.environment_id,
+        RuntimeBinding.backend_target_id == deployment.target,
+    ))
+    backend = deployment.execution_backend
+    if backend is None and origin_binding is not None:
+        backend = origin_binding.backend
+    if backend not in {"fake", "openshell-cli"}:
+        raise HTTPException(409, "deployment_backend_unknown")
+    if origin_binding is not None and origin_binding.backend != backend:
+        raise HTTPException(409, "deployment_backend_identity_conflict")
+    if os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none") != backend:
+        raise HTTPException(409, "deployment_backend_changed")
     if backend == "openshell-cli":
         receipt = deployment.receipt or {}
         if deployment.status != "effective" and not (deployment.status == "failed" and receipt.get("operation_id")):

@@ -79,8 +79,12 @@
       "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/development/optimization-opt05-backend-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "原部署后端绑定与迁移已验证；加密持久操作、跨进程恢复及真实 OpenShell 故障联验尚未完成。"
+      ]
     },
     {
       "id": "OPT-06",

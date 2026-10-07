@@ -524,6 +524,7 @@ class Deployment(Base):
     change_request_id: Mapped[str] = mapped_column(String(64), ForeignKey("change_request.id"))
     # P0-1：target 服务端从 RuntimeBinding.backend_target_id 解析，客户端不可指定
     target: Mapped[str] = mapped_column(String(128))
+    execution_backend: Mapped[str | None] = mapped_column(String(32), nullable=True)
     runtime_binding_id: Mapped[str | None] = mapped_column(
         String(64), ForeignKey("runtime_binding.id"), nullable=True, index=True
     )

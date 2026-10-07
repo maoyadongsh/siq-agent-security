@@ -151,12 +151,32 @@ def main():
             )
         assert session.scalar(select(func.count()).select_from(DiscoveryScheduleRun).where(
             DiscoveryScheduleRun.schedule_id == key)) == 1
+    # Newer provenance migrations stop automatic downgrade before revision 0028.
+    # Exercise this older populated-history guard directly, without weakening it.
+    import importlib.util
+
+    from alembic.migration import MigrationContext
+    from alembic.operations import Operations
+
+    spec = importlib.util.spec_from_file_location(
+        "schedule_migration",
+        Path(__file__).resolve().parents[2] / "apps/control-api/migrations/versions/0028_discovery_schedule.py",
+    )
+    migration = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(migration)
+    with get_engine().connect() as connection:
+        with (Operations.context(MigrationContext.configure(connection)),
+              pytest.raises(RuntimeError, match="discovery schedule history must be preserved")):
+            migration.downgrade()
+        assert connection.scalar(text("SELECT count(*) FROM discovery_schedule_run")) == 1
+        connection.rollback()
     get_engine().dispose()
     print(json.dumps({"passed": True, "checks": {
         "scheduler_postgres_real_lock_contention": True,
         "scheduler_postgres_duplicate_single_round_task_and_audit": True,
         "scheduler_postgres_audit_failure_atomic_rollback": True,
         "scheduler_postgres_duplicate_and_cross_tenant_constraints": True,
+        "scheduler_postgres_direct_populated_downgrade_refused": True,
     }}))
 
 

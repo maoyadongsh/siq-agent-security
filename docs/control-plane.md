@@ -215,6 +215,12 @@ OPT-04 将策略、部署和运行时绑定列表接入既有分页合同：limi
 
 OpenShell 编译入口的不可达、编译拒绝和校验失败只对外返回固定类别及 error digest，不回显底层异常、路径或验证器自由文本。保持既有状态码和拒绝语义；不把编译失败转为成功或 empty policy。
 
+### OPT-05：原部署后端来源
+
+新部署、单项 reservation 和批量 reservation 在外部执行前记录不可由请求正文覆盖的 `execution_backend`，由服务端已授权的 prepared/preview 结果提供。回滚按该记录选择分支；当前配置必须与原后端一致，否则 409 `deployment_backend_changed`，不得跳过 OpenShell 就标记 rolled_back。
+
+历史空值只可从原 deployment 绑定的、同租户/环境/目标的 RuntimeBinding 恢复分类；缺失或冲突时拒绝自动回滚。分类不代替活体授权链、binding 状态和网关身份复验。迁移新增可空列，不猜测批量回填；降级若会丢弃已记录的后端来源必须拒绝。此批仅解决后端选择；跨进程操作快照与故障恢复仍为 OPT-05 后续。
+
 ## 开发与测试
 
 仓库约定见 [AGENTS.md](../AGENTS.md)（边界、事实源顺序、安全不变量、按变更类型的最低验证要求）。所有改动不得破坏 7 条安全不变量：租户隔离、Secret 不明文落库、审计同事务、Edge 凭据只存哈希、模型非权威、孤儿证据拒绝、生产禁 SQLite/`X-Dev-*`。

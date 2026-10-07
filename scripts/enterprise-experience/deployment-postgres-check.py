@@ -139,6 +139,32 @@ def worker():
             assert connection.scalar(text("SELECT count(*) FROM deployment_submission")) == before
             connection.rollback()
         checks["populated_reservations_direct_migration_guard"] = True
+        spec = importlib.util.spec_from_file_location(
+            "device_scope_migration",
+            ROOT / "apps/control-api/migrations/versions/0020_discovery_device_scope.py",
+        )
+        migration = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(migration)
+        with pytest.raises(RuntimeError, match="device-scoped discovery cannot be merged"):
+            migration.downgrade()
+        checks["device_scope_direct_downgrade_refused"] = True
+        from app.db import session_scope
+        from app.models import Deployment
+        from sqlalchemy import select
+
+        with session_scope() as session:
+            row = session.scalar(select(Deployment).where(
+                Deployment.execution_backend == "fake", Deployment.status == "sent",
+            ))
+            assert row is not None
+            dep_id, original_status = row.id, row.status
+        with pytest.MonkeyPatch.context() as patch:
+            patch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
+            denied = client.post(f"/api/v1/deployments/{dep_id}/rollback", headers=headers, json={})
+            assert denied.status_code == 409 and denied.json()["detail"] == "deployment_backend_changed"
+        with session_scope() as session:
+            assert session.get(Deployment, dep_id).status == original_status
+        checks["postgres_backend_origin_survives_configuration_switch"] = True
     print(json.dumps({"passed": True, "checks": checks}))
 
 
@@ -266,9 +292,9 @@ def main():
             )
             assert (
                 down.returncode != 0
-                and "device-scoped discovery cannot be merged" in down.stderr
+                and "deployment backend origin must be preserved" in down.stderr
             )
-            proof["checks"]["device_scope_automatic_downgrade_refused"] = True
+            proof["checks"]["backend_origin_automatic_downgrade_refused"] = True
             with psycopg.connect(
                 host="127.0.0.1", port=int(port), dbname="postgres",
                 user="postgres", password=password, connect_timeout=2,
@@ -296,14 +322,14 @@ def main():
             (out / "scheduler-refused-downgrade.log").write_text(
                 (scheduler_down.stdout + scheduler_down.stderr).replace(password, "[REDACTED]")
             )
-            assert scheduler_down.returncode != 0 and "discovery schedule history must be preserved" in scheduler_down.stderr
+            assert scheduler_down.returncode != 0 and "deployment backend origin must be preserved" in scheduler_down.stderr
             with psycopg.connect(
                 host="127.0.0.1", port=int(port), dbname="postgres",
                 user="postgres", password=password, connect_timeout=2,
             ) as connection:
                 assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == migrated_head
                 assert connection.execute("SELECT count(*) FROM discovery_schedule_run").fetchone()[0] == 1
-            proof["checks"]["scheduler_postgres_populated_downgrade_refused"] = True
+            proof["checks"]["automatic_downgrade_keeps_scheduler_history"] = True
             proof.update(
                 {
                     "schema_version": "deployment-postgres-check/v1",
