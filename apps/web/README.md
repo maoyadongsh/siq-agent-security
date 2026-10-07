@@ -41,6 +41,8 @@ Windows PowerShell 可将 `npm` 写为 `npm.cmd`，无需修改 ExecutionPolicy�
 
 ## 开发验证与交付
 
+企业 Nginx 的既有 CSP 与本地 Go 入口使用一致的脚本、frame 和 MIME 防护策略。静态资产只有成功或条件缓存响应可长期缓存，缺失资源不缓存一年；本地管理 API/HTML/错误默认 no-store。[OPT-13 验收](../../docs/development/optimization-opt13-validation-20261007.md)包含真实 HTTP、Nginx 代理与浏览器正负检查，不替代生产网关或 IAM 联验。
+
 新增[个人浏览器接入与审计](../../evaluations/campaigns/20261006/reports/personal-runtime-browser-report.md)及[运行自检状态实测](../../evaluations/campaigns/20261006/reports/native-runtime-snapshot-report.md)：同候选接入、自检、活动关联、配置失效、取消和卸载有真实浏览器证据；自检 passed 不代表已撤销的业务授权仍可用。DGX 分析助手前端属于另一项目，其权限测评不能替代本 Web 全页面回归。
 
 Vitest 覆盖请求、状态投影和权限/效果相关逻辑；隔离浏览器旅程覆盖桌面/375px、权限过滤、分页、恢复与零意外写请求，真实身份、设备和宿主旅程仍见[测评索引](../../evaluations/README.md)。开发页面可访问不等于配对、授权或宿主已验收。

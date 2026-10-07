@@ -184,11 +184,16 @@
     {
       "id": "OPT-13",
       "title": "交付安全头",
-      "status": "planned",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/development/optimization-opt13-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/delivery-headers.json"
+      ],
+      "residual_limits": [
+        "受控真实 Nginx 代理链不替代客户生产 Gateway/TLS 配置；企业验证未登录页面，本地真实 daemon 验证正常管理会话。未测试完整 DNS rebinding 链，不宣称其实证防御；保留现有 unsafe-inline 样式策略。"
+      ]
     },
     {
       "id": "OPT-14",

@@ -23,6 +23,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/export"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/httpsecurity"
 	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/inventory"
@@ -375,6 +376,7 @@ func New(d Deps) (*Server, error) {
 // Handler returns the http.Handler (loopback check + mux).
 func (s *Server) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		httpsecurity.Apply(w)
 		host, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil || !isLoopback(host) {
 			http.Error(w, "loopback only", http.StatusForbidden)

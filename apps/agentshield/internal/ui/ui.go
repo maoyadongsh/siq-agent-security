@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"path"
 	"strings"
+
+	"siq-agent-security/apps/agentshield/internal/httpsecurity"
 )
 
 //go:embed all:embedded
@@ -20,11 +22,13 @@ func Handler() http.Handler {
 	sub, err := fs.Sub(embeddedFS, "embedded")
 	if err != nil {
 		return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			httpsecurity.Apply(w)
 			http.Error(w, "ui embed missing", http.StatusInternalServerError)
 		})
 	}
 	files := http.FileServer(http.FS(sub))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		httpsecurity.Apply(w)
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -32,11 +36,14 @@ func Handler() http.Handler {
 		p := path.Clean("/" + r.URL.Path)
 		if p != "/" {
 			rel := strings.TrimPrefix(p, "/")
-			if _, err := fs.Stat(sub, rel); err == nil {
+			if info, err := fs.Stat(sub, rel); err == nil && !info.IsDir() {
+				if strings.HasPrefix(p, "/assets/") {
+					w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+				}
 				files.ServeHTTP(w, r)
 				return
 			}
-			if ext := path.Ext(p); ext != "" && ext != ".html" {
+			if ext := path.Ext(p); p == "/assets" || strings.HasPrefix(p, "/assets/") || ext != "" && ext != ".html" {
 				http.NotFound(w, r)
 				return
 			}

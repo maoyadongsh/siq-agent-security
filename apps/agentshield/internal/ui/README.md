@@ -13,6 +13,8 @@ make -C apps/agentshield ui
 
 随后重新构建 Go，二进制才包含新页面。Go 测试不依赖 npm，不能代替 Web 类型、单元与浏览器检查。个人服务提供 SPA 与不含 secret 的 `/ui-config.json`；管理员配对和 API 权限由 server 执行。开发服务入口、固定代理端口和 Windows 命令见 [Web README](../../../web/README.md)。
 
+UI handler 与主 HTTP 入口均设置 CSP、frame、MIME 和 Referrer 等防护头；HTML/API/错误默认 no-store，实际存在的 Vite assets 可长期缓存。缺失 assets 不回退成 HTML，目录不列出内容。Host/Origin 与 loopback 校验仍由主 server 独立负责。[OPT-13 验收](../../../../docs/development/optimization-opt13-validation-20261007.md)覆盖真实二进制响应、浏览器配对/恢复和注入负向。
+
 ## 当前个人流程
 
 2026-10-06 [浏览器专项](../../../../evaluations/campaigns/20261006/reports/personal-runtime-browser-report.md)记录真实接入、自检、活动关联和卸载；[状态专项](../../../../evaluations/campaigns/20261006/reports/native-runtime-snapshot-report.md)区分配置快照、实例授权和临时自检身份。界面展示通过不能代替业务 Grant、安装身份或实际文件效果；本轮文档更新不重建嵌入资产。

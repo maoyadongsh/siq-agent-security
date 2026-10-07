@@ -2688,3 +2688,11 @@ D2a 按 ADR-056 为原生身份读回新增 identity-issued/v3、request-identit
 D2b 按 ADR-056 增加 Linux 薄元数据通道：可信启动器固定进程 pidfd/PID/UID，Unix SEQPACKET 每包核对 SCM_CREDENTIALS，拒绝继承连接的其他进程、重放、截断、额外描述符和退出宿主。标准库 Python 可在缺少 os.pidfd_open 时调用当前 libc 的 pidfd_open；能力缺失即拒绝。事件/响应合同只定义 64 KiB 有界传输与递增序号，不授予权限。处理器、受保护启动归属/制品、业务事件及实际 OpenShell 挂载接入仍需独立完成，组件不自动安装或启用。
 
 D2c1 增加 `native-skill-source/v1` 文件快照组件，先解决实际读取与摘要一致、支持文件归属、缓存重新核验和固定解码语义。单文件 1 MiB、单任务 256 源、路径 4096 UTF-8 字节/128 组件；逐级 NOFOLLOW、普通文件/单硬链接、读前后及回调后元数据与路径核验。观察回调必需，失败后 reader 停止；缓存未见过、内容漂移、fork、关闭后使用拒绝。摘要只对应正文解码前/后，不包括后续 Hermes banner，也不证明整个安装或授权。实现边界和未接入条件以 ADR-056 D2c1 为准；不得因此启用原生身份创建或绕过既有决策。
+
+## OPT-13：交付入口响应头增量（2026-10-07）
+
+本地 HTTP 服务在 loopback/Host/Origin 检查之前设置统一响应头，覆盖成功、重定向和拒绝响应：CSP 与企业静态入口现有策略一致（self 脚本、self 连接、禁止 frame/object、限制 base/form，样式保留 unsafe-inline），并设置 nosniff、X-Frame-Options DENY、strict-origin-when-cross-origin Referrer-Policy、禁用 camera/microphone/geolocation。不设置 HTTP HSTS，不增加 HTML meta CSP，不扩展 CORS 或改变现有 Host/Origin 检查。
+
+本地 API、HTML、配置、错误默认 Cache-Control no-store；实际存在的 Vite assets 文件可使用 public/max-age=31536000/immutable，支持 HEAD/304/206。静态目录不列出内容，缺失 assets 即使无扩展名也必须 404，不能套用 SPA 回退。独立 UI handler 也设置同一响应头，避免脱离主路由时遗漏。
+
+企业 Nginx 保持现有 CSP，assets 仅 200/206/304 可长期缓存，错误响应 no-store；health 明确单一 text/plain 类型并 no-store。验证须经过实际 Nginx 与本地二进制响应，覆盖 HTML、资产、SPA、错误及适用代理链，再进行浏览器正常会话/导航与注入、跨站限制检查。受控代理夹具不冒充外部生产网关；未执行完整 DNS rebinding 链时不得声称其实证防御。
