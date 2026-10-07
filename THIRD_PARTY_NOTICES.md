@@ -4,6 +4,7 @@ The root Apache-2.0 grant applies to project-owned work. It does not replace the
 
 | Material | Attribution and license | Inventory |
 | --- | --- | --- |
+| Fixed Hermes native-dispatch candidate overlay | Nous Research, copyright 2025; [upstream MIT text from the pinned image](patches/hermes/LICENSE). SIQ modifications are marked in the overlay builder and README; no upstream acceptance is claimed. | [Pinned source/overlay builder](patches/hermes/build_native_overlay.py), [scope](patches/hermes/README.md) |
 | OpenClaw 2026.5.12 and 2026.9.4 candidate patches | Peter Steinberger and contributors; [upstream MIT](patches/openclaw/LICENSE). Local modifications are marked in patch metadata and README. | [Historical source inventory](docs/research/third-party-source-inventory.json); newer [2026.9.4 patch metadata](patches/openclaw/2026.9.4-approval-execution-recheck-v1.json) records exact target and patch digests |
 | Mermaid 11.4.1 static bundle | [Mermaid MIT license](site/vendor/mermaid-LICENSE); original bundle bytes preserved, export alias appended. | Same source inventory, including 70 source-map component versions |
 | Mermaid bundled components | Original notices remain in the JS; [extracted notices](site/vendor/mermaid-bundled-notices.txt) plus per-component license/notice copies below. | [LICENSES/third-party](LICENSES/third-party) |

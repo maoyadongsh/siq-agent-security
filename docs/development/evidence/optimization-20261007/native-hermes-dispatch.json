@@ -1,0 +1,87 @@
+{
+  "schema_version": "siq.optimization-native-dispatch-evidence/v1",
+  "task": "OPT-08",
+  "phase": "D2c2",
+  "date": "2026-10-07",
+  "status": "component_verified",
+  "native_probe": {
+    "schema_version": "siq.native-hermes-function-probe/v1",
+    "checks": {
+      "unconfigured_real_registry_denies": true,
+      "ordinary_native_skill_read": true,
+      "inline_preprocessing_not_executed": true,
+      "native_cache_path_reobserved": true,
+      "native_support_read": true,
+      "real_handler_allowed_once": true,
+      "real_handler_denied_without_effect": true,
+      "real_registry_rejects_duplicate": true,
+      "actual_call_id_propagated": true,
+      "final_gate_sees_middleware_parameters": true,
+      "final_binding_records_rewritten_parameters": true,
+      "actual_plugin_reader": true,
+      "actual_plugin_support_reader": true,
+      "native_cache_same_stat_drift_denied": true,
+      "drift_poisons_subsequent_native_dispatch": true,
+      "task_end_observed": true,
+      "closed_task_denies_real_handler": true,
+      "native_conversation_normal_closes_task": true,
+      "native_conversation_exception_closes_task": true,
+      "direct_host_route_refused": true,
+      "sequential_concurrent_inline_boundary_refused": true
+    },
+    "model_calls": 0,
+    "real_hermes_functions": true,
+    "synthetic_authority_callbacks": true,
+    "siq_authority_bridge": false,
+    "openshell_execution": false,
+    "business_entry_execution": false,
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_manifest_sha256": "0b8d90c9d092fd1cfc8ab4fc3657b33ec0e1902cf19f8888f0b4277055580417",
+    "exit_code": 0
+  },
+  "overlay_manifest": {
+    "schema_version": "siq.native-hermes-overlay/v1",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "source_sha256": {
+      "tools/skills_tool.py": "7e258db459eff5906e7a29f1e2c8fc061fbd46aadf5633ac49d1ea5949cfe3e4",
+      "tools/registry.py": "f95d011cae75f0426dd77cb1e25df6bebb61a067d795312df297cb877dd616f5",
+      "model_tools.py": "5227bfe30f7c3f6eb20d064f648420138031e038d38eac2829d25b749739ad11",
+      "run_agent.py": "5b2e7083680e6c728f2306adc73e5f814c444aaa9ff3e3b840206142c67a7149",
+      "agent/agent_runtime_helpers.py": "9164dac169ce580d2de3396885c0959c5660620724f01509416ff2136df890e2",
+      "agent/tool_executor.py": "5aff6c7e95a280adc5124e7c1f1019b54984b8e7091db48bac35ad5bc2387813"
+    },
+    "overlay_sha256": {
+      "tools/skills_tool.py": "010e15fbb92d3923a7499e35689d04687c8f5d11191580402894d9f73b08d412",
+      "tools/registry.py": "cd6ac4438c49eade8e40e0d837597fa5fe78fd2d3e2182bc2fd11bcd43ea3231",
+      "model_tools.py": "1831c3fdb0776a2c5d4f7fdf8f19a05ee07c35b33f291b2165cc6da4f9b19b21",
+      "run_agent.py": "5c3ea4682392f01fe9be4bc75c945421a603e76007037bdc0d6930d6b399452b",
+      "agent/agent_runtime_helpers.py": "79caa0c1f05d813b6bc351596ff9fe484e0aafd8b95e70831473e1881e338a27",
+      "agent/tool_executor.py": "eae77739e3a85ff4864a02f94314a06ff20a2801e0be8f7332c889bf546c94ad",
+      "siq_native_runtime/native_dispatch.py": "55fd6eccfe222006e97558274a157a77a93c5cc0798002d1aaeef39b85a9dac4",
+      "siq_native_runtime/native_source.py": "9e1fcedb44fa0ebc01ea585c694f96e8fa78c80b42129e847a35dcac16a009ce",
+      "siq_native_runtime/__init__.py": "0503c9e6296811c29e7aaaeaeae9aac7a1d5babe96e2f237fac4870e868e4699",
+      "HERMES-LICENSE": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6"
+    },
+    "production_enabled": false,
+    "authority_bridge_connected": false
+  },
+  "adapter_regression": {
+    "initial_passed": 252,
+    "initial_failed": 1,
+    "initial_failure": "test_task_end_does_not_wait_forever_for_abandoned_handler",
+    "fix": "Reject ended tasks before waiting; bounded execution lock with cancellation checks.",
+    "affected_suite_after_fix_passed": 24,
+    "unaffected_suite_repeated": false,
+    "final_full_suite_claimed": false,
+    "additional_regression": "Queued calls stop after task end; one test-only assertion placement error corrected before final 24-case pass."
+  },
+  "builder_negative_checks": {
+    "existing_destination_preserved": true,
+    "changed_source_refused_without_output": true
+  },
+  "ruff": "passed",
+  "production_enabled": false,
+  "real_authority_bridge_verified": false,
+  "raw_logs_committed": false,
+  "probe_script_sha256": "e443fea4a2a7c424f3295940c030fca9ab19cbe0c08ab28b4a258cc7c3979049"
+}
