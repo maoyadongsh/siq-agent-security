@@ -1,0 +1,90 @@
+{
+  "schema_version": "siq.optimization-native-host-control-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "ea5ef19da4e7316b3e59a9762644eb4611850929",
+  "business_commit": "1f5568291aeb8032f4d48232cf7587be0346c658",
+  "tests": {
+    "related_control_session_loop_passed": 53,
+    "additional_quota_tests_passed": 2,
+    "business_consumer_passed": 21,
+    "ruff": "passed",
+    "intentional_warnings": "Two multi-threaded fork refusal warnings retained in related batch."
+  },
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-native-host-control-01",
+    "namespace": "siq-opt08-08e40b8f1111",
+    "image_id": "sha256:2cee8fe692b02fb17906ab5798492c3e67114decf1b5a2e0227179a142daf10a",
+    "runtime_checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "cross_process_control": {
+      "kernel_supervisor_pid_matched": true,
+      "business_consumer_exit": 0,
+      "client_sha256": "dc29a7bcfd828dde80235f048c58ab9b2955703f36829bc4efd4c4a2b60e5966",
+      "probe_sha256": "038d8d023ba0d67811d4497a7b27aab2c6f526fb72fb44dcfec3c888d7da3315"
+    },
+    "host_loop_stopped": true,
+    "host_session_resources_closed": true,
+    "synthetic_supervisor_renewals": 4,
+    "independent_host_effect_check": true,
+    "signed_chain_verified": true,
+    "receipt_count": 18,
+    "receipt_actions": {
+      "allow": 14,
+      "deny": 4
+    },
+    "go_integration_seconds": 75.262,
+    "model_calls": 0,
+    "business_entry_acceptance": false
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "final_source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_control.py": "89880c065ab9fc4bcbd8cb4e6f4ada4ec5bc5549cc6f78ccdde192389dcb464b",
+    "adapters/runtime/hermes-agentshield/host_service.py": "c1b0941cbedd6b751bcf040b5dfea0b5a9b8cde271b8ebe287ff77eef2783474",
+    "adapters/runtime/hermes-agentshield/host_session.py": "13ba369cd62e54daa0b2843a852385bb3398a4bbfc864cb53bf9a33e2802daa7",
+    "adapters/runtime/hermes-agentshield/host_online.py": "dd057195c93a0f413d4e6f05fc23bb751b6c685a06e8ee429c32a044d4205d3e",
+    "adapters/runtime/hermes-agentshield/host_openshell.py": "f99e5af7c9fe499b81ccf039ca596ce4f4e801dbb848bea790765226e8e6c47c",
+    "adapters/runtime/hermes-agentshield/tests/test_host_control.py": "25f3529e5273359d5634d1f763d52943556b948309945b96065affc7bc24e4a7",
+    "patches/hermes/openshell_online_probe.py": "069631feb4eb15dd27468818b25fa53272c090a794f86253a71167cebfd5019d",
+    "packages/contracts/native-host-control.v1.md": "dd44ae62609f81fd105c14e70651f284958d7e4070b1a1244138a5ef9d4d0082"
+  },
+  "raw_result_sha256": {
+    "result.json": "28b4721ded955ebaf73a515f899ceb1750ec3a88e5cc32a246c96896ef00376a",
+    "authority-result.json": "ad5223a747da4086b0115f446a1422428689f53f2b5fe5272f28e83cb4429464",
+    "business-client-start.json": "eba5ab4e0f884f5d8c4d4871b7b584c89c68a5b53a2ebd8aa46ba6355a5bd9eb",
+    "business-client-cancel.json": "c79a85c46e75c7f1a1be4173d2d0f0e66c1d59e053e061d1828f09176ff0f1c8",
+    "authority-go-test.log": "97aefc34029f8196c08f92c19d065890dbd3c1a9e3d560834330f3ec778cd8e0"
+  },
+  "limits": [
+    "Resident business consumer is QA; daily builder/Supervisor and model acceptance remain pending.",
+    "Actual run embeds HostControl in the owned host; standalone CLI has component startup/shutdown evidence only.",
+    "Business authorization renewals and Skill content are synthetic; kernel peer credentials, pidfd, OpenShell, Hermes tools and Go authority are real.",
+    "Same-UID hostile host isolation and rollback of effects already started are not claimed.",
+    "Two quota negatives were added after the live run; production sources were unchanged."
+  ]
+}

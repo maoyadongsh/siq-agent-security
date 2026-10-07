@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 import secrets
+import select
 import shutil
 import subprocess
 import sys
@@ -177,7 +178,7 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
     # online module so class identities match the already-running Verifier.
     package = _owned.module.__package__
     sys.modules[package + ".host_online"] = _owned.module
-    spec = importlib.util.spec_from_file_location(package + ".host_session", ADAPTER / "host_session.py")
+    spec = importlib.util.spec_from_file_location(package + ".host_control", ADAPTER / "host_control.py")
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
@@ -202,13 +203,40 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
         return answer
 
     _owned.module.DecisionRelay.dispatch = dispatch
-    host = module.HostSession(_owned.verifier, ready["endpoint"])
+    _owned.write("control.json", {"schema_version": "native-host-control-config/v1",
+        "credential": "nhc-" + secrets.token_hex(32), "control_socket": str(_owned.root / "control.sock")})
+    control = module.HostControl(_owned.verifier, ready["endpoint"], _owned.root / "control.json").start()
+    handle = "nhs-" + secrets.token_hex(16)
+    consumer, consumer_log = None, None
+
+    def read_consumer():
+        assert consumer is not None and select.select([consumer.stdout], [], [], 30)[0], "owned_business_control_timeout"
+        raw = consumer.stdout.readline(4097)
+        assert 0 < len(raw) <= 4096, "owned_business_control_reply_invalid"
+        return json.loads(raw)
+
+    def ask(operation, **arguments):
+        consumer.stdin.write(json.dumps({"operation": operation, **arguments}) + "\n")
+        consumer.stdin.flush()
+        answer = read_consumer()
+        assert answer == {"operation": operation, "state": "closed" if operation == "stop" else "running"}
+
     expires = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=150)
     renewals = 0
     try:
-        host.start(backend=backend, runtime=runtime, subject=ready["subject"], installs=ready["installs"],
-            channel_directory=row["channel_directory"], credential=credential, supervisor_pid=os.getpid(),
-            expires_at=expires, authorization_expires_at=datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=60))
+        _owned.write("host-client-input.json", {"schema_version": "siq.native-host-client-probe/v1",
+            "control_config": str(_owned.root / "control.json"), "handle": handle,
+            "start_arguments": {"backend": backend, "runtime": runtime, "subject": ready["subject"], "installs": ready["installs"],
+                "channel_directory": row["channel_directory"], "credential": credential,
+                "expires_at": expires.isoformat().replace("+00:00", "Z"),
+                "authorization_expires_at": (datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=60)).isoformat().replace("+00:00", "Z")}})
+        business_probe = BUSINESS_CLIENT.with_name("probe_agentshield_native_host.py")
+        consumer_log = (_owned.output / "business-host-client.log").open("w")
+        consumer = subprocess.Popen([sys.executable, "-I", "-B", str(business_probe), "--input", str(_owned.root / "host-client-input.json")],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=consumer_log, text=True,
+            env={"PATH": "/usr/bin:/bin", "LANG": "C.UTF-8"})
+        assert read_consumer() == {"schema_version": "siq.native-host-client-probe-ready/v1", "state": "running", "pid": consumer.pid}
+        assert control._entries[handle]["owner"][0] == consumer.pid != os.getpid()
         deadline, next_health, next_renewal = time.monotonic() + 110, 0.0, 0.0
         while True:
             rows = [json.loads(line) for line in exec_log.read_text(errors="replace").splitlines()
@@ -220,19 +248,36 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
             if time.monotonic() >= next_renewal:
                 # Synthetic business-authorization operator for this probe.
                 # Daily Supervisor must perform its actual authorization check.
-                host.renew(supervisor_pid=os.getpid(), authorization_expires_at=min(expires,
-                    datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=60)))
+                ask("renew", authorization_expires_at=min(expires,
+                    datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=60)).isoformat().replace("+00:00", "Z"))
                 renewals += 1
                 next_renewal = time.monotonic() + 20
             if time.monotonic() >= next_health:
-                host.assert_running()
+                ask("status")
+                control.assert_running()
                 next_health = time.monotonic() + 1
             time.sleep(.1)
-        host.assert_running()
+        ask("status")
+        ask("stop")
+        consumer.wait(timeout=10)
+        assert consumer.returncode == 0, "owned_business_control_exit_failed"
+        host = control._entries[handle]["session"]
+        assert control._entries[handle]["state"] == "closed"
+        result["cross_process_control"] = {"kernel_supervisor_pid_matched": True, "business_consumer_exit": consumer.returncode,
+            "client_sha256": digest(business_probe.with_name("agentshield_native_host.py").read_bytes()),
+            "probe_sha256": digest(business_probe.read_bytes())}
     finally:
         try:
-            host.close()
+            if consumer is not None:
+                if consumer.poll() is None:
+                    consumer.kill()
+                    consumer.wait(timeout=10)
+                consumer.stdin.close()
+                consumer.stdout.close()
+            control.close()
         finally:
+            if consumer_log is not None:
+                consumer_log.close()
             _owned.module.DecisionRelay.dispatch = original_dispatch
     result["host_loop_stopped"] = not host._loop._thread.is_alive()
     result["host_session_resources_closed"] = host._guard._closed and host._fence._pin is None and host._directory is None

@@ -82,3 +82,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3g OpenShell 后端归属核验](optimization-opt08-openshell-backend-validation-20261007.md)已从验收脚本提取为正式宿主组件，固定本机 Docker 端点、完整容器/镜像/OpenShell 归属和真实进程清单、cgroup/NSpid，异常永久拒绝。最终后端 53 项通过，相关阶段 63 项通过（重叠）；真实 OpenShell 18 项检查、18 条签名回执及清理通过。已修复非 root 读取 root init namespace 的不合理前提，并减少夹具重复健康轮询、调整整批等待上限，保留三轮失败记录；逐请求期限不变。日常 Supervisor 跨进程交接与模型业务仍未验收，OPT-08 与 9/16 不变。
 
 [D3h 业务监管与宿主会话](optimization-opt08-host-session-validation-20261007.md)已统一真实后端/guard、监管者 pidfd、固定期限/90秒内心跳、Verifier 和循环生命周期；过期/退出/停止后拒绝，线程退出未确认时保留在用资源。最终相关91项通过；真实OpenShell18项检查、18条签名回执、4次合成业务续期及会话/沙箱清理通过。另修复线程创建失败后的清理异常，由增量负向验证；live旧宿主模块与最终源码摘要分列。跨进程认证控制、日常API及模型业务仍未验收，OPT-08与9/16不变。
+
+[D3i 跨进程宿主控制](optimization-opt08-host-control-validation-20261007.md)已实现私有认证控制服务及业务独立客户端：监管者 PID 取自内核凭据，控制材料固定、句柄不可复活，处理器与资源有界。53项相关测试、额外2项配额负向及业务21项通过；真实OpenShell由独立业务消费者启动/4次续期/停止，18项权限检查、18条签名回执和清理通过。业务四个新增文件独立提交，未吸收既有工作树修改。独立CLI只验收启动/停止，日常builder/Supervisor/API/模型尚未验收；OPT-08与9/16保持不变。
