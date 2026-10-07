@@ -2686,3 +2686,5 @@ D1 查询桥接通过 `NativeCallStore.RequiredLookup` 将有效身份策略与�
 D2a 按 ADR-056 为原生身份读回新增 identity-issued/v3、request-identity-issued/v2、identity-self/v2、session-enrolled/v3 与混合 identities/v3。只从签名记录投影 native_skill_policy，runtime_state 仍为 unverified；旧版本不夹带策略。混合列表有任意原生条目即用 v3，Windows/旧式条目保持原形状。前端校验新策略、平台/路径及响应版本，旧适配器拒绝新会话合同；当前创建入口保持关闭，不因读回成功启用原生执行。
 
 D2b 按 ADR-056 增加 Linux 薄元数据通道：可信启动器固定进程 pidfd/PID/UID，Unix SEQPACKET 每包核对 SCM_CREDENTIALS，拒绝继承连接的其他进程、重放、截断、额外描述符和退出宿主。标准库 Python 可在缺少 os.pidfd_open 时调用当前 libc 的 pidfd_open；能力缺失即拒绝。事件/响应合同只定义 64 KiB 有界传输与递增序号，不授予权限。处理器、受保护启动归属/制品、业务事件及实际 OpenShell 挂载接入仍需独立完成，组件不自动安装或启用。
+
+D2c1 增加 `native-skill-source/v1` 文件快照组件，先解决实际读取与摘要一致、支持文件归属、缓存重新核验和固定解码语义。单文件 1 MiB、单任务 256 源、路径 4096 UTF-8 字节/128 组件；逐级 NOFOLLOW、普通文件/单硬链接、读前后及回调后元数据与路径核验。观察回调必需，失败后 reader 停止；缓存未见过、内容漂移、fork、关闭后使用拒绝。摘要只对应正文解码前/后，不包括后续 Hermes banner，也不证明整个安装或授权。实现边界和未接入条件以 ADR-056 D2c1 为准；不得因此启用原生身份创建或绕过既有决策。
