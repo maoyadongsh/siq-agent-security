@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"reflect"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 	"siq-agent-security/apps/agentshield/internal/trustedcontext"
@@ -91,12 +92,6 @@ func (e *Engine) ReadHoldStatus(req HoldStatusRequest) (*HoldStatus, error) {
 }
 
 func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time.Time) bool {
-	// Native invocation retries need a separately attested retry call plus live
-	// equality with the original full lineage. C1 is not wired online; until C2
-	// supplies both checks, the legacy single-Grant retry must not authorize it.
-	if d.NativeInvocation != nil {
-		return false
-	}
 	if intent.ValidateNativeSession(req.Platform, req.SessionID) != nil {
 		return false
 	}
@@ -122,11 +117,21 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 	if sec != nil && sec.Invalid {
 		return false
 	}
+	if d.NativeInvocation != nil {
+		if sec == nil || sec.Native == nil || !reflect.DeepEqual(sec.Native.Evidence, d.NativeInvocation) {
+			return false
+		}
+	} else if sec != nil && sec.Native != nil {
+		// An approval cannot be carried across a change in enrollment mode.
+		return false
+	}
 	// The original decision's attribution is evidence, not authority for a
 	// resume. Recompute the exact call binding from the current verified SEC;
 	// a switched installation, context or task must not inherit its approval.
 	var currentAttribution *SkillAttribution
-	if sec != nil {
+	if sec != nil && sec.Native != nil {
+		currentAttribution = nativeAttribution(sec)
+	} else if sec != nil {
 		binding, bindingErr := trustedcontext.CallBinding(req.Platform, req.SessionID, req.AgentID, holdRequestRuntimeTaskID(req.TaskID, req.RuntimeTaskID), req.Tool, req.ToolCallID, req.Params)
 		if bindingErr != nil {
 			return false
@@ -156,10 +161,16 @@ func (e *Engine) holdAuthorityCurrent(req HoldStatusRequest, d Receipt, now time
 		return false
 	}
 	if sec != nil {
-		if r.selectedGrant != nil && r.selectedGrant.GrantID != sec.Grant.GrantID {
-			return false
+		if sec.Native != nil {
+			if !nativeGrantMatches(r.selectedGrant, sec.Native.Evidence.AgentAuthority, r) {
+				return false
+			}
+		} else {
+			if r.selectedGrant != nil && r.selectedGrant.GrantID != sec.Grant.GrantID {
+				return false
+			}
+			r.selectedGrant = sec.Grant
 		}
-		r.selectedGrant = sec.Grant
 	}
 	if resolved == nil {
 		if d.IntentBinding == "bound" || e.opts.IntentEnforcement == "required" {

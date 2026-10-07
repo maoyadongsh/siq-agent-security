@@ -2672,3 +2672,5 @@ B1 按 ADR-056 的持久上下文约束新增独立 v2 上下文/撤销目录、
 B2 按 ADR-056 新增可信原生受管会话与精确调用的独立签名记录。会话固定原 baseline 和运行制品，调用固定原生 task/call ID、工具和最终参数摘要；精确上下文与显式无 Skill 证明互斥，未知拒绝。签发与执行前重验宿主事实，不提供缺记录回退；调用记录不替代执行预留。B2 存储组件不隐式启用 HTTP/Engine，受管模式须由后续可信 enrollment 门禁固定。
 
 C1 按 ADR-056 引入精确 native call 的引擎查询与交集，Intent 固定 Agent baseline，逐一收紧所有 Skill 祖先。必需上下文错误为 authority hard deny；静默参数脱敏改写不得继承原绑定。新原生回执使用独立 runtime-receipt/v3 保存完整调用/会话/权限链证据，v1/v2 字节保持。C1 不接入 serve；审批重试暂时明确拒绝，待 C2 补齐原调用/重试调用活体复验与状态 reader/writer 兼容，再进入真实宿主集成。
+
+C2a 按 ADR-056 解除 C1 的原生 hold 临时拒绝：状态检查和预留前重验原调用，预留还必须命中可信宿主登记的不同 retry call ID，并核对相同 session、baseline 和完整上下文链；reservation 保存重试调用本身的 v3 证据。执行前重复核验两条调用；读取/重启不再次授权，已预留无 observation 仍 uncertain。此批仍不启用 serve，C2 的 reader/writer 及 UI/导出兼容继续实施。

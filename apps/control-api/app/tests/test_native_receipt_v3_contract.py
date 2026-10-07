@@ -91,3 +91,37 @@ def test_native_receipt_refuses_incomplete_or_ambiguous_evidence(mutation):
         doc["native_invocation"]["model_authorized"] = True
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(doc, json.loads((CONTRACTS / "receipt.v3.schema.json").read_text()))
+
+
+@pytest.mark.parametrize("kind", ["no-skill", "with-skill"])
+def test_native_hold_full_product_chain(kind):
+    rows = json.loads((SAMPLES / f"native-hold-{kind}-v3.sample.json").read_text())
+    schema = json.loads((CONTRACTS / "receipt.v3.schema.json").read_text())
+    validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
+    previous = "0" * 64
+    for seq, row in enumerate(rows):
+        validator.validate(row)
+        verify(row)
+        assert row["seq"] == seq and row["prev_hash"] == previous
+        previous = row["hash"]
+    decision, approval, reservation, observation = rows
+    assert [row["record_type"] for row in rows] == [
+        "decision", "hold_resolution", "hold_reservation", "observation",
+    ]
+    assert approval["decision_receipt_id"] == decision["receipt_id"]
+    assert reservation["decision_receipt_id"] == decision["receipt_id"]
+    assert observation["decision_receipt_id"] == reservation["receipt_id"]
+    original = decision["native_invocation"]
+    retry = reservation["native_invocation"]
+    assert approval["native_invocation"] == original
+    assert observation["native_invocation"] == retry
+    assert original["call_id"] != retry["call_id"]
+    assert original["request_binding"] != retry["request_binding"]
+    for field in ["agent_authority", "session_registration_id", "session_signature", "no_skill", "contexts"]:
+        assert original[field] == retry[field]
+    if kind == "with-skill":
+        assert len(retry["contexts"]) == 2
+        assert retry["contexts"][0]["authority"]["grant_id"] != retry["contexts"][1]["authority"]["grant_id"]
+        assert reservation["skill_attribution"]["call_binding"] == retry["request_binding"]
+    else:
+        assert retry["contexts"] == [] and "skill_attribution" not in reservation

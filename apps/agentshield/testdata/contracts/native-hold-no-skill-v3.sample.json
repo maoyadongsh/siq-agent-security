@@ -1,0 +1,329 @@
+[
+  {
+    "native_invocation": {
+      "call_id": "ncall-7bfc9c59cffa30021896e2a00830c482",
+      "call_signature": "7adc8e1ab35742a638a9c153431ae6ceacb10c97b6a508b146a91f7e9900bc79c1ff3b6929028e095a97534ba37f78bf77e6da90c97819a6ea1eef73518dd50b",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "0d1023c9591a59bbb5a9f12a9c03fc98f44d8a1fb0282ed9698978ef4bd26de3",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": true,
+      "contexts": []
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "hold",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "decision",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000",
+    "chain_id": "local",
+    "seq": 0,
+    "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "hash": "4118f3c71fdafe0c30b824d909befac7784eec7597ddf7c3646a88524b9eb591",
+    "sig": "db992d9d934f31966e4b866a2ea85b07eeb3c68a02f35e39904cfa564ef6ab25d118d846a8553a6873d54da95dda6360485aaf9dfdc4ead6cbbea31ce77eaf0b",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "original",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+    "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+    "action": "hold",
+    "advisory_action": null,
+    "reason": "tool read_file requires human approval per grant grt-agent-baseline",
+    "reason_code": "runtime_denied",
+    "matched_grant_id": "grt-agent-baseline",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": 0,
+    "hold": {
+      "channel": "console",
+      "timeout_ms": 120000,
+      "resolved_by_receipt_id": null
+    }
+  },
+  {
+    "native_invocation": {
+      "call_id": "ncall-7bfc9c59cffa30021896e2a00830c482",
+      "call_signature": "7adc8e1ab35742a638a9c153431ae6ceacb10c97b6a508b146a91f7e9900bc79c1ff3b6929028e095a97534ba37f78bf77e6da90c97819a6ea1eef73518dd50b",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "0d1023c9591a59bbb5a9f12a9c03fc98f44d8a1fb0282ed9698978ef4bd26de3",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": true,
+      "contexts": []
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "allow",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "hold_resolution",
+    "decision_receipt_id": "rcp-e0effaee04ee-120000.000000",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000-res",
+    "chain_id": "local",
+    "seq": 1,
+    "prev_hash": "4118f3c71fdafe0c30b824d909befac7784eec7597ddf7c3646a88524b9eb591",
+    "hash": "a62f97d3bcde552832a6f7e6aa851de678408f692783084685b1b2f9ad2198c7",
+    "sig": "5239cb67d52419c80917344e88585de40506a319c7c050628eb8c8e37a921be4701b67aeec396f525b27a332e11f8141eb4b68eaeb9578076541d72dfe0aa207",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "original",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+    "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+    "action": "allow",
+    "advisory_action": null,
+    "reason": "hold approved by synthetic-reviewer",
+    "reason_code": "runtime_denied",
+    "matched_grant_id": "grt-agent-baseline",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": null,
+    "hold": null
+  },
+  {
+    "native_invocation": {
+      "call_id": "ncall-786735d4d140221adaeb0d42edfedb91",
+      "call_signature": "800bf5b1839c41ead179f152bab85843fabfc8c7ad909300e1dd7192ba539876b7e276009e64864586e0a609ee10e8370bea48fb8d2bad915f8a4b6ae60ebf02",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "ca534b4f22338491581ff740aba88463a2bcc1366e7a94b1bbcc16b5a24db128",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": true,
+      "contexts": []
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "allow",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "hold_reservation",
+    "decision_receipt_id": "rcp-e0effaee04ee-120000.000000",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000-exec",
+    "chain_id": "local",
+    "seq": 2,
+    "prev_hash": "a62f97d3bcde552832a6f7e6aa851de678408f692783084685b1b2f9ad2198c7",
+    "hash": "52f0007dd664856f86cf968cc1570ee0ffaaeb88cefec2c09105b3db68e6ffbb",
+    "sig": "7ebf9fb1dc4ab3048b0e92280dfc0e08e3d9d0542ad39aa64aaaf7d4ea5e7830f974338504ceb9a3bc8cc8f540b974d4c48c2b6e5744342a7699d93292fecd0c",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "retry",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+    "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+    "action": "allow",
+    "advisory_action": null,
+    "reason": "approved hold execution reserved",
+    "reason_code": "hold_execution_reserved",
+    "matched_grant_id": "grt-agent-baseline",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": null,
+    "hold": null
+  },
+  {
+    "native_invocation": {
+      "call_id": "ncall-786735d4d140221adaeb0d42edfedb91",
+      "call_signature": "800bf5b1839c41ead179f152bab85843fabfc8c7ad909300e1dd7192ba539876b7e276009e64864586e0a609ee10e8370bea48fb8d2bad915f8a4b6ae60ebf02",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "ca534b4f22338491581ff740aba88463a2bcc1366e7a94b1bbcc16b5a24db128",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": true,
+      "contexts": []
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "allow",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "observation",
+    "decision_receipt_id": "rcp-e0effaee04ee-120000.000000-exec",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000-exec-obs",
+    "chain_id": "local",
+    "seq": 3,
+    "prev_hash": "52f0007dd664856f86cf968cc1570ee0ffaaeb88cefec2c09105b3db68e6ffbb",
+    "hash": "7bed35a28c112ef1ec3c45d8fb2c5943e9f0ae644c69a095bd83c9e7458b8da1",
+    "sig": "695b2135e15e4bf9c9c4497aa01e96dc742e49748b81039d94b37dfecc187960f3295573e274b80e923b6a00ce62ef41579be1340183add101d29fcde7f8170e",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "retry",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "cadbf27f4827ce0ed2948a56b2bae3117f7b69cde4015386011e4fee05d3d71c",
+    "params_excerpt": "synthetic approved result",
+    "action": "allow",
+    "advisory_action": null,
+    "reason": "correlated observation of tool result",
+    "reason_code": "observation_accepted",
+    "matched_grant_id": "grt-agent-baseline",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": null,
+    "hold": null
+  }
+]

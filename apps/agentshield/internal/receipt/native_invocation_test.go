@@ -121,9 +121,9 @@ func TestNativeEngineResourceIntersectionAndApprovalPrecedence(t *testing.T) {
 	if err != nil || d.Action != ActionHold {
 		t.Fatal("baseline approval floor lost", err)
 	}
-	if fx.eng.holdAuthorityCurrent(HoldStatusRequest{Platform: r.Platform, SessionID: r.SessionID, AgentID: r.AgentID, Tool: r.Tool,
+	if !fx.eng.holdAuthorityCurrent(HoldStatusRequest{Platform: r.Platform, SessionID: r.SessionID, AgentID: r.AgentID, Tool: r.Tool,
 		ToolCallID: r.ToolCallID, TaskID: d.Receipt.TaskID, RuntimeTaskID: r.RuntimeTaskID, Params: r.Params}, d.Receipt, fx.clock) {
-		t.Fatal("C1 used legacy single-grant resume for native invocation")
+		t.Fatal("original full native authority no longer verifies")
 	}
 }
 

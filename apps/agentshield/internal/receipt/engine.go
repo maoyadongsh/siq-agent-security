@@ -1281,7 +1281,11 @@ func (e *Engine) resolveHoldLocked(held Receipt, approve bool, actorID string) (
 		if err != nil || current == nil || current.IntentID != held.IntentID || current.TaskID != held.TaskID || current.Digest != held.IntentDigest || current.AuthorityRevision != held.AuthorityRevision {
 			return nil, correlationError("hold_authority_changed")
 		}
-		if current.SelectedGrant != nil && current.SelectedGrant.GrantID != str(held.MatchedGrantID) {
+		if held.NativeInvocation != nil {
+			if !nativeGrantMatches(current.SelectedGrant, held.NativeInvocation.AgentAuthority, Request{Platform: held.Platform, AgentID: str(held.AgentID)}) {
+				return nil, correlationError("hold_authority_changed")
+			}
+		} else if current.SelectedGrant != nil && current.SelectedGrant.GrantID != str(held.MatchedGrantID) {
 			return nil, correlationError("hold_authority_changed")
 		}
 	}
