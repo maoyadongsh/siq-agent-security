@@ -121,11 +121,16 @@
     {
       "id": "OPT-08",
       "title": "日常Skill上下文",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/adr/0056-native-skill-invocation-authority.md",
+        "docs/development/optimization-opt08-context-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "正在实施版本化调用上下文；旧 SEC v1 单 Grant 约束保持，不把测评同步器或 best-effort 加载遥测当作产品接入。"
+      ]
     },
     {
       "id": "OPT-09",

@@ -16,7 +16,7 @@
 | OPT-05 | OpenShell持久化回滚与后端绑定 | done | 待结合对应模块继续核对 |
 | OPT-06 | pending提升幂等 | done | SEC-F05 |
 | OPT-07 | 策略语义与部署入口 | done | 待结合对应模块继续核对 |
-| OPT-08 | 日常Skill上下文 | planned | 待结合对应模块继续核对 |
+| OPT-08 | 日常Skill上下文 | implementing | 待结合对应模块继续核对 |
 | OPT-09 | OpenShell行为证据 | planned | 待结合对应模块继续核对 |
 | OPT-10 | 同候选业务回归 | planned | 待结合对应模块继续核对 |
 | OPT-11 | 连接器可信执行 | planned | 待结合对应模块继续核对 |
@@ -32,6 +32,8 @@ OPT-01 首批组件与 OPT-02 生产身份边界已完成本批回归，见[首�
 [OPT-03 / OPT-14 验证](optimization-opt03-opt14-validation-20261007.md)：控制面 2,372 通过、1 个既有条件跳过；进程配额与原生 Linux worker 故障边界通过。默认 Docker 阻止 namespace 创建，OPT-14 保持 implementing；[OPT-06](optimization-opt06-validation-20261007.md) 来源事件幂等、v2 重启恢复及全套相关 race 已通过。[OPT-05 A](optimization-opt05-backend-validation-20261007.md) 原部署后端绑定已验证：控制面 2,383 通过、1 跳过，PostgreSQL 22 项检查；[B 批基础组件](optimization-opt05-journal-validation-20261007.md)已通过定向与 PostgreSQL 29 项检查，[在线持久恢复](optimization-opt05-online-validation-20261007.md)已完成：控制面全量 2,475 通过、1 条条件跳过，PostgreSQL 31 项检查、真实 OpenShell 14 项检查通过，包括新 API 进程精确回滚。未推送或完成主线 CI，不作最终发行或全部任务完成结论。
 
 [OPT-07 验证](optimization-opt07-validation-20261007.md)：新增 15 条共享语义向量，四入口 32 项矩阵独立通过；Python 全量 2,486 通过、1 条条件跳过，PostgreSQL 31 项检查，Go 44 个测试包及 grant/server race、四目标构建通过。本地网络替换接口明确区分缺省/null 与空数组。
+
+[OPT-08 A](optimization-opt08-context-validation-20261007.md) 已完成新 v2 文档合同、签名及跨语言验证；真实业务镜像加载器已只读核对。持久调用绑定、双 Grant/祖先交集、宿主加载门禁与日常效果验收仍未完成，OPT-08 保持 implementing。
 
 ## 边界
 
