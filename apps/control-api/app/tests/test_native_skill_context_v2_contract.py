@@ -69,3 +69,21 @@ def test_native_skill_context_v2_tampering_invalidates_signature(section, field,
     jsonschema.validate(doc, json.loads(SCHEMA.read_text()))
     with pytest.raises(InvalidSignature):
         _verify(doc)
+
+
+def test_native_skill_revocation_v2_go_sample():
+    doc = json.loads(SAMPLE.with_name("skill-execution-context-revocation-v2.sample.json").read_text())
+    schema = json.loads(SCHEMA.with_name("skill-execution-context-revocation.v2.schema.json").read_text())
+    jsonschema.Draft202012Validator.check_schema(schema)
+    jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker()).validate(doc)
+    _verify(doc)
+    assert doc["context_signature"] == json.loads(SAMPLE.read_text())["signature"]
+    old = json.loads(SCHEMA.with_name("skill-execution-context-revocation.v1.schema.json").read_text())
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(doc, old)
+    doc["context_signature"] = "f" * 128
+    with pytest.raises(InvalidSignature):
+        _verify(doc)
+    del doc["context_signature"]
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(doc, schema)

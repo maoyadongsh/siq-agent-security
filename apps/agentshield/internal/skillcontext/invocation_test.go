@@ -22,6 +22,38 @@ func invocationFixture(t *testing.T) InvocationContext {
 	}
 }
 
+func TestInvocationRevocationSignedContractVector(t *testing.T) {
+	b, err := os.ReadFile("../../testdata/contracts/skill-execution-context-v2.sample.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var c InvocationContext
+	if err := json.Unmarshal(b, &c); err != nil {
+		t.Fatal(err)
+	}
+	r := InvocationRevocation{Revocation: Revocation{SchemaVersion: InvocationRevocationSchema, ContextID: c.ContextID,
+		IssuerID: Issuer, RevokedAt: "2026-09-14T00:30:00Z", SigningSchema: signing.SchemaLocalCanonicalV1}, ContextSignature: c.Signature}
+	key, err := signing.FromSeed(bytes.Repeat([]byte{7}, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Signature, err = key.SignCanonical(r.unsigned())
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, err := os.ReadFile("../../testdata/contracts/skill-execution-context-revocation-v2.sample.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var expected InvocationRevocation
+	if err := json.Unmarshal(want, &expected); err != nil {
+		t.Fatal(err)
+	}
+	if r != expected {
+		t.Fatal("Go tombstone differs from independently signed contract vector")
+	}
+}
+
 func TestInvocationShapeRejectsAmbiguousAuthority(t *testing.T) {
 	for name, change := range map[string]func(*InvocationContext){
 		"v1":                     func(c *InvocationContext) { c.SchemaVersion = Schema },
