@@ -9,6 +9,7 @@ import (
 // Summary deliberately excludes credential hashes, plaintext, and signatures.
 // Issuance is not evidence that a runtime hook has been installed or verified.
 type Summary struct {
+	NativeSkillPolicy *NativeSkillPolicy    `json:"native_skill_policy,omitempty"`
 	FilesystemProfile string                `json:"filesystem_profile,omitempty"`
 	IdentityID        string                `json:"identity_id"`
 	InstanceID        string                `json:"instance_id"`
@@ -33,7 +34,7 @@ func (s *Store) summarize(r Record) (Summary, error) {
 	} else if _, err = s.intents.GrantForReference(r.GrantRef, r.Platform, r.AgentID); err != nil || s.checkRequestRecord(r) != nil {
 		status = "grant_unavailable"
 	}
-	return Summary{FilesystemProfile: r.FilesystemProfile, IdentityID: r.IdentityID, InstanceID: r.InstanceID, AgentID: r.AgentID, Platform: r.Platform, GrantRef: r.GrantRef, ActorID: r.ActorID, CreatedAt: r.CreatedAt, SessionTTLSeconds: r.SessionTTLSeconds, Status: status, RuntimeState: "unverified"}, nil
+	return Summary{NativeSkillPolicy: copyNativePolicy(r.NativeSkillPolicy), FilesystemProfile: r.FilesystemProfile, IdentityID: r.IdentityID, InstanceID: r.InstanceID, AgentID: r.AgentID, Platform: r.Platform, GrantRef: r.GrantRef, ActorID: r.ActorID, CreatedAt: r.CreatedAt, SessionTTLSeconds: r.SessionTTLSeconds, Status: status, RuntimeState: "unverified"}, nil
 }
 func (s *Store) Summary(id string) (Summary, error) {
 	writeMu.RLock()

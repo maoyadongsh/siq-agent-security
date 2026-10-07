@@ -93,6 +93,8 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 
 新配置可引用由本机管理 API 发行的独立实例身份：`runtime_identity_id`、固定 `agent_id` 和 `token_path`。凭据只在本机文件保存，发行响应提供路径，不返回秘密正文。`pre_tool_call` 使用 Hermes 的真实 `session_id` 调用 `/v1/runtime-sessions`；服务根据身份自动创建权限包络并固定已批准 Grant，适配器不自行生成或签发权限。没有原生 session 时不会用任务 ID 或默认值替代。
 
+原生调用级 Skill 管控正在 OPT-08 中实施。携带必需策略的新身份使用独立的 `local-runtime-session-enrolled/v3` 响应，含 `native_skill_policy`，运行状态仍为 `unverified`。本版旧路径插件只接受精确 v1 登记响应；遇到新版本或旧版本夹带原生策略时，在 block/warn/audit_only 中均拒绝后续工具决策。新身份的管理创建入口尚未开放，不能把此兼容保护视作原生 Skill 宿主接入已完成；进展见 [优化台账](../../../docs/development/optimization-progress-20261007.md)。
+
 如果用户在 SIQ 隐私设置启用独立原文仓，并为该会话对应任务明确创建唯一的参数或输出 Grant，已管理插件会调用运行时身份专用的 `/v1/raw-task-content/native-captures`。pre hook 仅在工具获准后提交最终参数；post hook 还须以真实 tool_call_id 关联同一允许裁决，宿主为阻断调用触发的 post hook 不采集阻断文本。适配器不持有 task_id、原文 Grant、签名许可或管理凭据。嵌套 JSON 展开为 JSON Pointer 字段，服务端继续整项排除 secret/凭据键和值。不可表示、超限、未授权、重叠授权、不可达或仓异常会放弃本次辅助采集，不改变工具裁决和结果；请求本机等待上限 250ms。该功能默认关闭，也不适用于产品运行自检和旧全局决策凭据。
 
 已管理实例在登记、认证、授权读取失败时，所有模式均阻止调用；正常资源策略仍保留 warn/audit_only 的建议语义。环境不能替换已配置的实例主体。管理 API、其他实例/会话不能共用该凭据；撤销后新旧会话均失去访问能力。连接失败的本机 pending 记录明确为未签名拒绝，不能当作服务端回执或结果证据。

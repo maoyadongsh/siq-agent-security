@@ -49,6 +49,7 @@ import { isImportPermissionResult } from "./importPermissions";
 import { isSkillImportList, isSkillImportResult } from "./skillImports";
 import type { RuntimeIdentity } from "./types";
 import { identityFilesystemProfile, windowsFilesystemProfile } from './filesystemProfile';
+import { identityNativePolicy } from './nativeIdentity';
 /**
  * siq-agent-security 本地 API 客户端。
  * 管理会话只留在模块闭包里，不进 React state、不写 localStorage。
@@ -666,12 +667,15 @@ export const localApi = {
   admissions: () => request<{ admissions: Admission[] }>("/v1/admissions").then((data) => ({
     admissions: data.admissions ?? [],
   })),
-  runtimeIdentities: () => request<{ schema_version: 'local-runtime-identities/v1' | 'local-runtime-identities/v2'; items: RuntimeIdentity[] }>("/v1/runtime-identities").then((data) => {
-    if (!['local-runtime-identities/v1', 'local-runtime-identities/v2'].includes(data.schema_version) || !Array.isArray(data.items)
+  runtimeIdentities: () => request<{ schema_version: 'local-runtime-identities/v1' | 'local-runtime-identities/v2' | 'local-runtime-identities/v3'; items: RuntimeIdentity[] }>("/v1/runtime-identities").then((data) => {
+    if (!['local-runtime-identities/v1', 'local-runtime-identities/v2', 'local-runtime-identities/v3'].includes(data.schema_version) || !Array.isArray(data.items) || data.items.length > 512
       || data.items.some((item) => !item || !item.grant_ref || !['hermes', 'openclaw', 'workbuddy'].includes(item.platform) || identityFilesystemProfile(item) === 'unsupported'
+        || identityNativePolicy(item) === 'unsupported'
+        || (data.schema_version !== 'local-runtime-identities/v3' && identityNativePolicy(item) !== 'legacy')
         || (item.platform === 'workbuddy' && identityFilesystemProfile(item) !== windowsFilesystemProfile)
-        || (data.schema_version === 'local-runtime-identities/v1' && identityFilesystemProfile(item) !== 'posix/v1'))) {
-      throw new LocalApiError(502, '实例身份的路径解释与响应版本不一致，请检查服务版本后重新读取。');
+        || (data.schema_version === 'local-runtime-identities/v1' && identityFilesystemProfile(item) !== 'posix/v1'))
+      || (data.schema_version === 'local-runtime-identities/v3' && !data.items.some((item) => identityNativePolicy(item) === 'required'))) {
+      throw new LocalApiError(502, '实例身份的原生策略、路径解释与响应版本不一致，请检查服务版本后重新读取。');
     }
     return data;
   }),
@@ -693,6 +697,7 @@ export const localApi = {
         || (expectedPlatform !== undefined && result.identity.platform !== expectedPlatform)
         || (result.identity.platform === 'workbuddy' && !windows)
         || result.schema_version !== (windows ? 'local-runtime-identity-issued/v2' : 'local-runtime-identity-issued/v1')
+        || identityNativePolicy(result.identity) !== 'legacy'
         || identityFilesystemProfile(result.identity) !== filesystem.profile) {
         throw new LocalApiError(502, '无法确认新身份的实例、授权或路径解释，请重新读取身份列表；不要重复签发。');
       }

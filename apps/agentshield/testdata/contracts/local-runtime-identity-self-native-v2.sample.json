@@ -1,0 +1,19 @@
+{
+  "agent_id": "hri-11111111111111111111111111111111",
+  "grant_ref": {
+    "admission_id": "adm-native-readback-fixture",
+    "grant_id": "grt-native-readback-fixture",
+    "permission_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "identity_id": "ri-33333333333333333333333333333333",
+  "instance_id": "hi-11111111111111111111111111111111",
+  "native_skill_policy": {
+    "mode": "required",
+    "runtime_artifact_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "platform": "hermes",
+  "runtime_state": "unverified",
+  "schema_version": "local-runtime-identity-self/v2",
+  "session_ttl_seconds": 240,
+  "status": "active"
+}

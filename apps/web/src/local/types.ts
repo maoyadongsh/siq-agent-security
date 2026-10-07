@@ -389,7 +389,7 @@ export interface LedgerFinding {
 }
 
 export interface RuntimeIdentity {
-
+  native_skill_policy?: { mode: 'required'; runtime_artifact_sha256: string };
   filesystem_profile?: WindowsFilesystemProfile;
   identity_id: string;
   instance_id: string;

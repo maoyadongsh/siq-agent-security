@@ -79,7 +79,11 @@ func (s *Server) runtimeRequestIdentity(w http.ResponseWriter, r *http.Request) 
 	if requestIdentityError(w, err) {
 		return
 	}
-	writeJSON(w, http.StatusCreated, map[string]any{"schema_version": "local-runtime-request-identity-issued/v1", "identity": summary, "request": record.RequestScope, "credential_path": path})
+	version := "local-runtime-request-identity-issued/v1"
+	if record.NativeSkillPolicy != nil {
+		version = "local-runtime-request-identity-issued/v2"
+	}
+	writeJSON(w, http.StatusCreated, map[string]any{"schema_version": version, "identity": summary, "request": record.RequestScope, "credential_path": path})
 }
 func requestIdentityError(w http.ResponseWriter, err error) bool {
 	if err == nil {
