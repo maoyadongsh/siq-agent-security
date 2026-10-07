@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "native-host-connection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "credential",
+    "verification_socket"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "native-host-connection/v1"
+    },
+    "credential": {
+      "type": "string",
+      "pattern": "^nhp-[a-f0-9]{64}$"
+    },
+    "verification_socket": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 4096,
+      "pattern": "^/"
+    }
+  },
+  "$comment": "See native-host-online.v1.md for authentication, 64 KiB framing, kernel verification, canonical paths and live lease constraints. Samples contain synthetic credentials only."
+}

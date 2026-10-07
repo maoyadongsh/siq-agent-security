@@ -1,0 +1,228 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "native-host-publish v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "event"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "native-host-publish/v1"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "instance_id",
+        "agent_id",
+        "session_id",
+        "task_id"
+      ],
+      "properties": {
+        "platform": {
+          "const": "hermes"
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^hi-[a-f0-9]{32}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^hri-[a-f0-9]{32}$"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        }
+      }
+    },
+    "event": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "artifact_sha256"
+          ],
+          "properties": {
+            "kind": {
+              "const": "task_begin"
+            },
+            "artifact_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "load_id",
+            "parent_load_id",
+            "source"
+          ],
+          "properties": {
+            "kind": {
+              "const": "skill_source"
+            },
+            "load_id": {
+              "type": "string",
+              "pattern": "^nload-[a-f0-9]{32}$"
+            },
+            "parent_load_id": {
+              "type": "string",
+              "pattern": "^(|nload-[a-f0-9]{32})$"
+            },
+            "source": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "schema_version",
+                "skill_file",
+                "content_file",
+                "text_sha256",
+                "decoding",
+                "cache_hit"
+              ],
+              "properties": {
+                "schema_version": {
+                  "const": "native-skill-source/v1"
+                },
+                "skill_file": {
+                  "$ref": "#/definitions/file"
+                },
+                "content_file": {
+                  "$ref": "#/definitions/file"
+                },
+                "text_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "decoding": {
+                  "const": "utf-8-sig-replace-universal-newlines/v1"
+                },
+                "cache_hit": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "tool",
+            "tool_call_id",
+            "request_binding",
+            "load_id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "call_prepare"
+            },
+            "tool": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+            },
+            "tool_call_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+            },
+            "request_binding": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "load_id": {
+              "type": "string",
+              "pattern": "^(|nload-[a-f0-9]{32})$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "tool_call_id",
+            "request_binding"
+          ],
+          "properties": {
+            "kind": {
+              "const": "call_finish"
+            },
+            "tool_call_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+            },
+            "request_binding": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "task_end"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$comment": "See native-host-online.v1.md for authentication, 64 KiB framing, kernel verification, canonical paths and live lease constraints. Samples contain synthetic credentials only.",
+  "definitions": {
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path_sha256",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "path_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1048576
+        }
+      }
+    }
+  }
+}

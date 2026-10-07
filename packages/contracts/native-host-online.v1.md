@@ -14,7 +14,7 @@ ADR-056 的 Linux 显式启用路径。`serve --native-host` 从本状态目录�
 | call_finish | tool_call_id、request_binding | 消耗原调用；不是副作用证明 |
 | task_end | 无 | 即时失效 |
 
-重复、未知字段、错误大小写、null、无效结构和超限请求拒绝，不把额外模型字段投影成 Authority。成功响应精确为 `schema_version=native-host-published/v1, accepted=true`，不返回 Grant、SEC 或执行许可。失败只返回固定类别。宿主须先通过原生内核凭据通道和 RuntimeGuard 验证实际进程，不能把普通 HTTP 客户端的声明转发为可信事实。
+重复、未知字段、错误大小写、null、无效结构和超限请求拒绝，不把额外模型字段投影成 Authority。内核通道的发布映射可将应用层拒绝转换为精确 `accepted=false` 确认，停止当前任务但不使其他任务失去已认证通道；不能重试不确定的原调用。实际 RuntimeGuard 检查失败仍永久使该进程核验器失效。成功响应精确为 `schema_version=native-host-published/v1, accepted=true`，不返回 Grant、SEC 或执行许可。失败只返回固定类别。宿主须先通过原生内核凭据通道和 RuntimeGuard 验证实际进程，不能把普通 HTTP 客户端的声明转发为可信事实。
 
 ## 反向核验
 
