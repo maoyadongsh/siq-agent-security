@@ -38,3 +38,17 @@ A 批完成不能标记整个 OPT-05 完成。B 批的实现选择及证据须�
 恢复快照采用已有 cryptography 依赖的 AES-256-GCM，随机 96-bit nonce；每个封装包含固定版本、key_id、nonce 和 ciphertext。关联数据为带域分隔的规范 JSON，覆盖操作 ID、tenant、environment、binding、deployment、backend、target、网关指纹/名称摘要、base revision/digest、expected digest，以及版本和 key_id。修改来源字段或密文必须认证失败。完整策略只存在密文及短生命周期进程内对象，不进入 HTTP、审计、日志或 repr。
 
 内部 codec 接受调用方显式注入的独立 32-byte 密钥环及活动 key_id，不自动生成临时密钥、不复用签名密钥、不从数据库读取密钥。轮换时新写使用活动密钥，旧密钥仅解密历史；尚有恢复记录时应保留旧密钥。未知 ID、缺失密钥、格式不符、超过 1 MiB 明文上限、策略摘要不匹配一律失败，错误只含固定类别。服务部署的密钥供应及跨 worker 注入在 B2 接入时另行明确；codec 通过不代表持久恢复已接入。
+
+## B2：持久操作台账
+
+迁移 0030 新增私有 `openshell_operation`，每个 deployment 最多一个 operation，保存不可变来源 JSON、加密快照、状态、epoch、应用/恢复 revision 和 digest，以及时间戳。无明文策略列。外键不级联删除恢复材料；任何非空台账均禁止自动降级丢弃。
+
+内部台账方法使用独立短事务；调用者必须先提交 deployment reservation 并结束任何冲突写事务。prepare 同时校验已提交部署的 tenant/environment/binding/backend/target，并在同一事务追加审计。读取始终限定 tenant 和 deployment，认证封装后才返回进程内恢复对象。
+
+状态迁移采用状态与 epoch 双条件 CAS，与审计同事务提交。合法边为 prepared→applying→applied→rollback_pending→rolled_back，以及 applying/rollback_pending→unknown；完全无变更的 prepared→applied 仅允许原摘要、revision 一致。unknown 没有自动重试写入边。applied 必须匹配期望摘要，rolled_back 必须匹配原摘要。台账不授予管理权限，也不替代目标级跨进程互斥；这些检查仍由在线接入负责。只有把独立台账接入真实写入前后并验证故障窗口后，才可宣称持久恢复成立。
+
+## B3：密钥供应约束
+
+服务接入使用 `SIQ_AS_OPENSHELL_RECOVERY_KEYRING_FILE` 指向宿主或 Secret Manager 挂载的独立密钥文件。文件为普通文件、绝对路径、非最终符号链接，属当前服务用户或 root，权限只允许属主读写（0400/0600）。JSON 结构为 `{"active_key_id":"<id>","keys":{"<id>":"<32-byte key in base64>"}}`，只允许这两个字段，拒绝重复 JSON 键、超出 8 KiB、非法 base64、非法 key ID、错误长度与缺失活动密钥。读取过程中元数据变化同样拒绝。不得在代码或示例中携带实际密钥。
+
+加载失败不生成新密钥，不回退到签名密钥或内存缓存。轮换通过原子替换文件，保留所有尚需解密的旧 key ID；每个操作使用一次加载的一致快照。此接口仅为密钥供应组件，在线入口接入完成前不会改变现有部署行为。文件属主检查不是对同 UID 恶意进程的隔离保证。

@@ -538,6 +538,34 @@ class Deployment(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
+class OpenShellOperation(Base):
+    """Private encrypted recovery journal; never serialized as a public receipt."""
+
+    __tablename__ = "openshell_operation"
+    __table_args__ = (
+        UniqueConstraint("deployment_id", name="uq_openshell_operation_deployment"),
+        CheckConstraint("epoch >= 0", name="ck_openshell_operation_epoch"),
+        CheckConstraint(
+            "state IN ('prepared','applying','applied','rollback_pending','rolled_back','unknown')",
+            name="ck_openshell_operation_state",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    deployment_id: Mapped[str] = mapped_column(String(64), ForeignKey("deployment.id"))
+    origin: Mapped[dict] = mapped_column(JSON)
+    sealed_snapshot: Mapped[dict] = mapped_column(JSON)
+    state: Mapped[str] = mapped_column(String(32))
+    epoch: Mapped[int] = mapped_column(Integer, default=0)
+    applied_revision: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    applied_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    restored_revision: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    restored_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
 class EdgeTask(Base):
     __tablename__ = "edge_task"
 

@@ -330,6 +330,36 @@ def main():
                 assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == migrated_head
                 assert connection.execute("SELECT count(*) FROM discovery_schedule_run").fetchone()[0] == 1
             proof["checks"]["automatic_downgrade_keeps_scheduler_history"] = True
+            journal_worker = ROOT / "scripts/enterprise-experience/openshell-journal-postgres-worker.py"
+            journal_result = run(
+                [sys.executable, str(journal_worker)], cwd=api,
+                env={**settings, "SIQ_JOURNAL_PG_FIXTURE": "ephemeral-harness-only"},
+            )
+            (out / "journal-worker.log").write_text(
+                (journal_result.stdout + journal_result.stderr).replace(password, "[REDACTED]")
+            )
+            assert journal_result.returncode == 0, "journal PostgreSQL check failed; inspect redacted log"
+            journal_proof = json.loads(journal_result.stdout)
+            assert journal_proof["passed"] is True
+            proof["checks"].update(journal_proof["checks"])
+            journal_down = run(
+                [str(api / ".venv/bin/alembic"), "downgrade", "0029"], cwd=api, env=settings,
+            )
+            (out / "journal-refused-downgrade.log").write_text(
+                (journal_down.stdout + journal_down.stderr).replace(password, "[REDACTED]")
+            )
+            assert (
+                journal_down.returncode != 0
+                and "openshell recovery journal must be preserved" in journal_down.stderr
+            )
+            with psycopg.connect(
+                host="127.0.0.1", port=int(port), dbname="postgres",
+                user="postgres", password=password, connect_timeout=2,
+            ) as connection:
+                assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == migrated_head
+                assert connection.execute("SELECT count(*) FROM openshell_operation").fetchone() == (1,)
+            proof["checks"]["journal_populated_downgrade_preserves_history"] = True
+            proof["journal_worker_sha256"] = hashlib.sha256(journal_worker.read_bytes()).hexdigest()
             proof.update(
                 {
                     "schema_version": "deployment-postgres-check/v1",
