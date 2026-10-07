@@ -1,0 +1,36 @@
+{
+  "schema_version": "siq.native-business-grant-revocation-attempt/v1",
+  "case": "v817",
+  "passed": false,
+  "failure": "candidate_revoke_http_failed",
+  "checks": {
+    "fresh_database_migrations": true,
+    "request_recovery_ready": true,
+    "legacy_recovery_disabled": true,
+    "business_settled_before_api_stop": true,
+    "candidate_listener_closed": true,
+    "business_runtime_cleanup_confirmed": true,
+    "temporary_database_removed": true,
+    "existing_service_identity_unchanged": true
+  },
+  "cleanup_checks": {
+    "owned_gateway_stopped": true,
+    "owned_bridge_stopped": true,
+    "original_model_unchanged": true
+  },
+  "authority_exit_codes": [
+    0,
+    0
+  ],
+  "finding": "The public business revoke did not receive a confirmed success. Source review reproduced native v6 rejection in legacy-only execution fencing; no claim of a successful synchronous fence.",
+  "limits": [
+    "The first harness did not retain the failing withdrawal HTTP status/body; its exact response status is not asserted.",
+    "All owned runtime cleanup completed, but this does not replace successful in-flight revocation."
+  ],
+  "evidence_sha256": {
+    "native-business-api-v817.json": "031a58fef0feadab36766597bc7d7fab6268468a9bf557183321391db2a80f95",
+    "native-switch-v817-cleanup.json": "d1916075661e9b3cc2bd2e4301c6bd4b7f04fd101bc3c2ec4b9862fa7e7ba651",
+    "run-native-business-grant-revoke.py": "3e1d9006b26c35a93f066e4600aa2a486d22bad264fabb93586a9d184b4ef6d4",
+    "before-native-business-fence-openshell_grant_revocation.py": "d94544e04296e53956843f962636e3ffb61c886bfdf360d879d20c3d84560f64"
+  }
+}

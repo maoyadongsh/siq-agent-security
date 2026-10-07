@@ -1,0 +1,101 @@
+{
+  "schema_version": "siq.native-business-grant-revocation-review/v1",
+  "case": "v818",
+  "passed": true,
+  "run_id": "qwen-request-065ea84760a8d9dc",
+  "checks": {
+    "original_harness_passed": true,
+    "business_HTTP_revoke_confirmed_200": true,
+    "nine_receipt_signatures_verified": true,
+    "original_five_receipts_unchanged": true,
+    "exact_read_source_signed": true,
+    "actual_read_allowed_with_verified_reader_context": true,
+    "real_model_output_observed": true,
+    "stream_read_authorization_lost": true,
+    "stream_never_reports_success_done": true,
+    "owned_cleanup_completed": true,
+    "independent_active_read_denied_403": true,
+    "old_native_child_credential_401": true,
+    "native_child_revoked_before_diagnostic_cleanup": true,
+    "native_parent_still_active": true,
+    "sandbox_supervisor_and_forward_absent": true,
+    "API_finalizer_released_before_diagnostic_cleanup": true,
+    "read_only_source_unchanged": true,
+    "temporary_database_removed": true
+  },
+  "runtime_candidate": {
+    "security_binary_sha256": "4d49184507eaac5ae38a8f5e3a1be4429c753a04713ad68522f556a001738fe1",
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "business_fence_source_sha256_at_run": "3c414fed8bb7adb531084fc417222f0b83b4fb0bad925be640c5923b6c9f95e3",
+    "business_fence_source_sha256_after_import_format": "162efe95f6d988a0d1f3231b0379baca30268c16bea473cd9cea80780b5ad586",
+    "business_fence_delivery_status": "pending necessary dependency review"
+  },
+  "revocation_to_terminal_seconds": 25.309,
+  "bridge_terminal_statuses": [
+    200,
+    502
+  ],
+  "receipt_chain": {
+    "base": "native-business-context-revocation.receipts.jsonl",
+    "base_sha256": "25f184976db3c7c10d3af3f0b7d0a98c542f6967374b718b7adf45cb00842bce",
+    "tail": "native-business-grant-revocation.receipts.jsonl",
+    "tail_sha256": "d58cc1ebd4ca42d601cc960881057679053c855b26d64ed8ca9142773a785a45",
+    "total_records": 9,
+    "head_hash": "6bdfe4cbf21c50b5c1e6077859ae75f4671983462e503e7c5af46e7d24c1ebd0",
+    "combined_sha256": "1d8d39b04f992cd7831c1e03f52d04c5741bb16102db026e75eafba6cfc094a3",
+    "public_key": "native-business-context-revocation.public-key.json"
+  },
+  "v818_receipt_sequences": [
+    7,
+    8
+  ],
+  "v817_failure_retained": "native-business-grant-revocation-v817.json",
+  "stream_observations": [
+    {
+      "event": "run",
+      "code": null
+    },
+    {
+      "event": "tool",
+      "tool": "skill_view",
+      "status": "started",
+      "error": null
+    },
+    {
+      "event": "tool",
+      "tool": "read_file",
+      "status": "started",
+      "error": null
+    },
+    {
+      "event": "tool",
+      "tool": "skill_view",
+      "status": "completed",
+      "error": false
+    },
+    {
+      "event": "tool",
+      "tool": "read_file",
+      "status": "completed",
+      "error": false
+    },
+    {
+      "event": "error",
+      "code": "read_authorization_lost"
+    }
+  ],
+  "source_evidence_sha256": {
+    "native-business-api-v818.json": "6179e146cb4686d35de2e01731aeb64c9026f25338ccef8a22e3349ca225dc7f",
+    "native-switch-v818-cleanup.json": "1fe551bb00e4c6012ca823d992f4773bcdeda6a7a67bbc82c3d2cda036c5246c",
+    "run-native-business-grant-revoke-v2.py": "b0f8b66d59ca0c69a0dc397b95470b8a2cc91617cffad78c886b3555bf9b261f",
+    "run-native-revoke-owned-v818.py": "fc27c96bf55fefade3c9c1d01ef772b05aa018a875538ecb8e49d826151dc545",
+    "review-native-business-grant-revoke.py": "90e65bdb4a9e2a3ff1375ebf6cfc400f68400e2b2fe706c7831bebf3153e35e2"
+  },
+  "limits": [
+    "Business-grant withdrawal and runtime cleanup, not an additional unauthorized write attempt.",
+    "25.309 seconds is one observed terminal-cleanup duration, not a revocation latency SLA.",
+    "Interrupted model bridge records include 502; no claim of a complete successful model answer.",
+    "Business source dependency delivery and the full OPT-08 lifecycle remain incomplete."
+  ]
+}
