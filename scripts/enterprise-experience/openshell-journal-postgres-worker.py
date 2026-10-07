@@ -3,6 +3,7 @@
 
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -12,6 +13,7 @@ sys.path.insert(0, str(ROOT / "apps/control-api"))
 
 def main():
     from app.adapters.openshell.operation_journal import JournalError
+    from app.adapters.openshell.target_mutex import target_mutex
     from app.models import AuditEvent
     from app.tests.test_operation_journal import journal, seed
     from app.tests.test_sealed_snapshot import ORIGIN, POLICY
@@ -57,6 +59,29 @@ def main():
                 AuditEvent.resource_id == ORIGIN.deployment_id,
             )) == 5
         checks["journal_postgres_exact_transactional_audit_count"] = True
+        child_code = """
+import os, sys
+from sqlalchemy import create_engine
+from app.adapters.openshell.target_mutex import target_mutex, TargetLockError
+engine = create_engine(os.environ['SIQ_AS_DATABASE_URL'])
+try:
+    with target_mutex(engine, 'synthetic-gateway', 'synthetic-target', timeout=0):
+        pass
+except TargetLockError as exc:
+    assert str(exc) == 'operation_target_busy'
+    sys.exit(3)
+finally:
+    engine.dispose()
+"""
+        with target_mutex(engine, "synthetic-gateway", "synthetic-target"):
+            child = subprocess.run([sys.executable, "-c", child_code], capture_output=True, timeout=10, check=False)
+            assert child.returncode == 3, "PostgreSQL cross-process mutex failed"
+            with target_mutex(engine, "synthetic-gateway", "different-target", timeout=0):
+                pass
+        child = subprocess.run([sys.executable, "-c", child_code], capture_output=True, timeout=10, check=False)
+        assert child.returncode == 0, "PostgreSQL cross-process mutex not released"
+        checks["journal_postgres_target_mutex_across_processes"] = True
+        checks["journal_postgres_target_mutex_release_and_independent_target"] = True
         print(json.dumps({"passed": True, "checks": checks}))
     finally:
         engine.dispose()

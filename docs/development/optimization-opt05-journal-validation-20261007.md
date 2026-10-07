@@ -33,8 +33,14 @@ PostgreSQL 使用 harness 自建并清理的临时容器；原业务数据没有
 
 ## 接入前必须继续完成
 
-1. 目标作用域跨进程互斥；数据库状态 CAS 不能替代外部策略写入互斥。
+1. 将目标作用域跨进程互斥接入在线入口；数据库状态 CAS 不能替代外部策略写入互斥。
 2. 旧入口、单项/批量 reservation 的提交顺序统一，避免外部执行前恢复意图尚未提交。
 3. apply 与 rollback 写入前后接入台账，保留未知结果和唯一恢复线索。
 4. 每次回滚重新检查当前身份、活体授权、binding、网关及策略 revision/digest；不能由持久记录自行授权。
 5. 验证提交故障、重启/不同 worker、重复回滚、超缓存容量及真实 OpenShell 回滚；行为验证与配置读回仍分开报告。
+
+## B4 增量：跨进程目标锁组件
+
+`target_mutex.py` 使用网关指纹和目标作为作用域，PostgreSQL session advisory lock 与 SQLite 开发磁盘库 POSIX 文件锁均已实现。内存库及 URI 别名形式拒绝，锁文件私有、拒绝符号/多硬链接，不在释放后删除共享 inode。PostgreSQL 锁获取或释放结果不确定时使连接失效，防止带锁会话回到池。
+
+本机定向测试 10 项通过：实际子进程争锁与释放、不同目标不互斥、异常释放、危险锁文件及不支持数据库形式拒绝、四类 PostgreSQL 连接故障注入。重新执行临时 PostgreSQL harness **29 项通过**，新增实际独立子进程竞争和释放验证。日志为 `opt05-target-mutex.log`、`opt05-mutex-postgres.log`，明细 `opt05-mutex-postgres-001/`。组件尚未接入在线 CLI 操作；它不能阻止不遵守协议的外部管理员，也不提供后端原子 CAS。
