@@ -347,3 +347,41 @@ def test_real_snapshot_crosses_authenticated_channel_without_text(skill, tmp_pat
                 dispatched.result(timeout=3)
     assert [event["cache_hit"] for event in received] == [False, True]
     assert str(skill) not in json.dumps(received) and "Synthetic task." not in json.dumps(received)
+
+
+def test_managed_link_pair_needs_successful_install_observer(skill):
+    owner = skill.with_name("private-owner-fixture")
+    os.link(skill, owner)
+    events = []
+
+    def verified_pair(event):
+        assert os.path.samefile(owner, skill)
+        events.append(event)
+
+    reader = source.SkillSourceReader(verified_pair, managed_link_pair=True)
+    assert reader.read(skill) == skill.read_text()
+    assert len(events) == 1
+    os.link(skill, skill.with_name("unexpected-third-link"))
+    assert_poisoned(reader, skill)
+    assert len(events) == 1
+
+
+def test_managed_link_pair_observer_failure_never_returns_text(skill):
+    os.link(skill, skill.with_name("unapproved-link"))
+
+    def rejected(_):
+        raise RuntimeError("synthetic installation verification failure")
+
+    reader = source.SkillSourceReader(rejected, managed_link_pair=True)
+    assert_poisoned(reader, skill)
+    assert_poisoned(reader, skill)
+
+
+def test_managed_link_pair_change_during_observer_is_rejected(skill):
+    os.link(skill, skill.with_name("owner-link"))
+
+    def changed(_):
+        os.link(skill, skill.with_name("racing-third-link"))
+
+    reader = source.SkillSourceReader(changed, managed_link_pair=True)
+    assert_poisoned(reader, skill)

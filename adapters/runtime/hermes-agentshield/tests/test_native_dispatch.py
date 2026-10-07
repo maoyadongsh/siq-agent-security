@@ -301,3 +301,20 @@ def test_task_end_on_exception_is_not_reported_as_normal():
         raise ValueError("synthetic failure")
     assert events[-1]["kind"] == "task_end" and events[-1]["failed"] is True
     assert not runtime.tasks["task"].active
+
+
+@pytest.mark.parametrize("managed", [False, True])
+def test_bootstrap_explicit_managed_installation_pair(tmp_path, managed):
+    runtime, events, _, _ = fixture_runtime()
+    runtime = native.Runtime(runtime.agent, runtime.namespace, runtime.observe, runtime.authorize,
+                             runtime.result, managed_installations=managed)
+    main = tmp_path / "SKILL.md"
+    main.write_text("Synthetic installed skill")
+    os.link(main, tmp_path / "private-owner-link")
+    with runtime.task("task", "session"), call(runtime, tool="skill_view"):
+        if managed:
+            assert runtime.read_skill(main) == "Synthetic installed skill"
+            assert any(event["kind"] == "skill_source" for event in events)
+        else:
+            with pytest.raises(native.DispatchError):
+                runtime.read_skill(main)

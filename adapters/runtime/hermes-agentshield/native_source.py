@@ -58,7 +58,7 @@ def _stamp(info):
 class _Opened:
     """Hold the entire resolved descriptor chain until observation completes."""
 
-    def __init__(self, path):
+    def __init__(self, path, managed_link_pair=False):
         self.path, self._fds, self._edges = path, [], []
         try:
             directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
@@ -76,7 +76,8 @@ class _Opened:
                 parent = fd
             self.fd = parent
             info = os.fstat(self.fd)
-            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+            allowed_links = (1, 2) if managed_link_pair else (1,)
+            if (not stat.S_ISREG(info.st_mode) or info.st_nlink not in allowed_links
                     or not 0 <= info.st_size <= MAX_BYTES):
                 raise _failure()
             self._stamp = _stamp(info)
@@ -132,11 +133,14 @@ class SkillSourceReader:
     never be used to erase the still-live task's source lineage.
     """
 
-    def __init__(self, observe):
-        if (sys.platform != "linux" or not callable(observe)
+    def __init__(self, observe, *, managed_link_pair=False):
+        if (sys.platform != "linux" or not callable(observe) or type(managed_link_pair) is not bool
                 or any(not hasattr(os, flag) for flag in ("O_NOFOLLOW", "O_DIRECTORY", "O_CLOEXEC", "O_NONBLOCK"))):
             raise _failure()
         self._observe = observe
+        # Only protected bootstrap may enable this. The required observer must
+        # verify the signed install's private owner link and read-only mapping.
+        self._managed_link_pair = managed_link_pair
         self._pid = os.getpid()
         self._lock = threading.RLock()
         self._closed, self._busy = False, False
@@ -183,8 +187,8 @@ class SkillSourceReader:
         if len(set(self._sources) | {main, source}) > MAX_SOURCES:
             raise _failure()
         with ExitStack() as stack:
-            main_file = stack.enter_context(_Opened(main))
-            content = main_file if source == main else stack.enter_context(_Opened(source))
+            main_file = stack.enter_context(_Opened(main, self._managed_link_pair))
+            content = main_file if source == main else stack.enter_context(_Opened(source, self._managed_link_pair))
             pending = {main: main_file.metadata(), source: content.metadata()}
             for path, metadata in pending.items():
                 if path in self._sources and self._sources[path] != metadata:

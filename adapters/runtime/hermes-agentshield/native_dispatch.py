@@ -72,17 +72,21 @@ class _Task:
         self.lock = threading.RLock()
         self.calls, self.sources = set(), {}
         self.main, self.load = None, None
-        self.reader = SkillSourceReader(lambda event: runtime._source(self, event))
+        self.reader = SkillSourceReader(lambda event: runtime._source(self, event),
+                                       managed_link_pair=runtime.managed_installations)
 
 
 class Runtime:
-    def __init__(self, agent_id, session_namespace, observe_source, authorize, observe_result):
+    def __init__(self, agent_id, session_namespace, observe_source, authorize, observe_result, *,
+                 managed_installations=False):
         if (not re.fullmatch(r"hri-[a-f0-9]{32}", agent_id or "")
                 or not re.fullmatch(r"[A-Za-z0-9._-]{1,64}", session_namespace or "")
+                or type(managed_installations) is not bool
                 or not all(callable(f) for f in (observe_source, authorize, observe_result))):
             raise _unavailable()
         self.agent, self.namespace = agent_id, session_namespace
         self.observe, self.authorize, self.result = observe_source, authorize, observe_result
+        self.managed_installations = managed_installations
         self.pid = os.getpid()
         self.tasks, self.lock = {}, threading.RLock()
 

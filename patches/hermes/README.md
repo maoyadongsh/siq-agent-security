@@ -15,3 +15,5 @@ python patches/hermes/build_native_overlay.py \
 同一任务的调用串行以固定来源链；不同任务可并发。缺少精确父任务的 subagent 入口暂时拒绝。桥接不重置失败任务、不重复运行已消耗调用，不把函数 returned 解释为效果核验成功。受保护加载、签名权限、独立副作用观察与三平台支持仍须分别验证。
 
 上游代码遵循 [MIT License](LICENSE)；此目录的原生片段修改由 SIQ 标识并保留归属。完整容器及其依赖的再分发仍需独立许可证/SBOM 核对。
+
+现有 Hermes 安装使用目标与私密事务归属文件的硬链接对。新 profile 的可信 bootstrap 只有在接入 [实际安装来源解析](../../packages/contracts/native-install-source.v1.md)及实际只读挂载验证后，才可显式传入 `managed_installations=True`；默认不开放此模式，三条及以上链接始终拒绝。
