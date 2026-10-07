@@ -22,14 +22,21 @@ def main():
     parser.add_argument("output", type=Path)
     parser.add_argument("--gateway-template", type=Path, required=True)
     parser.add_argument("--gateway-binary", type=Path, required=True)
-    parser.add_argument("--web", type=Path, required=True)
+    parser.add_argument("--web", type=Path)
+    parser.add_argument("--behavior-image")
+    parser.add_argument("--probe-sha256")
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[2]
     original = args.gateway_template.resolve(strict=True)
     binary = args.gateway_binary.resolve(strict=True)
     root = args.output.resolve()
-    web = args.web.resolve(strict=True)
-    assert (web / "index.html").is_file()
+    web = args.web.resolve(strict=True) if args.web else None
+    if args.behavior_image:
+        import re
+        assert web is None and re.fullmatch(r"sha256:[a-f0-9]{64}", args.behavior_image)
+        assert args.probe_sha256 and re.fullmatch(r"[a-f0-9]{64}", args.probe_sha256)
+    else:
+        assert web is not None and (web / "index.html").is_file()
     root.mkdir(mode=0o700)
     before = hashlib.sha256(original.read_bytes()).hexdigest()
     config = tomllib.loads(original.read_text())
@@ -149,18 +156,16 @@ def main():
             result["ready"] = ready
             if ready:
                 result["live_check_started"] = True
+                if args.behavior_image:
+                    command = [sys.executable, str(repo / "scripts/enterprise-experience/openshell-behavior-live-check.py"),
+                               str(root / "live"), "--image", args.behavior_image, "--probe-sha256", args.probe_sha256,
+                               "--namespace", namespace]
+                else:
+                    command = [sys.executable, str(repo / "scripts/enterprise-experience/openshell-deployment-live-check.py"),
+                               str(root / "live"), "--web", str(web)]
                 with (root / "acceptance.log").open("wb") as output:
                     accepted = subprocess.run(
-                        [
-                            sys.executable,
-                            str(
-                                repo
-                                / "scripts/enterprise-experience/openshell-deployment-live-check.py"
-                            ),
-                            str(root / "live"),
-                            "--web",
-                            str(web),
-                        ],
+                        command,
                         cwd=repo,
                         stdout=output,
                         stderr=subprocess.STDOUT,

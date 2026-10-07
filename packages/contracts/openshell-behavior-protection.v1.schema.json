@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/openshell-behavior-protection.v1.schema.json",
+  "title": "Independent rootful Docker protected probe observations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approved",
+    "container",
+    "objects"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "openshell-behavior-protection/v1"
+    },
+    "approved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_id",
+        "image_digest",
+        "namespace",
+        "sandbox_name",
+        "sandbox_id",
+        "uid",
+        "allow_path",
+        "deny_path",
+        "probe_sha256",
+        "supervisor_profile"
+      ],
+      "properties": {
+        "container_id": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "image_digest": {
+          "type": "string",
+          "maxLength": 71,
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "namespace": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "sandbox_name": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "sandbox_id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "uid": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967294
+        },
+        "allow_path": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^/[A-Za-z0-9_./-]*$"
+        },
+        "deny_path": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^/[A-Za-z0-9_./-]*$"
+        },
+        "probe_sha256": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "supervisor_profile": {
+          "enum": [
+            "unprivileged-container",
+            "openshell-rootful-v0"
+          ]
+        }
+      }
+    },
+    "container": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_id",
+        "image_digest",
+        "init_pid",
+        "network",
+        "mount_destinations",
+        "namespace",
+        "sandbox_name",
+        "sandbox_id",
+        "supervisor_profile"
+      ],
+      "properties": {
+        "container_id": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "image_digest": {
+          "type": "string",
+          "maxLength": 71,
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "init_pid": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "network": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "mount_destinations": {
+          "type": "array",
+          "maxItems": 256,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "maxLength": 512,
+            "pattern": "^/[A-Za-z0-9_./-]*$"
+          }
+        },
+        "namespace": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "sandbox_name": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "sandbox_id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "supervisor_profile": {
+          "enum": [
+            "unprivileged-container",
+            "openshell-rootful-v0"
+          ]
+        }
+      }
+    },
+    "objects": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 34,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "uid",
+              "gid",
+              "mode",
+              "kind"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "maxLength": 512,
+                "pattern": "^/[A-Za-z0-9_./-]*$"
+              },
+              "uid": {
+                "const": 0
+              },
+              "gid": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967294
+              },
+              "mode": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4095
+              },
+              "kind": {
+                "const": "directory"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "uid",
+              "gid",
+              "mode",
+              "kind",
+              "size",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "maxLength": 512,
+                "pattern": "^/[A-Za-z0-9_./-]*$"
+              },
+              "uid": {
+                "const": 0
+              },
+              "gid": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967294
+              },
+              "mode": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4095
+              },
+              "kind": {
+                "const": "file"
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 4,
+                "maximum": 67108864
+              },
+              "sha256": {
+                "type": "string",
+                "maxLength": 64,
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "description": "Only an operator-approved local rootful Docker observer produces these facts. Schema conformance alone does not establish trust or authorize a probe."
+}

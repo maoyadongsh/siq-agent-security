@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -100,6 +101,9 @@ func observe(args []string) (observation, error) {
 	if os.Getuid() <= 0 || os.Getuid() != os.Geteuid() || os.Getgid() != os.Getegid() {
 		return result, errors.New("invalid identity")
 	}
+	if err := verifyProcess(); err != nil {
+		return result, err
+	}
 	path, err := os.Readlink("/proc/self/exe")
 	if err != nil || filepath.Clean(path) != path || len(path) > 512 ||
 		!regexp.MustCompile(`^/[A-Za-z0-9_./-]+$`).MatchString(path) {
@@ -135,6 +139,57 @@ func observe(args []string) (observation, error) {
 		return observation{}, errors.New("deadline exceeded")
 	}
 	return result, nil
+}
+
+func verifyProcess() error {
+	// Linux PR_SET_NO_NEW_PRIVS only restricts this child; inherited capabilities
+	// are not silently dropped or treated as an acceptable execution context.
+	if _, _, errno := syscall.AllThreadsSyscall6(syscall.SYS_PRCTL, 38, 1, 0, 0, 0, 0); errno != 0 {
+		return errors.New("invalid process")
+	}
+	file, err := os.Open("/proc/self/status")
+	if err != nil {
+		return errors.New("invalid process")
+	}
+	defer file.Close()
+	raw, err := io.ReadAll(io.LimitReader(file, 65537))
+	if err != nil || len(raw) > 65536 {
+		return errors.New("invalid process")
+	}
+	fields := map[string][]string{}
+	for _, line := range strings.Split(string(raw), "\n") {
+		key, value, ok := strings.Cut(line, ":")
+		if !ok {
+			continue
+		}
+		if _, exists := fields[key]; exists {
+			return errors.New("invalid process")
+		}
+		fields[key] = strings.Fields(value)
+	}
+	for key, value := range map[string]int{"Uid": os.Getuid(), "Gid": os.Getgid()} {
+		if len(fields[key]) != 4 {
+			return errors.New("invalid process")
+		}
+		for _, actual := range fields[key] {
+			if actual != strconv.Itoa(value) {
+				return errors.New("invalid process")
+			}
+		}
+	}
+	for _, key := range []string{"CapEff", "CapPrm", "CapAmb"} {
+		if len(fields[key]) != 1 {
+			return errors.New("invalid process")
+		}
+		value, err := strconv.ParseUint(fields[key][0], 16, 64)
+		if err != nil || value != 0 {
+			return errors.New("invalid process")
+		}
+	}
+	if len(fields["NoNewPrivs"]) != 1 || fields["NoNewPrivs"][0] != "1" {
+		return errors.New("invalid process")
+	}
+	return nil
 }
 
 func main() {

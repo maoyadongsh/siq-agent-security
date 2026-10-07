@@ -142,3 +142,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [企业OpenShell行为持久台账](optimization-opt09-journal-validation-20261008.md)：企业行为验证持久台账、单向状态／CAS、一次领取／消费、父操作来源核对与0031迁移完成。定向166项及最终台账32项通过（重叠），真实临时PostgreSQL40项通过，含两组实际行锁竞争、六状态审计回滚及非空降级保留。领取前观测误接受已复现并修复；Ruff通过。全部观测仍为合成材料，真实ELF收集器、API／授权／目标互斥及前端接线和真实三臂验收继续；生产等级未提升，总体9/16保持。
 
 [企业OpenShell静态ELF与观测通道](optimization-opt09-elf-channel-validation-20261008.md)：静态Go ELF、agent v1观测合同与有界回显通道完成；真实本机TCP／ELF和协议兼容共160项通过（39新＋58协议＋63历史），Ruff／Go vet／gofmt通过。无策略拦截的三轮12次连接全部成功时，校验器明确拒绝防护有效结论；错误回显、EOF、超时、reset、拒绝和伪造报告均分列。没有真实OpenShell调用，自报身份不替代独立保护核验；目标保护观察器、企业协调API／前端和真实三臂继续，总体9/16保持。
+
+[独立程序保护与首次真实OpenShell探测](optimization-opt09-protection-validation-20261008.md)：独立Docker保护观察器、v1保护事实及ELF低权限检查完成：84项保护／通道、最终46项保护（重叠）及12项真实Docker检查通过；Ruff／Go vet通过。真实OpenShell三次尝试保留：启动capability模板与镜像UID998已修正，003实际保护通过但原始TCP允许／拒绝各三次均refused、六次主机对照成功，校验器正确不予采信。全部自有网关／沙箱／网络清理，原模板及TLS不变；需新增显式代理通道协议并完成真实差分、协调API／前端，OPT-09与9/16保持。

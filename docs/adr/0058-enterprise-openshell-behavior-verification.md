@@ -36,6 +36,16 @@ OPT-09 要求企业部署获得绑定真实目标的行为证据。当前部署�
 
 程序自报路径、摘要与 UID 只能用于一致性核对；独立的目标／镜像／文件保护核验仍由受信任后端观察器完成，不能因为自报字段一致而认定可信。收集通道与 ELF 本地网络测试不等于真实 OpenShell 策略路径归因验收。
 
+## 本机受保护程序观察器
+
+首个可实施后端限定为已明确批准的本机 rootful Docker OpenShell 目标。控制面固定访问 root 所有的 `/usr/bin/docker` 与 `/run/docker.sock`，独立核对容器 ID、镜像、OpenShell namespace／sandbox／sandbox ID 标签及运行状态，拒绝特权、host PID／network、未批准 capability 与覆盖探针路径的挂载。该 Docker 访问权属于受信任操作员边界，不提供给普通工作负载；远端／rootless 目标不自动继承此验证。
+
+保护配置显式区分两个启动模板：`unprivileged-container` 要求数字非 root 用户且无额外 capability；`openshell-rootful-v0` 只允许已确认的 root 启动进程及恰好 `SYS_ADMIN/NET_ADMIN/SYS_PTRACE/SYSLOG` 四项 capability。后者是实测 OpenShell 启动器所需，不作为工作负载权限。模板必须由受信任操作员批准，不能从待验证容器自选。静态 ELF 在访问网络前设置 NoNewPrivs，并从自身内核状态确认四组 UID／GID一致、非 root、CapEff／CapPrm／CapAmb 均为零；不满足即退出。此检查由独立核对过字节的固定探针执行，不能移交给任意用户脚本。
+
+文件保护通过 Docker daemon 的只读 archive API 观察，而非执行容器内自述检查脚本：逐级读取路径元数据和 ELF 字节，仅在 root 所有、父目录不可被组／其他用户改写、无符号链接／特殊文件、无 setuid／setgid、两份摘要与批准制品一致时接受。只解析有界 tar 流，不解包文件；拒绝链接、ACL／capability 扩展和覆盖挂载。观察前后容器身份必须一致。归一化保护事实包含运行容器身份、路径权限与文件摘要，其 SHA-256 绑定挑战。
+
+Daemon archive 的接口语义参见 [Docker Engine API](https://docs.docker.com/reference/api/engine/version/v1.40/#tag/Container/operation/ContainerArchive)。实际符号链接行为仍需本机负向验证，不以路径字符串和自报摘要替代。该机制不改变同 UID／Docker 管理员的既有信任边界；真实三臂仍必须经 OpenShell `sandbox exec` 执行。
+
 ## 分批验收
 
 1. 合同与纯校验器：正常差分及目标／nonce／时间／策略／身份／臂故障反例；v1 历史合同不变。
