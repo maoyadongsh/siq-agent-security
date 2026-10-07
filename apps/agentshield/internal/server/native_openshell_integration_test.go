@@ -6,6 +6,8 @@ package server
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"net"
@@ -213,16 +215,43 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 	if issued["schema_version"] != "local-runtime-identity-issued/v3" || issued["identity"].(map[string]any)["runtime_state"] != "unverified" {
 		t.Fatal("native issuance overstated runtime status")
 	}
-	credentialPath := issued["credential_path"].(string)
+	parent := issued["identity"].(map[string]any)
+	parentCredential, err := os.ReadFile(issued["credential_path"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+	post("/v1/runtime-request-issuers", paired["session"].(string), runtimeidentity.RequestIssuerCreate{
+		SchemaVersion: "local-runtime-request-issuer-create/v1", ParentIdentityID: parent["identity_id"].(string),
+		ScopeID: strings.Repeat("a", 24), MaxIdentitySeconds: 300,
+		ExpiresAt: time.Now().UTC().Add(time.Hour).Format(time.RFC3339), ActorID: "owned-integration-operator"}, 201)
+	child := post("/v1/runtime-identity/self/requests", string(parentCredential), runtimeidentity.RequestIdentityCreate{
+		SchemaVersion: "local-runtime-request-identity-create/v1", RequestID: "qwen-request-2222222222222222",
+		ExecutionSHA256: strings.Repeat("d", 64), ExpiresAt: time.Now().UTC().Add(240 * time.Second).Format(time.RFC3339)}, 201)
+	identity := child["identity"].(map[string]any)
+	scope := child["request"].(map[string]any)
+	policy := identity["native_skill_policy"].(map[string]any)
+	if child["schema_version"] != "local-runtime-request-identity-issued/v2" || identity["runtime_state"] != "unverified" ||
+		identity["identity_id"] == parent["identity_id"] || scope["parent_identity_id"] != parent["identity_id"] ||
+		policy["mode"] != "required" || policy["runtime_artifact_sha256"] != input.Artifact || identity["agent_id"] != agent {
+		t.Fatal("native request identity did not inherit required parent policy")
+	}
+	namespace := scope["session_namespace"].(string)
+	if namespace != "siq:openshell:pool:"+strings.Repeat("a", 24)+":qwen-request-2222222222222222:siq_analysis" {
+		t.Fatal("unexpected request namespace")
+	}
+	sessionHash := sha256.Sum256([]byte(input.Session))
+	session := namespace + ":" + hex.EncodeToString(sessionHash[:])
+	credentialPath := child["credential_path"].(string)
 	credential, err := os.ReadFile(credentialPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	enrolled := post("/v1/runtime-sessions", string(credential), map[string]any{"schema_version": "local-runtime-session-enroll/v1", "session_id": input.Session}, 200)
+	post("/v1/runtime-sessions", string(credential), map[string]any{"schema_version": "local-runtime-session-enroll/v1", "session_id": "other:" + hex.EncodeToString(sessionHash[:])}, 400)
+	enrolled := post("/v1/runtime-sessions", string(credential), map[string]any{"schema_version": "local-runtime-session-enroll/v1", "session_id": session}, 200)
 	if enrolled["schema_version"] != "local-runtime-session-enrolled/v3" || enrolled["runtime_state"] != "unverified" {
 		t.Fatal("native enrollment overstated runtime status")
 	}
-	write("ready.json", map[string]any{"endpoint": "http://" + listener.Addr().String(), "credential_path": credentialPath, "state_dir": st.Dir, "subject": map[string]string{"platform": "hermes", "instance_id": instance, "agent_id": agent, "session_id": input.Session}, "installs": mounts})
+	write("ready.json", map[string]any{"endpoint": "http://" + listener.Addr().String(), "credential_path": credentialPath, "state_dir": st.Dir, "session_namespace": namespace, "subject": map[string]string{"platform": "hermes", "instance_id": instance, "agent_id": agent, "session_id": session}, "installs": mounts})
 	// Private, fixture-only operator controls. Nothing is mounted into the
 	// sandbox, and no route or production approval path is added.
 	controls := map[string]bool{}
@@ -289,5 +318,5 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 	if err != nil || len(chain) == 0 || receipt.Verify(chain, s.d.Key.Public()) != nil {
 		t.Fatal("actual signed receipt chain missing or invalid", err)
 	}
-	write("authority-result.json", map[string]any{"signed_chain_verified": true, "receipt_count": len(chain), "receipts": chain, "revocations": controls, "management_http_issuance": true, "session_http_enrollment": true})
+	write("authority-result.json", map[string]any{"signed_chain_verified": true, "receipt_count": len(chain), "receipts": chain, "revocations": controls, "management_http_issuance": true, "request_identity_http_issuance": true, "request_namespace_enforced": true, "session_http_enrollment": true})
 }

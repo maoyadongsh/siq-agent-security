@@ -60,7 +60,7 @@ class ImageBootstrap:
             if (self._uid <= 0 or self._gid <= 0
                     or os.geteuid() != self._uid or os.getegid() != self._gid
                     or type(agent_id) is not str or not re.fullmatch(r"hri-[a-f0-9]{32}", agent_id)
-                    or type(session_namespace) is not str or not re.fullmatch(r"[A-Za-z0-9._-]{1,64}", session_namespace)
+                    or not native_dispatch.valid_session_namespace(session_namespace)
                     or type(channel_directory) is not str or not channel_directory.startswith("/")
                     or "\\" in channel_directory or any(ord(c) < 32 or ord(c) == 127 for c in channel_directory)):
                 raise _failure()

@@ -46,6 +46,30 @@ def call(runtime, params=None, *, task="task", session="session", tool="read_fil
     return runtime.call(tool, {} if params is None else params, task, session, cid)
 
 
+@pytest.mark.parametrize("namespace", [
+    "legacy", "x" * 191,
+    "siq:openshell:pool:" + "a" * 24 + ":qwen-request-2222222222222222:siq_analysis",
+])
+def test_request_namespace_preserved_in_actual_task_events(namespace):
+    events = []
+    runtime = native.Runtime("hri-" + "a" * 32, namespace, events.append, lambda *_: None, lambda *_: None)
+    with runtime.task("task", "实际会话"):
+        pass
+    session = namespace + ":" + hashlib.sha256("实际会话".encode()).hexdigest()
+    assert len(session.encode()) == len(namespace) + 65 <= 256
+    assert [e["session_id"] for e in events] == [session, session]
+    assert runtime._session("another-session") != session
+
+
+@pytest.mark.parametrize("namespace", [
+    "", None, 1, "x" * 192, ":leading", "trailing:", "double::colon", "中文",
+    "a\nb", "a\x00b", "a\x7fb", "space here", "slash/path", "a\\b",
+])
+def test_invalid_request_namespace_refused_before_task(namespace):
+    with pytest.raises(native.DispatchError, match="^native_dispatch_unavailable$"):
+        native.Runtime("hri-" + "a" * 32, namespace, lambda *_: None, lambda *_: None, lambda *_: None)
+
+
 def test_real_reads_and_switches_preserve_lineage(tmp_path):
     runtime, events, calls, results = fixture_runtime()
     paths = []

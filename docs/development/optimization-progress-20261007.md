@@ -70,3 +70,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3a 管理 HTTP 接入](optimization-opt08-management-enrollment-validation-20261007.md)已限定开放创建 v3：显式 native-host 服务完整绑定且私有连接有效，管理鉴权、批准基线和 revision 约束保持，读回始终 unverified。真实 OpenShell 18 项检查已改用 HTTP 配对/身份签发/会话登记通过；Go 全量 45 包、server 定向 race、全量 vet、四目标构建及 16 项 Python 合同通过。此增量替代上述 D2“创建入口关闭”的阶段状态；受保护日常启动与业务验收仍未完成，OPT-08 与总体 9/16 保持不变。
 
 [D3b 受保护运行初始化](optimization-opt08-runtime-bootstrap-validation-20261007.md)已提供 ImageBootstrap 并纳入固定覆盖包：一次性配置、排他私有目录、固定跨 PID namespace 响应凭据及目录/端点变化、fork、超时和关闭后的拒绝。新增 39 项启动测试、相关共 138 项 Python 测试通过；实际 OpenShell 使用该初始化器及其制品摘要，18 项权限检查通过。未改 Go 生产逻辑，未重复无关全量。初始化器尚未接入日常网关与业务 API，业务核心文件的既有修改继续保留；OPT-08 与 9/16 不变。
+
+[D3c 请求级子身份衔接](optimization-opt08-request-identity-validation-20261007.md)修复原生 namespace 无法兼容业务请求前缀的问题：两入口共用严格 ASCII 冒号组件校验，派生会话不超过 256 字节。真实 HTTP 签发子身份、错范围登记拒绝、子凭据 OpenShell 联验 18 项通过，包含父基线撤销后拒绝；163 项相关 Python、Go 身份定向与 server vet 通过。请求参数和 Skill 内容仍为合成，日常业务 API/授权生命周期尚未验收，OPT-08 与 9/16 不变。

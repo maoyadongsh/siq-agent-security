@@ -57,7 +57,7 @@ class OwnedAuthority:
 
     def start(self, prepared):
         self.write("input.json", {"artifact": prepared["artifact"], "source": prepared["skill_source"],
-            "runtime_root": RUNTIME + "/skills", "session": "owned-online:" + digest(b"owned-session")})
+            "runtime_root": RUNTIME + "/skills", "session": "owned-session"})
         self.log = (self.output / "authority-go-test.log").open("wb")
         env = os.environ.copy()
         env["SIQ_NATIVE_OPENSHELL_TEST_DIR"] = str(self.root)
@@ -65,7 +65,7 @@ class OwnedAuthority:
             "-count=1", "-timeout=180s", "-v"], cwd=ROOT / "apps/agentshield", env=env,
             stdin=subprocess.DEVNULL, stdout=self.log, stderr=subprocess.STDOUT)
         self.ready = wait_json(self.root / "ready.json", self.process)
-        prepared["argv"].extend([self.ready["subject"]["agent_id"], "owned-online", "owned-session"])
+        prepared["argv"].extend([self.ready["subject"]["agent_id"], self.ready["session_namespace"], "owned-session"])
         prepared["skill_roots"] = [{"source": m["host_root"], "target": m["runtime_root"]} for m in self.ready["installs"]]
 
     def close(self):

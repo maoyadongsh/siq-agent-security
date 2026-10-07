@@ -34,6 +34,11 @@ def _unavailable():
     return DispatchError("native_dispatch_unavailable")
 
 
+def valid_session_namespace(value):
+    return (type(value) is str and 1 <= len(value) <= 191
+            and re.fullmatch(r"[A-Za-z0-9._-]+(?::[A-Za-z0-9._-]+)*", value) is not None)
+
+
 def _text(value, limit=256):
     return (type(value) is str and 0 < len(value.encode("utf-8", errors="strict")) <= limit
             and not any(ord(c) < 32 or ord(c) == 127 for c in value))
@@ -79,8 +84,8 @@ class _Task:
 class Runtime:
     def __init__(self, agent_id, session_namespace, observe_source, authorize, observe_result, *,
                  managed_installations=False):
-        if (not re.fullmatch(r"hri-[a-f0-9]{32}", agent_id or "")
-                or not re.fullmatch(r"[A-Za-z0-9._-]{1,64}", session_namespace or "")
+        if (type(agent_id) is not str or not re.fullmatch(r"hri-[a-f0-9]{32}", agent_id)
+                or not valid_session_namespace(session_namespace)
                 or type(managed_installations) is not bool
                 or not all(callable(f) for f in (observe_source, authorize, observe_result))):
             raise _unavailable()

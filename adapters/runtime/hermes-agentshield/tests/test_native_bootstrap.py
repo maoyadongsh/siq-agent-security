@@ -50,6 +50,23 @@ def endpoint(root):
     return listener
 
 
+@pytest.mark.parametrize("namespace", [
+    "x" * 191,
+    "siq:openshell:pool:" + "a" * 24 + ":qwen-request-2222222222222222:siq_analysis",
+])
+def test_request_namespace_reaches_configured_runtime_unchanged(fixture, namespace):
+    module, root = fixture
+    value = module.ImageBootstrap(AGENT, namespace, str(root / "channel"))
+    try:
+        assert value.ready()["session_namespace"] == namespace
+        with endpoint(root):
+            value.configure(timeout=.1)
+            assert module.native_dispatch._runtime.namespace == namespace
+            assert len(module.native_dispatch._runtime._session("actual-session")) <= 256
+    finally:
+        value.close()
+
+
 def test_ready_and_configuration_never_claim_authority(fixture, monkeypatch):
     module, root = fixture
     monkeypatch.setenv("SIQ_AGENT_SECURITY_AGENT_ID", "model-selected-agent")
@@ -77,7 +94,9 @@ def test_ready_and_configuration_never_claim_authority(fixture, monkeypatch):
 
 
 @pytest.mark.parametrize("field,value", [
-    ("agent", "other"), ("agent", None), ("namespace", "../other"), ("namespace", "x" * 65),
+    ("agent", "other"), ("agent", None), ("namespace", "../other"), ("namespace", "x" * 192),
+    ("namespace", ":leading"), ("namespace", "trailing:"), ("namespace", "two::parts"),
+    ("namespace", "bad\n"), ("namespace", "中文"), ("namespace", None),
     ("path", "relative"), ("path", "/tmp/../escape"), ("path", "/tmp//escape"),
     ("path", "/tmp/line\nbreak"), ("path", "/tmp/back\\slash"),
     ("path", "/tmp/" + "x" * 100), ("path", "/"),
