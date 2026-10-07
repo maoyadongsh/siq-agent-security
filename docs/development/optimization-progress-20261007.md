@@ -102,3 +102,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3q 业务交付依赖](evidence/optimization-20261007/native-business-delivery-review.json)扩大静态盘点至原生业务选择器／网关、镜像和编译器，共109模块、提交前66个未跟踪模块；先审查提交配置校验依赖，四文件隔离目录27项通过、Ruff通过。业务提交547a274，完整依赖与动态部署资产尚待交付。
 
 [D3r 同请求Skill切换](optimization-opt08-switch-validation-20261007.md)通过真实业务请求v814：先加载只读Skill，再加载写入Skill，实际写入仍被SIQ拒绝；签名回执保留准确两个Grant和原只读上下文，目标文件不存在。新增三条回执与原八条组成11条链，公钥独立验证通过，旧记录未改。原测评器及独立复核均通过；临时数据库／请求资源／候选网关／模型桥清理，原模型服务未变。并发、撤权、漂移等其他生命周期未完成，OPT-08与9/16保持。
+
+[D3s 原生上下文管理](optimization-opt08-context-management-validation-20261007.md)补齐管理员专用v2历史读取、分页和精确撤权HTTP接口，合同与实现分别提交；运行宿主失联不阻止管理员撤权。Go全量45包、两包相关race、vet、26项Python合同和四目标构建通过，查询控制字符缺口已修复。新Authority安装及重启各8项通过。真实业务v815正常写入与v816读取后HTTP撤权对照均通过；后者实际写入报错且目标不存在，在决策前拒绝、没有伪造deny回执。独立复核18项、五条完整回执链和SEC／撤销签名通过；请求资源清理、原模型不变。现有v1页面未接入v2管理。OPT-08与9/16保持。
