@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Real isolated API context and role-aware UI. Dev identity and fixture JWT only."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import base64
 import hashlib
@@ -96,6 +99,7 @@ def main():
                         seen.append(route.request.url.split(endpoint)[-1].split('?')[0])
                         route.continue_(headers=headers)
                     page.route('**/api/v1/**', identity)
+                    install_fixture_session(page)
                     page.goto(endpoint + '/')
                     expect(page.get_by_role('heading', name='工作台', exact=True)).to_be_visible()
                     expect(page.get_by_role('heading', name='验收组织甲', exact=True)).to_be_visible()
@@ -129,6 +133,7 @@ def main():
                             checks['reviewer_missing_read_access_explained_without_grant'] = True
                     current = {**base_headers, 'X-Dev-Roles': 'viewer'}
                     seen.clear()
+                    install_fixture_session(page)
                     page.goto(endpoint + '/environments')
                     expect(page.get_by_role('heading', name='当前账号无法访问此页面', exact=True)).to_be_visible()
                     assert '/api/v1/environments' not in seen

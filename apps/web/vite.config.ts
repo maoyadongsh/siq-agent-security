@@ -99,6 +99,7 @@ function localDevSpaFallback(): Plugin {
 // 企业控制台：client 默认同源 /api/v1；本地开发由 proxy 转发到 Control API。
 // AgentShield 本地模式：VITE_APP=agentshield，产物 embed 进 agentshield serve。
 export default defineConfig({
+  envDir: process.env.SIQ_AS_WEB_ENV_DIR,
   base: isLocal ? '/' : process.env.SIQ_AS_WEB_BASE || '/',
   plugins: [rejectDevelopmentIdentityBuild(), react(), dropLegacyWoff(), renameLocalIndex(), localDevSpaFallback()],
   server: {

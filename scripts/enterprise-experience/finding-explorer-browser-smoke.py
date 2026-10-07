@@ -6,6 +6,9 @@ B. 处置回归（确认/解决）：写请求只发往 Playwright 拦截的模�
 模拟验收专用：不连接真实控制面，不能证明后端授权或生产环境已验收。
 用法：python finding-explorer-browser-smoke.py --web <构建目录> --out-dir <证据目录>
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -172,6 +175,7 @@ def main():
             # ---------- 阶段 A：只读（零业务写请求） ----------
             # A1. 加载中不冒充零风险、不出示例
             state['mode'] = 'hold'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('正在加载风险记录')).to_be_visible()
             expect(page.get_by_role('button', name='确认', exact=True)).to_have_count(0)
@@ -256,10 +260,12 @@ def main():
 
             # A8. 空清单与断连区分
             state['mode'] = 'empty'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('后端成功返回空列表')).to_be_visible()
             expect(page.get_by_text('零条风险不等于当前系统安全')).to_be_visible()
             state['mode'] = 'down'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('未连接 — 控制面暂不可达')).to_be_visible()
             expect(page.get_by_text('后端成功返回空列表')).to_have_count(0)
@@ -268,6 +274,7 @@ def main():
             checks['a_empty_vs_disconnected_no_actions'] = True
 
             state['mode'] = 'edge-cases'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.locator('.finding-explorer-row')).to_have_count(1)
             page.locator('.finding-explorer-summary').click()
@@ -281,12 +288,14 @@ def main():
 
             before_gets = len(list_gets)
             state['access'] = 'denied'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('当前账号无法访问此页面', exact=True)).to_be_visible()
             expect(page.locator('a[href="/findings"]')).to_have_count(0)
             expect(page.locator('.finding-explorer-list')).to_have_count(0)
             assert len(list_gets) == before_gets
             state['access'] = 'error'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('暂时无法核对访问权限', exact=True)).to_be_visible()
             assert len(list_gets) == before_gets
@@ -301,6 +310,7 @@ def main():
             # ---------- 阶段 B：处置回归（写请求仅到模拟拦截） ----------
             state['mode'] = 'paged'
             state['page3_ok'] = False
+            install_fixture_session(page)
             page.goto(base)
             row1 = page.locator('.finding-explorer-row', has_text='R-A')
 

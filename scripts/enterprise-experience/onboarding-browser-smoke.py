@@ -4,6 +4,9 @@
 No production identity/provider or real user's device/configuration is accessed.
 Enrollment/device secrets stay in process memory and temporary private state.
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import hashlib
 import json
@@ -110,6 +113,7 @@ def main():
                     page.route('**/api/v1/**', browser_identity)
                     errors = []
                     page.on('pageerror', lambda _: errors.append('pageerror'))
+                    install_fixture_session(page)
                     page.goto(endpoint + '/environments')
                     page.get_by_label('环境名称', exact=True).fill('验收 DGX Spark')
                     with page.expect_response(lambda r: r.request.method == 'POST' and r.url.endswith('/api/v1/environments')) as created:
@@ -217,6 +221,7 @@ def main():
                     assert len(candidates) == 1
                     expect(page.get_by_role('link', name=candidates[0]['name'], exact=True)).to_be_visible()
                     checks['actual_asset_list_link'] = True
+                    install_fixture_session(page)
                     page.goto(endpoint + '/environments?environment=' + environment['id'])
                     page.get_by_text('高级：手动接入、补扫与详细记录', exact=True).click()
                     expect(page.get_by_text('扫描已完成', exact=True)).to_be_visible()

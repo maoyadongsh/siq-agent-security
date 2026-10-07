@@ -1,4 +1,7 @@
 """Mocked enterprise connection UI; no OpenShell process or real backend invoked."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -81,6 +84,7 @@ def main():
             errors = []
             page.on('pageerror', lambda _: errors.append('pageerror'))
             page.route('**/api/v1/**', route)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/environments?environment=env')
             summary = page.get_by_text('高级诊断：OpenShell 控制面连接', exact=True)
             expect(summary).to_be_visible()

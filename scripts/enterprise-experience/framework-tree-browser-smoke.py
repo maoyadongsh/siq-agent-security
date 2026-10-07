@@ -1,9 +1,12 @@
 """Framework tree UI smoke: isolated fixtures only, never production acceptance.
 
 ENT-018-FRAMEWORK-TREE-UI 浏览器冒烟：本地静态服务 + Playwright 拦截合成响应，
-不连接真实控制面、IAM 或任何业务数据。需配合 VITE_DEV_MODE=true 的隔离构建
+不连接真实控制面、IAM 或任何业务数据。需配合 VITE_DEV_MODE=false + loopback session fixture 的隔离构建
 （仅模拟验收，不可发布）。
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -166,6 +169,7 @@ def main():
             page = browser.new_page(viewport={'width': 1280, 'height': 900}, service_workers='block')
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.route('**/*', intercept)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/agents')
 
             # 默认资产列表行为保留：表格视图在，且未请求框架清单
@@ -328,6 +332,7 @@ def main():
 
             # 返回与刷新通过既有路由的白名单查询参数恢复视图，不接受任意跳转地址。
             base = f'http://127.0.0.1:{server.server_port}'
+            install_fixture_session(page)
             page.goto(base + '/agents?view=framework&environment_id=env-one&device_id=edge-one')
             expect(tree.get_by_text('已加载 3 条角色记录', exact=False)).to_be_visible()
             tree.locator('details').evaluate_all('(nodes) => nodes.forEach(node => { node.open = true; })')
@@ -347,6 +352,7 @@ def main():
 
             # 首页仍为 v1；第二页为 v2 且混合两种来源，不能按首版拒绝或按同摘要混组。
             state['hermes_page'] = True
+            install_fixture_session(page)
             page.goto(base + '/agents?view=framework')
             expect(tree.get_by_text('已加载 3 条角色记录', exact=False)).to_be_visible()
             tree.get_by_role('button', name='加载更多角色记录').click()

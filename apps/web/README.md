@@ -19,7 +19,7 @@ npm run build
 npm run build:local
 ```
 
-Windows PowerShell 可将 `npm` 写为 `npm.cmd`，无需修改 ExecutionPolicy。本地入口通过 Node 设置当前进程的 `VITE_APP=agentshield` 并调用锁定的 Vite，不依赖全局 Vite 或 POSIX 环境变量语法。两种构建均先运行 TypeScript 检查。 所有分发构建（含 `build:local` 和自定义 mode）在 `VITE_DEV_MODE=true` 时拒绝执行；请在构建环境显式设为 `false`，或移除该开发开关。开发服务器仍允许显式开启；生产 API 不接受开发身份头，前端开关不构成授权。
+Windows PowerShell 可将 `npm` 写为 `npm.cmd`，无需修改 ExecutionPolicy。本地入口通过 Node 设置当前进程的 `VITE_APP=agentshield` 并调用锁定的 Vite，不依赖全局 Vite 或 POSIX 环境变量语法。两种构建均先运行 TypeScript 检查。 所有分发构建（含 `build:local` 和自定义 mode）在 `VITE_DEV_MODE=true` 时拒绝执行；请在构建环境显式设为 `false`，或移除该开发开关。开发服务器仍允许显式开启；生产 API 不接受开发身份头，前端开关不构成授权。 浏览器模拟验收使用关闭该开关的构建，在 Playwright 测试层注入受控 loopback 会话；可通过 `SIQ_AS_WEB_ENV_DIR` 指向隔离的空环境目录，避免读取开发者 `.env.local`。该目录选项不绕过构建身份门禁。
 
 `dev:local` 默认监听 `127.0.0.1`、打开 `/overview`，并以本地应用处理 `/`、`/demo` 等 SPA 路由；附加参数示例为 `npm run dev:local -- --port 5174 --strictPort`。开发代理把 `/v1`、`/healthz`、`/ui-config.json` 发往 `127.0.0.1:47611`，需另行启动、配对该 daemon。端口与 Origin 处理见 [localProxy](dev/localProxy.ts)，不要通过删除服务端来源检查解决连接问题。
 

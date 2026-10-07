@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Bulk candidate UI with isolated API fixtures; never approves real assets."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -90,6 +93,7 @@ def main():
             errors = []
             page.on('pageerror', lambda _: errors.append('pageerror'))
             page.route('**/api/v1/**', route)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/agents?view=candidates')
             page.get_by_role('button', name='选择已加载前 50 个').click()
             page.get_by_role('button', name='核对并批量' + label).click()

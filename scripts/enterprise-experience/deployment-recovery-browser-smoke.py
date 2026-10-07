@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Real isolated dev/fake deployment task, exact history and audit UI; no OpenShell execution."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import json
 import os
@@ -100,6 +103,7 @@ def main():
                         requests.append((route.request.method, route.request.url.split(endpoint)[-1]))
                         route.continue_(headers={**clean, **current})
                     page.route('**/api/v1/**', identity)
+                    install_fixture_session(page)
                     page.goto(endpoint + '/changes')
                     expect(page.get_by_role('heading', name='变更中心', exact=True)).to_be_visible()
                     (args.out_dir / 'target-labels.json').write_text(json.dumps(page.locator('label').all_text_contents(), ensure_ascii=False))
@@ -180,6 +184,7 @@ def main():
                     checks['audit_and_environment_name_require_their_own_permissions'] = True
                     current.update(headers)
 
+                    install_fixture_session(page)
                     page.goto(endpoint + '/changes')
                     expect(page.get_by_role('heading', name='变更中心', exact=True)).to_be_visible()
                     (args.out_dir / 'target-labels.json').write_text(json.dumps(page.locator('label').all_text_contents(), ensure_ascii=False))
@@ -214,6 +219,7 @@ def main():
 
                     # Lose the browser completion entirely, then reload while the
                     # dialog still says submitting. The actual POST completes once.
+                    install_fixture_session(page)
                     page.goto(endpoint + '/changes')
                     page.get_by_label('部署环境', exact=True).select_option('env-execution')
                     page.get_by_label('运行时绑定', exact=True).select_option(binding['id'])
@@ -244,11 +250,13 @@ def main():
                     checks['reload_during_lost_completion_recovers_exact_persistent_request'] = True
                     page.screenshot(path=str(args.out_dir / 'recovered-request.png'), full_page=True, animations='disabled')
 
+                    install_fixture_session(page)
                     page.goto(endpoint + '/changes?view=execution&change=' + changes['empty']['id'])
                     expect(dialog.get_by_text('尚未查询到关联部署记录', exact=False)).to_be_visible()
                     expect(dialog.get_by_text('批准变更', exact=True)).to_be_visible()
                     checks['approved_without_deployment_is_explicit'] = True
                     # Seeded history demonstrates bounded expansion; it is not execution evidence.
+                    install_fixture_session(page)
                     page.goto(endpoint + '/changes?view=execution&change=cr-history')
                     expect(dialog.get_by_text('仅显示最近 20 次', exact=False)).to_be_visible()
                     expect(dialog.get_by_text('仅显示最近 50 条', exact=False)).to_be_visible()
@@ -258,6 +266,7 @@ def main():
                     expect(dialog.get_by_text('配置已读回，行为未验证', exact=True)).to_have_count(0)
                     expect(dialog.get_by_text('部署失败，需核对执行端', exact=True)).to_have_count(21)
                     checks['real_expanded_history_read_and_failed_old_success_projection'] = True
+                    install_fixture_session(page)
                     page.goto(endpoint + '/changes?view=execution&change=' + changes['normal']['id'])
                     expect(dialog.get_by_text('创建部署任务', exact=True)).to_be_visible()
                     page.set_viewport_size({'width': 390, 'height': 844})

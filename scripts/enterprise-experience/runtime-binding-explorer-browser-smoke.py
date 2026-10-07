@@ -16,6 +16,9 @@ VITE_DEV_MODE 模拟身份构建仅用于测试、不可发布；本脚本不是
 检查项见下方 check() 调用。
 """
 
+from browser_fixture_identity import install_fixture_session
+
+
 import argparse
 import json
 import mimetypes
@@ -283,7 +286,7 @@ def main() -> int:
         temporary = Path(raw)
         web_build = temporary / "web-sim"
         env = {k: v for k, v in os.environ.items() if k in {"PATH", "LANG", "TZ", "HOME"}}
-        env.update(VITE_DEV_MODE="true", VITE_DEV_TENANT_ID="fixture-tenant", VITE_DEV_USER_ID="fixture-user")
+        env.update(VITE_DEV_MODE="false", VITE_DEV_TENANT_ID="fixture-tenant", VITE_DEV_USER_ID="fixture-user")
         with (out / "build.log").open("x") as log:
             subprocess.run(["npm", "run", "build", "--", "--outDir", str(web_build)],
                            cwd=WEB, env=env, stdout=log, stderr=log, check=True, timeout=300)
@@ -314,6 +317,7 @@ def main() -> int:
             # ---- 1. 首次加载（挂起观察加载态）----
             STATE.bindings_fail = False
             STATE.bindings_truncated = False
+            install_fixture_session(page)
             page.goto(f"{base}/runtime-bindings", wait_until="domcontentloaded")
             page.wait_for_timeout(500)
             html = page.content()
@@ -423,10 +427,12 @@ def main() -> int:
 
             # ---- 8. 无权限入口不出现 + 直接访问被拒 ----
             STATE.access = NO_BINDINGS_ACCESS
+            install_fixture_session(page)
             page.goto(f"{base}/", wait_until="domcontentloaded")
             page.wait_for_timeout(400)
             nav_hrefs = [a.get_attribute("href") for a in page.locator("nav a").all()]
             check("无权限时导航不出现运行时绑定入口", "/runtime-bindings" not in nav_hrefs, f"hrefs={nav_hrefs}")
+            install_fixture_session(page)
             page.goto(f"{base}/runtime-bindings", wait_until="domcontentloaded")
             page.wait_for_timeout(400)
             html = page.content()
@@ -435,6 +441,7 @@ def main() -> int:
             STATE.access = FULL_ACCESS
 
             # ---- 9. 环境/资产/实例各自失败+恢复 ----
+            install_fixture_session(page)
             page.goto(f"{base}/runtime-bindings", wait_until="domcontentloaded")
             page.wait_for_timeout(400)
             page.locator("button:has-text('登记绑定')").click()
@@ -539,6 +546,7 @@ def main() -> int:
             overflow_results = {}
             for width in [375, 768, 1024, 1280, 1440]:
                 page.set_viewport_size({"width": width, "height": 900})
+                install_fixture_session(page)
                 page.goto(f"{base}/runtime-bindings", wait_until="domcontentloaded")
                 page.wait_for_timeout(400)
                 # 展开详情 + 打开表单 + 打开吊销对话框（长文本场景）
@@ -574,6 +582,7 @@ def main() -> int:
 
             # ============ 阶段二：业务回归（mock 记录载荷）============
             page.set_viewport_size({"width": 1280, "height": 900})
+            install_fixture_session(page)
             page.goto(f"{base}/runtime-bindings", wait_until="domcontentloaded")
             page.wait_for_timeout(400)
 

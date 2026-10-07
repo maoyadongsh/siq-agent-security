@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Browser-only source panel checks with explicit API fixtures, not live backend E2E."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -80,6 +83,7 @@ def main():
             page.on('pageerror', lambda _: errors.append('pageerror'))
             page.route('**/api/v1/**', route)
             base = f'http://127.0.0.1:{server.server_port}'
+            install_fixture_session(page)
             page.goto(base + '/agents/asset')
             panel = page.get_by_role('region', name='发现来源')
             expect(panel).to_contain_text('fixture-device')

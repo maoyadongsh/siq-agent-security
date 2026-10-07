@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Isolated real API approval UI; dev identities and labelled transport faults only."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import json
 import os
@@ -94,6 +97,7 @@ def main():
 
                     def open_review(key):
                         cr = changes[key]
+                        install_fixture_session(page)
                         page.goto(endpoint + '/changes?change=' + cr['id'])
                         dialog = page.get_by_role('dialog', name='审查变更')
                         try:
@@ -188,6 +192,7 @@ def main():
                     def read_failure(route):
                         route.fulfill(status=503, content_type='application/json', body='{"detail":"fixture_read_failure"}')
                     page.route(pattern, read_failure)
+                    install_fixture_session(page)
                     page.goto(endpoint + '/changes?change=' + changes['cancel']['id'])
                     dialog = page.get_by_role('dialog')
                     expect(dialog.get_by_text('暂时无法读取这份变更', exact=False)).to_be_visible()

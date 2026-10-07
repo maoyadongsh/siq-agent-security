@@ -27,3 +27,15 @@ describe('development identity boundary', () => {
     }
   });
 });
+
+describe('session restoration uses the same development boundary', () => {
+  it.each([false, true])('production=$prod ignores a development bypass', async (prod) => {
+    vi.stubEnv('DEV', !prod); vi.stubEnv('PROD', prod); vi.stubEnv('VITE_DEV_MODE', 'true');
+    vi.resetModules();
+    const fetcher = vi.fn().mockResolvedValue(new Response('{}', { status: 401 }));
+    vi.stubGlobal('fetch', fetcher);
+    const { restoreSession } = await import('./session');
+    expect(await restoreSession()).toBe(!prod);
+    expect(fetcher).toHaveBeenCalledTimes(prod ? 1 : 0);
+  });
+});

@@ -1,4 +1,7 @@
 """Isolated device credential UI; all API calls are synthetic and intercepted."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -89,6 +92,7 @@ def main():
             page = browser.new_page(viewport={'width': 1280, 'height': 900})
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.route('**/*', intercept)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/environments?environment=env')
             panel = page.get_by_role('region', name='设备凭据管理', exact=True)
             expect(panel).to_be_visible()

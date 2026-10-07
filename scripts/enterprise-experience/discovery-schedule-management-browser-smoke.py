@@ -5,6 +5,9 @@ All APIs are intercepted with synthetic responses on 127.0.0.1 static serving.
 This proves UI wiring only; it is not backend E2E, production IAM, or a real
 device confirmation chain.
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -158,6 +161,7 @@ def main():
             base = f'http://127.0.0.1:{server.server_port}'
 
             # --- 只读阶段：零业务写 ---
+            install_fixture_session(page_obj)
             page_obj.goto(base + '/environments')
             page_obj.get_by_role('button', name='查看接入进度').first.click()
             panel = page_obj.get_by_role('region', name='周期发现计划')
@@ -258,6 +262,7 @@ def main():
             mode['value'] = 'denied_context'
             writes['list'].clear()
             sched_gets['n'] = 0
+            install_fixture_session(page_obj)
             page_obj.goto(base + '/environments?environment=' + ENV)
             page_obj.wait_for_timeout(1500)
             expect(page_obj.get_by_role('region', name='周期发现计划')).to_have_count(0)
@@ -324,7 +329,7 @@ def main():
         worker.join(timeout=5)
     result = {'passed': True, 'scope': 'browser UI with mocked API; not backend E2E, not production IAM',
               'checks': checks, 'fixture_server_stopped': not worker.is_alive(),
-              'build_mode': 'VITE_DEV_MODE=true simulated build for smoke only; 不可发布', 'production_deployed': False}
+              'build_mode': 'VITE_DEV_MODE=false + loopback session fixture simulated build for smoke only; 不可发布', 'production_deployed': False}
     (args.out_dir / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     print(json.dumps(result, ensure_ascii=False))
 

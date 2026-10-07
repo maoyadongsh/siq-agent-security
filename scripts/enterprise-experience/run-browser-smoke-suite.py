@@ -7,11 +7,11 @@
 
 **这个套件证明什么、不证明什么**（写进 `result.json` 的硬字段，不是注释）：
 脚本自述 `scope: mocked browser only`、`production_deployed: false`——它们跑的是
-**模拟身份（`VITE_DEV_MODE=true`）构建 + `127.0.0.1` 静态服务 + Playwright 路由 mock**。
+**`VITE_DEV_MODE=false` 构建与测试层模拟会话 + `127.0.0.1` 静态服务 + Playwright 路由 mock**。
 因此本套件只证明"前端在模拟条件下的交互行为"，**不是真实后端 HTTP 契约证据、不是真实 IAM 证据**。
 
 安全边界：不启动任何共享服务、不连数据库、不读 `.env`/私钥/种子、不安装依赖；
-模拟身份构建输出到**独立临时目录**且目录名自带 `NOT-RELEASABLE`，
+模拟浏览器夹具构建输出到**独立临时目录**且目录名自带 `NOT-RELEASABLE`，
 不覆盖也不等同于正式构建（正式构建统一由 `enterprise-gate-run.py` 以 `VITE_DEV_MODE=false` 产生）。
 """
 
@@ -52,11 +52,11 @@ PLAYWRIGHT_PROBE = "from importlib.metadata import version; print(version('playw
 # X-Dev-* 合成身份头才会被 app/security.py 采纳。**这是运行时度量，不是写死的数字**：
 # 30 个脚本里 8 个属于这一类（2026-09-26 实测），硬编码会随脚本增删腐坏。
 REAL_DEV_API_MARKER = "SIQ_AS_DEV"
-SCOPE_NOTE = ("scope: mocked browser only —— 共享夹具是模拟身份构建 + 本地静态服务 + Playwright 路由 mock；"
+SCOPE_NOTE = ("scope: mocked browser only —— 共享夹具是模拟浏览器夹具构建 + 本地静态服务 + Playwright 路由 mock；"
               "**但按 real_dev_api_scripts 列出的脚本会额外自起回环 dev 控制面**"
               "（真实 socket、真实 HTTP、合成 X-Dev 身份，非真实 IAM）；"
               "套件本身只断言各脚本通过/失败，**不做契约级断言**（状态码/JSON 形状/隔离序不做独立核对）；"
-              "构建产物为模拟身份构建，不可发布")
+              "构建产物为模拟浏览器夹具构建，不可发布")
 
 
 def real_dev_api_scripts(script_paths) -> list[str]:
@@ -161,12 +161,14 @@ def build_argv(python: Path, script_path: Path, options: set[str], *,
 
 
 def build_web_simulated(repo: Path, *, runner=subprocess.run, timeout: int = DEFAULT_TIMEOUT_SECONDS) -> dict:
-    """模拟身份前端构建到独立临时目录；目录名自带 NOT-RELEASABLE，避免被误当正式产物。"""
+    """生产身份关闭的前端构建到独立临时目录，模拟会话由 Playwright 夹具提供；目录名自带 NOT-RELEASABLE，避免被误当正式产物。"""
     build_dir = Path(tempfile.mkdtemp(prefix="siq-browser-suite-web-SIMULATED-NOT-RELEASABLE-"))
     command = ["npx", "vite", "build", "--outDir", str(build_dir), "--emptyOutDir"]
     try:
         result = runner(command, cwd=str(repo / WEB_APP_DIR), capture_output=True, text=True,
-                        timeout=timeout, env={**os.environ, "VITE_DEV_MODE": "true"})
+                        timeout=timeout, env={**os.environ, "VITE_DEV_MODE": "false", "VITE_APP": "",
+                                      "VITE_API_BASE": "/api/v1", "VITE_IAM_URL": "/api/iam",
+                                      "SIQ_AS_WEB_ENV_DIR": str(build_dir)})
     except (OSError, subprocess.SubprocessError) as exc:
         return {"ok": False, "web_build_dir": str(build_dir),
                 "detail": f"web_build_error:{type(exc).__name__}"}
@@ -174,8 +176,8 @@ def build_web_simulated(repo: Path, *, runner=subprocess.run, timeout: int = DEF
         return {"ok": False, "web_build_dir": str(build_dir), "command": " ".join(command),
                 "detail": "web_build_exit_nonzero", "stderr_tail": tail(result.stderr)}
     return {"ok": True, "web_build_dir": str(build_dir), "command": " ".join(command),
-            "env": {"VITE_DEV_MODE": "true"},
-            "note": "模拟身份构建，独立临时目录，不可发布；与正式构建（VITE_DEV_MODE=false）分离"}
+            "env": {"VITE_DEV_MODE": "false"},
+            "note": "VITE_DEV_MODE=false；模拟身份仅在 loopback Playwright 会话夹具中，测试目录不可发布"}
 
 
 def run_suite(repo: Path, evidence_root: Path, *, python: Path, edge: Path | None,
@@ -302,7 +304,7 @@ def main(argv: list[str] | None = None, *, runner=subprocess.run, build_web=None
     parser.add_argument("--connector-dir", help="框架连接器二进制目录")
     parser.add_argument("--only", help="只跑指定脚本名（逗号分隔，不含 .py）")
     parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT_SECONDS, help="单脚本超时秒数")
-    parser.add_argument("--keep-build", action="store_true", help="保留模拟身份构建目录（默认删除）")
+    parser.add_argument("--keep-build", action="store_true", help="保留模拟浏览器夹具构建目录（默认删除）")
     args = parser.parse_args(argv)
 
     repo = Path(args.repo).resolve()
