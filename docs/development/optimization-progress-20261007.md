@@ -126,3 +126,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [候选镜像与业务工具资产交付](optimization-opt08-candidate-assets-delivery-validation-20261008.md)：候选镜像／MCP／报告资产交付业务f2bdc8b，105文件隔离验证109项及Ruff通过；两补丁实际回放和九wheel来源／许可核对通过。查明旧镜像只有配置校验器来源不同，代回旧摘要可完整复算旧构建身份；当前源码离线构建新镜像56c3d4d6ad39，七项运行检查及42个输入摘要通过。保留旧快照／镜像／证据，不激活服务、不调用模型；夹具发布不冒充生产审批。原109模块剩26个未交付，完整编排与最终新鲜候选验收继续，OPT-08与9/16不变。
 
 [请求编排组件预审](evidence/optimization-20261007/native-request-orchestration-prereview.json)：请求编排组件预审：独立226文件、61份选定源码／测试，486项通过、Ruff通过。使用HEAD离线构建并核验的控制包，补齐HEAD动态资源；未修改日常API环境。代码尚未提交，聊天API入口及相关完整集成用例仍待交付审查；不能把组件预审视为OPT-08或同候选业务验收。9/16保持。
+
+[请求编排与业务 API 依赖交付](optimization-opt08-request-api-delivery-validation-20261008.md)：请求编排与业务API完整依赖交付业务2a70587：110份选定输入的最终隔离API回归523项通过；修复原生请求因缺旧canary字段而漏导出安全生命周期事件，旧反例复现、相关45项通过（与523重叠）。Ruff基线104条、本批102条既有B008、新增0。保留报告归档等无关工作区改动及初始失败；未启动真实业务或调用模型。最终新鲜候选／生命周期／四臂验收继续，OPT-08与9/16保持。

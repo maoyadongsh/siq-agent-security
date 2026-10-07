@@ -197,7 +197,8 @@
         "docs/development/evidence/optimization-20261007/native-business-delivery-supervisor-review.json",
         "docs/development/optimization-opt08-candidate-assets-delivery-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/native-business-delivery-candidate-assets-review.json",
-        "docs/development/evidence/optimization-20261007/native-request-orchestration-prereview.json"
+        "docs/development/evidence/optimization-20261007/native-request-orchestration-prereview.json",
+        "docs/development/optimization-opt08-request-api-delivery-validation-20261008.md"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -232,7 +233,8 @@
         "业务API授权／执行租约及连续迁移依赖交付5be2a77/c8ee0df，隔离迁移24项、API64项及Ruff通过。修复ORM缓存导致账户／grant／执行租约旧状态被复用，以及快照到期瞬间误接受，11项旧负向已复现。真实临时PostgreSQL验证迁移回放与审计失败回滚，容器已清理；未访问日常业务库或模型。主链交付至021，工作区022–024保留；Supervisor集成完整用例留待后批。原109模块仍34个未跟踪，完整交付及最终同候选验收继续，OPT-08与9/16不变。",
         "监管／原生身份／受管转发六模块、两服务模板和五测试文件交付业务6a4e8b6，隔离49文件155项与Ruff通过；先前保留的API租约接管集成用例完整交付。fork／锁／信号为真实本地组件，systemd、Authority和业务资源切断仍为夹具，未安装服务或调用模型。原109模块剩28个未跟踪；候选镜像15份动态输入摘要一致但交付审查未完成。完整编排／撤权／同候选业务验收继续，OPT-08与9/16不变。",
         "候选镜像／MCP／报告资产交付业务f2bdc8b，105文件隔离验证109项及Ruff通过；两补丁实际回放和九wheel来源／许可核对通过。查明旧镜像只有配置校验器来源不同，代回旧摘要可完整复算旧构建身份；当前源码离线构建新镜像56c3d4d6ad39，七项运行检查及42个输入摘要通过。保留旧快照／镜像／证据，不激活服务、不调用模型；夹具发布不冒充生产审批。原109模块剩26个未交付，完整编排与最终新鲜候选验收继续，OPT-08与9/16不变。",
-        "请求编排组件预审：独立226文件、61份选定源码／测试，486项通过、Ruff通过。使用HEAD离线构建并核验的控制包，补齐HEAD动态资源；未修改日常API环境。代码尚未提交，聊天API入口及相关完整集成用例仍待交付审查；不能把组件预审视为OPT-08或同候选业务验收。9/16保持。"
+        "请求编排组件预审：独立226文件、61份选定源码／测试，486项通过、Ruff通过。使用HEAD离线构建并核验的控制包，补齐HEAD动态资源；未修改日常API环境。代码尚未提交，聊天API入口及相关完整集成用例仍待交付审查；不能把组件预审视为OPT-08或同候选业务验收。9/16保持。",
+        "请求编排与业务API完整依赖交付业务2a70587：110份选定输入的最终隔离API回归523项通过；修复原生请求因缺旧canary字段而漏导出安全生命周期事件，旧反例复现、相关45项通过（与523重叠）。Ruff基线104条、本批102条既有B008、新增0。保留报告归档等无关工作区改动及初始失败；未启动真实业务或调用模型。最终新鲜候选／生命周期／四臂验收继续，OPT-08与9/16保持。"
       ]
     },
     {
