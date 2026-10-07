@@ -88,3 +88,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3j 业务Supervisor原生接线](evidence/optimization-20261007/native-business-supervisor.json)已落盘显式v6、RequestNative和准备/运行态区分，真实监管方法先复查业务授权再控制宿主；关闭失败继续containment且不报完整成功。相关135项通过，最终原生专项21项通过（重叠14项，新增7项），Ruff通过。组件使用明确授权/宿主/资源夹具，日常builder/受保护网关/endpoint和模型业务尚未验收。业务必要导入闭包存在27个未跟踪模块，已保留改前快照、盘点并暂不提交依赖不完整的本批业务源码；后续审查必要依赖一并交付，不纳入无关修改。OPT-08与9/16保持。
 
 [D3k 原生配置与快照](evidence/optimization-20261007/native-runtime-config.json)已补齐显式原生编译、v4 fresh快照、挂载校验与旧入口拒绝；原生16项通过。相关74项通过、1项因既有Qwen路由候选摘要漂移失败；经10项实际模型/制品静态核验后修正绑定，该项复跑及路由13项通过。审计保留外部晋级门禁，不宣称模型业务就绪；未重启模型、无推理调用。受保护镜像/builder/网关/endpoint仍待接线，业务增量保留本地待依赖审查，OPT-08与9/16不变。
+
+[D3l 受保护业务镜像与启动交接](evidence/optimization-20261007/native-request-image.json)已构建独立原生候选：实际镜像5项、真实Hermes启动交接9项通过，包括宿主接管前HTTP关闭、重复启动拒绝及子进程/容器清理。首轮专项41项、最终镜像专项26项（新增10）、相关旧运行配置/快照/挂载73项通过。业务自包含bootstrap/测试及合同报告已提交，其余原生接线仍待必要依赖审查；没有Authority接管或模型调用，日常服务未替换。builder/assets/网关/endpoint和真实业务验收继续，OPT-08与9/16不变。
