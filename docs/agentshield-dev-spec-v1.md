@@ -2706,3 +2706,5 @@ OPT-08 D2g 按 [native-host-online/v1](../packages/contracts/native-host-online.
 OPT-08 D2h 按 [native-runtime-image-profile/v1](../packages/contracts/native-runtime-image-profile.v1.md) 显式适配 OpenShell 根文件系统可写、代码由 root 保护的部署。原只读 bind profile 保持不变；镜像 profile 逐次核验实际进程、根拥有且不可被非 root 写入的祖先/代码/Skill 清单，固定镜像与后端归属。通道只在已验证进程目录 fd 内创建，客户端核对每包宿主 PID namespace 投影与 UID/GID；任何替换、凭据不符或核验失败均拒绝。组件探针须使用独立网关和独有沙箱，不改变日常业务网关或宣称业务验收完成。
 
 OPT-08 D2i：按 [native-decision-relay/v1](../packages/contracts/native-decision-relay.v1.md)，显式可信启动器可以通过已认证的双向 Unix 通道转交现有 `/v1/decide` 请求，避免为 OpenShell 额外开放宿主网络。固定运行身份凭据仅在宿主持有，模型不能指定端点或凭据；主体与实际进程逐次核验，Go 仍必须唯一绑定已 Prepare 的调用。只返回原裁决 action/receipt_id，任何失败不执行、不重试、不伪造回执；原生命周期与 HTTP 新身份创建门禁不变。
+
+OPT-08 D2i 联验补充：宿主核验到期时间固定于登记，单调时钟与真实 guard 每次重验，避免 UTC 重算漂移。原生 `skill_view` 仅在完整有效原生调用证据下按受保护 `skill.load/tool.invoke` 工作流分类，参数严格限于规范相对 name/file_path；正文仍必须经 Go 真实安装来源同步校验。普通同名工具、缺证据或非法参数保持 unknown，不通过放宽全局效果表解决加载问题。
