@@ -1,0 +1,67 @@
+{
+  "schema_version": "optimization-validation/v1",
+  "task": "OPT-11",
+  "scope": "Linux managed connector execution component; not a signed installation acceptance",
+  "candidate_source_sha256": {
+    "edge/agent/connector.go": "4fd50d90c0bd28cc9f6356bc075c22fd9f166f785f1ff3efe07244215355c9a3",
+    "edge/agent/connector_trust_linux.go": "4d7e62d7d54454cb2515d879deadc33e2de5efa23516909da6f0e94eb928dc67",
+    "edge/agent/connector_trust_other.go": "20eb4c80a60f5480dd1f253404e56a69595e2e13abc3238fa71ad40a6d4e1182",
+    "edge/agent/capability_refresh_linux.go": "d9268c85194306bb9e07eeeef6a353654ada7a6407df7a9b0f70ada30f1ed409",
+    "edge/agent/installed_capabilities.go": "56141e4fe43c70341355915cdcd5a34a63bc932780d48cf11d84efdec7801b22",
+    "edge/agent/skill_collector.go": "d3fd8f96850f1e98f21efec7b4377274088b70f59e60db2d53f01b8dfbd5ac11",
+    "edge/agent/task.go": "87954d66172b930ee2b1b2c312001d679ac305e84d0149cd1532041d3ac9ff9f",
+    "edge/agent/main.go": "0041b37b0340dc5e9dcc2c839b3f9573f81439d632bb38b6059da185ce2cf732",
+    "edge/agent/connector_trust_linux_test.go": "9b7d8a82e96b20970b15548fb442073be310f4e32000fb9dc6456ef7de193ee9",
+    "edge/agent/connector_fixture_test.go": "68767e43b5afe45d127373ed99a2742c11d6f2fb2171afdf889e8f3680144239",
+    "edge/agent/discovery_consent_test.go": "66238749645710c50e60d69066601e6c95c5ba72011247fcc3720c338fb12ac5",
+    "edge/agent/installed_capabilities_test.go": "c55e5e9c325a1b3bee28e16f7b4d9064f9d653887984b48184e83d9076cb80e5",
+    "edge/agent/testdata/connector-helper/main.go": "2ffad3ac29b02b792ab8f508d10c5b845d3dce636c6a69760a0c664105a3bc04"
+  },
+  "validation": {
+    "edge_packages_passed": 4,
+    "test_actions": {
+      "pass": 689,
+      "skip": 2
+    },
+    "skipped": [
+      "TestInstallPlanWireParity",
+      "TestSkillAncestryNativeExport"
+    ],
+    "vet_exit_code": 0,
+    "focused_race_exit_code": 0,
+    "builds": [
+      {
+        "target": "linux-arm64",
+        "exit_code": 0,
+        "output": ""
+      },
+      {
+        "target": "linux-amd64",
+        "exit_code": 0,
+        "output": ""
+      },
+      {
+        "target": "darwin-arm64",
+        "exit_code": 0,
+        "output": ""
+      },
+      {
+        "target": "windows-amd64",
+        "exit_code": 0,
+        "output": ""
+      }
+    ]
+  },
+  "local_log_sha256": {
+    "var/optimization-20261007/opt11-edge-tests.jsonl": "7641d2a7a0c60c77866a18d49e9bc8bd3cf1c54c13d4201d0f927ba3907fc4e8",
+    "var/optimization-20261007/opt11-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "var/optimization-20261007/opt11-race.log": "07b8a5fc6759297586ccc4b0224a23c69652d5bbac09ed01c37f4a84c34fd447",
+    "var/optimization-20261007/opt11-builds.json": "b0e79b99fc5a5e1c320f42434e41840933da5e9961c69eefb42786ce0e47059d"
+  },
+  "limitations": [
+    "Native Linux arm64 synthetic subprocess; no production signed package install/upgrade acceptance.",
+    "Digest upgrade is a synthetic ELF component check, not release publisher validation.",
+    "Windows amd64 and macOS arm64 compiled only; managed profile explicitly unsupported.",
+    "No OS sandbox, same-UID inode mutation defense or production device migration acceptance."
+  ]
+}

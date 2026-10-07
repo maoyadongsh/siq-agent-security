@@ -216,7 +216,7 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 	if sr.Connector == "" {
 		sr.Connector = "hermes"
 	}
-	bin, err := ResolveConnectorBin(sr.Connector, "")
+	bin, artifact, err := resolveManagedConnector(r.State, sr.Connector)
 	if err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = protocol.CodeUnsupported
@@ -224,7 +224,7 @@ func (r *Runner) Execute(ctx context.Context, t *Task) (*Receipt, error) {
 		_ = SaveExecLedgerRecord(t, rcpt)
 		return rcpt, nil
 	}
-	out, err := r.runScan(ctx, sr, bin)
+	out, err := r.runScan(ctx, sr, bin, artifact)
 	if err != nil {
 		rcpt.Status = "failed"
 		rcpt.ErrorCode = codeOf(err)
@@ -317,8 +317,8 @@ func loadSigner(state *State) (*Signer, error) {
 	return signer, nil
 }
 
-func (r *Runner) runScan(ctx context.Context, sr ScanRequest, bin string) (*scanOutcome, error) {
-	cc, err := NewSubprocessConnector(ctx, bin, SubprocessOptions{Name: sr.Connector, Version: agentVersion})
+func (r *Runner) runScan(ctx context.Context, sr ScanRequest, bin, artifact string) (*scanOutcome, error) {
+	cc, err := NewVerifiedSubprocessConnector(ctx, bin, artifact, SubprocessOptions{Name: sr.Connector, Version: agentVersion})
 	if err != nil {
 		return nil, err
 	}

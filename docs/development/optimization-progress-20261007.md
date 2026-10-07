@@ -19,7 +19,7 @@
 | OPT-08 | 日常Skill上下文 | implementing | 待结合对应模块继续核对 |
 | OPT-09 | OpenShell行为证据 | planned | 待结合对应模块继续核对 |
 | OPT-10 | 同候选业务回归 | planned | 待结合对应模块继续核对 |
-| OPT-11 | 连接器可信执行 | planned | 待结合对应模块继续核对 |
+| OPT-11 | 连接器可信执行 | implementing | 待结合对应模块继续核对 |
 | OPT-12 | 钩子完整性 | planned | 待结合对应模块继续核对 |
 | OPT-13 | 交付安全头 | done | 待结合对应模块继续核对 |
 | OPT-14 | 扫描进程隔离 | implementing | SEC-F08 |
@@ -38,6 +38,8 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D2c1 文件快照](optimization-opt08-source-validation-20261007.md)已完成组件验证：47 项定向、230 项 Hermes 适配器全套、293 项相关合同通过；覆盖缓存内容漂移、路径替换、实际字节/文本摘要、回调失败和真实凭据通道传输。已核对固定业务镜像的普通/插件加载、缓存、预处理和最终分发位置，但尚未修改这些原生函数。OPT-08 状态不变。
 
 [OPT-13 交付响应头](optimization-opt13-validation-20261007.md)已完成：本地统一安全头、企业静态错误缓存修复；真实 HTTP 38 项（本地 14、企业 Nginx 12、代理链 12）及浏览器正负检查通过。本地配对、会话恢复、设置导航、退出正常；企业生产登录页正常。Go 45 包通过、10 包无测试，相关三包 race 和四目标构建通过。未宣称生产 Gateway/IAM 或完整 DNS rebinding 验收。当前主任务验收完成 9/16（56.25%）。
+
+[OPT-11 连接器可信启动](optimization-opt11-validation-20261007.md)已完成 Linux 组件实现与一轮批次回归：Edge 689 项通过、2 项条件跳过，定向 race、vet、四目标构建通过。受管扫描、能力探测和 Skill 采集绑定确认计划、签名暂存包与实际程序摘要；Linux 保持文件描述符直至启动。正式签名包安装/升级和设备迁移未验收，任务保持 implementing，主任务完成数仍为 9/16。
 
 ## 边界
 

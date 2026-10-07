@@ -7,7 +7,6 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -157,28 +156,17 @@ func TestInstalledSkillTaskCapabilities(t *testing.T) {
 	}
 }
 func TestInstalledCapabilitiesSubprocess(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("POSIX fixture")
+	if runtime.GOOS != "linux" {
+		t.Skip("managed enterprise execution currently requires Linux")
 	}
-	path := filepath.Join(t.TempDir(), "connector")
-	// Only describe and validate_scope are accepted. Any additional call exits.
-	script := `#!/bin/sh
-read -r request
-case "$request" in *'"op":"describe"'*) ;; *) exit 2;; esac
-printf '%s\n' '{"id":"req-000001","ok":true,"result":{"version":"0.1.0","objects":["hermes_profile"],"data_categories":["config_names"],"max_output_bytes":8388608}}'
-read -r request
-case "$request" in *'"op":"validate_scope"'*) ;; *) exit 3;; esac
-printf '%s\n' '{"id":"req-000002","ok":true,"result":{"valid":true,"errors":[]}}'
-exit 0
-`
-	if err := os.WriteFile(path, []byte(script), 0700); err != nil {
-		t.Fatal(err)
-	}
-	c, s, err := probeInstalledConnector(context.Background(), path, capabilityFixture().Connectors[0])
+	path, digest := connectorFixture(t)
+	selected := capabilityFixture().Connectors[0]
+	selected.ArtifactSHA256 = digest
+	c, s, err := probeInstalledConnector(context.Background(), path, selected)
 	if err != nil || c.Version != "0.1.0" || !s.Valid {
 		t.Fatalf("probe failed: %v", err)
 	}
-	_, _, err = probeInstalledConnector(context.Background(), path+"missing", capabilityFixture().Connectors[0])
+	_, _, err = probeInstalledConnector(context.Background(), path+"missing", selected)
 	if err != errInstalledCapabilities {
 		t.Fatal(err)
 	}

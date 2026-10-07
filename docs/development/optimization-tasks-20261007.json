@@ -166,11 +166,17 @@
     {
       "id": "OPT-11",
       "title": "连接器可信执行",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/adr/0057-enterprise-connector-execution.md",
+        "docs/development/optimization-opt11-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/connector-execution.json"
+      ],
+      "residual_limits": [
+        "Linux 描述符固定启动、签名安装来源接线、开发显式配置、资源边界和迁移拒绝已实现；Edge 689 项通过、2 项条件跳过，定向 race、vet、四目标构建通过。新摘要升级仅合成程序组件验证，正式签名包安装/升级与真实设备迁移未验收；Windows/macOS 受管入口明确 unsupported，未运行原生平台验收。"
+      ]
     },
     {
       "id": "OPT-12",

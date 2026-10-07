@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"os"
-	"path/filepath"
 	"slices"
 	"time"
 
@@ -18,10 +16,11 @@ func collectInstalledSkills(ctx context.Context, state *State, raw json.RawMessa
 	if strictDiscoveryJSON(raw, &scope) != nil || len(scope.Roots) == 0 || protocol.ValidateScopeSafety(&scope) != nil {
 		return out, errSkillExecution
 	}
-	if _, err := measureServiceCapabilities(ctx, state); err != nil {
+	bin, digest, err := resolveManagedConnector(state, "directory")
+	if err != nil {
 		return out, errInstalledCapabilities
 	}
-	c, err := NewSubprocessConnector(ctx, filepath.Join(os.Getenv("SIQ_CONNECTOR_BIN_DIR"), "directory-connector"), SubprocessOptions{
+	c, err := NewVerifiedSubprocessConnector(ctx, bin, digest, SubprocessOptions{
 		Name: "directory", Version: agentVersion, Timeout: 60 * time.Second,
 		MaxOutputBytes: protocol.DefaultOutputLimitBytes, MaxStderrBytes: 1024,
 	})

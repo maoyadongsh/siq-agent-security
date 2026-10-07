@@ -14,6 +14,8 @@ Edge 签名 → 上传候选/证据 → 任务回执 → 失败回执后续补�
 
 Connector 通过 NDJSON 交换结构化消息，不能直接创建 managed 资产或 effective 权限。Edge 对任务和采集执行实施协议、期限与资源边界；控制面继续校验批次、租户、签名和证据引用。设备密钥和签名材料保存在私密状态中，不能连同运行目录上传作证据。
 
+当前优化分支的受管扫描、安装能力探测和 Skill 采集统一使用[可信启动 profile](../../packages/contracts/enterprise-connector-execution.v1.md)：从已确认计划与固定公钥验签的暂存包取得程序及摘要，Linux 逐级核对目录、所有权和链接，持有实际已验证 ELF 的描述符启动，禁止 PATH 回退。子进程仅取得固定 PATH、HOME 和三项协议环境变量；超时或输出超限会停止。它不提供同 UID 攻击隔离或独立网络沙箱。
+
 ## 构建与使用入口
 
 Linux 可先运行 `edge-agent inspect-host` 获取只读主机摘要：系统发行版、二进制架构、内核架构与固件/设备树型号，各自带来源和缺失/无权限状态。固定读取系统元数据，不读取密钥、用户配置或上传数据；环境名不构成 DGX 硬件证明。安装引导消费该摘要仍待集成，输出中的 `hardware_attested=false` 不得改写为认证成功。
@@ -34,8 +36,8 @@ go -C edge/agent build -o "$PWD/.tmp/bin/edge-agent" .
 | `verify-enterprise-release --release FILE [--bundle DIR]` | Linux 验签；可选核对包内所有签名制品 | 固定公钥、不接受覆盖；未传 bundle 不核对制品；均不证明计划授权或安装成功 |
 | `register --control-plane URL --enrollment-code-stdin` | 注册设备并保存服务端凭据与本地签名身份 | 有效注册许可，目标 URL 明确；从标准输入读取，不把真实 code 写入命令参数 |
 | `heartbeat` | 30 秒心跳，失败退避 | 已注册状态；持续进程 |
-| `tasks` | 获取待处理任务、执行扫描并提交回执 | 已注册且凭据有效；先补交本地 pending receipts |
-| `run-once --connector NAME --scope JSON --connector-bin PATH` | 一次本地采集并输出 NDJSON | 可信 Connector 二进制与受控范围；不自动纳管或上传 |
+| `tasks` | 获取待处理任务、执行扫描并提交回执 | 已注册且凭据有效；受管执行还须确认计划、验签暂存包和绝对 `SIQ_CONNECTOR_BIN_DIR`；先补交本地 pending receipts |
+| `run-once --connector NAME --scope JSON --connector-bin PATH` | 明确开发入口，一次本地采集并输出 NDJSON | 绝对二进制路径或绝对 `SIQ_CONNECTOR_BIN_DIR`，禁止 PATH 回退；不等于已验签安装，不自动纳管或上传 |
 | `confirm-discovery-schedule (--intent FILE \| --schedule-id ID \| --discover \| --resume)` | Linux 预览或明确确认有界周期计划；`--discover` 只读查找本设备待办 | 四种来源严格互斥；查询不授权，多项不自动选择；确认需真实终端 yes 或精确摘要 |
 | `retire-discovery-schedule [--resume]` | Linux 预览或归档已在线复验为 revoked 的旧周期计划 | 不撤销业务权限、不停止服务、不取消已派发任务；历史和恢复记录保留 |
 | `setup-enterprise --help` | Linux 串联计划确认、发行验签暂存、注册/恢复与用户服务配置 | 默认只配置；显式 `--start` 才启动发现服务；新设备的组织周期计划仍需另行创建和确认 |
@@ -56,11 +58,16 @@ printf '%s\n' "$siq_enrollment" | ./edge-agent register \
   --control-plane https://security.example.com --enrollment-code-stdin
 unset siq_enrollment
 ./edge-agent heartbeat
+# 受管扫描须先按下方 setup-enterprise 流程验证制品并确认范围；
+# 以下目录来自该流程的 stage_path，不可用 PATH 中的程序代替。
 # 另开终端，在同一用户下运行：
+export SIQ_CONNECTOR_BIN_DIR="/absolute/verified-stage/bin/arm64"
 ./edge-agent tasks
 ```
 
 注册、心跳和扫描回执是不同事实。页面只有读到扫描完成回执才展示完成；候选发现不自动纳管，也不代表运行时策略生效。批次签名先转换为实际 wire JSON，再规范化签名，支持 Connector 产生的结构化候选/证据数组。E143 的真实 Edge + Hermes Connector + Control API 验收见 [记录](../../docs/development/ux-enterprise-onboarding-e143-validation-20260923.md)。
+
+升级到可信启动 profile 后，只有旧式注册状态的设备仍可保留身份和心跳，但扫描会返回 `unsupported` 与安装核验提示。通过 `setup-enterprise` 的既有身份复用/恢复流程核验签名包并确认范围；不可删除设备状态、自动放宽目录权限或降级开发执行。失败任务保留原回执，修正安装后须由控制面签发新的合法任务，不能清除执行台账强制重放。生成的用户服务会固定采集器目录；手工 `tasks` 必须显式配置同一暂存包的 `bin/<本机架构>`。本 profile 的受管执行仅支持 Linux，Windows/macOS 明确拒绝；交叉构建不等于原生验收。当前无正式签名包的完整安装/升级实测结论。
 
 实际可选模块见 [Connector 列表](../../connectors/README.md)，范围字段以 [protocol](protocol/)和各模块的验证器为准。不要对未知目录或整机根目录运行试探扫描。
 
