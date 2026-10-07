@@ -2720,3 +2720,5 @@ OPT-08 D3d：按 [native-gateway-entry/v1](../packages/contracts/native-gateway-
 OPT-08 D3e：业务原生消费者按 [native-business-identity-client/v1](../packages/contracts/native-business-identity-client.v1.md) 严格校验现有版本化 HTTP 读回，不扩展 Go 管理授权。业务仓库独立客户端保管宿主凭据并支持父权限失效后的精确取消；专属联验输入/探针不是生产路由或业务授权来源。
 
 OPT-08 D3f：按 [native-host-loop/v1](../packages/contracts/native-host-loop.v1.md)，accept 空闲超时与已接受请求失败明确区分；宿主循环在固定业务租约内持续服务已有 DecisionRelay，停止/到期/真实 guard 失效后不转交允许响应。业务 Supervisor 仍负责业务授权、撤权触发和精确容器回收。
+
+OPT-08 D3g：按 [native-openshell-backend/v1](../packages/contracts/native-openshell-backend.v1.md)，正式宿主组件逐次核对本机固定 Docker 端点、完整容器/镜像/OpenShell 归属及真实 cgroup/PID namespace；固定只读命令、有界等待，失败永久失效。不能继续依赖测试脚本回调作为日常后端实现，亦不以该组件代替业务授权和原生 RuntimeGuard。
