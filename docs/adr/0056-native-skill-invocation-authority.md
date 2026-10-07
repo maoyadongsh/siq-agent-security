@@ -120,3 +120,7 @@ DGX Spark 接入采用固定宿主进程的 Unix `SOCK_SEQPACKET` 元数据通�
 ### D2e：真实安装来源与现有归属链接
 
 按 [native-install-source/v1](../../packages/contracts/native-install-source.v1.md)，来源解析使用当前签名安装、运行绑定及真实字节。现有 Hermes 安装是目标与私密事务文件的硬链接对；D2c1 的默认单链接规则保留，可信 bootstrap 可显式使用受管链接对模式，由必需来源观察验证安装归属和只读挂载后才返回文字。额外第三条链接仍拒绝；该开关不得来自模型或工具参数。组件验证不自动开启新身份或在线产品入口。
+
+### D2f：实际运行进程与受保护挂载
+
+按 [native-runtime-guard/v1](../../packages/contracts/native-runtime-guard.v1.md)，宿主读取其可信启动进程的 Linux `/proc` 只读事实并保持 pidfd；核验真实挂载只读性、代码文件与命名空间，不把容器 API 声明作为唯一证据。仅允许标准库 Python 打开 `/proc`、文件与目录描述符，不增加系统调用监控、提权或新 OS 沙箱。启动后端仍须独立证明镜像、启动归属及底层代码/库保护；普通 Docker 离线试验不是 OpenShell 验收。
