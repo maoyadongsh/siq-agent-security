@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "identity_id",
+    "platform",
+    "agent_id",
+    "session_id",
+    "binding_id",
+    "intent_id",
+    "expires_at",
+    "native_skill_policy",
+    "runtime_state"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-runtime-session-enrolled/v3"
+    },
+    "identity_id": {
+      "type": "string",
+      "pattern": "^ri-[a-f0-9]{32}$"
+    },
+    "platform": {
+      "const": "hermes"
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^hri-[a-f0-9]{32}$"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "binding_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "intent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "native_skill_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "runtime_artifact_sha256"
+      ],
+      "properties": {
+        "mode": {
+          "const": "required"
+        },
+        "runtime_artifact_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "runtime_state": {
+      "const": "unverified"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

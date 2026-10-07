@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity_id",
+    "instance_id",
+    "agent_id",
+    "platform",
+    "grant_ref",
+    "session_ttl_seconds",
+    "runtime_state",
+    "schema_version",
+    "status",
+    "native_skill_policy"
+  ],
+  "properties": {
+    "identity_id": {
+      "type": "string",
+      "pattern": "^ri-[a-f0-9]{32}$"
+    },
+    "instance_id": {
+      "type": "string",
+      "pattern": "^hi-[a-f0-9]{32}$"
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^hri-[a-f0-9]{32}$"
+    },
+    "platform": {
+      "const": "hermes"
+    },
+    "grant_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "admission_id",
+        "permission_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "admission_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "permission_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "session_ttl_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 86400
+    },
+    "runtime_state": {
+      "const": "unverified"
+    },
+    "schema_version": {
+      "const": "local-runtime-identity-self/v2"
+    },
+    "status": {
+      "const": "active"
+    },
+    "native_skill_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "runtime_artifact_sha256"
+      ],
+      "properties": {
+        "mode": {
+          "const": "required"
+        },
+        "runtime_artifact_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

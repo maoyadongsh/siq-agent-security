@@ -2682,3 +2682,5 @@ C2c 回执页保留 v1/v2 归属说明，增加 v3 调用级上下文展示。�
 D1 按 ADR-056 新增签名 runtime identity v4/v5，将 `native_skill_policy.mode=required` 与运行制品摘要固定在根身份并继承到请求级身份。新创建请求采用 v3，原创建与身份版本不增加可选字段。模式查询只依据有效签名根身份，不依赖会话、调用或 SEC 记录存在与否；hri 根身份缺失/冲突/撤销或 Grant 失效均失败关闭。该组件不开放新 HTTP 创建入口；后续可信宿主接入与 Engine wiring 必须使用此必需模式和制品摘要，未接入前不能声称在线保护完成。
 
 D1 查询桥接通过 `NativeCallStore.RequiredLookup` 将有效身份策略与已有精确原生调用验证绑定，并校验会话制品摘要。HTTP 在尚未配置原生查询时拒绝携带新策略的身份，返回固定 503；管理创建入口仍不接受新版本。低于 reader/writer 5 的候选还须通过有界旧身份格式预检（512 条、每条 16 KiB）；原生身份即使尚无调用，也不能回退到不理解此策略的发行。实际宿主验证、版本化管理读回及 serve 接线仍属后续集成。
+
+D2a 按 ADR-056 为原生身份读回新增 identity-issued/v3、request-identity-issued/v2、identity-self/v2、session-enrolled/v3 与混合 identities/v3。只从签名记录投影 native_skill_policy，runtime_state 仍为 unverified；旧版本不夹带策略。混合列表有任意原生条目即用 v3，Windows/旧式条目保持原形状。前端校验新策略、平台/路径及响应版本，旧适配器拒绝新会话合同；当前创建入口保持关闭，不因读回成功启用原生执行。
