@@ -1,0 +1,94 @@
+{
+  "schema_version": "siq.optimization-native-runtime-config-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "implementation_committed": false,
+  "candidate_sources_sha256": {
+    "scripts/openshell/build_native_runtime_config.py": "6d65f7cc3e2f3f9f28533987a61fe2b5cd9044e22fd5042712b828493b1678e0",
+    "infra/openshell/sandbox/qwen38_candidate/native_runtime.py": "301a053f2ee9865accd55859f69bd0058ea94388aa07fd5db0a062de1c5d76b0",
+    "scripts/openshell/snapshot_siq_analysis_runtime.py": "825e7d23059e708556e56a26c6415417e91d2bfc8eb9869167ad1bc15c2a0cc7",
+    "scripts/openshell/build_siq_analysis_mount_plan.py": "afe61bf914616ba5457619044ff826ff68f75d46d1caec67fde0c8e4116e992f",
+    "scripts/openshell/tests/test_build_native_runtime_config.py": "f7bd17ba584d7f67fc6867611f0edd71b8027ce132f12b710e0d9956bd19c3a5",
+    "infra/model-services/qwen3.8/governed-route.v1.json": "19e171c8002a8810d0189359bf98c920f0eaa9371771f7002cac23a433811e35"
+  },
+  "tests": {
+    "native_subset_passed": 16,
+    "related_batch_passed": 74,
+    "related_batch_failed": 1,
+    "failed_case_after_route_fix": "passed",
+    "related_qwen_route_passed": 13,
+    "native_subset_overlaps_related_batch": true,
+    "ruff": "passed",
+    "diff_check": "passed"
+  },
+  "model_route_before_fix": {
+    "candidate_sha256": "608ef7bf7a2425f6c1b2d2fed56a5390245985a538a7dd585d5eb91298c2ab2f",
+    "route_bound_candidate_sha256": "eafdf3c322bc277aac7295c0c6d641ac4a1a5b0efd342d626e5765720e9e6a1a",
+    "container_found": true,
+    "image_id": "sha256:60166a99b6610e2b4b3febbeb6411e4cbc9338e996ab6c80d3339f86a7b5b9c3",
+    "running": true,
+    "ports": {
+      "30000/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8005"
+        }
+      ]
+    },
+    "runtime_parameters": {
+      "--speculative-num-draft-tokens": "8",
+      "--context-length": "262144",
+      "--max-running-requests": "6",
+      "--mem-fraction-static": "0.60",
+      "--speculative-algorithm": "DFLASH",
+      "--kv-cache-dtype": "fp8_e4m3"
+    }
+  },
+  "candidate_static_audit": {
+    "auditor_sha256": "1f1d96d582529f6a278e8a22f2bbc9b5a0582f32616782b53c0cfb9ff75edcc8",
+    "blockers": [
+      "authenticated_openshell_model_bridge_verified",
+      "governed_route_and_confidential_policy_bound",
+      "hermes_sandbox_inference_verified",
+      "model_route_revocation_fail_closed_verified"
+    ],
+    "candidate_ready": false,
+    "captured_at_unix": 1791371640,
+    "checks": {
+      "container_image_exact": true,
+      "docker_bridge_identity": true,
+      "draft_artifacts_exact": true,
+      "host_bind_private": true,
+      "image_exact": true,
+      "model_artifacts_exact": true,
+      "private_file_transport_active": true,
+      "runtime_parameters_exact": true,
+      "runtime_secret_not_in_argv": true,
+      "runtime_secret_not_in_environment": true
+    },
+    "confidential_route_promoted": false,
+    "external_promotion_gates_pending": [
+      "governed_route_and_confidential_policy_bound",
+      "authenticated_openshell_model_bridge_verified",
+      "hermes_sandbox_inference_verified",
+      "model_route_revocation_fail_closed_verified"
+    ],
+    "host_blockers": [],
+    "host_candidate_ready": false,
+    "manifest_file_sha256": "608ef7bf7a2425f6c1b2d2fed56a5390245985a538a7dd585d5eb91298c2ab2f",
+    "manifest_sha256": "00e9f54cdf8f28f2a66a8ec26133e8690c0a8e31ded7589d0acbb72430a81948",
+    "model_id": "Qwen3.8-27B-NVFP4",
+    "nemotron_route_changed_by_audit": false,
+    "schema_version": "siq.model.qwen38-isolated-candidate-audit.v1"
+  },
+  "audit_exit_code": 1,
+  "audit_exit_explanation": "10 static host checks passed; audit retains external promotion blockers and candidate_ready=false. No inference probe was requested.",
+  "raw_related_tests_log_sha256": "da6c41a007e77c4f9dad02682ac7a68fdc6f09fa843936e6ed2c97bc1cc383e9",
+  "business_report": "docs/reports/native-runtime-config-progress-20261007.md",
+  "limits": [
+    "No native image/build/endpoint activation or daily business acceptance in this batch.",
+    "Tests use an explicit fixed route fixture; the deployed route was separately audited and its stale exact candidate hash corrected.",
+    "Existing business worktree changes and prior snapshots preserved; complete necessary source dependency review precedes business delivery."
+  ]
+}

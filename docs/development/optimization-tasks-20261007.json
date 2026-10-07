@@ -172,7 +172,8 @@
         "docs/development/optimization-opt08-host-session-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/native-host-session.json",
         "docs/development/optimization-opt08-host-control-validation-20261007.md",
-        "docs/development/evidence/optimization-20261007/native-business-supervisor.json"
+        "docs/development/evidence/optimization-20261007/native-business-supervisor.json",
+        "docs/development/evidence/optimization-20261007/native-runtime-config.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -194,7 +195,8 @@
         "D3g 将验收脚本的OpenShell后端归属回调替换为正式宿主组件，固定本机rootful Docker、完整容器/镜像/namespace、进程清单和内核cgroup/NSpid；失败永久拒绝。53项最终后端专项通过，相关阶段63项通过（重叠）；真实OpenShell18项权限检查、18条签名回执及清理通过。非root读取root init namespace失败及批次总等待超时已保留并修复，逐请求期限未放宽。组件仍未接入日常Supervisor跨进程生命周期和真实模型业务，9/16不变。",
         "D3h 已实现HostSession统一编排与BusinessGuard：绑定真实监管者pidfd、固定整体期限及最多90秒心跳，过期/退出/停止后拒绝，续期不能复活；循环退出未确认时保留在用资源。最终91项相关定向通过；实际OpenShell18项检查、18条签名回执、4次合成业务续期及完整会话资源清理通过。线程创建失败清理修复由增量单测覆盖，live宿主加载修复前host_online摘要单列。尚未提供认证跨进程业务控制，未验收日常API/模型，9/16不变。",
         "D3i 已实现认证跨进程 HostControl 与业务独立消费者：内核凭据绑定监管者 PID、私有配置/端点固定、有界处理器和不可复活句柄。53项相关定向、额外2项配额负向、业务21项通过；真实OpenShell独立业务消费者启动/4次续期/停止，18项权限检查、18条签名回执及清理通过。CLI仅启动/停止组件验证，真实联验在宿主进程嵌入同一HostControl；日常builder/Supervisor/API/模型尚未验收，9/16不变。",
-        "D3j 已在业务Supervisor接入显式v6与RequestNative：当轮业务授权/租约先于宿主start/renew，准备态不能通过运行态检查，未知清理仍执行资源回收且保留失败。相关135项通过，最终原生专项21项（与前者14项重叠，新增7项）通过；均为组件夹具，非真实业务模型验收。业务核心依赖中27模块未跟踪，本批源码尚未提交，修改前快照已保留；需审查必要依赖后科学交付。builder/网关/endpoint接线继续，9/16不变。"
+        "D3j 已在业务Supervisor接入显式v6与RequestNative：当轮业务授权/租约先于宿主start/renew，准备态不能通过运行态检查，未知清理仍执行资源回收且保留失败。相关135项通过，最终原生专项21项（与前者14项重叠，新增7项）通过；均为组件夹具，非真实业务模型验收。业务核心依赖中27模块未跟踪，本批源码尚未提交，修改前快照已保留；需审查必要依赖后科学交付。builder/网关/endpoint接线继续，9/16不变。",
+        "D3k 已实现显式原生配置编译、v4 fresh快照与挂载校验，保留模型/委派/无密钥限制，关闭旧插件且旧启动器拒绝原生配置。原生16项通过；相关74通过1失败，失败源于既有Qwen路由候选摘要漂移。经10项真实模型/制品静态核验后修正摘要，失败项复跑与路由13项通过；审计外部晋级门禁仍未完成，无模型调用。固定原生镜像/builder/网关/endpoint尚未接入，业务增量尚未提交，9/16不变。"
       ]
     },
     {
