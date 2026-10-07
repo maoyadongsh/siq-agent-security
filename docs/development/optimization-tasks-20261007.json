@@ -134,10 +134,12 @@
         "docs/development/optimization-opt08-compat-validation-20261007.md",
         "docs/development/optimization-opt08-consumers-validation-20261007.md",
         "docs/development/optimization-opt08-enrollment-validation-20261007.md",
-        "docs/development/optimization-opt08-readback-validation-20261007.md"
+        "docs/development/optimization-opt08-readback-validation-20261007.md",
+        "docs/development/optimization-opt08-channel-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-channel.json"
       ],
       "residual_limits": [
-        "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a 已完成各自组件验证：包括签名身份必需策略、精确调用查询与版本化读回。前端校验新策略；旧 Hermes 插件拒绝新会话响应，未配置原生查询的 HTTP 拒绝新身份。新管理创建入口保持关闭。可信宿主事实来源与凭据隔离、serve 接线、首次/缓存加载/最终调用接入及日常效果尚未完成。原 v1 追踪投影不能表达原生权限链，明确标记 Skill 来源 unavailable；完整证明保留在 v3 回执。不可表述为产品验收完成。"
+        "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。"
       ]
     },
     {
