@@ -64,3 +64,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D2h 实际 OpenShell 镜像与双向通道](optimization-opt08-image-profile-validation-20261007.md)已完成：43 项通道、11 项镜像边界、11 项真实 OpenShell 组件检查和 21 项旧只读 bind profile 回归通过。运行进程核验 root 保护文件和明确的 PID namespace 双向凭据，拒绝容器内伪造服务端；未修改日常网关、原镜像或业务挂载合同。首次构建兼容性问题修复后，独有沙箱和网络清理成功。本批没有重跑无关 Go/前端全量；实际 Hermes 任务、在线 Authority 和两个业务 Skill 的同次运行仍待接通，OPT-08 与 9/16 状态保持。
 
 [D2i 同次真实运行联验](optimization-opt08-joined-runtime-validation-20261007.md)已接通实际 OpenShell 沙箱、Hermes 原生工具、宿主转发、Go HTTP Authority 与真实签名安装来源。8 项检查/8 条签名回执通过：reader 读允许、写拒绝；切换 writer 后仍受两层权限交集限制；独立 writer 合法写成功、越界写拒绝，宿主独立核对文件效果。修复租约截止漂移和原生受保护 Skill 加载分类；Python 30 项、Go 受影响五包完整测试/三包定向 race、vet 和四目标构建通过。两个 Skill 内容与操作员为合成测试材料，尚未验收模型对话/日常业务入口及其余场景，OPT-08 保持 implementing，总计仍为 9/16（56.25%）。
+
+[D2j 并发与撤权联验](optimization-opt08-lifecycle-validation-20261007.md)已在同一实际 OpenShell/Hermes/Go 链路通过 18 项检查：新增同进程并发任务权限隔离、调用重放拒绝、结束后拒绝及 SEC、Skill Grant、Agent 基线三种撤权。23 次工具尝试形成 18 条签名回执（14 allow、4 deny），另 5 次在决策前拒绝，不伪称 deny 回执。宿主独立核对允许文件与拒绝目标；真实集成测试、Ruff、server vet 通过，仅扩充验收夹具，未重复无关全量。测试操作员与 Skill 内容仍为合成材料；业务入口/业务权限撤销、网络、过期/升级/漂移及审批重试尚未完成，任务状态与 9/16 完成数不变。

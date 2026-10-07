@@ -171,6 +171,25 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
         _owned.verifier.register(ready["subject"], guard, ready["installs"], lifetime=150)
         publisher = _owned.module.Publisher(_owned.config, ready["endpoint"], ready["subject"], guard)
         relay = _owned.module.DecisionRelay(publisher, credential)
+        controls, events = {}, []
+
+        def dispatch(event):
+            # The test operator changes only this owned Authority fixture.
+            # Actual events/decisions still traverse the unmodified relay.
+            target = {"context-after-revoke": "context", "grant-after-revoke": "writer",
+                      "baseline-after-revoke": "baseline"}.get(event.get("tool_call_id"))
+            if event.get("kind") == "call_prepare" and target and target not in controls:
+                (_owned.root / ("revoke-" + target)).touch(exist_ok=False)
+                ack = wait_json(_owned.root / ("revoked-" + target + ".json"), _owned.process, timeout=3)
+                assert ack == {"revoked": True}, "owned_revocation_failed"
+                controls[target] = True
+            answer = relay.dispatch(event)
+            request = event.get("request", {})
+            events.append({"kind": event.get("kind", "decision"),
+                           "call": event.get("tool_call_id", request.get("tool_call_id")),
+                           "accepted": answer.get("accepted"), "action": answer.get("action")})
+            return answer
+
         with guard.namespace_channel_directory(row["channel_directory"]) as fd:
             with channel.NamespaceHostChannel(fd, guard.peer, timeout=5) as host, concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
                 deadline = time.monotonic() + 80
@@ -181,7 +200,7 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
                         result = rows[-1]
                         break
                     assert time.monotonic() < deadline, "owned_online_result_timeout"
-                    pending = pool.submit(host.serve_once, relay.dispatch)
+                    pending = pool.submit(host.serve_once, dispatch)
                     try:
                         pending.result(timeout=12)
                     except channel.ChannelError:
@@ -198,10 +217,19 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
             process_root = Path(f"/proc/{peer}/root")
             effect = process_root / "sandbox/native-business/writer-allowed.txt"
             assert digest(effect.read_bytes()) == result["output_sha256"]
-            for name in ("reader-denied.txt", "switch-denied.txt"):
+            for name in ("reader-denied.txt", "switch-denied.txt", "replay-denied.txt", "ended-denied.txt",
+                         "concurrent-reader.txt", "context-revoked-denied.txt", "grant-revoked-denied.txt"):
                 assert not (effect.parent / name).exists()
+            for name, content in {"concurrent-writer.txt": "concurrent-writer",
+                                  "context-before.txt": "before-context-revocation",
+                                  "grant-before.txt": "before-grant-revocation"}.items():
+                assert (effect.parent / name).read_text() == content
             assert not (process_root / "sandbox/outside-denied.txt").exists()
             result["independent_host_effect_check"] = True
+            assert controls == {"context": True, "writer": True, "baseline": True}
+            assert not any(event["call"] == "after-task-end" for event in events)
+            result["host_observed_events"] = events
+            result["revocations"] = controls
         (_owned.root / "finish").touch()
         _owned.process.wait(timeout=10)
         assert _owned.process.returncode == 0, "owned_authority_verification_failed"

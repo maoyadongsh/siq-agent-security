@@ -1,0 +1,1230 @@
+{
+  "schema_version": "siq.optimization-native-lifecycle-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "7a30dc79",
+  "run_directory": "var/optimization-20261007/opt08-openshell-lifecycle-01",
+  "inspection": {
+    "schema_version": "siq.openshell-native-runtime-inspection/v1",
+    "namespace": "siq-opt08-0c42069ae7a4",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "model_calls": 0,
+    "daily_gateway_modified": false,
+    "docker": {
+      "image_matches": true,
+      "root_filesystem_readonly": false,
+      "label_keys": [
+        "ai.siq.hermes.integration-patch-sha256",
+        "ai.siq.hermes.patch-sha256",
+        "ai.siq.openshell.context-sha256",
+        "ai.siq.openshell.data-classification",
+        "ai.siq.openshell.runtime-config-sha256",
+        "ai.siq.qwen38.candidate-input-sha256",
+        "ai.siq.qwen38.compiled-config-sha256",
+        "ai.siq.qwen38.pg-query-sha256",
+        "ai.siq.qwen38.route",
+        "ai.siq.qwen38.snapshot-manifest-sha256",
+        "openshell.ai/managed-by",
+        "openshell.ai/sandbox-id",
+        "openshell.ai/sandbox-name",
+        "openshell.ai/sandbox-namespace",
+        "org.opencontainers.image.revision",
+        "org.opencontainers.image.title"
+      ]
+    },
+    "runtime": {
+      "native_probe_ready": true,
+      "pid": 43,
+      "files": [],
+      "channel_directory": "/tmp/siq-native-online/channel"
+    },
+    "host_process": {
+      "unique_container_cgroup_and_pid_depth_match": true,
+      "status_readable": true,
+      "root_code_readable": true,
+      "mountinfo_readable": true
+    },
+    "native_online": {
+      "native_online_verified": true,
+      "checks": {
+        "real_reader_skill_loaded": true,
+        "reader_real_read_allowed": true,
+        "reader_write_denied_without_effect": true,
+        "real_second_skill_loaded": true,
+        "switch_preserves_reader_ancestor_limit": true,
+        "independent_writer_skill_loaded": true,
+        "writer_real_write_allowed": true,
+        "writer_outside_scope_denied_without_effect": true,
+        "consumed_call_id_cannot_change_parameters_and_replay": true,
+        "ended_task_cannot_execute": true,
+        "concurrent_reader_keeps_own_permissions": true,
+        "concurrent_writer_keeps_own_permissions": true,
+        "context_write_allowed_before_revocation": true,
+        "revoked_context_cannot_execute": true,
+        "separate_context_still_allowed_before_grant_revocation": true,
+        "revoked_skill_grant_cannot_execute": true,
+        "other_skill_still_allowed_before_agent_revocation": true,
+        "revoked_agent_cannot_read": true
+      },
+      "outcomes": [
+        {
+          "task": "reader-task",
+          "tool": "skill_view",
+          "call": "load-reader",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "reader-task",
+          "tool": "read_file",
+          "call": "reader-read",
+          "keys": [
+            "content",
+            "file_size",
+            "is_binary",
+            "is_image",
+            "total_lines",
+            "truncated"
+          ],
+          "error": false
+        },
+        {
+          "task": "reader-task",
+          "tool": "write_file",
+          "call": "reader-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "reader-task",
+          "tool": "skill_view",
+          "call": "switch-writer",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "reader-task",
+          "tool": "write_file",
+          "call": "switched-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "writer-task",
+          "tool": "skill_view",
+          "call": "load-writer",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "writer-task",
+          "tool": "write_file",
+          "call": "writer-write",
+          "keys": [
+            "bytes_written",
+            "dirs_created",
+            "files_modified",
+            "lint",
+            "resolved_path",
+            "verified"
+          ],
+          "error": false
+        },
+        {
+          "task": "writer-task",
+          "tool": "write_file",
+          "call": "outside-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "writer-task",
+          "tool": "write_file",
+          "call": "writer-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "writer-task",
+          "tool": "write_file",
+          "call": "after-task-end",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "concurrent-writer",
+          "tool": "skill_view",
+          "call": "concurrent-writer-load",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "concurrent-reader",
+          "tool": "skill_view",
+          "call": "concurrent-reader-load",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "concurrent-reader",
+          "tool": "write_file",
+          "call": "concurrent-reader-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "concurrent-writer",
+          "tool": "write_file",
+          "call": "concurrent-writer-write",
+          "keys": [
+            "bytes_written",
+            "dirs_created",
+            "files_modified",
+            "lint",
+            "resolved_path",
+            "verified"
+          ],
+          "error": false
+        },
+        {
+          "task": "context-revoke-task",
+          "tool": "skill_view",
+          "call": "context-load",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "context-revoke-task",
+          "tool": "write_file",
+          "call": "context-before-revoke",
+          "keys": [
+            "bytes_written",
+            "dirs_created",
+            "files_modified",
+            "lint",
+            "resolved_path",
+            "verified"
+          ],
+          "error": false
+        },
+        {
+          "task": "context-revoke-task",
+          "tool": "write_file",
+          "call": "context-after-revoke",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "grant-revoke-task",
+          "tool": "skill_view",
+          "call": "grant-load",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "grant-revoke-task",
+          "tool": "write_file",
+          "call": "grant-before-revoke",
+          "keys": [
+            "bytes_written",
+            "dirs_created",
+            "files_modified",
+            "lint",
+            "resolved_path",
+            "verified"
+          ],
+          "error": false
+        },
+        {
+          "task": "grant-revoke-task",
+          "tool": "write_file",
+          "call": "grant-after-revoke",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "baseline-revoke-task",
+          "tool": "skill_view",
+          "call": "baseline-load",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "baseline-revoke-task",
+          "tool": "read_file",
+          "call": "baseline-before-revoke",
+          "keys": [
+            "content",
+            "file_size",
+            "is_binary",
+            "is_image",
+            "total_lines",
+            "truncated"
+          ],
+          "error": false
+        },
+        {
+          "task": "baseline-revoke-task",
+          "tool": "read_file",
+          "call": "baseline-after-revoke",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        }
+      ],
+      "model_calls": 0,
+      "actual_hermes_tools": true,
+      "synthetic_skill_content": true,
+      "business_entry_acceptance": false,
+      "output_sha256": "1ddc6b5567637fa5c8ce9f5650535da81507708be8fc8fba30d695e4b4aae7c2",
+      "independent_host_effect_check": true,
+      "host_observed_events": [
+        {
+          "kind": "task_begin",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "load-reader",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "load-reader",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "load-reader",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "reader-read",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "reader-read",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "tool_result",
+          "call": "reader-read",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "reader-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "reader-write",
+          "accepted": null,
+          "action": "deny"
+        },
+        {
+          "kind": "call_prepare",
+          "call": "switch-writer",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "switch-writer",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "switch-writer",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "switched-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "switched-write",
+          "accepted": null,
+          "action": "deny"
+        },
+        {
+          "kind": "task_end",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "task_begin",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "load-writer",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "load-writer",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "load-writer",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "writer-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "writer-write",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "tool_result",
+          "call": "writer-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "outside-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "outside-write",
+          "accepted": null,
+          "action": "deny"
+        },
+        {
+          "kind": "task_end",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "task_begin",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "task_begin",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "concurrent-reader-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "concurrent-writer-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "concurrent-writer-load",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "decision",
+          "call": "concurrent-reader-load",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "concurrent-writer-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "concurrent-reader-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "concurrent-reader-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "concurrent-writer-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "concurrent-reader-write",
+          "accepted": null,
+          "action": "deny"
+        },
+        {
+          "kind": "decision",
+          "call": "concurrent-writer-write",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "task_end",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "concurrent-writer-write",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "task_end",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "task_begin",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "context-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "context-load",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "context-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "context-before-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "context-before-revoke",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "tool_result",
+          "call": "context-before-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "context-after-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "context-after-revoke",
+          "accepted": null,
+          "action": null
+        },
+        {
+          "kind": "task_end",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "task_begin",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "grant-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "grant-load",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "grant-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "grant-before-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "grant-before-revoke",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "tool_result",
+          "call": "grant-before-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "grant-after-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "grant-after-revoke",
+          "accepted": null,
+          "action": null
+        },
+        {
+          "kind": "task_end",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "task_begin",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "baseline-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "baseline-load",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "skill_source",
+          "call": null,
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "tool_result",
+          "call": "baseline-load",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "baseline-before-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "decision",
+          "call": "baseline-before-revoke",
+          "accepted": null,
+          "action": "allow"
+        },
+        {
+          "kind": "tool_result",
+          "call": "baseline-before-revoke",
+          "accepted": true,
+          "action": null
+        },
+        {
+          "kind": "call_prepare",
+          "call": "baseline-after-revoke",
+          "accepted": false,
+          "action": null
+        },
+        {
+          "kind": "task_end",
+          "call": null,
+          "accepted": true,
+          "action": null
+        }
+      ],
+      "revocations": {
+        "context": true,
+        "writer": true,
+        "baseline": true
+      },
+      "authority": {
+        "signed_chain_verified": true,
+        "receipt_count": 18
+      },
+      "artifact_sha256": "2a809f27020453c496aa70fbb12c605ca2debfa94c8c40c359af5a585d1acaae",
+      "image_id": "sha256:b8123cf07c5f42c1e5af8ca71072ed5d42c8882fbecb1961c680d05bbac3750e",
+      "files": {
+        "/opt/hermes-agent/tools/skills_tool.py": "010e15fbb92d3923a7499e35689d04687c8f5d11191580402894d9f73b08d412",
+        "/opt/hermes-agent/tools/registry.py": "cd6ac4438c49eade8e40e0d837597fa5fe78fd2d3e2182bc2fd11bcd43ea3231",
+        "/opt/hermes-agent/model_tools.py": "1831c3fdb0776a2c5d4f7fdf8f19a05ee07c35b33f291b2165cc6da4f9b19b21",
+        "/opt/hermes-agent/run_agent.py": "5c3ea4682392f01fe9be4bc75c945421a603e76007037bdc0d6930d6b399452b",
+        "/opt/hermes-agent/agent/agent_runtime_helpers.py": "79caa0c1f05d813b6bc351596ff9fe484e0aafd8b95e70831473e1881e338a27",
+        "/opt/hermes-agent/agent/tool_executor.py": "eae77739e3a85ff4864a02f94314a06ff20a2801e0be8f7332c889bf546c94ad",
+        "/opt/hermes-agent/siq_native_runtime/native_dispatch.py": "e3135a9f14f0cc6c3cb4ecab0ddd261ca85925338c7df61f110cc89f9f5f2479",
+        "/opt/hermes-agent/siq_native_runtime/native_source.py": "cbcf6a9785db38443d9163a15714b5ce16d600bbcf80ec6150b12b4612260df0",
+        "/opt/hermes-agent/siq_native_runtime/native_channel.py": "60b95536a68e814c9bc855baea00d26c7c1720134e76d904575a5e31420b3952",
+        "/opt/hermes-agent/siq_native_runtime/native_online.py": "6d87ea7f391697ae3ed6a72b5dd341e77fb67b284b431fbbef07e250261a4ab3",
+        "/opt/hermes-agent/siq_native_runtime/__init__.py": "0503c9e6296811c29e7aaaeaeae9aac7a1d5babe96e2f237fac4870e868e4699",
+        "/opt/hermes-agent/HERMES-LICENSE": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6",
+        "/opt/siq/native-business/bootstrap.py": "9c0b61b91762c70eae6c62203a81f706a4e5f9143458b2d39c5dcc083621c003",
+        "/opt/siq/native-business/skills/writer/SKILL.md": "26b49b759030d498acbcb7e2f05f12ab8a9db471b4210b1aa34e1b4ce7432ac0",
+        "/opt/siq/native-business/skills/reader/SKILL.md": "6061d006c47d311d601d17c859236535fe5b983c8415764e33ffc21436ff7a18"
+      }
+    },
+    "inspection_complete": true,
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true,
+    "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7"
+  },
+  "receipt_projection": [
+    {
+      "tool": "skill_view",
+      "tool_call_id": "load-reader",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "03c6b66c6d7f106c435ab89ab81b8506bb580177c6c079617c7f749281c6a64d",
+      "context_count": 0,
+      "no_skill": true
+    },
+    {
+      "tool": "read_file",
+      "tool_call_id": "reader-read",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "hash": "ab298b1ad96ebaa36a95169cba4260d12298eb17895776d3911a10a0b1a9e26f",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "reader-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "ae4412a3f1ceacc03dacf41d2997cdd463aa86130c9ff5a2683c4ac129f9ed7b",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "switch-writer",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "58c1749809195413e0b369a7dcd2acdbd7b965b1e90358e86e56ec5f0de10b2c",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "switched-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "e2ffbf6fc7c4f327bfdef5d309331085930fffb3fd0db5f929d531bc7e58d9a2",
+      "context_count": 2,
+      "no_skill": false
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "load-writer",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "3d76034129ef28446b8cab88d32118133ac3ada6559a94e960869ac1c5d7cdb9",
+      "context_count": 0,
+      "no_skill": true
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "writer-write",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "15994a217cd22bb3d3d01a44949820afe6a30f96cb772ec1a0f8c6a7eaa6e134",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "outside-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "2e2348f42969f7fbca7d6af2de69fd1d3a7b7dbc2c5459f327f410bd551bc703",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "concurrent-writer-load",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "14740ef8ee24c05dd8b5a5a3a09db7d6c178db9e1447d052407530d57b80e4ca",
+      "context_count": 0,
+      "no_skill": true
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "concurrent-reader-load",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "0e8d4c6845aae21a5635311c0364e8810fdd31c0625a9c76616f965ab84eddd2",
+      "context_count": 0,
+      "no_skill": true
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "concurrent-reader-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "531d05eb9039099ca375cd5d29fa741860c203446fd0c8d53b5209198aadc7d9",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "concurrent-writer-write",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "2d4a87b143019be18393368edbe8e6c08339566561baa4ca5be33919bd8beea7",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "context-load",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "2f8b88cc55211f434bb28ec1e8a1796d056f859236978cf0a84443deb3e7253f",
+      "context_count": 0,
+      "no_skill": true
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "context-before-revoke",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "49a1436b51c8e5e988775d8df346826e7a710325fe1f01933c7a5c37ea30b750",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "grant-load",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "8c25153da26f260ca334859948b9f9a5d803382658f1cfc12e18ef4fa628ea95",
+      "context_count": 0,
+      "no_skill": true
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "grant-before-revoke",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "hash": "b9c901ba63d5eb456b9131d1369d9eec87effa1656dd5dd11c5210f306360e9b",
+      "context_count": 1,
+      "no_skill": false
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "baseline-load",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "hash": "c997e8c3addbf095ef4384874d70880bfcbf11935254e4ffa0f1c5f5aca56038",
+      "context_count": 0,
+      "no_skill": true
+    },
+    {
+      "tool": "read_file",
+      "tool_call_id": "baseline-before-revoke",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "hash": "52ce3e3f35a1ec03c31526bf746b9f56ad9c9b5a1c31ae9fe1bf5c5bc78abd68",
+      "context_count": 1,
+      "no_skill": false
+    }
+  ],
+  "attempts": 23,
+  "signed_receipts": 18,
+  "signed_allows": 14,
+  "signed_denies": 4,
+  "pre_decision_refusals": {
+    "replay": 1,
+    "ended_task": 1,
+    "revocation": 3
+  },
+  "authority_test_seconds": 22.198,
+  "source_sha256": {
+    "apps/agentshield/internal/server/native_openshell_integration_test.go": "f87474108a6d70758144edb5f3080c78f80d1c145da64b2bb37f47f346a5f5ba",
+    "patches/hermes/openshell_online_bootstrap.py": "9c0b61b91762c70eae6c62203a81f706a4e5f9143458b2d39c5dcc083621c003",
+    "patches/hermes/openshell_online_probe.py": "bf6ffd8830384d0f1c20491e77acb254ecc81bfe6a561f90c084a89ab0cc4779",
+    "patches/hermes/run_openshell_runtime_probe.py": "284d201ee123c3e1fa252ada425a69bc33d06dbfdac9940152e643b4809efa9d",
+    "adapters/runtime/hermes-agentshield/native_dispatch.py": "e3135a9f14f0cc6c3cb4ecab0ddd261ca85925338c7df61f110cc89f9f5f2479",
+    "adapters/runtime/hermes-agentshield/host_online.py": "f1864c8a2a8ef979917a8fc1810316188e5f190b88841c29a4db72564a2e381f"
+  },
+  "limits": [
+    "Owned actual OpenShell and actual Hermes tools with real Go stores, HTTP Authority and kernel verifier; synthetic Skill content and test operator.",
+    "Revocations use private host-only controls in an explicit _test.go fixture, not the production business authorization UI.",
+    "Three revocation refusals precede decision receipts; no fabricated signed denial or exactly-once claim.",
+    "Zero model calls; daily business entry, network effects, lease expiry, installation upgrade/drift and approval retry remain pending.",
+    "Concurrent tasks overlap in one process/session; this does not prove unrelated processes or every concurrency schedule."
+  ]
+}

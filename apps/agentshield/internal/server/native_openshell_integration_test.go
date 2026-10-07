@@ -92,6 +92,7 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 	var mounts []nativeMount
+	grantIDs := map[string]string{"baseline": baseline.GrantID}
 	for index, name := range []string{"reader", "writer"} {
 		id := "si-" + strings.Repeat(string(rune('a'+index)), 32)
 		if _, _, _, err = s.skillImports.Create(nil, skillimport.CreateRequest{SchemaVersion: "local-skill-import-create/v1", ImportID: id, SourceKind: "local_dir", Path: filepath.Join(input.Source, name), ActorID: "owned-integration-operator"}); err != nil {
@@ -136,6 +137,7 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 			t.Fatal(err)
 		}
 		mounts = append(mounts, nativeMount{InstanceID: instance, InstallID: op.InstallID, ClaimSignature: op.ClaimSignature, HostRoot: filepath.Join(s.d.Home, ".hermes", "profiles", "work", "skills", name), RuntimeRoot: input.RuntimeRoot + "/" + name})
+		grantIDs[name] = approved.GrantID
 	}
 	record, err := s.runtimeIdentities.Create(runtimeidentity.CreateRequest{SchemaVersion: "local-runtime-identity-create/v3", InstanceID: instance, GrantID: baseline.GrantID, ExpectedGrantRevision: revision, ActorID: "owned-integration-operator", SessionTTLSeconds: 300, NativeSkillPolicy: &runtimeidentity.NativeSkillPolicy{Mode: "required", RuntimeArtifactSHA256: input.Artifact}})
 	if err != nil {
@@ -186,8 +188,60 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 	go func() { _ = httpServer.Serve(listener) }()
 	defer httpServer.Close()
 	write("ready.json", map[string]any{"endpoint": "http://" + listener.Addr().String(), "credential_path": credentialPath, "state_dir": st.Dir, "subject": map[string]string{"platform": "hermes", "instance_id": instance, "agent_id": agent, "session_id": input.Session}, "installs": mounts})
+	// Private, fixture-only operator controls. Nothing is mounted into the
+	// sandbox, and no route or production approval path is added.
+	controls := map[string]bool{}
 	deadline := time.Now().Add(150 * time.Second)
 	for {
+		for _, name := range []string{"context", "writer", "baseline"} {
+			if controls[name] {
+				continue
+			}
+			if _, err := os.Stat(filepath.Join(dir, "revoke-"+name)); err != nil {
+				if !os.IsNotExist(err) {
+					t.Fatal(err)
+				}
+				continue
+			}
+			if name == "context" {
+				chain, err := s.d.Chain.Read()
+				if err != nil {
+					t.Fatal(err)
+				}
+				found := false
+				for _, r := range chain {
+					if r.ToolCallID == nil || *r.ToolCallID != "context-before-revoke" || r.Action != receipt.ActionAllow || r.NativeInvocation == nil || len(r.NativeInvocation.Contexts) != 1 {
+						continue
+					}
+					ref := r.NativeInvocation.Contexts[0]
+					if _, err := native.host.Contexts().Revoke(ref.ContextID, ref.ContextSignature); err != nil {
+						t.Fatal(err)
+					}
+					found = true
+				}
+				if !found {
+					t.Fatal("live allowed context was not found for revocation")
+				}
+			} else {
+				current, rev, err := st.GetGrantWithSeq(grantIDs[name])
+				if err != nil {
+					t.Fatal(err)
+				}
+				revoked, err := grant.Revoke(*current, s.d.Key)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if _, err := st.CommitGrant(state.GrantCommit{Grant: revoked, ExpectedRevision: rev, Audit: &state.AuditEvent{Event: "owned_integration_revocation", Target: revoked.GrantID}}); err != nil {
+					t.Fatal(err)
+				}
+				readback, err := st.GetGrant(revoked.GrantID)
+				if err != nil || readback.Status != "revoked" || !grant.Verify(s.d.Key.Public(), *readback) {
+					t.Fatal("signed revocation readback failed", err)
+				}
+			}
+			controls[name] = true
+			write("revoked-"+name+".json", map[string]any{"revoked": true})
+		}
 		if _, err := os.Stat(filepath.Join(dir, "finish")); err == nil {
 			break
 		}
@@ -200,5 +254,5 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 	if err != nil || len(chain) == 0 || receipt.Verify(chain, s.d.Key.Public()) != nil {
 		t.Fatal("actual signed receipt chain missing or invalid", err)
 	}
-	write("authority-result.json", map[string]any{"signed_chain_verified": true, "receipt_count": len(chain), "receipts": chain})
+	write("authority-result.json", map[string]any{"signed_chain_verified": true, "receipt_count": len(chain), "receipts": chain, "revocations": controls})
 }
