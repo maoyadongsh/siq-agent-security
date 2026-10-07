@@ -122,3 +122,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [API授权与迁移交付](optimization-opt08-api-authority-delivery-validation-20261008.md)：业务API授权／执行租约及连续迁移依赖交付5be2a77/c8ee0df，隔离迁移24项、API64项及Ruff通过。修复ORM缓存导致账户／grant／执行租约旧状态被复用，以及快照到期瞬间误接受，11项旧负向已复现。真实临时PostgreSQL验证迁移回放与审计失败回滚，容器已清理；未访问日常业务库或模型。主链交付至021，工作区022–024保留；Supervisor集成完整用例留待后批。原109模块仍34个未跟踪，完整交付及最终同候选验收继续，OPT-08与9/16不变。
 
 [监管与转发依赖交付](optimization-opt08-supervisor-delivery-validation-20261008.md)：监管／原生身份／受管转发六模块、两服务模板和五测试文件交付业务6a4e8b6，隔离49文件155项与Ruff通过；先前保留的API租约接管集成用例完整交付。fork／锁／信号为真实本地组件，systemd、Authority和业务资源切断仍为夹具，未安装服务或调用模型。原109模块剩28个未跟踪；候选镜像15份动态输入摘要一致但交付审查未完成。完整编排／撤权／同候选业务验收继续，OPT-08与9/16不变。
+
+[候选镜像与业务工具资产交付](optimization-opt08-candidate-assets-delivery-validation-20261008.md)：候选镜像／MCP／报告资产交付业务f2bdc8b，105文件隔离验证109项及Ruff通过；两补丁实际回放和九wheel来源／许可核对通过。查明旧镜像只有配置校验器来源不同，代回旧摘要可完整复算旧构建身份；当前源码离线构建新镜像56c3d4d6ad39，七项运行检查及42个输入摘要通过。保留旧快照／镜像／证据，不激活服务、不调用模型；夹具发布不冒充生产审批。原109模块剩26个未交付，完整编排与最终新鲜候选验收继续，OPT-08与9/16不变。
