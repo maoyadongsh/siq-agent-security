@@ -244,6 +244,8 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/skill-contexts", s.auth(s.skillContextCollection, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/management", s.auth(s.skillContextManagement, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/", s.auth(s.skillContextOne, capAdmin))
+	s.mux.HandleFunc("/v2/skill-contexts", s.auth(s.nativeContextList, capAdmin))
+	s.mux.HandleFunc("/v2/skill-contexts/", s.auth(s.nativeContextOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/preview", s.auth(s.runtimeCheckPreview, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks", s.auth(s.runtimeCheckLatest, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/start", s.auth(s.runtimeCheckStart, capAdmin))
