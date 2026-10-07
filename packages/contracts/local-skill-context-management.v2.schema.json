@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/local-skill-context-management.v2.schema.json",
+  "title": "Native Skill signed history page V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contexts",
+    "next_after"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-context-management/v2"
+    },
+    "contexts": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "context",
+          "revocation"
+        ],
+        "properties": {
+          "context": {
+            "$ref": "skill-execution-context.v2.schema.json"
+          },
+          "revocation": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "skill-execution-context-revocation.v2.schema.json"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "next_after": {
+      "type": "string",
+      "pattern": "^(sec-[0-9a-f]{32})?$"
+    }
+  }
+}

@@ -2726,3 +2726,5 @@ OPT-08 D3g：按 [native-openshell-backend/v1](../packages/contracts/native-open
 OPT-08 D3h：按 [native-host-session/v1](../packages/contracts/native-host-session.v1.md)，HostSession 统一管理真实后端/guard、业务监管者 pidfd、固定整体期限与最多90秒的业务心跳边界、共享Verifier登记及宿主循环。续期仅来自原可信监管者已完成的业务授权复查，过期不能恢复；关闭失败不得提前释放在途线程资源。进程内编排不是跨进程业务接入的完成证明。
 
 OPT-08 D3i：按 [native-host-control/v1](../packages/contracts/native-host-control.v1.md)，独立私有Unix控制通道只向可信业务监管器开放HostSession生命周期；内核连接/逐包凭据共同派生监管者PID，外层控制凭据与内层运行身份凭据独立且不进入沙箱。固定端点和资源上限，原handle不重启，续期不接管；传输与进程内组件通过仍不等于日常模型业务验收。
+
+OPT-08 D3s：按 [native-skill-context-management/v1](../packages/contracts/native-skill-context-management.v1.md) 为已有原生v2 SEC增加独立 `/v2/skill-contexts` 管理读取、分页及精确撤销。管理凭据才能操作，不提供模型或管理员伪造原生加载的签发入口；历史读取与撤销不依赖运行宿主仍在线。撤销绑定原始签名、先审计、只追加签名墓碑，陈旧签名冲突，重复确认返回同一墓碑。v1接口及签名字节不变；读取不是实时权限证明，撤销不撤回已经完成的副作用。
