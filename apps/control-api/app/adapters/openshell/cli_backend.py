@@ -578,7 +578,7 @@ class OpenShellCliBackend(EnforcementAdapter):
         )
 
     def apply_dynamic(self, target: str, plan: ChangePlan, expected_revision: str) -> DeploymentReceipt:
-        """Patch only network_policies under a process-local target lock."""
+        """Patch network_policies under the configured registry's target lock."""
         validate_revision(expected_revision)
         if plan.target != target or plan.expected_revision != expected_revision or plan.kind != "dynamic":
             raise AdapterError("openshell_change_plan_mismatch")
@@ -605,6 +605,11 @@ class OpenShellCliBackend(EnforcementAdapter):
                 merged.pop("network_policies", None)
             expected_digest = policy_digest(merged)
             operation_id = f"opo-{secrets.token_hex(24)}"
+            self._operations.prepare(PolicyOperation(
+                operation_id=operation_id, target=target, base=current,
+                applied_revision="", applied_digest=expected_digest,
+                no_op=expected_digest == current.policy_digest,
+            ))
             if expected_digest == current.policy_digest:
                 receipt = self._deployment_receipt(
                     operation_id=operation_id,
@@ -625,6 +630,7 @@ class OpenShellCliBackend(EnforcementAdapter):
                     )
                 )
                 return receipt
+            self._operations.before_write(operation_id)
             prewrite = self.read_effective_policy(target)
             if prewrite.revision != current.revision or prewrite.policy_digest != current.policy_digest:
                 raise AdapterError("openshell_prewrite_policy_drift")
@@ -852,18 +858,13 @@ class OpenShellCliBackend(EnforcementAdapter):
             if operation is None:
                 raise VerificationFailed("openshell_rollback_operation_unknown")
             self._validate_receipt_binding(target, receipt, operation)
+            restored = self._operations.restored(operation.operation_id)
+            if restored is not None:
+                return restored  # Historical confirmation; no second backend write.
             current = self.read_effective_policy(target)
             if current.revision != operation.applied_revision or current.policy_digest != operation.applied_digest:
                 raise VerificationFailed("openshell_rollback_external_drift")
-            if operation.no_op:
-                self._operations.consume(operation.operation_id)
-                return RollbackReceipt(
-                    restored_revision=current.revision,
-                    restored_digest=current.policy_digest,
-                    result="no_op",
-                    evidence={"operation_id": operation.operation_id},
-                )
-            if authorizer is None:
+            if authorizer is None and not operation.no_op:
                 raise VerificationFailed("openshell_rollback_authorizer_required")
             try:
                 authorized = authorizer(
@@ -873,11 +874,20 @@ class OpenShellCliBackend(EnforcementAdapter):
                         current=current,
                         restore=operation.base,
                     )
-                )
+                ) if authorizer is not None else operation.no_op
             except Exception:
                 raise VerificationFailed("openshell_rollback_authorization_failed") from None
             if authorized is not True:
                 raise VerificationFailed("openshell_rollback_authorization_failed")
+            self._operations.before_rollback(operation.operation_id)
+            if operation.no_op:
+                self._operations.complete_rollback(operation.operation_id, current.revision, current.policy_digest)
+                return RollbackReceipt(
+                    restored_revision=current.revision,
+                    restored_digest=current.policy_digest,
+                    result="no_op",
+                    evidence={"operation_id": operation.operation_id},
+                )
             prewrite = self.read_effective_policy(target)
             if prewrite.revision != operation.applied_revision or prewrite.policy_digest != operation.applied_digest:
                 raise VerificationFailed("openshell_rollback_prewrite_drift")
@@ -889,7 +899,7 @@ class OpenShellCliBackend(EnforcementAdapter):
                 restored_revision,
                 operation.base.policy_digest,
             )
-            self._operations.consume(operation.operation_id)
+            self._operations.complete_rollback(operation.operation_id, restored_revision, readback.policy_digest)
             return RollbackReceipt(
                 restored_revision=restored_revision,
                 restored_digest=readback.policy_digest,

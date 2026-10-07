@@ -33,6 +33,7 @@ from app.models import (
     new_id,
     utcnow,
 )
+from app.openshell_recovery import RecoveryOut
 from app.outbox import audit, emit_event
 from app.safe_errors import error_reference
 from app.schemas import (
@@ -666,10 +667,46 @@ def execute_deployment(
         # 真实闭环（2026-08-13 活网关验证）：审批后直接 policy set + 读回验证
         # 静态段一致（只改网络段）→ 动态热更新；验证通过才 effective（§21.1 不变量 #5）
         receipt = None
+        recovery = None
         try:
             assert openshell_preflight is not None
             adapter, compiled, plan = openshell_preflight
+            from app.openshell_recovery import bind_recovery
+
+            def recheck_apply_authority():
+                try:
+                    chain = _rollback_live_chain(session, identity, deployment)
+                    if chain is None or deployment.status != "pending":
+                        raise HTTPException(409, "deployment_authorization_changed")
+                    live_binding, _, live_policy = chain
+                    _ensure_binding_in_selector(session, identity.tenant_id, live_policy, live_binding)
+                    require_binding_identity_unchanged(session, prepared.binding_snapshot, identity.tenant_id)
+                    caps = adapter.probe()
+                    if (require_target_authority(live_binding, identity.tenant_id, caps) != fresh_authority
+                        or caps.endpoint_fingerprint != fresh_caps.endpoint_fingerprint
+                        or caps.handshake_gateway != fresh_caps.handshake_gateway):
+                        raise HTTPException(409, "deployment_target_authority_changed")
+                except HTTPException:
+                    raise AdapterError("openshell_apply_authorization_expired") from None
+                finally:
+                    # No pending API writes at this stage; release its read/row
+                    # locks before the independent journal transaction writes.
+                    session.rollback()
+
+            recovery = bind_recovery(
+                adapter, deployment, identity, fingerprint=fresh_caps.endpoint_fingerprint,
+                gateway_hash=hashlib.sha256(fresh_caps.handshake_gateway.encode()).hexdigest(),
+                before_apply=recheck_apply_authority,
+            )
+            cr.status = "deploying"
+            audit(session, identity.tenant_id, identity.identity_type, identity.actor_id,
+                  "deployment.execute_reserved", "deployment", resource_id=deployment.id,
+                  summary={"backend": backend, **preview_audit})
+            session.commit()
             receipt = adapter.apply_dynamic(target, plan, expected_revision=plan.expected_revision)
+            # A replacement adapter cannot assert success without committed facts.
+            with recovery.target_lock(target):
+                adapter._validate_receipt_binding(target, receipt, recovery.get(receipt.operation_id))
             # 完整 digest 是权威校验；host/port 只补充核对真实声明，不发明
             # 可能与策略冲突的固定 deny probe。
             allow = [r.get("endpoint") for r in (compiled.artifact.get("network_policies") or [])]
@@ -732,7 +769,7 @@ def execute_deployment(
             error = error_reference(exc)
             deployment.status = "failed"
             if receipt is None:
-                deployment.receipt = error
+                deployment.receipt = {**error, **(recovery.recovery_hint() if recovery else {})}
             else:
                 # policy set 已返回可信 operation binding 时不可用错误覆盖它；
                 # failed deployment 仍可通过该绑定安全回滚。
@@ -957,6 +994,38 @@ def _rollback_live_chain(session: Session, identity: Identity, deployment: Deplo
     return live_binding, live_cr, live_policy
 
 
+@router.get("/api/v1/deployments/{deployment_id}/recovery", response_model=RecoveryOut)
+def read_deployment_recovery(
+    deployment_id: str,
+    response: Response,
+    session: Session = Depends(get_session),
+    identity: Identity = Depends(get_identity),
+):
+    from app.adapters.openshell.contracts import AdapterError
+    from app.openshell_recovery import recovery_fact
+
+    deployment = session.scalar(select(Deployment).where(
+        Deployment.id == deployment_id, Deployment.tenant_id == identity.tenant_id,
+    ))
+    if deployment is None:
+        raise HTTPException(404, "not_found")
+    ensure_permission(identity, "policy:read")
+    if deployment.execution_backend not in {None, "openshell-cli"}:
+        raise HTTPException(409, "deployment_recovery_backend_unsupported")
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        fact = recovery_fact(deployment, identity)
+    except AdapterError:
+        raise HTTPException(503, "openshell_recovery_unavailable") from None
+    if fact is None:
+        return RecoveryOut(deployment_id=deployment.id, state="missing")
+    return RecoveryOut(
+        deployment_id=deployment.id, operation_id=fact.origin.operation_id, state=fact.state,
+        applied_revision=fact.applied_revision, restored_revision=fact.restored_revision,
+        rollback_material_available=fact.state in {"applied", "rolled_back"},
+    )
+
+
 @router.post("/api/v1/deployments/{deployment_id}/rollback", response_model=DeploymentOut)
 def rollback_deployment(
     deployment_id: str,
@@ -969,7 +1038,7 @@ def rollback_deployment(
     if deployment is None:
         raise HTTPException(status_code=404, detail="not_found")
     ensure_permission(identity, "policy:manage")
-    if deployment.status not in ("effective", "sent", "failed"):
+    if deployment.status not in ("effective", "sent", "failed", "rolled_back", "pending"):
         raise HTTPException(status_code=409, detail="invalid_state")
 
     # The immutable deployment origin selects rollback; current config cannot replace it.
@@ -990,10 +1059,27 @@ def rollback_deployment(
         raise HTTPException(409, "deployment_backend_identity_conflict")
     if os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none") != backend:
         raise HTTPException(409, "deployment_backend_changed")
+    if deployment.status == "rolled_back":
+        return deployment  # Authorized historical acknowledgement, not a new write.
+    if deployment.status == "pending" and backend != "openshell-cli":
+        raise HTTPException(409, "invalid_state")
     if backend == "openshell-cli":
+        from app.adapters.openshell.contracts import AdapterError
+        from app.openshell_recovery import receipt_from_fact, recovery_fact
+
         receipt = deployment.receipt or {}
-        if deployment.status != "effective" and not (deployment.status == "failed" and receipt.get("operation_id")):
-            raise HTTPException(status_code=409, detail="openshell_rollback_requires_effective_deployment")
+        if deployment.status == "pending" or not all(receipt.get(key) for key in (
+            "operation_id", "target", "base_revision", "base_policy_digest", "backend_revision",
+            "applied_policy_digest", "endpoint_fingerprint", "gateway_name_sha256",
+        )):
+            try:
+                fact = recovery_fact(deployment, identity)
+                recovered = receipt_from_fact(fact)
+            except AdapterError:
+                raise HTTPException(409, "openshell_recovery_outcome_unconfirmed") from None
+            if receipt.get("operation_id") not in {None, recovered["operation_id"]}:
+                raise HTTPException(409, "openshell_recovery_identity_conflict")
+            receipt = recovered
 
         from app.adapters.openshell.contracts import (
             AdapterError,
@@ -1025,10 +1111,19 @@ def rollback_deployment(
                     return False
             except HTTPException:
                 return False
+            session.rollback()  # Release API reads before the journal write.
             return True
 
         try:
             rollback_adapter = OpenShellCliBackend()
+            from app.openshell_recovery import bind_recovery
+
+            bind_recovery(
+                rollback_adapter, deployment, identity,
+                fingerprint=str(receipt.get("endpoint_fingerprint", "")),
+                gateway_hash=str(receipt.get("gateway_name_sha256", "")),
+            )
+            session.rollback()  # No API writes yet; do not block private journal transactions.
             rollback_receipt = rollback_adapter.rollback(
                 deployment.target,
                 DeploymentReceipt(
@@ -1043,6 +1138,10 @@ def rollback_deployment(
                 ),
                 authorizer=authorize_rollback,
             )
+            session.refresh(deployment)
+            if deployment.status == "rolled_back" and rollback_receipt.evidence.get("replayed"):
+                return deployment
+            deployment.receipt = {**(deployment.receipt or {}), **receipt}
             deployment.verification = {
                 **(deployment.verification or {}),
                 "rollback": {

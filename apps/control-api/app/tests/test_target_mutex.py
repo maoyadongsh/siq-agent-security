@@ -36,6 +36,9 @@ def test_sqlite_separate_process_exclusion_and_release(tmp_path):
             assert result.returncode == 3, result.stderr
             with target_mutex(engine, "synthetic-gateway", "another-target", timeout=0):
                 pass
+            with pytest.raises(TargetLockError, match="operation_target_busy"):
+                with target_mutex(engine, "different-worker-context", "synthetic-target", timeout=0):
+                    pytest.fail("invocation context bypassed target exclusion")
         assert child(url).returncode == 0
         with pytest.raises(RuntimeError, match="synthetic failure"):
             with target_mutex(engine, "synthetic-gateway", "synthetic-target"):

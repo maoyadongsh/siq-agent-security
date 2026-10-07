@@ -76,12 +76,16 @@ finally:
         with target_mutex(engine, "synthetic-gateway", "synthetic-target"):
             child = subprocess.run([sys.executable, "-c", child_code], capture_output=True, timeout=10, check=False)
             assert child.returncode == 3, "PostgreSQL cross-process mutex failed"
+            alternate = child_code.replace("'synthetic-gateway'", "'different-worker-context'")
+            child = subprocess.run([sys.executable, "-c", alternate], capture_output=True, timeout=10, check=False)
+            assert child.returncode == 3, "worker invocation context bypassed target mutex"
             with target_mutex(engine, "synthetic-gateway", "different-target", timeout=0):
                 pass
         child = subprocess.run([sys.executable, "-c", child_code], capture_output=True, timeout=10, check=False)
         assert child.returncode == 0, "PostgreSQL cross-process mutex not released"
         checks["journal_postgres_target_mutex_across_processes"] = True
         checks["journal_postgres_target_mutex_release_and_independent_target"] = True
+        checks["journal_postgres_target_mutex_survives_worker_context_change"] = True
         print(json.dumps({"passed": True, "checks": checks}))
     finally:
         engine.dispose()

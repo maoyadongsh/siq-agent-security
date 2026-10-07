@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openshell-operation-recovery.v1.schema.json",
+  "title": "openshell-operation-recovery/v1",
+  "description": "Authenticated historical operation facts; not current enforcement or authorization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "deployment_id", "operation_id", "state", "applied_revision", "restored_revision", "rollback_material_available", "automatic_replay_allowed"],
+  "properties": {
+    "schema_version": {"const": "openshell-operation-recovery/v1"},
+    "deployment_id": {"type": "string", "minLength": 1, "maxLength": 64},
+    "operation_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 64},
+    "state": {"enum": ["missing", "prepared", "applying", "applied", "rollback_pending", "rolled_back", "unknown"]},
+    "applied_revision": {"type": ["string", "null"], "pattern": "^[1-9][0-9]{0,31}$"},
+    "restored_revision": {"type": ["string", "null"], "pattern": "^[1-9][0-9]{0,31}$"},
+    "rollback_material_available": {"type": "boolean"},
+    "automatic_replay_allowed": {"const": false}
+  }
+}

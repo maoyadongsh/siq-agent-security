@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from browser_fixture_identity import install_fixture_session
 from playwright.sync_api import expect, sync_playwright
 
 
@@ -32,6 +33,7 @@ def main():
                 route.continue_(headers={**clean, **headers})
 
             page.route(args.endpoint + '/api/v1/**', identity)
+            install_fixture_session(page)
             page.goto(args.endpoint + '/changes')
             expect(page.get_by_role('heading', name='变更中心', exact=True)).to_be_visible()
             page.get_by_label('部署环境', exact=True).select_option(args.environment)

@@ -76,15 +76,17 @@
     {
       "id": "OPT-05",
       "title": "OpenShell持久化回滚与后端绑定",
-      "status": "implementing",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
       "evidence": [
         "docs/development/optimization-opt05-backend-validation-20261007.md",
-        "docs/development/optimization-opt05-journal-validation-20261007.md"
+        "docs/development/optimization-opt05-journal-validation-20261007.md",
+        "docs/development/optimization-opt05-online-validation-20261007.md"
       ],
       "residual_limits": [
-        "原后端绑定及加密、持久台账、独立密钥、目标互斥组件已验证；在线 apply/rollback 接入、完整重启恢复及真实故障联验尚未完成。"
+        "未知外部写入结果不自动重放；目标锁仅约束同数据库的协作写者，不阻止外部管理员或替代后端原子 CAS。",
+        "真实联验使用 OpenShell 0.0.83 与隔离开发身份，不代表客户生产 IAM、任意版本或 Windows/macOS 原生验收。"
       ]
     },
     {

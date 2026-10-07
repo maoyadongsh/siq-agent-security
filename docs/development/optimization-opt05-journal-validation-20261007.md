@@ -1,6 +1,8 @@
 # OPT-05 B：持久恢复基础组件验证
 
-日期：2026-10-07。对应 [ADR-055](../adr/0055-durable-openshell-operation-recovery.md)。
+日期：2026-10-07。
+
+本文保留 B 批组件阶段记录；下文“尚未接入”和待办指当时状态。后续在线接入已完成，最新结论见 [在线验证](optimization-opt05-online-validation-20261007.md)。目标锁现保守使用同数据库登记目标 ID，避免 HOME/XDG 等调用上下文变化分裂锁域；原指纹仍用于来源认证。对应 [ADR-055](../adr/0055-durable-openshell-operation-recovery.md)。
 
 ## 当前交付边界
 

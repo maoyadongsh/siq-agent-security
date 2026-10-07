@@ -21,8 +21,11 @@ class TargetLockError(Exception):
 def _key(fingerprint: str, target: str) -> bytes:
     if any(not isinstance(value, str) or not value or len(value) > 512 for value in (fingerprint, target)):
         raise TargetLockError("operation_lock_identity_invalid")
+    # Invocation fingerprints include HOME/XDG paths, so two trusted workers
+    # may name the same gateway differently. Conservatively serialize the same
+    # registered target ID across all gateway contexts in this database.
     return hashlib.sha256(b"siq-as/openshell-target/v1\x00" + json.dumps(
-        [fingerprint, target], ensure_ascii=True, separators=(",", ":"),
+        ["all-configured-gateways", target], ensure_ascii=True, separators=(",", ":"),
     ).encode()).digest()
 
 

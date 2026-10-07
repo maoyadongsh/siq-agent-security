@@ -219,7 +219,11 @@ OpenShell 编译入口的不可达、编译拒绝和校验失败只对外返回�
 
 新部署、单项 reservation 和批量 reservation 在外部执行前记录不可由请求正文覆盖的 `execution_backend`，由服务端已授权的 prepared/preview 结果提供。回滚按该记录选择分支；当前配置必须与原后端一致，否则 409 `deployment_backend_changed`，不得跳过 OpenShell 就标记 rolled_back。
 
-历史空值只可从原 deployment 绑定的、同租户/环境/目标的 RuntimeBinding 恢复分类；缺失或冲突时拒绝自动回滚。分类不代替活体授权链、binding 状态和网关身份复验。迁移新增可空列，不猜测批量回填；降级若会丢弃已记录的后端来源必须拒绝。此批仅解决后端选择；跨进程操作快照与故障恢复仍为 OPT-05 后续。
+历史空值只可从原 deployment 绑定的、同租户/环境/目标的 RuntimeBinding 恢复分类；缺失或冲突时拒绝自动回滚。分类不代替活体授权链、binding 状态和网关身份复验。迁移新增可空列，不猜测批量回填；降级若会丢弃已记录的后端来源必须拒绝。
+
+企业 OpenShell 写入使用迁移 0030 的加密操作台账及目标跨进程锁，要求独立 `SIQ_AS_OPENSHELL_RECOVERY_KEYRING_FILE`。先提交带审计的 pending reservation，再提交 prepared/applying 操作意图，之后才调用外部命令；回滚对应 rollback_pending/rolled_back。密钥缺失或恢复材料无法认证时拒绝，不回退到内存快照。密钥格式、权限、保留与轮换见 [ADR-055](adr/0055-durable-openshell-operation-recovery.md)。上线前先迁移并配置全部 worker 的同一独立密钥环；不得删除仍被历史操作引用的旧密钥。
+
+已持久化的重复回滚只返回历史确认，不再次执行后端写入，也不声称当前策略未被后续操作改变。applying/rollback_pending/unknown 的不确定结果禁止自动重放；历史缺少持久操作记录时拒绝自动恢复。组件与接入阶段的准确验证状态见[优化台账](development/optimization-progress-20261007.md)，不以代码合入代替真实故障恢复验收。
 
 ## 开发与测试
 
