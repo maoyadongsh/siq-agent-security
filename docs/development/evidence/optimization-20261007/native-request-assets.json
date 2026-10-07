@@ -1,0 +1,47 @@
+{
+  "schema_version": "siq.optimization-native-request-assets-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "implementation_committed": false,
+  "candidate_sources_sha256": {
+    "apps/api/services/qwen38_request_runtime.py": "33644f40a386ad7bc7349d5f3a0c53e9b08d83883e5b7e90714b9b4bc59ea231",
+    "apps/api/services/qwen38_request_assets.py": "7003be5d5ca4115a4139adc2430aa95f392f5ce4ca8a7d73ffdd9087370979fc",
+    "apps/api/services/qwen38_request_deployment.py": "ee3c36a6b489a34697a752c6a975e1d8f40b2ae6886c0aeeb80087e81ef5c9f2",
+    "apps/api/services/qwen38_request_recovery.py": "7d148581808fffa290e65df3e42ee724f8d81266e7fb7b92a228c27dd293695c",
+    "apps/api/services/qwen38_request_startup.py": "43d7fcdfb0a2b38f44556cd9ac3142967a57df3c8299ffefc8dc3c3e9d6de587",
+    "scripts/openshell/build_policy.py": "a2a2805888f0720c2bcc5789fad234dc97133b4dd9770bd1c40eeadc2909fb3e",
+    "infra/env/local.example": "bddc860b503a6f8b2a7ee174078275c5ca1832ac09801a2e9290624b7025354d",
+    "apps/api/tests/test_qwen38_native_request_assets.py": "9feab18429dffa766fd50c9701a439019475a5c97d9615a381747d30b611577b",
+    "apps/api/tests/test_qwen38_native_request_deployment.py": "91fb8373eb75f65de15fbc3de6f4976d9d0393ce50f0e69447ed41b671b73197",
+    "scripts/openshell/tests/test_native_request_policy.py": "62a315b646ddd545db77d16dd102ba83fb5f0f96a3b569d5e634a5cfc12bc738"
+  },
+  "tests": {
+    "legacy_runtime_assets_deployment_policy_passed": 86,
+    "initial_native_request_assets_passed": 14,
+    "native_policy_deployment_passed": 10,
+    "endpoint_recovery_passed": 41,
+    "startup_recovery_and_final_native_assets_passed": 36,
+    "startup_batch_overlaps_initial_native": 14,
+    "startup_batch_new_native_case": 1,
+    "ruff": "passed",
+    "diff_check": "passed"
+  },
+  "test_environment": {
+    "initial_collection_failed": "System Python missing siq_financial_tools",
+    "uv_overlay_collection_failed": [
+      "repository root missing from module path",
+      "production control-distribution provenance rejects the overlay as its interpreter site root"
+    ],
+    "final_recovery_runner": "actual API .venv interpreter; append cached pytest tooling only, preserve trusted site roots and installed distribution checks",
+    "api_dependencies_or_locks_modified": false
+  },
+  "correction_to_prior_batch": "The existing mount compiler already omits config bind mounts. D3l suggested removal was unnecessary; this batch binds request config bytes to the protected image without changing mount layout.",
+  "business_report": "docs/reports/native-request-assets-progress-20261007.md",
+  "limits": [
+    "Grant/execution checks use actual owning database logic with synthetic users/rows; image and asset fixtures are explicit, not a daily business acceptance.",
+    "Native policy uses actual compiler; no sandbox or model calls in this batch.",
+    "Native identity issuer, Supervisor start, gateway host PID handoff, endpoint and full native cleanup remain pending.",
+    "Business source closure remains uncommitted pending review of existing necessary dependencies; no unrelated changes staged."
+  ]
+}

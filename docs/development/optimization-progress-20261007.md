@@ -90,3 +90,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3k 原生配置与快照](evidence/optimization-20261007/native-runtime-config.json)已补齐显式原生编译、v4 fresh快照、挂载校验与旧入口拒绝；原生16项通过。相关74项通过、1项因既有Qwen路由候选摘要漂移失败；经10项实际模型/制品静态核验后修正绑定，该项复跑及路由13项通过。审计保留外部晋级门禁，不宣称模型业务就绪；未重启模型、无推理调用。受保护镜像/builder/网关/endpoint仍待接线，业务增量保留本地待依赖审查，OPT-08与9/16不变。
 
 [D3l 受保护业务镜像与启动交接](evidence/optimization-20261007/native-request-image.json)已构建独立原生候选：实际镜像5项、真实Hermes启动交接9项通过，包括宿主接管前HTTP关闭、重复启动拒绝及子进程/容器清理。首轮专项41项、最终镜像专项26项（新增10）、相关旧运行配置/快照/挂载73项通过。业务自包含bootstrap/测试及合同报告已提交，其余原生接线仍待必要依赖审查；没有Authority接管或模型调用，日常服务未替换。builder/assets/网关/endpoint和真实业务验收继续，OPT-08与9/16不变。
+
+[D3m 原生请求规划与资产](evidence/optimization-20261007/native-request-assets.json)已接入显式镜像选择、计划/资产v2、配置摘要绑定、无旧relay的原生策略及恢复版本分离。原有相关86项、新部署/策略10项、完整恢复41项、启动恢复与最终原生资产36项通过（含首轮14项及新增1项）。保留API解释器和安装来源校验，修复测试工具环境收集问题。核对确认旧mount计划本就无配置bind，纠正D3l推测；未启动沙箱/模型。身份签发、监管启动、网关PID/endpoint与真实业务仍待接通，业务源待必要依赖审查，OPT-08与9/16不变。
