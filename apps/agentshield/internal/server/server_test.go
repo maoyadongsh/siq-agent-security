@@ -680,6 +680,42 @@ func TestOpenshellApplyRejectsUnknownNetworkConstraintBeforeBackendCall(t *testi
 	}
 }
 
+func TestOpenshellApplyRequiresExplicitNetworkIntent(t *testing.T) {
+	for _, kind := range []string{"missing", "null", "empty", "static"} {
+		t.Run(kind, func(t *testing.T) {
+			calls, writes := 0, 0
+			cli := openshell.New(openshell.Options{EnvScript: "/nonexistent/env.sh", PollInterval: -1, Runner: func(args []string) (int, string, string) {
+				calls++
+				if len(args) >= 2 && args[0] == "policy" && args[1] == "get" {
+					return 0, "Version: 1\n---\nversion: 1\n", ""
+				}
+				writes++
+				return 1, "", "unexpected backend write"
+			}})
+			s, _ := newServer(t, "block")
+			s.d.Openshell = cli
+			body := map[string]any{"target": "s1", "expected_revision": "1"}
+			switch kind {
+			case "null":
+				body["network"] = nil
+			case "empty", "static":
+				body["network"] = []any{}
+			}
+			if kind == "static" {
+				body["filesystem"] = map[string]any{}
+			}
+			code, out := call(t, s, "POST", "/v1/openshell/apply", token, body)
+			if kind == "empty" {
+				if code != 200 || out["passed"] != true || calls == 0 || writes != 0 {
+					t.Fatalf("explicit empty intent must be a verified no-op: %d calls=%d writes=%d %v", code, calls, writes, out)
+				}
+			} else if code != 400 || calls != 0 {
+				t.Fatalf("ambiguous/static intent must fail before backend call: %d calls=%d %v", code, calls, out)
+			}
+		})
+	}
+}
+
 func TestLedgerAssetsPermissionsFindings(t *testing.T) {
 	s, _ := newServer(t, "block")
 	demo := filepath.Join(s.d.Home, ".hermes", "skills", "demo")

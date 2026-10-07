@@ -89,9 +89,14 @@ def compile_policy(desired_policy: dict, capabilities: BackendCapabilities) -> C
     if fs is not None:
         if not isinstance(fs, dict):
             raise UnsupportedCapability("filesystem_policy_invalid")
+        if set(fs) - {"read_only", "read_write"}:
+            raise UnsupportedCapability("filesystem_policy_unknown_field")
+        for value in fs.values():
+            if not isinstance(value, list) or any(not isinstance(path, str) for path in value):
+                raise UnsupportedCapability("filesystem_policy_invalid")
         artifact["filesystem_policy"] = {
-            "read_only": fs.get("read_only") or [],
-            "read_write": fs.get("read_write") or [],
+            "read_only": fs.get("read_only", []),
+            "read_write": fs.get("read_write", []),
         }
         # 这里只标记制品携带静态意图；plan_change 必须与 live static
         # 内容比较，相同内容不得仅因字段存在而要求 generation。

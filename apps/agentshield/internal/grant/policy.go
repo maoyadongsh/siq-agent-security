@@ -82,18 +82,49 @@ func CompilePolicy(desired map[string]any, caps Capabilities) (*Compiled, error)
 	var unsupported []string
 	needsGen := false
 
-	if fs, ok := desired["filesystem"].(map[string]any); ok && len(fs) > 0 {
+	if value := desired["filesystem"]; value != nil {
+		fs, ok := value.(map[string]any)
+		if !ok {
+			return nil, &ErrUnsupported{"filesystem_policy_invalid"}
+		}
+		for key := range fs {
+			if key != "read_only" && key != "read_write" {
+				return nil, &ErrUnsupported{"filesystem_policy_unknown_field"}
+			}
+		}
+		for _, value := range fs {
+			paths, ok := value.([]any)
+			if !ok || paths == nil {
+				return nil, &ErrUnsupported{"filesystem_policy_invalid"}
+			}
+			for _, path := range paths {
+				if _, ok := path.(string); !ok {
+					return nil, &ErrUnsupported{"filesystem_policy_invalid"}
+				}
+			}
+		}
 		artifact["filesystem_policy"] = map[string]any{
 			"read_only":  listOrEmpty(fs["read_only"]),
 			"read_write": listOrEmpty(fs["read_write"]),
 		}
 		needsGen = true
 	}
-	if proc, ok := desired["process"].(map[string]any); ok && len(proc) > 0 {
+	if value := desired["process"]; value != nil {
+		proc, ok := value.(map[string]any)
+		if !ok {
+			return nil, &ErrUnsupported{"process_policy_invalid"}
+		}
 		artifact["process"] = proc
 		needsGen = true
 	}
-	if net, ok := desired["network"].([]any); ok && len(net) > 0 {
+	if value := desired["network"]; value != nil {
+		net, ok := value.([]any)
+		if !ok {
+			return nil, &ErrUnsupported{"network_policy_invalid"}
+		}
+		if net == nil {
+			net = []any{}
+		}
 		if !caps.DynamicNetworkUpdate {
 			unsupported = append(unsupported, "network.dynamic_update")
 			needsGen = true

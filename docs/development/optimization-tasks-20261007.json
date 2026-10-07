@@ -107,11 +107,16 @@
     {
       "id": "OPT-07",
       "title": "策略语义与部署入口",
-      "status": "planned",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/development/optimization-opt07-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "静态 generation 仍不支持，明确拒绝而非动态应用；企业与本地管理员入口采用不同身份合同，不宣称相同审批流程。",
+        "本批为语义、受控 CLI 入口矩阵与现有回归；真实业务同候选效果由 OPT-08–10 验收。"
+      ]
     },
     {
       "id": "OPT-08",

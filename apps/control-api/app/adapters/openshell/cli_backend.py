@@ -557,9 +557,11 @@ class OpenShellCliBackend(EnforcementAdapter):
         current = self.read_effective_policy(target)
         static_changed = any(
             key in compiled.artifact
+            and bool(compiled.artifact[key])
             and (
                 not isinstance(current.policy.get(key), dict)
-                or any(current.policy[key].get(field) != value for field, value in compiled.artifact[key].items())
+                or any(field not in current.policy[key] or current.policy[key][field] != value
+                       for field, value in compiled.artifact[key].items())
             )
             for key in ("filesystem_policy", "process")
         )

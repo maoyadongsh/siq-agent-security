@@ -7,6 +7,12 @@
 
 以下为企业控制面说明。
 
+### 策略更新语义（OPT-07）
+
+策略域省略/null 表示不更新，不表示删除。filesystem 对象替换 `read_only` 与 `read_write` 两个列表，缺省列表为空；未知字段或非法列表拒绝。`network: []` 明确清空网络许可，`process: {}` 则是空字段补丁。静态内容变化需 generation，当前动态部署不支持时明确拒绝；网络更新保留完整静态段及后端扩展。详见[版本化语义合同](../packages/contracts/desired-policy-update-semantics.v1.md)。
+
+旧 `/deployments` 仍受支持并执行当前审批、绑定与目标授权检查；预览提交、持久 submission 和批量执行另要求相应摘要。各入口的职责与验证见 [OPT-07 记录](development/optimization-opt07-validation-20261007.md)。
+
 ### 威胁扫描资源边界（OPT-03）
 
 `POST /api/v1/assets/{id}/threat-scan` 在对象定位和权限检查后，以验证身份的 tenant/actor 计费。每进程默认每 60 秒 actor 20 次、tenant 汇总 60 次、全局同时分析 2 次；全部条件原子检查，通过才记一次预算。预算耗尽返回 429、固定错误类别和 `Retry-After`，不写 Finding、隔离或成功扫描记录。解码、内容绑定及分析均在并发槽内，异常必释放槽位；无效内容也消耗已获预算。拒绝分类计数只保留进程聚合值，不保留内容、身份或凭据。

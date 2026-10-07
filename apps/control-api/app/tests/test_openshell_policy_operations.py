@@ -229,6 +229,44 @@ def test_static_plan_compares_values_not_field_presence():
     assert backend.plan_change("s1", changed).kind == "generation"
 
 
+@pytest.mark.parametrize(("intent", "kind"), [
+    ({}, "dynamic"),
+    ({"filesystem": None, "process": None}, "dynamic"),
+    ({"filesystem": {}}, "generation"),
+    ({"filesystem": {"read_only": ["/usr"]}}, "generation"),
+    ({"filesystem": {"read_only": [], "read_write": ["/sandbox"]}}, "generation"),
+    ({"process": {}}, "dynamic"),
+    ({"process": {"run_as_user": "sandbox"}}, "dynamic"),
+    ({"process": {"run_as": None}}, "generation"),
+    ({"process": {"run_as_user": "other"}}, "generation"),
+])
+def test_static_intent_is_not_lost_during_network_update(intent, kind):
+    runner = StatefulRunner()
+    backend = OpenShellCliBackend(runner=runner, operation_registry=PolicyOperationRegistry())
+    compiled = backend.compile({"network": [], "enforcement_mode": "block", **intent})
+    plan = backend.plan_change("s1", compiled)
+    assert plan.kind == kind
+    if kind == "generation":
+        with pytest.raises(AdapterError, match="change_plan_mismatch"):
+            backend.apply_dynamic("s1", plan, plan.expected_revision)
+    else:
+        receipt = backend.apply_dynamic("s1", plan, plan.expected_revision)
+        assert receipt.result == "no_op"
+    assert runner.set_calls == 0
+    assert runner.policy == BASE_POLICY  # Includes unknown static extensions.
+
+
+def test_empty_process_patch_does_not_create_a_missing_section():
+    runner = StatefulRunner()
+    runner.policy.pop("process")
+    backend = OpenShellCliBackend(runner=runner, operation_registry=PolicyOperationRegistry())
+    compiled = backend.compile({"network": [], "process": {}, "enforcement_mode": "block"})
+    plan = backend.plan_change("s1", compiled)
+    assert plan.kind == "dynamic"
+    assert backend.apply_dynamic("s1", plan, plan.expected_revision).result == "no_op"
+    assert "process" not in runner.policy and runner.set_calls == 0
+
+
 def test_apply_and_rollback_require_policy_load_acknowledgement():
     runner = StatefulRunner()
     writes = []
