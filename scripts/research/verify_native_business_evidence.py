@@ -80,6 +80,8 @@ def verify(report: Path, contracts: Path) -> dict:
         previous = digest
         by_hash[digest] = row
         invocation = row["native_invocation"]
+        invocation_ids = {ref["context_id"] for ref in invocation["contexts"]}
+        require(len(invocation_ids) == len(invocation["contexts"]), "duplicate_invocation_context")
         for reference in invocation["contexts"]:
             context = contexts[reference["context_id"]]
             schemas["skill-execution-context.v2.schema.json"].validate(context)
@@ -99,6 +101,17 @@ def verify(report: Path, contracts: Path) -> dict:
                     "context_lifetime_mismatch")
             require(context["loader"]["runtime_artifact_sha256"] == document["build"]["artifact_sha256"],
                     "runtime_artifact_mismatch")
+            ancestor = context
+            ancestry = {context["context_id"]}
+            while ancestor.get("parent"):
+                parent = ancestor["parent"]
+                require(parent["context_id"] in invocation_ids, "parent_context_missing")
+                require(parent["context_id"] not in ancestry, "context_ancestry_cycle")
+                ancestry.add(parent["context_id"])
+                ancestor = contexts[parent["context_id"]]
+                require(ancestor["signature"] == parent["signature"], "parent_signature_mismatch")
+                require(ancestor["subject"] == context["subject"], "parent_subject_mismatch")
+                require(ancestor["agent_authority"] == context["agent_authority"], "parent_agent_mismatch")
             referenced.add(context["context_id"])
     require(previous == verification["receipts"]["head_hash"], "receipt_head_mismatch")
     require(referenced == set(contexts) and len(contexts) == verification["signed_context_count"],
