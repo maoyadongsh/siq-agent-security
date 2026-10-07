@@ -2712,3 +2712,5 @@ OPT-08 D2i 联验补充：宿主核验到期时间固定于登记，单调时钟
 OPT-08 D3a：按 [native-runtime-enrollment/v1](../packages/contracts/native-runtime-enrollment.v1.md)，既有管理身份端点可在显式 `serve --native-host` 且同一在线宿主依赖完整绑定、私有配置身份仍有效时处理已定义的创建 v3。未接线在写入前返回 503，语法错误 400；旧版本保持。签发只固定已批准基线及制品要求，读回始终 `unverified`，不能替代实际进程登记和逐次反向核验。该增量替代前述 D2 临时关闭创建门禁，但不将日常业务接入标为完成。
 
 OPT-08 D3b：按 [native-runtime-bootstrap/v1](../packages/contracts/native-runtime-bootstrap.v1.md)，覆盖包提供受保护启动初始化组件 ImageBootstrap。只接受启动器固定的非秘密主体、namespace 和排他通道目录；实际 UID/GID、目录身份、固定端点、逐包跨 PID namespace 凭据及配置一次性均必须核验。初始化不接受可替换回调、命令或凭据，不发出允许决定；失败不回退普通插件。覆盖包摘要包含本模块，生产启用和日常业务验收仍分开完成。
+
+OPT-08 D3c：按 [native-session-namespace/v1](../packages/contracts/native-session-namespace.v1.md)，原生初始化和分发共享 1–191 字符、非空 ASCII 冒号组件的 namespace 校验，原样保留真实请求身份前缀。派生会话最长 256 字节，服务端现有请求范围校验不放宽；实际联验须用 HTTP 签发子身份并仅将子凭据交给宿主转发器，验证错范围拒绝及继承基线撤权。
