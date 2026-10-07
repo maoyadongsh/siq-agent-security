@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Linux native host authenticated metadata transport; not execution authority",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "sequence",
+    "result"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "native-host-response/v1"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "result": {
+      "type": "object",
+      "maxProperties": 32
+    }
+  },
+  "$comment": "One UTF-8 JSON SOCK_SEQPACKET packet, at most 65536 bytes. Kernel SCM_CREDENTIALS and a pinned live process are required out of band. Payload requires its own application contract; this frame alone grants no authority."
+}

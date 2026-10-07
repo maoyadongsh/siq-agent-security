@@ -2684,3 +2684,5 @@ D1 按 ADR-056 新增签名 runtime identity v4/v5，将 `native_skill_policy.mo
 D1 查询桥接通过 `NativeCallStore.RequiredLookup` 将有效身份策略与已有精确原生调用验证绑定，并校验会话制品摘要。HTTP 在尚未配置原生查询时拒绝携带新策略的身份，返回固定 503；管理创建入口仍不接受新版本。低于 reader/writer 5 的候选还须通过有界旧身份格式预检（512 条、每条 16 KiB）；原生身份即使尚无调用，也不能回退到不理解此策略的发行。实际宿主验证、版本化管理读回及 serve 接线仍属后续集成。
 
 D2a 按 ADR-056 为原生身份读回新增 identity-issued/v3、request-identity-issued/v2、identity-self/v2、session-enrolled/v3 与混合 identities/v3。只从签名记录投影 native_skill_policy，runtime_state 仍为 unverified；旧版本不夹带策略。混合列表有任意原生条目即用 v3，Windows/旧式条目保持原形状。前端校验新策略、平台/路径及响应版本，旧适配器拒绝新会话合同；当前创建入口保持关闭，不因读回成功启用原生执行。
+
+D2b 按 ADR-056 增加 Linux 薄元数据通道：可信启动器固定进程 pidfd/PID/UID，Unix SEQPACKET 每包核对 SCM_CREDENTIALS，拒绝继承连接的其他进程、重放、截断、额外描述符和退出宿主。标准库 Python 可在缺少 os.pidfd_open 时调用当前 libc 的 pidfd_open；能力缺失即拒绝。事件/响应合同只定义 64 KiB 有界传输与递增序号，不授予权限。处理器、受保护启动归属/制品、业务事件及实际 OpenShell 挂载接入仍需独立完成，组件不自动安装或启用。
