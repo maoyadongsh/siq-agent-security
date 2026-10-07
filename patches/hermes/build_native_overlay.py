@@ -95,12 +95,16 @@ def build(source, destination):
             raise ValueError("native_overlay_source_digest_changed")
         output[name] = transform(name, raw.decode()).encode()
     runtime = ROOT / "adapters/runtime/hermes-agentshield"
-    for name in ("native_dispatch.py", "native_source.py", "native_channel.py", "native_online.py", "native_bootstrap.py"):
+    for name in ("native_dispatch.py", "native_source.py", "native_channel.py", "native_online.py", "native_bootstrap.py", "native_gateway.py"):
         raw = (runtime / name).read_bytes()
         compile(raw, name, "exec")
         output["siq_native_runtime/" + name] = raw
     output["siq_native_runtime/__init__.py"] = (
         b"from .native_dispatch import Runtime, configure, task_scope, call_scope, read_skill, verify_cache, preprocess_allowed, require_registry_dispatch\n"
+    )
+    output["hermes-gateway"] = (
+        b'import sys\nsys.path.insert(0, "/opt/hermes-agent")\n'
+        b'from siq_native_runtime.native_gateway import main\nraise SystemExit(main())\n'
     )
     output["HERMES-LICENSE"] = (Path(__file__).parent / "LICENSE").read_bytes()
     destination.mkdir(mode=0o700)

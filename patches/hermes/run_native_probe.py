@@ -12,7 +12,7 @@ from pathlib import Path
 from build_native_overlay import IMAGE, SOURCES
 
 
-def run(overlay, output):
+def run(overlay, output, *, gateway=False):
     overlay, output = overlay.resolve(strict=True), output.resolve()
     manifest = json.loads((overlay / "manifest.json").read_text())
     if manifest["base_image_id"] != IMAGE or manifest["source_sha256"] != SOURCES:
@@ -28,8 +28,11 @@ def run(overlay, output):
            "--tmpfs", "/tmp:rw,nosuid,nodev,size=256m"]
     for name in SOURCES:
         cmd += ["--mount", f"type=bind,src={overlay/name},dst=/opt/hermes-agent/{name},readonly"]
+    probe = "native_gateway_probe.py" if gateway else "native_probe.py"
+    if gateway:
+        cmd += ["--mount", f"type=bind,src={overlay/'hermes-gateway'},dst=/opt/hermes-agent/hermes-gateway,readonly"]
     cmd += ["--mount", f"type=bind,src={overlay/'siq_native_runtime'},dst=/opt/hermes-agent/siq_native_runtime,readonly",
-            "--mount", f"type=bind,src={Path(__file__).with_name('native_probe.py').resolve()},dst=/native-probe.py,readonly",
+            "--mount", f"type=bind,src={Path(__file__).with_name(probe).resolve()},dst=/native-probe.py,readonly",
             "--entrypoint", "/opt/siq/hermes/venv/bin/python", IMAGE, "-I", "-B", "/native-probe.py"]
     # Docker writes the exact owned container ID before starting it. Clean up
     # that ID on timeout as well as normal exit, never a user container by name.
@@ -62,5 +65,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--overlay", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--gateway", action="store_true", help="Real offline gateway startup; no Authority or model")
     args = parser.parse_args()
-    run(args.overlay, args.output)
+    run(args.overlay, args.output, gateway=args.gateway)

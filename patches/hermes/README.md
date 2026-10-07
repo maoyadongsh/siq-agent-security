@@ -25,3 +25,5 @@ python patches/hermes/build_native_overlay.py \
 真实 OpenShell＋Hermes＋Go 联验已覆盖两个合成 Skill 的权限交集、并发任务、重放拒绝及三层撤权，见 [D2j](../../docs/development/optimization-opt08-lifecycle-validation-20261007.md)。原生身份可通过显式在线宿主服务的管理 HTTP 创建 v3，再经运行 HTTP 登记会话，条件见 [native-runtime-enrollment/v1](../../packages/contracts/native-runtime-enrollment.v1.md)。签发与会话读回仍为 `unverified`；未登记实际原生任务不能执行。验收脚本不是日常业务启动器，manifest 的生产启用标记保持关闭。
 
 镜像 profile 可通过新增 `native_bootstrap.ImageBootstrap` 统一配置固定通道和 Runtime，禁止环境替换主体、可替换裁决回调和失败后重试；用法及真实联验见 [D3b](../../docs/development/optimization-opt08-runtime-bootstrap-validation-20261007.md)。初始化器本身必须受制品核验，不能把导入模块或 ready 描述当作运行保护证明。它不启动模型/网关、不管理 OpenShell 生命周期，正式业务入口仍待接入。
+
+覆盖包另提供固定的 `hermes-gateway` 入口：`/opt/siq/hermes/venv/bin/python -I -B /opt/hermes-agent/hermes-gateway <agent_id> <session_namespace> <channel_directory>`，在同一 PID 内先初始化、再进入现有 `gateway.run.main`。参数由可信宿主固定，不能携带旧 `SIQ_AGENT_SECURITY_*` 插件环境；运行凭据只留在宿主。该入口的实际离线网关启动、认证健康和 argv 保持检查见 [D3d](../../docs/development/optimization-opt08-gateway-entry-validation-20261007.md)，尚未替代业务仓库的授权、租约、Supervisor 和请求生命周期。`run_native_probe.py --gateway` 仅做离线启动验证，使用合成协调 socket，不声明在线 Authority 或业务验收通过。

@@ -160,7 +160,9 @@
         "docs/development/optimization-opt08-runtime-bootstrap-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/native-runtime-bootstrap.json",
         "docs/development/optimization-opt08-request-identity-validation-20261007.md",
-        "docs/development/evidence/optimization-20261007/native-request-identity.json"
+        "docs/development/evidence/optimization-20261007/native-request-identity.json",
+        "docs/development/optimization-opt08-gateway-entry-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-gateway-entry.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -175,7 +177,8 @@
         "D2j 实际 OpenShell/Hermes/Go 联验 18 项检查通过，23 次原生工具尝试产生 18 条签名回执（14 allow、4 deny）；重放、结束后调用和三种撤权共 5 次在裁决前拒绝，不伪称 deny 回执。覆盖同进程并发 reader/writer 隔离、SEC/Skill Grant/Agent 基线撤销及未受影响任务正向，宿主核对文件效果。仅测试材料与私有测试操作员撤权；日常入口、网络效果、过期/升级/漂移及审批重试未完成，9/16 保持不变。",
         "D3a 限定开放已定义的创建 v3：显式 native-host 完整绑定与私有配置仍有效，现有管理鉴权和批准基线约束不变，读回仍 unverified；实际 OpenShell 18 项检查改用真实 HTTP 配对/身份发行/会话登记通过。Go 全量45包、server定向race、全量vet、四目标构建、16项Python合同通过。此项替代历史 D2 创建入口关闭状态；Go服务仍为测试夹具启动，日常受保护启动器、真实业务接入及其余验收未完成，9/16不变。",
         "D3b 已实现受保护 ImageBootstrap：进程一次性初始化、排他私有通道目录、固定跨 PID namespace 凭据、关闭/漂移/fork/超时失败关闭，不读环境替换身份、不接受可替换裁决回调。39项新增启动测试、相关共138项Python通过；实际OpenShell使用该初始化器并核验其制品摘要，18项权限检查通过。该组件不是日常网关启动器，业务API/模型及其余验收仍待接入，9/16保持。",
-        "D3c 修复原生 namespace 与真实请求身份不兼容：共用严格 ASCII 组件校验、派生会话不超过256字节。真实HTTP签发子身份、错误namespace拒绝及子凭据运行18项权限检查通过；163项相关Python、Go身份定向与server vet通过。业务请求参数仍为合成，日常业务入口和业务授权生命周期未完成，9/16保持。"
+        "D3c 修复原生 namespace 与真实请求身份不兼容：共用严格 ASCII 组件校验、派生会话不超过256字节。真实HTTP签发子身份、错误namespace拒绝及子凭据运行18项权限检查通过；163项相关Python、Go身份定向与server vet通过。业务请求参数仍为合成，日常业务入口和业务授权生命周期未完成，9/16保持。",
+        "D3d 固定hermes-gateway入口在同一PID先初始化再调用真实gateway.run.main，拒绝旧插件环境和任意额外参数。62项相关Python、固定镜像真实离线网关8项和原生函数21项通过；网关探针的启动socket为合成协调设施，不证明在线Authority或业务验收。业务身份客户端/宿主监管与日常API/模型接入仍未完成，9/16保持。"
       ]
     },
     {

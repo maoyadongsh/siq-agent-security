@@ -72,3 +72,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3b 受保护运行初始化](optimization-opt08-runtime-bootstrap-validation-20261007.md)已提供 ImageBootstrap 并纳入固定覆盖包：一次性配置、排他私有目录、固定跨 PID namespace 响应凭据及目录/端点变化、fork、超时和关闭后的拒绝。新增 39 项启动测试、相关共 138 项 Python 测试通过；实际 OpenShell 使用该初始化器及其制品摘要，18 项权限检查通过。未改 Go 生产逻辑，未重复无关全量。初始化器尚未接入日常网关与业务 API，业务核心文件的既有修改继续保留；OPT-08 与 9/16 不变。
 
 [D3c 请求级子身份衔接](optimization-opt08-request-identity-validation-20261007.md)修复原生 namespace 无法兼容业务请求前缀的问题：两入口共用严格 ASCII 冒号组件校验，派生会话不超过 256 字节。真实 HTTP 签发子身份、错范围登记拒绝、子凭据 OpenShell 联验 18 项通过，包含父基线撤销后拒绝；163 项相关 Python、Go 身份定向与 server vet 通过。请求参数和 Skill 内容仍为合成，日常业务 API/授权生命周期尚未验收，OPT-08 与 9/16 不变。
+
+[D3d 固定网关入口](optimization-opt08-gateway-entry-validation-20261007.md)在同一 PID 初始化后进入已有 gateway.run.main，拒绝旧插件环境和任意额外参数；62 项相关 Python、固定镜像真实网关启动 8 项与原生函数 21 项通过。网关启动 socket 为合成协调设施，无模型/在线裁决，不能替代真实业务验收。业务身份客户端、原生宿主监管及日常 API 接线继续实施，OPT-08 与 9/16 不变。
