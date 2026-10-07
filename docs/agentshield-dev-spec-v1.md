@@ -2710,3 +2710,5 @@ OPT-08 D2i：按 [native-decision-relay/v1](../packages/contracts/native-decisio
 OPT-08 D2i 联验补充：宿主核验到期时间固定于登记，单调时钟与真实 guard 每次重验，避免 UTC 重算漂移。原生 `skill_view` 仅在完整有效原生调用证据下按受保护 `skill.load/tool.invoke` 工作流分类，参数严格限于规范相对 name/file_path；正文仍必须经 Go 真实安装来源同步校验。普通同名工具、缺证据或非法参数保持 unknown，不通过放宽全局效果表解决加载问题。
 
 OPT-08 D3a：按 [native-runtime-enrollment/v1](../packages/contracts/native-runtime-enrollment.v1.md)，既有管理身份端点可在显式 `serve --native-host` 且同一在线宿主依赖完整绑定、私有配置身份仍有效时处理已定义的创建 v3。未接线在写入前返回 503，语法错误 400；旧版本保持。签发只固定已批准基线及制品要求，读回始终 `unverified`，不能替代实际进程登记和逐次反向核验。该增量替代前述 D2 临时关闭创建门禁，但不将日常业务接入标为完成。
+
+OPT-08 D3b：按 [native-runtime-bootstrap/v1](../packages/contracts/native-runtime-bootstrap.v1.md)，覆盖包提供受保护启动初始化组件 ImageBootstrap。只接受启动器固定的非秘密主体、namespace 和排他通道目录；实际 UID/GID、目录身份、固定端点、逐包跨 PID namespace 凭据及配置一次性均必须核验。初始化不接受可替换回调、命令或凭据，不发出允许决定；失败不回退普通插件。覆盖包摘要包含本模块，生产启用和日常业务验收仍分开完成。
