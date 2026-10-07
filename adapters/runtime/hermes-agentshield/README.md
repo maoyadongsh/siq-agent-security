@@ -123,3 +123,5 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 可信启动器可使用 [HostLoop](../../../packages/contracts/native-host-loop.v1.md) 在固定业务租约内持续服务已登记进程，正常空闲继续等待，已连接请求失败、停止、到期或实际 guard 失效均拒绝。循环不续租、不替代业务授权，所属启动器负责在目录上下文退出后关闭 guard 并精确回收沙箱。[真实 OpenShell 联验](../../../docs/development/optimization-opt08-host-loop-validation-20261007.md)已通过，日常业务 builder/Supervisor 与模型闭环仍待验收。
 
 `host_openshell.OpenShellBackend` 提供正式的[本机 OpenShell 后端归属核验](../../../packages/contracts/native-openshell-backend.v1.md)，逐次核对固定 Docker 端点、完整容器/镜像、OpenShell 标签和内核进程归属，不能由模型指定端点或命令。该组件已替代验收脚本回调并通过[真实联验](../../../docs/development/optimization-opt08-openshell-backend-validation-20261007.md)，目前仅支持 Linux rootful Docker；业务监管与跨平台验收状态保持独立。
+
+`host_session.HostSession` 组合以上资源，并通过 [BusinessGuard](../../../packages/contracts/native-host-session.v1.md) 绑定真实业务监管者 pidfd、固定整体期限和最多90秒的授权心跳。心跳必须来自监管者的既有业务授权复查，不能自动授权或使过期会话复活。该进程内编排已完成[组件与真实链路验证](../../../docs/development/optimization-opt08-host-session-validation-20261007.md)，认证跨进程业务接入仍待完成。

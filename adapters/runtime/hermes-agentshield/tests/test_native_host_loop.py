@@ -154,6 +154,21 @@ def test_failed_start_cannot_resume_after_guard_returns(loop):
         value.start()
 
 
+def test_failed_thread_creation_still_allows_owner_cleanup(loop, monkeypatch):
+    value, _, _, guard = loop
+
+    def fail(_thread):
+        raise RuntimeError("fixture thread allocation failure")
+
+    monkeypatch.setattr(threading.Thread, "start", fail)
+    with pytest.raises(online.OnlineError):
+        value.start()
+    value.close()
+    assert value._thread.ident is None and not guard.closed
+    with pytest.raises(online.OnlineError):
+        value.start()
+
+
 def test_forked_controller_refuses_before_inherited_lock(loop):
     value, _, _, _ = loop
     # Hold the controller lock across fork: a child must not wait for a parent

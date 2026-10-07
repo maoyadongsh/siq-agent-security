@@ -168,7 +168,9 @@
         "docs/development/optimization-opt08-host-loop-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/native-host-loop.json",
         "docs/development/optimization-opt08-openshell-backend-validation-20261007.md",
-        "docs/development/evidence/optimization-20261007/native-openshell-backend.json"
+        "docs/development/evidence/optimization-20261007/native-openshell-backend.json",
+        "docs/development/optimization-opt08-host-session-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-session.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -187,7 +189,8 @@
         "D3d 固定hermes-gateway入口在同一PID先初始化再调用真实gateway.run.main，拒绝旧插件环境和任意额外参数。62项相关Python、固定镜像真实离线网关8项和原生函数21项通过；网关探针的启动socket为合成协调设施，不证明在线Authority或业务验收。业务身份客户端/宿主监管与日常API/模型接入仍未完成，9/16保持。",
         "D3e 在独立业务分支新增原生身份HTTP客户端，49项定向测试通过；真实Go HTTP首次签发/登记/取消与撤销后拒绝、运行身份幂等读回及父基线撤销后精确取消均通过，同次OpenShell18项检查通过。业务改动单独提交，既有用户工作保留。客户端尚未接入日常builder/Supervisor，业务授权/租约与模型闭环继续，9/16不变。",
         "D3f 已实现固定租约宿主持续循环：空闲等待保持、坏包/已连接超时/停止/到期/guard失效拒绝，fork后控制及失败后重启拒绝；88项相关Python通过，最终循环15项通过（新增2项），Ruff通过。实际OpenShell18项权限检查、18条签名回执及线程/沙箱清理通过；业务客户端HTTP联验保持通过。日常builder/Supervisor、业务授权生命周期和模型闭环尚未验收，9/16不变。",
-        "D3g 将验收脚本的OpenShell后端归属回调替换为正式宿主组件，固定本机rootful Docker、完整容器/镜像/namespace、进程清单和内核cgroup/NSpid；失败永久拒绝。53项最终后端专项通过，相关阶段63项通过（重叠）；真实OpenShell18项权限检查、18条签名回执及清理通过。非root读取root init namespace失败及批次总等待超时已保留并修复，逐请求期限未放宽。组件仍未接入日常Supervisor跨进程生命周期和真实模型业务，9/16不变。"
+        "D3g 将验收脚本的OpenShell后端归属回调替换为正式宿主组件，固定本机rootful Docker、完整容器/镜像/namespace、进程清单和内核cgroup/NSpid；失败永久拒绝。53项最终后端专项通过，相关阶段63项通过（重叠）；真实OpenShell18项权限检查、18条签名回执及清理通过。非root读取root init namespace失败及批次总等待超时已保留并修复，逐请求期限未放宽。组件仍未接入日常Supervisor跨进程生命周期和真实模型业务，9/16不变。",
+        "D3h 已实现HostSession统一编排与BusinessGuard：绑定真实监管者pidfd、固定整体期限及最多90秒心跳，过期/退出/停止后拒绝，续期不能复活；循环退出未确认时保留在用资源。最终91项相关定向通过；实际OpenShell18项检查、18条签名回执、4次合成业务续期及完整会话资源清理通过。线程创建失败清理修复由增量单测覆盖，live宿主加载修复前host_online摘要单列。尚未提供认证跨进程业务控制，未验收日常API/模型，9/16不变。"
       ]
     },
     {

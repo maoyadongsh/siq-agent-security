@@ -80,3 +80,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3f 宿主持续服务循环](optimization-opt08-host-loop-validation-20261007.md)已区分正常空闲与连接失败，在固定租约内服务，停止/过期/guard 失效后拒绝转交允许结果；fork 后控制和失败后重启拒绝。88 项相关 Python 通过，最终循环 15 项通过（新增 2 项），Ruff 通过；实际 OpenShell 18 项权限检查、18 条签名回执、宿主效果及线程/沙箱清理通过。业务身份客户端 HTTP 联验保持通过，日常 builder/Supervisor 与模型闭环尚未验收，OPT-08 与 9/16 不变。
 
 [D3g OpenShell 后端归属核验](optimization-opt08-openshell-backend-validation-20261007.md)已从验收脚本提取为正式宿主组件，固定本机 Docker 端点、完整容器/镜像/OpenShell 归属和真实进程清单、cgroup/NSpid，异常永久拒绝。最终后端 53 项通过，相关阶段 63 项通过（重叠）；真实 OpenShell 18 项检查、18 条签名回执及清理通过。已修复非 root 读取 root init namespace 的不合理前提，并减少夹具重复健康轮询、调整整批等待上限，保留三轮失败记录；逐请求期限不变。日常 Supervisor 跨进程交接与模型业务仍未验收，OPT-08 与 9/16 不变。
+
+[D3h 业务监管与宿主会话](optimization-opt08-host-session-validation-20261007.md)已统一真实后端/guard、监管者 pidfd、固定期限/90秒内心跳、Verifier 和循环生命周期；过期/退出/停止后拒绝，线程退出未确认时保留在用资源。最终相关91项通过；真实OpenShell18项检查、18条签名回执、4次合成业务续期及会话/沙箱清理通过。另修复线程创建失败后的清理异常，由增量负向验证；live旧宿主模块与最终源码摘要分列。跨进程认证控制、日常API及模型业务仍未验收，OPT-08与9/16不变。

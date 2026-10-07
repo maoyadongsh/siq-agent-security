@@ -13,7 +13,7 @@ import time
 from pathlib import Path
 
 from build_native_overlay import IMAGE, build
-from openshell_image_probe import ADAPTER, PYTHON, ROOT, digest, runtime_options
+from openshell_image_probe import ADAPTER, PYTHON, ROOT, digest, runtime_parameters
 
 RUNTIME = "/opt/siq/native-business"
 BUSINESS_CLIENT = Path("/home/maoyd/siq-research-engine/scripts/openshell/probe_agentshield_native_identity.py")
@@ -169,99 +169,103 @@ def prepare(output, command):
 
 
 def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, row, command, exec_log):
-    module, _, options = runtime_options(prepared, peer=peer, cid=cid, namespace=namespace,
-        sandbox=sandbox, init_pid=init_pid, init_groups=init_groups, command=command)
+    backend, runtime = runtime_parameters(prepared, peer=peer, cid=cid, namespace=namespace,
+        sandbox=sandbox, init_pid=init_pid, init_groups=init_groups)
     ready = _owned.ready
     credential = Path(ready["credential_path"]).read_text()
-    trace = []
+    # This probe loads modules as an isolated package. Reuse its existing
+    # online module so class identities match the already-running Verifier.
+    package = _owned.module.__package__
+    sys.modules[package + ".host_online"] = _owned.module
+    spec = importlib.util.spec_from_file_location(package + ".host_session", ADAPTER / "host_session.py")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    controls, events = {}, []
+    original_dispatch = _owned.module.DecisionRelay.dispatch
 
-    def diagnostics(frame, event, arg):
-        if event == "exception" and frame.f_code.co_filename == str(ADAPTER / "host_runtime.py"):
-            trace.append({"function": frame.f_code.co_name, "line": frame.f_lineno, "exception_type": arg[0].__name__})
-        return diagnostics
+    def dispatch(relay, event):
+        # The fixed test operator issues revocations through the real owned
+        # Go fixture; the product relay remains the only event/decision path.
+        target = {"context-after-revoke": "context", "grant-after-revoke": "writer",
+                  "baseline-after-revoke": "baseline"}.get(event.get("tool_call_id"))
+        if event.get("kind") == "call_prepare" and target and target not in controls:
+            (_owned.root / ("revoke-" + target)).touch(exist_ok=False)
+            ack = wait_json(_owned.root / ("revoked-" + target + ".json"), _owned.process, timeout=3)
+            assert ack == {"revoked": True}, "owned_revocation_failed"
+            controls[target] = True
+        answer = original_dispatch(relay, event)
+        request = event.get("request", {})
+        events.append({"kind": event.get("kind", "decision"),
+                       "call": event.get("tool_call_id", request.get("tool_call_id")),
+                       "accepted": answer.get("accepted"), "action": answer.get("action")})
+        return answer
 
-    previous = sys.gettrace()
+    _owned.module.DecisionRelay.dispatch = dispatch
+    host = module.HostSession(_owned.verifier, ready["endpoint"])
+    expires = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=150)
+    renewals = 0
     try:
-        sys.settrace(diagnostics)
-        guard = module.RuntimeGuard(**options)
+        host.start(backend=backend, runtime=runtime, subject=ready["subject"], installs=ready["installs"],
+            channel_directory=row["channel_directory"], credential=credential, supervisor_pid=os.getpid(),
+            expires_at=expires, authorization_expires_at=datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=60))
+        deadline, next_health, next_renewal = time.monotonic() + 110, 0.0, 0.0
+        while True:
+            rows = [json.loads(line) for line in exec_log.read_text(errors="replace").splitlines()
+                    if line.startswith('{"native_online_verified":')]
+            if rows:
+                result = rows[-1]
+                break
+            assert time.monotonic() < deadline, "owned_online_result_timeout"
+            if time.monotonic() >= next_renewal:
+                # Synthetic business-authorization operator for this probe.
+                # Daily Supervisor must perform its actual authorization check.
+                host.renew(supervisor_pid=os.getpid(), authorization_expires_at=min(expires,
+                    datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=60)))
+                renewals += 1
+                next_renewal = time.monotonic() + 20
+            if time.monotonic() >= next_health:
+                host.assert_running()
+                next_health = time.monotonic() + 1
+            time.sleep(.1)
+        host.assert_running()
     finally:
-        sys.settrace(previous)
-        if trace:
-            (_owned.output / "guard-diagnostics.json").write_text(json.dumps(trace[-32:], indent=2))
-    with guard:
-        _owned.verifier.register(ready["subject"], guard, ready["installs"], lifetime=150)
-        publisher = _owned.module.Publisher(_owned.config, ready["endpoint"], ready["subject"], guard)
-        relay = _owned.module.DecisionRelay(publisher, credential)
-        original_dispatch = relay.dispatch
-        controls, events = {}, []
-
-        def dispatch(event):
-            # The test operator changes only this owned Authority fixture.
-            # Actual events/decisions still traverse the unmodified relay.
-            target = {"context-after-revoke": "context", "grant-after-revoke": "writer",
-                      "baseline-after-revoke": "baseline"}.get(event.get("tool_call_id"))
-            if event.get("kind") == "call_prepare" and target and target not in controls:
-                (_owned.root / ("revoke-" + target)).touch(exist_ok=False)
-                ack = wait_json(_owned.root / ("revoked-" + target + ".json"), _owned.process, timeout=3)
-                assert ack == {"revoked": True}, "owned_revocation_failed"
-                controls[target] = True
-            answer = original_dispatch(event)
-            request = event.get("request", {})
-            events.append({"kind": event.get("kind", "decision"),
-                           "call": event.get("tool_call_id", request.get("tool_call_id")),
-                           "accepted": answer.get("accepted"), "action": answer.get("action")})
-            return answer
-
-        relay.dispatch = dispatch  # Owned test operator instrumentation only.
-        channel = sys.modules[_owned.module.__package__ + ".native_channel"]
-        expires = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=150)
-        with guard.namespace_channel_directory(row["channel_directory"]) as fd:
-            with channel.NamespaceHostChannel(fd, guard.peer, timeout=5) as host, _owned.module.HostLoop(host, relay, expires_at=expires) as loop:
-                # The complete batch includes 23 attempts with repeated real
-                # backend checks; this is not an individual request deadline.
-                deadline, next_health = time.monotonic() + 110, 0.0
-                while True:
-                    rows = [json.loads(line) for line in exec_log.read_text(errors="replace").splitlines()
-                            if line.startswith('{"native_online_verified":')]
-                    if rows:
-                        result = rows[-1]
-                        break
-                    assert time.monotonic() < deadline, "owned_online_result_timeout"
-                    if time.monotonic() >= next_health:
-                        loop.assert_running()
-                        next_health = time.monotonic() + 1
-                    time.sleep(.1)
-                loop.assert_running()
-            result["host_loop_stopped"] = not loop._thread.is_alive()
-            assert result["host_loop_stopped"]
-            (_owned.output / "runtime-result.json").write_text(json.dumps(result, indent=2) + "\n")
-            assert result["native_online_verified"] and all(result["checks"].values()), "owned_native_online_check_failed"
-            process_root = Path(f"/proc/{peer}/root")
-            effect = process_root / "sandbox/native-business/writer-allowed.txt"
-            assert digest(effect.read_bytes()) == result["output_sha256"]
-            for name in ("reader-denied.txt", "switch-denied.txt", "replay-denied.txt", "ended-denied.txt",
-                         "concurrent-reader.txt", "context-revoked-denied.txt", "grant-revoked-denied.txt"):
-                assert not (effect.parent / name).exists()
-            for name, content in {"concurrent-writer.txt": "concurrent-writer",
-                                  "context-before.txt": "before-context-revocation",
-                                  "grant-before.txt": "before-grant-revocation"}.items():
-                assert (effect.parent / name).read_text() == content
-            assert not (process_root / "sandbox/outside-denied.txt").exists()
-            result["independent_host_effect_check"] = True
-            assert controls == {"context": True, "writer": True, "baseline": True}
-            assert not any(event["call"] == "after-task-end" for event in events)
-            result["host_observed_events"] = events
-            result["revocations"] = controls
-        if _owned.business_client is not None:
-            result["business_client_start"] = _owned.business_client
-            result["business_client_cancel_after_baseline_revocation"] = _owned.check_business_client(cancel=True)
-        (_owned.root / "finish").touch()
-        _owned.process.wait(timeout=10)
-        assert _owned.process.returncode == 0, "owned_authority_verification_failed"
-        authority = json.loads((_owned.root / "authority-result.json").read_text())
-        (_owned.output / "authority-result.json").write_text(json.dumps(authority, indent=2) + "\n")
-        result["authority"] = {k: authority[k] for k in ("signed_chain_verified", "receipt_count")}
-        result["artifact_sha256"] = prepared["artifact"]
-        result["image_id"] = prepared["image"]
-        result["files"] = prepared["files"]
-        return result
+        try:
+            host.close()
+        finally:
+            _owned.module.DecisionRelay.dispatch = original_dispatch
+    result["host_loop_stopped"] = not host._loop._thread.is_alive()
+    result["host_session_resources_closed"] = host._guard._closed and host._fence._pin is None and host._directory is None
+    result["synthetic_supervisor_renewals"] = renewals
+    assert result["host_loop_stopped"] and result["host_session_resources_closed"] and renewals > 0
+    (_owned.output / "runtime-result.json").write_text(json.dumps(result, indent=2) + "\n")
+    assert result["native_online_verified"] and all(result["checks"].values()), "owned_native_online_check_failed"
+    process_root = Path(f"/proc/{peer}/root")
+    effect = process_root / "sandbox/native-business/writer-allowed.txt"
+    assert digest(effect.read_bytes()) == result["output_sha256"]
+    for name in ("reader-denied.txt", "switch-denied.txt", "replay-denied.txt", "ended-denied.txt",
+                 "concurrent-reader.txt", "context-revoked-denied.txt", "grant-revoked-denied.txt"):
+        assert not (effect.parent / name).exists()
+    for name, content in {"concurrent-writer.txt": "concurrent-writer",
+                          "context-before.txt": "before-context-revocation",
+                          "grant-before.txt": "before-grant-revocation"}.items():
+        assert (effect.parent / name).read_text() == content
+    assert not (process_root / "sandbox/outside-denied.txt").exists()
+    result["independent_host_effect_check"] = True
+    assert controls == {"context": True, "writer": True, "baseline": True}
+    assert not any(event["call"] == "after-task-end" for event in events)
+    result["host_observed_events"] = events
+    result["revocations"] = controls
+    if _owned.business_client is not None:
+        result["business_client_start"] = _owned.business_client
+        result["business_client_cancel_after_baseline_revocation"] = _owned.check_business_client(cancel=True)
+    (_owned.root / "finish").touch()
+    _owned.process.wait(timeout=10)
+    assert _owned.process.returncode == 0, "owned_authority_verification_failed"
+    authority = json.loads((_owned.root / "authority-result.json").read_text())
+    (_owned.output / "authority-result.json").write_text(json.dumps(authority, indent=2) + "\n")
+    result["authority"] = {k: authority[k] for k in ("signed_chain_verified", "receipt_count")}
+    result["artifact_sha256"] = prepared["artifact"]
+    result["image_id"] = prepared["image"]
+    result["files"] = prepared["files"]
+    return result

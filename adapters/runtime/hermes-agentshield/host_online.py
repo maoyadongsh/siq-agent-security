@@ -454,7 +454,7 @@ class HostLoop:
         with self._lock:
             self._close_channel()
             thread = self._thread
-        if thread is not None:
+        if thread is not None and thread.ident is not None:
             if thread is threading.current_thread():
                 raise _failure()
             thread.join(timeout=6)

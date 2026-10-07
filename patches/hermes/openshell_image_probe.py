@@ -106,6 +106,18 @@ def prepare(output, command):
             "argv": [PYTHON, "-I", "-B", RUNTIME + "/bootstrap.py"], "skill_source": str(context / "skill")}
 
 
+def runtime_parameters(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups):
+    backend = {"container_id": cid, "image_id": prepared["image"], "namespace": namespace,
+               "sandbox": sandbox, "pid": peer, "init_pid": init_pid, "uid": os.getuid(), "gid": os.getgid(),
+               "artifact_sha256": prepared["artifact"], "cgroup": init_groups}
+    runtime = {"pid": peer, "uid": os.getuid(), "gid": os.getgid(), "artifact_sha256": prepared["artifact"],
+               "executable_sha256": prepared["executable"],
+               "argv_sha256": digest(b"\0".join(p.encode() for p in prepared["argv"]) + b"\0"),
+               "mounts": [], "code_files": {}, "image_files": prepared["files"],
+               "image_skill_roots": prepared.get("skill_roots", [{"source": prepared.get("skill_source"), "target": RUNTIME + "/skill"}])}
+    return backend, runtime
+
+
 def runtime_options(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, command):
     spec = importlib.util.spec_from_file_location("siq_image_probe_guard", ADAPTER / "host_runtime.py",
                                                 submodule_search_locations=[str(ADAPTER)])
@@ -118,15 +130,9 @@ def runtime_options(prepared, *, peer, cid, namespace, sandbox, init_pid, init_g
     backend_module = importlib.util.module_from_spec(backend_spec)
     sys.modules[backend_spec.name] = backend_module
     backend_spec.loader.exec_module(backend_module)
-    backend = backend_module.OpenShellBackend(container_id=cid, image_id=prepared["image"],
-        namespace=namespace, sandbox=sandbox, pid=peer, init_pid=init_pid, uid=os.getuid(), gid=os.getgid(),
-        artifact_sha256=prepared["artifact"], cgroup=init_groups)
-
-    options = {"pid": peer, "uid": os.getuid(), "gid": os.getgid(), "artifact_sha256": prepared["artifact"],
-               "executable_sha256": prepared["executable"],
-               "argv_sha256": digest(b"\0".join(p.encode() for p in prepared["argv"]) + b"\0"),
-               "mounts": [], "code_files": {}, "verify_backend": backend, "image_files": prepared["files"],
-               "image_skill_roots": prepared.get("skill_roots", [{"source": prepared.get("skill_source"), "target": RUNTIME + "/skill"}])}
+    backend, options = runtime_parameters(prepared, peer=peer, cid=cid, namespace=namespace,
+        sandbox=sandbox, init_pid=init_pid, init_groups=init_groups)
+    options["verify_backend"] = backend_module.OpenShellBackend(**backend)
     return module, channel, options
 
 

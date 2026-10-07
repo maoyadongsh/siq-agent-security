@@ -1,0 +1,108 @@
+{
+  "schema_version": "siq.optimization-native-host-session-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "11b3135b",
+  "tests": {
+    "initial_session_tests_passed": 16,
+    "related_final_tests_passed": 91,
+    "overlap": true,
+    "ruff": "passed",
+    "intentional_warning": "Multi-threaded fork refusal test retains Python warning."
+  },
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-native-host-session-01",
+    "namespace": "siq-opt08-ebb566640c1c",
+    "image_id": "sha256:2cee8fe692b02fb17906ab5798492c3e67114decf1b5a2e0227179a142daf10a",
+    "artifact_sha256": "476ec4fe2e988eb8384b47f03b1780112c8bc0ffbe3e66bd33c907a181feb65b",
+    "runtime_checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "host_loop_stopped": true,
+    "host_session_resources_closed": true,
+    "synthetic_supervisor_renewals": 4,
+    "independent_host_effect_check": true,
+    "signed_chain_verified": true,
+    "receipt_count": 18,
+    "receipt_actions": {
+      "allow": 14,
+      "deny": 4
+    },
+    "business_client_start": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "parent_native_policy_checked": true,
+        "child_identity_checked": true,
+        "child_credential_path_checked": true,
+        "session_enrollment_checked": true,
+        "first_child_issued_by_business_client": true,
+        "first_child_session_enrolled": true,
+        "first_child_cancel_confirmed": true,
+        "cancelled_child_readback_refused": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "business_client_cancel_after_baseline_revocation": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "cancel_confirmed": true,
+        "exact_child_cancelled": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "go_integration_seconds": 76.602,
+    "model_calls": 0,
+    "business_entry_acceptance": false
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "final_source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_session.py": "13ba369cd62e54daa0b2843a852385bb3398a4bbfc864cb53bf9a33e2802daa7",
+    "adapters/runtime/hermes-agentshield/host_online.py": "dd057195c93a0f413d4e6f05fc23bb751b6c685a06e8ee429c32a044d4205d3e",
+    "adapters/runtime/hermes-agentshield/tests/test_host_session.py": "92a5072451a214374e6ca4ecd7b7484bd7d01995e55af8abce8c618b199c6063",
+    "adapters/runtime/hermes-agentshield/tests/test_native_host_loop.py": "8789902d9a74302ab163a2bca84f58e766b7f4e5a0ed78dd16497376163fb951",
+    "patches/hermes/openshell_image_probe.py": "894a064f312a85c462762d1358c105b7c2583662f41e59e9e32cec020c285062",
+    "patches/hermes/openshell_online_probe.py": "1c10723d2b7c477592361bd56b6467f39f02a054923e879e62040b2d435ab485",
+    "packages/contracts/native-host-session.v1.md": "5bc91b13d5733ac156cb1ca4446e2fe60f4864223d9418748c4a0f761d94782e"
+  },
+  "live_host_online_sha256": "101193fb2e85e4a28bc08beefcb322e2810bb33928af219c3b0af8622ab220dc",
+  "source_timing_note": "The live host loaded host_online.py from 11b3135b before the incremental Thread.ident cleanup fix. HostSession and probe sources were unchanged during the live run. The Thread.start failure cleanup fix was covered by the final 91-test batch; this is not full same-candidate business acceptance.",
+  "raw_result_sha256": {
+    "result.json": "94775f1797b5ee54307c9420333ef8a50ca438e3a156fc4488b20db1f98a9242",
+    "authority-result.json": "bc6ccb63bb33b8f8037dfa8b0722cd602f1f85b990ac252ed19797a46e915fbb",
+    "business-client-start.json": "eba5ab4e0f884f5d8c4d4871b7b584c89c68a5b53a2ebd8aa46ba6355a5bd9eb",
+    "business-client-cancel.json": "c79a85c46e75c7f1a1be4173d2d0f0e66c1d59e053e061d1828f09176ff0f1c8"
+  },
+  "limits": [
+    "Business authorization renewals in this probe are synthetic; actual pidfd and lifecycle machinery are real.",
+    "The owner exit test uses a real child process with an explicit fixture RuntimeGuard.",
+    "HostSession is an in-process lifecycle API; authenticated cross-process control and daily Supervisor integration are pending.",
+    "No model request or business API acceptance; no claim of immediate business revocation without revalidation.",
+    "No rollback claim for effects already started before stop."
+  ]
+}
