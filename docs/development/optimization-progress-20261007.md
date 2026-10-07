@@ -128,3 +128,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [请求编排组件预审](evidence/optimization-20261007/native-request-orchestration-prereview.json)：请求编排组件预审：独立226文件、61份选定源码／测试，486项通过、Ruff通过。使用HEAD离线构建并核验的控制包，补齐HEAD动态资源；未修改日常API环境。代码尚未提交，聊天API入口及相关完整集成用例仍待交付审查；不能把组件预审视为OPT-08或同候选业务验收。9/16保持。
 
 [请求编排与业务 API 依赖交付](optimization-opt08-request-api-delivery-validation-20261008.md)：请求编排与业务API完整依赖交付业务2a70587：110份选定输入的最终隔离API回归523项通过；修复原生请求因缺旧canary字段而漏导出安全生命周期事件，旧反例复现、相关45项通过（与523重叠）。Ruff基线104条、本批102条既有B008、新增0。保留报告归档等无关工作区改动及初始失败；未启动真实业务或调用模型。最终新鲜候选／生命周期／四臂验收继续，OPT-08与9/16保持。
+
+[原生真实业务三例复核](optimization-opt08-working-business-validation-20261008.md)：原生真实业务v819–v821：合法读取、只读Skill实际拒写、写入Skill实际可写均通过；6条回执独立验签／链验证及v3 schema通过，文件效果对应。两个写入用例Agent基线相同、OpenShell可写挂载与归一化文件系统策略相同，SIQ按Skill Grant区别裁决。干净源码映射遇systemd 226/NAMESPACE；实测采用冻结工作区1873输入（289项与HEAD不同），前后字节一致，不能冒充干净提交验收。自有资源回收、原模型未重启；每例一次，重复／生命周期／四臂与完整交付继续，9/16保持。
