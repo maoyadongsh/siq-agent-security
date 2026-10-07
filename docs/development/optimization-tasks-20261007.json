@@ -38,7 +38,8 @@
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
       "evidence": [
-        "docs/development/optimization-opt01-opt02-validation-20261007.md"
+        "docs/development/optimization-opt01-opt02-validation-20261007.md",
+        "docs/development/optimization-opt02-consumers-validation-20261007.md"
       ],
       "residual_limits": [
         "受控 OIDC/JWKS 测试，不是客户 IdP 联验；前端构建不代替后端授权"
@@ -47,22 +48,28 @@
     {
       "id": "OPT-03",
       "title": "扫描资源预算与限流",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [
         "SEC-F08"
       ],
       "evidence": [],
-      "residual_limits": []
+      "residual_limits": [
+        "1 MiB Python 样本静态分析峰值约 438 MiB，资源实测触发 OPT-14；进程内限流不宣称强制 CPU/内存隔离或集群限流。"
+      ]
     },
     {
       "id": "OPT-04",
       "title": "错误输入与分页",
-      "status": "planned",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/development/optimization-opt04-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "pending 进程诊断不等于持久幂等；OPT-06 单独验证；交叉构建不代替原生平台验收。"
+      ]
     },
     {
       "id": "OPT-05",
@@ -150,13 +157,15 @@
     {
       "id": "OPT-14",
       "title": "扫描进程隔离",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [
         "SEC-F08"
       ],
       "evidence": [],
-      "residual_limits": []
+      "residual_limits": [
+        "1 MiB Python 样本静态分析峰值约 438 MiB，资源实测触发 OPT-14；进程内限流不宣称强制 CPU/内存隔离或集群限流。"
+      ]
     },
     {
       "id": "OPT-15",

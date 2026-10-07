@@ -7,12 +7,13 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.list_meta import apply_list_meta, clamp_limit, take_page
 from app.models import AgentAsset, AgentInstance, Environment, RuntimeBinding, utcnow
 from app.outbox import audit, emit_event
 from app.schemas import RuntimeBindingCreate, RuntimeBindingOut
@@ -101,6 +102,7 @@ def create_runtime_binding(
 
 @router.get("/api/v1/runtime-bindings", response_model=list[RuntimeBindingOut])
 def list_runtime_bindings(
+    response: Response,
     cursor: str | None = None,
     limit: int = 50,
     session: Session = Depends(get_session),
@@ -125,7 +127,14 @@ def list_runtime_bindings(
             )
         except ValueError:
             query = query.where(RuntimeBinding.id > cursor)
-    return list(session.scalars(query.limit(min(limit, 200))))
+    page_limit = clamp_limit(limit)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = f"{page[-1].created_at.isoformat()}|{page[-1].id}" if truncated and page else None
+    apply_list_meta(
+        response, limit=page_limit, returned=len(page), truncated=truncated, next_cursor=next_cursor,
+    )
+    return page
 
 
 @router.post("/api/v1/runtime-bindings/{binding_id}/revoke", response_model=RuntimeBindingOut)

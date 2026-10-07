@@ -11,8 +11,8 @@
 | OPT-00 | 基线与既有任务去重 | done | 本批新增／现有流程复用 |
 | OPT-01 | 回执链并发一致性 | done | 本批新增／现有流程复用 |
 | OPT-02 | 生产构建与身份边界 | done | 本批新增／现有流程复用 |
-| OPT-03 | 扫描资源预算与限流 | planned | SEC-F08 |
-| OPT-04 | 错误输入与分页 | planned | 待结合对应模块继续核对 |
+| OPT-03 | 扫描资源预算与限流 | implementing | SEC-F08 |
+| OPT-04 | 错误输入与分页 | done | 待结合对应模块继续核对 |
 | OPT-05 | OpenShell持久化回滚与后端绑定 | planned | 待结合对应模块继续核对 |
 | OPT-06 | pending提升幂等 | planned | SEC-F05 |
 | OPT-07 | 策略语义与部署入口 | planned | 待结合对应模块继续核对 |
@@ -22,12 +22,14 @@
 | OPT-11 | 连接器可信执行 | planned | 待结合对应模块继续核对 |
 | OPT-12 | 钩子完整性 | planned | 待结合对应模块继续核对 |
 | OPT-13 | 交付安全头 | planned | 待结合对应模块继续核对 |
-| OPT-14 | 扫描进程隔离 | planned | SEC-F08 |
+| OPT-14 | 扫描进程隔离 | implementing | SEC-F08 |
 | OPT-15 | 跨平台验收与有界清理 | planned | SEC-F06 |
 
 ## 当前验证
 
-OPT-01／OPT-02 已完成本批源码及组件验证，见[首批验证记录](optimization-opt01-opt02-validation-20261007.md)。44 个 Go 含测试包、三包 race、四目标构建、1,029 项前端、两类 UI 构建及 21 项后端身份／配置测试通过。旧实现负向对照分别触发竞争和生产开发头注入。尚未推送或完成主线 CI，不作发行验收结论。
+OPT-01 首批组件与 OPT-02 生产身份边界已完成本批回归，见[首批验证](optimization-opt01-opt02-validation-20261007.md)及[消费者回归](optimization-opt02-consumers-validation-20261007.md)。前端 1,031 项通过；30 组浏览器脚本均有通过记录（首轮 28 组、修复复跑 2 组）。[OPT-04 验证](optimization-opt04-validation-20261007.md)包括控制面 2,346 项通过、1 跳过，PostgreSQL 19 项检查、本地 Go 全量与四目标构建。
+
+OPT-03 正在验证进程内配额与请求边界；1 MiB Python 样本实测峰值约 438 MiB，已触发 OPT-14 扫描进程隔离。未推送或完成主线 CI，不作最终发行或全部任务完成结论。
 
 ## 边界
 

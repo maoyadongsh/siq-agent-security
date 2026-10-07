@@ -27,6 +27,7 @@ def worker():
     from app.main import app
     from app.routers import deployment_submission as route
     from app.tests import test_deployment_submission as tests
+    from app.tests import test_optimization_boundaries as boundary_tests
     from fastapi.testclient import TestClient
     from sqlalchemy import text
 
@@ -42,6 +43,15 @@ def worker():
             headers=headers,
             json={"name": "isolated-postgres", "mode": "enforce"},
         ).json()
+        for endpoint in ("policies", "deployments", "runtime-bindings"):
+            for requested, expected in ((-1, 50), (0, 50), (1, 1), (200, 200), (201, 200)):
+                boundary_tests.test_lists_use_bounded_compatible_limits(
+                    client, headers, endpoint, requested, expected
+                )
+        boundary_tests.test_lists_expose_next_page_without_cross_tenant_rows(
+            client, headers, {**headers, "X-Dev-Tenant-Id": "other-pg-tenant"}, env
+        )
+        checks["postgres_bounded_pagination_and_tenant_isolation"] = True
         tests.test_durable_submit_replay_and_exact_readback(client, headers, env)
         checks["postgres_submit_replay_and_audit"] = True
         for name in [

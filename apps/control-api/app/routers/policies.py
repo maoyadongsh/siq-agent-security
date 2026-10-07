@@ -101,6 +101,7 @@ def _ensure_binding_in_selector(
 
 @router.get("/api/v1/policies", response_model=list[PolicyOut])
 def list_policies(
+    response: Response,
     cursor: str | None = None,
     limit: int = 50,
     session: Session = Depends(get_session),
@@ -124,7 +125,14 @@ def list_policies(
             )
         except ValueError:
             query = query.where(DesiredPolicy.id > cursor)
-    return list(session.scalars(query.limit(min(limit, 200))))
+    page_limit = clamp_limit(limit)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = f"{page[-1].updated_at.isoformat()}|{page[-1].id}" if truncated and page else None
+    apply_list_meta(
+        response, limit=page_limit, returned=len(page), truncated=truncated, next_cursor=next_cursor,
+    )
+    return page
 
 
 @router.get("/api/v1/change-requests", response_model=list[ChangeRequestOut])
@@ -172,6 +180,7 @@ def list_change_requests(
 
 @router.get("/api/v1/deployments", response_model=list[DeploymentOut])
 def list_deployments(
+    response: Response,
     cursor: str | None = None,
     limit: int = 50,
     session: Session = Depends(get_session),
@@ -195,7 +204,14 @@ def list_deployments(
             )
         except ValueError:
             query = query.where(Deployment.id > cursor)
-    return list(session.scalars(query.limit(min(limit, 200))))
+    page_limit = clamp_limit(limit)
+    rows = list(session.scalars(query.limit(page_limit + 1)))
+    page, truncated = take_page(rows, limit=page_limit)
+    next_cursor = f"{page[-1].created_at.isoformat()}|{page[-1].id}" if truncated and page else None
+    apply_list_meta(
+        response, limit=page_limit, returned=len(page), truncated=truncated, next_cursor=next_cursor,
+    )
+    return page
 
 
 @router.post("/api/v1/policies", response_model=PolicyOut, status_code=201)
@@ -567,10 +583,13 @@ def prepare_deployment(
             compiled = adapter.compile(_desired_from_policy(policy), caps)
             validation = adapter.validate(compiled)
             if not validation.valid:
-                raise HTTPException(status_code=422, detail=f"compile_invalid: {validation.errors}")
+                error = error_reference(ValueError(str(validation.errors)))
+                raise HTTPException(status_code=422, detail=f"compile_invalid: {error['error_digest']}")
             plan = adapter.plan_change(target, compiled)
         except UnsupportedCapability as exc:
-            raise HTTPException(status_code=422, detail=f"compile_rejected: {exc}") from None
+            raise HTTPException(
+                status_code=422, detail=f"compile_rejected: {error_reference(exc)['error_digest']}"
+            ) from None
         except (AdapterError, RevisionConflict) as exc:
             error = error_reference(exc)
             raise HTTPException(
@@ -856,7 +875,10 @@ def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
         try:
             adapter = OpenShellCliBackend()
         except AdapterError as exc:
-            raise HTTPException(status_code=502, detail=f"openshell_unreachable: {exc}") from None
+            error = error_reference(exc)
+            raise HTTPException(
+                status_code=502, detail=f"openshell_unreachable: {error['error_digest']}"
+            ) from None
     else:
         raise HTTPException(status_code=400, detail=f"unknown_enforcement_backend: {backend}")
 
@@ -865,10 +887,13 @@ def _compile_for_enforcement(policy: DesiredPolicy, task_payload: dict) -> None:
     try:
         compiled = adapter.compile(_desired_from_policy(policy))
     except UnsupportedCapability as exc:
-        raise HTTPException(status_code=422, detail=f"compile_rejected: {exc}") from None
+        raise HTTPException(
+            status_code=422, detail=f"compile_rejected: {error_reference(exc)['error_digest']}"
+        ) from None
     report = adapter.validate(compiled)
     if not report.valid:
-        raise HTTPException(status_code=422, detail=f"compile_invalid: {report.errors}")
+        error = error_reference(ValueError(str(report.errors)))
+        raise HTTPException(status_code=422, detail=f"compile_invalid: {error['error_digest']}")
     task_payload["compiled"] = {
         "artifact_hash": compiled.artifact_hash,
         "backend": compiled.backend,

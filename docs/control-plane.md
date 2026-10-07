@@ -201,6 +201,12 @@ cd ../../edge/agent && go run . run-once --connector hermes --connector-bin ../.
 
 跨仓依赖编号（D1–D9）与阶段前置关系详见开发计划 §3。
 
+## 优化批次：列表与错误边界（2026-10-07）
+
+OPT-04 将策略、部署和运行时绑定列表接入既有分页合同：limit 小于 1 使用默认 50，大于 200 截至 200；响应头返回实际 limit、returned、truncated 和必要 next cursor，响应体保持数组。沿用现有 clamp_limit，不为这三个入口另建不兼容规则。游标分页仍按已验证租户过滤。
+
+OpenShell 编译入口的不可达、编译拒绝和校验失败只对外返回固定类别及 error digest，不回显底层异常、路径或验证器自由文本。保持既有状态码和拒绝语义；不把编译失败转为成功或 empty policy。
+
 ## 开发与测试
 
 仓库约定见 [AGENTS.md](../AGENTS.md)（边界、事实源顺序、安全不变量、按变更类型的最低验证要求）。所有改动不得破坏 7 条安全不变量：租户隔离、Secret 不明文落库、审计同事务、Edge 凭据只存哈希、模型非权威、孤儿证据拒绝、生产禁 SQLite/`X-Dev-*`。

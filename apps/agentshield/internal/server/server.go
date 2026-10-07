@@ -127,6 +127,7 @@ type Server struct {
 	bootAdmin       string                           // test harness after RedeemPairing
 
 	pendingMu    sync.Mutex
+	pendingState pendingPromotionStatus // protected by pendingMu; process-local diagnostics
 	refreshMu    sync.Mutex
 	discoveryMu  sync.Mutex
 	discoveryRun DiscoveryRun
@@ -437,6 +438,7 @@ func (s *Server) status(w http.ResponseWriter, _ *http.Request) {
 		"version": s.d.Version, "enforcement_mode": s.currentMode(), "local_mode": true, "single_user": true,
 		"rulepack_version": s.d.Pack.Version, "rulepack_source": s.d.Pack.Source,
 		"chain":              map[string]any{"id": "local", "head_seq": seq, "head_hash": head},
+		"pending_promotion":  s.pendingPromotionSnapshot(),
 		"signing_public_key": s.d.Key.PublicBase64(),
 		"platforms":          s.platforms(),
 	})
@@ -562,14 +564,22 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 }
 
 // promotePendingBestEffort signs any new fail-closed pending lines onto the
-// receipt chain (DEV07-D). Errors are swallowed so decision path stays available.
+// receipt chain (DEV07-D). Failure is exposed in status while the online
+// decision continues to enforce its own authority and durable receipt checks.
 func (s *Server) promotePendingBestEffort() {
 	s.pendingMu.Lock()
 	defer s.pendingMu.Unlock()
-	_, _ = pending.Promote(s.d.Store.Dir, func(rec pending.Record) error {
+	promoted, err := pending.Promote(s.d.Store.Dir, func(rec pending.Record) error {
 		_, err := s.d.Engine.AppendPendingObserved(rec)
 		return err
 	})
+	s.pendingState.Attempts++
+	s.pendingState.LastPromoted = promoted
+	s.pendingState.Status = "ok"
+	if err != nil {
+		s.pendingState.Status = "failed"
+		s.pendingState.Failures++
+	}
 }
 
 func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
@@ -734,7 +744,10 @@ func (s *Server) runInventory(cwd string) (*inventory.Report, error) {
 	if err != nil {
 		return nil, err
 	}
-	admissions, _ := s.d.Store.ListAdmissions()
+	admissions, err := s.d.Store.ListAdmissions()
+	if err != nil {
+		return nil, errors.New("inventory admission state unavailable")
+	}
 	byHash := map[string]string{}
 	for _, a := range admissions {
 		byHash[a.ContentHash] = a.Verdict

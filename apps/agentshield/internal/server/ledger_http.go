@@ -1,7 +1,9 @@
 package server
 
 import (
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 	"sync"
@@ -200,12 +202,31 @@ func (s *Server) assets(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) assetAction(w http.ResponseWriter, r *http.Request, id, action string) {
-	var body struct {
+	var body *struct {
 		ActorID string `json:"actor_id"`
 		Reason  string `json:"reason"`
 		Until   string `json:"until"`
 	}
-	_ = readJSON(r, &body, 64<<10)
+	decoder := json.NewDecoder(http.MaxBytesReader(w, r.Body, 64<<10))
+	err := decoder.Decode(&body)
+	if err == nil && body != nil {
+		var extra any
+		if tailErr := decoder.Decode(&extra); tailErr != io.EOF {
+			err = tailErr
+			if err == nil {
+				err = errors.New("extra json value")
+			}
+		}
+	}
+	if err != nil || body == nil {
+		code := http.StatusBadRequest
+		var oversized *http.MaxBytesError
+		if errors.As(err, &oversized) {
+			code = http.StatusRequestEntityTooLarge
+		}
+		writeJSON(w, code, map[string]any{"error": "invalid json"})
+		return
+	}
 	snap, err := s.snapshotForWrite(r.URL.Query().Get("cwd"))
 	if err != nil {
 		writeJSON(w, 500, map[string]any{"error": "inventory failed"})
