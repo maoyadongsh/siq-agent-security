@@ -69,7 +69,11 @@ class ImageBootstrap:
                     or len((channel_directory + "/native-host.sock").encode("utf-8")) > 107):
                 raise _failure()
             self._agent, self._namespace, self._directory = agent_id, session_namespace, channel_directory
-            flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+            # Directory identity/traversal does not require directory listing.
+            # O_RDONLY unnecessarily requires READ_DIR on every ancestor under
+            # Landlock, including /. O_PATH keeps the same no-follow handles
+            # and fstat/dir_fd checks without granting broader filesystem reads.
+            flags = os.O_PATH | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
             root = os.open("/", flags)
             self._nodes.append((root, None, None, os.fstat(root)))
             self._check(leaf=False)

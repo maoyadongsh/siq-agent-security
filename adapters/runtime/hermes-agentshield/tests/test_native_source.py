@@ -385,3 +385,28 @@ def test_managed_link_pair_change_during_observer_is_rejected(skill):
 
     reader = source.SkillSourceReader(changed, managed_link_pair=True)
     assert_poisoned(reader, skill)
+
+
+@pytest.mark.parametrize('deny_leaf', [False, True])
+def test_metadata_only_ancestors_do_not_bypass_leaf_read_permission(skill, monkeypatch, deny_leaf):
+    original = source.os.open
+    events = []
+    def restricted(path, flags, *args, **kwargs):
+        if flags & os.O_DIRECTORY and not flags & os.O_PATH:
+            raise PermissionError('ancestor listing denied')
+        if str(path) == 'SKILL.md':
+            assert not flags & os.O_PATH
+            if deny_leaf:
+                raise PermissionError('leaf read denied')
+        return original(path, flags, *args, **kwargs)
+    monkeypatch.setattr(source.os, 'open', restricted)
+    reader = source.SkillSourceReader(events.append)
+    if deny_leaf:
+        with pytest.raises(source.SourceError):
+            reader.read(skill)
+        assert events == []
+        assert_poisoned(reader, skill)
+    else:
+        assert reader.read(skill) == skill.read_text()
+        assert len(events) == 1
+    reader.close()

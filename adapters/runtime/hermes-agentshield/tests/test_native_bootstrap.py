@@ -3,6 +3,7 @@
 # ruff: noqa: SIM117 - keep exception assertions separate from guarded execution.
 
 import concurrent.futures
+import errno
 import importlib.util
 import os
 import select
@@ -89,6 +90,27 @@ def test_ready_and_configuration_never_claim_authority(fixture, monkeypatch):
             with module.native_dispatch.task_scope("closed", "session"):
                 pytest.fail("closed bootstrap began a task")
         assert (root / "channel/native-host.sock").exists()  # Never deletes host objects.
+    finally:
+        value.close()
+
+
+def test_directory_identity_works_without_ancestor_listing_permission(fixture, monkeypatch):
+    module, _ = fixture
+    original = module.os.open
+
+    def no_directory_listing(path, flags, *args, **kwargs):
+        if flags & os.O_DIRECTORY and not flags & os.O_PATH:
+            raise PermissionError(errno.EACCES, "directory listing not granted")
+        return original(path, flags, *args, **kwargs)
+
+    monkeypatch.setattr(module.os, "open", no_directory_listing)
+    value = bootstrap(fixture)
+    try:
+        assert value.ready()["runtime_state"] == "unverified"
+        for fd, *_ in value._nodes:
+            with pytest.raises(OSError) as error:
+                os.listdir(fd)
+            assert error.value.errno == errno.EBADF
     finally:
         value.close()
 

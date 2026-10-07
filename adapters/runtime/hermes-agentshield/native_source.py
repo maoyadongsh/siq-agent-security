@@ -61,7 +61,9 @@ class _Opened:
     def __init__(self, path, managed_link_pair=False):
         self.path, self._fds, self._edges = path, [], []
         try:
-            directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+            # Ancestors are identity anchors, not directory-listing requests.
+            # Keep real read access for the leaf; O_PATH does not read its bytes.
+            directory_flags = os.O_PATH | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
             root = os.open("/", directory_flags)
             self._fds.append(root)
             parent = root
@@ -135,7 +137,7 @@ class SkillSourceReader:
 
     def __init__(self, observe, *, managed_link_pair=False):
         if (sys.platform != "linux" or not callable(observe) or type(managed_link_pair) is not bool
-                or any(not hasattr(os, flag) for flag in ("O_NOFOLLOW", "O_DIRECTORY", "O_CLOEXEC", "O_NONBLOCK"))):
+                or any(not hasattr(os, flag) for flag in ("O_PATH", "O_NOFOLLOW", "O_DIRECTORY", "O_CLOEXEC", "O_NONBLOCK"))):
             raise _failure()
         self._observe = observe
         # Only protected bootstrap may enable this. The required observer must

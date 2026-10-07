@@ -1,0 +1,12 @@
+{
+  "schema_version": "siq.evaluation-receipt-public-key/v1",
+  "algorithm": "Ed25519",
+  "public_key_base64": "Q1sDwXy7uwCp3w1aSNGpRggqD+UlD1A4Y8nN//BBd5s=",
+  "trust_scope": "Local explicitly approved evaluation authority; not a third-party certification or production identity.",
+  "receipt_schema": "runtime-receipt/v3",
+  "canonicalization": "Python json.dumps(sort_keys=True,separators=(comma,colon),ensure_ascii=True); omit hash and sig",
+  "signature_input": "ASCII hexadecimal SHA-256 of canonical receipt body",
+  "records": 8,
+  "head_hash": "438132da43ba461355407d949102e2148f9c7584d1bd7132835b0878c63f66cf",
+  "receipts_sha256": "91550c9ccad883bd69f5d3dff4107d9cbc8d66a7bf70a84ca74408e311352df4"
+}
