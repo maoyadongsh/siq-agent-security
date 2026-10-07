@@ -18,7 +18,7 @@
 | OPT-07 | 策略语义与部署入口 | done | 待结合对应模块继续核对 |
 | OPT-08 | 日常Skill上下文 | implementing | 待结合对应模块继续核对 |
 | OPT-09 | OpenShell行为证据 | planned | 待结合对应模块继续核对 |
-| OPT-10 | 同候选业务回归 | planned | 待结合对应模块继续核对 |
+| OPT-10 | 同候选业务回归 | implementing | 待结合对应模块继续核对 |
 | OPT-11 | 连接器可信执行 | implementing | 待结合对应模块继续核对 |
 | OPT-12 | 钩子完整性 | planned | 待结合对应模块继续核对 |
 | OPT-13 | 交付安全头 | done | 待结合对应模块继续核对 |
@@ -130,3 +130,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [请求编排与业务 API 依赖交付](optimization-opt08-request-api-delivery-validation-20261008.md)：请求编排与业务API完整依赖交付业务2a70587：110份选定输入的最终隔离API回归523项通过；修复原生请求因缺旧canary字段而漏导出安全生命周期事件，旧反例复现、相关45项通过（与523重叠）。Ruff基线104条、本批102条既有B008、新增0。保留报告归档等无关工作区改动及初始失败；未启动真实业务或调用模型。最终新鲜候选／生命周期／四臂验收继续，OPT-08与9/16保持。
 
 [原生真实业务三例复核](optimization-opt08-working-business-validation-20261008.md)：原生真实业务v819–v821：合法读取、只读Skill实际拒写、写入Skill实际可写均通过；6条回执独立验签／链验证及v3 schema通过，文件效果对应。两个写入用例Agent基线相同、OpenShell可写挂载与归一化文件系统策略相同，SIQ按Skill Grant区别裁决。干净源码映射遇systemd 226/NAMESPACE；实测采用冻结工作区1873输入（289项与HEAD不同），前后字节一致，不能冒充干净提交验收。自有资源回收、原模型未重启；每例一次，重复／生命周期／四臂与完整交付继续，9/16保持。
+
+[真实权限三次重复与公开核验](optimization-opt08-opt10-repetitions-validation-20261008.md)：冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。
