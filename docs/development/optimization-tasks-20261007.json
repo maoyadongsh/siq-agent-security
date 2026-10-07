@@ -252,10 +252,12 @@
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
       "evidence": [
-        "docs/development/optimization-opt09-protocol-validation-20261008.md"
+        "docs/development/optimization-opt09-protocol-validation-20261008.md",
+        "docs/development/optimization-opt09-journal-validation-20261008.md"
       ],
       "residual_limits": [
-        "ADR-058及企业OpenShell单次挑战／v2观测合同、纯校验器完成；58项新用例和63项v1回归共121项通过，Ruff通过。覆盖时效／nonce／范围／前后策略与保护身份／三臂和前后可达性约束。全部为合成组件证据；纯校验器不承担持久CAS或认证，生产部署仍只做配置读回。持久协调／真实ELF收集器／API前端接线和真实三臂验收继续，总体9/16保持。"
+        "ADR-058及企业OpenShell单次挑战／v2观测合同、纯校验器完成；58项新用例和63项v1回归共121项通过，Ruff通过。覆盖时效／nonce／范围／前后策略与保护身份／三臂和前后可达性约束。全部为合成组件证据；纯校验器不承担持久CAS或认证，生产部署仍只做配置读回。持久协调／真实ELF收集器／API前端接线和真实三臂验收继续，总体9/16保持。",
+        "企业行为验证持久台账、单向状态／CAS、一次领取／消费、父操作来源核对与0031迁移完成。定向166项及最终台账32项通过（重叠），真实临时PostgreSQL40项通过，含两组实际行锁竞争、六状态审计回滚及非空降级保留。领取前观测误接受已复现并修复；Ruff通过。全部观测仍为合成材料，真实ELF收集器、API／授权／目标互斥及前端接线和真实三臂验收继续；生产等级未提升，总体9/16保持。"
       ]
     },
     {

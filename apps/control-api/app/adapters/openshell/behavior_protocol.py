@@ -137,6 +137,43 @@ def challenge_digest(challenge: BehaviorChallenge) -> str:
     ).encode()).hexdigest()
 
 
+def _challenge_check(expected: BehaviorChallenge, current: BehaviorReadback, now: datetime) -> str | None:
+    if current.binding != expected.binding:
+        return "behavior_current_binding_changed"
+    if current.enforcement_mode not in ("block", "unknown"):
+        return "behavior_mode_not_block"
+    issued, expires = _time(expected.issued_at), _time(expected.expires_at)
+    window_ms = (expires - issued).total_seconds() * 1000
+    if not 0 < window_ms <= 300000 or window_ms < expected.attempts * 4 * expected.timeout_ms:
+        return "behavior_window_invalid"
+    if not issued <= now < expires:
+        return "behavior_time_invalid"
+    endpoint = f"{expected.receiver_ipv4}:{expected.receiver_port}"
+    pairs = {(rule.endpoint, rule.program_path) for rule in current.allow_rules}
+    if (expected.allow_path == expected.deny_path or len(pairs) != len(current.allow_rules)
+        or (endpoint, expected.allow_path) not in pairs or (endpoint, expected.deny_path) in pairs):
+        return "behavior_differential_invalid"
+    return None
+
+
+def validate_behavior_challenge(challenge: dict, current_readback: dict, *, now: datetime) -> tuple[bool, str]:
+    """Pre-execution eligibility; caller still owns authorization and one-time claim."""
+    if not isinstance(now, datetime) or now.utcoffset() != timedelta(0):
+        return False, "behavior_clock_invalid"
+    if type(challenge) is not dict or type(current_readback) is not dict:
+        return False, "behavior_schema_invalid"
+    try:
+        expected = BehaviorChallenge.model_validate(challenge)
+        current = BehaviorReadback.model_validate(current_readback)
+    except (ValidationError, ValueError, TypeError):
+        return False, "behavior_schema_invalid"
+    reason = _challenge_check(expected, current, now)
+    remaining_ms = (_time(expected.expires_at) - now).total_seconds() * 1000
+    if not reason and remaining_ms < expected.attempts * 4 * expected.timeout_ms:
+        reason = "behavior_window_remaining_insufficient"
+    return (False, reason) if reason else (True, "behavior_challenge_eligible")
+
+
 def validate_behavior_result(
     result: dict, challenge: dict, current_readback: dict, *, now: datetime, run_state: str,
 ) -> tuple[bool, str]:
@@ -162,24 +199,15 @@ def validate_behavior_result(
         return False, "behavior_challenge_mismatch"
     if observed.challenge_sha256 != challenge_digest(expected):
         return False, "behavior_challenge_digest_mismatch"
-    if current.binding != expected.binding:
-        return False, "behavior_current_binding_changed"
+    if reason := _challenge_check(expected, current, now):
+        return False, reason
     if observed.before != current or observed.after != current:
         return False, "behavior_readback_changed"
-    if current.enforcement_mode not in ("block", "unknown"):
-        return False, "behavior_mode_not_block"
     issued, expires = _time(expected.issued_at), _time(expected.expires_at)
-    window_ms = (expires - issued).total_seconds() * 1000
-    if not 0 < window_ms <= 300000 or window_ms < expected.attempts * 4 * expected.timeout_ms:
-        return False, "behavior_window_invalid"
     started, finished = _time(observed.started_at), _time(observed.finished_at)
     if not issued <= started <= finished <= now < expires:
         return False, "behavior_time_invalid"
     endpoint = f"{expected.receiver_ipv4}:{expected.receiver_port}"
-    pairs = {(rule.endpoint, rule.program_path) for rule in current.allow_rules}
-    if (expected.allow_path == expected.deny_path or len(pairs) != len(current.allow_rules)
-        or (endpoint, expected.allow_path) not in pairs or (endpoint, expected.deny_path) in pairs):
-        return False, "behavior_differential_invalid"
     if len(observed.observations) != expected.attempts * 4:
         return False, "behavior_observations_incomplete"
     previous = started

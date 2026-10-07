@@ -538,6 +538,37 @@ class Deployment(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
+class OpenShellBehaviorOperation(Base):
+    """Single-use probe coordination; accepted observations are not a deployment grade."""
+
+    __tablename__ = "openshell_behavior_operation"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "nonce_sha256", name="uq_openshell_behavior_nonce"),
+        CheckConstraint("epoch >= 0", name="ck_openshell_behavior_epoch"),
+        CheckConstraint(
+            "state IN ('prepared','running','accepted','rejected','unknown','expired')",
+            name="ck_openshell_behavior_state",
+        ),
+    )
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    deployment_id: Mapped[str] = mapped_column(String(64), ForeignKey("deployment.id"), index=True)
+    operation_id: Mapped[str] = mapped_column(String(64), ForeignKey("openshell_operation.id"))
+    challenge: Mapped[dict] = mapped_column(JSON)
+    challenge_digest: Mapped[str] = mapped_column(String(64))
+    nonce_sha256: Mapped[str] = mapped_column(String(64))
+    state: Mapped[str] = mapped_column(String(32), default="prepared")
+    epoch: Mapped[int] = mapped_column(Integer, default=0)
+    owner_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    result_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    reason_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
 class OpenShellOperation(Base):
     """Private encrypted recovery journal; never serialized as a public receipt."""
 
