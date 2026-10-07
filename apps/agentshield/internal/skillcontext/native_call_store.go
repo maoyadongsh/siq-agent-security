@@ -249,6 +249,17 @@ func nativeRequestBinding(req NativeCallRequest) (string, error) {
 }
 
 func (s *NativeCallStore) BindCall(req NativeCallRequest) (*NativeCall, error) {
+	return s.bindCall(req, false)
+}
+
+// BindFreshCall is the execution-facing issuer: persisted evidence is never
+// reused to authorize a restarted host's duplicate call. BindCall retains its
+// historical idempotent document/readback semantics for existing consumers.
+func (s *NativeCallStore) BindFreshCall(req NativeCallRequest) (*NativeCall, error) {
+	return s.bindCall(req, true)
+}
+
+func (s *NativeCallStore) bindCall(req NativeCallRequest, fresh bool) (*NativeCall, error) {
 	mu.Lock()
 	defer mu.Unlock()
 	binding, err := nativeRequestBinding(req)
@@ -279,6 +290,9 @@ func (s *NativeCallStore) BindCall(req NativeCallRequest) (*NativeCall, error) {
 	p := s.callPath(req.Subject, req.ToolCallID)
 	var old NativeCall
 	if err := readInvocationJSON(p, &old); err == nil {
+		if fresh {
+			return nil, invalid("native_skill_call_already_recorded")
+		}
 		if !nativeReplayEqual(c, &old, &c.nativeSigned, old.nativeSigned) {
 			return nil, invalid("native_skill_call_conflict")
 		}

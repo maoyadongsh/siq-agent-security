@@ -1,0 +1,42 @@
+{
+  "schema_version": "siq.optimization-native-host-bridge-evidence/v1",
+  "task": "OPT-08",
+  "phase": "D2d",
+  "date": "2026-10-07",
+  "status": "component_verified",
+  "real_signed_stores": true,
+  "real_receipt_engine": true,
+  "runtime_and_install_resolution": "controlled_fixture_callbacks",
+  "native_python_to_go_daemon_connected": false,
+  "production_enabled": false,
+  "model_calls": 0,
+  "openshell_execution": false,
+  "business_entry_execution": false,
+  "tests": {
+    "new_top_level_groups": 8,
+    "table_driven_negative_subcases": 18,
+    "initial_full_go_packages_passed": 45,
+    "initial_full_go_packages_without_tests": 10,
+    "final_affected_packages": [
+      "skillcontext",
+      "receipt",
+      "server"
+    ],
+    "final_affected_result": "passed",
+    "race_skillcontext": "passed",
+    "vet_all": "passed",
+    "cross_builds": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "final_full_suite_repeated": false,
+    "existing_unformatted_scratch": ".tmp/fx01/refcalc.go"
+  },
+  "source_sha256": {
+    "apps/agentshield/internal/skillcontext/native_host.go": "8c17a7227cc5c22d77621a716b254b497346912409e0b0cb622cfe0a9b6c0233",
+    "apps/agentshield/internal/skillcontext/native_host_test.go": "0812b1c228d282abe06eea732ce0cc8d806767103e7984088b4e5bc5a2a06403",
+    "apps/agentshield/internal/skillcontext/native_call_store.go": "64b9c9848105b34e3551c8e6d49a134c6221ec7cc7f840abb0fec34b49449578"
+  }
+}

@@ -43,6 +43,8 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 
 [D2c2 原生 Hermes 分发](optimization-opt08-dispatch-validation-20261007.md)已落盘固定镜像补丁：普通/插件/缓存读取、任务作用域和中间件之后的实际 handler 门禁均接入；未接线的宿主直达路由明确拒绝。真实 Hermes 函数离线探针 21 项通过，构建器两个负向通过。全适配器首轮 252 通过、1 失败；已修复任务结束后的锁阻塞，受影响套件 24 项通过，未重复无关全量。探针采用合成 Authority 回调，没有真实 SIQ 在线裁决、OpenShell 或业务 API 验收；新身份创建仍关闭。OPT-08 继续 implementing，主任务完成数仍为 9/16。
 
+[D2d 宿主应用桥接](optimization-opt08-host-validation-20261007.md)已串接原生生命周期与真实 Go 签名 Store/决策引擎：切换保留祖先权限，新独立任务能使用对应 Skill；重启后不能通过历史调用幂等读回重放执行。八组新增测试（含十八个负向子用例）通过；一轮全量 45 包通过、10 包无测试，最终增量相关三包、race、vet 和四目标构建通过。实际进程/安装解析仍是组件夹具；认证传输、可信启动器及日常业务接线未完成，不将两个独立组件测试拼成端到端验收。OPT-08 状态和 9/16 完成数不变。
+
 ## 边界
 
 既有 SEC-F01–F04/F07/F09 不因本方案自动插入；与实际修改相关时按原合同处理。RES-01 与 SEC-F10 的 Host Sensor 方向关联，但不自动纳入风险评分或强制执行实现。Windows/macOS 原生验收环境需在相应任务启动时核实，不以 Linux 构建替代。
