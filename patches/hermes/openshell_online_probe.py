@@ -16,6 +16,7 @@ from build_native_overlay import IMAGE, build
 from openshell_image_probe import ADAPTER, PYTHON, ROOT, digest, runtime_options
 
 RUNTIME = "/opt/siq/native-business"
+BUSINESS_CLIENT = Path("/home/maoyd/siq-research-engine/scripts/openshell/probe_agentshield_native_identity.py")
 _owned = None
 
 
@@ -65,8 +66,28 @@ class OwnedAuthority:
             "-count=1", "-timeout=180s", "-v"], cwd=ROOT / "apps/agentshield", env=env,
             stdin=subprocess.DEVNULL, stdout=self.log, stderr=subprocess.STDOUT)
         self.ready = wait_json(self.root / "ready.json", self.process)
+        self.business_client = None
+        if os.environ.get("SIQ_NATIVE_BUSINESS_CLIENT_PROBE") == "1":
+            self.business_client = self.check_business_client()
         prepared["argv"].extend([self.ready["subject"]["agent_id"], self.ready["session_namespace"], "owned-session"])
         prepared["skill_roots"] = [{"source": m["host_root"], "target": m["runtime_root"]} for m in self.ready["installs"]]
+
+    def check_business_client(self, *, cancel=False):
+        source = BUSINESS_CLIENT.with_name("agentshield_native_identity.py")
+        wait_json(self.root / "business-client-input.json", self.process)
+        result_path = self.output / ("business-client-cancel.json" if cancel else "business-client-start.json")
+        command = [sys.executable, str(BUSINESS_CLIENT), "--input", str(self.root / "business-client-input.json"),
+                   "--output", str(result_path)]
+        if cancel:
+            command.append("--cancel-only")
+        result = subprocess.run(command, env={k: v for k, v in os.environ.items() if k in ("PATH", "LANG")},
+                                capture_output=True, timeout=30, check=False)
+        if result.returncode:
+            raise RuntimeError("native_business_client_interoperability_failed")
+        value = json.loads(result_path.read_text())
+        if value.get("schema_version") != "siq.native-business-client-probe-result/v1" or not all(value["checks"].values()):
+            raise RuntimeError("native_business_client_interoperability_failed")
+        return {**value, "client_sha256": digest(source.read_bytes()), "probe_sha256": digest(BUSINESS_CLIENT.read_bytes())}
 
     def close(self):
         if self.process is not None and self.process.poll() is None:
@@ -230,6 +251,9 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
             assert not any(event["call"] == "after-task-end" for event in events)
             result["host_observed_events"] = events
             result["revocations"] = controls
+        if _owned.business_client is not None:
+            result["business_client_start"] = _owned.business_client
+            result["business_client_cancel_after_baseline_revocation"] = _owned.check_business_client(cancel=True)
         (_owned.root / "finish").touch()
         _owned.process.wait(timeout=10)
         assert _owned.process.returncode == 0, "owned_authority_verification_failed"

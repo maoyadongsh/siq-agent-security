@@ -224,9 +224,10 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 		SchemaVersion: "local-runtime-request-issuer-create/v1", ParentIdentityID: parent["identity_id"].(string),
 		ScopeID: strings.Repeat("a", 24), MaxIdentitySeconds: 300,
 		ExpiresAt: time.Now().UTC().Add(time.Hour).Format(time.RFC3339), ActorID: "owned-integration-operator"}, 201)
-	child := post("/v1/runtime-identity/self/requests", string(parentCredential), runtimeidentity.RequestIdentityCreate{
+	childRequest := runtimeidentity.RequestIdentityCreate{
 		SchemaVersion: "local-runtime-request-identity-create/v1", RequestID: "qwen-request-2222222222222222",
-		ExecutionSHA256: strings.Repeat("d", 64), ExpiresAt: time.Now().UTC().Add(240 * time.Second).Format(time.RFC3339)}, 201)
+		ExecutionSHA256: strings.Repeat("d", 64), ExpiresAt: time.Now().UTC().Add(240 * time.Second).Format(time.RFC3339)}
+	child := post("/v1/runtime-identity/self/requests", string(parentCredential), childRequest, 201)
 	identity := child["identity"].(map[string]any)
 	scope := child["request"].(map[string]any)
 	policy := identity["native_skill_policy"].(map[string]any)
@@ -252,6 +253,16 @@ func TestOwnedOpenShellNativeOnlineIntegration(t *testing.T) {
 		t.Fatal("native enrollment overstated runtime status")
 	}
 	write("ready.json", map[string]any{"endpoint": "http://" + listener.Addr().String(), "credential_path": credentialPath, "state_dir": st.Dir, "session_namespace": namespace, "subject": map[string]string{"platform": "hermes", "instance_id": instance, "agent_id": agent, "session_id": session}, "installs": mounts})
+	// Private handoff to the business repository's public native HTTP client.
+	// Only paths are shared; it reads credentials under its own strict checks.
+	write("business-client-input.json", map[string]any{
+		"schema_version": "siq.native-business-client-probe/v1", "port": deps.ListenPort,
+		"identity_id": parent["identity_id"], "instance_id": instance, "grant_id": baseline.GrantID,
+		"scope_id": scope["scope_id"], "artifact_sha256": input.Artifact,
+		"credential_path": issued["credential_path"], "request_id": childRequest.RequestID,
+		"execution_sha256": childRequest.ExecutionSHA256, "expires_at": childRequest.ExpiresAt,
+		"expected_child_id": identity["identity_id"], "expected_child_path": credentialPath,
+		"native_session": input.Session, "expected_session": session})
 	// Private, fixture-only operator controls. Nothing is mounted into the
 	// sandbox, and no route or production approval path is added.
 	controls := map[string]bool{}

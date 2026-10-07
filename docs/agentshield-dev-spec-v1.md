@@ -2716,3 +2716,5 @@ OPT-08 D3b：按 [native-runtime-bootstrap/v1](../packages/contracts/native-runt
 OPT-08 D3c：按 [native-session-namespace/v1](../packages/contracts/native-session-namespace.v1.md)，原生初始化和分发共享 1–191 字符、非空 ASCII 冒号组件的 namespace 校验，原样保留真实请求身份前缀。派生会话最长 256 字节，服务端现有请求范围校验不放宽；实际联验须用 HTTP 签发子身份并仅将子凭据交给宿主转发器，验证错范围拒绝及继承基线撤权。
 
 OPT-08 D3d：按 [native-gateway-entry/v1](../packages/contracts/native-gateway-entry.v1.md)，候选覆盖包新增固定 `hermes-gateway` 入口，先初始化原生通道，再在同一 PID 调用既有 gateway.run.main。拒绝旧插件环境混入，不接受任意模块/命令，ready 仍 unverified；宿主身份、业务授权、租约及真实业务验收独立保持。
+
+OPT-08 D3e：业务原生消费者按 [native-business-identity-client/v1](../packages/contracts/native-business-identity-client.v1.md) 严格校验现有版本化 HTTP 读回，不扩展 Go 管理授权。业务仓库独立客户端保管宿主凭据并支持父权限失效后的精确取消；专属联验输入/探针不是生产路由或业务授权来源。

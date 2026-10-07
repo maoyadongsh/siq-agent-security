@@ -74,3 +74,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3c 请求级子身份衔接](optimization-opt08-request-identity-validation-20261007.md)修复原生 namespace 无法兼容业务请求前缀的问题：两入口共用严格 ASCII 冒号组件校验，派生会话不超过 256 字节。真实 HTTP 签发子身份、错范围登记拒绝、子凭据 OpenShell 联验 18 项通过，包含父基线撤销后拒绝；163 项相关 Python、Go 身份定向与 server vet 通过。请求参数和 Skill 内容仍为合成，日常业务 API/授权生命周期尚未验收，OPT-08 与 9/16 不变。
 
 [D3d 固定网关入口](optimization-opt08-gateway-entry-validation-20261007.md)在同一 PID 初始化后进入已有 gateway.run.main，拒绝旧插件环境和任意额外参数；62 项相关 Python、固定镜像真实网关启动 8 项与原生函数 21 项通过。网关启动 socket 为合成协调设施，无模型/在线裁决，不能替代真实业务验收。业务身份客户端、原生宿主监管及日常 API 接线继续实施，OPT-08 与 9/16 不变。
+
+[D3e 业务原生身份客户端](optimization-opt08-business-identity-validation-20261007.md)在业务独立分支新增严格 HTTP 消费者，49 项定向通过；真实 Go HTTP 首次签发/登记/取消与取消后拒绝、运行身份幂等读回及父基线撤销后的精确取消均通过，同次 OpenShell 18 项检查通过。业务提交只含四个新增文件，既有改动保留。日常 builder/Supervisor 与业务授权/模型闭环继续接入，OPT-08 与 9/16 不变。
