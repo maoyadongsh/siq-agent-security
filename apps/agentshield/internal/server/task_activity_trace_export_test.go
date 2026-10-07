@@ -101,6 +101,29 @@ func TestTaskActivityTraceExport(t *testing.T) {
 	if len(doc.Receipts) != 1 || len(doc.Sources) != 1 || doc.Sources[0].Source == nil || doc.Sources[0].Status != "verified_source" || doc.Completion.Status != "unknown" || !doc.Incomplete || len(doc.Effects) != 0 {
 		t.Fatalf("wrong trace projection: %+v", doc)
 	}
+	// A legacy source exists above, but must not be re-used as native Skill
+	// attribution: the Intent pins the baseline, not the invoked Skill ancestry.
+	for _, sample := range []string{"native-receipt-with-skill-v3.sample.json", "native-receipt-no-skill-v3.sample.json"} {
+		raw, err := os.ReadFile("../../testdata/contracts/" + sample)
+		var native receipt.Receipt
+		if err != nil || json.Unmarshal(raw, &native) != nil {
+			t.Fatal("native fixture", err)
+		}
+		for _, kind := range []string{"complete", "missing-proof", "missing-version"} {
+			input := rc
+			input.SchemaVersion, input.NativeInvocation = native.SchemaVersion, native.NativeInvocation
+			if kind == "missing-proof" {
+				input.NativeInvocation = nil
+			}
+			if kind == "missing-version" {
+				input.SchemaVersion = ""
+			}
+			rows, code := s.traceSources([]receipt.Receipt{input}, []int{0})
+			if code != "" || len(rows) != 1 || rows[0].Status != "unavailable" || rows[0].Source != nil || rows[0].ReceiptHash != rc.Hash {
+				t.Fatal("legacy admission misattributed as native Skill source", sample, kind)
+			}
+		}
+	}
 	if err := os.Remove(filepath.Join(st.Dir, "admissions", a.AdmissionID+".json")); err != nil {
 		t.Fatal(err)
 	}

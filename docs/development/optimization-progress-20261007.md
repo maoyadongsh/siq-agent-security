@@ -33,7 +33,7 @@ OPT-01 首批组件与 OPT-02 生产身份边界已完成本批回归，见[首�
 
 [OPT-07 验证](optimization-opt07-validation-20261007.md)：新增 15 条共享语义向量，四入口 32 项矩阵独立通过；Python 全量 2,486 通过、1 条条件跳过，PostgreSQL 31 项检查，Go 44 个测试包及 grant/server race、四目标构建通过。本地网络替换接口明确区分缺省/null 与空数组。
 
-OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20261007.md)、[B1 持久上下文](optimization-opt08-store-validation-20261007.md)、[B2 精确调用](optimization-opt08-call-validation-20261007.md)、[C1 决策交集](optimization-opt08-engine-validation-20261007.md)、[C2a 审批重试](optimization-opt08-hold-validation-20261007.md)、[C2b 版本兼容](optimization-opt08-compat-validation-20261007.md) 已完成各自组件验证。最新 Go 全量、clientrelease/stateformat/skillmanifest race、四目标构建及 336 项合同检查通过。消费者兼容、可信 enrollment 必需门禁、真实宿主接入和日常业务效果验收仍未完成；尚未接入 serve。
+OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20261007.md)、[B1 持久上下文](optimization-opt08-store-validation-20261007.md)、[B2 精确调用](optimization-opt08-call-validation-20261007.md)、[C1 决策交集](optimization-opt08-engine-validation-20261007.md)、[C2a 审批重试](optimization-opt08-hold-validation-20261007.md)、[C2b 版本兼容](optimization-opt08-compat-validation-20261007.md)、[C2c 消费者兼容](optimization-opt08-consumers-validation-20261007.md) 已完成各自组件验证。最新前端 1,062 项、Go 全量、导出/追踪定向 race、四目标构建及页面 HTTP 夹具验证通过；合同保持上一批 336 项通过记录。原 v1 追踪投影明确标记无法表达的原生 Skill 来源 unavailable，完整证明保留在 v3 回执。可信 enrollment 必需门禁、真实宿主接入和日常业务效果验收仍未完成；尚未接入 serve。
 
 ## 边界
 

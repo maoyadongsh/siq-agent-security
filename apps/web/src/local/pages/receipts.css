@@ -1,0 +1,16 @@
+.receipts-table .receipt-reason {
+  display: block;
+  min-width: 12rem;
+  max-width: 22rem;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+.receipts-table .receipt-attribution {
+  display: inline-block;
+  min-width: 10rem;
+  max-width: 18rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

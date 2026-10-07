@@ -6,8 +6,9 @@ import { Icon } from '@/components/icons';
 import { localApi } from '../api';
 import type { Receipt } from '../types';
 import { actionLabel, actionTag, platformLabel, shortHash } from '../format';
-import { skillAttributionLabel } from '../skillAttribution';
+import { receiptSkillAttributionLabel } from '../skillAttribution';
 import { useLoadGuard } from '../staleGuard';
+import './receipts.css';
 
 function shortTime(iso: string): string {
   return iso.length >= 19 ? iso.slice(0, 19).replace('T', ' ') : iso;
@@ -27,11 +28,11 @@ export default function ReceiptsPage() {
       .then((data) => {
         if (data === undefined) return; // superseded by a newer load
         setRows([...(data.receipts ?? [])].reverse());
-        setVerified(Boolean(data.verified));
+        setVerified(data.verified === true);
         setError(null);
         setLoading(false);
         if (announce) {
-          setMsg(data.verified ? '哈希链与签名均通过。' : '验签失败：链断裂或签名不匹配。');
+          setMsg(data.verified === true ? '哈希链与签名均通过。' : '验签失败：链断裂或签名不匹配。');
         }
       })
       .catch((err: unknown) => {
@@ -61,24 +62,24 @@ export default function ReceiptsPage() {
         </span>
       ),
     },
-    { key: 'tool', header: '工具', render: (r) => r.tool },
-    { key: 'plat', header: '平台', render: (r) => platformLabel(r.platform) },
-    { key: 'reason', header: '原因', render: (r) => r.reason },
+    { key: 'tool', header: '工具', render: (r) => <span className="cell-nowrap">{r.tool}</span> },
+    { key: 'plat', header: '平台', render: (r) => <span className="cell-nowrap">{platformLabel(r.platform)}</span> },
+    { key: 'reason', header: '原因', render: (r) => <span className="receipt-reason">{r.reason}</span> },
     {
       key: 'skill',
       header: 'Skill 归属',
       render: (r) => {
-        const label = skillAttributionLabel(r.skill_attribution);
-        if (!r.skill_attribution) return '—';
+        const label = receiptSkillAttributionLabel(r, verified);
+        if (label.text === '—') return '—';
         if (label.trusted) {
           return (
-            <span className="tag tag-allow" title={label.detail}>
+            <span className="tag tag-allow receipt-attribution" title={label.detail}>
               {label.text}
             </span>
           );
         }
-        if (r.skill_attribution.status === 'mismatch') return <span className="tag tag-deny">{label.text}</span>;
-        return <span title="无可信来源，未经验证">{label.text}</span>;
+        if (r.skill_attribution?.status === 'mismatch') return <span className="tag tag-deny">{label.text}</span>;
+        return <span title={label.detail ?? '无可信来源，未经验证'}>{label.text}</span>;
       },
     },
     {
@@ -96,7 +97,7 @@ export default function ReceiptsPage() {
     {
       key: 'hash',
       header: 'hash',
-      render: (r) => <span className="mono">{shortHash(r.hash, 10)}</span>,
+      render: (r) => <span className="mono cell-nowrap">{shortHash(r.hash, 10)}</span>,
     },
     {
       key: 'hold',
@@ -125,7 +126,7 @@ export default function ReceiptsPage() {
       />
       {verified === true ? (
         <div className="scan-result" role="status">
-          <p>链完整，签名有效（{rows.length} 条）。</p>
+          <p>已展示 {rows.length} 条回执；服务端哈希链与签名验证通过。</p>
         </div>
       ) : null}
       {verified === false ? (
@@ -139,7 +140,7 @@ export default function ReceiptsPage() {
           <p className="notice-detail">{error}</p>
         </div>
       ) : null}
-      <div className="card">
+      <div className="card receipts-table">
         <SimpleTable
           columns={columns}
           rows={rows}
