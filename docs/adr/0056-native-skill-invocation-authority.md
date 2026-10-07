@@ -46,3 +46,13 @@ v2 记录位于状态目录 `skill-contexts-v2`，撤销位于 `skill-context-re
 每个上下文目录最多 4096 个已发布记录，不淘汰历史来绕过容量；点查及父链读取有界。未知、损坏、重复字段、非规范字段名、额外 JSON 文档、超限或符号链接记录拒绝。签发/撤销先写审计授权尝试，再排他发布签名文件；审计不能替代最终发布事实。沿用 daemon 状态单写者锁，进程内互斥只协调本进程；不宣称跨进程管理可以无锁操作。
 
 B1 不新增公开签发端点、不接入 Engine；后续调用绑定与受管会话必需上下文门禁未完成前不得启用 v2 执行。
+
+## B2：精确调用记录与受管会话
+
+新增 `native-skill-managed-session/v1` 与 `native-skill-call/v1`，分别位于 `native-skill-sessions`、`native-skill-calls`。会话由可信宿主登记实际运行制品及原 Agent baseline；会话记录本身不能批准业务权限。调用绑定必须引用该记录精确签名及原 baseline，携带完整 subject（原生 task 必填）、工具名、原生调用 ID、`trustedcontext.RequestBinding` 格式的参数摘要；不保存参数原文，摘要前拒绝非 JSON/循环参数及超过 1 MiB 的 JSON 参数（HTTP 入口另有限额）。宿主回调每次验证会话/任务/原生调用事实，不能根据请求自报判断无 Skill 或父链。
+
+会话 ID 是 `nsess-` 加 `canon.Marshal({"domain":"native-skill-managed-session/v1","subject":<无 task 的 subject>})` SHA-256 前 16 字节 hex。调用 ID 是 `ncall-` 加 `canon.Marshal({"domain":"native-skill-call/v1","subject":<完整 subject>,"tool_call_id":<原生调用 ID>})` SHA-256 前 16 字节 hex；ID 不含工具名或参数，使相同原生调用 ID 的重写不能生成第二条不同授权。有 Skill 时所有上下文祖先的运行制品摘要还必须与登记会话一致。调用记录要么带精确 v2 上下文引用，要么明确 `no_skill=true`；两者互斥，未知状态不得选择无 Skill。
+
+会话最长 24 小时，调用最长五分钟，签发按 baseline session、宿主生命周期及上下文期限收紧；幂等返回原始有效文档，不续期。会话最多 1024 条、调用最多 16384 条，暂存残留计入目录读取预算，不自动删除历史。记录只追加，审计缺失不发布。绑定的存在不是执行预留，不提供 exactly-once 语义；后续引擎仍必须应用原 hold reservation/observation。
+
+组件 `VerifyCall` 对缺失会话、缺失调用、过期、依赖不可读、上下文撤销和参数漂移一律报错，不提供“找不到就普通 Agent 授权”的返回值。C 阶段需将调用级受管模式绑定到可信 enrollment/运行身份策略，并在决策前选择此必需验证路径；不得仅根据本次请求 claim 或调用记录是否存在决定是否启用保护。此门禁和真实宿主回调接入之前，B2 不作为在线授权入口。
