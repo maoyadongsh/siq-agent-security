@@ -71,6 +71,7 @@ type Deps struct {
 	ListenPort        int                 // must match the actual listen port
 	PairingCode       string              // tests only; production serve generates a random code
 	SkillContexts     *skillcontext.Store // exact store also used by receipt.Engine in production
+	NativeRuntime     *NativeRuntime      // optional explicit trusted-host online profile
 }
 
 // Server is the HTTP handler set.
@@ -203,6 +204,10 @@ func New(d Deps) (*Server, error) {
 			return nil, err
 		}
 	}
+	if err := s.initNativeRuntime(); err != nil {
+		return nil, err
+	}
+	s.mux.HandleFunc("/v1/native-host/events", s.nativeHostEvent)
 	s.refreshRawContentLocked()
 	s.mux.HandleFunc("/v1/raw-task-content/status", s.auth(s.rawTaskContentStatus, capAdmin))
 	s.mux.HandleFunc("/v1/raw-task-content/activation", s.auth(s.rawTaskContentActivation, capAdmin))
@@ -526,8 +531,23 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 	if req.Platform == "workbuddy" && !workBuddyRuntimeResponseReady(w, r) {
 		return
 	}
+	var finishNative func() error
+	if s.d.NativeRuntime != nil {
+		var err error
+		finishNative, err = s.d.NativeRuntime.bindDecision(req)
+		if err != nil {
+			writeJSON(w, 409, map[string]string{"error": "native_host_unavailable"})
+			return
+		}
+	}
 	s.promotePendingBestEffort()
 	d, err := s.d.Engine.Decide(req)
+	if finishNative != nil && (err != nil || d.Action != "allow") {
+		if closeErr := finishNative(); closeErr != nil {
+			writeJSON(w, 503, map[string]string{"error": "native_host_unavailable"})
+			return
+		}
+	}
 	if err != nil {
 		if errors.Is(err, receipt.ErrSessionCapacity) || errors.Is(err, receipt.ErrActionCapacity) {
 			st := s.d.Engine.SessionStats()

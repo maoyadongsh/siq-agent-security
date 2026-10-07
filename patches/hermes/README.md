@@ -10,7 +10,7 @@ python patches/hermes/build_native_overlay.py \
   --destination /absolute/new-candidate-overlay
 ```
 
-可信 bootstrap 须先一次性配置 `Runtime` 的来源、最终授权和结果回调。未配置或回调失效时禁止调用；模型不持有或选择这些回调。测试回调只用于独立临时运行，不得用固定 allow 回调部署业务。完整 Go Authority 桥接、可信启动器和真实 OpenShell/业务验收未完成前，manifest 保持 `production_enabled=false`、`authority_bridge_connected=false`。
+可信 bootstrap 须先一次性配置 `Runtime` 的来源、最终授权和结果回调。未配置或回调失效时禁止调用；模型不持有或选择这些回调。测试回调只用于独立临时运行，不得用固定 allow 回调部署业务。Go 在线 Authority 桥接已提供显式接线；可信 OpenShell 启动器和真实业务验收未完成前，manifest 保持 `production_enabled=false`、`authority_bridge_connected=false`。
 
 同一任务的调用串行以固定来源链；不同任务可并发。缺少精确父任务的 subagent 入口暂时拒绝。桥接不重置失败任务、不重复运行已消耗调用，不把函数 returned 解释为效果核验成功。受保护加载、签名权限、独立副作用观察与三平台支持仍须分别验证。
 
@@ -19,3 +19,5 @@ python patches/hermes/build_native_overlay.py \
 现有 Hermes 安装使用目标与私密事务归属文件的硬链接对。新 profile 的可信 bootstrap 只有在接入 [实际安装来源解析](../../packages/contracts/native-install-source.v1.md)及实际只读挂载验证后，才可显式传入 `managed_installations=True`；默认不开放此模式，三条及以上链接始终拒绝。
 
 实际进程核验组件及离线探针见 [D2f 验证](../../docs/development/optimization-opt08-runtime-guard-validation-20261007.md)。`run_runtime_guard_probe.py --output /absolute/result.json` 使用固定镜像和本次私有容器核对进程、代码、真实只读挂载与凭据通道；不调用模型，也不代表 OpenShell 日常后端已经接入。
+
+在线覆盖包包含 `native_channel.py` 和 `native_online.py`，供受保护 bootstrap 配置回调。`host_online.py` 与宿主凭据不进入覆盖包；Go 与 Python 的各自在线联验见 [D2g](../../docs/development/optimization-opt08-online-validation-20261007.md)。

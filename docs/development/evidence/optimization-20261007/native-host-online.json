@@ -1,0 +1,80 @@
+{
+  "schema_version": "siq.optimization-native-host-online-evidence/v1",
+  "task": "OPT-08",
+  "phase": "D2g",
+  "date": "2026-10-07",
+  "status": "online_components_verified",
+  "production_enabled": false,
+  "model_calls": 0,
+  "real_openshell_business_acceptance": false,
+  "go_online": {
+    "real_signed_stores_and_engine": true,
+    "real_http_and_private_unix_transport": true,
+    "runtime_verifier": "explicit_synthetic_fixture",
+    "test_groups": 4,
+    "reverse_negative_subcases": 8,
+    "go_contract_sample_groups": 1,
+    "packages_passed": 45,
+    "packages_no_tests": 10,
+    "focused_race": "passed",
+    "vet_all": "passed",
+    "cross_builds": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ]
+  },
+  "python_online": {
+    "real_native_runtime_handler_and_channel": true,
+    "http_decisions": "explicit_synthetic_fixture",
+    "runtime_guard": "explicit_named_fixture",
+    "batch_adapter_passed": 264,
+    "final_related_passed": 5,
+    "ruff": "passed"
+  },
+  "schema_contract_passed": 6,
+  "native_probe": {
+    "schema_version": "siq.native-hermes-function-probe/v1",
+    "checks": {
+      "unconfigured_real_registry_denies": true,
+      "ordinary_native_skill_read": true,
+      "inline_preprocessing_not_executed": true,
+      "native_cache_path_reobserved": true,
+      "native_support_read": true,
+      "real_handler_allowed_once": true,
+      "real_handler_denied_without_effect": true,
+      "real_registry_rejects_duplicate": true,
+      "actual_call_id_propagated": true,
+      "final_gate_sees_middleware_parameters": true,
+      "final_binding_records_rewritten_parameters": true,
+      "actual_plugin_reader": true,
+      "actual_plugin_support_reader": true,
+      "native_cache_same_stat_drift_denied": true,
+      "drift_poisons_subsequent_native_dispatch": true,
+      "task_end_observed": true,
+      "closed_task_denies_real_handler": true,
+      "native_conversation_normal_closes_task": true,
+      "native_conversation_exception_closes_task": true,
+      "direct_host_route_refused": true,
+      "sequential_concurrent_inline_boundary_refused": true
+    },
+    "model_calls": 0,
+    "real_hermes_functions": true,
+    "synthetic_authority_callbacks": true,
+    "siq_authority_bridge": false,
+    "openshell_execution": false,
+    "business_entry_execution": false,
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_manifest_sha256": "bb21b3142814887b81175b6947aa8dcddee82fd72cdef507714f3610c9fb1430",
+    "exit_code": 0
+  },
+  "source_sha256": {
+    "apps/agentshield/internal/server/native_runtime.go": "5fa76c7dc2b62de24e0eafde799de47100d5261d2f1291466b57f2fad0ed7101",
+    "apps/agentshield/internal/server/server.go": "223ef8bcad828d064574b7fbb30fdfb53dd34d0f591c4ebc473662f7097fedf5",
+    "apps/agentshield/cmd/agentshield/main.go": "8be8c935516597bad0ecba9adf8b5e966fcd27bd34d4bf8758463cb5b9f373b9",
+    "adapters/runtime/hermes-agentshield/host_online.py": "469b5c260ece386a9b57028fb5e3bcce44fc76c23f51f0f13ea847be9a5cefa8",
+    "adapters/runtime/hermes-agentshield/native_online.py": "af3f5921674ed314ce525bec47331470c135ccc83897b77b61ee8eb6313a3b72",
+    "patches/hermes/build_native_overlay.py": "bd0745d6c298ccc04d45423164c027113f39dcc6419713c037cc1328b7f48d3e"
+  }
+}
