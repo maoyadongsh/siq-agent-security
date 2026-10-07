@@ -8,7 +8,9 @@ func (e *Engine) TaskActivitySnapshot() ([]Receipt, TaskActivities, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	chain := e.opts.Chain
-	read, err := chain.ReadLimited(ReadLimit{})
+	chain.mu.RLock()
+	defer chain.mu.RUnlock()
+	read, err := chain.readLimitedLocked(ReadLimit{})
 	if err != nil || read.Truncated {
 		return nil, TaskActivities{}, errors.New("task activities: snapshot unavailable or over budget")
 	}

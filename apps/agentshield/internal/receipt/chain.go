@@ -14,6 +14,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/statefs"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"siq-agent-security/apps/agentshield/internal/canon"
@@ -30,6 +31,9 @@ const GenesisPrev = "00000000000000000000000000000000000000000000000000000000000
 //
 // hash = sha256(canon(receipt without hash/sig)); sig = Ed25519(hash hex bytes).
 type Chain struct {
+	// Lock order: Engine.mu before Chain.mu. Disk readers hold a read lock
+	// so they never observe an in-progress append from this instance.
+	mu      sync.RWMutex
 	dir     string
 	chainID string
 	key     *signing.Key
@@ -63,6 +67,8 @@ func OpenChain(stateDir, chainID string, key *signing.Key) (*Chain, error) {
 
 // Append finalises r (seq, prev_hash, hash, sig) and persists it.
 func (c *Chain) Append(r *Receipt) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	r.ChainID = c.chainID
 	r.Seq = c.seq + 1
 	r.PrevHash = c.head
@@ -138,7 +144,11 @@ func (c *Chain) writeHeadHint() error {
 }
 
 // Head returns the current (seq, hash); seq is -1 for an empty chain.
-func (c *Chain) Head() (int, string) { return c.seq, c.head }
+func (c *Chain) Head() (int, string) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.seq, c.head
+}
 
 // ChainID returns the chain identifier.
 func (c *Chain) ChainID() string { return c.chainID }
@@ -195,6 +205,8 @@ func (c *Chain) files() ([]string, error) {
 // Read returns all receipts in chain order. A trailing incomplete line on the
 // newest file (crash mid-append) is skipped; a malformed mid-file line fails.
 func (c *Chain) Read() ([]Receipt, error) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 	files, err := c.files()
 	if err != nil {
 		return nil, err
@@ -383,7 +395,10 @@ func VerifyDetailed(receipts []Receipt, pub []byte, cp *Checkpoint) Verification
 }
 
 // walkVerified streams the chain without retaining the historical receipt set.
+// The callback must not reenter Chain methods while its read lock is held.
 func (c *Chain) walkVerified(visit func(Receipt) error) error {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 	files, err := c.files()
 	if err != nil {
 		return err
