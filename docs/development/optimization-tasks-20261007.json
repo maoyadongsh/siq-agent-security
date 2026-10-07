@@ -175,7 +175,8 @@
         "docs/development/evidence/optimization-20261007/native-business-supervisor.json",
         "docs/development/evidence/optimization-20261007/native-runtime-config.json",
         "docs/development/evidence/optimization-20261007/native-request-image.json",
-        "docs/development/evidence/optimization-20261007/native-request-assets.json"
+        "docs/development/evidence/optimization-20261007/native-request-assets.json",
+        "docs/development/evidence/optimization-20261007/native-request-wiring.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -200,7 +201,8 @@
         "D3j 已在业务Supervisor接入显式v6与RequestNative：当轮业务授权/租约先于宿主start/renew，准备态不能通过运行态检查，未知清理仍执行资源回收且保留失败。相关135项通过，最终原生专项21项（与前者14项重叠，新增7项）通过；均为组件夹具，非真实业务模型验收。业务核心依赖中27模块未跟踪，本批源码尚未提交，修改前快照已保留；需审查必要依赖后科学交付。builder/网关/endpoint接线继续，9/16不变。",
         "D3k 已实现显式原生配置编译、v4 fresh快照与挂载校验，保留模型/委派/无密钥限制，关闭旧插件且旧启动器拒绝原生配置。原生16项通过；相关74通过1失败，失败源于既有Qwen路由候选摘要漂移。经10项真实模型/制品静态核验后修正摘要，失败项复跑与路由13项通过；审计外部晋级门禁仍未完成，无模型调用。固定原生镜像/builder/网关/endpoint尚未接入，业务增量尚未提交，9/16不变。",
         "D3l 已构建独立受保护原生业务镜像：实际镜像5项及真实Hermes启动交接9项检查通过，宿主接管前HTTP未开放，重复启动拒绝且清理确认。首轮专项41项、最终镜像专项26项（新增10）、相关旧配置/快照/挂载73项通过。自包含bootstrap/测试已在业务分支提交，其余必要依赖仍待审查；无Authority接管或模型调用，未替换日常服务。builder/assets/网关/endpoint与真实业务尚未验收，9/16不变。",
-        "D3m 已接入显式原生镜像选择、计划v2/资产v2、请求配置与镜像摘要绑定、原生无旧relay网络策略和新旧恢复记录分离。原有相关86项、新原生部署/策略10项、完整恢复41项、启动恢复与最终原生资产36项通过（后者包含首轮原生14项和新增1项）。系统/uv测试解释器收集问题已通过使用真实API venv并仅追加测试工具解决，来源校验保留。核对确认旧mount计划本就无配置bind，纠正D3l推测；未启动沙箱/模型，实际身份/监管/网关PID/endpoint接线仍未完成。业务源修改待必要依赖审查提交，9/16不变。"
+        "D3m 已接入显式原生镜像选择、计划v2/资产v2、请求配置与镜像摘要绑定、原生无旧relay网络策略和新旧恢复记录分离。原有相关86项、新原生部署/策略10项、完整恢复41项、启动恢复与最终原生资产36项通过（后者包含首轮原生14项和新增1项）。系统/uv测试解释器收集问题已通过使用真实API venv并仅追加测试工具解决，来源校验保留。核对确认旧mount计划本就无配置bind，纠正D3l推测；未启动沙箱/模型，实际身份/监管/网关PID/endpoint接线仍未完成。业务源修改待必要依赖审查提交，9/16不变。",
+        "D3n 已接通原生签发/API监管、无旧relay的forward、容器宿主PID观察、固定镜像网关交接、v2端点以及原claim builder/私有配置selector。签发监管恢复53项、进程/旧forward32项、相关旧链路111项、新旧selector62项与最终原生63项通过（各批重叠）。首次环境缺少Wiki access_scope及硬链接安装问题在独立venv以本机源码wheel/copy安装解决，来源校验保留，日常API环境未修改。独立进程观察器/测试/合同报告已在业务4a25b38提交，完整业务源码闭包仍待审查。当前镜像缺少批准业务Skill；真实API/模型及完整生命周期尚未验收，9/16不变。"
       ]
     },
     {

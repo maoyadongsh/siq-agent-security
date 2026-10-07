@@ -1,0 +1,106 @@
+{
+  "schema_version": "siq.optimization-native-request-wiring-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "batch": "D3n",
+  "status": "implementing",
+  "business_branch": "codex/native-skill-business-20261007",
+  "business_component_commit": "4a25b3850203566b7b54e432b9089b4530cb5601",
+  "business_commit_scope": [
+    "scripts/openshell/qwen38_native_process.py",
+    "scripts/openshell/tests/test_qwen38_native_process.py",
+    "docs/architecture/native-skill-supervisor-integration-20261007.md",
+    "docs/reports/native-request-wiring-progress-20261007.md"
+  ],
+  "full_business_wiring_committed": false,
+  "candidate_sources_sha256": {
+    "apps/api/services/qwen38_native_request_issuer.py": "dc6f7361c9a52b9a278377932c109cef60458ed49d691aaff6b94e8ea07f673d",
+    "apps/api/services/qwen38_native_request_launch.py": "8643e35db9b24f9295d73742763e1dab9a8deff2fd51bd090fc2feaf3bdd7c82",
+    "apps/api/services/qwen38_native_request_gateway.py": "3cfc9325830f2863806525f2b6df28a359436e77e5c77de310250b8f668c9a74",
+    "apps/api/services/qwen38_native_request_profile.py": "f1c0e4d0ed64b9bf19b312057c387844c45a4a7fde26a8bb6bf852f2d02fdfa8",
+    "apps/api/services/qwen38_request_builder.py": "79ec8161a396559e8b3cff5f86d6527b0460a7aea4762fb2daeb05a3df0f6d54",
+    "apps/api/services/qwen38_request_selector.py": "80ea92b6313a9fe424490bed04d02b96b1cfed6b26c81a3e6c6993a85f947978",
+    "apps/api/services/qwen38_request_supervision.py": "fa39db747826e02794a5033a8f3f1b6e3c9de815fc240552e7efbb7e69d300c4",
+    "apps/api/services/qwen38_request_startup.py": "5a9681ea9695a0fe4859f4faa4d3699c2edce3824f443e27874884ff275b5aa3",
+    "apps/api/services/qwen38_request_gateway.py": "3f97b5d418696f579bf822d5dd4cf2bf7913b37ae8c365baa4e052fe3ec71290",
+    "apps/api/services/qwen38_request_endpoint.py": "249b9f0a62130563d400dfafbda82e342a220c2e037f3bc64c89a553486dcd6c",
+    "scripts/openshell/qwen38_native_process.py": "4d8ed55145cadfaec3c32467e95a80b340fd39d2ff31fa0f78ad82d210b1d5a1",
+    "scripts/openshell/qwen38_request_forward.py": "7cc73a848c2c50f570eb331db73faa36d440c948ecc46bedccbd709ad5590a00",
+    "apps/api/tests/test_qwen38_native_request_issuer.py": "7370089199aa16732e2d45150490bf26c814ee2a5e1009e0669e1ec83a70d041",
+    "apps/api/tests/test_qwen38_native_request_supervision.py": "c10fdb56621a1abcb43f89dcb6aa32d97386b9f7d92495542ce24fb817bebf7b",
+    "apps/api/tests/test_qwen38_native_request_gateway.py": "10de92531fbc7b8b29d4b13a900308871c66c2870433309b2e62c02cf8fa7a24",
+    "apps/api/tests/test_qwen38_native_request_builder.py": "98a4bfa5c593d00bd76d1a63b48ba96bd8a1695e4efe48bf439eb91ec72bbf50",
+    "apps/api/tests/test_qwen38_native_request_selector.py": "d6a8d4f68dd36babf5aa00f4d6d73a930f640229ed24fd52c7b7e4a1f96ee05f",
+    "scripts/openshell/tests/test_qwen38_native_process.py": "8a103a5f7f7ae0af68bf40cea55c5388532d59ff3a4929158c324de642846448",
+    "infra/env/local.example": "a3617cb40fc1913add88ddfbc90488848e69102d6a371838adac03d44dc7fa9c",
+    "docs/architecture/native-skill-supervisor-integration-20261007.md": "05a95d2630d66522fea8bb0cafcf0130d64da05b72a26df76bfa63a3a1f15233",
+    "docs/reports/native-request-wiring-progress-20261007.md": "abb9a78bc4ec23b29b366a7e487f0eba5ffa6cc35dd923f740999265ffcb809b"
+  },
+  "implemented": [
+    "Durable native request issuance and exact cancellation after authority loss",
+    "API v6 preparation, containment and native forward without legacy relay",
+    "Owned container/process observation and fixed-image gateway PID handoff",
+    "Separate native host readiness and endpoint authenticated HTTP v2",
+    "Original-claim native builder with joined cancellation cleanup",
+    "Operator-private native profile and revalidated selector/activation"
+  ],
+  "validation": {
+    "issuance_supervision_startup_passed": 53,
+    "native_process_and_legacy_forward_passed": 32,
+    "initial_native_gateway_passed": 11,
+    "initial_native_builder_passed": 10,
+    "related_legacy_gateway_endpoint_builder_recovery_and_native_supervision_passed": 111,
+    "native_and_legacy_selector_passed": 62,
+    "final_native_passed": 63,
+    "final_native_breakdown": {
+      "issuer": 11,
+      "supervision": 15,
+      "gateway": 11,
+      "builder": 10,
+      "selector": 16
+    },
+    "counts_overlap": true,
+    "ruff": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "failed_attempts": [
+    "Native supervision fixture had group-writable ancestors; fixed fixture and added production preflight plus negative test without relaxing private-path checks",
+    "Native selection drift fixture initially violated NativeBinding constructor constraints; replaced with a valid different grant",
+    "Combined selector first attempt: 50 passed, 12 failed; one fixture issue and eleven old installed financial-tools package missing access_scope",
+    "New isolated test venv first wheel install had hardlinks and was rejected by existing source provenance; reinstalled using copy mode, checks retained"
+  ],
+  "local_result_sha256": {
+    "native-issuance-supervision-tests.log": "63da2c4dd2d1da4b6a6aae172b626f8acc340d9b3feb0695d492f33509a3835e",
+    "native-process-test.log": "5fc4e88642ca0cf99ce1b1155ffd20642f488f43a0af14d1940531cd77757eea",
+    "native-wiring-legacy-regression.log": "9783c7b8bcb77bfa5f4f880b1e2b62c1ea2f80062084df073b461654410eb7a6",
+    "native-selector-test.log": "a69116444924ad2988a48c5250d717888cb1db13ea64c0616dd543f2222d134f",
+    "native-selector-final-test.log": "0cc2384a0c3f83e43640411f72aac5beecbc8466ff1a2708cf610a6e5de9151b",
+    "native-selector-copy-final-test.log": "deb468ae844be362aacb9d359c6a30e304554964026bb9b99c2b918df4f27a07",
+    "native-business-wiring-final.log": "71eeac37010437ce0578958a174fbe5aa6886b860b27b92e4caed7e7759bee4e"
+  },
+  "isolated_wheels_sha256": {
+    "siq_openshell_control-0.4.0-py3-none-any.whl": "0b7edac4940c04355b6bc37002fee27373641ba7bc00af67bc25f435c1902fcf",
+    "siq_financial_tools-0.2.0-py3-none-any.whl": "4b87ae4af8a874f4811da6c46b722e76b3cfd9ae59cf355992840577eb393182"
+  },
+  "environment": {
+    "actual_grant_and_execution_database_logic": true,
+    "synthetic_users_and_rows": true,
+    "container_host_control_and_HTTP_fixtures": true,
+    "new_isolated_test_venv": true,
+    "shares_existing_third_party_API_dependencies": true,
+    "production_API_venv_modified": false,
+    "provenance_checks_retained": true,
+    "live_containers_started_this_batch": false,
+    "model_calls": 0
+  },
+  "business_report": "docs/reports/native-request-wiring-progress-20261007.md",
+  "limits": [
+    "No single real daily API/model business acceptance yet; component fixtures do not establish this",
+    "Current protected candidate image lacks approved business Skill bundle; native business profile requires at least one protected Skill",
+    "Need private deployment paths and consistent isolated API/Supervisor distributions",
+    "Native API and Supervisor source closure includes preexisting untracked dependencies awaiting scoped review; not fully delivered or pushed",
+    "Business revocation, approval retry, network, expiration/upgrade/drift and failure recovery still require real end-to-end evidence"
+  ],
+  "overall_accepted_tasks": 9,
+  "overall_tasks": 16
+}
