@@ -56,3 +56,11 @@ B1 不新增公开签发端点、不接入 Engine；后续调用绑定与受管�
 会话最长 24 小时，调用最长五分钟，签发按 baseline session、宿主生命周期及上下文期限收紧；幂等返回原始有效文档，不续期。会话最多 1024 条、调用最多 16384 条，暂存残留计入目录读取预算，不自动删除历史。记录只追加，审计缺失不发布。绑定的存在不是执行预留，不提供 exactly-once 语义；后续引擎仍必须应用原 hold reservation/observation。
 
 组件 `VerifyCall` 对缺失会话、缺失调用、过期、依赖不可读、上下文撤销和参数漂移一律报错，不提供“找不到就普通 Agent 授权”的返回值。C 阶段需将调用级受管模式绑定到可信 enrollment/运行身份策略，并在决策前选择此必需验证路径；不得仅根据本次请求 claim 或调用记录是否存在决定是否启用保护。此门禁和真实宿主回调接入之前，B2 不作为在线授权入口。
+
+## C1：决策交集与版本化回执组件
+
+引擎新增可信宿主 `NativeCalls` 查询接口，由该接口基于受管 enrollment/宿主配置返回“必需”状态与完整已验证调用。该状态不能来自模型参数，查询错误或必需但无结果必须 hard deny（包括 warn/audit_only）。未启用的既有 v1 会话保持原路径。原 Intent 必须选择精确 Agent baseline；不能用 Skill Grant 覆盖 Intent 所选 Grant。所有 Skill 祖先逐一按自己的归属执行资源/工具策略，任一 deny 优先，之后 hold，最后才 allow；不得查询“最新 baseline”替代绑定。
+
+新增 `runtime-receipt/v3`，在独立 `receipt.v3.schema.json` 记录 `native_invocation`：精确调用/会话引用与签名、参数绑定、Agent authority 及完整叶到根上下文授权引用。Skill 归属等级采用 `controlled_invocation`。原 v1/v2 合同及签名字节保持；不能以 v1 的 controlled_task 标签隐瞒新的执行语义。无 Skill 的记录保留原 baseline 与明确无 Skill 证明，不制造 Skill 归属。
+
+原生调用的最终参数已由宿主固定；引擎不得在绑定之后静默脱敏改写参数并把旧证据带到新调用。需要脱敏时由宿主生成新的原生调用 ID/绑定，再进行决策。C1 仅新增引擎组件与回执合同，未接入在线启动路径。审批重试在 C2 完成原调用和重试调用的双重活体核验之前明确拒绝；状态 reader/writer 兼容、受管 enrollment 必需门禁和真实宿主 wiring 未验收前不得产品启用。
