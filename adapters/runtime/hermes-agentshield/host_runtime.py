@@ -96,14 +96,36 @@ class RuntimeGuard:
     """
 
     def __init__(self, *, pid, uid, gid, artifact_sha256, executable_sha256,
-                 argv_sha256, mounts, code_files, verify_backend):
+                 argv_sha256, mounts, code_files, verify_backend,
+                 image_files=None, image_skill_roots=None):
         self._pin, self._closed = None, False
         self._lock = threading.RLock()
         self._failed = threading.Event()
+        self._image_mode = image_files is not None
+        self._image_objects, self._image_skills = {}, []
+        self._channel_directory = None
         try:
             if (type(uid) is not int or uid <= 0 or type(gid) is not int or gid <= 0
-                    or not callable(verify_backend) or type(mounts) is not list or not 1 <= len(mounts) <= 64
-                    or type(code_files) is not dict or not 1 <= len(code_files) <= _MAX_FILES):
+                    or not callable(verify_backend) or type(mounts) is not list
+                    or type(code_files) is not dict):
+                raise _failure()
+            if self._image_mode:
+                if (mounts or code_files or type(image_files) is not dict
+                        or not 1 <= len(image_files) <= _MAX_FILES
+                        or type(image_skill_roots) is not list or len(image_skill_roots) > 64):
+                    raise _failure()
+                for mapping in image_skill_roots:
+                    if type(mapping) is not dict or set(mapping) != {"source", "target"}:
+                        raise _failure()
+                    entry = {"source": _path(mapping["source"]), "target": _path(mapping["target"])}
+                    for old in self._image_skills:
+                        if (entry["source"] == old["source"] or entry["target"] == old["target"]
+                                or entry["target"].startswith(old["target"] + "/")
+                                or old["target"].startswith(entry["target"] + "/")):
+                            raise _failure()
+                    self._image_skills.append(entry)
+            elif (image_skill_roots is not None or not 1 <= len(mounts) <= 64
+                    or not 1 <= len(code_files) <= _MAX_FILES):
                 raise _failure()
             self.pid, self.uid, self.gid = pid, uid, gid
             self.artifact = _hash(artifact_sha256)
@@ -120,8 +142,8 @@ class RuntimeGuard:
                             or old["target"].startswith(entry["target"] + "/")):
                         raise _failure()
                 self._mounts.append(entry)
-            self._files = {_path(k): _hash(v) for k, v in code_files.items()}
-            if any(self._owner(path)["kind"] != "code" for path in self._files):
+            self._files = {_path(k): _hash(v) for k, v in (image_files if self._image_mode else code_files).items()}
+            if not self._image_mode and any(self._owner(path)["kind"] != "code" for path in self._files):
                 raise _failure()
             self._pin = ProcessPin(pid, uid)
             self._namespaces = self._namespace_ids()
@@ -152,7 +174,8 @@ class RuntimeGuard:
             key, _, value = line.partition(":")
             fields[key] = value.split()
         if (fields.get("Uid") != [str(self.uid)] * 4 or fields.get("Gid") != [str(self.gid)] * 4
-                or fields.get("NoNewPrivs") != ["1"] or int(fields["CapEff"][0], 16) != 0
+                or fields.get("NoNewPrivs") != ["1"]
+                or any(int(fields[key][0], 16) != 0 for key in ("CapEff", "CapPrm", "CapAmb"))
                 or not set(fields.get("Groups", ())).issubset({str(self.gid)})
                 or self._namespace_ids() != self._namespaces
                 or hashlib.sha256(_bounded(f"/proc/{self.pid}/cmdline", 65536)).hexdigest() != self._argv):
@@ -180,10 +203,12 @@ class RuntimeGuard:
         return digest.hexdigest(), total
 
     @contextlib.contextmanager
-    def _runtime_file(self, root, path):
+    def _runtime_file(self, root, path, *, protected=False):
         descriptors, edges = [], []
         parent = root
         try:
+            if protected:
+                self._protected_object("/", os.fstat(root))
             parts = path.split("/")[1:]
             for index, name in enumerate(parts):
                 flags = os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
@@ -192,18 +217,110 @@ class RuntimeGuard:
                 fd = os.open(name, flags, dir_fd=parent)
                 descriptors.append(fd)
                 info = os.fstat(fd)
+                if protected:
+                    self._protected_object("/" + "/".join(parts[:index + 1]), info)
                 edges.append((parent, name, fd, (info.st_dev, info.st_ino)))
                 parent = fd
             yield parent
-            for parent, name, fd, expected in edges:
+            for index, (parent, name, fd, expected) in enumerate(edges):
                 current = os.stat(name, dir_fd=parent, follow_symlinks=False)
                 opened = os.fstat(fd)
                 if (stat.S_ISLNK(current.st_mode) or (current.st_dev, current.st_ino) != expected
                         or (opened.st_dev, opened.st_ino) != expected):
                     raise _failure()
+                if protected:
+                    key = "/" + "/".join(parts[:index + 1])
+                    self._protected_object(key, opened)
+                    self._protected_object(key, current)
         finally:
             for fd in reversed(descriptors):
                 os.close(fd)
+
+    def _protected_object(self, path, info):
+        if (info.st_uid != 0 or info.st_mode & 0o022
+                or not (stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode))):
+            raise _failure()
+        identity = (info.st_dev, info.st_ino, info.st_mode, info.st_uid, info.st_gid)
+        if self._image_objects.setdefault(path, identity) != identity:
+            raise _failure()
+
+    def _check_image_skills(self, root):
+        for mapping in self._image_skills:
+            target = mapping["target"]
+            expected = {path for path in self._files if path.startswith(target + "/")}
+            if not expected:
+                raise _failure()
+            found, pending, entries = set(), [target], 0
+            while pending:
+                directory = pending.pop()
+                with self._runtime_file(root, directory, protected=True) as fd:
+                    if not stat.S_ISDIR(os.fstat(fd).st_mode):
+                        raise _failure()
+                    # scandir streams entries instead of allocating an unbounded list.
+                    with os.scandir(fd) as children:
+                        for child in children:
+                            entries += 1
+                            if entries > _MAX_FILES * 2:
+                                raise _failure()
+                            path = directory + "/" + child.name
+                            info = child.stat(follow_symlinks=False)
+                            self._protected_object(path, info)
+                            if stat.S_ISDIR(info.st_mode):
+                                if not any(p.startswith(path + "/") for p in expected):
+                                    raise _failure()
+                                pending.append(path)
+                            elif path in expected:
+                                found.add(path)
+                            else:
+                                raise _failure()
+            if found != expected:
+                raise _failure()
+
+    def _check_channel_directory(self, root):
+        if self._channel_directory is None:
+            return
+        path, identity = self._channel_directory
+        with self._runtime_file(root, path) as fd:
+            info = os.fstat(fd)
+            if (not stat.S_ISDIR(info.st_mode) or info.st_uid != self.uid or info.st_gid != self.gid
+                    or stat.S_IMODE(info.st_mode) != 0o700 or (info.st_dev, info.st_ino) != identity):
+                raise _failure()
+
+    @contextlib.contextmanager
+    def namespace_channel_directory(self, runtime_path):
+        """Yield a verified runtime fd; only for a host outside its PID namespace."""
+        root, duplicate = None, None
+        try:
+            with self._lock:
+                _path(runtime_path)
+                host_pid_ns = os.stat("/proc/self/ns/pid")
+                if (not self._image_mode or (os.geteuid(), os.getegid()) != (self.uid, self.gid)
+                        or self._namespaces[1] == (host_pid_ns.st_dev, host_pid_ns.st_ino)):
+                    raise _failure()
+                self.verify()
+                root = os.open(f"/proc/{self.pid}/root", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+                with self._runtime_file(root, runtime_path) as fd:
+                    info = os.fstat(fd)
+                    entry = (runtime_path, (info.st_dev, info.st_ino))
+                    if self._channel_directory not in (None, entry):
+                        raise _failure()
+                    self._channel_directory = entry
+                    self._check_channel_directory(root)
+                    self.verify()
+                    duplicate = os.dup(fd)
+                    os.set_inheritable(duplicate, False)
+            # Publisher verification may run on another thread while the
+            # launcher holds this context; do not hold the guard lock here.
+            yield duplicate
+            self.verify()
+        except BaseException:  # noqa: BLE001 - invalid bootstrap state closes the guarded process
+            self.close()
+            raise _failure() from None
+        finally:
+            if duplicate is not None:
+                os.close(duplicate)
+            if root is not None:
+                os.close(root)
 
     def _check_mounts(self, root):
         actual = _mounts(_bounded(f"/proc/{self.pid}/mountinfo", 1 << 20))
@@ -256,21 +373,30 @@ class RuntimeGuard:
             self._check_process()
             root = os.open(f"/proc/{self.pid}/root", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
             try:
-                self._check_mounts(root)
+                if self._image_mode:
+                    self._check_image_skills(root)
+                else:
+                    self._check_mounts(root)
+                self._check_channel_directory(root)
                 total = 0
                 for path, expected in self._files.items():
                     if time.monotonic() >= deadline:
                         raise _failure()
-                    owner = self._owner(path)
-                    host = owner["source"] + path.removeprefix(owner["target"])
-                    with self._runtime_file(root, path) as fd:
-                        if not os.path.samestat(_host_info(host), os.fstat(fd)):
-                            raise _failure()
+                    with self._runtime_file(root, path, protected=self._image_mode) as fd:
+                        if not self._image_mode:
+                            owner = self._owner(path)
+                            host = owner["source"] + path.removeprefix(owner["target"])
+                            if not os.path.samestat(_host_info(host), os.fstat(fd)):
+                                raise _failure()
                         digest, size = self._digest_fd(fd, 1 << 20)
                         total += size
                         if digest != expected or total > _MAX_CODE_BYTES:
                             raise _failure()
-                self._check_mounts(root)
+                if self._image_mode:
+                    self._check_image_skills(root)
+                else:
+                    self._check_mounts(root)
+                self._check_channel_directory(root)
             finally:
                 os.close(root)
             self._check_process()
@@ -286,7 +412,9 @@ class RuntimeGuard:
             self._lock.release()
 
     def verify_mount(self, source, target):
-        if not any(m == {"source": source, "target": target, "kind": "skill"} for m in self._mounts):
+        matched = ({"source": source, "target": target} in self._image_skills if self._image_mode
+                   else {"source": source, "target": target, "kind": "skill"} in self._mounts)
+        if not matched:
             self.close()
             raise _failure()
         self.verify()

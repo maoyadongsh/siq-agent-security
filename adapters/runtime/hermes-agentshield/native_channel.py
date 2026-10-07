@@ -233,6 +233,58 @@ class HostChannel:
         self.close()
 
 
+class NamespaceHostChannel(HostChannel):
+    """Listener in a runtime directory already verified by RuntimeGuard.
+
+    The trusted launcher supplies an open directory, never an arbitrary model
+    path. The duplicate descriptor pins the directory across path replacement.
+    The image-profile client must authenticate every response's credentials.
+    """
+
+    def __init__(self, directory_fd: int, peer: ProcessPin, timeout=2):
+        _linux()
+        self._socket, self._inode, self._directory_fd = None, None, None
+        self._lock = threading.Lock()
+        self._peer, self._sequence, self._timeout = peer, 1, _timeout(timeout)
+        try:
+            if type(directory_fd) is not int or directory_fd < 0:
+                raise _failure()
+            self._directory_fd = os.dup(directory_fd)
+            os.set_inheritable(self._directory_fd, False)
+            peer.check()
+            info = os.fstat(self._directory_fd)
+            if (not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid()
+                    or info.st_gid != os.getegid() or stat.S_IMODE(info.st_mode) != 0o700):
+                raise _failure()
+            self.path = Path(f"/proc/self/fd/{self._directory_fd}/native-host.sock")
+            self._socket = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+            self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_PASSCRED, 1)
+            self._socket.settimeout(self._timeout)
+            self._socket.bind(str(self.path))
+            self._inode = os.stat("native-host.sock", dir_fd=self._directory_fd, follow_symlinks=False)
+            os.chmod("native-host.sock", 0o600, dir_fd=self._directory_fd, follow_symlinks=False)
+            self._socket.listen(8)
+        except (OSError, ValueError, ChannelError):
+            self.close()
+            raise _failure() from None
+
+    def close(self):
+        if self._socket is not None:
+            self._socket.close()
+            self._socket = None
+        if self._inode is not None and self._directory_fd is not None:
+            try:
+                current = os.stat("native-host.sock", dir_fd=self._directory_fd, follow_symlinks=False)
+                if stat.S_ISSOCK(current.st_mode) and os.path.samestat(self._inode, current):
+                    os.unlink("native-host.sock", dir_fd=self._directory_fd)
+            except OSError:
+                pass
+            self._inode = None
+        if self._directory_fd is not None:
+            os.close(self._directory_fd)
+            self._directory_fd = None
+
+
 class HermesChannel:
     """Thin client for the launcher's protected mount; no authority or secrets.
 
@@ -240,10 +292,17 @@ class HermesChannel:
     uncertain exchange poisons this client; no automatic retry of an event.
     """
 
-    def __init__(self, path: Path, timeout=2):
+    def __init__(self, path: Path, timeout=2, *, server_credentials=None):
         _linux()
         if not Path(path).is_absolute():
             raise _failure()
+        if server_credentials is not None and (
+                type(server_credentials) is not tuple or len(server_credentials) != 3
+                or any(type(value) is not int for value in server_credentials)
+                or not 0 <= server_credentials[0] <= 2147483647
+                or any(not 0 < value <= 2147483647 for value in server_credentials[1:])):
+            raise _failure()
+        self._server_credentials = server_credentials
         self._path, self._timeout = str(path), _timeout(timeout)
         self._pid, self._sequence, self._failed = os.getpid(), 1, False
         self._lock = threading.Lock()
@@ -266,7 +325,9 @@ class HermesChannel:
                     connection.connect(self._path)
                     if connection.send(raw) != len(raw):
                         raise _failure()
-                    response, _ = _receive(connection)
+                    response, credentials = _receive(connection)
+                    if self._server_credentials is not None and credentials != self._server_credentials:
+                        raise _failure()
                 frame = _frame(response, "result", "native-host-response/v1")
                 if frame["sequence"] != sequence:
                     raise _failure()

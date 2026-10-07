@@ -2702,3 +2702,5 @@ OPT-08 D2d 的宿主应用桥接按 [native-host-bridge/v1](../packages/contract
 企业 Nginx 保持现有 CSP，assets 仅 200/206/304 可长期缓存，错误响应 no-store；health 明确单一 text/plain 类型并 no-store。验证须经过实际 Nginx 与本地二进制响应，覆盖 HTML、资产、SPA、错误及适用代理链，再进行浏览器正常会话/导航与注入、跨站限制检查。受控代理夹具不冒充外部生产网关；未执行完整 DNS rebinding 链时不得声称其实证防御。
 
 OPT-08 D2g 按 [native-host-online/v1](../packages/contracts/native-host-online.v1.md) 增加显式 `serve --native-host` 与宿主专用元数据发布端点。只读取本状态目录内 0600 私有连接配置，通过固定 Unix socket 有界反查运行事实，独立凭据不赋予管理权限。真实 `/v1/decide` 在现有身份认证后对必需原生调用唯一 Bind，使用构造时固定的原生查询器，非 allow/异常关闭在途调用。旧入口和新身份创建门禁保持；组件联验不能代替实际启动器与业务验收。
+
+OPT-08 D2h 按 [native-runtime-image-profile/v1](../packages/contracts/native-runtime-image-profile.v1.md) 显式适配 OpenShell 根文件系统可写、代码由 root 保护的部署。原只读 bind profile 保持不变；镜像 profile 逐次核验实际进程、根拥有且不可被非 root 写入的祖先/代码/Skill 清单，固定镜像与后端归属。通道只在已验证进程目录 fd 内创建，客户端核对每包宿主 PID namespace 投影与 UID/GID；任何替换、凭据不符或核验失败均拒绝。组件探针须使用独立网关和独有沙箱，不改变日常业务网关或宣称业务验收完成。

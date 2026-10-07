@@ -250,3 +250,77 @@ def test_non_linux_is_explicitly_unsupported(monkeypatch):
     monkeypatch.setattr(channel.sys, "platform", "win32")
     with pytest.raises(channel.ChannelError):
         channel.ProcessPin(os.getpid(), os.getuid())
+
+
+@pytest.mark.parametrize("expected", ["actual", (0, os.getuid(), os.getgid()),
+                                      (os.getpid(), os.getuid() + 1, os.getgid()),
+                                      (os.getpid(), os.getuid(), os.getgid() + 1)])
+def test_client_authenticates_kernel_response_and_poisoning(host, expected):
+    valid = expected == "actual"
+    if valid:
+        expected = (os.getpid(), os.getuid(), os.getgid())
+    client = channel.HermesChannel(host.path, server_credentials=expected)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        task = pool.submit(host.serve_once, lambda _: {"accepted": True})
+        if valid:
+            assert client.exchange({"kind": "synthetic-call"}) == {"accepted": True}
+        else:
+            # A same-namespace imposter cannot impersonate a PID-0 outer host,
+            # even when it owns and replaces the well-known socket path.
+            with pytest.raises(channel.ChannelError):
+                client.exchange({"kind": "synthetic-call"})
+            with pytest.raises(channel.ChannelError):
+                client.exchange({"kind": "synthetic-call"})
+        task.result(timeout=2)
+
+
+@pytest.mark.parametrize("credentials", [(), [0, 1000, 1000], (False, 1000, 1000),
+                                         (-1, 1000, 1000), (0, 0, 1000), (0, 1000, 0)])
+def test_invalid_explicit_server_credentials_rejected(host, credentials):
+    with pytest.raises(channel.ChannelError):
+        channel.HermesChannel(host.path, server_credentials=credentials)
+
+
+def test_namespace_channel_pins_directory_and_owns_only_its_socket(tmp_path):
+    original = tmp_path / "original"
+    original.mkdir(mode=0o700)
+    fd = os.open(original, os.O_RDONLY | os.O_DIRECTORY)
+    with channel.ProcessPin(os.getpid(), os.getuid()) as peer:
+        server = channel.NamespaceHostChannel(fd, peer)
+        os.close(fd)  # The listener owns its independent duplicate.
+        moved = tmp_path / "moved"
+        original.rename(moved)
+        original.mkdir(mode=0o700)
+        replacement = original / "native-host.sock"
+        replacement.write_text("unrelated object")
+        try:
+            client = channel.HermesChannel(moved / "native-host.sock",
+                server_credentials=(os.getpid(), os.getuid(), os.getgid()))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                task = pool.submit(server.serve_once, lambda _: {"accepted": True})
+                assert client.exchange({}) == {"accepted": True}
+                task.result(timeout=2)
+        finally:
+            server.close()
+        assert not (moved / "native-host.sock").exists()
+        assert replacement.read_text() == "unrelated object"
+
+
+def test_namespace_channel_refuses_existing_object_and_preserves_replacement(tmp_path):
+    tmp_path.chmod(0o700)
+    path = tmp_path / "native-host.sock"
+    path.write_text("existing")
+    fd = os.open(tmp_path, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        with channel.ProcessPin(os.getpid(), os.getuid()) as peer:
+            with pytest.raises(channel.ChannelError):
+                channel.NamespaceHostChannel(fd, peer)
+            assert path.read_text() == "existing"
+            path.unlink()
+            server = channel.NamespaceHostChannel(fd, peer)
+            path.unlink()
+            path.write_text("replacement")
+            server.close()
+            assert path.read_text() == "replacement"
+    finally:
+        os.close(fd)
