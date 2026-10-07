@@ -1,0 +1,284 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://siq-agent-security.local/contracts/threat-scan-worker.v1.schema.json",
+  "title": "Private bounded static scan IPC v1",
+  "description": "Process-local request/result, never an authorization credential. Content only travels in bounded stdin; no persistence. Failure has no success response. Binding equality is enforced by the parent.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "task_id",
+        "scope_sha256",
+        "input_sha256",
+        "rules_sha256",
+        "analyzer_version",
+        "content_base64",
+        "filename",
+        "rules"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "threat-scan-worker/v1"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        },
+        "scope_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rules_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "analyzer_version": {
+          "type": "string",
+          "pattern": "^siq\\.threat-static\\.v[1-9][0-9]*$"
+        },
+        "content_base64": {
+          "type": "string",
+          "maxLength": 1398104
+        },
+        "filename": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "rules": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "rules",
+            "redaction_patterns"
+          ],
+          "properties": {
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "rules": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "description",
+                  "impact",
+                  "remediation",
+                  "rule_id",
+                  "severity",
+                  "confidence",
+                  "patterns"
+                ],
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "maxLength": 8192
+                  },
+                  "impact": {
+                    "type": "string",
+                    "maxLength": 8192
+                  },
+                  "remediation": {
+                    "type": "string",
+                    "maxLength": 8192
+                  },
+                  "rule_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "severity": {
+                    "enum": [
+                      "critical",
+                      "high",
+                      "medium",
+                      "low"
+                    ]
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "patterns": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "redaction_patterns": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "pattern",
+                  "replacement"
+                ],
+                "properties": {
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "replacement": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "task_id",
+        "scope_sha256",
+        "input_sha256",
+        "rules_sha256",
+        "analyzer_version",
+        "result"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "threat-scan-worker/v1"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        },
+        "scope_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rules_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "analyzer_version": {
+          "type": "string",
+          "pattern": "^siq\\.threat-static\\.v[1-9][0-9]*$"
+        },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sha256",
+            "detected_type",
+            "matches"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "detected_type": {
+              "enum": [
+                "shell",
+                "python",
+                "javascript",
+                "powershell",
+                "binary",
+                "unknown"
+              ]
+            },
+            "matches": {
+              "type": "array",
+              "maxItems": 1024,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "description",
+                  "impact",
+                  "remediation",
+                  "rule_id",
+                  "severity",
+                  "confidence",
+                  "line",
+                  "excerpt",
+                  "excerpt_sha256"
+                ],
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "maxLength": 8192
+                  },
+                  "impact": {
+                    "type": "string",
+                    "maxLength": 8192
+                  },
+                  "remediation": {
+                    "type": "string",
+                    "maxLength": 8192
+                  },
+                  "rule_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "severity": {
+                    "enum": [
+                      "critical",
+                      "high",
+                      "medium",
+                      "low"
+                    ]
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "line": {
+                    "anyOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1048577
+                      }
+                    ]
+                  },
+                  "excerpt": {
+                    "type": "string",
+                    "maxLength": 40
+                  },
+                  "excerpt_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
