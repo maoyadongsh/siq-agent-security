@@ -110,6 +110,24 @@ def test_reverse_verification_is_private_scoped_and_fresh(setup):
     assert not Path(value["verification_socket"]).exists()
 
 
+def test_lease_expiry_is_fixed_while_every_read_revalidates_runtime(setup, monkeypatch):
+    _, config, _, subject, guard = setup
+    clock = [1000.0]
+    monkeypatch.setattr(online.time, "monotonic", lambda: clock[0])
+    verifier = online.Verifier(config)
+    verifier.register(subject, guard, [], lifetime=30)
+    request = {"schema_version": "native-host-verification/v1", "nonce": "d" * 32,
+               "subject": subject, "artifact_sha256": guard.artifact}
+    first = verifier.verify(request)
+    before = guard.checks
+    clock[0] += 10.000001
+    second = verifier.verify(request)
+    assert first["expires_at"] == second["expires_at"] and guard.checks > before
+    clock[0] = 1030.0
+    with pytest.raises(online.OnlineError):
+        verifier.verify(request)
+
+
 @pytest.mark.parametrize("action", ["allow", "deny", "hold"])
 def test_runtime_channel_publisher_and_http_parameter_mapping(setup, action):
     root, config, value, subject, guard = setup

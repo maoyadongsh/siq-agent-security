@@ -92,6 +92,57 @@ func TestNativeEngineIntersectsPinnedBaselineAndEverySkill(t *testing.T) {
 	}
 }
 
+func TestProtectedNativeSkillLoaderRequiresLiveNativeProofAndStrictShape(t *testing.T) {
+	for _, name := range []string{"valid", "support", "legacy", "missing-proof", "extra", "absolute", "traversal", "non-string", "empty", "backslash", "no-name"} {
+		t.Run(name, func(t *testing.T) {
+			base := baselineGrant(t, "hermes", "skill_view")
+			fx, r, v := nativeEngineFixture(t, "block", base)
+			r.Tool, r.Params = "skill_view", map[string]any{"name": "reader"}
+			switch name {
+			case "support":
+				r.Params["file_path"] = "reference/notes.md"
+			case "legacy":
+				fx.eng.opts.NativeCalls = nil
+			case "missing-proof":
+				fx.eng.opts.NativeCalls = func(Request) (bool, *NativeInvocationVerification, error) { return true, nil, nil }
+			case "extra":
+				r.Params["command"] = "unapproved"
+			case "absolute":
+				r.Params["file_path"] = "/etc/passwd"
+			case "traversal":
+				r.Params["file_path"] = "../outside"
+			case "non-string":
+				r.Params["name"] = true
+			case "empty":
+				r.Params["name"] = ""
+			case "backslash":
+				r.Params["name"] = "a\\b"
+			case "no-name":
+				r.Params = map[string]any{"file_path": "notes.md"}
+			}
+			binding, err := trustedcontext.CallBinding(r.Platform, r.SessionID, r.AgentID, r.RuntimeTaskID, r.Tool, r.ToolCallID, r.Params)
+			if err != nil {
+				t.Fatal(err)
+			}
+			v.Evidence.RequestBinding = binding
+			fx.eng.opts.IntentLookup = func(_, _, _ string) (*IntentContract, error) {
+				return &IntentContract{IntentID: "native-load", TaskID: "trusted-envelope", Principal: "user", AgentID: r.AgentID, Purpose: "load approved Skill", AllowedEffects: []string{"tool.invoke"}, ValidUntil: "2099-01-01T00:00:00Z", AuthorityRevision: "revision", SelectedGrant: base}, nil
+			}
+			d, err := fx.eng.Decide(r)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if name == "valid" || name == "support" {
+				if d.Action != ActionAllow || d.Receipt.Operation != "skill.load" || d.Receipt.NativeInvocation == nil {
+					t.Fatal("verified loader refused", d.Action, d.Reason)
+				}
+			} else if d.Action != ActionDeny {
+				t.Fatal("unverified loader accepted", name, d.Action)
+			}
+		})
+	}
+}
+
 func TestNativeEngineResourceIntersectionAndApprovalPrecedence(t *testing.T) {
 	for _, restricted := range []int{0, 1, 2} {
 		t.Run(fmt.Sprint(restricted), func(t *testing.T) {

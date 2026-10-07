@@ -168,6 +168,13 @@ func nativeAttribution(sec *SkillContextVerification) *SkillAttribution {
 		EvidenceLevel: "controlled_invocation", ContextID: sec.ContextID, CallBinding: sec.Native.Evidence.RequestBinding}
 }
 
+func nativeSkillLoadDescriptor(req Request, sec *SkillContextVerification) (runtimeaction.Descriptor, bool) {
+	if sec == nil || sec.Invalid || sec.Native == nil {
+		return runtimeaction.Descriptor{}, false
+	}
+	return runtimeaction.ProtectedSkillLoadDescriptor(req.Platform, req.Tool, req.Params)
+}
+
 func (e *Engine) evaluateNativeIntersection(req Request, s *session, d runtimeaction.Descriptor, rec *Receipt, now time.Time, sec *SkillContextVerification) (string, string) {
 	v := sec.Native
 	// Reconfirm the final parameter binding before any grant is evaluated.

@@ -30,10 +30,17 @@ type IntentContract struct {
 }
 
 func (i *IntentContract) validate(req Request, now time.Time) error {
+	return i.validateNative(req, now, nil)
+}
+
+func (i *IntentContract) validateNative(req Request, now time.Time, sec *SkillContextVerification) error {
 	if i == nil {
 		return nil
 	}
 	if i.Trusted != nil {
+		if _, ok := nativeSkillLoadDescriptor(req, sec); ok {
+			return i.Trusted.AuthorizeNativeSkillLoad(req.Platform, req.AgentID, req.Principal, req.Tool, req.Params, now)
+		}
 		return i.Trusted.Authorize(req.Platform, req.AgentID, req.Principal, req.Tool, req.Params, now)
 	}
 	if i.IntentID == "" || i.TaskID == "" || i.Principal == "" || i.AgentID == "" || i.Purpose == "" || i.AuthorityRevision == "" {
@@ -62,6 +69,9 @@ func (i *IntentContract) validate(req Request, now time.Time) error {
 		return fmt.Errorf("intent expired or invalid valid_until")
 	}
 	descriptor := runtimeaction.Describe(req.Tool, req.Params)
+	if protected, ok := nativeSkillLoadDescriptor(req, sec); ok {
+		descriptor = protected
+	}
 	for _, effect := range descriptor.Effects {
 		allowed := false
 		for _, wanted := range i.AllowedEffects {

@@ -524,7 +524,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 					authorityErr = &intent.Violation{Code: "intent_task_mismatch"}
 				default:
 					if parameterErr == nil {
-						authorityErr = resolvedIntent.validate(req, start)
+						authorityErr = resolvedIntent.validateNative(req, start, sec)
 					}
 				}
 			}
@@ -561,6 +561,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	finishNormalization := e.stageTimer("runtime_action_normalization")
 	req.resourceProfile = verifiedResourceProfile(resolvedIntent)
 	descriptor := runtimeaction.DescribeForProfile(req.resourceProfile, req.Tool, req.Params)
+	if protected, ok := nativeSkillLoadDescriptor(req, sec); ok {
+		descriptor = protected
+	}
 	finishNormalization()
 	operation, effects := descriptor.Operation, descriptor.Effects
 	// Preserve the host task identity even when no Intent is bound. It remains

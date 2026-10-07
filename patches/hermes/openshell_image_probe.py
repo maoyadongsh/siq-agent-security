@@ -106,14 +106,13 @@ def prepare(output, command):
             "argv": [PYTHON, "-I", "-B", RUNTIME + "/bootstrap.py"], "skill_source": str(context / "skill")}
 
 
-def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, row, command, exec_log):
+def runtime_options(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, command):
     spec = importlib.util.spec_from_file_location("siq_image_probe_guard", ADAPTER / "host_runtime.py",
                                                 submodule_search_locations=[str(ADAPTER)])
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     channel = sys.modules[spec.name + ".native_channel"]
-    checks = {}
 
     def backend(pid, uid, gid, artifact):
         assert (pid, uid, gid, artifact) == (peer, os.getuid(), os.getgid(), prepared["artifact"])
@@ -131,7 +130,14 @@ def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, ro
                "executable_sha256": prepared["executable"],
                "argv_sha256": digest(b"\0".join(p.encode() for p in prepared["argv"]) + b"\0"),
                "mounts": [], "code_files": {}, "verify_backend": backend, "image_files": prepared["files"],
-               "image_skill_roots": [{"source": prepared["skill_source"], "target": RUNTIME + "/skill"}]}
+               "image_skill_roots": prepared.get("skill_roots", [{"source": prepared.get("skill_source"), "target": RUNTIME + "/skill"}])}
+    return module, channel, options
+
+
+def verify(prepared, *, peer, cid, namespace, sandbox, init_pid, init_groups, row, command, exec_log):
+    module, channel, options = runtime_options(prepared, peer=peer, cid=cid, namespace=namespace,
+        sandbox=sandbox, init_pid=init_pid, init_groups=init_groups, command=command)
+    checks = {}
     with module.RuntimeGuard(**options) as guard:
         guard.verify_mount(prepared["skill_source"], RUNTIME + "/skill")
         checks["actual_openshell_process_image_and_skill_files"] = True

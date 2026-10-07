@@ -100,7 +100,8 @@ class Verifier:
         with self._lock:
             if key in self._entries or len(self._entries) >= 4096:
                 raise _failure()
-            self._entries[key] = (guard, mounts, time.monotonic() + lifetime)
+            expires = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=lifetime)
+            self._entries[key] = (guard, mounts, time.monotonic() + lifetime, expires)
 
     def verify(self, request):
         if (type(request) is not dict or set(request) != {"schema_version", "nonce", "subject", "artifact_sha256"}
@@ -112,14 +113,16 @@ class Verifier:
             entry = self._entries.get(key)
         if entry is None:
             raise _failure()
-        guard, mounts, until = entry
+        guard, mounts, until, expires = entry
         if request["artifact_sha256"] != guard.artifact or time.monotonic() >= until:
             raise _failure()
         guard.verify()  # Also verifies every immutable mount fixed at registration.
         remaining = until - time.monotonic()
-        if remaining <= 0 or _config(self.config_path) != self.config:
+        if remaining <= 0 or datetime.datetime.now(datetime.UTC) >= expires or _config(self.config_path) != self.config:
             raise _failure()
-        expires = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=remaining)
+        # A signed call may be clamped to this lease. Recomputing the wall
+        # timestamp from separate clock reads introduces microsecond jitter,
+        # which can incorrectly invalidate a still-live signed call.
         return {"schema_version": "native-host-verified/v1", "nonce": request["nonce"],
                 "subject": dict(request["subject"]), "artifact_sha256": guard.artifact,
                 "expires_at": expires.isoformat().replace("+00:00", "Z"), "install_mounts": [dict(m) for m in mounts]}
@@ -215,7 +218,7 @@ class Verifier:
                 pass
             self._socket_info = None
         with self._lock:
-            for guard, _, _ in self._entries.values():
+            for guard, _, _, _ in self._entries.values():
                 guard.close()
 
 
@@ -283,3 +286,80 @@ class Publisher:
             connection.close()
         self.guard.verify()
         return {"accepted": True}
+
+
+class DecisionRelay:
+    """Authenticated peer -> fixed scoped /v1/decide; never an authorizer."""
+
+    def __init__(self, publisher, runtime_credential):
+        if (not isinstance(publisher, Publisher) or type(runtime_credential) is not str
+                or not re.fullmatch(r"ri-[a-f0-9]{32}\.[a-f0-9]{64}", runtime_credential)):
+            raise _failure()
+        self.publisher, self._credential = publisher, runtime_credential
+
+    def dispatch(self, event):
+        if type(event) is dict and event.get("schema_version") == "native-hermes-lifecycle/v1":
+            return self.publisher.dispatch(event)
+        try:
+            return self._decide(event)
+        except Exception:  # noqa: BLE001 - never reflect credentials, parameters or transport exceptions
+            return {"error": "native_host_unavailable"}
+
+    def _decide(self, event):
+        publisher = self.publisher
+        publisher.guard.verify()
+        if _config(publisher.config_path) != publisher.config:
+            raise _failure()
+        if (type(event) is not dict or set(event) != {"schema_version", "request"}
+                or event["schema_version"] != "native-decision-relay/v1"):
+            raise _failure()
+        request = event["request"]
+        if (type(request) is not dict or set(request) != {
+                "platform", "agent_id", "session_id", "runtime_task_id", "tool", "tool_call_id", "params"}
+                or type(request["params"]) is not dict
+                or any(request[k] != publisher.subject[k] for k in ("platform", "agent_id", "session_id"))):
+            raise _failure()
+        for key in ("runtime_task_id", "tool", "tool_call_id"):
+            value = request[key]
+            if (type(value) is not str or not 0 < len(value.encode()) <= 256
+                    or any(ord(c) < 32 or ord(c) == 127 for c in value)):
+                raise _failure()
+        raw = json.dumps(request, separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode()
+        if len(raw) > 65536:
+            raise _failure()
+        deadline = time.monotonic() + 5
+        connection = http.client.HTTPConnection("127.0.0.1", publisher._port, timeout=5)
+        try:
+            connection.request("POST", "/v1/decide", raw,
+                {"Authorization": "Bearer " + self._credential, "Content-Type": "application/json"})
+            response = connection.getresponse()
+            if response.status != 200:
+                raise _failure()
+            chunks, total = [], 0
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise _failure()
+                # The retained response socket can be detached from connection
+                # when HTTP/1.0 closes; set its deadline before each short read.
+                response.fp.raw._sock.settimeout(remaining)
+                chunk = response.read1(min(4096, 65537 - total))
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > 65536:
+                    raise _failure()
+                chunks.append(chunk)
+                if response.isclosed():
+                    break
+            result = _decode(b"".join(chunks))
+            if (type(result) is not dict or result.get("action") not in ("allow", "deny", "hold")
+                    or type(result.get("receipt_id")) is not str or not 0 < len(result["receipt_id"].encode()) <= 256
+                    or any(ord(c) < 32 or ord(c) == 127 for c in result["receipt_id"]) or "params" in result):
+                raise _failure()
+            publisher.guard.verify()
+            if time.monotonic() >= deadline:
+                raise _failure()
+            return {"action": result["action"], "receipt_id": result["receipt_id"]}
+        finally:
+            connection.close()

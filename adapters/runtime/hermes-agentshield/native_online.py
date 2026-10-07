@@ -9,6 +9,11 @@ class CallbackError(RuntimeError):
 
 
 class Callbacks:
+    @classmethod
+    def via_host(cls, channel):
+        """Use the already authenticated host; keep runtime credentials there."""
+        return cls(channel, lambda body: channel.exchange({"schema_version": "native-decision-relay/v1", "request": body}))
+
     def __init__(self, channel, decide):
         # decide is the existing bounded, scoped-credential HTTP transport,
         # installed by trusted bootstrap, never selected in tool parameters.
