@@ -156,7 +156,7 @@ func (s *Store) EnrollContext(token, session string) (Record, intent.Binding, er
 }
 func bindingMatches(r Record, session string, c *intent.Contract, b *intent.Binding) bool {
 	id, task := sessionNames(r, session)
-	profileMatch := c != nil && ((r.SchemaVersion == "local-runtime-identity/v1" || r.SchemaVersion == "local-runtime-identity/v3") && c.SchemaVersion == "intent/v2" && c.FilesystemProfile == "" || r.SchemaVersion == "local-runtime-identity/v2" && c.SchemaVersion == "intent/v4" && c.AuthorityKind == "instance_permission" && c.FilesystemProfile == r.FilesystemProfile)
+	profileMatch := c != nil && (posixIdentity(r) && c.SchemaVersion == "intent/v2" && c.FilesystemProfile == "" || r.SchemaVersion == "local-runtime-identity/v2" && c.SchemaVersion == "intent/v4" && c.AuthorityKind == "instance_permission" && c.FilesystemProfile == r.FilesystemProfile)
 	return profileMatch && b != nil && c.IntentID == id && b.IntentID == id && c.TaskID == task && b.TaskID == task && c.Authority.Issuer == "local-runtime-identity" && c.Authority.Revision == recordDigest(r) && b.GrantRef != nil && *b.GrantRef == r.GrantRef
 }
 

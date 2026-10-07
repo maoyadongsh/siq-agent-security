@@ -47,6 +47,10 @@ type NativeInvocationVerification struct {
 // A lookup failure is an authority denial, even when Required could not be read.
 type NativeCallLookup func(Request) (required bool, verified *NativeInvocationVerification, err error)
 
+// NativeCallsConfigured only reports wiring availability. It does not validate
+// an enrollment or call; those must still pass the configured trusted lookup.
+func (e *Engine) NativeCallsConfigured() bool { return e != nil && e.opts.NativeCalls != nil }
+
 var nativeCallIDPattern = regexp.MustCompile(`^ncall-[0-9a-f]{32}$`)
 var nativeSessionIDPattern = regexp.MustCompile(`^nsess-[0-9a-f]{32}$`)
 var nativeContextIDPattern = regexp.MustCompile(`^sec-[0-9a-f]{32}$`)

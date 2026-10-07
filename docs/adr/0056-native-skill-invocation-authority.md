@@ -80,3 +80,5 @@ C1 的临时拒绝只在本批完整重试验证通过后解除。审批仍是�
 创建仅接受 Hermes、无 Windows 文件系统 profile、无 Skill 的原 Agent baseline。派生请求身份继承原策略的独立副本，并逐次检查父签名、撤销、固定 Grant、请求租约和完整策略一致性；不能派生较弱模式。已有 root replacement 必须先撤销旧身份；不修改旧签名记录。
 
 原生必需模式查询依据同实例的有效签名根身份，独立于 session/call/SEC 是否存在。已属于 hri 命名空间却没有可验证根身份、存在冲突或身份/Grant 无法读取时返回错误，不返回 legacy。非受管 Agent 及明确旧式有效根身份保留既有路径。具体请求仍须通过 credential 与 session 绑定验证；模式查询本身不授予访问权。管理 API、宿主凭据与在线 Engine wiring 完成前，不开放新创建请求，不能把身份组件测试表述为日常业务验收。
+
+D1 实现的 `RequiredLookup` 先读身份固定策略，再核对原生调用及会话制品摘要；错误保持必需 Authority hard deny。尚未配置该查询的 HTTP 服务遇到新身份返回 503，不进入旧授权路径。候选 reader/writer 低于 5 的回退预检增加有界身份格式检查，即使尚无原生会话，也拒绝 v4/v5 或无法确认兼容的身份状态。此预检不代替签名认证，不改写历史 marker 或发行清单。组件验证见 [D1 验证记录](../development/optimization-opt08-enrollment-validation-20261007.md)。

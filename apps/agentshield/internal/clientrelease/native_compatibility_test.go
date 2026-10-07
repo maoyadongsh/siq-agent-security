@@ -21,6 +21,8 @@ func TestNativeStateRejectsOldCandidateBeforeStaging(t *testing.T) {
 		"native-skill-calls/call.json":                 "native-skill-call-with-skill-v1.sample.json",
 		"native-skill-calls/.unfinished":               "native-skill-call-no-skill-v1.sample.json",
 		"receipts/local/native.jsonl":                  "native-receipt-with-skill-v3.sample.json",
+		"runtime-identities/native-root.json":          "local-runtime-identity-native-v4.sample.json",
+		"runtime-identities/native-child.json":         "local-runtime-identity-native-v5.sample.json",
 	} {
 		t.Run(name, func(t *testing.T) {
 			dir := t.TempDir()
@@ -153,5 +155,30 @@ func TestReader4RejectsUnsafeNativeDirectory(t *testing.T) {
 				t.Fatal("unsafe directory accepted", err)
 			}
 		})
+	}
+}
+
+func TestLegacyIdentityVersionScan(t *testing.T) {
+	for _, name := range []string{"local-runtime-identity.json", "local-runtime-identity-v3.json"} {
+		raw, err := os.ReadFile("../../testdata/contracts/" + name)
+		if err != nil || !legacyIdentityRecord(raw) {
+			t.Fatal("old identity refused", name, err)
+		}
+		dir := t.TempDir()
+		path := filepath.Join(dir, "runtime-identities", "old.json")
+		if err := statefs.MkdirAllPrivate(filepath.Dir(path)); err != nil {
+			t.Fatal(err)
+		}
+		if err := statefs.WriteFile(path, raw, 0600); err != nil {
+			t.Fatal(err)
+		}
+		if err := checkEventCompatibility(dir, 4); err != nil {
+			t.Fatal("legacy identity state rejected", err)
+		}
+	}
+	for _, raw := range []string{`{}`, `{"schema_version":"local-runtime-identity/v4"}`, `{"schema_version":"local-runtime-identity/v1","native_skill_policy":null}`, `{"schema_version":"local-runtime-identity/v3","schema_version":"local-runtime-identity/v1"}`} {
+		if legacyIdentityRecord([]byte(raw)) {
+			t.Fatal("unknown or ambiguous identity accepted")
+		}
 	}
 }

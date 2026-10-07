@@ -44,6 +44,7 @@ var ErrUnavailable = errors.New("runtime_identity_unavailable")
 
 // Record is private signed storage metadata, not an HTTP response DTO.
 type Record struct {
+	NativeSkillPolicy *NativeSkillPolicy    `json:"native_skill_policy,omitempty"`
 	RequestScope      *RequestScope         `json:"request_scope,omitempty"`
 	FilesystemProfile string                `json:"filesystem_profile,omitempty"`
 	SchemaVersion     string                `json:"schema_version"`
@@ -69,13 +70,14 @@ type Revocation struct {
 }
 
 type CreateRequest struct {
-	ConfirmFilesystemProfile bool   `json:"confirm_filesystem_profile,omitempty"`
-	SchemaVersion            string `json:"schema_version"`
-	InstanceID               string `json:"instance_id"`
-	GrantID                  string `json:"grant_id"`
-	ExpectedGrantRevision    int    `json:"expected_grant_revision"`
-	ActorID                  string `json:"actor_id"`
-	SessionTTLSeconds        int    `json:"session_ttl_seconds"`
+	NativeSkillPolicy        *NativeSkillPolicy `json:"native_skill_policy,omitempty"`
+	ConfirmFilesystemProfile bool               `json:"confirm_filesystem_profile,omitempty"`
+	SchemaVersion            string             `json:"schema_version"`
+	InstanceID               string             `json:"instance_id"`
+	GrantID                  string             `json:"grant_id"`
+	ExpectedGrantRevision    int                `json:"expected_grant_revision"`
+	ActorID                  string             `json:"actor_id"`
+	SessionTTLSeconds        int                `json:"session_ttl_seconds"`
 }
 
 // supportedIdentityPlatforms is the closed set of host products for which a
@@ -206,6 +208,7 @@ func (s *Store) revoked(r Record) (bool, error) {
 func (s *Store) Create(req CreateRequest) (Record, error) {
 	writeMu.Lock()
 	defer writeMu.Unlock()
+	req.NativeSkillPolicy = copyNativePolicy(req.NativeSkillPolicy)
 	agent, err := AgentID(req.InstanceID)
 	if err != nil || !validCreateProfile(req) || !textValid(req.GrantID, 256) || req.ExpectedGrantRevision < 0 || !textValid(req.ActorID, 128) || req.SessionTTLSeconds < 60 || req.SessionTTLSeconds > 86400 {
 		return Record{}, ErrInvalid
@@ -259,6 +262,9 @@ func (s *Store) Create(req CreateRequest) (Record, error) {
 	r := Record{SchemaVersion: "local-runtime-identity/v1", IdentityID: id, InstanceID: req.InstanceID, AgentID: agent, Platform: platform, GrantRef: ref, ActorID: req.ActorID, CreatedAt: time.Now().UTC().Format(time.RFC3339Nano), SessionTTLSeconds: req.SessionTTLSeconds, CredentialHash: hash([]byte(token))}
 	if profile != "" {
 		r.SchemaVersion, r.FilesystemProfile = "local-runtime-identity/v2", profile
+	}
+	if req.NativeSkillPolicy != nil {
+		r.SchemaVersion, r.NativeSkillPolicy = "local-runtime-identity/v4", copyNativePolicy(req.NativeSkillPolicy)
 	}
 	r.Signature, err = s.sign(r)
 	if err != nil {

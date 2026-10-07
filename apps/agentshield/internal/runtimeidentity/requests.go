@@ -121,7 +121,7 @@ func (s *Store) publishSigned(path string, value any) error {
 
 func (s *Store) issuer(parent Record) (RequestIssuer, error) {
 	var v RequestIssuer
-	if parent.RequestScope != nil || parent.Platform != "hermes" || parent.SchemaVersion != "local-runtime-identity/v1" ||
+	if !requestParent(parent) ||
 		readJSON(s.requestPath("runtime-request-issuers", parent.IdentityID), &v) != nil {
 		return v, ErrUnavailable
 	}
@@ -148,7 +148,7 @@ func (s *Store) EnableRequestIssuer(req RequestIssuerCreate) (RequestIssuer, err
 		return RequestIssuer{}, ErrInvalid
 	}
 	parent, err := s.read(req.ParentIdentityID)
-	if err != nil || parent.RequestScope != nil || parent.SchemaVersion != "local-runtime-identity/v1" || parent.Platform != "hermes" {
+	if err != nil || !requestParent(parent) {
 		return RequestIssuer{}, ErrInvalid
 	}
 	if revoked, e := s.revoked(parent); e != nil || revoked {
@@ -158,7 +158,7 @@ func (s *Store) EnableRequestIssuer(req RequestIssuerCreate) (RequestIssuer, err
 		return RequestIssuer{}, ErrUnavailable
 	}
 	g, err := s.intents.GrantForReference(parent.GrantRef, parent.Platform, parent.AgentID)
-	if err != nil {
+	if err != nil || !recordGrantProfileMatches(parent, g) {
 		return RequestIssuer{}, ErrUnavailable
 	}
 	if g.ExpiresAt != nil {
@@ -188,7 +188,7 @@ func (s *Store) EnableRequestIssuer(req RequestIssuerCreate) (RequestIssuer, err
 	if err != nil {
 		return RequestIssuer{}, err
 	}
-	if _, err = s.intents.GrantForReference(parent.GrantRef, parent.Platform, parent.AgentID); err != nil {
+	if g, err = s.intents.GrantForReference(parent.GrantRef, parent.Platform, parent.AgentID); err != nil || !recordGrantProfileMatches(parent, g) {
 		return RequestIssuer{}, ErrUnavailable
 	}
 	if platform, e := s.resolve(parent.InstanceID); e != nil || platform != parent.Platform {
@@ -224,6 +224,7 @@ func (s *Store) checkRequestRecord(r Record) error {
 	parent, err := s.read(v.ParentIdentityID)
 	if err != nil || parent.RequestScope != nil || recordDigest(parent) != v.ParentSHA256 ||
 		parent.InstanceID != r.InstanceID || parent.AgentID != r.AgentID || parent.GrantRef != r.GrantRef || parent.ActorID != r.ActorID ||
+		!sameNativePolicy(parent.NativeSkillPolicy, r.NativeSkillPolicy) ||
 		r.SessionTTLSeconds > parent.SessionTTLSeconds {
 		return ErrUnavailable
 	}
@@ -385,6 +386,9 @@ func (s *Store) IssueRequest(token string, req RequestIdentityCreate) (Record, e
 	}
 	r := Record{SchemaVersion: "local-runtime-identity/v3", IdentityID: id, InstanceID: parent.InstanceID, AgentID: parent.AgentID, Platform: parent.Platform,
 		GrantRef: parent.GrantRef, ActorID: parent.ActorID, CreatedAt: attempt.CreatedAt, SessionTTLSeconds: ttl, CredentialHash: hash([]byte(childToken)), RequestScope: &scope}
+	if parent.NativeSkillPolicy != nil {
+		r.SchemaVersion, r.NativeSkillPolicy = "local-runtime-identity/v5", copyNativePolicy(parent.NativeSkillPolicy)
+	}
 	if _, _, err = s.authenticateWithGrant(token); err != nil || s.checkRequestRecord(r) != nil {
 		return Record{}, ErrUnavailable
 	}

@@ -63,6 +63,13 @@ func checkEventCompatibility(dir string, protocol int) error {
 		}
 	}
 	remaining, entries := int64(256<<20), 10000
+	if err := pinDirectory("runtime-identities"); err == nil {
+		if err := checkLegacyIdentityCompatibility(dir, snapshot); err != nil {
+			return err
+		}
+	} else if !os.IsNotExist(err) {
+		return errEventCompatibility
+	}
 	readLog := func(name string, pending bool) error {
 		if remaining <= 0 {
 			return errEventCompatibility
