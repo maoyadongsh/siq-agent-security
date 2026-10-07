@@ -37,6 +37,8 @@ OPT-01 首批组件与 OPT-02 生产身份边界已完成本批回归，见[首�
 
 [OPT-08 B1](optimization-opt08-store-validation-20261007.md) 已完成独立持久上下文、精确原生加载幂等、实时依赖重验、父链撤销与容量/并发/跨进程恢复验证。Go 全量、race、四目标构建与 305 项合同检查通过；B2 调用绑定及 C–E 产品接入/效果验收仍待完成。
 
+[OPT-08 B2](optimization-opt08-call-validation-20261007.md) 已完成会话/精确调用的持久签名记录，区分可信 Skill 与明确无 Skill，防止调用 ID 重写和请求声明降级。Go 全量/race、四目标构建及 320 项合同检查通过；可信 enrollment 必需门禁与引擎/业务接入尚待完成。
+
 ## 边界
 
 既有 SEC-F01–F04/F07/F09 不因本方案自动插入；与实际修改相关时按原合同处理。RES-01 与 SEC-F10 的 Host Sensor 方向关联，但不自动纳入风险评分或强制执行实现。Windows/macOS 原生验收环境需在相应任务启动时核实，不以 Linux 构建替代。

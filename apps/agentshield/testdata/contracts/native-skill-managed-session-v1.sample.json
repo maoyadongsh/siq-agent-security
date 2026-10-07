@@ -1,0 +1,20 @@
+{
+  "schema_version": "native-skill-managed-session/v1",
+  "issuer_id": "local-admin",
+  "subject": {
+    "platform": "hermes",
+    "instance_id": "hi-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "session_id": "sess-1"
+  },
+  "agent_authority": {
+    "grant_id": "grt-agent-baseline",
+    "grant_digest": "b203449be2374cf9d4d44b55862e78f0c10487450486bb8c62ae689345eef7f9"
+  },
+  "issued_at": "2026-09-14T12:00:00Z",
+  "expires_at": "2026-09-14T12:45:00Z",
+  "signing_schema": "local_canonical/v1",
+  "signature": "69240c6f42c72bfe49d85fd7f5213797f71243bacbde8b0a3d6fcd3898c5bff20eaa9319a70b2a683ccfd53acbddcc03dbe772c7973933422aa50b9481f43103",
+  "registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+  "runtime_artifact_sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+}

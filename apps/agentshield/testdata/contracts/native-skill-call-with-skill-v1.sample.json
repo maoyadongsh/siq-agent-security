@@ -1,0 +1,32 @@
+{
+  "schema_version": "native-skill-call/v1",
+  "issuer_id": "local-admin",
+  "subject": {
+    "platform": "hermes",
+    "instance_id": "hi-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "session_id": "sess-1",
+    "task_id": "task-1"
+  },
+  "agent_authority": {
+    "grant_id": "grt-agent-baseline",
+    "grant_digest": "b203449be2374cf9d4d44b55862e78f0c10487450486bb8c62ae689345eef7f9"
+  },
+  "issued_at": "2026-09-14T12:00:00Z",
+  "expires_at": "2026-09-14T12:01:00Z",
+  "signing_schema": "local_canonical/v1",
+  "signature": "5a8f07a0229467a53406f0d5a11bd837f860e704572c63bb386b30b2e96c156299cb685c8a3b3d46c7270979ebdbced7d2649cc36a5296e0fe1314932a476c06",
+  "call_id": "ncall-8944caa43c8cd78ee72f02e03b85f40d",
+  "session_ref": {
+    "registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+    "signature": "69240c6f42c72bfe49d85fd7f5213797f71243bacbde8b0a3d6fcd3898c5bff20eaa9319a70b2a683ccfd53acbddcc03dbe772c7973933422aa50b9481f43103"
+  },
+  "tool": "read_file",
+  "tool_call_id": "call-skill",
+  "request_binding": "9443fe8bb5a499026e5776bc2120ac4fd8db9b90178bf64eeaebc074330069ae",
+  "no_skill": false,
+  "context": {
+    "context_id": "sec-f92364d605d38536f788fbcc0389c022",
+    "signature": "07d17f9f491119c1c115450971e3554c84d45484280b8ad562e91eef3f9699afd1036d2929566e2635064251ac8f8a0f438a73dba1fe8cda43953da1eb430501"
+  }
+}

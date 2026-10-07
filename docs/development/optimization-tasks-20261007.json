@@ -127,10 +127,11 @@
       "evidence": [
         "docs/adr/0056-native-skill-invocation-authority.md",
         "docs/development/optimization-opt08-context-validation-20261007.md",
-        "docs/development/optimization-opt08-store-validation-20261007.md"
+        "docs/development/optimization-opt08-store-validation-20261007.md",
+        "docs/development/optimization-opt08-call-validation-20261007.md"
       ],
       "residual_limits": [
-        "A 签名合同与 B1 持久上下文/父链组件已验证；精确调用绑定、引擎双 Grant 交集、原生宿主接入与日常效果仍未完成。旧 SEC v1 不变，不以测评同步器或 best-effort 遥测替代产品接入。"
+        "A/B1/B2 合同、持久上下文/父链与精确调用存储组件已验证；可信 enrollment 必需门禁、引擎双 Grant 交集、原生宿主接入与日常效果仍未完成。旧 SEC v1 不变，不以测评同步器或 best-effort 遥测替代产品接入。"
       ]
     },
     {
