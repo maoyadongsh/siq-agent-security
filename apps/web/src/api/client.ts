@@ -37,7 +37,8 @@ import { parseListMeta, type ListMeta } from './listMeta';
 export const API_BASE: string = import.meta.env.VITE_API_BASE ?? '/api/v1';
 
 /** 开发模式身份注入开关（生产必须为 false，禁止身份伪造头） */
-const DEV_MODE: boolean = import.meta.env.VITE_DEV_MODE === 'true';
+const DEV_MODE: boolean = import.meta.env.DEV && !import.meta.env.PROD
+  && import.meta.env.VITE_DEV_MODE === 'true';
 
 /** 请求超时（ms）：控制面不可达时快速失败，避免页面挂起 */
 const REQUEST_TIMEOUT_MS = 5000;

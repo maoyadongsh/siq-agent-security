@@ -8,6 +8,18 @@ import { localProxy } from './dev/localProxy';
 const isLocal = process.env.VITE_APP === 'agentshield';
 const localOutDir = fileURLToPath(new URL('../agentshield/internal/ui/embedded', import.meta.url));
 
+/** Apply to every build entry and mode, including the embedded local UI. */
+function rejectDevelopmentIdentityBuild(): Plugin {
+  return {
+    name: 'siq-production-identity',
+    configResolved(config) {
+      if (config.command === 'build' && config.env.VITE_DEV_MODE === 'true') {
+        throw new Error('SIQ build refuses VITE_DEV_MODE=true; use false for distributable assets.');
+      }
+    },
+  };
+}
+
 /** Vite names the output after index.local.html; Go embed expects index.html. */
 function renameLocalIndex(): Plugin {
   return {
@@ -88,7 +100,7 @@ function localDevSpaFallback(): Plugin {
 // AgentShield 本地模式：VITE_APP=agentshield，产物 embed 进 agentshield serve。
 export default defineConfig({
   base: isLocal ? '/' : process.env.SIQ_AS_WEB_BASE || '/',
-  plugins: [react(), dropLegacyWoff(), renameLocalIndex(), localDevSpaFallback()],
+  plugins: [rejectDevelopmentIdentityBuild(), react(), dropLegacyWoff(), renameLocalIndex(), localDevSpaFallback()],
   server: {
     host: isLocal ? '127.0.0.1' : undefined,
     headers: {
