@@ -1,0 +1,202 @@
+{
+  "schema_version": "siq.optimization.delivery-review/v1",
+  "date": "2026-10-08",
+  "task": "OPT-08",
+  "commit": "6a4e8b6363a491ff37c9da976e10e65238cc0f0f",
+  "review": {
+    "schema_version": "delivery-review/v1",
+    "dependency_base_commit": "c8ee0df66e4d11f1c1c0c6de492fc546e7d5e959",
+    "selected_files": {
+      "scripts/openshell/qwen38_candidate_supervisor.py": "a24b869cede0df63dcb393c43f4d175b2bc19eaaefac1dd44e2edc7369ca9f09",
+      "scripts/openshell/qwen38_supervisor_service.py": "300ee125ad43554229d95fcca5a86eb11f1f327062051d2853a97e29cb490c07",
+      "scripts/openshell/qwen38_request_native.py": "dfdf5b56dedb22410f57329c5f163fdb9c5495079c41eaed6d0383314095daac",
+      "scripts/openshell/qwen38_request_identity.py": "72f99873bb6f873e647857451a8d71d0aa03c2b0051b4e9933285577574efcd0",
+      "scripts/openshell/qwen38_request_forward.py": "7cc73a848c2c50f570eb331db73faa36d440c948ecc46bedccbd709ad5590a00",
+      "scripts/openshell/qwen38_request_relay.py": "d51c4fc446fd0628a9dfb531c9d8bbae3a1d6de2e78e055cf1e93dba779f3873",
+      "scripts/openshell/tests/test_qwen38_candidate_supervisor.py": "76852a2db3cd424f4f2cdd5f86cfca8278094592cbbdcd5b41637cf268436a65",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py": "541a22e74ddabaa0aa7e5fde330572d6379bdfc30b1c03f0b7ee2470dc94f06c",
+      "scripts/openshell/tests/test_qwen38_request_native.py": "8ae1a713a6318ce5857170d0a6f0bba963fd4e3e4f0b8491e1d0562b5a36ee80",
+      "scripts/openshell/tests/test_qwen38_request_forward.py": "7b8654a8b9afcdde3b18c4f9078cfca6387871b570134e525b180a93ef367792",
+      "apps/api/tests/test_qwen38_supervisor_lease_integration.py": "a9232c7e7d003b979056c3011882096dc4cf2525a50d297c29cf3358d7a1341e",
+      "infra/systemd-user/siq-qwen38-supervisor@.service": "08bfbaf18de71a75f5864d82ea3e93c69629665afbb19a9b5f8751480f66b56d",
+      "infra/systemd-user/siq-qwen38-api-supervisor@.service": "02fb70569d9b198ea4aa7958b537483dc1022cd1ad0a71ac994c02e9cedd28df"
+    },
+    "files": {
+      "agents/hermes/profiles/shared/scripts/pg_query.py": "7774d74c3d7f56cce8b79685f639de289f4809a4197758bb6cbaa0669383475f",
+      "apps/api/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "apps/api/services/auth_service.py": "8599ae4ec45524ff7e4474f39a7c860c073cf5e4e861dff1d131818482b2aa6f",
+      "apps/api/services/openshell_data_scope.py": "f5b8e4dbf6ccd9c4cc9f3c10d639735a08c11512927798620bb6ee2b113b706f",
+      "apps/api/services/path_config.py": "4135edf742f288be8105bb058e4ee7a8437489c3a404ec6aaf7d033dc3ce685c",
+      "apps/api/services/qwen38_runtime_lease.py": "1ee7d8f03ae629fcad67012ed2d10e565cf0ffaf60658f8cfdfbd2d6cd464b2e",
+      "apps/api/services/runtime_coordination.py": "1eb7e15e66c9ed2679b1f4d0f6b218d8ca12b10ced27e7ffbc0d060ece996483",
+      "apps/api/tests/test_qwen38_runtime_lease.py": "ff5428b2a47d57469926b23e1e6af8530bd266bdcd8fb8fe68877bc195f4130a",
+      "apps/api/tests/test_qwen38_supervisor_lease_integration.py": "a9232c7e7d003b979056c3011882096dc4cf2525a50d297c29cf3358d7a1341e",
+      "infra/systemd-user/siq-qwen38-api-supervisor@.service": "02fb70569d9b198ea4aa7958b537483dc1022cd1ad0a71ac994c02e9cedd28df",
+      "infra/systemd-user/siq-qwen38-supervisor@.service": "08bfbaf18de71a75f5864d82ea3e93c69629665afbb19a9b5f8751480f66b56d",
+      "scripts/openshell/agentshield_native_host.py": "dc29a7bcfd828dde80235f048c58ab9b2955703f36829bc4efd4c4a2b60e5966",
+      "scripts/openshell/agentshield_native_identity.py": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "scripts/openshell/agentshield_runtime_binding.py": "b1e6ff12d58ff593dfb6ede41cb35d4d34aab84889b468a85b63e7edab57981f",
+      "scripts/openshell/agentshield_self_identity.py": "1b3e20d3679060bd4f80acd66873305a5b50e0ea6c45ca92e5e8db9401931cc2",
+      "scripts/openshell/audit_qwen38_local_candidate.py": "1f1d96d582529f6a278e8a22f2bbc9b5a0582f32616782b53c0cfb9ff75edcc8",
+      "scripts/openshell/authenticated_model_bridge.py": "5eef6534c7c82570d881fae46610ed93b33f1e9a4b21d3812266da31cc608864",
+      "scripts/openshell/bridge_endpoint.py": "074982f7bbe0a7037a45098c2c3da52f1498acc6a955fe947caff0dc486e7f16",
+      "scripts/openshell/broker_admission_registry.py": "ab72f432e813ddc362bd616ff39e0ae86b587fb1e40af7b99abe9a0abefc2a6a",
+      "scripts/openshell/broker_lifecycle.py": "619981d28e9d89d990695035b7af22fa1c9717f4e233534d748b5b8ad9467a33",
+      "scripts/openshell/broker_request_identity.py": "262971f2ff2c144ebf55f25c9d0b7ccbb94005f9b3093c10cc1e8aa2e795d623",
+      "scripts/openshell/build_agentshield_decision_relay_config.py": "45d2e489a860c481ac4f2b9b41cf3cdf3cdfc170ef9a853e4983f8ad335eea9b",
+      "scripts/openshell/enterprise_data_scope.py": "ec0f20d6075e897ab9e66d08a7df2cf283cdc6afc31712980051b5c331abd0ec",
+      "scripts/openshell/gateway_runtime_identity.py": "11bc55e9f0ee4362df50f5af1cf7708d737a562066f3166cfa50065867473fc0",
+      "scripts/openshell/launch_agentshield_decision_relay.py": "34a47269c2476cff41616768a79ebd208d158c681c0df06c500a0360cd040218",
+      "scripts/openshell/model_bridge_stream.py": "2d00fa20c0e3203cd48256320155453e18ecb0ff3a3c057b8268c6e092a50cfe",
+      "scripts/openshell/probe_qwen38_provider.py": "ea0da61b4f6317c4bb82d94d1825fc03083a45cf3c0cc2adf1b255e4fc96604c",
+      "scripts/openshell/qwen38_business_broker.py": "345a26a7f128aaa0f2cf526451c2c83f456db10e676c7aad434645c087db8378",
+      "scripts/openshell/qwen38_candidate_gateway_owner.py": "b6ac48c90c7cb574af526af8245d2e04fcc06498259955c6c16fcb19c7a64d21",
+      "scripts/openshell/qwen38_candidate_host_guard.py": "b06ac869a56411ff0bf65bcfa4cd12328731f54ef8b4a527e5e11de71cc9d91d",
+      "scripts/openshell/qwen38_candidate_identity.py": "9fdca0de75cccfaa58e25802cf421214869d4d9c35d0591abd0afefb9fb8a6f6",
+      "scripts/openshell/qwen38_candidate_lease.py": "b67350cb663ca626e05ff738cc5a66d7afc95273c6d16639819dfb85811ead7e",
+      "scripts/openshell/qwen38_candidate_renewal.py": "98c2c34fd09b1ada25a66a83ac77f9fbac80f5764cd6ccd8280ad587ceb5ab06",
+      "scripts/openshell/qwen38_candidate_run_guard.py": "29d686e7c052675280d70927a93706a99505f4b83a263c841f8131013bf58c79",
+      "scripts/openshell/qwen38_candidate_supervisor.py": "a24b869cede0df63dcb393c43f4d175b2bc19eaaefac1dd44e2edc7369ca9f09",
+      "scripts/openshell/qwen38_model_credential.py": "c0ffd7c6d37ce883f4e093c5c92c913ff7cde0a7851c4ae2811fddd87368ae53",
+      "scripts/openshell/qwen38_native_process.py": "4d8ed55145cadfaec3c32467e95a80b340fd39d2ff31fa0f78ad82d210b1d5a1",
+      "scripts/openshell/qwen38_request_forward.py": "7cc73a848c2c50f570eb331db73faa36d440c948ecc46bedccbd709ad5590a00",
+      "scripts/openshell/qwen38_request_identity.py": "72f99873bb6f873e647857451a8d71d0aa03c2b0051b4e9933285577574efcd0",
+      "scripts/openshell/qwen38_request_native.py": "dfdf5b56dedb22410f57329c5f163fdb9c5495079c41eaed6d0383314095daac",
+      "scripts/openshell/qwen38_request_relay.py": "d51c4fc446fd0628a9dfb531c9d8bbae3a1d6de2e78e055cf1e93dba779f3873",
+      "scripts/openshell/qwen38_supervisor_service.py": "300ee125ad43554229d95fcca5a86eb11f1f327062051d2853a97e29cb490c07",
+      "scripts/openshell/read_only_data_broker.py": "4603bbfa4b3b532a20440ded69ef42a83c539c293f355acac16bf90b28237963",
+      "scripts/openshell/sandbox_resource_governance.py": "35a04af8682ba9b63affed0f6dac49bc44de3f93719ddc80c7c97d126eecd3b2",
+      "scripts/openshell/security_audit.py": "f5e567852ce5e7ffabbe579c4aa566766e61c83d14f1e844183a5926dcb8a16d",
+      "scripts/openshell/tests/test_qwen38_candidate_supervisor.py": "76852a2db3cd424f4f2cdd5f86cfca8278094592cbbdcd5b41637cf268436a65",
+      "scripts/openshell/tests/test_qwen38_request_forward.py": "7b8654a8b9afcdde3b18c4f9078cfca6387871b570134e525b180a93ef367792",
+      "scripts/openshell/tests/test_qwen38_request_native.py": "8ae1a713a6318ce5857170d0a6f0bba963fd4e3e4f0b8491e1d0562b5a36ee80",
+      "scripts/openshell/tests/test_qwen38_supervisor_service.py": "541a22e74ddabaa0aa7e5fde330572d6379bdfc30b1c03f0b7ee2470dc94f06c"
+    },
+    "isolated_pytest": {
+      "exit_code": 0,
+      "summary": "155 passed in 8.39s"
+    },
+    "owning_repo_ruff": {
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    "no_actual_business_data_or_model_calls": true,
+    "nonsemantic_finalization": {
+      "path": "apps/api/tests/test_qwen38_supervisor_lease_integration.py",
+      "tested_sha256": "8e08660644088637b81987c606d2ddafd30680f8a99bd01e2b21882904ff902b",
+      "committed_sha256": "a9232c7e7d003b979056c3011882096dc4cf2525a50d297c29cf3358d7a1341e",
+      "change": "remove one extra EOF blank line",
+      "python_ast_equal": true
+    }
+  },
+  "retained_initial_record_sha256": "b683472f4f4628080f04ca59925368390ec13fc1ed03f02fd0b82fce74ccb47f",
+  "remaining_untracked_in_original_closure": [
+    "apps/api/services/business_run_result_model.py",
+    "apps/api/services/qwen38_native_request_gateway.py",
+    "apps/api/services/qwen38_native_request_issuer.py",
+    "apps/api/services/qwen38_native_request_launch.py",
+    "apps/api/services/qwen38_native_request_profile.py",
+    "apps/api/services/qwen38_recovery_manager.py",
+    "apps/api/services/qwen38_request_admission.py",
+    "apps/api/services/qwen38_request_assets.py",
+    "apps/api/services/qwen38_request_builder.py",
+    "apps/api/services/qwen38_request_deployment.py",
+    "apps/api/services/qwen38_request_endpoint.py",
+    "apps/api/services/qwen38_request_finalizer.py",
+    "apps/api/services/qwen38_request_gateway.py",
+    "apps/api/services/qwen38_request_heartbeat.py",
+    "apps/api/services/qwen38_request_http.py",
+    "apps/api/services/qwen38_request_issuer.py",
+    "apps/api/services/qwen38_request_origin.py",
+    "apps/api/services/qwen38_request_pending.py",
+    "apps/api/services/qwen38_request_queue.py",
+    "apps/api/services/qwen38_request_recovery.py",
+    "apps/api/services/qwen38_request_runtime.py",
+    "apps/api/services/qwen38_request_sandbox.py",
+    "apps/api/services/qwen38_request_selector.py",
+    "apps/api/services/qwen38_request_startup.py",
+    "apps/api/services/qwen38_request_supervision.py",
+    "apps/api/services/runtime_startup_guard.py",
+    "scripts/openshell/build_qwen38_candidate_image.py",
+    "scripts/openshell/prepare_qwen38_business_mcp.py"
+  ],
+  "remaining_count": 28,
+  "next_image_dynamic_inputs": {
+    "schema_version": "delivery-dynamic-input-review/v1",
+    "locks": {
+      "report-assets.lock.json": "260b0ca5ce6d8a11f1bb96e526bcab89c114fa7f7a8fabe7d4fb9284d305b843",
+      "business-mcp.lock.json": "b1cbbd9830574db1d71c0df30776c598362ffd1280947e59ba3cbcdfd4fd7e39",
+      "agentshield-adapter.lock.json": "7a57fddc3d57a254fe8f1a2fb386dd5394b028ecfd61db8e04d08d9f0d138324"
+    },
+    "inputs": {
+      "agents/hermes/profiles/siq_analysis/SOUL.md": {
+        "sha256": "d311c4d72fb5e985c9329d6cd47d11db0b60a8bb0493a22f6312d70a75d27758",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_analysis/scripts/peer_metrics_builder.py": {
+        "sha256": "3ad48744723b5f71287f6909d3ddb309d7e8b5517a9f5047ee67d31ff90b4963",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_analysis/scripts/report_publication_inputs.py": {
+        "sha256": "679c72c1b475ef9432bdcfbcdae730cb19440df1c92c557f98fa317695b92cdc",
+        "tracked_in_business": false
+      },
+      "agents/hermes/profiles/siq_analysis/scripts/resolve_company.py": {
+        "sha256": "ddf506dbc42b315fe998f1e6e436479cdb9693b04724ab24c36d28ebb5e4bb2b",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_analysis/scripts/run_analysis_report.py": {
+        "sha256": "52de0ac949092ae77acc58a110de4c6d978d5e36c11f69552f31eeac17205e98",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_analysis/scripts/validate_report_quality.py": {
+        "sha256": "18fdbdd7b2874e0a647c2ccc24b9093121db32f8a1a3f534c9a1264af3478e85",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_analysis/scripts/wiki_data_accessor.py": {
+        "sha256": "4bcbce7781cf215b7f54fe78c1f0600bd0635195d09b4afc69787ab0a44a762b",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_factchecker/scripts/factcheck_cli.py": {
+        "sha256": "928f6c4039cd884ca31dd7ca0274dd98bd4c5be14e32f2e4237733d7ea113262",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_factchecker/scripts/generate_factcheck_html.py": {
+        "sha256": "5738c71dde2e2324d09c3a0410944526db4e12f1cf1d9dbf6b8360c82b8eacb4",
+        "tracked_in_business": true
+      },
+      "agents/hermes/profiles/siq_factchecker/scripts/wiki_data_accessor.py": {
+        "sha256": "506df19b354c690da5513182b851a7ecc9f480d2169cde5c87f6c27ddf991fa3",
+        "tracked_in_business": true
+      },
+      "scripts/openshell/publish_verified_report.py": {
+        "sha256": "cbde1e54b117e039a8e9559e7b3aaec3033293d98fea22677ee4193743283ed1",
+        "tracked_in_business": false
+      },
+      "scripts/openshell/research_business_tools_mcp.py": {
+        "sha256": "4628b99a4d709295aae0de4c173d4bc943474b1458980084c6387ae35443e266",
+        "tracked_in_business": false
+      },
+      "scripts/openshell/research_report_generation.py": {
+        "sha256": "eb4efe608a74e03fa3e7851c24623f4acce40ecef62162d45913682a3e3b10bd",
+        "tracked_in_business": false
+      },
+      "siq-agent-security/adapters/runtime/hermes-agentshield/__init__.py": {
+        "sha256": "025d794d8313b692b445aef5520038965591c1cce74ecd17a34e5caae56b6e4b",
+        "tracked_in_business": null
+      },
+      "siq-agent-security/adapters/runtime/hermes-agentshield/plugin.yaml": {
+        "sha256": "0f6a898c187c592f2a48270fc8d7fe3c1d77c896e36169028c7e0491004707bc",
+        "tracked_in_business": null
+      }
+    },
+    "scope": "Read-only input identity review; no build or acceptance claim."
+  },
+  "limits": [
+    "Fork tests use real processes and locks with synthetic business/model/sandbox callbacks.",
+    "Systemd, journal and native Authority results use component fixtures.",
+    "No live service installation, model inference or sandbox mutation.",
+    "Legacy identity/relay full API consumer tests remain in request orchestration batch.",
+    "OPT-08 remains implementing; overall 9/16."
+  ]
+}
