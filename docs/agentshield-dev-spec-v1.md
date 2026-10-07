@@ -2691,6 +2691,8 @@ D2c1 增加 `native-skill-source/v1` 文件快照组件，先解决实际读取�
 
 ## OPT-13：交付入口响应头增量（2026-10-07）
 
+OPT-08 D2d 的宿主应用桥接按 [native-host-bridge/v1](../packages/contracts/native-host-bridge.v1.md) 串接任务、真实来源解析、v2 SEC 及精确调用绑定。所有宿主依赖必需且有界；失效任务不得回退无 Skill。内存事实不从签名文件恢复，重启后缺少可信登记即拒绝。该组件不直接开放 HTTP 发布能力或新身份创建；产品启用仍取决于完整可信启动器与在线接线。
+
 本地 HTTP 服务在 loopback/Host/Origin 检查之前设置统一响应头，覆盖成功、重定向和拒绝响应：CSP 与企业静态入口现有策略一致（self 脚本、self 连接、禁止 frame/object、限制 base/form，样式保留 unsafe-inline），并设置 nosniff、X-Frame-Options DENY、strict-origin-when-cross-origin Referrer-Policy、禁用 camera/microphone/geolocation。不设置 HTTP HSTS，不增加 HTML meta CSP，不扩展 CORS 或改变现有 Host/Origin 检查。
 
 本地 API、HTML、配置、错误默认 Cache-Control no-store；实际存在的 Vite assets 文件可使用 public/max-age=31536000/immutable，支持 HEAD/304/206。静态目录不列出内容，缺失 assets 即使无扩展名也必须 404，不能套用 SPA 回退。独立 UI handler 也设置同一响应头，避免脱离主路由时遗漏。
