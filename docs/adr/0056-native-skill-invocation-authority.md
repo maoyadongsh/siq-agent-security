@@ -124,3 +124,7 @@ DGX Spark 接入采用固定宿主进程的 Unix `SOCK_SEQPACKET` 元数据通�
 ### D2f：实际运行进程与受保护挂载
 
 按 [native-runtime-guard/v1](../../packages/contracts/native-runtime-guard.v1.md)，宿主读取其可信启动进程的 Linux `/proc` 只读事实并保持 pidfd；核验真实挂载只读性、代码文件与命名空间，不把容器 API 声明作为唯一证据。仅允许标准库 Python 打开 `/proc`、文件与目录描述符，不增加系统调用监控、提权或新 OS 沙箱。启动后端仍须独立证明镜像、启动归属及底层代码/库保护；普通 Docker 离线试验不是 OpenShell 验收。
+
+### D2g：显式在线宿主接线
+
+按 [native-host-online/v1](../../packages/contracts/native-host-online.v1.md)，daemon 通过显式启动开关加载私有连接配置。独立宿主凭据只发布元数据，普通运行时凭据只提交参数；每次必要 Authority 验证经固定私有 Unix socket 回查实际运行，不从客户端选择回查目标或复用先前成功。Engine 的查询器在构造时固定，server 在监听前一次绑定实际 Store；来源解析使用 D2e，运行事实来自 D2f 及实际启动后端。此接线仍不自动开放新身份创建或宣称 OpenShell/业务验收。
