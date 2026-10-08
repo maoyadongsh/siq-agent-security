@@ -4,6 +4,7 @@ import json
 import os
 import socket
 import subprocess
+import sys
 import time
 from dataclasses import asdict
 from pathlib import Path
@@ -161,6 +162,19 @@ print(json.dumps({{'hidden':True,'readonly':True,'host_network_denied':True}}))'
         assert all(result.values())
     monkeypatch.setenv('SIQ_AS_THREAT_SCAN_ISOLATION', 'bwrap')
     assert scan_execution.analyze(b'echo hello', filename='x.sh').matches == []
+
+
+def test_bwrap_preserves_python_origin():
+    if sys.platform != 'linux' or not os.path.exists('/usr/bin/bwrap'):
+        pytest.skip('bwrap argv check needs the Linux launcher')
+    argv = command('bwrap', code='pass')
+    executable = os.path.abspath(sys.executable)
+    resolved = os.path.realpath(executable)
+    binds = [(argv[i + 1], argv[i + 2]) for i, token in enumerate(argv) if token == '--ro-bind']
+    assert (resolved, resolved) in binds
+    if resolved != executable:
+        links = [(argv[i + 1], argv[i + 2]) for i, token in enumerate(argv) if token == '--symlink']
+        assert (resolved, executable) in links
 
 
 def test_cpu_bound_worker_does_not_hold_governance_and_slot_is_released(client, tenant_a, env_a, monkeypatch):

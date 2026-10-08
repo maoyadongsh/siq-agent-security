@@ -24,7 +24,7 @@ def command(mode, *, code=None):
             "--clearenv", "--setenv", "LANG", "C.UTF-8",
             "--proc", "/proc", "--dev", "/dev", "--tmpfs", "/tmp", "--chdir", "/tmp"]
     mounts = {
-        "/usr/lib": "/usr/lib", "/lib": "/lib",
+        "/usr/lib": "/usr/lib", "/lib": "/lib", "/usr/lib64": "/usr/lib64", "/lib64": "/lib64",
         str(Path(sys.base_prefix) / "lib"): str(Path(sys.base_prefix) / "lib"),
         str(Path(sys.prefix) / "lib"): str(Path(sys.prefix) / "lib"),
         str(Path(__file__).resolve().parent): "/scan/app",
@@ -35,7 +35,13 @@ def command(mode, *, code=None):
     cfg = Path(sys.prefix) / "pyvenv.cfg"
     if cfg.is_file():
         argv += ["--ro-bind", str(cfg), str(cfg)]
-    argv += ["--ro-bind", str(Path(executable).resolve()), executable,
-             "--remount-ro", "/tmp", "--remount-ro", "/", "--", executable, "-I", "-B", "-c",
+    # Bind the real interpreter at its own path. A venv Python is usually a
+    # symlink, and its RPATH is $ORIGIN/../lib. Mounting the real file over the
+    # symlink path makes the loader look beside the venv instead.
+    resolved = str(Path(executable).resolve())
+    argv += ["--ro-bind", resolved, resolved]
+    if resolved != executable:
+        argv += ["--symlink", resolved, executable]
+    argv += ["--remount-ro", "/tmp", "--remount-ro", "/", "--", executable, "-I", "-B", "-c",
              f"import sys; sys.path.insert(0, '/scan'); {bootstrap}"]
     return argv
