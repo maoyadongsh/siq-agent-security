@@ -1,0 +1,65 @@
+{
+  "schema_version": "opt08-content-version-v2-image/v1",
+  "recorded_at": "2026-10-08T07:38:59Z",
+  "security_commit": "275b6489286c",
+  "security_code_commit": "8c473439",
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+  "image_id": "sha256:a3be2a4a2caaafc4d909ce74645e4e568444a4a72c81d0a7312b7ec789c673e2",
+  "runtime_artifact_sha256": "c5e3e318e078e1dc28b901f7ce813e0593174e07e5f7ad8f809b312409cc9bb4",
+  "skill_bundle_sha256": "a9f3ac75f9ddfcc78505e7a1d5b53bae0b098d73cb8f076775a53732df11c9c7",
+  "overlay_manifest_sha256": "db2b7a522f6fe6789c3246b3ef5a4ce7ce32997747cd5153ab0c9f61ef03d7e8",
+  "previous_image_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+  "installed_skill_sha256": "a38f8af2dfefc099c18b9876d2f8e565be77c72f5ccaf7ad1cdbd95a209759db",
+  "company_skill_sha256": "9f594a1bcba6cb9ce50f5c3d1960a1310444511f6a3d882c42a2b1ba847fed37",
+  "instance_id": "hi-fb1539d2c65f16f18a4bde38ac063cba",
+  "grant_id": "grt-si-fd97d2ac2c65f04438255b92e9f9be9b69ffa21e9fea8cac7ecba9ad20b3d59e",
+  "install_id": "sin-790526ed4f3c6d2d6180e4ef048940861de4c206eb8b1007faa4563f04ea20d5",
+  "suffix": "v881",
+  "passed": true,
+  "check_count": 33,
+  "write_receipt_count": 1,
+  "write_reason_codes": ["allow"],
+  "target_exists": true,
+  "target_content_sha256": "18a5938194b63f82f26725ca5fa870e0bf0f471b71675a99f96e52f1f68c099d",
+  "request_run_sha256": "b49d669881fd06aae83abe7645cd9867780f17c2d5c0a54104533518c63bd266",
+  "receipts_response_sha256": "07ef4296105399846a692de08edf2d510b75c84dd8acf43cc1cd535e176f4dec",
+  "receipts": [
+    {
+      "seq": 0,
+      "receipt_id": "rcp-51dbfd36e559035b205cd51f86276874",
+      "tool": "skill_view",
+      "effective_action": "allow",
+      "no_skill": true,
+      "hash": "fcda9f21c23d3dd0c5e930f04f91ed93b0240a80ffad33afb00cd38f39466476"
+    },
+    {
+      "seq": 1,
+      "receipt_id": "rcp-5486ec760ba91f6595e3265931536268",
+      "tool": "read_file",
+      "effective_action": "allow",
+      "hash": "6533038e567fcd349ec706a87f3a760087cdb55eaca586831644f1400d43c945",
+      "prev_hash": "fcda9f21c23d3dd0c5e930f04f91ed93b0240a80ffad33afb00cd38f39466476",
+      "grant_id": "grt-si-fd97d2ac2c65f04438255b92e9f9be9b69ffa21e9fea8cac7ecba9ad20b3d59e"
+    },
+    {
+      "seq": 2,
+      "receipt_id": "rcp-67e0fd11a5edefa1ecfb666403a83fd5",
+      "tool": "write_file",
+      "effective_action": "allow",
+      "hash": "9352a7e0f3a24b299f69f7e319f5d6714ef2f20e8d92d777a5b32d6dbd4f2284",
+      "prev_hash": "6533038e567fcd349ec706a87f3a760087cdb55eaca586831644f1400d43c945",
+      "grant_id": "grt-si-fd97d2ac2c65f04438255b92e9f9be9b69ffa21e9fea8cac7ecba9ad20b3d59e"
+    }
+  ],
+  "same_identity_after_inplace_upgrade": false,
+  "frozen_image_directory_preserved": "var/optimization-20261007/native-final-image-20261008a",
+  "supervisor_contract": {
+    "aligned_for_run": true,
+    "restored": true,
+    "unit_sha256": "02fb70569d9b198ea4aa7958b537483dc1022cd1ad0a71ac994c02e9cedd28df",
+    "env_sha256": "9a3440c207a4555d32c7adbf6b0f82fb78ac27586cc22ab0580e25105dd2bba8"
+  },
+  "model_unit_unchanged": true,
+  "bridge_left_inactive": true
+}
