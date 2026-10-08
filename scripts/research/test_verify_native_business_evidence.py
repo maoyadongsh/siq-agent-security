@@ -15,6 +15,7 @@ from verify_native_business_evidence import (
     native_grant_digest,
     validators,
     verify,
+    verify_authority_replacement,
     verify_context_revocations,
     verify_grant_transition,
     verify_live_grants,
@@ -322,3 +323,127 @@ def test_explicit_runtime_no_skill_completion_preserves_failed_trials():
     assert row["native_invocation"]["no_skill"] is True
     assert row["native_invocation"]["contexts"] == []
     assert row["tool"] == "write_file" and row["effective_action"] == "allow"
+
+
+def authority_replacement_fixture():
+    key, sign, snapshots, *_ = grant_transition_fixture()
+    grants = {"previous_before": snapshots["skill_before"],
+              "previous_after": snapshots["skill_after"],
+              "agent": snapshots["agent_baseline"],
+              "replacement": sign({"grant_id": "new-skill", "status": "approved"})}
+    operations = {name: sign({"schema_version": "local-skill-install-operation/v1",
+                             "install_id": name, "claim_signature": name + "-claim",
+                             "status": "installed_unverified", "runtime_verified": False})
+                  for name in ("old", "new")}
+    removal = sign({"schema_version": "local-skill-install-removal-result/v1", "install_id": "old",
+                    "status": "removed", "grant_id": "skill", "grant_revoked": True,
+                    "target_absent": True, "retained_install_id": "",
+                    "grant_signature": grants["previous_after"]["signature"]})
+    result = sign({"schema_version": "local-skill-update-result/v1", "update_id": "update",
+                   "status": "updated_unverified", "runtime_verified": False,
+                   "removal_signature": removal["signature"],
+                   "installation_signature": operations["new"]["signature"]})
+    evidence = {"grants": grants, "old_installation": operations["old"],
+                "new_installation": operations["new"], "removal": removal, "update_result": result}
+    binding = {"previous_grant_id": "skill", "replacement_grant_id": "new-skill",
+               "agent_grant_id": "agent", "old_install_id": "old", "new_install_id": "new",
+               "update_id": "update"}
+    agent = {"grant_id": "agent", "grant_digest": native_grant_digest(grants["agent"])}
+    contexts = {}
+    for name, role in (("old", "previous_before"), ("new", "replacement")):
+        grant = grants[role]
+        contexts[name] = {"authority": {"grant_id": grant["grant_id"],
+                                         "grant_digest": native_grant_digest(grant)},
+                          "agent_authority": agent,
+                          "install": {"install_id": name, "claim_signature": name + "-claim"}}
+    receipts = {name: {"native_invocation": {"agent_authority": agent,
+                                            "contexts": [{"authority": c["authority"]}]}}
+                for name, c in contexts.items()}
+    cases = {name: {"receipt_hash": name} for name in contexts}
+    return key, sign, evidence, binding, contexts, cases, receipts
+
+
+def test_replacement_binds_old_and_new_authority_to_distinct_installations():
+    key, _, evidence, binding, contexts, cases, receipts = authority_replacement_fixture()
+    verify_authority_replacement(canonical(evidence), key, binding, contexts, cases, receipts)
+
+
+@pytest.mark.parametrize("field,value,reason", [
+    ("previous_grant_id", "other", "replacement_grant_identity_mismatch"),
+    ("new_install_id", "old", "replacement_installation_mismatch"),
+    ("update_id", "other", "replacement_result_mismatch"),
+])
+def test_replacement_rejects_unsigned_binding_substitution(field, value, reason):
+    key, _, evidence, binding, contexts, cases, receipts = authority_replacement_fixture()
+    binding[field] = value
+    with pytest.raises(ValueError, match=reason):
+        verify_authority_replacement(canonical(evidence), key, binding, contexts, cases, receipts)
+
+
+@pytest.mark.parametrize("record,change,reason", [
+    ("update_result", {"installation_signature": "wrong"}, "replacement_result_mismatch"),
+    ("removal", {"grant_signature": "wrong"}, "replacement_removal_mismatch"),
+    ("removal", {"grant_revoked": False}, "replacement_removal_mismatch"),
+    ("new_installation", {"runtime_verified": True}, "replacement_installation_mismatch"),
+])
+def test_validly_signed_replacement_records_cannot_be_mixed(record, change, reason):
+    key, sign, evidence, binding, contexts, cases, receipts = authority_replacement_fixture()
+    evidence[record] = sign({**evidence[record], **change})
+    with pytest.raises(ValueError, match=reason):
+        verify_authority_replacement(canonical(evidence), key, binding, contexts, cases, receipts)
+
+
+def test_old_context_cannot_inherit_new_installation():
+    key, _, evidence, binding, contexts, cases, receipts = authority_replacement_fixture()
+    contexts["old"]["install"] = contexts["new"]["install"]
+    with pytest.raises(ValueError, match="replacement_context_install_mismatch"):
+        verify_authority_replacement(canonical(evidence), key, binding, contexts, cases, receipts)
+
+
+def test_replacement_needs_observed_cases_from_both_authorities():
+    key, _, evidence, binding, contexts, cases, receipts = authority_replacement_fixture()
+    del cases["old"]
+    with pytest.raises(ValueError, match="replacement_case_authority_mismatch"):
+        verify_authority_replacement(canonical(evidence), key, binding, contexts, cases, receipts)
+
+
+@pytest.mark.parametrize("role,change,reason", [
+    ("replacement", {"status": "pending_approval"}, "replacement_grant_status_mismatch"),
+    ("previous_after", {"facts": ["different-permissions"]}, "replacement_old_permissions_changed"),
+])
+def test_signed_grant_changes_do_not_prove_valid_replacement(role, change, reason):
+    key, sign, evidence, binding, contexts, cases, receipts = authority_replacement_fixture()
+    evidence["grants"][role] = sign({**evidence["grants"][role], **change})
+    with pytest.raises(ValueError, match=reason):
+        verify_authority_replacement(canonical(evidence), key, binding, contexts, cases, receipts)
+
+
+REPLACEMENT_REPORT = ROOT / "docs/development/evidence/optimization-20261007/native-renewal-v870-v871.json"
+
+
+def test_real_replacement_preserves_old_denial_and_new_success():
+    result = verify(REPLACEMENT_REPORT, ROOT / "packages/contracts")
+    assert result["receipts"] == 5 and result["signed_contexts"] == 2
+    assert result["signed_replacement_grants"] == result["signed_installation_records"] == 4
+    assert not result["replacement_execution_effects_reobserved"]
+    document = json.loads(REPLACEMENT_REPORT.read_text())
+    assert not document["observations"]["v870"]["target_exists"]
+    assert document["observations"]["v871"]["target_exists"]
+
+
+def test_rehashed_replacement_installation_tampering_fails(tmp_path):
+    report, doc = copy_bundle(tmp_path, REPLACEMENT_REPORT)
+    raw = json.loads((tmp_path / doc["artifacts"]["authority_replacement"]["file"]).read_text())
+    raw["new_installation"]["claim_signature"] = raw["old_installation"]["claim_signature"]
+    replace_artifact(report, doc, "authority_replacement", canonical(raw))
+    with pytest.raises(InvalidSignature):
+        verify(report, ROOT / "packages/contracts")
+
+
+@pytest.mark.parametrize("section", ["artifacts", "verification"])
+def test_replacement_artifact_and_binding_are_both_required(tmp_path, section):
+    report, doc = copy_bundle(tmp_path, REPLACEMENT_REPORT)
+    del doc[section]["authority_replacement"]
+    report.write_text(json.dumps(doc))
+    with pytest.raises(ValueError, match="replacement_binding_missing"):
+        verify(report, ROOT / "packages/contracts")

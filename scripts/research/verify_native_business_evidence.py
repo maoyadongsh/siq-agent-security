@@ -134,6 +134,75 @@ def verify_live_grants(raw: bytes, key: Ed25519PublicKey, binding: dict, context
                 "live_grant_receipt_binding_mismatch")
 
 
+def verify_authority_replacement(raw: bytes, key: Ed25519PublicKey, binding: dict,
+                                 contexts: dict, cases: dict, receipts: dict) -> None:
+    """Verify historical replacement records; do not infer timing or execution effects."""
+    evidence = json.loads(raw)
+    require(set(evidence) == {"grants", "old_installation", "new_installation",
+                              "removal", "update_result"}, "replacement_inventory_mismatch")
+    grants = evidence["grants"]
+    require(set(grants) == {"previous_before", "previous_after", "replacement", "agent"},
+            "replacement_grant_inventory_mismatch")
+    for record in [*grants.values(), *(evidence[k] for k in evidence if k != "grants")]:
+        key.verify(bytes.fromhex(record["signature"]),
+                   canonical({k: v for k, v in record.items() if k != "signature"}))
+    before, after, replacement, agent = (grants[k] for k in
+                                        ("previous_before", "previous_after", "replacement", "agent"))
+    require(before["grant_id"] == after["grant_id"] == binding["previous_grant_id"]
+            and replacement["grant_id"] == binding["replacement_grant_id"]
+            and agent["grant_id"] == binding["agent_grant_id"]
+            and len({before["grant_id"], replacement["grant_id"], agent["grant_id"]}) == 3,
+            "replacement_grant_identity_mismatch")
+    require(before["status"] == replacement["status"] == "approved"
+            and after["status"] == "revoked" and agent["status"] in {"deployed", "effective"},
+            "replacement_grant_status_mismatch")
+    require({k: v for k, v in before.items() if k not in {"signature", "status"}}
+            == {k: v for k, v in after.items() if k not in {"signature", "status"}},
+            "replacement_old_permissions_changed")
+    old, new, removal, result = (evidence[k] for k in
+                                ("old_installation", "new_installation", "removal", "update_result"))
+    require(all(op["schema_version"] == "local-skill-install-operation/v1"
+                and op["status"] == "installed_unverified" and op["runtime_verified"] is False
+                for op in (old, new))
+            and old["install_id"] == binding["old_install_id"]
+            and new["install_id"] == binding["new_install_id"]
+            and old["install_id"] != new["install_id"], "replacement_installation_mismatch")
+    require(removal["schema_version"] == "local-skill-install-removal-result/v1"
+            and removal["status"] == "removed" and removal["install_id"] == old["install_id"]
+            and removal["grant_id"] == after["grant_id"]
+            and removal["grant_signature"] == after["signature"]
+            and removal["grant_revoked"] is True and removal["target_absent"] is True
+            and removal["retained_install_id"] == "", "replacement_removal_mismatch")
+    require(result["schema_version"] == "local-skill-update-result/v1"
+            and result["update_id"] == binding["update_id"]
+            and result["status"] == "updated_unverified" and result["runtime_verified"] is False
+            and result["removal_signature"] == removal["signature"]
+            and result["installation_signature"] == new["signature"], "replacement_result_mismatch")
+    authorities = {g["grant_id"]: {"grant_id": g["grant_id"], "grant_digest": native_grant_digest(g)}
+                   for g in (before, replacement)}
+    agent_ref = {"grant_id": agent["grant_id"], "grant_digest": native_grant_digest(agent)}
+    installs = {before["grant_id"]: old, replacement["grant_id"]: new}
+    represented = set()
+    for context in contexts.values():
+        grant_id = context["authority"]["grant_id"]
+        require(grant_id in authorities and context["authority"] == authorities[grant_id]
+                and context["agent_authority"] == agent_ref, "replacement_context_grant_mismatch")
+        require(context["install"] == {"install_id": installs[grant_id]["install_id"],
+                                        "claim_signature": installs[grant_id]["claim_signature"]},
+                "replacement_context_install_mismatch")
+        represented.add(grant_id)
+    require(represented == set(authorities), "replacement_context_inventory_mismatch")
+    for row in receipts.values():
+        require(row["native_invocation"]["agent_authority"] == agent_ref,
+                "replacement_agent_receipt_mismatch")
+    case_grants = set()
+    for case in cases.values():
+        refs = receipts[case["receipt_hash"]]["native_invocation"]["contexts"]
+        require(len(refs) == 1, "replacement_case_context_mismatch")
+        case_grants.add(refs[0]["authority"]["grant_id"])
+    require(case_grants == set(authorities), "replacement_case_authority_mismatch")
+
+
 def verify(report: Path, contracts: Path) -> dict:
     document = json.loads(report.read_text())
     require(document["schema_version"] in {
@@ -234,6 +303,15 @@ def verify(report: Path, contracts: Path) -> dict:
         verify_live_grants(payloads["live_grants"], key, verification["live_grant_ids"], contexts,
                            by_hash)
         live_grant_result = {"signed_live_grants": 2}
+    replacement_result = {}
+    if "authority_replacement" in payloads or "authority_replacement" in verification:
+        require("authority_replacement" in payloads and "authority_replacement" in verification,
+                "replacement_binding_missing")
+        verify_authority_replacement(payloads["authority_replacement"], key,
+                                     verification["authority_replacement"], contexts,
+                                     verification["cases"], by_hash)
+        replacement_result = {"signed_replacement_grants": 4, "signed_installation_records": 4,
+                              "replacement_execution_effects_reobserved": False}
     return {
         "cryptographic_bundle_verified": True,
         "receipts": len(rows),
@@ -244,6 +322,7 @@ def verify(report: Path, contracts: Path) -> dict:
         **grant_result,
         **revocation_result,
         **live_grant_result,
+        **replacement_result,
     }
 
 

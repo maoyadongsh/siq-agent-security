@@ -1,0 +1,299 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "6AMx8ceYmTAUR8AI7IQorKdx7VcZ/toZannRP5hCkoQ=",
+      "count": 5,
+      "head_hash": "b71d72405f1ba08c7c349dc25d7b7f3c53bb4d4b5fe18a6d5d4a0563646b9623"
+    },
+    "signed_context_count": 2,
+    "cases": {
+      "v870": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "24fa51e50baa6678f1f2fb3a170e7a8660b1c17e7d0943ac334cbc633d7ee808",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "402a186efbc046dfeba5c07cb66cfec7b85773c6723ad4a35e17dea71c7243d9"
+      },
+      "v871": {
+        "tool": "write_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "b71d72405f1ba08c7c349dc25d7b7f3c53bb4d4b5fe18a6d5d4a0563646b9623",
+        "resource_digest": "e4f329a86d62fa4d363dcd01e4570fac4d1b498a6146f6be6858d973b92b6a3b",
+        "request_run_sha256": "b849e89d8e170cd124d0ca33085a7050c3f40d196ab0f0ee605178f7ba490964"
+      }
+    },
+    "authority_replacement": {
+      "previous_grant_id": "grt-si-c3293e225aa95e5d3298b2c70dbade7ba2959292ef17323c73182d86c7f34783",
+      "replacement_grant_id": "grt-si-e88bd9df984d550de1941d563516015507f330139159e906febf10c65c0706f4",
+      "agent_grant_id": "grt-id-ce657e5998c20c2e770e26a825454d2606a046e32cf7677bc8b8c32c51f1a7ef",
+      "old_install_id": "sin-0ed4fa82b702faead3f37981e7e42b04ef3930fba17c3603e0fe54f5fed4353e",
+      "new_install_id": "sin-ce88a60bd5ba869da7234a066a7f1d6a3b8b9153a9b1f3a71007beb02f2ab2a5",
+      "update_id": "sup-a6b6aef81432130614beb7ce4ae0157a005aca6c6faaed8e0b6a94b544d4b643"
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-renewal-v870-v871.receipts.jsonl",
+      "sha256": "9d4553426fc4ec3a91f649353304449141e8b2e53af00ccc9c49ce54c1030bdd"
+    },
+    "contexts": {
+      "file": "native-renewal-v870-v871.contexts.json",
+      "sha256": "b1d34fefe806d0dd0f52065637bbeddcb98c0034f7948114b1aeeb3d3cfed55f"
+    },
+    "authority_replacement": {
+      "file": "native-renewal-v870-v871.authority-replacement.json",
+      "sha256": "403390bec56efd4062cc89a52f40c186d789ce497156d4385cf9136a157b14dd"
+    }
+  },
+  "candidate_inputs": {
+    "v870": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v870.py": "95a9d921e888304dc0d09a0385663537b64c1c5d8c227d977f5c429ef91e069b",
+        "run-native-context-boundary-owned-v870.py": "61c029e80d0dff1f1ec935dff8b7928637d3c83aac728b0b6ee4f52385677f04",
+        "deployment-driver.py": "869e5df62178d42b6667c1d1de59989dce4aadcfc1623d27ab7f0fef97b7b354",
+        "stage-native-renewal-authority-20261008i.py": "c30378b3aa54fd9956d6beb080c4ad3b1a6d6b02a7aec5c86ce51bfb250237af"
+      }
+    },
+    "v871": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v871.py": "95a9d921e888304dc0d09a0385663537b64c1c5d8c227d977f5c429ef91e069b",
+        "run-native-context-boundary-owned-v871.py": "f79310e75546fd09ec41b153ac816fe631b9ce6365eb80bd1d48237f30b149a3",
+        "deployment-driver.py": "80f86261fcca622872850b64bf31df1b724359db6dfb640a787dea80c15e3f3d",
+        "stage-native-renewal-authority-20261008i.py": "c30378b3aa54fd9956d6beb080c4ad3b1a6d6b02a7aec5c86ce51bfb250237af"
+      }
+    }
+  },
+  "observations": {
+    "v870": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run": true,
+        "SSE_terminal_observed": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "owned_runtime_paused_and_resumed": true,
+        "write_attempt_after_authority_replacement": true,
+        "write_attempt_after_runtime_resumed": true,
+        "actual_file_effect_matches": true,
+        "no_write_allowed": true,
+        "tool_rejection_observed": true,
+        "agent_baseline_unchanged": true,
+        "expected_skill_authority_status": true,
+        "context_unchanged_and_not_revoked": true,
+        "business_execution_terminal": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 144,
+        "done": 1,
+        "progress": 15,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "5fd06c2e8fc3cabb8941f2db0af3a29fdf34b17e536325d274ec18c35c8cc3f6",
+      "write_attempt_count": 1,
+      "write_completed_with_error": true,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 0,
+      "new_receipt_count": 2,
+      "target_resource_digest": "57b5037ffadcba259a7754ec2a419a45bbb0a434c459e4270a2d1a63e2dd8599",
+      "target_exists": false,
+      "target_content_sha256": null,
+      "output_directory_identity_matches": true,
+      "policy_sha256": "442fbe24c21479ea2d3ab36e22a0c2baa16dc6e9ff21bf8c41d1a4ea349cd7f7",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "completed",
+      "replacement_observation": {
+        "request_run_id": "qwen-request-18d4e0ff7673ca6d",
+        "read_receipt_hash": "24fa51e50baa6678f1f2fb3a170e7a8660b1c17e7d0943ac334cbc633d7ee808",
+        "context_id": "sec-cd8eb28d1825a51594094695ded2a94b",
+        "skill_grant_id": "grt-si-c3293e225aa95e5d3298b2c70dbade7ba2959292ef17323c73182d86c7f34783",
+        "context_expires_at": "2026-10-08T06:03:46.58502Z",
+        "observed_read_wall_ns": 1791438892959498947,
+        "runtime_resumed": true,
+        "paused": true,
+        "host_pid": 3513152,
+        "process_start_ticks": "13777383",
+        "record_sha256": "1a13f6990b6d6bd0123dabef6cada0167d1d1987950b75bc0c02688b2aea7bd9",
+        "child_expires_at": "2026-10-08T06:03:47Z",
+        "paused_wall_ns": 1791438892970471092,
+        "paused_monotonic_ns": 137834315731517,
+        "update_id": "sup-a6b6aef81432130614beb7ce4ae0157a005aca6c6faaed8e0b6a94b544d4b643",
+        "replacement_grant_id": "grt-si-e88bd9df984d550de1941d563516015507f330139159e906febf10c65c0706f4",
+        "old_install_id": "sin-0ed4fa82b702faead3f37981e7e42b04ef3930fba17c3603e0fe54f5fed4353e",
+        "replacement_install_id": "sin-ce88a60bd5ba869da7234a066a7f1d6a3b8b9153a9b1f3a71007beb02f2ab2a5",
+        "update_completed_wall_ns": 1791438893338245380,
+        "update_completed_monotonic_ns": 137834683505917,
+        "update_committed": true,
+        "resumed_wall_ns": 1791438893338336100,
+        "resumed_monotonic_ns": 137834683596733
+      },
+      "write_attempt_observed_wall_ns": 1791438898999513538,
+      "write_attempt_observed_monotonic_ns": 137840344772811,
+      "context_deadline_still_future_at_write": true,
+      "business_done_observed": true,
+      "business_error_observed": false
+    },
+    "v871": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run": true,
+        "SSE_terminal_observed": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "actual_write_allowed": true,
+        "actual_file_effect_matches": true,
+        "agent_baseline_unchanged": true,
+        "expected_skill_authority_status": true,
+        "new_grant_unchanged": true,
+        "context_unchanged_and_not_revoked": true,
+        "new_install_context_on_write": true,
+        "business_normal_terminal_success": true,
+        "business_execution_terminal": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 59,
+        "done": 1,
+        "progress": 12,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "a0a7e1390ca037224e750145f91206a33733eaf4b5a9ed16f5ff03b4fba1ff48",
+      "write_attempt_count": 1,
+      "write_completed_with_error": false,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 1,
+      "new_receipt_count": 3,
+      "target_resource_digest": "e4f329a86d62fa4d363dcd01e4570fac4d1b498a6146f6be6858d973b92b6a3b",
+      "target_exists": true,
+      "target_content_sha256": "e432de9094c3a4cdd0d9de04ac3dd333bb519b0c8c112d9bebe281c6ed552af0",
+      "output_directory_identity_matches": true,
+      "policy_sha256": "0579cffb365dfb15ad163222832b8d509818991e9e4c24f2e232cb1913092e4f",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "completed",
+      "replacement_observation": {
+        "request_run_id": "qwen-request-809ba7dcc5c80756",
+        "read_receipt_hash": "fdbb551d8281cb88f3c6b3ff64f14428b1d13ec0d8401495eba168bbbbf1269b",
+        "context_id": "sec-e51f084c0d0d95f75db9bad1a88e7bd2",
+        "skill_grant_id": "grt-si-e88bd9df984d550de1941d563516015507f330139159e906febf10c65c0706f4",
+        "context_expires_at": "2026-10-08T06:05:50.936409Z",
+        "observed_read_wall_ns": 1791438998335183713,
+        "runtime_resumed": false,
+        "paused": false
+      },
+      "write_attempt_observed_wall_ns": 1791439004420685147,
+      "write_attempt_observed_monotonic_ns": 137945765944612,
+      "context_deadline_still_future_at_write": true,
+      "business_done_observed": true,
+      "business_error_observed": false
+    }
+  },
+  "same_normalized_openshell_policy": true,
+  "new_receipt_count": 5,
+  "new_context_count": 2,
+  "fresh_Authority_chain": true,
+  "same_skill_bytes": true,
+  "deployment_profile_only_install_binding_updated": true,
+  "private_transaction_sha256": "488f383a8929a3d0fdbf8a1cf073702aa7ae306e7371ee3a7714f0ae923199d2",
+  "scope": "Official update transaction for same Skill bytes and independently approved new Grant. Old context actual write fails after replacement; new task with new installation/Grant succeeds. Not content-version upgrade or in-place extension of old signed authority.",
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "api_runtime_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_unchanged": true,
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  }
+}
