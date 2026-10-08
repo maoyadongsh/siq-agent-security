@@ -243,6 +243,23 @@ def validate_behavior_result(
     """
     if run_state != "running":
         return False, "behavior_operation_not_running"
+    return _validate_behavior_observations(result, challenge, current_readback, now=now)
+
+
+def validate_accepted_behavior_result(
+    result: dict, challenge: dict, current_readback: dict, *, now: datetime, operation_state: str,
+) -> tuple[bool, str]:
+    """Read-only assessment of already consumed, CONNECT-bound evidence."""
+    if operation_state != "accepted":
+        return False, "behavior_operation_not_accepted"
+    if (not isinstance(challenge, dict) or challenge.get("schema_version") != "openshell-behavior-challenge/v2"
+        or not isinstance(result, dict) or result.get("schema_version") != "openshell-behavior-result/v3"):
+        return False, "behavior_current_version_required"
+    accepted, reason = _validate_behavior_observations(result, challenge, current_readback, now=now)
+    return accepted, "behavior_current_scope_verified" if accepted else reason
+
+
+def _validate_behavior_observations(result, challenge, current_readback, *, now):
     if not isinstance(now, datetime) or now.utcoffset() != timedelta(0):
         return False, "behavior_clock_invalid"
     if any(type(value) is not dict for value in (result, challenge, current_readback)):

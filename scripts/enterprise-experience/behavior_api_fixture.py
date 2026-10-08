@@ -6,6 +6,7 @@ explicit development storage; the exercised authentication disables dev headers.
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import os
 import tempfile
@@ -92,9 +93,10 @@ class ApiFixture(CoordinatedFixture):
             return {'Authorization': 'Bearer ' + token}
 
         url = '/api/v1/deployments/d/behavior-verifications'
-        body = {'schema_version': 'deployment-behavior-start/v1', 'verification_id': challenge.verification_id,
-                'profile_id': profile['profile_id']}
+        body = {'schema_version': 'deployment-behavior-start/v2', 'verification_id': challenge.verification_id,
+                'profile_id': profile['profile_id'], 'profile_sha256': hashlib.sha256(raw.encode()).hexdigest()}
         checks = {}
+        verified_settings, verified_cache = security.settings, security._jwks_cache
         try:
             with TestClient(app) as client:
                 assert client.post(url, json=body).status_code == 401
@@ -103,12 +105,25 @@ class ApiFixture(CoordinatedFixture):
                 assert client.post(url, headers=headers('different-tenant'), json=body).status_code == 404
                 assert client.post(url, headers=headers(roles=('viewer',)), json=body).status_code == 403
                 checks['cross_tenant_and_readonly_probe_denied'] = True
+                preview = client.get('/api/v1/deployments/d/behavior-profiles', headers=headers(roles=('viewer',)))
+                assert preview.status_code == 200 and preview.json()['profiles'][0]['profile_sha256'] == body['profile_sha256']
+                checks['readonly_template_preview_matches_v2_request'] = True
                 response = client.post(url, headers=headers(), json=body)
                 assert response.status_code == 200, response.text
                 value = response.json()
                 assert value['state'] == 'accepted' and value['observation_count'] == 12
                 assert value['current_enforcement_verified'] is False
                 checks['rs256_authenticated_real_collection'] = True
+                assessment = client.post('/api/v1/deployments/d/behavior-assessment', headers=headers(roles=('viewer',)),
+                    json={'schema_version': 'deployment-behavior-assess/v1', 'verification_id': challenge.verification_id})
+                assert assessment.status_code == 200 and assessment.json()['state'] == 'verified', assessment.text
+                assert assessment.json()['level'] == 'enforcement_verified'
+                (self.out / 'current-assessment.json').write_text(json.dumps(assessment.json(), indent=2) + '\n')
+                checks['read_only_current_grade_from_same_accepted_evidence'] = True
+                if getattr(self, 'web', None) is not None:
+                    self._browser(app, headers(roles=('viewer',)))
+                    checks['real_browser_api_runtime_readback'] = True
+
                 assert client.post(url, headers=headers(), json=body).json() == value
                 history = client.get(url + '/' + body['verification_id'], headers=headers(roles=('viewer',)))
                 assert history.status_code == 200 and history.json() == value
@@ -127,6 +142,22 @@ class ApiFixture(CoordinatedFixture):
         finally:
             security.settings, security._jwks_cache = original_settings, original_cache
             get_engine().dispose()
+        def after_change():
+            previous_settings, previous_cache = security.settings, security._jwks_cache
+            security.settings, security._jwks_cache = verified_settings, verified_cache
+            try:
+                with TestClient(app) as client:
+                    response = client.post('/api/v1/deployments/d/behavior-assessment', headers=headers(roles=('viewer',)),
+                        json={'schema_version': 'deployment-behavior-assess/v1',
+                              'verification_id': challenge.verification_id})
+                    assert response.status_code == 200 and response.json()['state'] == 'changed', response.text
+                    assert response.json()['level'] == 'unverified' and not response.json()['current_enforcement_verified']
+                    (self.out / 'changed-assessment.json').write_text(json.dumps(response.json(), indent=2) + '\n')
+            finally:
+                security.settings, security._jwks_cache = previous_settings, previous_cache
+                get_engine().dispose()
+        self.assess_changed = after_change
+
         with self.sessions() as session:
             fact = behavior_fact(session.get(OpenShellBehaviorOperation, challenge.verification_id), 't', 'd')
             audits = list(session.scalars(select(AuditEvent).where(AuditEvent.action.like('openshell.behavior.%'))))
@@ -141,3 +172,47 @@ class ApiFixture(CoordinatedFixture):
             'verification_id': fact.verification_id, 'deployment_grade_promoted': False,
             'recorded_at': datetime.now(UTC).isoformat()}, indent=2) + '\n')
         return BehaviorChallengeV2.model_validate(fact.challenge), fact.result
+
+    def _browser(self, app, headers):
+        import socket
+        import subprocess
+        import threading
+
+        import uvicorn
+        from fastapi.responses import FileResponse
+
+        web = self.web.resolve(strict=True)
+        assert (web / 'index.html').is_file()
+
+        @app.get('/{asset_path:path}')
+        def asset(asset_path: str):
+            path = (web / asset_path).resolve()
+            if not path.is_relative_to(web) or not path.is_file():
+                path = web / 'index.html'
+            return FileResponse(path)
+
+        listener = socket.socket()
+        listener.bind(('127.0.0.1', 0))
+        listener.listen(32)
+        endpoint = f'http://127.0.0.1:{listener.getsockname()[1]}'
+        server = uvicorn.Server(uvicorn.Config(app, log_level='error', access_log=False, lifespan='off'))
+        thread = threading.Thread(target=lambda: server.run(sockets=[listener]), daemon=True)
+        thread.start()
+        try:
+            deadline = time.monotonic() + 10
+            while not server.started:
+                assert thread.is_alive() and time.monotonic() < deadline
+                time.sleep(0.05)
+            worker = Path(__file__).with_name('behavior-live-browser-worker.py')
+            env = {**os.environ, 'PLAYWRIGHT_BROWSERS_PATH': '/home/maoyd/.cache/ms-playwright'}
+            result = subprocess.run(['/home/maoyd/miniconda3/bin/python', str(worker)],
+                input=json.dumps({'endpoint': endpoint, 'out': str(self.out), 'target': self.target,
+                                  'authorization': headers['Authorization']}),
+                text=True, capture_output=True, timeout=60, env=env, check=False)
+            (self.out / 'live-browser.log').write_text(result.stdout + result.stderr)
+            assert result.returncode == 0, 'owned live browser check failed; inspect private log'
+        finally:
+            server.should_exit = True
+            thread.join(timeout=10)
+            listener.close()
+            assert not thread.is_alive(), 'owned API server did not stop'

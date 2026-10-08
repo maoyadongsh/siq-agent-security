@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "$id": "https://siq.dev/contracts/deployment-behavior-start.v2.schema.json",
+  "properties": {
+    "schema_version": {
+      "const": "deployment-behavior-start/v2"
+    },
+    "verification_id": {
+      "type": "string",
+      "maxLength": 36,
+      "pattern": "^opv-[a-f0-9]{32}$"
+    },
+    "profile_id": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "profile_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "maxLength": 64
+    }
+  },
+  "required": [
+    "schema_version",
+    "verification_id",
+    "profile_id",
+    "profile_sha256"
+  ]
+}

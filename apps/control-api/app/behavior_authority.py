@@ -18,8 +18,10 @@ from app.target_authority import authorize_runtime_target
 
 
 class BehaviorAuthority:
-    def __init__(self, request: Request, identity: Identity, sessions, adapter):
+    def __init__(self, request: Request, identity: Identity, sessions, adapter, *,
+                 permissions=("policy:manage", "policy:read")):
         self.request, self.identity, self.sessions, self.adapter = request, identity, sessions, adapter
+        self.permissions = permissions
         self.deadline = None
         self.assignment = None
         self.gateway_fingerprint = None
@@ -85,7 +87,7 @@ class BehaviorAuthority:
             current, deadline = get_identity_with_expiry(self.request)
             if current != self.identity:
                 raise AdapterError("behavior_identity_changed")
-            for permission in ("policy:manage", "policy:read"):
+            for permission in self.permissions:
                 ensure_permission(current, permission)
             if os.getenv("SIQ_AS_ENFORCEMENT_BACKEND", "none") != "openshell-cli":
                 raise AdapterError("behavior_backend_unavailable")

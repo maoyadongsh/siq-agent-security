@@ -165,16 +165,22 @@ def _read(path: str) -> bytes:
             os.close(fd)
 
 
-def load_behavior_profile(profile_id: str, *, now: datetime | None = None) -> ApprovedBehaviorProfile:
+def load_behavior_profiles(*, now: datetime | None = None) -> list[ApprovedBehaviorProfile]:
     try:
         raw = _read(os.environ.get("SIQ_AS_OPENSHELL_BEHAVIOR_PROFILES_FILE", ""))
         document = BehaviorProfiles.model_validate(json.loads(raw, object_pairs_hook=_unique_object))
         instant = now or datetime.now(UTC)
         if instant.utcoffset() != timedelta(0):
             raise ValueError("invalid clock")
-        matches = [item for item in document.profiles if item.profile_id == profile_id]
-        if len(matches) != 1 or not _time(matches[0].issued_at) <= instant < _time(matches[0].expires_at):
-            raise ValueError("unavailable profile")
-        return ApprovedBehaviorProfile(matches[0], hashlib.sha256(raw).hexdigest())
+        digest = hashlib.sha256(raw).hexdigest()
+        return [ApprovedBehaviorProfile(item, digest) for item in document.profiles
+                if _time(item.issued_at) <= instant < _time(item.expires_at)]
     except (OSError, ValueError, TypeError, RecursionError, AttributeError):
         raise AdapterError("behavior_profile_unavailable") from None
+
+
+def load_behavior_profile(profile_id: str, *, now: datetime | None = None) -> ApprovedBehaviorProfile:
+    matches = [item for item in load_behavior_profiles(now=now) if item.profile.profile_id == profile_id]
+    if len(matches) != 1:
+        raise AdapterError("behavior_profile_unavailable")
+    return matches[0]

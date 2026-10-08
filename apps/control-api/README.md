@@ -65,6 +65,8 @@ uv run pytest
 
 修改 schema 或共享规则时，须同步 Go 消费方和固定向量检查。真实 PostgreSQL + RS256/JWKS 的阶段记录见[测评目录](../../evaluations/README.md)，它不等同客户 IdP、HA、灾备或生产运维验收。OpenShell 的 fake backend、隔离网关验证和实际部署分别记录；不得用模拟读回宣称真实隔离已生效。
 
+2026-10-08 优化开发分支已接入批准模板的主动行为测评、持久观测历史和只读当前目标核验；模板v2请求绑定摘要，等级限定于核验时点／范围，策略变化和过期不沿用旧正向等级。真实OpenShell及浏览器联验见[OPT-09验收](../../docs/development/optimization-opt09-completion-validation-20261008.md)，不等同生产IdP或发行包验收。
+
 ### 复用项目 OpenShell 的配置与证书目录
 
 显式连接已有项目网关时，`SIQ_AS_OPENSHELL_CLI_BIN` 和

@@ -80,3 +80,15 @@ API 将原认证请求交给每臂授权回调，重新验证身份与令牌时�
 迁移0032为行为操作增加可空 profile_id／profile_sha256 并约束同时存在或同时为空。新协调器持久绑定批准模板及其文件摘要；旧记录保留空值，不反填为新版本受控执行。重试已存在的相同ID／profile只读回原状态，不启动进程、修复配置或继续prepared；同ID改profile返回冲突，跨租户／部署ID不披露既有记录。历史GET不调用网关、不执行探针，也不改变已保存观测。
 
 历史列表默认20条、最多100条，通过 X-SIQ-List-* 头标明截断，不把当前页冒充全部记录；单条按ID查询。历史读回不依赖当前恢复密钥或模板文件。已接受记录即使超过挑战有效期也保留 accepted 历史状态，time_window=expired 与 current_enforcement_verified=false 明确区分历史观测和当前保证。
+
+## 按当前目标核验的限定等级
+
+新增 POST `/api/v1/deployments/{id}/behavior-assessment`，只接收版本及已持久化的verification_id，要求policy:read。此操作重新读取网关、策略和受保护程序事实，但不向回显接收端发送探针、不重新消费挑战。历史GET保持无外部动作。
+
+仅accepted且绑定批准模板的记录可参与当前核验；复查模板字节、有效期、身份与批准链、目标授权、父apply来源，使用共享目标互斥读取实际策略和程序保护，再按接受态专用校验入口验证历史观测与当前事实。该入口不伪造running、不重新领取或改变已消费记录。最终短事务再次核验父操作、授权与到期时间，并原子追加核验审计；审计失败不能返回正向等级。
+
+返回独立deployment-behavior-assessment/v1投影：verified时为enforcement_verified，其余not_accepted／expired／changed／unavailable均为unverified。等级限定为evaluated_at时刻、该记录scope范围；valid_until是证据有效窗口上限，不是对未来状态不变的承诺。历史Deployment.verification不写入永久enforcement_verified，旧消费者不会因缓存收到永久正向等级。前端同时显示部署状态、历史测评状态、当前核验快照、范围及时间；到期自动撤去正向展示，刷新失败清除旧快照。任何新核验发现策略／目标／保护变化即使旧记录accepted也返回非验证状态。
+
+不提升IPv6、重定向、其他程序路径或其他目标的结论；生产身份提供方、持续监控和未覆盖平台不因该接口自动验收。
+
+前端通过只读behavior-profiles接口读取本租户／部署当前有效的运维模板投影，不读取其他租户条目或内部容器保护细节。确认后使用deployment-behavior-start/v2，除原字段外必须发送已展示的profile_sha256。新采集开始前比较当前批准文件摘要；旧ID重试比较持久摘要，变化拒绝且无探针。v1保留兼容既有受控调用，前端不使用v1。模板预览只声明批准范围，不替代执行时授权／当前目标核验。

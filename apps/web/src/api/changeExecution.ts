@@ -49,7 +49,7 @@ export function executionEvidence(d: DeploymentHistory): { label: string; detail
   if (d.independent_result === 'unknown') return { label: '独立读回结果待核对', detail: '不能依赖此前的成功记录推断当前状态。', tone: 'warn' };
   if (d.verification_level === 'stale' || d.verification_level === 'failed') return { label: d.verification_level === 'stale' ? '验证证据已过期' : '验证未通过', detail: '需要重新核对执行端。', tone: 'err' };
   if (d.status !== 'effective') return { label: '尚无生效验证', detail: '任务已创建或正在处理，不代表配置已经应用。', tone: 'warn' };
-  if (d.verification_level === 'config_readback') return { label: '配置已读回，行为未验证', detail: '历史读回证明当时配置一致，尚未证明实际工具调用受到拦截。', tone: 'warn' };
+  if (d.verification_level === 'config_readback') return { label: '配置已读回，行为未验证', detail: '该部署记录证明当时配置一致；行为测评及当前目标核验请展开下方面板。', tone: 'warn' };
   if (d.verification_level === 'behavior_enforced') return { label: '已有行为验证记录', detail: '仅代表该次验证及其覆盖范围，不是持续保护保证。', tone: 'ok' };
   return { label: '验证证据不足', detail: '仅有后端状态或版本核对，不能确认完整配置及行为。', tone: 'warn' };
 }

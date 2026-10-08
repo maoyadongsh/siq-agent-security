@@ -372,3 +372,72 @@ def test_nonempty_migration_downgrade_preserves_evidence(database, ready):
             with pytest.raises(RuntimeError, match="behavior evidence must be preserved"):
                 migration.downgrade()
     assert j.read(original.verification_id) == original
+
+
+def _accepted_connect_for_assessment(database, ready):
+    from app.tests.test_openshell_behavior_connect import connect_documents
+
+    challenge, result, current = connect_documents(ready)
+    j = journal(database)
+    j.prepare(challenge, current, profile_id='assessment', profile_sha256='a' * 64)
+    claim = j.claim(challenge['verification_id'], current)
+    fact = finish(database, claim, result, current)
+    assert fact.state == 'accepted'
+    return fact, current
+
+
+def test_current_assessment_preserves_consumed_state_and_audits(database, ready):
+    fact, current = _accepted_connect_for_assessment(database, ready)
+    j = journal(database, now=NOW)
+    before = j.read(fact.verification_id)
+    valid, reason, when = j.assess(fact.verification_id, current, before_accept=lambda session: None)
+    assert valid and reason == 'behavior_current_scope_verified' and when == NOW
+    assert j.read(fact.verification_id) == before
+    with database() as session:
+        events = list(session.scalars(select(AuditEvent).where(AuditEvent.action == 'deployment.behavior_assess')))
+        assert len(events) == 1 and events[0].summary['level'] == 'enforcement_verified'
+
+
+def test_current_assessment_drift_is_audited_without_promoting_history(database, ready):
+    fact, current = _accepted_connect_for_assessment(database, ready)
+    current['binding']['policy_revision'] = '100'
+    j = journal(database, now=NOW)
+    valid, reason, _ = j.assess(fact.verification_id, current, before_accept=lambda session: None)
+    assert not valid and reason == 'behavior_current_binding_changed'
+    assert j.read(fact.verification_id) == fact
+    with database() as session:
+        events = list(session.scalars(select(AuditEvent).where(AuditEvent.action == 'deployment.behavior_assess')))
+        assert len(events) == 1 and events[0].summary['level'] == 'unverified'
+
+
+@pytest.mark.parametrize('fault', ['audit', 'authorization'])
+def test_current_assessment_failure_is_atomic(database, ready, fault):
+    from unittest.mock import patch
+
+    from app.adapters.openshell import behavior_journal as module
+
+    fact, current = _accepted_connect_for_assessment(database, ready)
+    j = journal(database, now=NOW)
+
+    def fail(*args, **kwargs):
+        raise RuntimeError('synthetic assessment failure')
+
+    with patch.object(module, 'audit', fail if fault == 'audit' else module.audit):
+        with pytest.raises(RuntimeError, match='synthetic assessment failure'):
+            j.assess(fact.verification_id, current,
+                     before_accept=fail if fault == 'authorization' else lambda session: None)
+    assert j.read(fact.verification_id) == fact
+    with database() as session:
+        assert session.scalar(select(AuditEvent.id).where(AuditEvent.action == 'deployment.behavior_assess')) is None
+
+
+def test_current_assessment_rechecks_expiry_after_authorization(database, ready):
+    fact, current = _accepted_connect_for_assessment(database, ready)
+    j = journal(database, now=NOW)
+
+    def expire(session):
+        j.clock = lambda: NOW + timedelta(minutes=10)
+
+    valid, reason, _ = j.assess(fact.verification_id, current, before_accept=expire)
+    assert not valid and reason == 'behavior_time_invalid'
+    assert j.read(fact.verification_id) == fact

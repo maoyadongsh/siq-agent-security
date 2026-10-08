@@ -34,6 +34,7 @@ def main():
     parser.add_argument("--namespace", required=True)
     parser.add_argument("--coordinated", action="store_true")
     parser.add_argument("--authenticated-api", action="store_true")
+    parser.add_argument("--web", type=Path)
     args = parser.parse_args()
     assert re.fullmatch(r"sha256:[a-f0-9]{64}", args.image)
     assert re.fullmatch(r"[a-f0-9]{64}", args.probe_sha256)
@@ -196,6 +197,7 @@ def main():
             if args.authenticated_api:
                 from behavior_api_fixture import ApiFixture
                 coordinated = ApiFixture(out, backend, target)
+                coordinated.web = args.web
             else:
                 coordinated = CoordinatedFixture(out, backend, target)
             coordinated.apply(network)
@@ -284,6 +286,9 @@ def main():
         assert not validate_behavior_result(observed, challenge.model_dump(), readback(),
                                             now=datetime.now(UTC), run_state="running")[0]
         checks["real_policy_change_invalidates_old_observations"] = True
+        if args.authenticated_api:
+            coordinated.assess_changed()
+            checks["api_grade_removed_after_real_policy_change"] = True
         # Observe the same formerly denied program after explicit authorization.
         updated = challenge.model_dump()
         current_time = datetime.now(UTC)

@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/deployment-behavior-assessment.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "deployment_id",
+    "verification_id",
+    "evaluated_at",
+    "valid_until",
+    "state",
+    "level",
+    "current_enforcement_verified",
+    "reason_code",
+    "scope"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "deployment-behavior-assessment/v1"
+    },
+    "deployment_id": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "verification_id": {
+      "type": "string",
+      "maxLength": 36,
+      "pattern": "^opv-[a-f0-9]{32}$"
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_until": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state": {
+      "enum": [
+        "verified",
+        "not_accepted",
+        "expired",
+        "changed",
+        "unavailable"
+      ]
+    },
+    "level": {
+      "enum": [
+        "enforcement_verified",
+        "unverified"
+      ]
+    },
+    "current_enforcement_verified": {
+      "type": "boolean"
+    },
+    "reason_code": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "policy_revision",
+        "policy_digest",
+        "transport",
+        "endpoint",
+        "allow_path",
+        "deny_path",
+        "attempts"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "maxLength": 64
+        },
+        "transport": {
+          "enum": [
+            "direct_tcp",
+            "http_connect"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "maxLength": 21
+        },
+        "allow_path": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "deny_path": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 10
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "const": "verified"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "level": {
+            "const": "enforcement_verified"
+          },
+          "current_enforcement_verified": {
+            "const": true
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "level": {
+            "const": "unverified"
+          },
+          "current_enforcement_verified": {
+            "const": false
+          },
+          "valid_until": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

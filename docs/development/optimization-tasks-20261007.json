@@ -248,7 +248,7 @@
     {
       "id": "OPT-09",
       "title": "OpenShell行为证据",
-      "status": "implementing",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
       "evidence": [
@@ -258,7 +258,8 @@
         "docs/development/optimization-opt09-protection-validation-20261008.md",
         "docs/development/optimization-opt09-connect-validation-20261008.md",
         "docs/development/optimization-opt09-coordinator-validation-20261008.md",
-        "docs/development/optimization-opt09-api-validation-20261008.md"
+        "docs/development/optimization-opt09-api-validation-20261008.md",
+        "docs/development/optimization-opt09-completion-validation-20261008.md"
       ],
       "residual_limits": [
         "ADR-058及企业OpenShell单次挑战／v2观测合同、纯校验器完成；58项新用例和63项v1回归共121项通过，Ruff通过。覆盖时效／nonce／范围／前后策略与保护身份／三臂和前后可达性约束。全部为合成组件证据；纯校验器不承担持久CAS或认证，生产部署仍只做配置读回。持久协调／真实ELF收集器／API前端接线和真实三臂验收继续，总体9/16保持。",
@@ -267,7 +268,8 @@
         "独立Docker保护观察器、v1保护事实及ELF低权限检查完成：84项保护／通道、最终46项保护（重叠）及12项真实Docker检查通过；Ruff／Go vet通过。真实OpenShell三次尝试保留：启动capability模板与镜像UID998已修正，003实际保护通过但原始TCP允许／拒绝各三次均refused、六次主机对照成功，校验器正确不予采信。全部自有网关／沙箱／网络清理，原模板及TLS不变；需新增显式代理通道协议并完成真实差分、协调API／前端，OPT-09与9/16保持。",
         "显式CONNECT挑战v2／结果v3／agent v2及持久台账兼容完成，相关172个不同用例分批通过（初次schema引用失败修复，重叠不累加）；新ELF真实Docker保护12项通过。真实独立OpenShell同目标三轮允许3/3、明确policy_denied拒绝3/3、主机前后对照6/6，接收端9条标识；原拒绝路径显式授权后新挑战连通、再收到1条，旧策略证据失效。9项真实检查及清理通过，公开观测离线核验通过。生产认证协调／目标互斥／可信代理模板／API前端及等级生命周期仍待接线；合成operation绑定不冒充生产端到端，OPT-09与总体9/16保持。",
         "操作员批准模板与内部持久协调器完成：模板文件／祖先权限及完整目标绑定、每臂授权复核、共享目标互斥、提交后联网、完成事务授权与二次期限检查。57项定向通过；真实专用OpenShell的持久策略下发、同次持久行为收集、重复不重放、数据库绑定撤权、三轮差分及清理共12项通过，独立查询确认唯一accepted/epoch2及三条审计、父操作revision/digest吻合。真实运行使用隔离SQLite与合成审批身份，生产认证API／目标授权链／前端及等级生命周期尚待接线；未提升部署等级，OPT-09与9/16保持。",
-        "认证行为API、批准模板持久绑定及0032迁移完成：167项定向回归、真实临时PostgreSQL43项通过；专用OpenShell12项及同次认证API6项检查通过（有重叠）。实际RS256认证、三臂探测、重复不重放、撤权拒绝与三条主体审计完成；独立读库／协议／schema复核通过。身份发行者及审批为合成材料，数据库为开发SQLite、请求经ASGI；不冒充生产IdP／PostgreSQL同次端到端。原配置不变，自有资源清理；前端及等级生命周期仍待接线，OPT-09与9/16保持。"
+        "认证行为API、批准模板持久绑定及0032迁移完成：167项定向回归、真实临时PostgreSQL43项通过；专用OpenShell12项及同次认证API6项检查通过（有重叠）。实际RS256认证、三臂探测、重复不重放、撤权拒绝与三条主体审计完成；独立读库／协议／schema复核通过。身份发行者及审批为合成材料，数据库为开发SQLite、请求经ASGI；不冒充生产IdP／PostgreSQL同次端到端。原配置不变，自有资源清理；前端及等级生命周期仍待接线，OPT-09与9/16保持。",
+        "企业OpenShell行为证据闭环适用范围验收完成：批准模板预览与v2摘要绑定、accepted态独立核验、当前限定等级／审计、前端时效及不重放恢复已接线。后端154项、前端31项、PostgreSQL48项通过；同次真实OpenShell13项／API9项及实际浏览器HTTP核验通过，故障浏览器9项另计且不混淆。实际策略变更使等级转unverified，历史accepted不改写；自有资源清理。生产IdP、持续监控和未覆盖路径不作通过声明，其他任务与最终交付继续。OPT-09记done，总体10/16（62.5%）。"
       ]
     },
     {

@@ -6,6 +6,8 @@
 
 基线：`c41347579ebe67c7f732d0e523722e489f831039`。分支：`codex/security-optimization-20261007`。
 
+当前主任务验收：**10/16（62.5%）**。最新完成OPT-09；下方批次段落保留当时状态，不作为当前总数。
+
 | 任务 | 内容 | 状态 | 旧任务映射 |
 | --- | --- | --- | --- |
 | OPT-00 | 基线与既有任务去重 | done | 本批新增／现有流程复用 |
@@ -17,7 +19,7 @@
 | OPT-06 | pending提升幂等 | done | SEC-F05 |
 | OPT-07 | 策略语义与部署入口 | done | 待结合对应模块继续核对 |
 | OPT-08 | 日常Skill上下文 | implementing | 待结合对应模块继续核对 |
-| OPT-09 | OpenShell行为证据 | implementing | 待结合对应模块继续核对 |
+| OPT-09 | OpenShell行为证据 | done | 待结合对应模块继续核对 |
 | OPT-10 | 同候选业务回归 | implementing | 待结合对应模块继续核对 |
 | OPT-11 | 连接器可信执行 | implementing | 待结合对应模块继续核对 |
 | OPT-12 | 钩子完整性 | planned | 待结合对应模块继续核对 |
@@ -150,3 +152,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [操作员模板与同次持久协调](optimization-opt09-coordinator-validation-20261008.md)：操作员批准模板与内部持久协调器完成：模板文件／祖先权限及完整目标绑定、每臂授权复核、共享目标互斥、提交后联网、完成事务授权与二次期限检查。57项定向通过；真实专用OpenShell的持久策略下发、同次持久行为收集、重复不重放、数据库绑定撤权、三轮差分及清理共12项通过，独立查询确认唯一accepted/epoch2及三条审计、父操作revision/digest吻合。真实运行使用隔离SQLite与合成审批身份，生产认证API／目标授权链／前端及等级生命周期尚待接线；未提升部署等级，OPT-09与9/16保持。
 
 [企业认证行为API与真实OpenShell接线](optimization-opt09-api-validation-20261008.md)：认证行为API、批准模板持久绑定及0032迁移完成：167项定向回归、真实临时PostgreSQL43项通过；专用OpenShell12项及同次认证API6项检查通过（有重叠）。实际RS256认证、三臂探测、重复不重放、撤权拒绝与三条主体审计完成；独立读库／协议／schema复核通过。身份发行者及审批为合成材料，数据库为开发SQLite、请求经ASGI；不冒充生产IdP／PostgreSQL同次端到端。原配置不变，自有资源清理；前端及等级生命周期仍待接线，OPT-09与9/16保持。
+
+[企业OpenShell行为闭环验收](optimization-opt09-completion-validation-20261008.md)：企业OpenShell行为证据闭环适用范围验收完成：批准模板预览与v2摘要绑定、accepted态独立核验、当前限定等级／审计、前端时效及不重放恢复已接线。后端154项、前端31项、PostgreSQL48项通过；同次真实OpenShell13项／API9项及实际浏览器HTTP核验通过，故障浏览器9项另计且不混淆。实际策略变更使等级转unverified，历史accepted不改写；自有资源清理。生产IdP、持续监控和未覆盖路径不作通过声明，其他任务与最终交付继续。OPT-09记done，总体10/16（62.5%）。

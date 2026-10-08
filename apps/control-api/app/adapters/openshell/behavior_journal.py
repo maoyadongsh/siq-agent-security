@@ -27,6 +27,7 @@ from app.adapters.openshell.behavior_protocol import (
     challenge_digest,
     parse_behavior_challenge,
     parse_behavior_result,
+    validate_accepted_behavior_result,
     validate_behavior_challenge,
     validate_behavior_result,
 )
@@ -322,6 +323,29 @@ class BehaviorJournal:
                 return self._transition(session, row, "unknown", reason_code="behavior_deadline_expired")
             return self._transition(session, row, "accepted" if accepted else "rejected", reason_code=reason,
                                     result=saved, result_digest=_digest(saved) if saved is not None else None)
+
+    def assess(self, verification_id: str, current_readback: dict, *, before_accept: Callable[[Session], None]):
+        """Assess accepted evidence and append an audit without changing its state."""
+        if not callable(before_accept):
+            raise BehaviorJournalError("behavior_authorizer_required")
+        with self.sessions.begin() as session:
+            row = self._load(session, verification_id)
+            if row.state != "accepted":
+                raise BehaviorJournalError("behavior_operation_not_accepted")
+            self._live_parent(session, parse_behavior_challenge(row.challenge))
+            before_accept(session)
+            checked_at = self._now()
+            accepted, reason = validate_accepted_behavior_result(
+                row.result, row.challenge, current_readback, now=checked_at, operation_state=row.state)
+            audit(session, self.tenant_id, self.actor_type, self.actor_id, "deployment.behavior_assess", "deployment",
+                  resource_id=self.deployment_id, summary={"verification_id": row.id,
+                    "level": "enforcement_verified" if accepted else "unverified", "reason_code": reason,
+                    "evaluated_at": checked_at.isoformat(), "challenge_sha256": row.challenge_digest,
+                    "result_sha256": row.result_digest})
+            session.flush()
+            if accepted and self._now().replace(tzinfo=None) >= row.expires_at:
+                raise BehaviorJournalError("behavior_assessment_expired")
+        return accepted, reason, checked_at
 
     def abandon(self, claim: BehaviorClaim) -> BehaviorFact:
         if not isinstance(claim, BehaviorClaim):

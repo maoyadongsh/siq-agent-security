@@ -105,10 +105,34 @@ class BehaviorCoordinator:
             "issued_at": issued_at, "expires_at": expires_at,
         })
 
-    def run(self, profile_id: str, verification_id: str) -> BehaviorFact:
+    def assess(self, verification_id: str) -> tuple[bool, str, datetime]:
+        """Recheck current target facts without creating or replaying a probe."""
+        fact = self.journal.read(verification_id)
+        now = self.clock()
+        if fact.state != "accepted":
+            return False, "behavior_operation_not_accepted", now
+        if now >= _time(fact.challenge["expires_at"]):
+            return False, "behavior_evidence_expired", now
+        if fact.profile_id is None:
+            return False, "behavior_profile_reference_missing", now
+        approved = self.profile_loader(fact.profile_id, now=now)
+        profile = approved.profile
+        expected = self._challenge(profile, verification_id, nonce=fact.challenge["nonce"],
+            issued_at=fact.challenge["issued_at"], expires_at=fact.challenge["expires_at"])
+        if fact.challenge != expected.model_dump() or fact.profile_sha256 != approved.file_sha256:
+            return False, "behavior_profile_changed", now
+        self.authorize(profile)
+        with target_mutex(self.engine, profile.binding.gateway_fingerprint, profile.binding.target):
+            current = self._readback(approved)
+            return self.journal.assess(verification_id, current,
+                before_accept=lambda session: self.before_accept(session, profile))
+
+    def run(self, profile_id: str, verification_id: str, *, expected_profile_sha256: str | None = None) -> BehaviorFact:
         if not isinstance(verification_id, str) or not re.fullmatch(r"opv-[a-f0-9]{32}", verification_id):
             raise AdapterError("behavior_verification_id_invalid")
         approved = self.profile_loader(profile_id, now=self.clock())
+        if expected_profile_sha256 is not None and approved.file_sha256 != expected_profile_sha256:
+            raise AdapterError("behavior_profile_changed")
         profile = approved.profile
         if (profile.binding.tenant_id != self.journal.tenant_id
             or profile.binding.deployment_id != self.journal.deployment_id):
