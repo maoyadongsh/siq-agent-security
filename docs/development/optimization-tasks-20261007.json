@@ -230,7 +230,8 @@
         "docs/development/evidence/optimization-20261007/native-content-version-business-v879.json",
         "docs/development/optimization-opt08-v2-image-business-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/native-content-version-v2-image-v881.json",
-        "docs/development/evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json"
+        "docs/development/evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json",
+        "docs/development/evidence/optimization-20261007/native-overlay-unmapped-image-20261008n.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -362,7 +363,8 @@
         "patches/hermes/test_build_native_overlay.py",
         "adapters/runtime/hermes-agentshield/native_dispatch.py",
         "adapters/runtime/hermes-agentshield/tests/test_native_dispatch.py",
-        "docs/development/evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json"
+        "docs/development/evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json",
+        "docs/development/evidence/optimization-20261007/native-overlay-unmapped-image-20261008n.json"
       ],
       "residual_limits": [
         "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
@@ -389,7 +391,8 @@
         "已部署且只包含 write_file 与 /home/u/work/out 写权限的 Grant 下，规范 write_file 允许；write、edit、patch、Write_File、write-file 和 opt10_unmapped_tool 均因工具名未授权而拒绝；只有嵌套 path、没有顶层 path 的 write_file 因资源不可用拒绝。原生宿主在已准备的 read_file 调用上改用 write_file 绑定时拒绝并使任务失效。这是引擎和宿主决定，不是日常宿主实际执行观察，也不能代替最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。",
         "顺序执行的宿主路由拒绝原先位于前置钩子、检查点和 execute 之后。覆盖层生成现在在这些副作用之前调用 require_registry_dispatch；夹具与已构建覆盖层还原后的钉住源码形状均通过。已经发出的请求镜像 sha256:a3be2a4a 仍是旧注入位置，本批没有重建镜像或调用模型。最终矩阵、四臂、平台和签名继续，OPT-10 保持 implementing，11/16 不变。",
         "原生配置 checkpoints.enabled 为 true。write_file、patch 和破坏性 terminal 原先在 _begin_tool_execution 里、SIQ allow 之前写入检查点。覆盖层现在从开始阶段移除该写入，并只在 call() 确认 allow 之后、工具体执行之前运行同一检查点；拒绝不调用回调。钉住的 tool_executor.py 变换和定向测试通过。已经发出的请求镜像 sha256:a3be2a4a 仍是旧注入，本批没有重建镜像或调用模型。最终矩阵、四臂、平台和签名继续，OPT-10 保持 implementing，11/16 不变。",
-        "新离线请求镜像 sha256:73153d1a83ff1cc9e041b3d6366f85e5a25ea696653559971d941d73d3ed78ac、制品 461046804f3f3da95ee34c007801af18cacfaeb25e22dcec71f226806219f30c 含当前覆盖层：宿主路由在副作用前拒绝，write_file、patch 和破坏性 terminal 的检查点只在 allow 之后。六项离线检查为 true，production_eligible 为 false，未登记身份，未调用模型。冻结镜像 sha256:dc22c450 与 sha256:a3be2a4a 未改。这不是最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。"
+        "新离线请求镜像 sha256:73153d1a83ff1cc9e041b3d6366f85e5a25ea696653559971d941d73d3ed78ac、制品 461046804f3f3da95ee34c007801af18cacfaeb25e22dcec71f226806219f30c 含当前覆盖层：宿主路由在副作用前拒绝，write_file、patch 和破坏性 terminal 的检查点只在 allow 之后。六项离线检查为 true，production_eligible 为 false，未登记身份，未调用模型。冻结镜像 sha256:dc22c450 与 sha256:a3be2a4a 未改。这不是最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。",
+        "未注册工具名原先在 registry.dispatch 里于 call_scope 之前返回 Unknown tool，不产生决定。覆盖层现在先调用 call_scope，拒绝不会进入 handler；允许但没有注册项时仍返回 Unknown tool 且不执行。新离线镜像 sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1、制品 116ce585865b1b1259489dc39676f8d5ecd3821a45a92804b98e8077869004be，registry 摘要 d85035e380e2c9d2d9732b35f00f351742cbc51d28e047ec3655c34cee82d54f。六项离线检查为 true，production_eligible 为 false，未登记身份，未调用模型。OPT-10 保持 implementing，11/16 不变。"
       ]
     },
     {
@@ -435,7 +438,8 @@
       "residual_limits": [
         "安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。",
         "受保护钩子实效联验完成：独立OpenShell＋当前Hermes原生工具＋真实Go Authority下，两个正常写入成功，钩子／清单六次改写删除替换均拒绝；管理员注入代码漂移后实际写入被拒且无副作用，恢复字节不复活旧guard。002完整18项检查通过，50项组件和9项证据回归通过；001清理复验异常保留且资源已清理。仅合成批准Skill、无模型，非日常业务／正式发行验收；OPT-12继续implementing，总体10/16保持。",
-        "安装程序身份读回完成：复用密封计划的准确路径和BinaryDigest，发现程序改写／删除／异路径；旧计划无摘要为unknown，明确升级后认可新身份，中断恢复重新核对旧身份。五个旧反例复现；Go全量1741顶层通过／34跳过，定向45项与合同4项、vet/Ruff/格式/四目标构建通过。当前验证器另复核历史0.4.0真实签名包及四类篡改拒绝，不能冒充当前候选签发或原生验收；OPT-12继续implementing，总体10/16保持。"
+        "安装程序身份读回完成：复用密封计划的准确路径和BinaryDigest，发现程序改写／删除／异路径；旧计划无摘要为unknown，明确升级后认可新身份，中断恢复重新核对旧身份。五个旧反例复现；Go全量1741顶层通过／34跳过，定向45项与合同4项、vet/Ruff/格式/四目标构建通过。当前验证器另复核历史0.4.0真实签名包及四类篡改拒绝，不能冒充当前候选签发或原生验收；OPT-12继续implementing，总体10/16保持。",
+        "2026-10-08 确认：Windows 与 macOS 原生安装验收暂时不实施，保持 blocked。当前候选的发行身份与 Linux 受保护加载继续。OPT-12 保持 implementing，11/16 不变。"
       ]
     },
     {

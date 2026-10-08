@@ -236,3 +236,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-10 离线镜像](evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json)：新请求镜像 `sha256:73153d1a83ff1cc9e041b3d6366f85e5a25ea696653559971d941d73d3ed78ac`，制品 `461046804f3f3da95ee34c007801af18cacfaeb25e22dcec71f226806219f30c`。它包含宿主路由提前拒绝，以及 allow 之后才写入的检查点。六项离线检查通过，`production_eligible` 为 false，未登记身份，未调用模型。冻结镜像 `sha256:dc22c450` 与 `sha256:a3be2a4a` 未改。总体仍为 11/16（68.75%）。
 
 [平台范围](optimization-tasks-20261007.json)：2026-10-08 确认当前环境没有 Windows 与 macOS 原生机器，这两项暂时不实施，状态保持 blocked。交叉编译不计入原生验收。Linux 本机与 DGX 适用项继续。总体仍为 11/16（68.75%）。
+
+[OPT-10 未注册工具先裁决](../../patches/hermes/build_native_overlay.py)：未注册工具名原先在 `call_scope` 之前返回 Unknown tool。覆盖层现在先裁决，拒绝不进入处理函数。离线镜像 `sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1`，制品 `116ce585865b1b1259489dc39676f8d5ecd3821a45a92804b98e8077869004be`。六项离线检查通过，未登记身份，未调用模型。总体仍为 11/16（68.75%）。

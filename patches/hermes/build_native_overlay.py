@@ -38,7 +38,10 @@ def transform(name, text):
                        '            __import__("siq_native_runtime").verify_cache(task_id, src)\n'
                        '            try:\n                st = os.stat(src)\n')
     elif name == "tools/registry.py":
-        old = '''        try:
+        old = '''        entry = self.get_entry(name, scope=scope)
+        if not entry:
+            return tool_error(f"Unknown tool: {name}")
+        try:
             if entry.is_async:
                 from model_tools import _run_async
                 result = _run_async(entry.handler(args, **kwargs))
@@ -46,10 +49,13 @@ def transform(name, text):
                 result = entry.handler(args, **kwargs)
             return self._normalize_handler_result(name, result)
 '''
-        new = '''        try:
+        new = '''        entry = self.get_entry(name, scope=scope)
+        try:
             from siq_native_runtime import call_scope
             native_call_id = kwargs.pop("tool_call_id", None)
             with call_scope(name, args, kwargs.get("task_id"), kwargs.get("session_id"), native_call_id) as checked_args:
+                if not entry:
+                    return tool_error(f"Unknown tool: {name}")
                 if entry.is_async:
                     from model_tools import _run_async
                     result = _run_async(entry.handler(checked_args, **kwargs))

@@ -14,6 +14,30 @@ def load_builder():
 
 
 class OverlayDispatchOrderTest(unittest.TestCase):
+    def test_unmapped_tool_is_authorized_before_unknown_result(self):
+        source = (
+            "class Registry:\n"
+            "    def dispatch(self, name, args, **kwargs):\n"
+            "        entry = self.get_entry(name, scope=scope)\n"
+            "        if not entry:\n"
+            '            return tool_error(f"Unknown tool: {name}")\n'
+            "        try:\n"
+            "            if entry.is_async:\n"
+            "                from model_tools import _run_async\n"
+            "                result = _run_async(entry.handler(args, **kwargs))\n"
+            "            else:\n"
+            "                result = entry.handler(args, **kwargs)\n"
+            "            return self._normalize_handler_result(name, result)\n"
+            "        except Exception:\n"
+            "            return tool_error('failed')\n"
+        )
+        transformed = load_builder().transform("tools/registry.py", source)
+        allow = transformed.index("with call_scope(")
+        unknown = transformed.index('return tool_error(f"Unknown tool: {name}")')
+        handler = transformed.index("entry.handler(checked_args, **kwargs)")
+        self.assertLess(allow, unknown)
+        self.assertLess(unknown, handler)
+        self.assertEqual(transformed.count("if not entry:"), 1)
     def test_host_route_gate_precedes_hooks_checkpoints_and_execute(self):
         source = (
             "def outer():\n"
