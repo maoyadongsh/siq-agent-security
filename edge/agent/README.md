@@ -41,6 +41,7 @@ go -C edge/agent build -o "$PWD/.tmp/bin/edge-agent" .
 | `confirm-discovery-schedule (--intent FILE \| --schedule-id ID \| --discover \| --resume)` | Linux 预览或明确确认有界周期计划；`--discover` 只读查找本设备待办 | 四种来源严格互斥；查询不授权，多项不自动选择；确认需真实终端 yes 或精确摘要 |
 | `retire-discovery-schedule [--resume]` | Linux 预览或归档已在线复验为 revoked 的旧周期计划 | 不撤销业务权限、不停止服务、不取消已派发任务；历史和恢复记录保留 |
 | `setup-enterprise --help` | Linux 串联计划确认、发行验签暂存、注册/恢复与用户服务配置 | 默认只配置；显式 `--start` 才启动发现服务；新设备的组织周期计划仍需另行创建和确认 |
+| `review-enterprise-upgrade --help` | Linux 只读核对现有身份、旧/新签名暂存、采集范围与服务单元，输出完整确认摘要 | 不修改计划或服务、不运行采集器；不是升级完成或服务已停止的证明 |
 
 Linux 后台服务、心跳和任务命令读取设备身份时要求绝对、私有状态目录及安全父目录，
 拒绝符号链接、硬链接、组/其他用户可访问的状态文件、超大或歧义 JSON。
@@ -80,6 +81,8 @@ export SIQ_CONNECTOR_BIN_DIR="/absolute/verified-stage/bin/arm64"
 统一开发入口：`setup-enterprise --help`。将确认计划、可信暂存、环境绑定注册/原身份恢复/既有身份复用、采集范围保存和用户服务安装串为一次调用。自动化采用确认摘要和 --enrollment-code-stdin；Linux 终端可改用 --interactive，直接阅读组织/环境/范围后输入 yes，默认取消，首次注册码在验签后提示且不回显，不进入命令参数。交互确认期间计划变化或过期拒绝。输出逐阶段 NDJSON（交互模式另有提示），暂存成功后即返回 stage_path，后续失败可用 --resume-stage 重验继续。默认只配置，显式 --start 才启动发现服务，不批准业务权限。未签名制品在注册前拒绝，失败不删除身份或暂存。serve 已接入确认范围内的去重首扫申请，但包下载、完整生产签名包/systemd 一次安装与结果页真实验收仍未完成，不作为已发布一键安装承诺。
 
 Linux 用户服务安装开发入口：`install-user-service --release FILE --stage DIR [--start]`。要求本机已注册并确认仍在安装期限内的 user 模式计划，重新验签和核对暂存文件后写入当前用户 systemd 单元；相同内容可重试，不覆盖不同配置。默认只写配置，显式 --start 才执行用户级 reload/enable/start 和 active 检查，不提权、不启用 linger。失败保留状态和制品，可能留下已启用但未运行的单元；完整升级/回滚及真实登录退出/重启验收待完成。命令使用中的 Edge 排他锁会拒绝并发安装，测试仅使用模拟服务管理器，当前不承诺部署即开机自启。
+
+升级前核验入口：`review-enterprise-upgrade --plan FILE --from-stage OLD --to-stage NEW --tenant ID`。它读取现有私密状态，但仅输出不含凭据的完整新旧计划及摘要；复验两份暂存的发布签名，拒绝自定义/漂移的旧单元与跨环境迁移。旧安装窗口可已过期，新计划必须当前有效。目前完成的是[升级核验](../../docs/development/optimization-opt11-upgrade-review-validation-20261008.md)，事务切换、中断恢复、实际停止/启动与正式签名包验收仍待完成，不能通过重新执行 setup 替代。
 
 Linux 范围确认底层入口：`confirm-discovery-plan --plan FILE --tenant ID --confirm-plan-sha256 DIGEST`。核对已注册状态、当前计划与明确确认后，仅保存本机扫描限制；不注册、不扫描、不授权业务。需先停止 serve/tasks 以取得排他锁，确认后重新启动服务。已确认设备的签名任务仍必须使用明确采集器及允许的 roots/include 子集，超范围返回 discovery_scope_denied；旧设备未保存计划时仍属 legacy，不能声称已验证范围。统一安装入口已复用该确认阶段，但制品信任、设备注册和周期计划仍保持独立核验。
 
