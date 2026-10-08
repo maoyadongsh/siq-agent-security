@@ -11,6 +11,7 @@ from dataclasses import asdict, dataclass
 from app import threat_analysis as analysis
 from app.config import load_settings
 from app.scan_isolation import command
+from app.scan_service_transport import service_exchange
 from app.scan_transport import ScanFailure, exchange
 from app.scan_worker import MAX_INPUT, canonical
 
@@ -78,5 +79,9 @@ def analyze(content, filename=None, *, scope=""):
     payload = canonical(request)
     if len(payload) > MAX_INPUT:
         raise ScanFailure("threat_scan_input_limit")
-    output = exchange(command(load_settings().threat_scan_isolation), payload)
+    settings = load_settings()
+    if settings.threat_scan_isolation == "bwrap-service":
+        output = service_exchange(settings.threat_scan_socket, settings.threat_scan_service_uid, payload)
+    else:
+        output = exchange(command(settings.threat_scan_isolation), payload)
     return parse_response(output, request)

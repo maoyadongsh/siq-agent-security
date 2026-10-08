@@ -6,7 +6,7 @@
 
 基线：`c41347579ebe67c7f732d0e523722e489f831039`。分支：`codex/security-optimization-20261007`。
 
-当前主任务验收：**10/16（62.5%）**。最新完成OPT-09；下方批次段落保留当时状态，不作为当前总数。
+当前主任务验收：**11/16（68.75%）**。最新完成OPT-14；下方批次段落保留当时状态，不作为当前总数。
 
 | 任务 | 内容 | 状态 | 旧任务映射 |
 | --- | --- | --- | --- |
@@ -24,7 +24,7 @@
 | OPT-11 | 连接器可信执行 | implementing | 待结合对应模块继续核对 |
 | OPT-12 | 钩子完整性 | implementing | 待结合对应模块继续核对 |
 | OPT-13 | 交付安全头 | done | 待结合对应模块继续核对 |
-| OPT-14 | 扫描进程隔离 | implementing | SEC-F08 |
+| OPT-14 | 扫描进程隔离 | done | SEC-F08 |
 | OPT-15 | 跨平台验收与有界清理 | planned | SEC-F06 |
 
 ## 当前验证
@@ -160,3 +160,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [受保护钩子与执行拒绝联验](optimization-opt12-protected-hook-validation-20261008.md)：受保护钩子实效联验完成：独立OpenShell＋当前Hermes原生工具＋真实Go Authority下，两个正常写入成功，钩子／清单六次改写删除替换均拒绝；管理员注入代码漂移后实际写入被拒且无副作用，恢复字节不复活旧guard。002完整18项检查通过，50项组件和9项证据回归通过；001清理复验异常保留且资源已清理。仅合成批准Skill、无模型，非日常业务／正式发行验收；OPT-12继续implementing，总体10/16保持。
 
 [安装程序身份与升级恢复](optimization-opt12-program-identity-validation-20261008.md)：安装程序身份读回完成：复用密封计划的准确路径和BinaryDigest，发现程序改写／删除／异路径；旧计划无摘要为unknown，明确升级后认可新身份，中断恢复重新核对旧身份。五个旧反例复现；Go全量1741顶层通过／34跳过，定向45项与合同4项、vet/Ruff/格式/四目标构建通过。当前验证器另复核历史0.4.0真实签名包及四类篡改拒绝，不能冒充当前候选签发或原生验收；OPT-12继续implementing，总体10/16保持。
+
+[独立静态扫描服务与容器验收](optimization-opt14-host-service-validation-20261008.md)：新增 UID 认证 Unix 通道与独立宿主 bwrap 服务，保留 Docker 默认 AppArmor/seccomp、非 root 和只读根目录；真实正常/恶意扫描、资源失败恢复、错误 UID/权限漂移拒绝、失联失败关闭与重启恢复通过。相关187项、最终专项35项（33重叠，独立合计189）及 Ruff/镜像锁/Compose 配置检查通过。修复 COPY 保留0600源码导致容器启动失败，001/002失败保留，003完整13项组合检查和资源清理通过。开发身份/SQLite不冒充生产IdP验收，未安装常驻服务或推送；OPT-14记done，总体11/16（68.75%）。

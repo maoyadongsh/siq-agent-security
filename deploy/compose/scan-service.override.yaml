@@ -1,0 +1,17 @@
+# Opt-in Linux host scanner. See docs/deployment/isolated-scan-service.md.
+# This override does not turn the development Compose stack into production.
+services:
+  control-api:
+    environment:
+      SIQ_AS_THREAT_SCAN_ISOLATION: bwrap-service
+      SIQ_AS_THREAT_SCAN_SOCKET: /run/siq-scan/scan.sock
+      SIQ_AS_THREAT_SCAN_SERVICE_UID: ${SIQ_SCAN_SERVICE_UID:?Set the host scanner UID}
+    group_add:
+      - ${SIQ_SCAN_SOCKET_GID:?Set the socket directory group GID}
+    volumes:
+      - type: bind
+        source: ${SIQ_SCAN_SOCKET_DIR:?Set the existing protected host socket directory}
+        target: /run/siq-scan
+        read_only: true
+        bind:
+          create_host_path: false

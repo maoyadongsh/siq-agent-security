@@ -1,0 +1,126 @@
+{
+  "schema_version": "optimization-isolated-scan-service/v1",
+  "recorded_at": "2026-10-08T01:57:08.564406+00:00",
+  "candidate_base_commit": "6412cefd1bc7cf0307969832fff4772e81829882",
+  "machine": "DGX Spark / Linux arm64",
+  "native_python": "3.13.12",
+  "container_python": "3.12",
+  "source_sha256": {
+    "apps/control-api/Dockerfile": "a96ba862914e16ab408938e117ad1a1edc74ba2c97ff260a35c17ecd92849e4c",
+    "apps/control-api/app/config.py": "8bc47eae797e9ef3ab0319e6d8ba5e6a5d2744ad3e50e20abdd33d4ff00b9f98",
+    "apps/control-api/app/scan_execution.py": "96ae8fc7a0f9e0459cb71ec4cc2e5658eba7d96834eddbd1947201ff300acbf5",
+    "apps/control-api/app/scan_isolation.py": "d1012f4f5af160ecdd803ad676d0c8acb6267e3e047daa047e92a1fb9cfcb98a",
+    "apps/control-api/app/scan_transport.py": "a39747f37eb1f5726633908b16f278a52db63dfb42799fcece306bb2fbc64004",
+    "apps/control-api/app/scan_worker.py": "212beef0bdfd1871c750bc9dd5beeb258077cd80c9c1f6bad99e17519dd1bdcd",
+    "apps/control-api/app/scan_service.py": "66e7fd7bf645261da97faf59732f1ad6024b8aba73c6bc2a7e7e1d5b0a3a588e",
+    "apps/control-api/app/scan_service_transport.py": "d226cfecc17767b383291fa2a1d8cb508aca850e0cd58b73b5acaa80be059c37",
+    "apps/control-api/app/tests/test_scan_service.py": "15ae60d340b57ec5a1d86ca56ed16cb6b2e6c20873f0ebae186e969bcada50d7",
+    "scripts/scan_service/container_probe.py": "a4e215415406da02fff8a5aac677f9e862ec8577e81daaf07b7d28dcfc3770a0",
+    "scripts/scan_service/validate.py": "2bcedc1456adbed27b9b74bfacf56fd0b3d681af955345db470df3dd710e5558",
+    "deploy/compose/scan-service.override.yaml": "82a82448a47372f6fb08735548f5511ddfdde1ca06fca5bb66a677d0305057ad",
+    "packages/contracts/threat-scan-service.v1.md": "daf39db0256688a4c9856ec99d00379ac1944a7f084394d5eaa1874146cfff6c"
+  },
+  "related_suite": {
+    "passed": 187,
+    "skipped": 0
+  },
+  "final_service_suite": {
+    "passed": 35,
+    "overlap_with_related": 33,
+    "additional": 2
+  },
+  "unique_related_tests": 189,
+  "native_bwrap_enabled": true,
+  "live_candidate": {
+    "checks": {
+      "cpu_failure_governance_responsive": true,
+      "endpoint-drift_no_success_transaction": true,
+      "governance_healthy": true,
+      "http_ready": true,
+      "malicious_http": true,
+      "memory_failure_no_success_transaction": true,
+      "native_private_file_readonly_code_network_isolation": true,
+      "normal_http": true,
+      "scan_recovers_after_resource_failures": true,
+      "scan_recovers_after_service_restart": true,
+      "three_samples_match_static_analyzer": true,
+      "unavailable_no_success_transaction": true,
+      "wrong_client_uid_denied": true
+    },
+    "cleanup": {
+      "owned_container_removed": true,
+      "owned_directory_removed": true,
+      "service_stopped_and_socket_removed": true
+    },
+    "client_uid": 10001,
+    "host_uid": 1000,
+    "image_id": "sha256:22da21e1030a9210c310e810379856329f4af508f7a98e9600772dde81beb8c7",
+    "probe_sha256": "a4e215415406da02fff8a5aac677f9e862ec8577e81daaf07b7d28dcfc3770a0",
+    "restart_socket_inode_changed": false,
+    "runtime": {
+      "apparmor": "docker-default (enforce)",
+      "cap_drop": [
+        "ALL"
+      ],
+      "network": "none",
+      "no_new_privileges": true,
+      "rootfs_readonly": true,
+      "seccomp_filter": true,
+      "security_opt": [
+        "no-new-privileges"
+      ]
+    },
+    "schema_version": "isolated-scan-acceptance/v1",
+    "status": "passed"
+  },
+  "image_readback": {
+    "compose_source_and_render": true,
+    "image_id": "sha256:22da21e1030a9210c310e810379856329f4af508f7a98e9600772dde81beb8c7",
+    "in_container_namespace_still_refused": true,
+    "root_owned_code_readable_not_writable": true,
+    "source_sha256": {
+      "app/adapters/openshell/operation_registry.py": "91e3bc835e9b6f3c90db85d4bcfaf13c14ed60a139e8e81bd4f67d65f730a8fa",
+      "app/config.py": "8bc47eae797e9ef3ab0319e6d8ba5e6a5d2744ad3e50e20abdd33d4ff00b9f98",
+      "app/scan_execution.py": "96ae8fc7a0f9e0459cb71ec4cc2e5658eba7d96834eddbd1947201ff300acbf5",
+      "app/scan_isolation.py": "d1012f4f5af160ecdd803ad676d0c8acb6267e3e047daa047e92a1fb9cfcb98a",
+      "app/scan_service.py": "66e7fd7bf645261da97faf59732f1ad6024b8aba73c6bc2a7e7e1d5b0a3a588e",
+      "app/scan_service_transport.py": "d226cfecc17767b383291fa2a1d8cb508aca850e0cd58b73b5acaa80be059c37",
+      "app/scan_transport.py": "a39747f37eb1f5726633908b16f278a52db63dfb42799fcece306bb2fbc64004",
+      "app/scan_worker.py": "212beef0bdfd1871c750bc9dd5beeb258077cd80c9c1f6bad99e17519dd1bdcd"
+    }
+  },
+  "failure_history": {
+    "component_initial": "one invalid-request close assertion assumed EOF; Linux returned RST; no second worker executed",
+    "live_001": "container startup failed; complete diagnosis not captured until 002; resources cleaned",
+    "live_002": "non-root import PermissionError from COPY preserving source mode 0600",
+    "live_003": "passed after image code-readability normalization",
+    "compose_render": "false create_host_path omitted by serializer; source false and no rendered true verified"
+  },
+  "ruff": "passed",
+  "dockerfile_lock_guard": "passed",
+  "compose_render": "passed, not live Compose deployment",
+  "raw_sha256": {
+    "var/optimization-20261007/opt14-host-service-001.json": "a62e0ff5cd6f9d9046024ec927888604a721454037ccb81074325b28819142b0",
+    "var/optimization-20261007/opt14-host-service-002.json": "9073a0d30c234a62384208cb4eaedb87809d6fda98d990df0784c5a56bf6e799",
+    "var/optimization-20261007/opt14-host-service-003.json": "f3084aa52c5fadeebd4afd9c4fefeab7599d88fbcc4af7f1547b61eca172b09c",
+    "var/optimization-20261007/opt14-host-service-image-check.json": "9657930bdb2f4da217d9c790f67833b5a6047c9711011619cd4f8c0eae0e0c7c",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-build-002.log": "1e7aa27f362a42292a2ef7a125417abb0b229c81266222161c846bd3a421c4f6",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-build.log": "b80cf909b863a85ccea43c5ab58c08972d55e8c46ebca3df35e43280efc11f32",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-compose.json": "751845c9dc45cfec8318ed055e7e180aa4cf22f014169785e697c70e5847f495",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-final.log": "7dd3d47d1aad8b8e3ecd9716c711fb1042dbff884b8f0f799932ab264e00367d",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-focused-002.log": "351333c88119096e06042302a96a039156c5b81f6a846113ff64823dde06ef6b",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-focused.log": "e8de2c0bbdd5c54a9a0f28c3b07086fcc21f20229f61db125d92fd20698388af",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-live-001.log": "9ef5c26a9790a4dfde321b8b7f41850357afe52dc287f4d0adff47f58fb372c7",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-live-002.log": "9b95f7de85b80bdc27e126297b1d295a5bc02fb8635b94d4cc164036d2cc0a74",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-live-003.log": "55c72e3d2ef2146d2f39206d8780254d158dc7bc11ecadc256a432f7e67f57d9",
+    "var/optimization-20261007/opt14-host-service-logs/siq-opt14-service-regression.log": "4bdb4f4a505a1b71c632f222cee185c007bcd64772ff8b552e0a2ff99fbfec71"
+  },
+  "limits": [
+    "Actual HTTP uses development identity and isolated SQLite; not production OIDC/PostgreSQL same-run acceptance.",
+    "Independent non-root host service identity is a trusted deployment boundary; root/service owner tampering is outside it.",
+    "Default Docker in-container namespace creation remains refused; no privileged mode or AppArmor/seccomp relaxation.",
+    "13 live checks overlap and combine effects; not independent attack samples or a statistical success rate.",
+    "No service installation, model calls, daily business changes, remote push or release.",
+    "Socket inode was reused on restart; lifecycle/UID and real HTTP, not a unique inode value, establish the observed recovery."
+  ]
+}

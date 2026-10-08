@@ -34,6 +34,11 @@ COPY --from=builder /workspace/alembic.ini /workspace/alembic.ini
 COPY --from=builder /workspace/migrations /workspace/migrations
 COPY --from=builder /workspace/app /workspace/app
 
+# Source files may originate from a restrictive developer umask. Normalize only
+# packaged code/config readability; keep root ownership and no appuser writes.
+RUN chmod -R u=rwX,go=rX /workspace/app /workspace/migrations \
+    && chmod 0644 /workspace/alembic.ini
+
 ENV PATH="/workspace/.venv/bin:$PATH" \
     PYTHONPATH=/workspace \
     PYTHONDONTWRITEBYTECODE=1

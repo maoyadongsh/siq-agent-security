@@ -342,16 +342,18 @@
     {
       "id": "OPT-14",
       "title": "扫描进程隔离",
-      "status": "implementing",
+      "status": "done",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [
         "SEC-F08"
       ],
       "evidence": [
-        "docs/development/optimization-opt03-opt14-validation-20261007.md"
+        "docs/development/optimization-opt03-opt14-validation-20261007.md",
+        "docs/development/optimization-opt14-host-service-validation-20261008.md"
       ],
       "residual_limits": [
-        "原生 Linux namespace 与资源故障通过；默认 Docker 拒绝 namespace 创建，生产容器部署验收未关闭。"
+        "原生 bwrap 与独立宿主服务/真实 Docker 路径已验收；容器内直接 namespace 仍拒绝，不放宽默认安全配置。",
+        "真实 HTTP 使用开发身份与隔离 SQLite；生产 IdP/PostgreSQL、rootless UID 映射及其他主机须按部署单独核验。"
       ]
     },
     {
