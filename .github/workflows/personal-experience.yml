@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
         with:
-          go-version: '1.26.6'
+          go-version: '1.26.9'
           cache: false
       - name: Validate comparison failure handling
         run: python -m unittest discover -s scripts/personal-experience/tests -p test_windows_go_compare.py -v
@@ -94,7 +94,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
         with:
-          go-version: "1.26.6"
+          go-version: "1.26.9"
           cache: false
       - name: Real Darwin aliases and isolated adapter configuration round trips
         working-directory: apps/agentshield
