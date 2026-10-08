@@ -238,3 +238,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [平台范围](optimization-tasks-20261007.json)：2026-10-08 确认当前环境没有 Windows 与 macOS 原生机器，这两项暂时不实施，状态保持 blocked。交叉编译不计入原生验收。Linux 本机与 DGX 适用项继续。总体仍为 11/16（68.75%）。
 
 [OPT-10 未注册工具先裁决](../../patches/hermes/build_native_overlay.py)：未注册工具名原先在 `call_scope` 之前返回 Unknown tool。覆盖层现在先裁决，拒绝不进入处理函数。离线镜像 `sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1`，制品 `116ce585865b1b1259489dc39676f8d5ecd3821a45a92804b98e8077869004be`。六项离线检查通过，未登记身份，未调用模型。总体仍为 11/16（68.75%）。
+
+[OPT-08 新镜像身份](evidence/optimization-20261007/native-unmapped-image-authority-20261008n.json)：镜像 `sha256:534d18c9` 已登记身份 `hi-2fb7a2320751b728f664d6cfbbbf6230`，绑定制品 `116ce585`。研究 Skill 可写，公司证据 Skill 只读，安装字节与镜像钉一致。九项登记检查通过，未调用模型，自有进程已停止，`runtime_state` 仍为 unverified。总体仍为 11/16（68.75%）。
