@@ -242,3 +242,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-08 新镜像身份](evidence/optimization-20261007/native-unmapped-image-authority-20261008n.json)：镜像 `sha256:534d18c9` 已登记身份 `hi-2fb7a2320751b728f664d6cfbbbf6230`，绑定制品 `116ce585`。研究 Skill 可写，公司证据 Skill 只读，安装字节与镜像钉一致。九项登记检查通过，未调用模型，自有进程已停止，`runtime_state` 仍为 unverified。总体仍为 11/16（68.75%）。
 
 [OPT-08 新镜像执行](evidence/optimization-20261007/native-unmapped-image-execute-20261008n.json)：v886 在该镜像上通过日常入口完成一次读取和写入。33 项检查通过，业务 completed。读取回执 `rcp-1830841a4e9b0b53ab53a2350756796f`，写入回执 `rcp-2c3444ba542f04a525b876a0ac132993`，都绑定可写 Grant `grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484`。目标文件存在。模型单元未变，自有网关和桥已停止，监管合同已恢复。网络效果、未注册工具和四臂仍未覆盖。总体仍为 11/16（68.75%）。
+
+[OPT-08 网络参数](../../apps/agentshield/internal/receipt/resource_scope.go)：`web_extract` 实际读取 `urls`。裁决现在要求 `url`、`host` 和 `urls` 中的每个 http(s) 目标都已授权；对象优先使用 `url`，否则使用 `href`。畸形项会拒绝整次调用。定向测试通过。这还不是日常入口上的网络效果。总体仍为 11/16（68.75%）。

@@ -12,38 +12,32 @@ import (
 	"strings"
 
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/runtimeaction"
 )
 
 // Structured network tools must name their actual endpoint. Text in request
 // payloads cannot supply missing authority or change the selected target.
 func structuredGrantEndpoints(params map[string]any) ([]string, bool) {
-	endpoints := []string{}
-	for _, name := range []string{"url", "host"} {
-		value, exists := params[name]
-		if !exists {
-			continue
-		}
-		raw, ok := value.(string)
-		if !ok || raw == "" || strings.TrimSpace(raw) != raw {
+	urls, hosts, err := runtimeaction.URLAuthorityInputs(params)
+	if err != nil {
+		return nil, false
+	}
+	endpoints := make([]string, 0, len(urls)+len(hosts))
+	for _, raw := range urls {
+		endpoint, ok := endpointFromURL(raw)
+		if !ok {
 			return nil, false
 		}
+		endpoints = append(endpoints, endpoint)
+	}
+	for _, raw := range hosts {
 		endpoint := raw
-		if name == "url" || strings.Contains(raw, "://") {
-			u, err := url.Parse(raw)
-			if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.User != nil || u.Hostname() == "" {
+		if strings.Contains(raw, "://") {
+			parsed, ok := endpointFromURL(raw)
+			if !ok {
 				return nil, false
 			}
-			port := u.Port()
-			if port == "" {
-				if strings.HasSuffix(u.Host, ":") {
-					return nil, false
-				}
-				port = "80"
-				if u.Scheme == "https" {
-					port = "443"
-				}
-			}
-			endpoint = net.JoinHostPort(u.Hostname(), port)
+			endpoint = parsed
 		}
 		host, port, ok := grantEndpoint(endpoint, false)
 		if !ok {
@@ -52,6 +46,28 @@ func structuredGrantEndpoints(params map[string]any) ([]string, bool) {
 		endpoints = append(endpoints, net.JoinHostPort(host, port))
 	}
 	return endpoints, len(endpoints) > 0
+}
+
+func endpointFromURL(raw string) (string, bool) {
+	u, err := url.Parse(raw)
+	if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.User != nil || u.Hostname() == "" {
+		return "", false
+	}
+	port := u.Port()
+	if port == "" {
+		if strings.HasSuffix(u.Host, ":") {
+			return "", false
+		}
+		port = "80"
+		if u.Scheme == "https" {
+			port = "443"
+		}
+	}
+	host, port, ok := grantEndpoint(net.JoinHostPort(u.Hostname(), port), false)
+	if !ok {
+		return "", false
+	}
+	return net.JoinHostPort(host, port), true
 }
 
 func grantEndpoint(value string, wildcard bool) (string, string, bool) {

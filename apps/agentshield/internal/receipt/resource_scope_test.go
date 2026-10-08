@@ -248,6 +248,50 @@ func TestUnscopedAndUnsupportedGrantResourcesFailClosed(t *testing.T) {
 	}
 }
 
+func TestWebExtractAuthorizesEveryURL(t *testing.T) {
+	g := deployedGrant(t, "hermes", false)
+	g.Facts = append(g.Facts,
+		scopedFact("extract", "tool", "tool.invoke", "web_extract", "allow"),
+		scopedFact("search", "tool", "tool.invoke", "web_search", "allow"),
+	)
+	fx := newFixture(t, "block", g, false)
+	allow := map[string]map[string]any{
+		"one":      map[string]any{"urls": []any{"https://api.github.com/a"}},
+		"object":   map[string]any{"urls": []any{map[string]any{"url": "https://api.github.com/a", "href": "https://evil.example/secret"}}},
+		"href":     map[string]any{"urls": []any{map[string]any{"href": "https://api.github.com/a"}}},
+		"with_url": map[string]any{"url": "https://api.github.com/a", "urls": []any{"https://api.github.com/b"}},
+	}
+	for name, params := range allow {
+		d, err := fx.eng.Decide(req("hermes", "web_extract", params))
+		if err != nil || d.Action != ActionAllow {
+			t.Fatalf("%s: %+v %v", name, d, err)
+		}
+		if len(d.Receipt.ResourceRefs) == 0 {
+			t.Fatalf("%s receipt did not bind a network resource", name)
+		}
+	}
+	deny := map[string]map[string]any{
+		"second_host": map[string]any{"urls": []any{"https://api.github.com/a", "https://evil.example/b"}},
+		"decoy_url":   map[string]any{"url": "https://api.github.com/a", "urls": []any{"https://evil.example/b"}},
+		"file":        map[string]any{"urls": []any{"file:///tmp/secret"}},
+		"empty":       map[string]any{"urls": []any{}},
+		"string":      map[string]any{"urls": "https://api.github.com/a"},
+		"number":      map[string]any{"urls": []any{1}},
+		"bad_object":  map[string]any{"urls": []any{map[string]any{"url": 1, "href": "https://api.github.com/a"}}},
+		"search":      map[string]any{"query": "api.github.com"},
+	}
+	for name, params := range deny {
+		tool := "web_extract"
+		if name == "search" {
+			tool = "web_search"
+		}
+		d, err := fx.eng.Decide(req("hermes", tool, params))
+		if err != nil || d.Action != ActionDeny {
+			t.Fatalf("%s: %+v %v", name, d, err)
+		}
+	}
+}
+
 func TestRedactionCannotMixConcurrentGrantIdentities(t *testing.T) {
 	g := deployedGrant(t, "hermes", true)
 	newGrant := *g

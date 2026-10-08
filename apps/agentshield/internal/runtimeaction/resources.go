@@ -154,7 +154,7 @@ func extractResourcesWithNormalizer(tool string, params map[string]any, normaliz
 		keys = []string{"path", "file_path"}
 	case EffectNetworkRequest:
 		domain = "network"
-		keys = []string{"url", "host"}
+		keys = []string{"url", "host", "urls"}
 	case EffectMessageSend:
 		domain = "message"
 		keys = []string{"recipient", "to"}
@@ -168,17 +168,19 @@ func extractResourcesWithNormalizer(tool string, params map[string]any, normaliz
 		if !exists {
 			continue
 		}
-		value, ok := raw.(string)
+		texts, ok := authorityTexts(key, raw)
 		if !ok {
 			return nil, ErrResource
 		}
-		value, err := normalize(domain, value)
-		if err != nil {
-			return nil, err
-		}
-		if !seen[value] {
-			out = append(out, Resource{domain, value})
-			seen[value] = true
+		for _, text := range texts {
+			value, err := normalize(domain, text)
+			if err != nil {
+				return nil, err
+			}
+			if !seen[value] {
+				out = append(out, Resource{domain, value})
+				seen[value] = true
+			}
 		}
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Value < out[j].Value })
@@ -195,6 +197,87 @@ func ResourceRefs(resources []Resource) []ResourceRef {
 		out = append(out, ResourceRef{r.Domain, hex.EncodeToString(digest[:])})
 	}
 	return out
+}
+
+// URLAuthorityInputs returns the raw targets a network tool can actually use.
+// A url field and every urls item are URL strings. A host field stays an endpoint.
+// An object uses url when that field exists, otherwise href, matching the Hermes
+// extract tool. Any malformed item rejects the whole call.
+func URLAuthorityInputs(params map[string]any) (urls, hosts []string, err error) {
+	if raw, exists := params["url"]; exists {
+		text, ok := raw.(string)
+		if !ok || text == "" || strings.TrimSpace(text) != text {
+			return nil, nil, ErrResource
+		}
+		urls = append(urls, text)
+	}
+	if raw, exists := params["host"]; exists {
+		text, ok := raw.(string)
+		if !ok || text == "" || strings.TrimSpace(text) != text {
+			return nil, nil, ErrResource
+		}
+		hosts = append(hosts, text)
+	}
+	if raw, exists := params["urls"]; exists {
+		texts, ok := authorityTexts("urls", raw)
+		if !ok {
+			return nil, nil, ErrResource
+		}
+		urls = append(urls, texts...)
+	}
+	return urls, hosts, nil
+}
+
+func authorityTexts(key string, raw any) ([]string, bool) {
+	if key != "urls" {
+		text, ok := raw.(string)
+		if !ok || text == "" || strings.TrimSpace(text) != text {
+			return nil, false
+		}
+		return []string{text}, true
+	}
+	list, ok := raw.([]any)
+	if !ok || len(list) == 0 {
+		return nil, false
+	}
+	out := make([]string, 0, len(list))
+	for _, item := range list {
+		text, ok := urlListItem(item)
+		if !ok {
+			return nil, false
+		}
+		out = append(out, text)
+	}
+	return out, true
+}
+
+func urlListItem(item any) (string, bool) {
+	switch value := item.(type) {
+	case string:
+		if value == "" || strings.TrimSpace(value) != value {
+			return "", false
+		}
+		return value, true
+	case map[string]any:
+		if raw, exists := value["url"]; exists {
+			text, ok := raw.(string)
+			if !ok || text == "" || strings.TrimSpace(text) != text {
+				return "", false
+			}
+			return text, true
+		}
+		raw, exists := value["href"]
+		if !exists {
+			return "", false
+		}
+		text, ok := raw.(string)
+		if !ok || text == "" || strings.TrimSpace(text) != text {
+			return "", false
+		}
+		return text, true
+	default:
+		return "", false
+	}
 }
 
 func ExtractResources(tool string, params map[string]any) ([]Resource, error) {

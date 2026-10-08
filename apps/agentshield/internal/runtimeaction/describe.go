@@ -87,7 +87,15 @@ func describeWithNormalizer(tool string, params map[string]any, normalize func(s
 			}
 		}
 	} else if !d.ShellLike && hasEffect(effects, EffectNetworkRequest) {
-		d.Hosts = extractHosts(true, false, FlattenStrings(map[string]any{"url": params["url"], "host": params["host"]}))
+		urls, hosts, err := URLAuthorityInputs(params)
+		if err != nil {
+			d.Hosts = nil
+			if d.ResourceError == nil {
+				d.ResourceError = err
+			}
+		} else {
+			d.Hosts = extractHosts(true, false, FlattenStrings(map[string]any{"url": strings.Join(urls, "\n"), "host": strings.Join(hosts, "\n")}))
+		}
 	} else if !d.ShellLike && hasEffect(effects, EffectMessageSend) {
 		d.Hosts = nil
 	}
