@@ -84,6 +84,66 @@ def transform(name, text):
             "        require_registry_dispatch(agent, function_name)\n"
             "        with dispatch_lock:\n",
         )
+        text = replace(
+            text,
+            '    if function_name in {"write_file", "patch"} and agent._checkpoint_mgr.enabled:\n'
+            "        try:\n"
+            "            _ensure_file_checkpoint(\n"
+            "                agent,\n"
+            "                function_name,\n"
+            "                function_args,\n"
+            "                effective_task_id,\n"
+            "            )\n"
+            "        except Exception:\n"
+            "            pass\n"
+            "\n"
+            '    if function_name == "terminal" and agent._checkpoint_mgr.enabled:\n'
+            "        try:\n"
+            '            command = function_args.get("command", "")\n'
+            "            if _is_destructive_command(command):\n"
+            '                cwd = function_args.get("workdir") or os.getenv(\n'
+            '                    "TERMINAL_CWD", os.getcwd()\n'
+            "                )\n"
+            "                agent._checkpoint_mgr.ensure_checkpoint(\n"
+            '                    cwd, f"before terminal: {command[:60]}"\n'
+            "                )\n"
+            "        except Exception:\n"
+            "            pass\n",
+            "    # Checkpoints write only after a native allow.\n",
+        )
+        text = replace(
+            text,
+            "        try:\n"
+            "            return execute(final_args)\n"
+            "        finally:\n",
+            "        try:\n"
+            "            from siq_native_runtime import after_allow\n"
+            "\n"
+            "            def _checkpoint_after_allow() -> None:\n"
+            "                try:\n"
+            '                    if function_name in {"write_file", "patch"} and agent._checkpoint_mgr.enabled:\n'
+            "                        _ensure_file_checkpoint(\n"
+            "                            agent,\n"
+            "                            function_name,\n"
+            "                            function_args,\n"
+            "                            effective_task_id,\n"
+            "                        )\n"
+            '                    elif function_name == "terminal" and agent._checkpoint_mgr.enabled:\n'
+            '                        command = function_args.get("command", "")\n'
+            "                        if _is_destructive_command(command):\n"
+            '                            cwd = function_args.get("workdir") or os.getenv(\n'
+            '                                "TERMINAL_CWD", os.getcwd()\n'
+            "                            )\n"
+            "                            agent._checkpoint_mgr.ensure_checkpoint(\n"
+            '                                cwd, f"before terminal: {command[:60]}"\n'
+            "                            )\n"
+            "                except Exception:\n"
+            "                    pass\n"
+            "\n"
+            "            with after_allow(_checkpoint_after_allow):\n"
+            "                return execute(final_args)\n"
+            "        finally:\n",
+        )
     compile(text, name, "exec")
     return text
 
@@ -106,7 +166,7 @@ def build(source, destination):
         compile(raw, name, "exec")
         output["siq_native_runtime/" + name] = raw
     output["siq_native_runtime/__init__.py"] = (
-        b"from .native_dispatch import Runtime, configure, task_scope, call_scope, read_skill, verify_cache, preprocess_allowed, require_registry_dispatch\n"
+        b"from .native_dispatch import Runtime, configure, task_scope, call_scope, after_allow, read_skill, verify_cache, preprocess_allowed, require_registry_dispatch\n"
     )
     output["hermes-gateway"] = (
         b'import sys\nsys.path.insert(0, "/opt/hermes-agent")\n'

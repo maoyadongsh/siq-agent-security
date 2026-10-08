@@ -22,6 +22,7 @@ MAX_TASKS = 4096
 MAX_CALLS = 16384
 MAX_PARAMS = 1048576
 _current = contextvars.ContextVar("siq_native_dispatch", default=None)
+_after_allow = contextvars.ContextVar("siq_native_after_allow", default=None)
 _runtime = None
 _configuration_lock = threading.Lock()
 
@@ -229,6 +230,13 @@ class Runtime:
                 raise _unavailable() from None
             if decision["action"] != "allow":
                 raise DispatchError("native_dispatch_denied")
+            callback = _after_allow.get()
+            if callback is not None:
+                try:
+                    callback()
+                except BaseException:  # noqa: BLE001 — a checkpoint failure must not run the tool.
+                    task.failed = True
+                    raise
             token = _current.set((self, task, tool))
             outcome = "raised"
             try:
@@ -303,6 +311,18 @@ def task_scope(task_id, session_id, parent_session_id=None):
 
 def call_scope(tool, params, task_id, session_id, tool_call_id):
     return _configured().call(tool, params, task_id, session_id, tool_call_id)
+
+
+@contextlib.contextmanager
+def after_allow(callback):
+    """Run callback only after a native allow and before the tool body."""
+    if not callable(callback):
+        raise _unavailable()
+    token = _after_allow.set(callback)
+    try:
+        yield
+    finally:
+        _after_allow.reset(token)
 
 
 def read_skill(main, content=None):

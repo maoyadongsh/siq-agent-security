@@ -152,6 +152,28 @@ def test_denial_is_not_a_host_failure_but_call_never_replays(tmp_path, action):
     assert (tmp_path / "allowed").read_text() == "allowed"
 
 
+def test_after_allow_runs_only_when_the_decision_allows(tmp_path):
+    seen = []
+    runtime, *_ = fixture_runtime()
+    with runtime.task("task", "session"):
+        with native.after_allow(lambda: seen.append("allow")):
+            with call(runtime):
+                (tmp_path / "ran").write_text("yes")
+                assert seen == ["allow"]
+    assert (tmp_path / "ran").read_text() == "yes"
+
+    def deny(request, _):
+        return {"action": "deny", "request_binding": digest(request), "decision_id": "receipt"}
+
+    denied, *_ = fixture_runtime(authorize=deny)
+    with denied.task("task", "session"):
+        with native.after_allow(lambda: seen.append("deny")):
+            with pytest.raises(native.DispatchError, match="native_dispatch_denied"):
+                with call(denied, cid="denied"):
+                    pytest.fail("denial executed")
+    assert seen == ["allow"]
+
+
 def test_authorizer_cannot_mutate_handler_parameters():
     original = {"path": "allowed", "nested": {"value": "actual"}}
 
