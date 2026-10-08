@@ -2732,3 +2732,5 @@ OPT-08 D3s：按 [native-skill-context-management/v1](../packages/contracts/nati
 ### OPT-12：安装归属完整性诊断增量（2026-10-08）
 
 按 ADR-0059，适配器只读诊断在入口文件存在性判定前检查当前实例的密封安装事务；已安装但入口与整个插件目录丢失不再显示未安装。损坏、未结束或无法认证的操作产生 installation_record/fail 及 incomplete。安装与卸载动作都须先通过原密封计划验证，再解释为当前安装或已卸载；不信任明文 action/Record 作为替代身份。检查不读决策凭据、不执行插件、不写配置。无受保护历史记录时保留原兼容检查，runtime_state 仍为 unverified。本增量沿用 diagnostics/v1 开放 check code，不改变合同结构；检测到漂移不自动产生工具拒绝，也不提升同 UID 的信任档位。
+
+OPT-12安装程序读回复用密封安装计划的BinaryDigest，不新增Record字段或改写历史事务；独立诊断新增installation_program。准确程序路径和当前有界文件摘要均匹配才显示pass；缺失／变化为fail，旧计划缺摘要为unknown。新程序经用户明确预览、应用及原有审计流程后成为新安装身份；诊断不自动认可升级或覆盖旧记录。仍是当前文件快照，不等于官方发行签名或同UID执行隔离。

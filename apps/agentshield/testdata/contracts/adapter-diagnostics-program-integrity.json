@@ -1,0 +1,61 @@
+{
+  "platform_changes": false,
+  "platforms": [
+    {
+      "platform": "openclaw",
+      "configuration_state": "ready",
+      "runtime_state": "unverified",
+      "checks": [
+        {
+          "code": "installation_record",
+          "status": "pass",
+          "message": "已核验状态目录中的密封安装记录；不代表宿主已加载或具备隔离保护"
+        },
+        {
+          "code": "installation_program",
+          "status": "pass",
+          "message": "程序路径和摘要与密封安装计划一致；不等同官方发行验签或执行隔离"
+        },
+        {
+          "code": "adapter_files",
+          "status": "pass",
+          "message": "适配器文件与当前服务内嵌版本一致"
+        },
+        {
+          "code": "service_configuration",
+          "status": "pass",
+          "message": "配置的服务地址、凭据位置及执行模式与当前服务一致；未读取凭据"
+        },
+        {
+          "code": "host_registration",
+          "status": "pass",
+          "message": "配置已登记并启用本插件；仍需验证实际加载"
+        },
+        {
+          "code": "runtime_verification",
+          "status": "unknown",
+          "message": "此诊断仅检查配置；真实调用证据请查看独立的运行自检记录"
+        }
+      ],
+      "next_steps": [
+        "配置检查不等于保护生效；在方便时重启目标会话，完成原生调用自检。"
+      ]
+    },
+    {
+      "platform": "openclaw",
+      "configuration_state": "incomplete",
+      "runtime_state": "unverified",
+      "checks": [
+        {
+          "code": "installation_record",
+          "status": "fail",
+          "message": "安装事务未完成、记录损坏或无法认证；不能确认当前安装归属"
+        }
+      ],
+      "next_steps": [
+        "检查接入操作和恢复记录；保留现场，不以替换插件清单消除告警。"
+      ]
+    }
+  ],
+  "schema_version": "local-adapter-diagnostics/v1"
+}

@@ -354,6 +354,7 @@ def test_personal_discovery_contracts_and_inferred_relationships() -> None:
 
 @pytest.mark.parametrize("sample", [
     "adapter-diagnostics.json", "adapter-diagnostics-linux.json", "adapter-diagnostics-integrity.json",
+    "adapter-diagnostics-program-integrity.json",
 ])
 def test_adapter_configuration_diagnosis_never_claims_runtime_verification(sample: str) -> None:
     schema = json.loads((CONTRACTS / "local-adapter-diagnostics.v1.schema.json").read_text(encoding="utf-8"))

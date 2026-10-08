@@ -165,7 +165,7 @@ func TestIntegrityDiagnosisContractSample(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected, err := os.ReadFile(filepath.Join("..", "..", "testdata", "contracts", "adapter-diagnostics-integrity.json"))
+	expected, err := os.ReadFile(filepath.Join("..", "..", "testdata", "contracts", "adapter-diagnostics-program-integrity.json"))
 	if err != nil || !bytes.Equal(bytes.TrimSpace(expected), raw) {
 		t.Fatal("diagnosis contract sample differs", err)
 	}

@@ -217,6 +217,16 @@ func finishOperation(dir string, claim operationClaim, status string) error {
 }
 
 func latestManagedRecord(dir, platform string, namespace ...string) (*Record, bool, error) {
+	plan, found, err := latestManagedPlan(dir, platform, namespace...)
+	if err != nil || plan == nil {
+		return nil, found, err
+	}
+	return &plan.payload.Record, found, nil
+}
+
+// Keep the authenticated installation identity available to read-only
+// diagnostics without adding fields to historical records or rewriting them.
+func latestManagedPlan(dir, platform string, namespace ...string) (*Plan, bool, error) {
 	key := platform
 	if len(namespace) > 0 {
 		key = namespace[0]
@@ -258,7 +268,7 @@ func latestManagedRecord(dir, platform string, namespace ...string) (*Record, bo
 			if claim.Action != "install" {
 				return nil, true, errors.New("adapter: invalid recorded action")
 			}
-			return &plan.payload.Record, true, nil
+			return plan, true, nil
 		}
 		raw = nil
 	}
