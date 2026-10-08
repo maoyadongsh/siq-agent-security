@@ -256,3 +256,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-08 镜像锁](../../../../siq-research-engine/infra/openshell/sandbox/qwen38_candidate/business-mcp.lock.json)：业务 `b3701ce` 把候选镜像锁里的 `research_report_generation.py` 钉为 `c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad`。改锁前构建测试返回 `business_mcp_source_digest_mismatch`，改锁后相关 25 项通过。已登记镜像 `sha256:534d18c9` 仍是旧生成器，没有重建镜像，没有再跑模型。总体仍为 11/16（68.75%）。
 
 [OPT-08 镜像内程序](../../../../siq-research-engine/scripts/openshell/build_siq_analysis_mount_plan.py)：只读进入已登记镜像 `sha256:534d18c9`。其中 `research_report_generation.py` 是 `0444`、摘要前缀 `eb4efe60`。分析脚本、事实核查和查询客户端均为 root 所有、`nlink` 1、`0444` 或 `0555`。请求挂载只绑定公司目录、公开元数据和本次写入目录，不覆盖这些程序。本机文件的 `0775`/`0664` 只在直接跑本机树时拒绝，不会拦沙箱里的子进程。当前没有 `18794` 监听，没有再跑模型，也还没有放行后的数据代理连接。总体仍为 11/16（68.75%）。
+
+[OPT-12 当前覆盖层受保护加载](optimization-opt12-current-overlay-hook-20261008.md)：源码 `1a07fa8a` 在独立 OpenShell 中构建镜像 `sha256:12f1c8d9`，制品 `8573522e`。18 项检查为真，钩子和清单的六次写、删、替换被拒绝。三条 allow 回执由真实 Go 权限服务验签。`registry.py` 与 `tool_executor.py` 的摘要和已登记镜像 `sha256:534d18c9` 的覆盖层一致。这次没有调用模型，Skill 是合成夹具，镜像也不是那张已登记请求镜像。发行签名身份以及 Windows/macOS 原生安装仍未验收。总体仍为 11/16（68.75%）。

@@ -461,13 +461,16 @@
         "docs/development/optimization-opt12-protected-hook-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/protected-hook-execution.json",
         "docs/development/optimization-opt12-program-identity-validation-20261008.md",
-        "docs/development/evidence/optimization-20261007/install-program-identity.json"
+        "docs/development/evidence/optimization-20261007/install-program-identity.json",
+        "docs/development/optimization-opt12-current-overlay-hook-20261008.md",
+        "docs/development/evidence/optimization-20261007/protected-hook-current-overlay-20261008.json"
       ],
       "residual_limits": [
         "安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。",
         "受保护钩子实效联验完成：独立OpenShell＋当前Hermes原生工具＋真实Go Authority下，两个正常写入成功，钩子／清单六次改写删除替换均拒绝；管理员注入代码漂移后实际写入被拒且无副作用，恢复字节不复活旧guard。002完整18项检查通过，50项组件和9项证据回归通过；001清理复验异常保留且资源已清理。仅合成批准Skill、无模型，非日常业务／正式发行验收；OPT-12继续implementing，总体10/16保持。",
         "安装程序身份读回完成：复用密封计划的准确路径和BinaryDigest，发现程序改写／删除／异路径；旧计划无摘要为unknown，明确升级后认可新身份，中断恢复重新核对旧身份。五个旧反例复现；Go全量1741顶层通过／34跳过，定向45项与合同4项、vet/Ruff/格式/四目标构建通过。当前验证器另复核历史0.4.0真实签名包及四类篡改拒绝，不能冒充当前候选签发或原生验收；OPT-12继续implementing，总体10/16保持。",
-        "2026-10-08 确认：Windows 与 macOS 原生安装验收暂时不实施，保持 blocked。当前候选的发行身份与 Linux 受保护加载继续。OPT-12 保持 implementing，11/16 不变。"
+        "2026-10-08 确认：Windows 与 macOS 原生安装验收暂时不实施，保持 blocked。当前候选的发行身份与 Linux 受保护加载继续。OPT-12 保持 implementing，11/16 不变。",
+        "2026-10-08 当前覆盖层在独立 OpenShell 上完成 Linux 受保护加载：镜像 sha256:12f1c8d9，18 项检查为真，钩子和清单六次改写删除替换被拒绝。registry 与 tool_executor 摘要和已登记镜像 sha256:534d18c9 的覆盖层一致，native_dispatch 与当前源码一致。无模型，合成 Skill，不是该请求镜像本身，也不是发行签名身份。Windows/macOS 仍 blocked。OPT-12 保持 implementing，11/16 不变。"
       ]
     },
     {
