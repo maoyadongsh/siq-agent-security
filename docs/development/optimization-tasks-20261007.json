@@ -213,7 +213,8 @@
         "docs/development/evidence/optimization-20261007/native-business-revoke-v842-v844.json",
         "docs/development/optimization-opt08-crash-expiry-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/native-business-crash-v845.json",
-        "docs/development/evidence/optimization-20261007/native-queue-expiry-v846.json"
+        "docs/development/evidence/optimization-20261007/native-queue-expiry-v846.json",
+        "docs/development/optimization-opt08-containment-repair-validation-20261008.md"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -258,7 +259,8 @@
         "真实业务撤权v834试点通过：当前SEC Git导出二进制与登记1874输入/289补丁的f73e566业务工作候选，原生Skill加载/读取后撤销业务授权，活动查询403、SSE失权无done、子凭据401、父身份有效、约25.287秒终态及资源回收。2回执/1 SEC独立验签schema通过。v835重复启动失败且已回收，v836按规则未执行；不宣称三次通过或撤权后实际写入拒绝。业务74d9024新增固定允许列表端点诊断，26项定向通过，仅诊断改进不是启动修复。遵循OPT-10分别登记跨仓补丁，不把完整业务仓路径重构另作前提；完整矩阵和最终全栈冻结仍必需。OPT-08/10与11/16保持。",
         "诊断候选74d9024的v837真实撤权复测通过，约38.375秒终态；相同1874输入范围重新冻结，候选摘要52596e44。新增2回执/1 SEC，累计4回执/2 SEC独立验签及schema通过；原服务配置恢复、模型不变。v835启动失败没有复现，仍未解决，不能合并为同候选三连通过。两轮撤权后监管单元保留failed/exit-code状态但进程PID0，资源回收与服务退出状态分开记录；后续继续启动可靠性、撤权后工具尝试和其余矩阵。",
         "业务7e52689为原进程/原handle的stop增加有界终止确认重试，不重试start/renew、不放宽身份校验。旧实现2项反例失败，相关86项及Ruff通过。v838–v841四次真实启动/取消通过但v835启动失败未复现、未解决。修复候选v842–v844三次真实模型输出后业务撤权通过，约32.879/30.811/24.314秒终态；不再出现close_native或containment_failed，撤权触发failed_closed仍保留systemd failed/退出1、PID0。新增6回执/3 SEC，完整10回执/5 SEC及3个请求绑定独立核验通过。v843/v844各有首次读取报错后重试成功，未认定为防御成绩。后两轮API依赖11663文件/4链接前后不变，非全栈冻结。原模型/配置恢复、自有资源清理。撤权后工具尝试、启动/读取错误归因、其余矩阵/平台/签名交付继续；11/16不变。",
-        "同业务候选7e52689新增v845真实Skill读取/模型输出后API SIGKILL与原数据库重启试点，原租约自然失效且未接管/续租，约126.976秒转authority_lost、子凭据401、最终资源回收；首次containment_failed后ExecStopPost recover通过，failed/退出1状态保留。v846真实排队Grant自然到期约59.404秒后受控503、pending released、无沙箱/模型/新增回执，合成占位保持且由所有者释放。新增2回执/1 SEC，完整12回执/6 SEC及新请求绑定独立核验；源码/驱动/pending/终态复核通过，11663依赖文件/4链接前后不变。每例仅1次试点，数据库断言源于现场固定驱动，非事后重查；运行中SEC到期、恢复后新任务、其余矩阵/平台/签名交付继续，11/16保持。"
+        "同业务候选7e52689新增v845真实Skill读取/模型输出后API SIGKILL与原数据库重启试点，原租约自然失效且未接管/续租，约126.976秒转authority_lost、子凭据401、最终资源回收；首次containment_failed后ExecStopPost recover通过，failed/退出1状态保留。v846真实排队Grant自然到期约59.404秒后受控503、pending released、无沙箱/模型/新增回执，合成占位保持且由所有者释放。新增2回执/1 SEC，完整12回执/6 SEC及新请求绑定独立核验；源码/驱动/pending/终态复核通过，11663依赖文件/4链接前后不变。每例仅1次试点，数据库断言源于现场固定驱动，非事后重查；运行中SEC到期、恢复后新任务、其余矩阵/平台/签名交付继续，11/16保持。",
+        "业务8851724修复在途模型流占锁导致的首次清理失败：仅明确admission锁超时且沙箱删除/空清单已确认时，对原运行模型凭据轮换追加一次重试，其余失败保持失败。75项不同相关检查通过；诊断v847复现model_access失败且锁由自有桥持有，修复v848真实API崩溃复测记录busy→recovered、监管退出0/PID0、业务authority_lost及资源清理通过。约139.098秒恢复等待不是低延迟SLA。两候选分别登记，独立新Authority链4回执/2 SEC/2请求绑定验签通过；依赖11663文件/4链接前后不变，非全栈冻结。其余生命周期/四臂/平台/正式签名继续，11/16保持。"
       ]
     },
     {
@@ -308,7 +310,8 @@
         "docs/development/evidence/optimization-20261007/native-business-revoke-v842-v844.json",
         "docs/development/optimization-opt08-crash-expiry-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/native-business-crash-v845.json",
-        "docs/development/evidence/optimization-20261007/native-queue-expiry-v846.json"
+        "docs/development/evidence/optimization-20261007/native-queue-expiry-v846.json",
+        "docs/development/optimization-opt08-containment-repair-validation-20261008.md"
       ],
       "residual_limits": [
         "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
@@ -318,7 +321,8 @@
         "真实业务撤权v834试点通过：当前SEC Git导出二进制与登记1874输入/289补丁的f73e566业务工作候选，原生Skill加载/读取后撤销业务授权，活动查询403、SSE失权无done、子凭据401、父身份有效、约25.287秒终态及资源回收。2回执/1 SEC独立验签schema通过。v835重复启动失败且已回收，v836按规则未执行；不宣称三次通过或撤权后实际写入拒绝。业务74d9024新增固定允许列表端点诊断，26项定向通过，仅诊断改进不是启动修复。遵循OPT-10分别登记跨仓补丁，不把完整业务仓路径重构另作前提；完整矩阵和最终全栈冻结仍必需。OPT-08/10与11/16保持。",
         "诊断候选74d9024的v837真实撤权复测通过，约38.375秒终态；相同1874输入范围重新冻结，候选摘要52596e44。新增2回执/1 SEC，累计4回执/2 SEC独立验签及schema通过；原服务配置恢复、模型不变。v835启动失败没有复现，仍未解决，不能合并为同候选三连通过。两轮撤权后监管单元保留failed/exit-code状态但进程PID0，资源回收与服务退出状态分开记录；后续继续启动可靠性、撤权后工具尝试和其余矩阵。",
         "业务7e52689为原进程/原handle的stop增加有界终止确认重试，不重试start/renew、不放宽身份校验。旧实现2项反例失败，相关86项及Ruff通过。v838–v841四次真实启动/取消通过但v835启动失败未复现、未解决。修复候选v842–v844三次真实模型输出后业务撤权通过，约32.879/30.811/24.314秒终态；不再出现close_native或containment_failed，撤权触发failed_closed仍保留systemd failed/退出1、PID0。新增6回执/3 SEC，完整10回执/5 SEC及3个请求绑定独立核验通过。v843/v844各有首次读取报错后重试成功，未认定为防御成绩。后两轮API依赖11663文件/4链接前后不变，非全栈冻结。原模型/配置恢复、自有资源清理。撤权后工具尝试、启动/读取错误归因、其余矩阵/平台/签名交付继续；11/16不变。",
-        "同业务候选7e52689新增v845真实Skill读取/模型输出后API SIGKILL与原数据库重启试点，原租约自然失效且未接管/续租，约126.976秒转authority_lost、子凭据401、最终资源回收；首次containment_failed后ExecStopPost recover通过，failed/退出1状态保留。v846真实排队Grant自然到期约59.404秒后受控503、pending released、无沙箱/模型/新增回执，合成占位保持且由所有者释放。新增2回执/1 SEC，完整12回执/6 SEC及新请求绑定独立核验；源码/驱动/pending/终态复核通过，11663依赖文件/4链接前后不变。每例仅1次试点，数据库断言源于现场固定驱动，非事后重查；运行中SEC到期、恢复后新任务、其余矩阵/平台/签名交付继续，11/16保持。"
+        "同业务候选7e52689新增v845真实Skill读取/模型输出后API SIGKILL与原数据库重启试点，原租约自然失效且未接管/续租，约126.976秒转authority_lost、子凭据401、最终资源回收；首次containment_failed后ExecStopPost recover通过，failed/退出1状态保留。v846真实排队Grant自然到期约59.404秒后受控503、pending released、无沙箱/模型/新增回执，合成占位保持且由所有者释放。新增2回执/1 SEC，完整12回执/6 SEC及新请求绑定独立核验；源码/驱动/pending/终态复核通过，11663依赖文件/4链接前后不变。每例仅1次试点，数据库断言源于现场固定驱动，非事后重查；运行中SEC到期、恢复后新任务、其余矩阵/平台/签名交付继续，11/16保持。",
+        "业务8851724修复在途模型流占锁导致的首次清理失败：仅明确admission锁超时且沙箱删除/空清单已确认时，对原运行模型凭据轮换追加一次重试，其余失败保持失败。75项不同相关检查通过；诊断v847复现model_access失败且锁由自有桥持有，修复v848真实API崩溃复测记录busy→recovered、监管退出0/PID0、业务authority_lost及资源清理通过。约139.098秒恢复等待不是低延迟SLA。两候选分别登记，独立新Authority链4回执/2 SEC/2请求绑定验签通过；依赖11663文件/4链接前后不变，非全栈冻结。其余生命周期/四臂/平台/正式签名继续，11/16保持。"
       ]
     },
     {

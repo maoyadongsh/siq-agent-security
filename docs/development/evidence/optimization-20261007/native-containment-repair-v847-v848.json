@@ -1,0 +1,277 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "L3DwgGQAsyHIqrDx9PgtZOstz4VU2j3BqdojARHaWNA=",
+      "count": 4,
+      "head_hash": "db7ea9df96f8bfa48d6d27e936f7a089c120c104db8984b35952ac0a6db59a17"
+    },
+    "signed_context_count": 2,
+    "cases": {
+      "v847": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "e66818389a09183fe2269deb9c32e68e2a48893cfdcc7f9be3c23f2a727c6d17",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "def9e4fdbd0ef3076b4143f06cbd71f829d974fde09a30d4daab6cb5a0713761"
+      },
+      "v848": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "db7ea9df96f8bfa48d6d27e936f7a089c120c104db8984b35952ac0a6db59a17",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "bf0d77560449ccee40e9c7b21d3df705a9f395463fb206c9ed59acf0d6af1a84"
+      }
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-containment-repair-v847-v848.receipts.jsonl",
+      "sha256": "c738034534871ea6142d51a02e802d798ea2a5593cba7f891685231e9f8bf379"
+    },
+    "contexts": {
+      "file": "native-containment-repair-v847-v848.contexts.json",
+      "sha256": "4b88d171d00a373e5d08e25667db7b5116999030b5c2524a96aaad9ff334e882"
+    }
+  },
+  "candidate_inputs": {
+    "v847": {
+      "business_commit": "8d2cc2cd5f8fb7f6d7e6240f8f4b386a8790ebf8",
+      "candidate_source_sha256": "d61d0e59bfbe886d3ecff2562e37cbc2ebf38428842ac52e7b95303d057d2f79",
+      "business_input_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "5241add706e65ea45f0c998c548b96d5acd78d4bcbbc72a6824384a0b03ad534",
+      "driver_sha256": {
+        "run-native-business-crash-v847.py": "7f4fa2e1c84e784e398f8ba1021f421c5fdb020b41c59c8ecc312e9676c8dd2d",
+        "run-native-crash-owned-v847.py": "bd6af9128fe2a760a5fedb836124d4ca8d413061907f6fcc658a525433927ebd",
+        "deployment-driver.py": "c9124430a1305d07f1cf67eebcde0e2b432729d194ceacd1583e3225356c6223"
+      }
+    },
+    "v848": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "business_input_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-crash-v848.py": "7f4fa2e1c84e784e398f8ba1021f421c5fdb020b41c59c8ecc312e9676c8dd2d",
+        "run-native-crash-owned-v848.py": "11f6efc2d3148ca199ff6c39d5677f520cdc081f807f09f6368d3588e327c859",
+        "deployment-driver.py": "f09fecdd6e246d2894c690ad0a27a0892746fc439ccdf29b3a9c4b8e06d90055"
+      }
+    }
+  },
+  "observations": {
+    "v847": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SIGKILL_after_real_model_delta": true,
+        "execution_still_running_after_API_death": true,
+        "same_database_API_restarted": true,
+        "original_lease_expired_without_manual_update": true,
+        "restarted_API_recovery_ready": true,
+        "read_only_source_unchanged": true,
+        "model_delta_observed_before_crash": true,
+        "crashed_execution_authority_lost": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_stream_started_200": true,
+        "sandbox_supervisor_and_forward_absent": true,
+        "old_native_child_credential_401": true,
+        "native_child_revoked_before_diagnostic_cleanup": true,
+        "native_parent_still_active": true,
+        "native_skill_read_allowed_before_API_crash": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "recovery_wait_seconds": 106.837,
+      "SSE_event_counts": {
+        "tool": 4,
+        "delta": 1,
+        "progress": 21,
+        "run": 1
+      },
+      "cleanup": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "events_sha256": "27f40d03f0174a77f35da1b9f524ff829d322e6728aadcf99203f87ad9589717",
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "exit-code",
+        "ExecMainStatus": "1",
+        "ActiveState": "failed"
+      },
+      "supervisor_errors": [
+        "supervisor_containment_failed"
+      ],
+      "containment_events": [
+        {
+          "at_unix": 1791432680.891038,
+          "category": "candidate_containment_failed stage=model_access"
+        },
+        {
+          "at_unix": 1791432682.822576,
+          "category": "supervisor_failure stage=contain_guard category=run_guard"
+        },
+        {
+          "at_unix": 1791432682.849032,
+          "category": "supervisor_failure stage=containment category=supervisor_contract"
+        }
+      ],
+      "lock_observation_sha256": "d0e4caabcb1127c45bfab02c0230c5761c369adf7da8b5414cc85d42d3a0beee",
+      "lock_changes": [
+        {
+          "at_unix": 1791432545.3105388,
+          "read_lock_owned_by_bridge": false
+        },
+        {
+          "at_unix": 1791432551.224893,
+          "read_lock_owned_by_bridge": true
+        },
+        {
+          "at_unix": 1791432681.5099368,
+          "read_lock_owned_by_bridge": false
+        }
+      ]
+    },
+    "v848": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SIGKILL_after_real_model_delta": true,
+        "execution_still_running_after_API_death": true,
+        "same_database_API_restarted": true,
+        "original_lease_expired_without_manual_update": true,
+        "restarted_API_recovery_ready": true,
+        "read_only_source_unchanged": true,
+        "model_delta_observed_before_crash": true,
+        "crashed_execution_authority_lost": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_stream_started_200": true,
+        "sandbox_supervisor_and_forward_absent": true,
+        "old_native_child_credential_401": true,
+        "native_child_revoked_before_diagnostic_cleanup": true,
+        "native_parent_still_active": true,
+        "native_skill_read_allowed_before_API_crash": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "recovery_wait_seconds": 139.098,
+      "SSE_event_counts": {
+        "tool": 4,
+        "delta": 1,
+        "progress": 10,
+        "run": 1
+      },
+      "cleanup": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "events_sha256": "8201923c55d8457930f5655ba53aff9b62429639f4e96b2f1f8f64e64c7e78d9",
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "supervisor_errors": [],
+      "containment_events": [
+        {
+          "at_unix": 1791433106.462379,
+          "category": "candidate_containment_failed stage=model_access_busy"
+        },
+        {
+          "at_unix": 1791433108.561657,
+          "category": "candidate_containment_recovered stage=model_access"
+        }
+      ],
+      "lock_observation_sha256": "b0a65f2cdbfbf892e44338508e7efc027e2844aa886907b51fbda78a1892f046",
+      "lock_changes": [
+        {
+          "at_unix": 1791432901.2922573,
+          "read_lock_owned_by_bridge": false
+        },
+        {
+          "at_unix": 1791432910.1159399,
+          "read_lock_owned_by_bridge": true
+        },
+        {
+          "at_unix": 1791432939.580305,
+          "read_lock_owned_by_bridge": false
+        },
+        {
+          "at_unix": 1791432945.477673,
+          "read_lock_owned_by_bridge": true
+        },
+        {
+          "at_unix": 1791433107.3225894,
+          "read_lock_owned_by_bridge": false
+        }
+      ]
+    }
+  },
+  "scope": "diagnostic candidate and repaired candidate actual API crash recovery; not same-candidate repetitions",
+  "new_receipt_count": 4,
+  "new_context_count": 2,
+  "prior_Authority_chain_included": false,
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "historical_startup_failure_resolved": false,
+  "database_assertions_source": "owned preregistered harness; temporary databases not independently queried after removal",
+  "api_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_identical": true,
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  },
+  "validation": {
+    "unique_related_checks_passed": 75,
+    "diagnostic_checks_passed": 61,
+    "diagnostic_checks_overlap_final_set": true,
+    "pre_fix_new_regressions_failed": 3,
+    "ruff_passed": true,
+    "diff_check_passed": true
+  }
+}
