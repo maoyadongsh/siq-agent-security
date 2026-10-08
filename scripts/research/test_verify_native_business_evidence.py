@@ -303,3 +303,22 @@ def test_optional_context_artifacts_must_not_be_silently_ignored(tmp_path, bindi
     report.write_text(json.dumps(doc))
     with pytest.raises(ValueError, match=reason):
         verify(report, ROOT / "packages/contracts")
+
+
+def test_explicit_runtime_no_skill_completion_preserves_failed_trials():
+    report = ROOT / "docs/development/evidence/optimization-20261007/native-context-boundary-v860.json"
+    result = verify(report, ROOT / "packages/contracts")
+    assert result["receipts"] == 11 and result["case_decision_bindings"] == 4
+    document = json.loads(report.read_text())
+    assert document["accepted_cases"] == ["v855", "v856", "v858", "v860"]
+    assert document["observations"]["v860"]["full_case_passed"]
+    assert document["observations"]["v860"]["own_context_count"] == 0
+    assert not document["historical_v857"]["passed"]
+    assert not document["supplementary_v859"]["passed"]
+    rows = [json.loads(line) for line in (
+        report.parent / document["artifacts"]["receipts"]["file"]
+    ).read_text().splitlines()]
+    row = next(row for row in rows if row["hash"] == document["verification"]["cases"]["v860"]["receipt_hash"])
+    assert row["native_invocation"]["no_skill"] is True
+    assert row["native_invocation"]["contexts"] == []
+    assert row["tool"] == "write_file" and row["effective_action"] == "allow"
