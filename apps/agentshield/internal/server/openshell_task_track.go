@@ -197,12 +197,20 @@ func (s *Server) taskChainFacts(reservationReceiptID string) (*taskReservationFa
 	for i := range receipts {
 		rec := &receipts[i]
 		// The reconciliation receipt binds to the reservation it closes, not to
-		// the original decision, so it is found by DecisionReceiptID.
+		// the original decision, so it is found by DecisionReceiptID. A second
+		// signed closure can contradict the first; status must not prefer whichever
+		// line was appended later.
 		if rec.RecordType == openshellTaskReconcileRecord && rec.DecisionReceiptID == reservationReceiptID {
+			if facts.Reconciliation != nil {
+				return nil, "openshell_receipt_ambiguous"
+			}
 			facts.Reconciliation = rec
 		}
 		if rec.RecordType == "observation" && rec.DecisionReceiptID == reservationReceiptID &&
 			rec.ReceiptID == reservationReceiptID+"-obs" {
+			if facts.Observation != nil {
+				return nil, "openshell_receipt_ambiguous"
+			}
 			facts.Observation = rec
 		}
 	}

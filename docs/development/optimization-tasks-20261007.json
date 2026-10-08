@@ -447,11 +447,13 @@
       "evidence": [
         "docs/development/optimization-opt15-receipt-identity-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/receipt-identity-validation.json",
-        "docs/development/optimization-opt15-receipt-lookup-validation-20261008.md"
+        "docs/development/optimization-opt15-receipt-lookup-validation-20261008.md",
+        "docs/development/optimization-opt15-closure-validation-20261008.md"
       ],
       "residual_limits": [
         "新在线 decision 使用 rcp- 加 128 位密码学随机值；固定时钟重复请求、引擎重建和历史重复 ID 审批拒绝已复现并修复。receipt/server/skillcontext 最终复测通过，合同样例未改写。审批仍是管理路径的线性验签，未证明大型历史库性能；任务追踪等只按 ReceiptID 取值的入口尚未逐项确认；token 哈希、依赖锁定、生产 assert 与请求超限状态码未在本子项改动。四目标构建不等于 Windows/macOS 原生验收。OPT-15 保持 implementing，总体仍为 11/16。",
-        "会话/任务绑定、预留哈希和任务链定位已改为重复 receipt_id 失败关闭：修复前绑定返回 openshell_decision_missing 并采用第一条。HTTP 409、唯一旧 ID 对照、OpenShell server 回归、vet 及四目标编译通过。对账/观察末条覆盖、线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。"
+        "会话/任务绑定、预留哈希和任务链定位已改为重复 receipt_id 失败关闭：修复前绑定返回 openshell_decision_missing 并采用第一条。HTTP 409、唯一旧 ID 对照、OpenShell server 回归、vet 及四目标编译通过。对账/观察末条覆盖、线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。",
+        "同一预留的第二条签名对账或观察不再按末条采信：修复前 deny 之后的 allow 被任务查询选中。现返回 openshell_receipt_ambiguous。单条对照、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。"
       ]
     }
   ],

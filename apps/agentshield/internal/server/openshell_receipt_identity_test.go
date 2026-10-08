@@ -104,7 +104,82 @@ func TestOpenShellLookupsKeepUniqueReceiptIdentity(t *testing.T) {
 		t.Fatalf("unique hash = %s, want %s", got, reservation.Hash)
 	}
 	facts, code := s.taskChainFacts("unique-reservation")
-	if code != "" || facts == nil || facts.TaskID != "task-only" {
+	if code != "" || facts == nil || facts.TaskID != "task-only" || facts.Reconciliation != nil {
 		t.Fatalf("unique reservation lost: code=%s facts=%v", code, facts)
+	}
+	only := reservation
+	only.RecordType = openshellTaskReconcileRecord
+	only.ReceiptID = "unique-reservation-rec"
+	only.DecisionReceiptID = "unique-reservation"
+	only.Action = receipt.ActionDeny
+	if err = s.d.Chain.Append(&only); err != nil {
+		t.Fatal(err)
+	}
+	facts, code = s.taskChainFacts("unique-reservation")
+	if code != "" || facts == nil || facts.Reconciliation == nil || facts.Reconciliation.Action != receipt.ActionDeny {
+		t.Fatalf("single reconciliation lost: code=%s facts=%v", code, facts)
+	}
+}
+
+func TestTaskChainFactsRejectsContradictoryClosure(t *testing.T) {
+	s, _ := newServer(t, "block")
+	session := nativeOpenClawSession(t, "closure-collision")
+	issued := time.Now().UTC().Format(time.RFC3339)
+	reservation := receipt.Receipt{
+		ReceiptID: "legacy-reservation", RecordType: openshellTaskReservationRecord,
+		ActionID: "reserve-one", TaskID: "task-one", Action: receipt.ActionAllow,
+		Tool: "exec", Platform: "openclaw", SessionID: session, IssuedAt: issued,
+	}
+	if err := s.d.Chain.Append(&reservation); err != nil {
+		t.Fatal(err)
+	}
+	notOccurred := reservation
+	notOccurred.RecordType = openshellTaskReconcileRecord
+	notOccurred.ReceiptID = "legacy-reservation-rec"
+	notOccurred.DecisionReceiptID = reservation.ReceiptID
+	notOccurred.Action = receipt.ActionDeny
+	if err := s.d.Chain.Append(&notOccurred); err != nil {
+		t.Fatal(err)
+	}
+	occurred := notOccurred
+	occurred.ReceiptID = "legacy-reservation-rec-later"
+	occurred.Action = receipt.ActionAllow
+	if err := s.d.Chain.Append(&occurred); err != nil {
+		t.Fatal(err)
+	}
+	facts, code := s.taskChainFacts(reservation.ReceiptID)
+	if facts != nil || code != "openshell_receipt_ambiguous" {
+		action := ""
+		if facts != nil && facts.Reconciliation != nil {
+			action = string(facts.Reconciliation.Action)
+		}
+		t.Fatalf("contradictory reconciliation selected %q, code %s", action, code)
+	}
+
+	s, _ = newServer(t, "block")
+	reservation.SessionID = nativeOpenClawSession(t, "observation-collision")
+	if err := s.d.Chain.Append(&reservation); err != nil {
+		t.Fatal(err)
+	}
+	firstObs := reservation
+	firstObs.RecordType = "observation"
+	firstObs.ReceiptID = reservation.ReceiptID + "-obs"
+	firstObs.DecisionReceiptID = reservation.ReceiptID
+	firstObs.ParamsDigest = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	if err := s.d.Chain.Append(&firstObs); err != nil {
+		t.Fatal(err)
+	}
+	secondObs := firstObs
+	secondObs.ParamsDigest = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+	if err := s.d.Chain.Append(&secondObs); err != nil {
+		t.Fatal(err)
+	}
+	facts, code = s.taskChainFacts(reservation.ReceiptID)
+	if facts != nil || code != "openshell_receipt_ambiguous" {
+		digest := ""
+		if facts != nil && facts.Observation != nil {
+			digest = facts.Observation.ParamsDigest
+		}
+		t.Fatalf("contradictory observation selected %s, code %s", digest, code)
 	}
 }

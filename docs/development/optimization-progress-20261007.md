@@ -206,3 +206,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-15 回执标识](optimization-opt15-receipt-identity-validation-20261008.md)：固定时钟下相同参数会生成重复 decision ID，历史重复 ID 的审批会选中一条而不拒绝；两项反例已复现。新 ID 改为 128 位随机值，随机源失败不签发；审批在验签链中要求原 hold 与 resolution 唯一且关联一致，歧义返回原有 409。历史样例未改写。定向测试、receipt/skillcontext 包、合同比较、vet 与既有四目标构建记录通过。查询入口、请求边界、token 哈希和原生平台验收继续；总体仍为 11/16（68.75%）。
 
 [OPT-15 重复 ID 查询](optimization-opt15-receipt-lookup-validation-20261008.md)：会话绑定在重复 decision ID 下采用第一条并返回 openshell_decision_missing，已复现。绑定、预留哈希和任务链定位现要求 ID 唯一，重复返回 409 或空哈希；唯一旧 ID 仍走原缺失 Grant 结果。OpenShell server 回归、vet 和四目标编译通过。对账/观察末条覆盖、请求边界和原生平台验收继续，总体仍为 11/16。
+
+[OPT-15 矛盾闭合记录](optimization-opt15-closure-validation-20261008.md)：同一预留先记 deny 再记 allow 时，任务查询采用后一条 allow，已复现。第二条对账或匹配观察现返回 openshell_receipt_ambiguous；单条 deny 对账仍按原投影。OpenShell server 回归、vet 和四目标编译通过。请求边界与原生平台验收继续，总体仍为 11/16。
