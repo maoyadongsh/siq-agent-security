@@ -186,12 +186,16 @@ func (s *Server) taskChainFacts(reservationReceiptID string) (*taskReservationFa
 	if err != nil || receipt.Verify(receipts, s.d.Key.Public()) != nil {
 		return nil, "openshell_chain_unverified"
 	}
+	reservation, idErr := uniqueReceiptByID(receipts, reservationReceiptID)
+	if idErr != nil {
+		return nil, "openshell_receipt_ambiguous"
+	}
 	facts := &taskReservationFacts{}
+	if reservation != nil && reservation.RecordType == openshellTaskReservationRecord {
+		facts.Reservation = reservation
+	}
 	for i := range receipts {
 		rec := &receipts[i]
-		if rec.ReceiptID == reservationReceiptID && rec.RecordType == openshellTaskReservationRecord {
-			facts.Reservation = rec
-		}
 		// The reconciliation receipt binds to the reservation it closes, not to
 		// the original decision, so it is found by DecisionReceiptID.
 		if rec.RecordType == openshellTaskReconcileRecord && rec.DecisionReceiptID == reservationReceiptID {
@@ -696,11 +700,7 @@ func (s *Server) openshellTaskStatus(w http.ResponseWriter, r *http.Request) {
 func (s *Server) taskStatusFor(body openshellTaskStatusRequest) (map[string]any, int, string) {
 	facts, errCode := s.taskChainFacts(body.ReservationReceiptID)
 	if errCode != "" {
-		code := http.StatusServiceUnavailable
-		if errCode == "openshell_task_reservation_unknown" {
-			code = http.StatusNotFound
-		}
-		return nil, code, errCode
+		return nil, taskLookupStatus(errCode), errCode
 	}
 	if !facts.matchesRequest(body) {
 		return nil, http.StatusNotFound, "openshell_task_reservation_mismatch"
@@ -733,11 +733,7 @@ func (s *Server) openshellTaskStop(w http.ResponseWriter, r *http.Request) {
 	statusReq := body.statusRequest()
 	facts, errCode := s.taskChainFacts(body.ReservationReceiptID)
 	if errCode != "" {
-		code := http.StatusServiceUnavailable
-		if errCode == "openshell_task_reservation_unknown" {
-			code = http.StatusNotFound
-		}
-		writeJSON(w, code, map[string]string{"error": errCode, "reason_code": errCode})
+		writeJSON(w, taskLookupStatus(errCode), map[string]string{"error": errCode, "reason_code": errCode})
 		return
 	}
 	// Ownership is checked against signed state, never against the request's own
@@ -947,11 +943,7 @@ func (s *Server) openshellTaskReconcile(w http.ResponseWriter, r *http.Request) 
 	}
 	facts, errCode := s.taskChainFacts(body.ReservationReceiptID)
 	if errCode != "" {
-		code := http.StatusServiceUnavailable
-		if errCode == "openshell_task_reservation_unknown" {
-			code = http.StatusNotFound
-		}
-		writeJSON(w, code, map[string]string{"error": errCode, "reason_code": errCode})
+		writeJSON(w, taskLookupStatus(errCode), map[string]string{"error": errCode, "reason_code": errCode})
 		return
 	}
 	if facts.Reservation.ActionID != body.ActionID || facts.Reservation.DecisionReceiptID != body.DecisionReceiptID {

@@ -204,3 +204,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3 真实并发请求的排队与权限隔离](optimization-opt08-concurrent-business-validation-20261008.md)：同候选8851724完成v872两个真实业务HTTP请求并发在途：writer实际加载/读取后暂停约2.202秒，reader真实请求在单槽队列等待，三次重叠观察跨度约1.131秒；writer实际写入成功并释放后reader加载自己的只读Skill，实际写入签名deny grant_scope_violation且文件不存在。36项现场检查通过，两业务completed、监管退出0/PID0；同Agent、不同会话/任务/Skill、归一化可写OpenShell策略相同、Grant及源数据不变。完整6回执/2SEC/3Grant及2任务绑定独立核验，离线核验器59项（新增9项）与Ruff通过，API依赖11663文件/4链接不变。证明当前单槽业务架构下真实并发请求的排队及权限隔离，不宣称两个沙箱同时执行或压力容量；内容版本升级、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。
 
 [OPT-15 回执标识](optimization-opt15-receipt-identity-validation-20261008.md)：固定时钟下相同参数会生成重复 decision ID，历史重复 ID 的审批会选中一条而不拒绝；两项反例已复现。新 ID 改为 128 位随机值，随机源失败不签发；审批在验签链中要求原 hold 与 resolution 唯一且关联一致，歧义返回原有 409。历史样例未改写。定向测试、receipt/skillcontext 包、合同比较、vet 与既有四目标构建记录通过。查询入口、请求边界、token 哈希和原生平台验收继续；总体仍为 11/16（68.75%）。
+
+[OPT-15 重复 ID 查询](optimization-opt15-receipt-lookup-validation-20261008.md)：会话绑定在重复 decision ID 下采用第一条并返回 openshell_decision_missing，已复现。绑定、预留哈希和任务链定位现要求 ID 唯一，重复返回 409 或空哈希；唯一旧 ID 仍走原缺失 Grant 结果。OpenShell server 回归、vet 和四目标编译通过。对账/观察末条覆盖、请求边界和原生平台验收继续，总体仍为 11/16。

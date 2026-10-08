@@ -118,14 +118,11 @@ func (s *Server) validateOpenShellTaskExecutionBinding(body openshellTaskExecute
 	if err != nil || receipt.Verify(chain, s.d.Key.Public()) != nil {
 		return nil, fmt.Errorf("openshell_chain_unverified")
 	}
-	var decision *receipt.Receipt
-	for i := range chain {
-		if chain[i].ReceiptID == body.DecisionReceiptID && chain[i].RecordType == "decision" {
-			decision = &chain[i]
-			break
-		}
+	decision, err := uniqueReceiptByID(chain, body.DecisionReceiptID)
+	if err != nil {
+		return nil, err
 	}
-	if decision == nil || decision.MatchedGrantID == nil {
+	if decision == nil || decision.RecordType != "decision" || decision.MatchedGrantID == nil {
 		return nil, fmt.Errorf("openshell_decision_missing")
 	}
 	g, err := s.d.Store.GetGrant(*decision.MatchedGrantID)

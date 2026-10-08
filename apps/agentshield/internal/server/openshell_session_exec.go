@@ -131,12 +131,11 @@ func (s *Server) chainReceiptHash(receiptID string) string {
 	if err != nil || receipt.Verify(receipts, s.d.Key.Public()) != nil {
 		return ""
 	}
-	for _, rec := range receipts {
-		if rec.ReceiptID == receiptID && len(rec.Hash) == 64 {
-			return rec.Hash
-		}
+	rec, err := uniqueReceiptByID(receipts, receiptID)
+	if err != nil || rec == nil || len(rec.Hash) != 64 {
+		return ""
 	}
-	return ""
+	return rec.Hash
 }
 
 func (s *Server) reconcileUncertainExecution(reserveStatus *receipt.HoldExecutionStatus, actor, outcome string) (*receipt.HoldExecutionStatus, string) {
@@ -187,7 +186,7 @@ func (s *Server) openshellSessionExecute(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	if _, err := s.validateOpenShellExecutionBinding(body); err != nil {
-		writeJSON(w, 403, map[string]string{"error": err.Error(), "reason_code": err.Error()})
+		writeJSON(w, bindingStatus(err), map[string]string{"error": err.Error(), "reason_code": err.Error()})
 		return
 	}
 
