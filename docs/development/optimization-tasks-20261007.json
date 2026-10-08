@@ -467,13 +467,15 @@
         "docs/development/evidence/optimization-20261007/receipt-identity-validation.json",
         "docs/development/optimization-opt15-receipt-lookup-validation-20261008.md",
         "docs/development/optimization-opt15-closure-validation-20261008.md",
-        "docs/development/optimization-opt15-request-limit-validation-20261008.md"
+        "docs/development/optimization-opt15-request-limit-validation-20261008.md",
+        "docs/development/optimization-opt15-bounded-cleanup-20261008.md"
       ],
       "residual_limits": [
         "新在线 decision 使用 rcp- 加 128 位密码学随机值；固定时钟重复请求、引擎重建和历史重复 ID 审批拒绝已复现并修复。receipt/server/skillcontext 最终复测通过，合同样例未改写。审批仍是管理路径的线性验签，未证明大型历史库性能；任务追踪等只按 ReceiptID 取值的入口尚未逐项确认；token 哈希、依赖锁定、生产 assert 与请求超限状态码未在本子项改动。四目标构建不等于 Windows/macOS 原生验收。OPT-15 保持 implementing，总体仍为 11/16。",
         "会话/任务绑定、预留哈希和任务链定位已改为重复 receipt_id 失败关闭：修复前绑定返回 openshell_decision_missing 并采用第一条。HTTP 409、唯一旧 ID 对照、OpenShell server 回归、vet 及四目标编译通过。对账/观察末条覆盖、线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。",
         "同一预留的第二条签名对账或观察不再按末条采信：修复前 deny 之后的 allow 被任务查询选中。现返回 openshell_receipt_ambiguous。单条对照、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。",
-        "decide/observe 超限正文修复前返回 400 invalid decision request，现返回 413 decision_request_too_large，不进入引擎。hold 超限返回 413，畸形仍为 400，链头不变。定向测试、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、token 哈希、依赖锁定和原生平台验收仍未收口。"
+        "decide/observe 超限正文修复前返回 400 invalid decision request，现返回 413 decision_request_too_large，不进入引擎。hold 超限返回 413，畸形仍为 400，链头不变。定向测试、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、token 哈希、依赖锁定和原生平台验收仍未收口。",
+        "有界清理已核对且不改代码：Go 模块无第三方 require，故无 go.sum；web package-lock 与 control-api uv.lock 已固定实际版本。审批线性过程是验签本身，验签前索引会重新引入重复 ID 取值。三处 panic 仍是规范编码或启动随机源失败。观察者、刷新和管理配对码已是 SHA-256；access token 仍须留在刷新记录中才能恢复会话，只改 map 键不能从内存去掉它。Windows/macOS 无原生机器，记为 blocked，不用交叉编译代替。OPT-15 保持 implementing，11/16 不变。"
       ]
     }
   ],

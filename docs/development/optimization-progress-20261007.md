@@ -216,3 +216,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-08 日常内容版本拒绝](optimization-opt08-content-version-business-validation-20261008.md)：当前安全二进制 aa25999e 与业务 8851724 的 v879 在日常模型上 33 项通过。SKILL.md 由 014ac378 换成 a38f8af2，旧 Grant 撤销；暂停恢复后的 write_file 没有回执，目标文件不存在。已安装监管单元与当前 `SIQ_RUNTIME_ROOT` 合同不一致，产品安装拒绝覆盖；本轮临时对齐后按原字节恢复，模型单元不变。v880 新任务没有读取或写入，工具结果为 native_dispatch_unavailable，没有 V2 Skill 上下文。资源/工具入口、四臂、平台和签名继续，总体仍为 11/16（68.75%）。
 
 [OPT-08 V2 镜像执行](optimization-opt08-v2-image-business-validation-20261008.md)：当前二进制 aa25999e 与业务 8851724 的 v881 在新镜像 `sha256:a3be2a4a`、制品 `c5e3e318` 上 33 项通过。受保护 `SKILL.md` 钉为 `a38f8af2`，读取和写入回执均为 allow 并绑定该安装的 Grant，目标文件存在。`skill_view` 回执本身是 no_skill。冻结镜像目录未改写；监管合同临时对齐后按原字节恢复，模型单元不变。这是镜像已含 V2 字节的新身份，不是旧制品 `070e9423` 上同一身份原地换字节后的续跑。资源/工具入口、四臂、平台和签名继续，总体仍为 11/16（68.75%）。
+
+[OPT-15 有界清理](optimization-opt15-bounded-cleanup-20261008.md)：依赖锁、线性验签、三处生产 panic 和管理 token 存储已核对，产品代码未改。Go 无第三方依赖，故没有 go.sum；web 与 control-api 已有锁文件。Windows/macOS 无原生机器，不能用交叉编译代替。OPT-15 保持 implementing，总体仍为 11/16（68.75%）。
