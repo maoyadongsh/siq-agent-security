@@ -674,6 +674,13 @@
       '''^\s*"benchmarks/third\-party/review_native_auth_modes\.py":\ "5910552d132fbd0a460742ae529cf296801fceb6e14ade5de53b494fc3141dab",?\s*$''',
       '''^\s*"benchmarks/third\-party/test_native_auth_modes\.py":\ "6dab9014f156e3669653661fc65ca513afcf504fc1e345e25bfebc75689f0a42",?\s*$''',
     ]
+  # Reviewed file digests in optimization evidence. Only a filename key mapped to
+  # 64 hex digits is excepted; other fields and copied paths stay scanned.
+  [[rules.allowlists]]
+    condition = "AND"
+    paths = ['''^docs/development/evidence/.+\.json$''']
+    regexTarget = "line"
+    regexes = ['''^\s*"(?:[^"\r\n]+/)?[^"/\r\n]+\.(?:go|py|json|toml|js|ts|tsx|mjs|cjs|md|sh|ps1|yml|yaml|css|html|log|sql|patch)": "[a-f0-9]{64}",?\s*$''']
   [[rules.allowlists]]
     description = "third-party evidence SHA-256 group 14"
     condition = "AND"

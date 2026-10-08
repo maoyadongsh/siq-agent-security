@@ -234,7 +234,7 @@ class Runtime:
             if callback is not None:
                 try:
                     callback()
-                except BaseException:  # noqa: BLE001 — a checkpoint failure must not run the tool.
+                except BaseException:  # A checkpoint failure must not run the tool.
                     task.failed = True
                     raise
             token = _current.set((self, task, tool))
