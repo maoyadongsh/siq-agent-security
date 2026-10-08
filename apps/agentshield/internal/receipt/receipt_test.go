@@ -120,6 +120,47 @@ func TestGrantedToolAllowedAndUngrantedDenied(t *testing.T) {
 	}
 }
 
+func TestGrantedWriteFileRejectsAliasUnmappedAndNested(t *testing.T) {
+	f := func(domain, action, rtype, value string) admission.DeclaredFact {
+		return admission.DeclaredFact{Domain: domain, Action: action, Resource: admission.Resource{Type: rtype, Value: value},
+			Effect: "allow", State: "declared", Authority: "skill_manifest", SourceField: "t", EvidenceIDs: []string{"ev-1"}}
+	}
+	adm := admission.Admission{AdmissionID: "adm-write", ContentHash: strings.Repeat("b", 64), Verdict: "admit_with_conditions", EvidenceIDs: []string{"ev-1"},
+		DeclaredFacts: []admission.DeclaredFact{
+			f("tool", "tool.invoke", "tool", "write_file"),
+			f("filesystem", "fs.write", "path", "/home/u/work/out"),
+		}}
+	res, err := grant.Build(adm, grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: "inst_1"}, Platform: "hermes", Key: key(t)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	g, err := grant.Approve(res.Grant, grant.Approval{ActorType: "human", ActorID: "u", ApprovedAt: "2026-09-04T06:00:00Z"}, key(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	g, err = grant.MarkDeployed(g, key(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	fx := newFixture(t, "block", &g, false)
+	allowed := req("hermes", "write_file", map[string]any{"path": "/home/u/work/out/result.txt"})
+	d, err := fx.eng.Decide(allowed)
+	if err != nil || d.Action != ActionAllow {
+		t.Fatalf("granted write_file: %v %+v", err, d)
+	}
+	for _, tool := range []string{"write", "edit", "patch", "Write_File", "write-file", "opt10_unmapped_tool"} {
+		d, err = fx.eng.Decide(req("hermes", tool, map[string]any{"path": "/home/u/work/out/result.txt"}))
+		if err != nil || d.Action != ActionDeny || !strings.Contains(d.Reason, "not granted") {
+			t.Fatalf("%s borrowed write_file: %v %+v", tool, err, d)
+		}
+	}
+	nested := req("hermes", "write_file", map[string]any{"nested_entry": map[string]any{"path": "/home/u/work/out/result.txt"}})
+	d, err = fx.eng.Decide(nested)
+	if err != nil || d.Action != ActionDeny || !strings.Contains(d.Reason, "unavailable resource") {
+		t.Fatalf("nested path borrowed the grant: %v %+v", err, d)
+	}
+}
+
 func TestEgressHostMustBeGranted(t *testing.T) {
 	g := deployedGrant(t, "hermes", false)
 	fx := newFixture(t, "block", g, false)

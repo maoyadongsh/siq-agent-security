@@ -353,7 +353,8 @@
         "docs/development/optimization-opt08-content-version-business-validation-20261008.md",
         "docs/development/evidence/optimization-20261007/native-content-version-business-v879.json",
         "docs/development/optimization-opt08-v2-image-business-validation-20261008.md",
-        "docs/development/evidence/optimization-20261007/native-content-version-v2-image-v881.json"
+        "docs/development/evidence/optimization-20261007/native-content-version-v2-image-v881.json",
+        "apps/agentshield/internal/receipt/receipt_test.go"
       ],
       "residual_limits": [
         "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
@@ -376,7 +377,8 @@
         "同候选8851724完成v872两个真实业务HTTP请求并发在途：writer实际加载/读取后暂停约2.202秒，reader真实请求在单槽队列等待，三次重叠观察跨度约1.131秒；writer实际写入成功并释放后reader加载自己的只读Skill，实际写入签名deny grant_scope_violation且文件不存在。36项现场检查通过，两业务completed、监管退出0/PID0；同Agent、不同会话/任务/Skill、归一化可写OpenShell策略相同、Grant及源数据不变。完整6回执/2SEC/3Grant及2任务绑定独立核验，离线核验器59项（新增9项）与Ruff通过，API依赖11663文件/4链接不变。证明当前单槽业务架构下真实并发请求的排队及权限隔离，不宣称两个沙箱同时执行或压力容量；内容版本升级、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。",
         "当前安全提交8c473439的Hermes原生内容版本升级16项通过：V1与V2内容哈希不同，确认前取消不改V1，明确更新替换字节并撤销V1 Grant，旧决策凭据被拒且无新回执或文件效果，V2需新身份和SEC后实际读取执行，4条回执链验签通过。本地确定性模型，不是DGX日常业务入口，也不能并入v870/v872。日常业务内容版本、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。",
         "当前安全二进制aa25999e与业务8851724完成v879日常内容版本拒绝：33项通过，SKILL.md由014ac378改为a38f8af2，旧Grant撤销，恢复后的写入没有回执也没有文件。执行期间临时对齐SIQ_RUNTIME_ROOT监管合同并按原字节恢复，模型单元不变。v880新任务未执行读取或写入，工具结果为native_dispatch_unavailable，没有V2 Skill上下文；核验脚本随后AttributeError。不是最终矩阵。资源/工具入口、四臂、平台和签名继续，11/16保持。",
-        "当前安全二进制aa25999e与业务8851724完成v881：新建请求镜像sha256:a3be2a4a、制品c5e3e318，受保护SKILL.md钉为a38f8af2，并签发绑定该制品的新运行时身份。33项通过，read_file与write_file均为allow，目标文件存在。skill_view回执为no_skill；读取和写入回执绑定Grant grt-si-fd97d2ac2c65f04438255b92e9f9be9b69ffa21e9fea8cac7ecba9ad20b3d59e。监管合同临时对齐后按原字节恢复，模型单元不变。这是镜像已含V2字节的新身份执行，不是v879同一身份在旧镜像070e9423上原地换字节后的续跑；v880仍说明旧镜像钉住V1时V2安装无法加载。不是最终矩阵。资源/工具入口、四臂、平台和签名继续，11/16保持。"
+        "当前安全二进制aa25999e与业务8851724完成v881：新建请求镜像sha256:a3be2a4a、制品c5e3e318，受保护SKILL.md钉为a38f8af2，并签发绑定该制品的新运行时身份。33项通过，read_file与write_file均为allow，目标文件存在。skill_view回执为no_skill；读取和写入回执绑定Grant grt-si-fd97d2ac2c65f04438255b92e9f9be9b69ffa21e9fea8cac7ecba9ad20b3d59e。监管合同临时对齐后按原字节恢复，模型单元不变。这是镜像已含V2字节的新身份执行，不是v879同一身份在旧镜像070e9423上原地换字节后的续跑；v880仍说明旧镜像钉住V1时V2安装无法加载。不是最终矩阵。资源/工具入口、四臂、平台和签名继续，11/16保持。",
+        "已部署且只包含 write_file 与 /home/u/work/out 写权限的 Grant 下，规范 write_file 允许；write、edit、patch、Write_File、write-file 和 opt10_unmapped_tool 均因工具名未授权而拒绝；只有嵌套 path、没有顶层 path 的 write_file 因资源不可用拒绝。这是引擎决定，不是日常宿主实际执行观察，也不能代替最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。"
       ]
     },
     {

@@ -224,3 +224,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-15 Linux 用户服务升级](optimization-opt15-linux-upgrade-20261008.md)：当前二进制 `aa25999e` 的临时用户单元完成同字节升级、端口冲突后的显式恢复和回滚。开发清单没有打断正在运行的原进程。临时单元已清理。这不是企业签名包、设备迁移或越权决定拒绝。总体仍为 11/16（68.75%）。
 
 [OPT-15 Linux 未授权拒绝](optimization-opt15-linux-deny-20261008.md)：当前二进制 `aa25999e` 在无 Grant 的隔离状态拒绝无凭据和未知凭据，已认证写入为 `grant_missing` 且没有文件。停止后再次启动仍拒绝，4 条回执验签通过。别名和未映射工具同一原因被拒绝，不能算已授权工具的入口隔离。总体仍为 11/16（68.75%）。
+
+[OPT-10 已授权写入的工具身份](../apps/agentshield/internal/receipt/receipt_test.go)：`TestGrantedWriteFileRejectsAliasUnmappedAndNested` 在只授予 `write_file` 时允许规范写入，并拒绝 `write`、`edit`、`patch`、大小写变体、连字符别名、未映射工具，以及缺少顶层路径的嵌套参数。这是引擎决定，不是日常宿主的实际执行观察。最终矩阵、四臂、平台和签名继续，总体仍为 11/16（68.75%）。
