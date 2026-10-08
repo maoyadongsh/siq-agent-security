@@ -1,0 +1,264 @@
+{
+  "schema_version": "optimization-clean-business-api-evidence/v1",
+  "scope": "clean_candidate_http_authorization_and_recovery_readiness",
+  "business_commit": "f73e566f602f67a7f241274a3d910c410d191fb6",
+  "security_code_changed": false,
+  "final": {
+    "schema_version": "clean-business-api-probe/v1",
+    "source_commit": "f73e566f602f67a7f241274a3d910c410d191fb6",
+    "source_files": 3652,
+    "source_archive_sha256": "d3cd7fced8cd157f59307d557e914bb5ec7e9fd86e135f1e7681bf561c99165c",
+    "driver_sha256": "bb355c6737b84851fff6db9a3b10c2912a8343671b07333e73c34096bbac0be2",
+    "checks": {
+      "committed_schema_bootstrap": true,
+      "http_health": true,
+      "request_recovery_ready": true,
+      "legacy_recovery_disabled": true,
+      "anonymous_analysis_denied": true,
+      "real_http_login": true,
+      "analyst_cannot_issue_grant": true,
+      "admin_grant_allowed": true,
+      "grant_retry_same_identity": true,
+      "analyst_cannot_revoke": true,
+      "admin_revoke_allowed": true
+    },
+    "passed": true,
+    "models_called": false,
+    "native_agent_skill_effect_test": false,
+    "candidate_wheels": {
+      "siq_openshell_control-0.3.0-py3-none-any.whl": "18a26dc006cbf73508b260e8d3714a6009ce005005500b96ac36b8ecf34ab897",
+      "siq_analysis_inputs-0.1.0-py3-none-any.whl": "747071c16cf0221298b92c252fc66747767b2bcdb9bb96cd8bf8465f9321043f",
+      "siq_financial_tools-0.2.0-py3-none-any.whl": "4b87ae4af8a874f4811da6c46b722e76b3cfd9ae59cf355992840577eb393182",
+      "siq_parsers_common-0.1.0-py3-none-any.whl": "84f3c69d233bafabe9a50bad3127e1d887ab6b43f7f0ea779a429e2479745608"
+    },
+    "request_recovery_snapshot": {
+      "enabled": true,
+      "ready": true,
+      "last_scan": {
+        "examined": 0,
+        "deferred": 0,
+        "released": 0,
+        "failed": 0,
+        "replaced": 0,
+        "foreign": 0
+      }
+    },
+    "cleanup": {
+      "api_stopped": true,
+      "port_free": true,
+      "owned_database_removed": true
+    },
+    "import_inventories": {
+      "bootstrap-imports-before.json": {
+        "modules": 1446,
+        "escapes": []
+      },
+      "bootstrap-imports-after.json": {
+        "modules": 1446,
+        "escapes": []
+      },
+      "serve-imports-before.json": {
+        "modules": 1446,
+        "escapes": []
+      },
+      "serve-imports-after.json": {
+        "modules": 1483,
+        "escapes": []
+      }
+    },
+    "project_packages_from_candidate_wheels": true,
+    "all_import_inventories_present": true,
+    "no_worktree_imports": true,
+    "peer_state_unchanged": true,
+    "source_bytes_unchanged": true,
+    "new_source_files": []
+  },
+  "loaded_module_origin_counts": {
+    "external_dependency": 262,
+    "explicit_probe_driver": 2,
+    "candidate_built_dependency": 16,
+    "candidate_source": 323,
+    "installed_dependency": 880
+  },
+  "loaded_candidate_wheel_modules": [
+    {
+      "module": "siq_financial_tools.calculator",
+      "wheel": "siq_financial_tools-0.2.0-py3-none-any.whl",
+      "file": "siq_financial_tools/calculator.py",
+      "sha256": "d2700f58bdbb91a7d550a7d3510d5e3906e68ef514ef070932ef729a7f059133"
+    },
+    {
+      "module": "siq_financial_tools",
+      "wheel": "siq_financial_tools-0.2.0-py3-none-any.whl",
+      "file": "siq_financial_tools/__init__.py",
+      "sha256": "bef89cc94c0c8476b54bde35a22d35a3c0ffd3bf42b87fa4ef710b4f4f45a6ee"
+    },
+    {
+      "module": "siq_openshell_control",
+      "wheel": "siq_openshell_control-0.3.0-py3-none-any.whl",
+      "file": "siq_openshell_control/__init__.py",
+      "sha256": "01f1af7ebf9624ae87aedc68722dfb96a2921ef8dc6bb8f8d049e96c832b4203"
+    },
+    {
+      "module": "siq_openshell_control.contract",
+      "wheel": "siq_openshell_control-0.3.0-py3-none-any.whl",
+      "file": "siq_openshell_control/contract.py",
+      "sha256": "484fc0e4b62a7366fb4b3dc4cba8b6008bfac5f5833ce452e833958b2783399f"
+    },
+    {
+      "module": "siq_openshell_control.state",
+      "wheel": "siq_openshell_control-0.3.0-py3-none-any.whl",
+      "file": "siq_openshell_control/state.py",
+      "sha256": "f3bc8682e2c565a235a4362f4a06a1d431d7220689817a7ca670647ff9095826"
+    },
+    {
+      "module": "siq_openshell_control.pool_registry",
+      "wheel": "siq_openshell_control-0.3.0-py3-none-any.whl",
+      "file": "siq_openshell_control/pool_registry.py",
+      "sha256": "e50dbed51db6f10ac2b69e19f04afbe7b982c20755e36adaa36291e0ac7ef5bf"
+    },
+    {
+      "module": "siq_openshell_control.pool_concurrency",
+      "wheel": "siq_openshell_control-0.3.0-py3-none-any.whl",
+      "file": "siq_openshell_control/pool_concurrency.py",
+      "sha256": "45efe3b401cbfd3b09ea018fa3e6de50e63f864827efe1d227c1c4da9066e679"
+    },
+    {
+      "module": "scripts.openshell.siq_analysis_pool_concurrency",
+      "wheel": "siq_openshell_control-0.3.0-py3-none-any.whl",
+      "file": "siq_openshell_control/pool_concurrency.py",
+      "sha256": "45efe3b401cbfd3b09ea018fa3e6de50e63f864827efe1d227c1c4da9066e679"
+    },
+    {
+      "module": "scripts.openshell.siq_analysis_pool_registry",
+      "wheel": "siq_openshell_control-0.3.0-py3-none-any.whl",
+      "file": "siq_openshell_control/pool_registry.py",
+      "sha256": "e50dbed51db6f10ac2b69e19f04afbe7b982c20755e36adaa36291e0ac7ef5bf"
+    },
+    {
+      "module": "siq_analysis_inputs.adapters.base",
+      "wheel": "siq_analysis_inputs-0.1.0-py3-none-any.whl",
+      "file": "siq_analysis_inputs/adapters/base.py",
+      "sha256": "ff7a2ac07568d3178c5e922de5bd55a5fec248dc99582da89c92207d525f9c04"
+    },
+    {
+      "module": "siq_analysis_inputs.adapters.pdf_market",
+      "wheel": "siq_analysis_inputs-0.1.0-py3-none-any.whl",
+      "file": "siq_analysis_inputs/adapters/pdf_market.py",
+      "sha256": "24006b2cb3ffef84fef0c2bd57a15036d2197129148ad61030dcb3d2e473b406"
+    },
+    {
+      "module": "siq_analysis_inputs.adapters.sec_ixbrl",
+      "wheel": "siq_analysis_inputs-0.1.0-py3-none-any.whl",
+      "file": "siq_analysis_inputs/adapters/sec_ixbrl.py",
+      "sha256": "c58a7ff77fa39f56ac6d391c770dba3d116061559a8d5b5fb8c1962d423ec619"
+    },
+    {
+      "module": "siq_analysis_inputs.adapters",
+      "wheel": "siq_analysis_inputs-0.1.0-py3-none-any.whl",
+      "file": "siq_analysis_inputs/adapters/__init__.py",
+      "sha256": "edda1e6caeeb6a244b1bc46027bc2f8d973dea972ad7684d97ab045be0cfe4da"
+    },
+    {
+      "module": "siq_analysis_inputs.bundle",
+      "wheel": "siq_analysis_inputs-0.1.0-py3-none-any.whl",
+      "file": "siq_analysis_inputs/bundle.py",
+      "sha256": "daded5cf942a9bd84c5bf41223df81c680d5049994f7bb9f4e62cd36dd83a3b0"
+    },
+    {
+      "module": "siq_analysis_inputs",
+      "wheel": "siq_analysis_inputs-0.1.0-py3-none-any.whl",
+      "file": "siq_analysis_inputs/__init__.py",
+      "sha256": "6b645359f6a0780a1f4de4787660b3e1d6d98a0f4e8b978a2a3cc5ffecb3d194"
+    }
+  ],
+  "unique_candidate_wheel_files": 13,
+  "loaded_candidate_wheel_bytes_match": true,
+  "common_loaded_module_hashes_unchanged": true,
+  "regression": {
+    "related_worktree_tests_passed": 242,
+    "skipped": 0,
+    "warnings": 303,
+    "isolated_new_tests_passed": 14,
+    "isolated_tests_overlap_worktree_tests": true,
+    "isolated_worktree_import_escapes": 0,
+    "ruff": "passed",
+    "diff_check": "passed",
+    "worktree_test_log_sha256": "73c5dd78e8307961554f12daf06c86d35b76ab9825bdd136e7e751967e6ab8dd",
+    "isolated_test_log_sha256": "ae4f27472bef2d08df86c2f50e7d89213710d5230def64ee871654cd77f890fb"
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "source_commit": "2a70587ab13a33bdaba9b5fa299b4ac8be594a23",
+      "passed_within_recorded_scope": false,
+      "note": "Source-relative ownership directory absent; recovery unready.",
+      "record_sha256": "fb20e6df3ebd199bb810bd505c6042cfec482254f26c7570aeae468639d9160e",
+      "cleanup": {
+        "api_stopped": true,
+        "port_free": true,
+        "owned_database_removed": true
+      },
+      "peer_state_unchanged": true
+    },
+    {
+      "attempt": 2,
+      "source_commit": "f73e566f602f67a7f241274a3d910c410d191fb6",
+      "passed_within_recorded_scope": true,
+      "note": "HTTP passed; two installed control modules differed from candidate Git.",
+      "record_sha256": "2f0aaf8773ae44b7b728ec96c5d82743c594670ffd85d50ae65f6465f2f54f0b",
+      "cleanup": {
+        "api_stopped": true,
+        "port_free": true,
+        "owned_database_removed": true
+      },
+      "peer_state_unchanged": true
+    },
+    {
+      "attempt": 3,
+      "source_commit": "f73e566f602f67a7f241274a3d910c410d191fb6",
+      "passed_within_recorded_scope": false,
+      "note": "Non-venv target installation rejected by trusted-root check.",
+      "record_sha256": "186a4163a866d4f40d4366afa0e2fa9c573c7ff9c940c18bf7ad0018c4e70408",
+      "cleanup": {
+        "api_stopped": true,
+        "port_free": true,
+        "owned_database_removed": true
+      },
+      "peer_state_unchanged": true
+    },
+    {
+      "attempt": 4,
+      "source_commit": "f73e566f602f67a7f241274a3d910c410d191fb6",
+      "passed_within_recorded_scope": false,
+      "note": "Hardlinked package files rejected by file-identity check.",
+      "record_sha256": "aa9d0dee8846dee21aba578a6d8605c8890565f7a53202ae0380ab46146fdbea",
+      "cleanup": {
+        "api_stopped": true,
+        "port_free": true,
+        "owned_database_removed": true
+      },
+      "peer_state_unchanged": true
+    },
+    {
+      "attempt": 5,
+      "source_commit": "f73e566f602f67a7f241274a3d910c410d191fb6",
+      "passed_within_recorded_scope": true,
+      "note": "New venv with copy installation; candidate packages and real HTTP passed.",
+      "record_sha256": "e09ffe8de809db5f3a975e5b3ce19bef44857a622144b27cb8007711aabab55d",
+      "cleanup": {
+        "api_stopped": true,
+        "port_free": true,
+        "owned_database_removed": true
+      },
+      "peer_state_unchanged": true
+    }
+  ],
+  "limits": [
+    "No Hermes task, model inference or native Skill effect executed in this batch.",
+    "Readiness scanned an empty disposable request table; no live crash cleanup claim.",
+    "Third-party Python dependencies reused the existing API installation; four project-owned noneditable packages rebuilt from candidate Git and copy-installed in a new venv.",
+    "Editable project imports explicitly redirected to frozen Git export; no editable worktree finder retained.",
+    "No formal signed release, Windows/macOS acceptance or four-arm business comparison claimed."
+  ]
+}
