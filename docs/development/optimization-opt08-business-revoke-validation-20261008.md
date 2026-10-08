@@ -51,3 +51,13 @@ apps/control-api/.venv/bin/python scripts/research/verify_native_business_eviden
 为兼容本轮所有权路径合同，测试仅在所有请求监管实例无运行 PID 时备份并临时配置三个固定服务文件，结束后按精确摘要恢复并 daemon-reload。v833、v834、v835 均完成自有 API、临时数据库、网关及桥接回收；模型服务 PID、InvocationID 和重启计数保持不变。未覆盖其他开发者代码。
 
 当前仍须解决重复启动问题，完成固定候选重复矩阵、撤权后受控工具尝试、其余生命周期及分层对照。OPT-08、OPT-10 保持 implementing，总体主任务仍为 **11/16（68.75%）**；仅本地提交，未推送或发布。
+
+## 诊断候选复测：v837
+
+新增日志后的业务提交 `74d9024` 重新冻结了相同的 1,874 个输入范围，候选摘要为 `52596e44fcc4e26d8f6d27a0dcbd5994a0a3cfb79722938c071244fa599ad812`。v837 成功启动，实际加载 Skill、读取、模型输出后撤权，完整失权终止与回收检查再次通过，观测到约 **38.375 秒**至终态。原服务文件恢复，业务输入和原模型进程身份不变。
+
+v835 的启动失败没有再次出现；新增日志并未产生该失败的具体类别。因此它仍是未解决问题，v834 与 v837 也不能合并成同候选的三次重复。两轮成功请求均未发起撤权后的新工具尝试。
+
+v834、v837 的监管单元最终均为 systemd `failed / exit-code`，MainPID 与 ControlPID 为 0。此处的资源回收结论来自实际沙箱、进程、端点和执行记录核对，**不等于监管服务正常退出**；退出语义及其可操作性继续跟踪，未重置 failed 状态来制造成功结果。
+
+复测新增 2 条回执和 1 个签名 SEC，连同 v834 构成 4 条回执、2 个上下文的完整链；离线验证器通过，但只为 v837 新增 1 个请求决定绑定，历史条目不重复计为新测试。[复测结果](evidence/optimization-20261007/native-business-revoke-v837.json)、[完整回执链](evidence/optimization-20261007/native-business-revoke-v837.receipts.jsonl)、[签名上下文](evidence/optimization-20261007/native-business-revoke-v837.contexts.json)。
