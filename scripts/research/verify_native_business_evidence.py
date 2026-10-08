@@ -203,6 +203,39 @@ def verify_authority_replacement(raw: bytes, key: Ed25519PublicKey, binding: dic
     require(case_grants == set(authorities), "replacement_case_authority_mismatch")
 
 
+def verify_grant_inventory(raw: bytes, key: Ed25519PublicKey, binding: dict,
+                           contexts: dict, receipts: dict) -> int:
+    """Bind a finite set of historical Skill authorities to one Agent baseline."""
+    inventory = json.loads(raw)
+    require(set(inventory) == {"agent", "skills"} and set(binding) == {"agent", "skills"}
+            and isinstance(binding["skills"], list) and bool(binding["skills"])
+            and len(set(binding["skills"])) == len(binding["skills"])
+            and set(inventory["skills"]) == set(binding["skills"]), "grant_inventory_mismatch")
+    agent, skills = inventory["agent"], inventory["skills"]
+    for record in [agent, *skills.values()]:
+        key.verify(bytes.fromhex(record["signature"]),
+                   canonical({k: v for k, v in record.items() if k != "signature"}))
+    require(agent["grant_id"] == binding["agent"] and agent["grant_id"] not in skills
+            and agent["status"] in {"deployed", "effective"}, "grant_inventory_agent_invalid")
+    for grant_id, grant in skills.items():
+        require(grant["grant_id"] == grant_id
+                and grant["status"] in {"approved", "deployed", "effective"},
+                "grant_inventory_skill_invalid")
+    agent_ref = {"grant_id": agent["grant_id"], "grant_digest": native_grant_digest(agent)}
+    referenced = set()
+    for context in contexts.values():
+        grant_id = context["authority"]["grant_id"]
+        require(grant_id in skills and context["authority"] == {
+            "grant_id": grant_id, "grant_digest": native_grant_digest(skills[grant_id]),
+        } and context["agent_authority"] == agent_ref, "grant_inventory_context_mismatch")
+        referenced.add(grant_id)
+    require(referenced == set(skills), "grant_inventory_unused_skill")
+    for row in receipts.values():
+        require(row["native_invocation"]["agent_authority"] == agent_ref,
+                "grant_inventory_receipt_mismatch")
+    return 1 + len(skills)
+
+
 def verify(report: Path, contracts: Path) -> dict:
     document = json.loads(report.read_text())
     require(document["schema_version"] in {
@@ -312,6 +345,13 @@ def verify(report: Path, contracts: Path) -> dict:
                                      verification["cases"], by_hash)
         replacement_result = {"signed_replacement_grants": 4, "signed_installation_records": 4,
                               "replacement_execution_effects_reobserved": False}
+    inventory_result = {}
+    if "grant_inventory" in payloads or "grant_inventory_ids" in verification:
+        require("grant_inventory" in payloads and "grant_inventory_ids" in verification,
+                "grant_inventory_binding_missing")
+        count = verify_grant_inventory(payloads["grant_inventory"], key,
+                                       verification["grant_inventory_ids"], contexts, by_hash)
+        inventory_result = {"signed_inventory_grants": count}
     return {
         "cryptographic_bundle_verified": True,
         "receipts": len(rows),
@@ -323,6 +363,7 @@ def verify(report: Path, contracts: Path) -> dict:
         **revocation_result,
         **live_grant_result,
         **replacement_result,
+        **inventory_result,
     }
 
 

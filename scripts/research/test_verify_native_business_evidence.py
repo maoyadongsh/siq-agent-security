@@ -17,6 +17,7 @@ from verify_native_business_evidence import (
     verify,
     verify_authority_replacement,
     verify_context_revocations,
+    verify_grant_inventory,
     verify_grant_transition,
     verify_live_grants,
 )
@@ -446,4 +447,80 @@ def test_replacement_artifact_and_binding_are_both_required(tmp_path, section):
     del doc[section]["authority_replacement"]
     report.write_text(json.dumps(doc))
     with pytest.raises(ValueError, match="replacement_binding_missing"):
+        verify(report, ROOT / "packages/contracts")
+
+
+def grant_inventory_fixture():
+    key, sign, evidence, _, contexts, _, receipts = authority_replacement_fixture()
+    grants = evidence["grants"]
+    inventory = {"agent": grants["agent"], "skills": {
+        g["grant_id"]: g for g in (grants["previous_before"], grants["replacement"])
+    }}
+    binding = {"agent": grants["agent"]["grant_id"], "skills": sorted(inventory["skills"])}
+    return key, sign, inventory, binding, contexts, receipts
+
+
+def test_multi_skill_inventory_binds_distinct_authorities():
+    key, _, inventory, binding, contexts, receipts = grant_inventory_fixture()
+    assert verify_grant_inventory(canonical(inventory), key, binding, contexts, receipts) == 3
+
+
+def test_duplicate_skill_cannot_inflate_inventory_count():
+    key, _, inventory, binding, contexts, receipts = grant_inventory_fixture()
+    binding["skills"].append(binding["skills"][0])
+    with pytest.raises(ValueError, match="grant_inventory_mismatch"):
+        verify_grant_inventory(canonical(inventory), key, binding, contexts, receipts)
+
+
+def test_unobserved_signed_skill_cannot_be_added_as_tested():
+    key, sign, inventory, binding, contexts, receipts = grant_inventory_fixture()
+    inventory["skills"]["unused"] = sign({"grant_id": "unused", "status": "approved"})
+    binding["skills"].append("unused")
+    with pytest.raises(ValueError, match="grant_inventory_unused_skill"):
+        verify_grant_inventory(canonical(inventory), key, binding, contexts, receipts)
+
+
+def test_skill_inventory_cannot_swap_permission_digest_between_contexts():
+    key, _, inventory, binding, contexts, receipts = grant_inventory_fixture()
+    contexts["old"]["authority"]["grant_digest"] = contexts["new"]["authority"]["grant_digest"]
+    with pytest.raises(ValueError, match="grant_inventory_context_mismatch"):
+        verify_grant_inventory(canonical(inventory), key, binding, contexts, receipts)
+
+
+def test_inventory_no_skill_receipt_still_needs_exact_agent():
+    key, _, inventory, binding, contexts, receipts = grant_inventory_fixture()
+    receipts["no-skill"] = {"native_invocation": {"contexts": [], "no_skill": True,
+                                                  "agent_authority": {"grant_id": "other"}}}
+    with pytest.raises(ValueError, match="grant_inventory_receipt_mismatch"):
+        verify_grant_inventory(canonical(inventory), key, binding, contexts, receipts)
+
+
+def test_revoked_signed_skill_cannot_be_described_as_live_inventory():
+    key, sign, inventory, binding, contexts, receipts = grant_inventory_fixture()
+    inventory["skills"]["skill"] = sign({**inventory["skills"]["skill"], "status": "revoked"})
+    with pytest.raises(ValueError, match="grant_inventory_skill_invalid"):
+        verify_grant_inventory(canonical(inventory), key, binding, contexts, receipts)
+
+
+CONCURRENT_REPORT = ROOT / "docs/development/evidence/optimization-20261007/native-concurrent-v872.json"
+
+
+def test_real_concurrent_requests_preserve_single_slot_and_skill_boundaries():
+    result = verify(CONCURRENT_REPORT, ROOT / "packages/contracts")
+    assert result["receipts"] == 6 and result["signed_contexts"] == 2
+    assert result["signed_inventory_grants"] == 3 and result["case_decision_bindings"] == 2
+    document = json.loads(CONCURRENT_REPORT.read_text())
+    assert document["concurrent_HTTP_requests"] and not document["simultaneous_sandbox_execution"]
+    assert document["verification"]["cases"]["v872-reader"]["effective_action"] == "deny"
+    assert document["verification"]["cases"]["v872-writer"]["effective_action"] == "allow"
+
+
+@pytest.mark.parametrize("section,field", [
+    ("artifacts", "grant_inventory"), ("verification", "grant_inventory_ids"),
+])
+def test_grant_inventory_cannot_be_silently_ignored(tmp_path, section, field):
+    report, doc = copy_bundle(tmp_path, CONCURRENT_REPORT)
+    del doc[section][field]
+    report.write_text(json.dumps(doc))
+    with pytest.raises(ValueError, match="grant_inventory_binding_missing"):
         verify(report, ROOT / "packages/contracts")

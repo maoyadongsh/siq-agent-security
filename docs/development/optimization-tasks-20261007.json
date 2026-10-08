@@ -222,7 +222,8 @@
         "docs/development/optimization-opt08-native-channel-fault-validation-20261008.md",
         "docs/development/optimization-opt08-call-binding-effect-validation-20261008.md",
         "docs/development/optimization-opt08-natural-expiry-validation-20261008.md",
-        "docs/development/optimization-opt08-authority-replacement-validation-20261008.md"
+        "docs/development/optimization-opt08-authority-replacement-validation-20261008.md",
+        "docs/development/optimization-opt08-concurrent-business-validation-20261008.md"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -276,7 +277,8 @@
         "同候选8851724完成v861原生元数据通道失联与v862新任务恢复：读取后只移走本任务socket，约5.396秒窗口内实际write_file报错、文件不存在、无写入回执；原socket按inode恢复，完整Grant/SEC不变，业务failed/hermes_run_failed且资源释放，故障检查30项通过。新任务加载/读取/写入及结果27项通过。两监管均退出0/PID0；归一化OpenShell可写策略一致。新增5回执/2SEC，完整16回执/5SEC/2新请求绑定与有效Grant签名核验通过；依赖11663文件/4链接不变。未改产品或核验器、不重复无关测试；未知证明/到期/并发/四臂/平台/签名继续，11/16保持。",
         "同候选8851724完成v863正常代理对照32项和v864缺失tool_call_id负向33项。合法加载/读取后，仅从唯一实际写入HTTP请求移除调用标识，身份/任务/参数/认证/完整Grant和SEC不变；Authority实际409 native_host_unavailable、工具错误、文件不存在，无伪造deny。正常字节透传对照200 allow并实际写入。两例业务completed及监管退出0/PID0，输出OpenShell可写策略一致；新增5回执/2SEC，完整21回执/7SEC/2新请求绑定及Grant独立核验通过。依赖11663文件/4链接不变，代理及自有资源清理；未改产品、不重复无关测试。自然到期/并发/其他错配/四臂/平台/签名继续，11/16保持；已请求原生Windows/macOS接入信息。",
         "同候选8851724新增Skill Grant自然到期真实对照：v867到期前合法加载/读取/写入29项通过；v869读取后用pidfd暂停自有Hermes约106秒，正式420秒Grant自然到期后恢复，约0.088秒后观察实际write_file报错、文件不存在，31项通过。SEC及原生子身份尚未到期、Agent基线有效，完整签名内容/归一化可写策略不变，无主动撤销或改时钟。两例业务completed、监管退出0/PID0，资源/配置恢复。新Authority完整8回执/3SEC/2Grant及2请求绑定独立核验，通过例占5回执/2SEC；v865错误SEC截止断言失败、v866未执行、v868缺少os.pidfd_open失败均保留，后用预检查通过的libc pidfd接口复测，不改产品。API依赖11663文件/4链接不变。SEC单独到期、续期/更新、并发、资源入口、最终矩阵/平台/签名继续，11/16保持。",
-        "同候选8851724完成正式Skill授权换代：独立批准相同内容的新Grant，通过公开compare/plan/commit/activate撤销旧Grant并建立新安装。v870实际读取后暂停自有Hermes约0.368秒完成更新，恢复后实际write_file报错、文件不存在，32项通过；v871显式绑定新安装的独立新任务加载/读取/写入31项通过。Agent基线及Skill字节不变，SEC自身未到期，输出目录仍可写；两例业务completed、监管退出0/PID0，配置/资源恢复。新Authority 5回执/2SEC/4Grant/4安装更新记录及2任务绑定独立核验；新增离线换代签名/关联检查，50项相关回归（新增16项）和Ruff通过。API依赖11663文件/4链接不变。此为相同内容授权换代，不代替内容版本升级或旧授权原地续期；并发/资源入口/最终矩阵/平台/签名继续，11/16保持。"
+        "同候选8851724完成正式Skill授权换代：独立批准相同内容的新Grant，通过公开compare/plan/commit/activate撤销旧Grant并建立新安装。v870实际读取后暂停自有Hermes约0.368秒完成更新，恢复后实际write_file报错、文件不存在，32项通过；v871显式绑定新安装的独立新任务加载/读取/写入31项通过。Agent基线及Skill字节不变，SEC自身未到期，输出目录仍可写；两例业务completed、监管退出0/PID0，配置/资源恢复。新Authority 5回执/2SEC/4Grant/4安装更新记录及2任务绑定独立核验；新增离线换代签名/关联检查，50项相关回归（新增16项）和Ruff通过。API依赖11663文件/4链接不变。此为相同内容授权换代，不代替内容版本升级或旧授权原地续期；并发/资源入口/最终矩阵/平台/签名继续，11/16保持。",
+        "同候选8851724完成v872两个真实业务HTTP请求并发在途：writer实际加载/读取后暂停约2.202秒，reader真实请求在单槽队列等待，三次重叠观察跨度约1.131秒；writer实际写入成功并释放后reader加载自己的只读Skill，实际写入签名deny grant_scope_violation且文件不存在。36项现场检查通过，两业务completed、监管退出0/PID0；同Agent、不同会话/任务/Skill、归一化可写OpenShell策略相同、Grant及源数据不变。完整6回执/2SEC/3Grant及2任务绑定独立核验，离线核验器59项（新增9项）与Ruff通过，API依赖11663文件/4链接不变。证明当前单槽业务架构下真实并发请求的排队及权限隔离，不宣称两个沙箱同时执行或压力容量；内容版本升级、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。"
       ]
     },
     {
@@ -335,7 +337,8 @@
         "docs/development/optimization-opt08-native-channel-fault-validation-20261008.md",
         "docs/development/optimization-opt08-call-binding-effect-validation-20261008.md",
         "docs/development/optimization-opt08-natural-expiry-validation-20261008.md",
-        "docs/development/optimization-opt08-authority-replacement-validation-20261008.md"
+        "docs/development/optimization-opt08-authority-replacement-validation-20261008.md",
+        "docs/development/optimization-opt08-concurrent-business-validation-20261008.md"
       ],
       "residual_limits": [
         "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
@@ -354,7 +357,8 @@
         "同候选8851724完成v861原生元数据通道失联与v862新任务恢复：读取后只移走本任务socket，约5.396秒窗口内实际write_file报错、文件不存在、无写入回执；原socket按inode恢复，完整Grant/SEC不变，业务failed/hermes_run_failed且资源释放，故障检查30项通过。新任务加载/读取/写入及结果27项通过。两监管均退出0/PID0；归一化OpenShell可写策略一致。新增5回执/2SEC，完整16回执/5SEC/2新请求绑定与有效Grant签名核验通过；依赖11663文件/4链接不变。未改产品或核验器、不重复无关测试；未知证明/到期/并发/四臂/平台/签名继续，11/16保持。",
         "同候选8851724完成v863正常代理对照32项和v864缺失tool_call_id负向33项。合法加载/读取后，仅从唯一实际写入HTTP请求移除调用标识，身份/任务/参数/认证/完整Grant和SEC不变；Authority实际409 native_host_unavailable、工具错误、文件不存在，无伪造deny。正常字节透传对照200 allow并实际写入。两例业务completed及监管退出0/PID0，输出OpenShell可写策略一致；新增5回执/2SEC，完整21回执/7SEC/2新请求绑定及Grant独立核验通过。依赖11663文件/4链接不变，代理及自有资源清理；未改产品、不重复无关测试。自然到期/并发/其他错配/四臂/平台/签名继续，11/16保持；已请求原生Windows/macOS接入信息。",
         "同候选8851724新增Skill Grant自然到期真实对照：v867到期前合法加载/读取/写入29项通过；v869读取后用pidfd暂停自有Hermes约106秒，正式420秒Grant自然到期后恢复，约0.088秒后观察实际write_file报错、文件不存在，31项通过。SEC及原生子身份尚未到期、Agent基线有效，完整签名内容/归一化可写策略不变，无主动撤销或改时钟。两例业务completed、监管退出0/PID0，资源/配置恢复。新Authority完整8回执/3SEC/2Grant及2请求绑定独立核验，通过例占5回执/2SEC；v865错误SEC截止断言失败、v866未执行、v868缺少os.pidfd_open失败均保留，后用预检查通过的libc pidfd接口复测，不改产品。API依赖11663文件/4链接不变。SEC单独到期、续期/更新、并发、资源入口、最终矩阵/平台/签名继续，11/16保持。",
-        "同候选8851724完成正式Skill授权换代：独立批准相同内容的新Grant，通过公开compare/plan/commit/activate撤销旧Grant并建立新安装。v870实际读取后暂停自有Hermes约0.368秒完成更新，恢复后实际write_file报错、文件不存在，32项通过；v871显式绑定新安装的独立新任务加载/读取/写入31项通过。Agent基线及Skill字节不变，SEC自身未到期，输出目录仍可写；两例业务completed、监管退出0/PID0，配置/资源恢复。新Authority 5回执/2SEC/4Grant/4安装更新记录及2任务绑定独立核验；新增离线换代签名/关联检查，50项相关回归（新增16项）和Ruff通过。API依赖11663文件/4链接不变。此为相同内容授权换代，不代替内容版本升级或旧授权原地续期；并发/资源入口/最终矩阵/平台/签名继续，11/16保持。"
+        "同候选8851724完成正式Skill授权换代：独立批准相同内容的新Grant，通过公开compare/plan/commit/activate撤销旧Grant并建立新安装。v870实际读取后暂停自有Hermes约0.368秒完成更新，恢复后实际write_file报错、文件不存在，32项通过；v871显式绑定新安装的独立新任务加载/读取/写入31项通过。Agent基线及Skill字节不变，SEC自身未到期，输出目录仍可写；两例业务completed、监管退出0/PID0，配置/资源恢复。新Authority 5回执/2SEC/4Grant/4安装更新记录及2任务绑定独立核验；新增离线换代签名/关联检查，50项相关回归（新增16项）和Ruff通过。API依赖11663文件/4链接不变。此为相同内容授权换代，不代替内容版本升级或旧授权原地续期；并发/资源入口/最终矩阵/平台/签名继续，11/16保持。",
+        "同候选8851724完成v872两个真实业务HTTP请求并发在途：writer实际加载/读取后暂停约2.202秒，reader真实请求在单槽队列等待，三次重叠观察跨度约1.131秒；writer实际写入成功并释放后reader加载自己的只读Skill，实际写入签名deny grant_scope_violation且文件不存在。36项现场检查通过，两业务completed、监管退出0/PID0；同Agent、不同会话/任务/Skill、归一化可写OpenShell策略相同、Grant及源数据不变。完整6回执/2SEC/3Grant及2任务绑定独立核验，离线核验器59项（新增9项）与Ruff通过，API依赖11663文件/4链接不变。证明当前单槽业务架构下真实并发请求的排队及权限隔离，不宣称两个沙箱同时执行或压力容量；内容版本升级、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。"
       ]
     },
     {
