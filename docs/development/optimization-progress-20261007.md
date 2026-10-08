@@ -208,3 +208,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-15 重复 ID 查询](optimization-opt15-receipt-lookup-validation-20261008.md)：会话绑定在重复 decision ID 下采用第一条并返回 openshell_decision_missing，已复现。绑定、预留哈希和任务链定位现要求 ID 唯一，重复返回 409 或空哈希；唯一旧 ID 仍走原缺失 Grant 结果。OpenShell server 回归、vet 和四目标编译通过。对账/观察末条覆盖、请求边界和原生平台验收继续，总体仍为 11/16。
 
 [OPT-15 矛盾闭合记录](optimization-opt15-closure-validation-20261008.md)：同一预留先记 deny 再记 allow 时，任务查询采用后一条 allow，已复现。第二条对账或匹配观察现返回 openshell_receipt_ambiguous；单条 deny 对账仍按原投影。OpenShell server 回归、vet 和四目标编译通过。请求边界与原生平台验收继续，总体仍为 11/16。
+
+[OPT-15 请求超限状态](optimization-opt15-request-limit-validation-20261008.md)：超过 4 MiB 的 decide/observe 正文修复前返回 400 invalid decision request，已复现。现返回 413 decision_request_too_large，不进入引擎；畸形正文仍为 400。hold 超过 64 KiB 返回 413，链头不变。定向测试、OpenShell server 回归、vet 和四目标编译通过。线性扫描、生产 assert、token 哈希和原生平台验收继续，总体仍为 11/16。

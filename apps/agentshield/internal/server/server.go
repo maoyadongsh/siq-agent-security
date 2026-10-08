@@ -419,6 +419,14 @@ func writeJSON(w http.ResponseWriter, code int, v any) {
 	_ = json.NewEncoder(w).Encode(v)
 }
 
+func requestStatus(err error) int {
+	var oversized *http.MaxBytesError
+	if errors.As(err, &oversized) {
+		return http.StatusRequestEntityTooLarge
+	}
+	return http.StatusBadRequest
+}
+
 func readJSON(r *http.Request, v any, limit int64) error {
 	dec := json.NewDecoder(http.MaxBytesReader(nil, r.Body, limit))
 	dec.UseNumber()
@@ -665,7 +673,7 @@ func (s *Server) hold(w http.ResponseWriter, r *http.Request) {
 		ActorID string `json:"actor_id"`
 	}
 	if err := readJSONStrict(r, &body, 64<<10); err != nil {
-		writeJSON(w, 400, map[string]any{"error": "invalid json"})
+		writeJSON(w, requestStatus(err), map[string]any{"error": "invalid json"})
 		return
 	}
 	if body.ActorID == "" {

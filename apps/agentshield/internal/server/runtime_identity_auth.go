@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/subtle"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -89,7 +90,14 @@ func (s *Server) authorizeDecision(w http.ResponseWriter, r *http.Request, crede
 	}
 	raw, err := io.ReadAll(http.MaxBytesReader(w, r.Body, limit))
 	if err != nil {
-		writeJSON(w, 400, map[string]string{"error": "invalid decision request"})
+		code := 400
+		message := "invalid decision request"
+		var oversized *http.MaxBytesError
+		if errors.As(err, &oversized) {
+			code = http.StatusRequestEntityTooLarge
+			message = "decision_request_too_large"
+		}
+		writeJSON(w, code, map[string]string{"error": message})
 		return false
 	}
 
