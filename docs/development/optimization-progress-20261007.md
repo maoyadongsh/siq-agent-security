@@ -222,3 +222,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-15 Linux 启动](evidence/optimization-20261007/skill-source-smoke-linux-arm64.json)：当前二进制 `aa25999e` 在 linux/arm64 隔离状态通过未签名引导拒绝、自检准入、start 与 init/serve 的 status/pair/控制台/停止，以及 SSH 指导。工作树有无关未提交文件。这不是签名安装、越权拒绝、升级或后台服务验收。总体仍为 11/16（68.75%）。
 
 [OPT-15 Linux 用户服务升级](optimization-opt15-linux-upgrade-20261008.md)：当前二进制 `aa25999e` 的临时用户单元完成同字节升级、端口冲突后的显式恢复和回滚。开发清单没有打断正在运行的原进程。临时单元已清理。这不是企业签名包、设备迁移或越权决定拒绝。总体仍为 11/16（68.75%）。
+
+[OPT-15 Linux 未授权拒绝](optimization-opt15-linux-deny-20261008.md)：当前二进制 `aa25999e` 在无 Grant 的隔离状态拒绝无凭据和未知凭据，已认证写入为 `grant_missing` 且没有文件。停止后再次启动仍拒绝，4 条回执验签通过。别名和未映射工具同一原因被拒绝，不能算已授权工具的入口隔离。总体仍为 11/16（68.75%）。

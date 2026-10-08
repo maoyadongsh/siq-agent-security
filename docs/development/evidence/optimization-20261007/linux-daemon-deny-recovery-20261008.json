@@ -1,0 +1,26 @@
+{
+  "schema_version": "siq-linux-daemon-deny-recovery/v1",
+  "checked_at_utc": "2026-10-08T07:58:00Z",
+  "source_sha": "516aa537",
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "binary_version": "0.0.0-dev",
+  "target": "linux/arm64",
+  "init_code": 0,
+  "stop_code": 0,
+  "restart_health": 200,
+  "restart_same_decision_credential": true,
+  "target_file_created": false,
+  "receipts": 4,
+  "head_seq": 3,
+  "head_hash": "ae628bea30523f390b72d4c194901cfa80a20b5f885cdaaf49070c73c85f3aa7",
+  "chain_verified": true,
+  "cases": {
+    "missing_authorization": {"http": 401, "error": "unauthorized"},
+    "unknown_bearer": {"http": 401, "error": "unauthorized"},
+    "no_grant_write_file": {"http": 200, "action": "deny", "reason_code": "grant_missing"},
+    "alias_write": {"http": 200, "action": "deny", "reason_code": "grant_missing"},
+    "unmapped_tool": {"http": 200, "action": "deny", "reason_code": "grant_missing"},
+    "restart_write_file": {"http": 200, "action": "deny", "reason_code": "grant_missing"}
+  },
+  "scope": "fresh local daemon with no deployed grant. Missing and unknown credentials are 401. An authenticated write is deny and creates no file. Alias and unmapped names also deny, but for grant_missing, so this does not separate tool identity from the missing grant. Stop then serve keeps the credential and the deny. Not a signed install, granted-tool alias test, enterprise upgrade, Windows, or macOS acceptance."
+}
