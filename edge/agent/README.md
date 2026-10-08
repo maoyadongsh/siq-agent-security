@@ -42,6 +42,9 @@ go -C edge/agent build -o "$PWD/.tmp/bin/edge-agent" .
 | `retire-discovery-schedule [--resume]` | Linux 预览或归档已在线复验为 revoked 的旧周期计划 | 不撤销业务权限、不停止服务、不取消已派发任务；历史和恢复记录保留 |
 | `setup-enterprise --help` | Linux 串联计划确认、发行验签暂存、注册/恢复与用户服务配置 | 默认只配置；显式 `--start` 才启动发现服务；新设备的组织周期计划仍需另行创建和确认 |
 | `review-enterprise-upgrade --help` | Linux 只读核对现有身份、旧/新签名暂存、采集范围与服务单元，输出完整确认摘要 | 不修改计划或服务、不运行采集器；不是升级完成或服务已停止的证明 |
+| `upgrade-capabilities` | Linux 只读输出升级恢复协议与编译版本 | 自述须结合实际签名制品身份验证；不证明服务运行或业务效果 |
+| `apply-enterprise-upgrade --help` | 在明确确认摘要、已停服及可信来源检查后切换配置 | 不自动停服/启动；先持久 pending，完成后归档；旧周期确认须先显式退出 |
+| `recover-enterprise-upgrade --help` | 根据 pending 和明确方向继续完成或恢复旧配置 | 不接受任意新路径/计划，不能改写已完成归档方向；新目标仍须有效，已完成清理除外 |
 
 Linux 后台服务、心跳和任务命令读取设备身份时要求绝对、私有状态目录及安全父目录，
 拒绝符号链接、硬链接、组/其他用户可访问的状态文件、超大或歧义 JSON。
@@ -82,9 +85,11 @@ export SIQ_CONNECTOR_BIN_DIR="/absolute/verified-stage/bin/arm64"
 
 Linux 用户服务安装开发入口：`install-user-service --release FILE --stage DIR [--start]`。要求本机已注册并确认仍在安装期限内的 user 模式计划，重新验签和核对暂存文件后写入当前用户 systemd 单元；相同内容可重试，不覆盖不同配置。默认只写配置，显式 --start 才执行用户级 reload/enable/start 和 active 检查，不提权、不启用 linger。失败保留状态和制品，可能留下已启用但未运行的单元；完整升级/回滚及真实登录退出/重启验收待完成。命令使用中的 Edge 排他锁会拒绝并发安装，测试仅使用模拟服务管理器，当前不承诺部署即开机自启。
 
-升级前核验入口：`review-enterprise-upgrade --plan FILE --from-stage OLD --to-stage NEW --tenant ID`。它读取现有私密状态，但仅输出不含凭据的完整新旧计划及摘要；复验两份暂存的发布签名，拒绝自定义/漂移的旧单元与跨环境迁移。旧安装窗口可已过期，新计划必须当前有效。目前完成的是[升级核验](../../docs/development/optimization-opt11-upgrade-review-validation-20261008.md)，事务切换、中断恢复、实际停止/启动与正式签名包验收仍待完成，不能通过重新执行 setup 替代。
+升级前核验入口：`review-enterprise-upgrade --plan FILE --from-stage OLD --to-stage NEW --tenant ID`。它读取现有私密状态，但仅输出不含凭据的完整新旧计划及摘要；复验两份暂存的发布签名，拒绝自定义/漂移的旧单元与跨环境迁移。旧安装窗口可已过期，新计划必须当前有效。[只读核验](../../docs/development/optimization-opt11-upgrade-review-validation-20261008.md)后，可使用下述显式切换/恢复入口。正式签名包、真实服务及设备迁移验收仍待完成，不能通过重新执行 setup 替代。
 
-升级恢复基础组件已加入 [pending 合同](../../packages/contracts/enterprise-upgrade-journal.v1.md)：任何未完成升级记录都会阻断 `tasks`/`serve` 及正常身份/授权变更，先锁后读避免使用旧内存状态。日志严格绑定旧/新计划和状态摘要，不复制设备令牌或签名 seed；遇损坏记录应保留现场。当前尚无公开切换/恢复命令，勿手工生成或删除 pending。周期确认须通过既有撤销及归档流程退出，不能自动迁移到新安装计划。见[本批验证与限制](../../docs/development/optimization-opt11-upgrade-journal-validation-20261008.md)。
+升级恢复基础组件已加入 [pending 合同](../../packages/contracts/enterprise-upgrade-journal.v1.md)：任何未完成升级记录都会阻断 `tasks`/`serve` 及正常身份/授权变更，先锁后读避免使用旧内存状态。日志严格绑定旧/新计划和状态摘要，不复制设备令牌或签名 seed；遇损坏记录应保留现场。已有显式切换/恢复命令，勿手工生成或删除 pending。周期确认须通过既有撤销及归档流程退出，不能自动迁移到新安装计划。见[本批验证与限制](../../docs/development/optimization-opt11-upgrade-journal-validation-20261008.md)。
+
+配置切换：`apply-enterprise-upgrade --plan FILE --from-stage OLD --to-stage NEW --tenant ID --confirm-upgrade-sha256 DIGEST`，摘要取自完整 review。先由操作员停止服务；CLI 对固定用户单元读取准确来源、无 drop-in、无运行 PID，再从两份签名暂存中固定实际 Edge 程序探测恢复能力。旧程序不支持 pending 协议则拒绝。中断时保留旧/新包和日志，使用 `recover-enterprise-upgrade --direction target|previous --confirm-upgrade-sha256 DIGEST` 明确选择完成或恢复。恢复只使用 pending 内绑定的路径与计划；target 未完成切换仍受新计划窗口限制，previous 可恢复已过期旧安装。成功仅表示 `configured_not_started`，完成记录位于私密状态目录；启动服务和确认业务效果是后续独立步骤。见[切换与恢复验证](../../docs/development/optimization-opt11-upgrade-apply-validation-20261008.md)。
 
 Linux 范围确认底层入口：`confirm-discovery-plan --plan FILE --tenant ID --confirm-plan-sha256 DIGEST`。核对已注册状态、当前计划与明确确认后，仅保存本机扫描限制；不注册、不扫描、不授权业务。需先停止 serve/tasks 以取得排他锁，确认后重新启动服务。已确认设备的签名任务仍必须使用明确采集器及允许的 roots/include 子集，超范围返回 discovery_scope_denied；旧设备未保存计划时仍属 legacy，不能声称已验证范围。统一安装入口已复用该确认阶段，但制品信任、设备注册和周期计划仍保持独立核验。
 

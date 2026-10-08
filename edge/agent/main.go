@@ -73,6 +73,12 @@ func main() {
 		err = cmdRetireSchedule(ctx, os.Args[2:])
 	case "install-user-service":
 		err = cmdInstallUserService(ctx, os.Args[2:])
+	case "upgrade-capabilities":
+		err = cmdUpgradeCapabilities(os.Args[2:])
+	case "apply-enterprise-upgrade":
+		err = cmdApplyEnterpriseUpgrade(ctx, os.Args[2:])
+	case "recover-enterprise-upgrade":
+		err = cmdRecoverEnterpriseUpgrade(ctx, os.Args[2:])
 	case "review-enterprise-upgrade":
 		err = cmdReviewEnterpriseUpgrade(ctx, os.Args[2:])
 	case "user-service-status":
@@ -112,6 +118,9 @@ commands:
   recover-registration --control-plane ORIGIN --environment ID
                                                            Linux: recover a pending initial registration
   prepare-install --help                                   Linux: validate confirmed plan and stage files only
+  upgrade-capabilities                                    Linux: read-only upgrade protocol support
+  apply-enterprise-upgrade --help                          Linux: explicitly switch stopped service configuration
+  recover-enterprise-upgrade --help                        Linux: finish or restore the exact pending upgrade
   review-enterprise-upgrade --help                         Linux: review signed old/new installation; no changes
   verify-enterprise-release --release FILE [--bundle DIR]   Linux: verify publisher and optionally all artifacts; no install
   serve                                                    Linux: heartbeat and task polling until stopped

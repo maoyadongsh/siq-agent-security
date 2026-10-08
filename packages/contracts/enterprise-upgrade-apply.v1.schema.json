@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security.local/contracts/enterprise-upgrade-apply.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "direction",
+    "journal",
+    "state_sha256",
+    "unit_sha256",
+    "service_started",
+    "business_permissions_granted"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "enterprise-upgrade-completed/v1"
+    },
+    "status": {
+      "const": "configured_not_started"
+    },
+    "direction": {
+      "enum": [
+        "target",
+        "previous"
+      ]
+    },
+    "journal": {
+      "$ref": "https://siq-agent-security.local/contracts/enterprise-upgrade-journal.v1.schema.json"
+    },
+    "state_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "unit_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "service_started": {
+      "const": false
+    },
+    "business_permissions_granted": {
+      "const": false
+    }
+  }
+}

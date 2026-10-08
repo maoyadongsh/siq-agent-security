@@ -31,8 +31,15 @@ func connectorCommand(ctx context.Context, path, name, digest string) (*exec.Cmd
 }
 
 func openVerifiedConnector(path, name, digest string) (*os.File, error) {
-	if !isOfficialConnector(name) || !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(digest) ||
-		!filepath.IsAbs(path) || filepath.Clean(path) != path || filepath.Base(path) != name+"-connector" || len(path) > 4096 {
+	if !isOfficialConnector(name) {
+		return nil, ErrConnectorTrust
+	}
+	return openVerifiedProgram(path, name+"-connector", digest)
+}
+
+func openVerifiedProgram(path, basename, digest string) (*os.File, error) {
+	if !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(digest) ||
+		!filepath.IsAbs(path) || filepath.Clean(path) != path || filepath.Base(path) != basename || len(path) > 4096 {
 		return nil, ErrConnectorTrust
 	}
 	parts := strings.Split(strings.TrimPrefix(path, "/"), "/")

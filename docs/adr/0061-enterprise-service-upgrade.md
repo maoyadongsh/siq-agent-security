@@ -37,11 +37,14 @@
 `tasks`/`serve` 在获取任务锁后才读取 State，锁目录逐级固定。内部原始锁用于恢复，不开放公共绕过参数。
 周期确认绑定旧计划：新升级准备要求既有周期经过现有在线撤销及显式归档，不迁移或重签授权。
 正式来源必须包含 pending 阻断能力，不能假定旧 Edge 二进制能识别新日志。
-实际 stopped-service 核验、配置切换、恢复方向确认、完成归档和公开 CLI 尚未实现；
-当前没有入口可根据 preview 自动写入或升级。
+已接入 `apply-enterprise-upgrade` / `recover-enterprise-upgrade`：明确确认摘要和恢复方向，
+服务管理器严格读取 stopped/无 override 条件，固定 FD 探测两份已验签 Edge 的 pending 协议，
+持久切换 state/unit、daemon-reload、完成归档再移除 pending。命令不停止或启动服务。
+完成输出丢失不回滚已经持久的配置；已完成归档不能被相反方向恢复覆盖。
+见 [执行合同](../../packages/contracts/enterprise-upgrade-apply.v1.md)。正式签名包和实际 systemd 验收仍待完成。
 只读核验中的同 UID/root 管理员仍是信任边界，不是远程证明。版本切换必须显式显示两份
 发行身份；本期没有发布者在线撤回列表，不宣称通用防降级。Windows/macOS 明确 unsupported。
 
 验收要求：正确旧/新来源及过期旧安装窗口可核验；新窗口过期、跨上下文、签名失败、
-状态/计划/unit 漂移、路径别名和取消均拒绝；成功/失败/输出故障都没有安装副作用。
+状态/计划/unit 漂移、路径别名和取消均拒绝；只读 review 的成功/失败/输出故障都没有安装副作用。
 完整升级另需故障注入、实际签名包、服务管理器、任务执行及恢复验收。

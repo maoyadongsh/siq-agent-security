@@ -1,0 +1,99 @@
+{
+  "schema_version": "enterprise-upgrade-completed/v1",
+  "status": "configured_not_started",
+  "direction": "target",
+  "journal": {
+    "schema_version": "enterprise-upgrade-pending/v1",
+    "intent": {
+      "schema_version": "enterprise-upgrade-intent/v1",
+      "device_identity": "synthetic-device",
+      "tenant_id": "tenant-fixture",
+      "environment_id": "env-fixture",
+      "control_plane_origin": "https://security.example.test:8443",
+      "state_path": "/tmp/TestUpgradeApplyChangesOnlyConfirmedConfiguration4056020941/001/state/state.json",
+      "state_file_sha256": "1c54c6055af84bf38736fe83c3e9aae358fa2516748ee4f746afd2f1a3960e39",
+      "unit_path": "/tmp/TestUpgradeApplyChangesOnlyConfirmedConfiguration4056020941/001/config/systemd/user/siq-edge-discovery.service",
+      "from": {
+        "stage_path": "/tmp/TestUpgradeApplyChangesOnlyConfirmedConfiguration4056020941/001/old-stage",
+        "plan": {
+          "schema_version": "enterprise-install-plan/v1",
+          "plan_id": "eip-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "tenant_id": "tenant-fixture",
+          "environment_id": "env-fixture",
+          "control_plane_origin": "https://security.example.test:8443",
+          "issued_at": "2026-10-08T01:35:28Z",
+          "expires_at": "2026-10-08T01:45:28Z",
+          "target_os": "linux",
+          "target_arch": "arm64",
+          "service_mode": "user",
+          "release_version": "0.4.0-test",
+          "release_manifest_sha256": "edf59d5d35c4fc4ce765ebaa87c77a246a0008a3f55d55d5cfa41ef4b242ce50",
+          "connectors": [
+            {
+              "id": "hermes",
+              "version": "0.4.0-test",
+              "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "protocol_version": "connector-protocol.v1",
+              "scope": {
+                "roots": [
+                  "~/.hermes/profiles/*"
+                ],
+                "include": [
+                  "config.yaml",
+                  "SOUL.md"
+                ]
+              }
+            }
+          ],
+          "purpose": "discovery_only"
+        },
+        "unit_sha256": "6b076aa2e862db51421b2659b831418baddc72c033eeadf192b88a778d42251a"
+      },
+      "to": {
+        "stage_path": "/tmp/TestUpgradeApplyChangesOnlyConfirmedConfiguration4056020941/001/new-stage",
+        "plan": {
+          "schema_version": "enterprise-install-plan/v1",
+          "plan_id": "eip-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "tenant_id": "tenant-fixture",
+          "environment_id": "env-fixture",
+          "control_plane_origin": "https://security.example.test:8443",
+          "issued_at": "2026-10-08T02:34:28Z",
+          "expires_at": "2026-10-08T02:45:28Z",
+          "target_os": "linux",
+          "target_arch": "arm64",
+          "service_mode": "user",
+          "release_version": "0.4.1-upgrade-fixture",
+          "release_manifest_sha256": "edda5749231a90be3753f6cd28301fbb7ca5ea4f25ad928dde199b891128a008",
+          "connectors": [
+            {
+              "id": "hermes",
+              "version": "0.4.1-upgrade-fixture",
+              "artifact_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "protocol_version": "connector-protocol.v1",
+              "scope": {
+                "roots": [
+                  "~/评估角色/*"
+                ],
+                "include": [
+                  "config.yaml",
+                  "SOUL.md"
+                ]
+              }
+            }
+          ],
+          "purpose": "discovery_only"
+        },
+        "unit_sha256": "a42ee90887c7cbddf1c20631fa9e64affc4201032975e53e41b78b468d45b884"
+      }
+    },
+    "confirmation_sha256": "e2f76df37f4c6e0862faa011af9a0da290b22b1bf435e62908f2b7d5beeba526",
+    "state_baseline_sha256": "aaab79c20a52338a84174bd1cadf6f3a29f4a5060a2b56a00f5ccdc13d32c075",
+    "original_plan_bytes": "ewogICAgInNjaGVtYV92ZXJzaW9uIjogImVudGVycHJpc2UtaW5zdGFsbC1wbGFuL3YxIiwKICAgICJwbGFuX2lkIjogImVpcC1hYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsCiAgICAidGVuYW50X2lkIjogInRlbmFudC1maXh0dXJlIiwKICAgICJlbnZpcm9ubWVudF9pZCI6ICJlbnYtZml4dHVyZSIsCiAgICAiY29udHJvbF9wbGFuZV9vcmlnaW4iOiAiaHR0cHM6Ly9zZWN1cml0eS5leGFtcGxlLnRlc3Q6ODQ0MyIsCiAgICAiaXNzdWVkX2F0IjogIjIwMjYtMTAtMDhUMDE6MzU6MjhaIiwKICAgICJleHBpcmVzX2F0IjogIjIwMjYtMTAtMDhUMDE6NDU6MjhaIiwKICAgICJ0YXJnZXRfb3MiOiAibGludXgiLAogICAgInRhcmdldF9hcmNoIjogImFybTY0IiwKICAgICJzZXJ2aWNlX21vZGUiOiAidXNlciIsCiAgICAicmVsZWFzZV92ZXJzaW9uIjogIjAuNC4wLXRlc3QiLAogICAgInJlbGVhc2VfbWFuaWZlc3Rfc2hhMjU2IjogImVkZjU5ZDVkMzVjNGZjNGNlNzY1ZWJhYTg3Yzc3YTI0NmEwMDA4YTNmNTVkNTVkNWNmYTQxZWY0YjI0MmNlNTAiLAogICAgImNvbm5lY3RvcnMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAiaGVybWVzIiwKICAgICAgICAidmVyc2lvbiI6ICIwLjQuMC10ZXN0IiwKICAgICAgICAiYXJ0aWZhY3Rfc2hhMjU2IjogImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLAogICAgICAgICJwcm90b2NvbF92ZXJzaW9uIjogImNvbm5lY3Rvci1wcm90b2NvbC52MSIsCiAgICAgICAgInNjb3BlIjogewogICAgICAgICAgInJvb3RzIjogWwogICAgICAgICAgICAifi8uaGVybWVzL3Byb2ZpbGVzLyoiCiAgICAgICAgICBdLAogICAgICAgICAgImluY2x1ZGUiOiBbCiAgICAgICAgICAgICJjb25maWcueWFtbCIsCiAgICAgICAgICAgICJTT1VMLm1kIgogICAgICAgICAgXQogICAgICAgIH0KICAgICAgfQogICAgXSwKICAgICJwdXJwb3NlIjogImRpc2NvdmVyeV9vbmx5IgogIH0=",
+    "restored_state_sha256": "1c54c6055af84bf38736fe83c3e9aae358fa2516748ee4f746afd2f1a3960e39",
+    "target_state_sha256": "68552e18a610ad67ff2a9df37f8047c9123d76d52c241d8870b9bda9f23f97bd"
+  },
+  "state_sha256": "68552e18a610ad67ff2a9df37f8047c9123d76d52c241d8870b9bda9f23f97bd",
+  "unit_sha256": "a42ee90887c7cbddf1c20631fa9e64affc4201032975e53e41b78b468d45b884",
+  "service_started": false,
+  "business_permissions_granted": false
+}

@@ -1,7 +1,7 @@
 # enterprise-upgrade-pending/v1
 
 Linux 私密设备目录的升级恢复记录。记录不是授权、发行签名或升级完成回执。
-本增量提供持久记录、恢复输入核验和普通任务阻断；尚无公开 apply/recover 命令。
+持久记录、恢复输入核验和普通任务阻断供 [apply/recover 命令](enterprise-upgrade-apply.v1.md) 使用。
 
 ## 文件与绑定
 
@@ -38,6 +38,6 @@ serve/tasks 先取得锁再读取状态，避免升级完成后仍使用锁前�
 ## 边界与后续阶段
 
 本增量不修改 state、unit、周期授权或执行台账，不调用 systemctl、不运行 connector。
-实际 stopped-service 核验、配置切换、故障恢复、完成归档及公开 CLI 后续实现。
+实际 stopped-service 核验、配置切换、故障恢复和完成归档由执行合同定义；正式签名包与真实服务验收另列。
 原有未包含 pending 阻断逻辑的旧 Edge 二进制不因生成此记录自动获得保护；正式升级来源
 必须包含该能力，不能把早期候选包的测试拼接成完整断电恢复验收。同 UID/root 管理员仍是信任边界。

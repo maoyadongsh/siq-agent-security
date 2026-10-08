@@ -1,0 +1,404 @@
+{
+  "schema_version": "optimization-enterprise-upgrade-apply-evidence/v1",
+  "date": "2026-10-08",
+  "parent_commit": "12023f31486b847ed3408d36fcb30e8b444b426e",
+  "task": "OPT-11",
+  "task_status": "implementing",
+  "scope": "Explicit stopped-user-service configuration upgrade/recovery with durable completion; never service activation or business authorization",
+  "validation": {
+    "focused-002": {
+      "pass": {
+        "top_level": 9,
+        "including_subtests": 32
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    },
+    "full": {
+      "pass": {
+        "top_level": 249,
+        "including_subtests": 818
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 2,
+        "including_subtests": 2
+      }
+    },
+    "race": {
+      "pass": {
+        "top_level": 31,
+        "including_subtests": 134
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    },
+    "connector-race": {
+      "pass": {
+        "top_level": 6,
+        "including_subtests": 18
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    },
+    "process-exit": {
+      "pass": {
+        "top_level": 1,
+        "including_subtests": 1
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    },
+    "full-final": {
+      "pass": {
+        "top_level": 251,
+        "including_subtests": 820
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 2,
+        "including_subtests": 2
+      }
+    },
+    "protocol-final-race": {
+      "pass": {
+        "top_level": 2,
+        "including_subtests": 2
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    }
+  },
+  "unique_passed_top_level": 251,
+  "unique_passed_including_subtests": 820,
+  "aggregation": "Final production snapshot full run passed 251 top-level / 820 including subtests, 2 existing conditional skips. Earlier full run and extra process test retained separately, not added again.",
+  "contracts": {
+    "passed": 38,
+    "new_apply_tests": 12,
+    "prior_journal_review_tests": 26
+  },
+  "static_checks": {
+    "vet": "passed",
+    "ruff": "passed",
+    "gofmt": "passed",
+    "diff_check": "passed"
+  },
+  "native_cli": {
+    "schema_version": "opt11-upgrade-apply-native-checks/v1",
+    "binary_sha256": "bd5e74bfc15af4b955ce939c5060dddb3009b88831d6504cd25a21f37bcb4ed5",
+    "checks": [
+      "actual capability wire",
+      "apply-enterprise-upgrade help",
+      "recover-enterprise-upgrade help",
+      "profile rejects arguments",
+      "actual fixed verifier refuses synthetic releases before pending/config writes",
+      "no verification bypass flag",
+      "damaged pending rejects target",
+      "damaged pending rejects previous",
+      "tasks remains blocked",
+      "serve remains blocked"
+    ],
+    "passed": 10,
+    "temporary_home_removed": true,
+    "formal_signed_upgrade": false,
+    "real_systemd_acceptance": false
+  },
+  "builds": [
+    {
+      "target": "linux-arm64",
+      "sha256": "bd5e74bfc15af4b955ce939c5060dddb3009b88831d6504cd25a21f37bcb4ed5",
+      "bytes": 9717432,
+      "exit_code": 0
+    },
+    {
+      "target": "linux-amd64",
+      "sha256": "05d7f6e5334b0aaad8ed2af003c57ae109c3fab9a2abc5583160fd8ac4dd17aa",
+      "bytes": 10484066,
+      "exit_code": 0
+    },
+    {
+      "target": "darwin-arm64",
+      "sha256": "bd2ef33c7a581bdeb28b4b11cbb4f5b8dcd1feda721a212418d00b9710a57395",
+      "bytes": 9437778,
+      "exit_code": 0
+    },
+    {
+      "target": "windows-amd64",
+      "sha256": "b1b68569bba51f458d8157b99eeeaa2de0b56b75c704e9c8d96343f1a66dadc7",
+      "bytes": 10031104,
+      "exit_code": 0
+    }
+  ],
+  "test_dependencies": {
+    "positive_upgrade_signature": "Explicit internal synthetic verifier, not publisher proof",
+    "service_manager": "Strict internal test callback, not actual systemd",
+    "edge_profile_positive": "Actual compiled synthetic ELF helper via pinned FD, no inherited HOME/device state; not a signed Edge release",
+    "fixed_publisher": "Actual native CLI rejects synthetic releases; no alternate key/bypass"
+  },
+  "initial_correction": "First focused command failed to compile because a test referenced the wrong existing short-writer helper name; corrected before focused-002. Original stderr retained.",
+  "source_files": [
+    {
+      "path": "edge/agent/upgrade_apply_linux.go",
+      "sha256": "97e40a81526e65005880f27e71a3251897d39c4e99201f8fefe47d57ccc98847",
+      "bytes": 16888
+    },
+    {
+      "path": "edge/agent/upgrade_apply_other.go",
+      "sha256": "5e84642ec162cb0e92f9a4f571937e587475fff36bb6dd9dede660eb43690cf9",
+      "bytes": 419
+    },
+    {
+      "path": "edge/agent/upgrade_apply_linux_test.go",
+      "sha256": "63fc5e27025481e6da8b385c242b3f0725cc6477132b0d15b32f728d161d7b5f",
+      "bytes": 16640
+    },
+    {
+      "path": "edge/agent/connector_trust_linux.go",
+      "sha256": "8ff36bd9458875f2ca264882c6349a6961461e0464d2067e8385ce01ded4fc19",
+      "bytes": 3732
+    },
+    {
+      "path": "edge/agent/main.go",
+      "sha256": "99313cd2fe81211c9b6f78b8d76730f470f1cb3574a23c0e0f516c594c590504",
+      "bytes": 15891
+    },
+    {
+      "path": "edge/agent/testdata/upgrade-helper/main.go",
+      "sha256": "ab16287019c6fd162cdd78646a21724b661f86c635515a274820c5631344cd0b",
+      "bytes": 494
+    },
+    {
+      "path": "edge/agent/testdata/enterprise-upgrade-apply.synthetic.json",
+      "sha256": "e25ff533e35c8f755d895e2b8aa48c732d1b5c64bdb3a7660ff183b56f71ad20",
+      "bytes": 5699
+    },
+    {
+      "path": "packages/contracts/enterprise-upgrade-apply.v1.md",
+      "sha256": "4f8421ed7061abe04205547721ae7da18befdcb8634c4cdae4cf9b33adf998ee",
+      "bytes": 2719
+    },
+    {
+      "path": "packages/contracts/enterprise-upgrade-apply.v1.schema.json",
+      "sha256": "b30df87d78e1038ab1bd8db3bdc6ac23a417dc8a4edfc0ce040c719e495f4fa4",
+      "bytes": 1067
+    },
+    {
+      "path": "packages/contracts/enterprise-upgrade-capabilities.v1.schema.json",
+      "sha256": "2da20c2b476aa76350fe21f16ab4622c4820daef8173913bf918d777164d637d",
+      "bytes": 753
+    },
+    {
+      "path": "apps/control-api/app/tests/test_enterprise_upgrade_apply_contract.py",
+      "sha256": "5bf446228ded69ece65e4d2b41006d7eee8c15e23e3c3ae5372d1ba7bc1a1c2a",
+      "bytes": 3042
+    }
+  ],
+  "private_logs": [
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/compile.log",
+      "sha256": "ee346178c86e4ab342f1cf00d256fc29b3edaa16b31e14212215552b4f478a0c",
+      "bytes": 42
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/connector-race.jsonl",
+      "sha256": "dfe8a9763a6241cd1620106c1307cb5a1cce5fb4898fdacb8b3f6f59ff2d147a",
+      "bytes": 15533
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/contracts.log",
+      "sha256": "e9225e52699d7cac5a8ae8ea388041c0a86a8e2539e97c9859a08a461b71bc55",
+      "bytes": 589
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/focused-001.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/focused-001.jsonl",
+      "sha256": "e5ed636d1e1719c458dd1e39d6e9a8e1d25fda037729534552e25d31f0eee43b",
+      "bytes": 962
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/focused-002.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/focused-002.jsonl",
+      "sha256": "083a66ea59cd849b78fbc531549851f111cb82f0bc1dd74d5de5446688e41189",
+      "bytes": 27622
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/full-final.jsonl",
+      "sha256": "9ed6cc91538345ae1aba26a23075d8427f619415601b4219719e81660796e383",
+      "bytes": 691053
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/full.jsonl",
+      "sha256": "452f47985e25b80c2d302b00ab0e671cfe8d8032a86329ad1697cdffcbf7a551",
+      "bytes": 689466
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/go-overlay.json",
+      "sha256": "41e5931c914c2d3e4e0a8b32f07e5b976b2904460cb78796fd166244e09354cb",
+      "bytes": 89
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/native-capabilities.json",
+      "sha256": "211562898e803aab9f899afd2d69cd712010ed4ba8bca1af81415de894f8e1b1",
+      "bytes": 197
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/native-cli-driver.py",
+      "sha256": "576cb4679bf05cb15c7adbb48d4ca1dfc34d79784940ab881f9f9d9c8cf19860",
+      "bytes": 4769
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/native-cli.json",
+      "sha256": "8bb6cea6594a9439e9e9d96204f3ae6c0c3b0f085ed2d91c7a3e0da027b65519",
+      "bytes": 683
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/process-exit.jsonl",
+      "sha256": "7b9b7e0853093906dd758dc93b5ebda3f43aea12bb0d421966f7bd11db788a5c",
+      "bytes": 1324
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/protocol-final-race.jsonl",
+      "sha256": "55dc93478f3b4f09f539c2e7b0a6eed564e5b7e9b0878d59b372c0c8c9f13b57",
+      "bytes": 1988
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/race.jsonl",
+      "sha256": "b6290aeb130931cbfd4ca26f2b7dad5b4732ea282d35c9cd5eb0f9819da1c3b5",
+      "bytes": 118031
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/vet-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-logs/wire-sample.jsonl",
+      "sha256": "69e2ee9ddbb5db825aabbcd758c6e376a2a964ab2749112bcd4915f6a637a0bb",
+      "bytes": 1344
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-final-native/native-capabilities.json",
+      "sha256": "211562898e803aab9f899afd2d69cd712010ed4ba8bca1af81415de894f8e1b1",
+      "bytes": 197
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-final-native/native-cli-driver.py",
+      "sha256": "d4debaf8afb594d812431a319f8e13a75d3efe38dcac761ff58e612bccee41c7",
+      "bytes": 4783
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-apply-final-native/native-cli.json",
+      "sha256": "4b9736d4cd36765025552260488766e4764fd127584e5b3d0f634e842fd9c07b",
+      "bytes": 683
+    }
+  ],
+  "limits": [
+    "Formal enterprise-release/v1 signed source pair and real stopped-service install/upgrade/migration acceptance remain outstanding",
+    "Configuration completion is not service start, heartbeat, discovery or business recovery",
+    "Prior a9a8e91e unsigned candidates do not contain this upgrade capability; preserved frozen, not relabeled",
+    "No native Windows/macOS managed support; cross-build only",
+    "Same-UID/root remain trusted; no universal anti-downgrade or online publisher revocation",
+    "No remote push, release, CI or merge"
+  ],
+  "final_hardening": "Exact capability field names reject case aliases, duplicates, null/numeric lock markers. Added focused race regression, final full run, rebuilt all four targets, repeated native CLI checks against final binary; earlier artifacts preserved.",
+  "prior_builds": [
+    {
+      "target": "linux-arm64",
+      "sha256": "dcf20e31ab2a5ae7ced0cdc33360b736e636bb3fad41503ed6c9b09ff87a7bc6",
+      "bytes": 9718007,
+      "exit_code": 0
+    },
+    {
+      "target": "linux-amd64",
+      "sha256": "92725606d8c140f4ee39d736c98d7c6f64d5611e8d6d154a556bc39d1c2be241",
+      "bytes": 10484209,
+      "exit_code": 0
+    },
+    {
+      "target": "darwin-arm64",
+      "sha256": "bd2ef33c7a581bdeb28b4b11cbb4f5b8dcd1feda721a212418d00b9710a57395",
+      "bytes": 9437778,
+      "exit_code": 0
+    },
+    {
+      "target": "windows-amd64",
+      "sha256": "b1b68569bba51f458d8157b99eeeaa2de0b56b75c704e9c8d96343f1a66dadc7",
+      "bytes": 10031104,
+      "exit_code": 0
+    }
+  ],
+  "prior_native_cli": {
+    "schema_version": "opt11-upgrade-apply-native-checks/v1",
+    "binary_sha256": "dcf20e31ab2a5ae7ced0cdc33360b736e636bb3fad41503ed6c9b09ff87a7bc6",
+    "checks": [
+      "actual capability wire",
+      "apply-enterprise-upgrade help",
+      "recover-enterprise-upgrade help",
+      "profile rejects arguments",
+      "actual fixed verifier refuses synthetic releases before pending/config writes",
+      "no verification bypass flag",
+      "damaged pending rejects target",
+      "damaged pending rejects previous",
+      "tasks remains blocked",
+      "serve remains blocked"
+    ],
+    "passed": 10,
+    "temporary_home_removed": true,
+    "formal_signed_upgrade": false,
+    "real_systemd_acceptance": false
+  }
+}
