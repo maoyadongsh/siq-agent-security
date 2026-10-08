@@ -52,6 +52,13 @@ func normalizeReadLimit(lim ReadLimit) ReadLimit {
 // ReadLimited streams day files in order and stops when the budget is hit.
 // Unlike slicing after Read(), unread file content is not loaded into memory.
 func (c *Chain) ReadLimited(lim ReadLimit) (ReadResult, error) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.readLimitedLocked(lim)
+}
+
+// readLimitedLocked requires the caller to hold c.mu.
+func (c *Chain) readLimitedLocked(lim ReadLimit) (ReadResult, error) {
 	lim = normalizeReadLimit(lim)
 	files, err := c.files()
 	if err != nil {

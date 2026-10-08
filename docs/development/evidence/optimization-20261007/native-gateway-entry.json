@@ -1,0 +1,51 @@
+{
+  "schema_version": "siq.optimization-native-gateway-entry-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "a1eb6138",
+  "python_tests_passed": 62,
+  "gateway_entry_unit_tests_passed": 15,
+  "gateway_startup": {
+    "schema_version": "siq.native-hermes-function-probe/v1",
+    "checks": {
+      "bootstrap_ready_remains_unverified": true,
+      "bootstrap_pid_is_gateway_process": true,
+      "actual_argv_matches_fixed_entry": true,
+      "real_gateway_authenticated_health": true,
+      "invalid_api_key_rejected": true,
+      "kernel_argv_unchanged_after_gateway_start": true,
+      "api_key_absent_from_argv": true,
+      "owned_gateway_exited": true
+    },
+    "probe": "native-gateway-startup",
+    "synthetic_startup_socket": true,
+    "authority_verified": false,
+    "business_entry_acceptance": false,
+    "model_calls": 0,
+    "kernel_argv_sha256": "791ad84489c3870b02bf65fb0641408b9e686d22671f22d5c4e1abd201594c1f",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_manifest_sha256": "9d506621f3761eb2bd8dbca0b31b32efb0ab4e0524396ef5dcf1a9c83a59bc6e",
+    "exit_code": 0
+  },
+  "existing_native_function_checks_passed": 21,
+  "existing_native_function_authority": "synthetic_callbacks",
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/native_gateway.py": "42bf379551cd0f601eb1e7b82244ac87122c5147c664fd81d85f7b79358adeff",
+    "adapters/runtime/hermes-agentshield/tests/test_native_gateway.py": "0679ddfaeae3781d3476e169550c7d17d690308b91d1f8c679bf22fdeb8c418c",
+    "patches/hermes/native_gateway_probe.py": "94f77f3ac5966defdff9b4523a88fe941ef96eb2abc4caf1e497d3aeb0a6eb3f",
+    "patches/hermes/build_native_overlay.py": "d59a4566d45b8652b8753595a8baa6eba7e0a7d8bf2d22a60189e18388e6b888",
+    "patches/hermes/run_native_probe.py": "df9c3a926e1ead240061be34fcc057d76b7fa3da0ccbfaf6af4faea82f2de446",
+    "packages/contracts/native-gateway-entry.v1.md": "a68f47c02c1167ffb610f0ee753f67b77a9073cb42b1031407268c7b80efeecf"
+  },
+  "raw_result_sha256": {
+    "opt08-native-gateway-startup-01.json": "e481499a9cf72291e65701e843fe6f7e29247cbc64148e09b9d52b28db367191",
+    "opt08-native-gateway-functions-01.json": "f52a7c249a41e122f8f1662c593ba00deb9af99442ebccd0961aed194819750e"
+  },
+  "limits": [
+    "Actual gateway runs in the pinned offline Docker image with a synthetic startup socket; no OpenShell/online Authority or model call in this batch.",
+    "Business repository unchanged. Request identity client, native host supervision, daily API entry, model, cancellation/lease expiry and live business effects remain to integrate.",
+    "Ordinary CLI/plugins unchanged. Fixed native entry calls the upstream dedicated gateway.run.main without arbitrary module selection.",
+    "API transport authentication and unverified ready metadata do not prove runtime tool authorization."
+  ]
+}

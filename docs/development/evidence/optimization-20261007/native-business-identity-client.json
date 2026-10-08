@@ -1,0 +1,100 @@
+{
+  "schema_version": "siq.optimization-native-business-identity-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "security_source_base_commit": "089ceb28",
+  "business_repository": {
+    "baseline": "47c0eda39119662a8f230c7a3b3bea97216abab6",
+    "branch": "codex/native-skill-business-20261007",
+    "commit": "a08142c8316e623618d100c1e3e42f4a9dd3c796",
+    "existing_worktree_changes_preserved": true,
+    "source_sha256": {
+      "scripts/openshell/agentshield_native_identity.py": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "scripts/openshell/probe_agentshield_native_identity.py": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75",
+      "scripts/openshell/tests/test_agentshield_native_identity.py": "0a0791ec9b4edd7d393e10e06b4d49f7f6bc622c62e403b1b78827abf8501dab"
+    }
+  },
+  "business_client_tests_passed": 49,
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-business-identity-client-02",
+    "namespace": "siq-opt08-e56754bbf853",
+    "image_id": "sha256:03a84c5fabde0c05f41a653e55c070839ad0daa79701c9dda6d8968a4a47f79e",
+    "artifact_sha256": "53aaae6a9e4b4edb690a11915cc821f1e31deea2663fea50f81e3c7791846c6c",
+    "business_client_start": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "parent_native_policy_checked": true,
+        "child_identity_checked": true,
+        "child_credential_path_checked": true,
+        "session_enrollment_checked": true,
+        "first_child_issued_by_business_client": true,
+        "first_child_session_enrolled": true,
+        "first_child_cancel_confirmed": true,
+        "cancelled_child_readback_refused": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "business_client_cancel_after_baseline_revocation": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "cancel_confirmed": true,
+        "exact_child_cancelled": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "runtime_checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "signed_chain_verified": true,
+    "receipt_count": 18,
+    "signed_allow": 14,
+    "signed_deny": 4,
+    "model_calls": 0,
+    "business_entry_acceptance": false,
+    "go_integration_seconds": 22.721
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "security_source_sha256": {
+    "apps/agentshield/internal/server/native_openshell_integration_test.go": "087b66d0a8f1ed3dee41a013684f2a2e18ba1840f9983e866898d3c80a0bc572",
+    "patches/hermes/openshell_online_probe.py": "19c21958466d7c2ab143564a2e428ea38e097a8d6cc5ca67acb08b8e90caa628",
+    "packages/contracts/native-business-identity-client.v1.md": "dd8c80fe4944d766a3a69bfd920edcd3f44a22cc7cdf72c79bd9bfe68867e294"
+  },
+  "raw_result_sha256": {
+    "result.json": "0cae0667fc4719799ea7071a94dbd4cc82423748487ccc71c2cebd73d16ecb79",
+    "authority-result.json": "35468202a4ec660823fa5e6d95aef6cc658e8a67b742a38ba2bc12b1d55fb299",
+    "business-client-start.json": "eba5ab4e0f884f5d8c4d4871b7b584c89c68a5b53a2ebd8aa46ba6355a5bd9eb",
+    "business-client-cancel.json": "c79a85c46e75c7f1a1be4173d2d0f0e66c1d59e053e061d1828f09176ff0f1c8"
+  },
+  "limits": [
+    "Business client is not yet invoked by the daily API builder or Supervisor.",
+    "HTTP fixture unit tests and actual Go HTTP/OpenShell integration are separate evidence layers.",
+    "Request/operator/execution digest/Skill content remain synthetic; model calls zero.",
+    "This run repeats after adding first-issuance/enrollment/cancellation checks; previous successful run remains in opt08-business-identity-client-01."
+  ]
+}

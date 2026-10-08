@@ -1,0 +1,87 @@
+{
+  "schema_version": "optimization-openshell-behavior-protection-validation/v1",
+  "recorded_at": "2026-10-07T20:54:45.351071+00:00",
+  "base_commit": "4d1f85b2f26d0621a3cf4ec66c8cc3dcd0dda08d",
+  "result": "protection_passed_real_direct_differential_failed",
+  "validation": {
+    "pytest": {
+      "opt09-protection-final": {
+        "tests": 84,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "opt09-protection-peer-final": {
+        "tests": 46,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "docker": {
+      "passed": true,
+      "schema_version": "openshell-behavior-protection-docker-check/v1",
+      "base_image": "sha256:bcf4897ab8f95ec875847998297da98d16a44c8741c62c738d917f0eb8d35097",
+      "probe_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+      "checks": {
+        "daemon_observed_static_elf_and_protected_parents": true,
+        "unchanged_target_digest_stable_and_schema_valid": true,
+        "symlink_rejected": true,
+        "writable_parent_rejected": true,
+        "different_program_rejected": true,
+        "wrong_image_rejected": true,
+        "wrong_namespace_rejected": true,
+        "wrong_sandbox_id_rejected": true,
+        "actual_workload_uid_cannot_open_program_for_write": true,
+        "writable_program_rejected": true,
+        "restored_permissions_reverified": true,
+        "same_bytes_readonly_overlay_rejected": true
+      },
+      "openshell_calls": 0,
+      "model_calls": 0,
+      "synthetic_sandbox_labels": true,
+      "image_digest": "sha256:123ddf660f3b95ad12d4b667803febf0fd20c35dedc21b9b913b52b44c2d1dde",
+      "owned_containers_removed": true
+    },
+    "ruff": "passed",
+    "go_vet": "passed",
+    "gofmt": "passed",
+    "owned_attempts": [
+      {
+        "attempt": "opt09-owned-behavior-001",
+        "passed": false,
+        "cleaned": true
+      },
+      {
+        "attempt": "opt09-owned-behavior-002",
+        "passed": false,
+        "cleaned": true
+      },
+      {
+        "attempt": "opt09-owned-behavior-003",
+        "passed": false,
+        "cleaned": true
+      }
+    ],
+    "model_calls": 0,
+    "production_state_mutations": 0
+  },
+  "source_sha256": {
+    "docs/adr/0058-enterprise-openshell-behavior-verification.md": "080531131429b738a1aed0b7bc2712594826bd1ddf8a32540d55d1649ecf7f89",
+    "packages/contracts/openshell-behavior-protection.v1.schema.json": "315eb19c2b56da9af04ef670a23c29cbd5d1f3672e7313391cc56325ae1770a8",
+    "apps/control-api/app/adapters/openshell/behavior_protection.py": "54cb031805017ab1210566ecb177f3af8e48c0f67230edd1022015fe122979a5",
+    "apps/control-api/app/tests/test_openshell_behavior_protection.py": "9e81a9934c32833df56dd153c6432a25e70a69c7b5d55bb065be72cb0b1db38b",
+    "scripts/enterprise-experience/probe/behavior_probe.go": "6b12b4debccb1696cfbfc656c67de727844d6a22bb6fed0f3445eb9455c7a903",
+    "scripts/enterprise-experience/probe/README.md": "e08ace6772d2942035ee6a9a600af5ca0560e351c4568c27054d681b0ab34168",
+    "scripts/enterprise-experience/behavior-protection-docker-check.py": "5bac366e9a911adb853d13d1ea01652cd13db7aac2af593de859dca853fa659f",
+    "scripts/enterprise-experience/openshell-behavior-live-check.py": "86f1977698abf2045f30b0178aaa50210408b8425697f5ae1e82ae010acc4566",
+    "scripts/enterprise-experience/owned-openshell-recovery-check.py": "474f01b25278005a6f463190aff71b3c6e0f5391fffa060d6a07c47e53e8f7a3"
+  },
+  "direct_attempt_sha256": "2b41997be6dfb8455902cc8f2c2191088ecce8c5c21e789c39f982f72b951682",
+  "limits": [
+    "Final source hashes identify the final component implementation, not all intermediate failed attempts.",
+    "Docker checks use synthetic sandbox labels. Real OpenShell raw TCP differential failed with both arms refused and six successful controls.",
+    "Proxy transport contract, actual proxy attribution, durable production API/UI and full OPT-09 acceptance remain pending.",
+    "No real business/model requests or production grade promotion occurred."
+  ]
+}

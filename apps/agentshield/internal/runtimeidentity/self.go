@@ -4,6 +4,7 @@ import "siq-agent-security/apps/agentshield/internal/intent"
 
 // SelfView is authenticated metadata, never a claim of runtime protection.
 type SelfView struct {
+	NativeSkillPolicy *NativeSkillPolicy    `json:"native_skill_policy,omitempty"`
 	SchemaVersion     string                `json:"schema_version"`
 	IdentityID        string                `json:"identity_id"`
 	InstanceID        string                `json:"instance_id"`
@@ -25,7 +26,11 @@ func (s *Store) Self(token string) (SelfView, error) {
 	if platform, err := s.resolve(r.InstanceID); err != nil || platform != r.Platform {
 		return SelfView{}, ErrCredential
 	}
-	return SelfView{SchemaVersion: "local-runtime-identity-self/v1", IdentityID: r.IdentityID,
+	version := "local-runtime-identity-self/v1"
+	if r.NativeSkillPolicy != nil {
+		version = "local-runtime-identity-self/v2"
+	}
+	return SelfView{SchemaVersion: version, NativeSkillPolicy: copyNativePolicy(r.NativeSkillPolicy), IdentityID: r.IdentityID,
 		InstanceID: r.InstanceID, AgentID: r.AgentID, Platform: r.Platform, GrantRef: r.GrantRef,
 		SessionTTLSeconds: r.SessionTTLSeconds, Status: "active", RuntimeState: "unverified"}, nil
 }

@@ -27,6 +27,28 @@ def managed(mod, token):
 
 
 @pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
+@pytest.mark.parametrize("variant", ["native", "legacy_with_policy", "native_without_policy"])
+def test_legacy_adapter_rejects_native_enrollment_before_decision(server, mode, variant):
+    srv, token = server
+    mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)
+    managed(mod, token)
+    if variant != "legacy_with_policy":
+        _Fake.enroll["schema_version"] = "local-runtime-session-enrolled/v3"
+    if variant != "native_without_policy":
+        _Fake.enroll["native_skill_policy"] = {
+            "mode": "required", "runtime_artifact_sha256": "c" * 64,
+        }
+        _Fake.enroll["runtime_state"] = "unverified"
+    _Fake.decision = {"action": "allow", "reason": "fixture-upstream-allow"}
+    result = mod._pre_tool_call(
+        "read_file", {"path": "/work/public/report"}, session_id="native-session",
+        tool_call_id="call-native",
+    )
+    assert result["action"] == "block"
+    assert [row[0] for row in _Fake.seen] == ["/v1/runtime-sessions"]
+
+
+@pytest.mark.parametrize("mode", ["block", "warn", "audit_only"])
 def test_managed_enrollment_precedes_decision_and_observation(server, mode):
     srv, token = server
     mod = load(mode, f"http://127.0.0.1:{srv.server_port}", token)

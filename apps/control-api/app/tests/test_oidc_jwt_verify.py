@@ -171,3 +171,34 @@ def test_signed_malformed_authorization_claims_rejected_at_http_boundary(client,
     response = client.get("/api/v1/console-context", headers={"Authorization": "Bearer " + token})
     assert response.status_code == 401
     assert response.json() == {"detail": "invalid_token"}
+
+
+def test_production_rejects_development_headers_without_bearer(oidc_env):
+    from starlette.requests import Request
+
+    request = Request({"type": "http", "headers": [
+        (b"x-dev-tenant-id", b"forged-tenant"),
+        (b"x-dev-user-id", b"forged-admin"),
+        (b"x-dev-roles", b"tenant_admin,security_admin"),
+    ]})
+    with pytest.raises(HTTPException) as exc:
+        security.get_identity(request)
+    assert exc.value.status_code == 401
+
+
+def test_production_signed_identity_ignores_forged_development_headers(oidc_env):
+    from starlette.requests import Request
+
+    token = oidc_env["mint"](role_codes=["viewer"], permissions=[])
+    request = Request({"type": "http", "headers": [
+        (b"authorization", f"Bearer {token}".encode()),
+        (b"x-dev-tenant-id", b"forged-tenant"),
+        (b"x-dev-user-id", b"forged-admin"),
+        (b"x-dev-roles", b"tenant_admin,security_admin"),
+    ]})
+    identity = security.get_identity(request)
+    assert identity.tenant_id == "default"
+    assert identity.actor_id == "user-1"
+    assert identity.has_permission("agent:read")
+    assert not identity.has_permission("policy:manage")
+    assert not identity.has_permission("env:manage")

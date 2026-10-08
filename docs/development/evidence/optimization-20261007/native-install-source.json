@@ -1,0 +1,74 @@
+{
+  "schema_version": "siq.optimization-native-install-source-evidence/v1",
+  "task": "OPT-08",
+  "phase": "D2e",
+  "date": "2026-10-07",
+  "status": "component_verified",
+  "real_import_approval_install_activation": true,
+  "real_python_reader_to_go_install_resolver": true,
+  "transport": "test-only stdin/stdout synchronous observer",
+  "actual_process_and_mount_verification": false,
+  "production_enabled": false,
+  "model_calls": 0,
+  "python_adapter_passed": 259,
+  "go_packages_passed": 45,
+  "go_packages_no_tests": 10,
+  "decoding_vectors": 22,
+  "source_contract_passed": 1,
+  "ruff": "passed",
+  "race_vet_cross_build": {
+    "race_packages": [
+      "skillinstall",
+      "skillcontext"
+    ],
+    "race_result": "passed",
+    "vet_all": "passed",
+    "cross_builds": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/arm64",
+      "windows/amd64"
+    ]
+  },
+  "native_probe": {
+    "schema_version": "siq.native-hermes-function-probe/v1",
+    "checks": {
+      "unconfigured_real_registry_denies": true,
+      "ordinary_native_skill_read": true,
+      "inline_preprocessing_not_executed": true,
+      "native_cache_path_reobserved": true,
+      "native_support_read": true,
+      "real_handler_allowed_once": true,
+      "real_handler_denied_without_effect": true,
+      "real_registry_rejects_duplicate": true,
+      "actual_call_id_propagated": true,
+      "final_gate_sees_middleware_parameters": true,
+      "final_binding_records_rewritten_parameters": true,
+      "actual_plugin_reader": true,
+      "actual_plugin_support_reader": true,
+      "native_cache_same_stat_drift_denied": true,
+      "drift_poisons_subsequent_native_dispatch": true,
+      "task_end_observed": true,
+      "closed_task_denies_real_handler": true,
+      "native_conversation_normal_closes_task": true,
+      "native_conversation_exception_closes_task": true,
+      "direct_host_route_refused": true,
+      "sequential_concurrent_inline_boundary_refused": true
+    },
+    "model_calls": 0,
+    "real_hermes_functions": true,
+    "synthetic_authority_callbacks": true,
+    "siq_authority_bridge": false,
+    "openshell_execution": false,
+    "business_entry_execution": false,
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_manifest_sha256": "704cc0ab8a8e7118165391ce4cdef6d688f437ba59a60e235d1aa430ef347600",
+    "exit_code": 0
+  },
+  "source_sha256": {
+    "apps/agentshield/internal/skillinstall/native_source.go": "e78062439a3c02c77f8b0044cc8bbf165365a96aa6c5b91bc69d46881ee8ec87",
+    "apps/agentshield/internal/skillcontext/native_install.go": "99e680fbce1f786c97271512f4799448ae0a653916a2be9e297402ca8bffdd4f",
+    "adapters/runtime/hermes-agentshield/native_source.py": "cbcf6a9785db38443d9163a15714b5ce16d600bbcf80ec6150b12b4612260df0",
+    "adapters/runtime/hermes-agentshield/native_dispatch.py": "e3135a9f14f0cc6c3cb4ecab0ddd261ca85925338c7df61f110cc89f9f5f2479"
+  }
+}

@@ -1,11 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import Modal from './Modal';
+import { useConsoleContext } from './ConsoleContext';
 import { auditAction, deploymentStatus, executionEvidence, readChangeExecution, type ChangeExecution } from '@/api/changeExecution';
 import { changeStatus } from '@/api/changeReview';
 import { readDeploymentSubmission, type DeploymentSubmission } from '@/api/deploymentSubmission';
 
+const DeploymentBehaviorPanel = lazy(() => import('./DeploymentBehaviorPanel'));
+
 const time = (date: string) => new Date(date).toLocaleString('zh-CN', { hour12: false });
 export default function ChangeExecutionDialog({ id, uncertain, expectedDeploymentId, onClose }: { id: string; uncertain?: boolean; expectedDeploymentId?: string; onClose: () => void }) {
+  const { data: context } = useConsoleContext();
   const [data, setData] = useState<ChangeExecution | null>(null);
   const [submission, setSubmission] = useState<DeploymentSubmission | null | undefined>(null);
   const [error, setError] = useState('');
@@ -40,8 +44,9 @@ export default function ChangeExecutionDialog({ id, uncertain, expectedDeploymen
           return <article className="change-execution-record" key={d.id}>
             <h4>{d.environment_name || '环境名称未提供'} · {deploymentStatus(d.status)}</h4>
             <p>登记目标：{d.target}</p><p>记录时间：{time(d.created_at)}</p>
-            <p className={`verification-badge tone-${view.tone}`}>{view.label}</p><p>{view.detail}</p>
+            <p className={`verification-badge tone-${view.tone}`}>部署时记录：<span>{view.label}</span></p><p>{view.detail}</p>
             <p>独立读回：{{ not_checked: '没有记录', verified: '版本核对一致', mismatch: '与回执不一致', unreachable: '无法连接执行端', no_receipt: '缺少回执', unknown: '结果待核对' }[d.independent_result]}</p>
+            {context ? <Suspense fallback={<p role="status">正在加载测评面板…</p>}><DeploymentBehaviorPanel key={`${context.tenant.id}:${context.actor.type}:${context.actor.id}:${d.id}`} deploymentId={d.id} canManage={context.actions.manage_policy} /></Suspense> : null}
             <details><summary>记录标识与错误摘要</summary><p>部署：{d.id}</p><p>环境：{d.environment_id}</p><p>绑定：{d.binding_id || '历史记录未绑定'}</p>{d.error_digest ? <p>错误摘要：{d.error_digest}</p> : <p>无错误摘要记录。</p>}</details>
           </article>;
         })}

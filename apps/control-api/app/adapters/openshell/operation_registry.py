@@ -7,7 +7,7 @@ import threading
 from collections import OrderedDict
 from dataclasses import dataclass
 
-from app.adapters.openshell.contracts import PolicySnapshot
+from app.adapters.openshell.contracts import PolicySnapshot, RollbackReceipt
 
 
 @dataclass(frozen=True)
@@ -40,6 +40,21 @@ class PolicyOperationRegistry:
             while len(self._records) >= self._limit:
                 self._records.popitem(last=False)
             self._records[operation.operation_id] = operation
+
+    def prepare(self, operation: PolicyOperation) -> None:
+        """Standalone memory profile has no durable pre-write intent."""
+
+    def before_write(self, operation_id: str) -> None:
+        pass
+
+    def before_rollback(self, operation_id: str) -> None:
+        pass
+
+    def restored(self, operation_id: str) -> RollbackReceipt | None:
+        return None
+
+    def complete_rollback(self, operation_id: str, revision: str, digest: str) -> None:
+        self.consume(operation_id)
 
     def get(self, operation_id: str) -> PolicyOperation | None:
         with self._lock:

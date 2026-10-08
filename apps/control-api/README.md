@@ -24,10 +24,16 @@
 | [main.py](app/main.py) | 应用启动、路由与服务配置 |
 | [OpenShell adapter](app/adapters/openshell/) | 期望策略编译、后端交互与读回；能力不支持时显式拒绝 |
 | [worker.py](app/worker.py) | outbox、规则评估、发现调度、漂移及到期状态处理 |
+| [scan_service.py](app/scan_service.py) | 可选独立 Linux 静态扫描服务；经 UID 认证通道调用有界 bubblewrap worker |
 | [migrations](migrations/) | Alembic 数据库迁移；生产不自动建表 |
 | [tests](app/tests/) | 租户/权限负向、合同与规则对等、状态机及后端契约测试 |
 
 租户来自验证身份，不能由请求体覆盖。Secret 不以明文写入业务库、日志或 outbox；Edge 凭据吊销逐请求检查。高风险写操作若无法记录审计即失败。队列租约与重试属于至少一次处理，不宣称 exactly-once。
+
+静态扫描使用单次资源受限 worker。生产支持原生 `bwrap`，以及保留 Docker 默认安全限制的
+`bwrap-service` 独立部署；失败、失联和结果错配不生成成功扫描记录，生产不回退 `process`。
+配置与边界见[隔离扫描部署](../../docs/deployment/isolated-scan-service.md)，
+DGX Spark 实际容器验证见[OPT-14 验收](../../docs/development/optimization-opt14-host-service-validation-20261008.md)。
 
 ## 企业首次接入状态
 
@@ -64,6 +70,8 @@ uv run pytest
 ```
 
 修改 schema 或共享规则时，须同步 Go 消费方和固定向量检查。真实 PostgreSQL + RS256/JWKS 的阶段记录见[测评目录](../../evaluations/README.md)，它不等同客户 IdP、HA、灾备或生产运维验收。OpenShell 的 fake backend、隔离网关验证和实际部署分别记录；不得用模拟读回宣称真实隔离已生效。
+
+2026-10-08 优化开发分支已接入批准模板的主动行为测评、持久观测历史和只读当前目标核验；模板v2请求绑定摘要，等级限定于核验时点／范围，策略变化和过期不沿用旧正向等级。真实OpenShell及浏览器联验见[OPT-09验收](../../docs/development/optimization-opt09-completion-validation-20261008.md)，不等同生产IdP或发行包验收。
 
 ### 复用项目 OpenShell 的配置与证书目录
 

@@ -1,0 +1,379 @@
+{
+  "schema_version": "siq.native-openshell-online-evidence/v1",
+  "date": "2026-10-07",
+  "task_status": "implementing",
+  "result": {
+    "schema_version": "siq.openshell-native-runtime-inspection/v1",
+    "namespace": "siq-opt08-320106fca84f",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "model_calls": 0,
+    "daily_gateway_modified": false,
+    "docker": {
+      "image_matches": true,
+      "root_filesystem_readonly": false,
+      "label_keys": [
+        "ai.siq.hermes.integration-patch-sha256",
+        "ai.siq.hermes.patch-sha256",
+        "ai.siq.openshell.context-sha256",
+        "ai.siq.openshell.data-classification",
+        "ai.siq.openshell.runtime-config-sha256",
+        "ai.siq.qwen38.candidate-input-sha256",
+        "ai.siq.qwen38.compiled-config-sha256",
+        "ai.siq.qwen38.pg-query-sha256",
+        "ai.siq.qwen38.route",
+        "ai.siq.qwen38.snapshot-manifest-sha256",
+        "openshell.ai/managed-by",
+        "openshell.ai/sandbox-id",
+        "openshell.ai/sandbox-name",
+        "openshell.ai/sandbox-namespace",
+        "org.opencontainers.image.revision",
+        "org.opencontainers.image.title"
+      ]
+    },
+    "runtime": {
+      "native_probe_ready": true,
+      "pid": 43,
+      "files": [],
+      "channel_directory": "/tmp/siq-native-online/channel"
+    },
+    "host_process": {
+      "unique_container_cgroup_and_pid_depth_match": true,
+      "status_readable": true,
+      "root_code_readable": true,
+      "mountinfo_readable": true
+    },
+    "native_online": {
+      "native_online_verified": true,
+      "checks": {
+        "real_reader_skill_loaded": true,
+        "reader_real_read_allowed": true,
+        "reader_write_denied_without_effect": true,
+        "real_second_skill_loaded": true,
+        "switch_preserves_reader_ancestor_limit": true,
+        "independent_writer_skill_loaded": true,
+        "writer_real_write_allowed": true,
+        "writer_outside_scope_denied_without_effect": true
+      },
+      "outcomes": [
+        {
+          "task": "reader-task",
+          "tool": "skill_view",
+          "call": "load-reader",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "reader-task",
+          "tool": "read_file",
+          "call": "reader-read",
+          "keys": [
+            "content",
+            "file_size",
+            "is_binary",
+            "is_image",
+            "total_lines",
+            "truncated"
+          ],
+          "error": false
+        },
+        {
+          "task": "reader-task",
+          "tool": "write_file",
+          "call": "reader-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "reader-task",
+          "tool": "skill_view",
+          "call": "switch-writer",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "reader-task",
+          "tool": "write_file",
+          "call": "switched-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        },
+        {
+          "task": "writer-task",
+          "tool": "skill_view",
+          "call": "load-writer",
+          "keys": [
+            "_source_path",
+            "content",
+            "description",
+            "linked_files",
+            "missing_credential_files",
+            "missing_required_commands",
+            "missing_required_environment_variables",
+            "name",
+            "org_provenance",
+            "path",
+            "readiness_status",
+            "related_skills",
+            "required_commands",
+            "required_environment_variables",
+            "setup_needed",
+            "setup_skipped",
+            "skill_dir",
+            "success",
+            "tags",
+            "usage_hint"
+          ],
+          "error": false
+        },
+        {
+          "task": "writer-task",
+          "tool": "write_file",
+          "call": "writer-write",
+          "keys": [
+            "bytes_written",
+            "dirs_created",
+            "files_modified",
+            "lint",
+            "resolved_path",
+            "verified"
+          ],
+          "error": false
+        },
+        {
+          "task": "writer-task",
+          "tool": "write_file",
+          "call": "outside-write",
+          "keys": [
+            "error"
+          ],
+          "error": true
+        }
+      ],
+      "model_calls": 0,
+      "actual_hermes_tools": true,
+      "synthetic_skill_content": true,
+      "business_entry_acceptance": false,
+      "output_sha256": "1ddc6b5567637fa5c8ce9f5650535da81507708be8fc8fba30d695e4b4aae7c2",
+      "independent_host_effect_check": true,
+      "authority": {
+        "signed_chain_verified": true,
+        "receipt_count": 8
+      },
+      "artifact_sha256": "e96b0b3c78c6993e73583800689b29fc51719e18a0fef45f7479e5ffcf4bfef0",
+      "image_id": "sha256:b5c7acfee3c154e5af4a3df2c00d61251bd69403fe90472853099e2f8f85970f",
+      "files": {
+        "/opt/hermes-agent/tools/skills_tool.py": "010e15fbb92d3923a7499e35689d04687c8f5d11191580402894d9f73b08d412",
+        "/opt/hermes-agent/tools/registry.py": "cd6ac4438c49eade8e40e0d837597fa5fe78fd2d3e2182bc2fd11bcd43ea3231",
+        "/opt/hermes-agent/model_tools.py": "1831c3fdb0776a2c5d4f7fdf8f19a05ee07c35b33f291b2165cc6da4f9b19b21",
+        "/opt/hermes-agent/run_agent.py": "5c3ea4682392f01fe9be4bc75c945421a603e76007037bdc0d6930d6b399452b",
+        "/opt/hermes-agent/agent/agent_runtime_helpers.py": "79caa0c1f05d813b6bc351596ff9fe484e0aafd8b95e70831473e1881e338a27",
+        "/opt/hermes-agent/agent/tool_executor.py": "eae77739e3a85ff4864a02f94314a06ff20a2801e0be8f7332c889bf546c94ad",
+        "/opt/hermes-agent/siq_native_runtime/native_dispatch.py": "e3135a9f14f0cc6c3cb4ecab0ddd261ca85925338c7df61f110cc89f9f5f2479",
+        "/opt/hermes-agent/siq_native_runtime/native_source.py": "cbcf6a9785db38443d9163a15714b5ce16d600bbcf80ec6150b12b4612260df0",
+        "/opt/hermes-agent/siq_native_runtime/native_channel.py": "60b95536a68e814c9bc855baea00d26c7c1720134e76d904575a5e31420b3952",
+        "/opt/hermes-agent/siq_native_runtime/native_online.py": "6d87ea7f391697ae3ed6a72b5dd341e77fb67b284b431fbbef07e250261a4ab3",
+        "/opt/hermes-agent/siq_native_runtime/__init__.py": "0503c9e6296811c29e7aaaeaeae9aac7a1d5babe96e2f237fac4870e868e4699",
+        "/opt/hermes-agent/HERMES-LICENSE": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6",
+        "/opt/siq/native-business/bootstrap.py": "e945c9cd4304205addf55d556ba68975975d0870641c1d5bb79e3c51dd2e06c0",
+        "/opt/siq/native-business/skills/writer/SKILL.md": "26b49b759030d498acbcb7e2f05f12ab8a9db471b4210b1aa34e1b4ce7432ac0",
+        "/opt/siq/native-business/skills/reader/SKILL.md": "6061d006c47d311d601d17c859236535fe5b983c8415764e33ffc21436ff7a18"
+      }
+    },
+    "inspection_complete": true,
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true,
+    "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7"
+  },
+  "receipt_projection": [
+    {
+      "tool": "skill_view",
+      "tool_call_id": "load-reader",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "no_skill": true,
+      "context_count": 0,
+      "receipt_sha256": "3e1affd90294a31df11e01b10c09251f39ab90437328ff9a9f6cb0899f40c68d"
+    },
+    {
+      "tool": "read_file",
+      "tool_call_id": "reader-read",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "read",
+      "effects": [
+        "file.read"
+      ],
+      "no_skill": false,
+      "context_count": 1,
+      "receipt_sha256": "c5819580ecbb5ac09142b731e7ad108994e7fe4eda7ae44fe40175ed635b078a"
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "reader-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "no_skill": false,
+      "context_count": 1,
+      "receipt_sha256": "8d8c5f4cf20a2aba6549b2747304c9fa5df4ec72eb42d54e554a29694777abde"
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "switch-writer",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "no_skill": false,
+      "context_count": 1,
+      "receipt_sha256": "d56dbe2e7fb4492c15ef513e1dee94f36e997e4ebdd956e2556d10e752e20150"
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "switched-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "no_skill": false,
+      "context_count": 2,
+      "receipt_sha256": "7e455eae7c70022df5f3b52ccc6a13bf36a84c94cb98d447978f690352679204"
+    },
+    {
+      "tool": "skill_view",
+      "tool_call_id": "load-writer",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "skill.load",
+      "effects": [
+        "tool.invoke"
+      ],
+      "no_skill": true,
+      "context_count": 0,
+      "receipt_sha256": "37e53dafc03a4dff139656008cf6f3c204e62addc723e04ef9ace444e43413c2"
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "writer-write",
+      "action": "allow",
+      "reason_code": "allow",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "no_skill": false,
+      "context_count": 1,
+      "receipt_sha256": "8f16d00808ebc1c563054a14a998676fe92a0f6eccc955f3b02ca79f12397c48"
+    },
+    {
+      "tool": "write_file",
+      "tool_call_id": "outside-write",
+      "action": "deny",
+      "reason_code": "grant_scope_violation",
+      "operation": "write",
+      "effects": [
+        "file.write"
+      ],
+      "no_skill": false,
+      "context_count": 1,
+      "receipt_sha256": "8d599d8b05ecc98fe03778e6add60fd73b94f4d671a61a2e39220a7917586883"
+    }
+  ],
+  "python_tests_passed": 30,
+  "go_affected_packages_passed": 5,
+  "go_race_packages_passed": 3,
+  "build_targets": [
+    "linux/amd64",
+    "linux/arm64",
+    "darwin/arm64",
+    "windows/amd64"
+  ],
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_online.py": "f1864c8a2a8ef979917a8fc1810316188e5f190b88841c29a4db72564a2e381f",
+    "adapters/runtime/hermes-agentshield/native_online.py": "6d87ea7f391697ae3ed6a72b5dd341e77fb67b284b431fbbef07e250261a4ab3",
+    "adapters/runtime/hermes-agentshield/tests/test_native_online.py": "03121803c01892454c1d9b332cdd855beadcc06557b65707969c5c17e9c7eef8",
+    "adapters/runtime/hermes-agentshield/tests/test_native_relay.py": "05d4259be68eabf830eed7357dd5af6460c16d38783ec3c0170568eabc3b96bf",
+    "apps/agentshield/internal/receipt/engine.go": "a2aef57f1e9532c0eafae2793f14e9265c1ea6f04c38368eb8465f72d38447a8",
+    "apps/agentshield/internal/receipt/intent.go": "b0eece150cf1a3b4ea37c0265393c93568fa822c1e098473f403111ceec596cc",
+    "apps/agentshield/internal/receipt/native_invocation.go": "42e2104a25f3a93dee3a0f2d365225a912aad2fe974bee79f01da283aa60f04b",
+    "apps/agentshield/internal/receipt/native_invocation_test.go": "c1e6293c6e02c65440b71698a38476a42d14cb7c4bf53adcea0deaa15e555369",
+    "apps/agentshield/internal/intent/matcher.go": "c9ed6cce48ff452853ce9b736e45869ca11078c695c11a77001f85c32b1dbe42",
+    "apps/agentshield/internal/intent/native_skill_load_test.go": "c670a10e281ba19c779273900c92528f1bbe8ea861d88ae5c1c955a9c5ac6645",
+    "apps/agentshield/internal/runtimeaction/native_skill_load.go": "0bc760a3452ebc822c56079b12c48bcce683b5b9c9b379ffb5d9ab9e0e527b6b",
+    "apps/agentshield/internal/server/native_openshell_integration_test.go": "ce6851b2443b626d7ac7bc051aa114994a9be698a2259427cdd3ba153049c2e0",
+    "patches/hermes/openshell_image_probe.py": "44e9d957271cbe04f793ffe3a996b4925d0c44f705cdd86642f44b95a75c910a",
+    "patches/hermes/openshell_online_probe.py": "bb19d83bbe0d74e1558a86af31cc40b17de31b5f0c92ebbfa53dd75a11700049",
+    "patches/hermes/openshell_online_bootstrap.py": "e945c9cd4304205addf55d556ba68975975d0870641c1d5bb79e3c51dd2e06c0",
+    "patches/hermes/run_openshell_runtime_probe.py": "284d201ee123c3e1fa252ada425a69bc33d06dbfdac9940152e643b4809efa9d"
+  },
+  "limits": [
+    "Go HTTP server is started by an explicit test harness with synthetic operator identities; no shipping daily launcher acceptance.",
+    "Two synthetic Skill contents use actual signed imports and installations.",
+    "Actual Hermes tool functions and actual OpenShell sandbox; zero model requests.",
+    "No business-entry, concurrent revocation, approval retry or cross-platform native acceptance in this run."
+  ],
+  "post_run_harness_changes": [
+    "Formatting only and owned extractor CID cleanup added after successful run; evaluated runtime image and production sources unchanged."
+  ]
+}

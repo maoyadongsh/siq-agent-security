@@ -1,0 +1,85 @@
+{
+  "schema_version": "optimization-native-queue-expiry/v1",
+  "passed": true,
+  "case": "v846",
+  "scope": "real_API_natural_grant_expiry_while_queued_behind_synthetic_reservation",
+  "model_execution_acceptance": false,
+  "queue_wait_seconds": 59.404,
+  "business_HTTP_status": 503,
+  "error_code": "request_start_unconfirmed",
+  "retryable": false,
+  "checks": {
+    "fresh_database_migrations": true,
+    "request_recovery_ready": true,
+    "legacy_recovery_disabled": true,
+    "live_authorized_request_observed_pending": true,
+    "grant_expired_naturally_during_queue": true,
+    "controlled_error_no_automatic_retry": true,
+    "read_only_source_unchanged": true,
+    "original_pending_closed_without_Hermes_run": true,
+    "other_gateway_reservation_unchanged": true,
+    "no_request_directory_or_sandbox_created": true,
+    "grant_deadline_unchanged_and_not_revoked": true,
+    "no_replay_or_new_execution_row": true,
+    "no_native_receipts_added": true,
+    "anonymous_analysis_denied": true,
+    "real_http_login": true,
+    "analyst_cannot_issue_grant": true,
+    "grant_retry_same_identity": true,
+    "analyst_cannot_revoke_grant": true,
+    "admin_http_revoke": true,
+    "business_settled_before_api_stop": true,
+    "candidate_listener_closed": true,
+    "owned_synthetic_reservation_released": true,
+    "business_runtime_cleanup_confirmed": true,
+    "temporary_database_removed": true,
+    "existing_service_identity_unchanged": true
+  },
+  "resource_cleanup": {
+    "owned_gateway_stopped": true,
+    "owned_bridge_stopped": true,
+    "original_model_unchanged": true
+  },
+  "deployment_checks": {
+    "business_sources_unchanged": true,
+    "original_service_files_restored": true
+  },
+  "business_candidate_sha256": "21a4251e6649912be86a34ecc3ec8b5b8a77744b1d058c6ec45ce184469f52ae",
+  "business_commit": "7e526896409eaf1a960c07c7b63008d72b7bce6b",
+  "business_input_count": 1874,
+  "registered_patch_count": 289,
+  "registered_driver_sha256": {
+    "run-native-business-queue-expiry-v846.py": "ccd901d12102711b1d6fbb8dd0befa0783c22a5912ac7ca6d25fd904ef709faf",
+    "run-native-expiry-owned-v846.py": "c50b9ce3e995fb5b49b050548781734ff727d18f248f4ebc1a2cf2b1dd2022ae",
+    "deployment-driver.py": "4a7d86547351bfa7fa5b06b4facd9588391dc36c96bb1e8ac91c53ca3685f7c2"
+  },
+  "pending_phase": "released",
+  "request_run_sha256": "2e956d564209e4da65ec6d02b78555063d31145fb062784a699afacd62376411",
+  "pending_record_sha256": "4b5ef81abea655297766a75446e4ca9697c71f2d6e06a889840d218c878660d3",
+  "private_result_sha256": "4ab470789b6b8eca2a6b3db9ce179e64f46e2209cb3b7f56cfafa44cdfd705c4",
+  "receipts_added": 0,
+  "decision_denials_observed": 0,
+  "independent_checks": [
+    "frozen archive bytes match manifest",
+    "driver hashes match pre-registration",
+    "matching pending record released",
+    "request directory absent",
+    "receipt chain unchanged",
+    "controlled HTTP error body verified"
+  ],
+  "database_assertions_source": "owned preregistered harness; the removed temporary database was not independently queried afterward",
+  "api_dependency_inventory": {
+    "verified_cases": [
+      "v845",
+      "v846"
+    ],
+    "file_count": 11663,
+    "symlink_count": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_identical": true,
+    "before_record_sha256": "3fa72c732fb04a7a93092b560a1ece34c67f567b94f0d8e058cb99992a8f29dc",
+    "after_record_sha256": "e7da61061960fc1a80911acc07dabcc0d116f4214fa61b473dd86c6761da10bc",
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory",
+    "full_stack_frozen": false
+  }
+}

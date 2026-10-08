@@ -1,0 +1,141 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "HSuh1P8R8dpX+k5RyhYqrYTbb4ZocoMMIBjjjFKUWLc=",
+      "count": 12,
+      "head_hash": "f925b8a1adb6d7f14becbe34ca4694fcaad39d697aa96dde48b33aabc4faee9c"
+    },
+    "signed_context_count": 6,
+    "cases": {
+      "v845": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "f925b8a1adb6d7f14becbe34ca4694fcaad39d697aa96dde48b33aabc4faee9c",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "4410ebcb01c3b346c07009c33a97b03bcf186d7709459ec153b2a42e057ccf0d"
+      }
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-business-crash-v845.receipts.jsonl",
+      "sha256": "345b94b138ebeabc9005fc446500834a49102e93deae08ede0995ca281d4631f"
+    },
+    "contexts": {
+      "file": "native-business-crash-v845.contexts.json",
+      "sha256": "ed742382bfdc7296e4dac635f193ca9e5865e882fcc3111ac0fafbec412d2797"
+    }
+  },
+  "observations": {
+    "v845": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SIGKILL_after_real_model_delta": true,
+        "execution_still_running_after_API_death": true,
+        "same_database_API_restarted": true,
+        "original_lease_expired_without_manual_update": true,
+        "restarted_API_recovery_ready": true,
+        "read_only_source_unchanged": true,
+        "model_delta_observed_before_crash": true,
+        "crashed_execution_authority_lost": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_stream_started_200": true,
+        "sandbox_supervisor_and_forward_absent": true,
+        "old_native_child_credential_401": true,
+        "native_child_revoked_before_diagnostic_cleanup": true,
+        "native_parent_still_active": true,
+        "native_skill_read_allowed_before_API_crash": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "SSE_event_counts": {
+        "delta": 1,
+        "tool": 4,
+        "run": 1,
+        "progress": 8
+      },
+      "recovery_wait_seconds": 126.976,
+      "cleanup": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "events_sha256": "3111e0c22cf687b4a375410379a742c298dbb6bfe5c74070a6c2d24b395cf743",
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "exit-code",
+        "ExecMainStatus": "1",
+        "ActiveState": "failed"
+      },
+      "supervisor_failure_stages": [
+        {
+          "stage": "containment",
+          "category": "supervisor_contract"
+        }
+      ],
+      "supervisor_error_codes": [
+        "supervisor_containment_failed"
+      ],
+      "ExecStopPost_recover_passed": true,
+      "first_containment_succeeded": false,
+      "finalizer_phase": "released"
+    }
+  },
+  "candidate_source_sha256": "21a4251e6649912be86a34ecc3ec8b5b8a77744b1d058c6ec45ce184469f52ae",
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "business_head": "7e526896409eaf1a960c07c7b63008d72b7bce6b",
+  "registered_patch_files": 289,
+  "business_input_files": 1874,
+  "business_source_archive_sha256": "97168d63329dc42d5b8727af5935a1f48d8028bf480ab5fbd71dcc46baa9137b",
+  "frozen_archive_matches_manifest": true,
+  "API_crash_recovery_pilots_passed": 1,
+  "new_receipt_count": 2,
+  "new_context_count": 1,
+  "historical_receipt_count": 10,
+  "tool_attempt_after_API_death_observed": false,
+  "database_assertions_source": "owned preregistered harness; the removed temporary database was not independently queried afterward",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "registered_driver_sha256": {
+    "run-native-business-crash-v845.py": "7f4fa2e1c84e784e398f8ba1021f421c5fdb020b41c59c8ecc312e9676c8dd2d",
+    "run-native-crash-owned-v845.py": "6fd5c4aa6922f43d2894c096ab446099f0fcc5c0ec13e4d5af7ec35b2e04d67d",
+    "deployment-driver.py": "d4e090b3e038e3f06dc7d04aa90f70d05690bad9596177bc1f27abc810f3f576"
+  },
+  "api_dependency_inventory": {
+    "verified_cases": [
+      "v845",
+      "v846"
+    ],
+    "file_count": 11663,
+    "symlink_count": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_identical": true,
+    "before_record_sha256": "3fa72c732fb04a7a93092b560a1ece34c67f567b94f0d8e058cb99992a8f29dc",
+    "after_record_sha256": "e7da61061960fc1a80911acc07dabcc0d116f4214fa61b473dd86c6761da10bc",
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory",
+    "full_stack_frozen": false
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": "siq.native-business-tool-observations/v1",
+  "cases": {
+    "v815": [
+      {
+        "event": "tool",
+        "tool": "skill_view",
+        "status": "started",
+        "error": null,
+        "observed_monotonic_ns": 84926068773321
+      },
+      {
+        "event": "tool",
+        "tool": "read_file",
+        "status": "started",
+        "error": null,
+        "observed_monotonic_ns": 84926104652955
+      },
+      {
+        "event": "tool",
+        "tool": "skill_view",
+        "status": "completed",
+        "error": false,
+        "observed_monotonic_ns": 84931634127251
+      },
+      {
+        "event": "tool",
+        "tool": "read_file",
+        "status": "completed",
+        "error": false,
+        "observed_monotonic_ns": 84931636268617
+      },
+      {
+        "event": "tool",
+        "tool": "write_file",
+        "status": "started",
+        "error": null,
+        "observed_monotonic_ns": 84937473932641
+      },
+      {
+        "event": "tool",
+        "tool": "write_file",
+        "status": "completed",
+        "error": false,
+        "observed_monotonic_ns": 84939894438659
+      }
+    ],
+    "v816": [
+      {
+        "event": "tool",
+        "tool": "skill_view",
+        "status": "started",
+        "error": null,
+        "observed_monotonic_ns": 85051369443061
+      },
+      {
+        "event": "tool",
+        "tool": "skill_view",
+        "status": "completed",
+        "error": false,
+        "observed_monotonic_ns": 85054732018517
+      },
+      {
+        "event": "tool",
+        "tool": "read_file",
+        "status": "started",
+        "error": null,
+        "observed_monotonic_ns": 85061072198082
+      },
+      {
+        "event": "tool",
+        "tool": "read_file",
+        "status": "completed",
+        "error": false,
+        "observed_monotonic_ns": 85063562955258
+      },
+      {
+        "event": "tool",
+        "tool": "write_file",
+        "status": "started",
+        "error": null,
+        "observed_monotonic_ns": 85069784576732
+      },
+      {
+        "event": "tool",
+        "tool": "write_file",
+        "status": "completed",
+        "error": true,
+        "observed_monotonic_ns": 85071074825744
+      }
+    ]
+  },
+  "revocation_started_monotonic_ns": 85063623315980,
+  "revocation_completed_monotonic_ns": 85063644289088
+}

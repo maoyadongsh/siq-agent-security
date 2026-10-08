@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/local-skill-execution-context-revoke.v2.schema.json",
+  "title": "Local native Skill context revoke request V2",
+  "description": "Administrator confirmation bound to the original immutable native context signature; does not issue permission.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "local-skill-execution-context-revoke/v2"
+    },
+    "expected_context_signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "confirm_revoke": {
+      "const": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "expected_context_signature",
+    "actor_id",
+    "confirm_revoke"
+  ]
+}

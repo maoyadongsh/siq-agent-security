@@ -23,6 +23,7 @@ import (
 	"siq-agent-security/apps/agentshield/internal/effectevidence"
 	"siq-agent-security/apps/agentshield/internal/export"
 	"siq-agent-security/apps/agentshield/internal/grant"
+	"siq-agent-security/apps/agentshield/internal/httpsecurity"
 	"siq-agent-security/apps/agentshield/internal/importsource"
 	"siq-agent-security/apps/agentshield/internal/intent"
 	"siq-agent-security/apps/agentshield/internal/inventory"
@@ -70,6 +71,7 @@ type Deps struct {
 	ListenPort        int                 // must match the actual listen port
 	PairingCode       string              // tests only; production serve generates a random code
 	SkillContexts     *skillcontext.Store // exact store also used by receipt.Engine in production
+	NativeRuntime     *NativeRuntime      // optional explicit trusted-host online profile
 }
 
 // Server is the HTTP handler set.
@@ -127,6 +129,7 @@ type Server struct {
 	bootAdmin       string                           // test harness after RedeemPairing
 
 	pendingMu    sync.Mutex
+	pendingState pendingPromotionStatus // protected by pendingMu; process-local diagnostics
 	refreshMu    sync.Mutex
 	discoveryMu  sync.Mutex
 	discoveryRun DiscoveryRun
@@ -201,6 +204,10 @@ func New(d Deps) (*Server, error) {
 			return nil, err
 		}
 	}
+	if err := s.initNativeRuntime(); err != nil {
+		return nil, err
+	}
+	s.mux.HandleFunc("/v1/native-host/events", s.nativeHostEvent)
 	s.refreshRawContentLocked()
 	s.mux.HandleFunc("/v1/raw-task-content/status", s.auth(s.rawTaskContentStatus, capAdmin))
 	s.mux.HandleFunc("/v1/raw-task-content/activation", s.auth(s.rawTaskContentActivation, capAdmin))
@@ -237,6 +244,8 @@ func New(d Deps) (*Server, error) {
 	s.mux.HandleFunc("/v1/skill-contexts", s.auth(s.skillContextCollection, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/management", s.auth(s.skillContextManagement, capAdmin))
 	s.mux.HandleFunc("/v1/skill-contexts/", s.auth(s.skillContextOne, capAdmin))
+	s.mux.HandleFunc("/v2/skill-contexts", s.auth(s.nativeContextList, capAdmin))
+	s.mux.HandleFunc("/v2/skill-contexts/", s.auth(s.nativeContextOne, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/preview", s.auth(s.runtimeCheckPreview, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks", s.auth(s.runtimeCheckLatest, capAdmin))
 	s.mux.HandleFunc("/v1/runtime-checks/start", s.auth(s.runtimeCheckStart, capAdmin))
@@ -374,6 +383,7 @@ func New(d Deps) (*Server, error) {
 // Handler returns the http.Handler (loopback check + mux).
 func (s *Server) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		httpsecurity.Apply(w)
 		host, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil || !isLoopback(host) {
 			http.Error(w, "loopback only", http.StatusForbidden)
@@ -409,6 +419,14 @@ func writeJSON(w http.ResponseWriter, code int, v any) {
 	_ = json.NewEncoder(w).Encode(v)
 }
 
+func requestStatus(err error) int {
+	var oversized *http.MaxBytesError
+	if errors.As(err, &oversized) {
+		return http.StatusRequestEntityTooLarge
+	}
+	return http.StatusBadRequest
+}
+
 func readJSON(r *http.Request, v any, limit int64) error {
 	dec := json.NewDecoder(http.MaxBytesReader(nil, r.Body, limit))
 	dec.UseNumber()
@@ -437,6 +455,7 @@ func (s *Server) status(w http.ResponseWriter, _ *http.Request) {
 		"version": s.d.Version, "enforcement_mode": s.currentMode(), "local_mode": true, "single_user": true,
 		"rulepack_version": s.d.Pack.Version, "rulepack_source": s.d.Pack.Source,
 		"chain":              map[string]any{"id": "local", "head_seq": seq, "head_hash": head},
+		"pending_promotion":  s.pendingPromotionSnapshot(),
 		"signing_public_key": s.d.Key.PublicBase64(),
 		"platforms":          s.platforms(),
 	})
@@ -522,8 +541,23 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 	if req.Platform == "workbuddy" && !workBuddyRuntimeResponseReady(w, r) {
 		return
 	}
+	var finishNative func() error
+	if s.d.NativeRuntime != nil {
+		var err error
+		finishNative, err = s.d.NativeRuntime.bindDecision(req)
+		if err != nil {
+			writeJSON(w, 409, map[string]string{"error": "native_host_unavailable"})
+			return
+		}
+	}
 	s.promotePendingBestEffort()
 	d, err := s.d.Engine.Decide(req)
+	if finishNative != nil && (err != nil || d.Action != "allow") {
+		if closeErr := finishNative(); closeErr != nil {
+			writeJSON(w, 503, map[string]string{"error": "native_host_unavailable"})
+			return
+		}
+	}
 	if err != nil {
 		if errors.Is(err, receipt.ErrSessionCapacity) || errors.Is(err, receipt.ErrActionCapacity) {
 			st := s.d.Engine.SessionStats()
@@ -562,14 +596,22 @@ func (s *Server) decide(w http.ResponseWriter, r *http.Request) {
 }
 
 // promotePendingBestEffort signs any new fail-closed pending lines onto the
-// receipt chain (DEV07-D). Errors are swallowed so decision path stays available.
+// receipt chain (DEV07-D). Failure is exposed in status while the online
+// decision continues to enforce its own authority and durable receipt checks.
 func (s *Server) promotePendingBestEffort() {
 	s.pendingMu.Lock()
 	defer s.pendingMu.Unlock()
-	_, _ = pending.Promote(s.d.Store.Dir, func(rec pending.Record) error {
+	promoted, err := pending.Promote(s.d.Store.Dir, func(rec pending.Record) error {
 		_, err := s.d.Engine.AppendPendingObserved(rec)
 		return err
 	})
+	s.pendingState.Attempts++
+	s.pendingState.LastPromoted = promoted
+	s.pendingState.Status = "ok"
+	if err != nil {
+		s.pendingState.Status = "failed"
+		s.pendingState.Failures++
+	}
 }
 
 func (s *Server) observe(w http.ResponseWriter, r *http.Request) {
@@ -631,7 +673,7 @@ func (s *Server) hold(w http.ResponseWriter, r *http.Request) {
 		ActorID string `json:"actor_id"`
 	}
 	if err := readJSONStrict(r, &body, 64<<10); err != nil {
-		writeJSON(w, 400, map[string]any{"error": "invalid json"})
+		writeJSON(w, requestStatus(err), map[string]any{"error": "invalid json"})
 		return
 	}
 	if body.ActorID == "" {
@@ -734,7 +776,10 @@ func (s *Server) runInventory(cwd string) (*inventory.Report, error) {
 	if err != nil {
 		return nil, err
 	}
-	admissions, _ := s.d.Store.ListAdmissions()
+	admissions, err := s.d.Store.ListAdmissions()
+	if err != nil {
+		return nil, errors.New("inventory admission state unavailable")
+	}
 	byHash := map[string]string{}
 	for _, a := range admissions {
 		byHash[a.ContentHash] = a.Verdict

@@ -1,4 +1,7 @@
 """Synthetic batch selection/preview/readback only; never contacts real business services."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -170,6 +173,7 @@ def main():
             page.add_init_script("Object.defineProperty(crypto, 'randomUUID', { value: undefined });")
             page.on('pageerror', lambda e: errors.append(str(e)))
             page.route('**/api/v1/**', route)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/changes')
             panel = page.get_by_role('region', name='批次预览与结果')
             expect(panel.get_by_role('button', name='加入批次')).to_be_disabled()
@@ -295,6 +299,7 @@ def main():
             expect(panel).to_contain_text('asset-fixture')
             expect(panel.get_by_role('region', name='网络权限撤除申请')).to_have_count(0)
             assert len(writes) == 3
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/permissions')
             expect(page.get_by_role('heading', name='权限视图', exact=True)).to_be_visible()
             expect(page.get_by_role('region', name='期望网络权限管理')).to_have_count(0)
@@ -337,6 +342,7 @@ def main():
             page.reload()
             expect(manager.get_by_role('region', name='恢复撤除申请')).to_contain_text('当前记录状态：proposed')
             assert len(writes) == 4
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/permissions')
             manager.get_by_role('button', name='选择策略并申请撤除').click()
             manager.get_by_role('button', name='切换跨策略批量申请').press('Enter')

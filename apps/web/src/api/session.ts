@@ -6,7 +6,7 @@
 import { onUnauthorized, setToken } from './client';
 
 const IAM_BASE = import.meta.env.VITE_IAM_URL ?? '/api/iam';
-const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true';
+import { DEV_IDENTITY as DEV_MODE } from './devMode';
 
 export function registerUnauthorizedHandler(handler: () => void): void {
   onUnauthorized(handler);

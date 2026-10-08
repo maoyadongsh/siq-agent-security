@@ -1,0 +1,43 @@
+{
+  "schema_version": "personal-r04-hermes-native-update/v2",
+  "recorded_at": "2026-10-08T06:58:23.510201+00:00",
+  "passed": true,
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "harness_sha256": "a043dc5b9d1d3b14b88d97cbef76f36c1507221f13188336a7acca7dbfcf5b64",
+  "native_cli_sha256": "84db22df87dc3ec9a32afb91ba94beb3f8ef093060e3aae44ec7922523526d5b",
+  "native_entrypoint": "public hermes chat --oneshot with normal plugin hooks and file tool",
+  "checks": [
+    "v1_installed_activated_and_loaded_in_native_prompt",
+    "v1_native_read_has_controlled_task_attribution",
+    "pending_candidate_comparison_is_read_only",
+    "cancel_before_confirmation_preserves_v1_files_and_authority",
+    "approved_candidate_recomparison_and_signed_plan",
+    "explicit_update_replaces_bytes_and_revokes_v1_grant",
+    "v1_scoped_decision_credential_refused_after_v2_update_without_receipt_or_effect",
+    "v1_runtime_identity_becomes_unavailable",
+    "v1_runtime_identity_explicitly_retired_before_replacement",
+    "v2_requires_new_activation_identity_and_sec",
+    "v2_loaded_in_native_prompt_and_real_read_executes",
+    "v2_attribution_binds_new_content_and_installation",
+    "receipt_chain_verified",
+    "explicit_v2_removal_revokes_authority_and_removes_target",
+    "host_settings_and_other_profile_preserved",
+    "test_observer_disabled_and_files_removed"
+  ],
+  "update_id": "sup-f1f76c5ef0deb5f2c9aa272394477888564078684dd704a5a79c2ca6142f169d",
+  "v1_install_id": "sin-469e5ac44932a903c9987ddc70bceabc1e7e443415026a81e4bf570c0fab6372",
+  "v2_install_id": "sin-41764e1366965725579b99491f2d0e21ddfb1c8d77340a7de861026e69f7e5ee",
+  "v1_context_id": "sec-90521c3dabc75c9b38f2357eaa5aa94b",
+  "v2_context_id": "sec-c654d1178cf920659611ce490717094a",
+  "v1_content_hash": "32015f33555a755007638ecbb077644fcf633d7a4e5db148feb1f2231ce65652",
+  "v2_content_hash": "19faafa0cdc6bf1e66ea408b0f4a45a77c41d782798c938a68a5313a14b95c70",
+  "stale_v1_http_refusal_reason_code": "scoped_decision_credential_required",
+  "signed_receipt_count": 4,
+  "limitations": [
+    "local deterministic model and synthetic operator; no external or paid model",
+    "candidate V2 is an explicitly imported local directory; public-network scheduled fetch is separate",
+    "test-only observer reports host session/task IDs and carries no SIQ credential or signing authority",
+    "Linux/Hermes only; Windows, macOS, OpenClaw and WorkBuddy remain separate acceptance legs",
+    "local state and an external side effect cannot provide a cross-system exactly-once transaction"
+  ]
+}

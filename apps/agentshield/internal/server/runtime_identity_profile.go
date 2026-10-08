@@ -20,6 +20,9 @@ func readRuntimeIdentityCreate(w http.ResponseWriter, r *http.Request, out *runt
 	if header.SchemaVersion == "local-runtime-identity-create/v2" {
 		fields = append(fields, "confirm_filesystem_profile")
 	}
+	if header.SchemaVersion == "local-runtime-identity-create/v3" {
+		fields = append(fields, "native_skill_policy")
+	}
 	if err != nil || !exactJSONObject(raw, fields...) || json.Unmarshal(raw, out) != nil {
 		writeJSON(w, 400, map[string]string{"error": "runtime_identity_invalid_request"})
 		return false

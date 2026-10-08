@@ -21,14 +21,18 @@ func (e *CorrelationError) Error() string { return e.Code }
 func correlationError(code string) error  { return &CorrelationError{code} }
 
 type actionRecord struct {
-	approvedAt     time.Time
-	decision       Receipt
-	reservation    *Receipt
-	reconciliation *Receipt
-	observation    *Receipt
-	expires        time.Time
-	approved       bool
-	holdResolved   bool
+	// Native final execution checks are one-shot and owned only by the process
+	// that appended the reservation. Recovery never restores these permissions.
+	nativeReservationOwned bool
+	nativeExecutionChecked bool
+	approvedAt             time.Time
+	decision               Receipt
+	reservation            *Receipt
+	reconciliation         *Receipt
+	observation            *Receipt
+	expires                time.Time
+	approved               bool
+	holdResolved           bool
 }
 
 func unresolvedReservation(a *actionRecord) bool {
@@ -182,7 +186,7 @@ func (e *Engine) restoreActionState() error {
 	// window. Determine those action IDs from the verified chain first so the
 	// second pass can restore their older decision and approval records.
 	if err := e.opts.Chain.walkVerified(func(r Receipt) error {
-		if r.RecordType == "" {
+		if r.RecordType == "" || r.RecordType == "local_failure" {
 			return nil
 		}
 		switch r.RecordType {
@@ -207,9 +211,9 @@ func (e *Engine) restoreActionState() error {
 		active[id] = true
 	}
 	return e.opts.Chain.walkVerified(func(r Receipt) error {
-		if r.RecordType == "" {
+		if r.RecordType == "" || r.RecordType == "local_failure" {
 			return nil
-		} // historical v1 records never manufacture action authority
+		} // Historical v1 and unsigned local origins never manufacture action authority or sessions.
 		at, err := time.Parse(time.RFC3339, r.IssuedAt)
 		if err != nil {
 			return err
@@ -256,6 +260,13 @@ func (e *Engine) restoreActionState() error {
 			e.actions[r.ActionID] = &actionRecord{decision: r, expires: at.Add(actionWindow)}
 		case "observation":
 			if a := e.actions[r.ActionID]; a != nil {
+				source := a.decision
+				if a.reservation != nil {
+					source = *a.reservation
+				}
+				if !nativeFollowupMatches(source, r) {
+					return correlationError("observation_native_authority_mismatch")
+				}
 				if a.reconciliation != nil && a.reconciliation.Action == ActionDeny {
 					return correlationError("observation_reconciled_not_occurred")
 				}
@@ -273,6 +284,9 @@ func (e *Engine) restoreActionState() error {
 				s.parentActionID = r.ActionID
 			}
 			if a := e.actions[r.ActionID]; a != nil {
+				if !nativeFollowupMatches(a.decision, r) {
+					return correlationError("hold_native_authority_mismatch")
+				}
 				a.approved = r.Action == ActionAllow
 				a.approvedAt = at
 				a.holdResolved = true
@@ -284,7 +298,7 @@ func (e *Engine) restoreActionState() error {
 					r.DecisionReceiptID != a.decision.ReceiptID || r.Action != ActionAllow || r.ToolCallID == nil ||
 					r.Platform != a.decision.Platform || r.SessionID != a.decision.SessionID || str(r.AgentID) != str(a.decision.AgentID) ||
 					r.TaskID != a.decision.TaskID || r.Tool != a.decision.Tool || r.ParamsDigest != a.decision.ParamsDigest ||
-					at.Before(a.approvedAt) || deadlineErr != nil || !at.Before(deadline) {
+					at.Before(a.approvedAt) || deadlineErr != nil || !at.Before(deadline) || !nativeReservationMatches(a.decision, r) {
 					return correlationError("hold_reservation_invalid")
 				}
 				if a.reservation != nil {
@@ -305,6 +319,9 @@ func (e *Engine) restoreActionState() error {
 					r.TaskID != a.reservation.TaskID || r.Tool != a.reservation.Tool || str(r.ToolCallID) != str(a.reservation.ToolCallID) ||
 					r.ParamsDigest != a.reservation.ParamsDigest || reservedAt.IsZero() || at.Before(reservedAt) {
 					return correlationError("hold_reconciliation_invalid")
+				}
+				if !nativeFollowupMatches(*a.reservation, r) {
+					return correlationError("hold_reconciliation_native_mismatch")
 				}
 				if a.reconciliation != nil {
 					return correlationError("hold_reconciliation_conflict")

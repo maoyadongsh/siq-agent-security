@@ -4,6 +4,9 @@
 No production identity/provider or real user's device/configuration is accessed.
 Enrollment/device secrets stay in process memory and temporary private state.
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import hashlib
 import json
@@ -102,7 +105,7 @@ def main():
                     browser = pw.chromium.launch(headless=True)
                     page = browser.new_page(viewport={'width': 1440, 'height': 1000}, locale='zh-CN')
                     # Use the same least-privilege synthetic operator in the browser
-                    # and HTTP assertions; the bundle's default roles lack edge:manage.
+                    # and HTTP assertions; identity is supplied only by the fixture.
                     def browser_identity(route):
                         clean = {k: v for k, v in route.request.headers.items()
                                  if not k.lower().startswith('x-dev-')}
@@ -110,6 +113,7 @@ def main():
                     page.route('**/api/v1/**', browser_identity)
                     errors = []
                     page.on('pageerror', lambda _: errors.append('pageerror'))
+                    install_fixture_session(page)
                     page.goto(endpoint + '/environments')
                     page.get_by_label('环境名称', exact=True).fill('验收 DGX Spark')
                     with page.expect_response(lambda r: r.request.method == 'POST' and r.url.endswith('/api/v1/environments')) as created:
@@ -234,7 +238,9 @@ def main():
                     confirm_url = '**/api/v1/candidates/' + first_asset['id'] + '/confirm'
                     def lose_write_response(route):
                         posts.append(route.request.method)
-                        response = route.fetch()
+                        clean = {k: v for k, v in route.request.headers.items()
+                                 if not k.lower().startswith('x-dev-')}
+                        response = route.fetch(headers={**clean, **headers})
                         assert response.status == 200
                         route.fulfill(status=503, json={'detail': 'fixture_lost_response'})
                     page.route(confirm_url, lose_write_response)
@@ -293,6 +299,7 @@ def main():
                     remaining = api('/api/v1/candidates')
                     assert len(remaining) == 1
                     second_asset = remaining[0]
+                    install_fixture_session(page)
                     page.goto(endpoint + '/agents?view=candidates')
                     second_row = page.locator('tbody tr').filter(has=page.get_by_role('link', name=second_asset['name'], exact=True))
                     expect(second_row).to_be_visible()
@@ -303,9 +310,12 @@ def main():
                     checks['detail_returns_to_candidate_context'] = True
                     # Real backend viewer identity, not a mocked access response.
                     def readonly_identity(route):
-                        headers = dict(route.request.headers)
-                        headers['x-dev-roles'] = 'viewer'
-                        route.continue_(headers=headers)
+                        if not route.request.url.startswith(endpoint + '/api/v1/'):
+                            route.fallback()
+                            return
+                        clean = {k: v for k, v in route.request.headers.items()
+                                 if not k.lower().startswith('x-dev-')}
+                        route.continue_(headers={**clean, **headers, 'X-Dev-Roles': 'viewer'})
                     page.route('**/api/v1/**', readonly_identity)
                     page.reload()
                     expect(page.get_by_text('当前账号仅可查看候选。处理候选需要资产确认权限，请联系组织管理员申请。', exact=True)).to_be_visible()
@@ -314,7 +324,7 @@ def main():
                     readonly_headers = {**headers, 'X-Dev-Roles': 'viewer'}
                     api('/api/v1/candidates/' + second_asset['id'] + '/confirm', {}, expected=403, custom=readonly_headers)
                     checks['viewer_ui_hidden_and_backend_refuses_confirmation'] = True
-                    page.unroute('**/api/v1/**')
+                    page.unroute('**/api/v1/**', readonly_identity)
                     page.reload()
                     second_row.get_by_role('button', name='驳回', exact=True).click()
                     dialog.get_by_label('驳回原因', exact=True).fill('不属于本次管理范围')
@@ -348,6 +358,7 @@ def main():
                     page.screenshot(path=str(args.out_dir / 'review-mobile.png'), animations='disabled')
                     page.set_viewport_size({'width': 1440, 'height': 1000})
 
+                    install_fixture_session(page)
                     page.goto(endpoint + '/environments?environment=' + environment['id'])
                     page.get_by_text('高级：手动接入、补扫与详细记录', exact=True).click()
                     expect(page.get_by_text('扫描已完成', exact=True).first).to_be_visible()

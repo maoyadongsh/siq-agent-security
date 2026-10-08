@@ -40,6 +40,7 @@ var (
 	ErrUnsupported      = errors.New("connector: unsupported")
 	ErrOutputLimit      = errors.New("connector: output limit exceeded")
 	ErrConnectorClosed  = errors.New("connector: subprocess closed")
+	ErrConnectorTrust   = errors.New("connector trust unavailable; verify the confirmed setup-enterprise plan, signed release and private installation; do not delete device state; development scans require run-once --connector-bin with an absolute path")
 )
 
 // mapCodeToError translates a connector error code into the typed error.
@@ -56,7 +57,7 @@ func mapCodeToError(code string) error {
 	case protocol.CodeUnsupported:
 		return ErrUnsupported
 	default:
-		return fmt.Errorf("connector: unknown error code %q", code)
+		return errors.New("connector: unknown error code")
 	}
 }
 
@@ -71,7 +72,7 @@ func codeOf(err error) string {
 		return protocol.CodeRedactionFailure
 	case errors.Is(err, ErrTimeout):
 		return protocol.CodeTimeout
-	case errors.Is(err, ErrUnsupported):
+	case errors.Is(err, ErrUnsupported), errors.Is(err, ErrConnectorTrust):
 		return protocol.CodeUnsupported
 	default:
 		return "internal_error"
@@ -89,9 +90,10 @@ func codeOf(err error) string {
 //     timeout → cancel subprocess, task fails);
 //   - total stdout per op is capped at maxOutput (default 8 MiB).
 type SubprocessConnector struct {
-	name    string
-	binPath string
-	version string
+	name           string
+	binPath        string
+	version        string
+	artifactSHA256 string
 
 	timeout   time.Duration
 	maxOutput int64
@@ -115,6 +117,17 @@ type SubprocessOptions struct {
 	Timeout        time.Duration // 0 → 60s
 	MaxOutputBytes int64         // 0 → 8 MiB
 	MaxStderrBytes int64         // 0 → 1 MiB
+	artifactSHA256 string        // set only by the verified managed constructor
+}
+
+// NewVerifiedSubprocessConnector is for callers that already verified the
+// release/plan binding. It pins the actual bytes again at the execution boundary.
+func NewVerifiedSubprocessConnector(ctx context.Context, binPath, digest string, opts SubprocessOptions) (*SubprocessConnector, error) {
+	if digest == "" || !isOfficialConnector(opts.Name) {
+		return nil, ErrConnectorTrust
+	}
+	opts.artifactSHA256 = digest
+	return NewSubprocessConnector(ctx, binPath, opts)
 }
 
 // NewSubprocessConnector spawns the connector binary in --serve mode.
@@ -129,12 +142,13 @@ func NewSubprocessConnector(ctx context.Context, binPath string, opts Subprocess
 		opts.MaxStderrBytes = 1 << 20
 	}
 	c := &SubprocessConnector{
-		name:      opts.Name,
-		binPath:   binPath,
-		version:   opts.Version,
-		timeout:   opts.Timeout,
-		maxOutput: opts.MaxOutputBytes,
-		maxStderr: opts.MaxStderrBytes,
+		name:           opts.Name,
+		binPath:        binPath,
+		version:        opts.Version,
+		artifactSHA256: opts.artifactSHA256,
+		timeout:        opts.Timeout,
+		maxOutput:      opts.MaxOutputBytes,
+		maxStderr:      opts.MaxStderrBytes,
 	}
 	if err := c.start(ctx); err != nil {
 		return nil, err
@@ -143,11 +157,21 @@ func NewSubprocessConnector(ctx context.Context, binPath string, opts Subprocess
 }
 
 func (c *SubprocessConnector) start(ctx context.Context) error {
-	cmd := exec.CommandContext(ctx, c.binPath, "--serve")
+	cmd, pinned, err := connectorCommand(ctx, c.binPath, c.name, c.artifactSHA256)
+	if err != nil {
+		return err
+	}
+	if pinned != nil {
+		defer pinned.Close()
+	}
 	// Allowlisted environment (contract §1): the connector must not see the
 	// agent's environment, which may contain credentials.
+	childPath := os.Getenv("PATH")
+	if pinned != nil {
+		childPath = "/usr/bin:/bin"
+	}
 	cmd.Env = []string{
-		"PATH=" + os.Getenv("PATH"),
+		"PATH=" + childPath,
 		"HOME=" + os.Getenv("HOME"),
 		"SIQ_CONNECTOR_NAME=" + c.name,
 		"SIQ_CONNECTOR_VERSION=" + c.version,
@@ -155,16 +179,22 @@ func (c *SubprocessConnector) start(ctx context.Context) error {
 	}
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		return fmt.Errorf("connector %s: stdin pipe: %w", c.binPath, err)
+		return errors.New("connector: stdin pipe unavailable")
 	}
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("connector %s: stdout pipe: %w", c.binPath, err)
+		stdin.Close()
+		return errors.New("connector: stdout pipe unavailable")
 	}
 	c.stderr = newCappedBuffer(c.maxStderr)
 	cmd.Stderr = c.stderr
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("connector %s: start: %w", c.binPath, err)
+		stdin.Close()
+		stdout.Close()
+		if pinned != nil {
+			return ErrConnectorTrust
+		}
+		return errors.New("connector: subprocess start failed")
 	}
 	c.cmd = cmd
 	c.stdin = stdin
@@ -240,20 +270,20 @@ func (c *SubprocessConnector) call(ctx context.Context, op string, params any, i
 		Error  *protocol.ProtocolError `json:"error"`
 	}
 	if err := json.Unmarshal(respLine, &resp); err != nil {
-		return fmt.Errorf("connector: parse %s response: %w", op, err)
+		return fmt.Errorf("connector: invalid %s response", op)
 	}
 	if resp.ID != req.ID {
-		return fmt.Errorf("connector: %s response id mismatch: got %q want %q", op, resp.ID, req.ID)
+		return fmt.Errorf("connector: %s response id mismatch", op)
 	}
 	if !resp.OK {
 		if resp.Error == nil {
 			return fmt.Errorf("connector: %s failed without an error code", op)
 		}
-		return fmt.Errorf("%w: %s", mapCodeToError(resp.Error.Code), resp.Error.Message)
+		return mapCodeToError(resp.Error.Code)
 	}
 	if into != nil && len(resp.Result) > 0 {
 		if err := json.Unmarshal(resp.Result, into); err != nil {
-			return fmt.Errorf("connector: decode %s result: %w", op, err)
+			return fmt.Errorf("connector: invalid %s result", op)
 		}
 	}
 	return nil
@@ -269,10 +299,10 @@ func (c *SubprocessConnector) writeLine(ctx context.Context, op string, line []b
 	select {
 	case <-ctx.Done():
 		c.killLocked()
-		return fmt.Errorf("%w: %s op exceeded deadline during write (stderr: %s)", ErrTimeout, op, c.stderr.String())
+		return fmt.Errorf("%w: %s op exceeded deadline during write", ErrTimeout, op)
 	case err := <-ch:
 		if err != nil {
-			return fmt.Errorf("connector: write %s request: %w (stderr: %s)", op, err, c.stderr.String())
+			return fmt.Errorf("connector: write %s request failed", op)
 		}
 		return nil
 	}
@@ -288,19 +318,23 @@ type lineResult struct {
 func (c *SubprocessConnector) readLine(ctx context.Context, op string) ([]byte, error) {
 	ch := make(chan lineResult, 1)
 	go func() {
-		b, err := c.reader.ReadBytes('\n')
+		b, err := readBoundedConnectorLine(c.reader, c.maxOutput)
 		ch <- lineResult{b: b, err: err}
 	}()
 	select {
 	case <-ctx.Done():
 		c.killLocked()
-		return nil, fmt.Errorf("%w: %s op exceeded deadline (stderr: %s)", ErrTimeout, op, c.stderr.String())
+		return nil, fmt.Errorf("%w: %s op exceeded deadline", ErrTimeout, op)
 	case r := <-ch:
+		if errors.Is(r.err, ErrOutputLimit) {
+			c.killLocked()
+			return nil, ErrOutputLimit
+		}
 		if r.err != nil {
 			if r.err == io.EOF {
-				return nil, fmt.Errorf("%w: subprocess exited prematurely (stderr: %s)", ErrConnectorClosed, c.stderr.String())
+				return nil, ErrConnectorClosed
 			}
-			return nil, fmt.Errorf("connector: read %s response: %w (stderr: %s)", op, r.err, c.stderr.String())
+			return nil, fmt.Errorf("connector: read %s response failed", op)
 		}
 		c.totalOut += int64(len(r.b))
 		if c.totalOut > c.maxOutput {
@@ -308,6 +342,21 @@ func (c *SubprocessConnector) readLine(ctx context.Context, op string) ([]byte, 
 			return nil, fmt.Errorf("%w: %s output exceeded %d bytes", ErrOutputLimit, op, c.maxOutput)
 		}
 		return r.b, nil
+	}
+}
+
+func readBoundedConnectorLine(reader *bufio.Reader, limit int64) ([]byte, error) {
+	var line []byte
+	for {
+		part, err := reader.ReadSlice('\n')
+		if int64(len(line))+int64(len(part)) > limit {
+			return nil, ErrOutputLimit
+		}
+		line = append(line, part...)
+		if err == bufio.ErrBufferFull {
+			continue
+		}
+		return line, err
 	}
 }
 
@@ -368,31 +417,24 @@ func (c *SubprocessConnector) Health(ctx context.Context) (*protocol.HealthRepor
 	return &out, err
 }
 
-// ResolveConnectorBin locates a connector binary. Lookup order:
-//  1. explicit override (already resolved by caller)
-//  2. $SIQ_CONNECTOR_BIN_DIR/<name>-connector and $SIQ_CONNECTOR_BIN_DIR/<name>
-//  3. <name>-connector and <name> on PATH
+// ResolveConnectorBin is the explicit development resolver. Managed scans use
+// their verified installation instead; neither path silently searches PATH.
 func ResolveConnectorBin(name, override string) (string, error) {
 	if !isOfficialConnector(name) {
 		return "", fmt.Errorf("connector %q is not allowlisted", name)
 	}
-	if override != "" {
-		if fi, err := os.Stat(override); err == nil && !fi.IsDir() {
+	if override == "" {
+		dir := os.Getenv("SIQ_CONNECTOR_BIN_DIR")
+		if filepath.IsAbs(dir) && filepath.Clean(dir) == dir {
+			override = filepath.Join(dir, name+"-connector")
+		}
+	}
+	if filepath.IsAbs(override) && filepath.Clean(override) == override {
+		if info, err := os.Lstat(override); err == nil && info.Mode().IsRegular() {
 			return override, nil
 		}
-		return "", fmt.Errorf("connector binary %q not found", override)
 	}
-	var candidates []string
-	if dir := os.Getenv("SIQ_CONNECTOR_BIN_DIR"); dir != "" {
-		candidates = append(candidates, filepath.Join(dir, name+"-connector"))
-	}
-	candidates = append(candidates, name+"-connector")
-	for _, cand := range candidates {
-		if p, err := exec.LookPath(cand); err == nil {
-			return p, nil
-		}
-	}
-	return "", fmt.Errorf("connector binary for %q not found (set SIQ_CONNECTOR_BIN_DIR or install %s-connector on PATH)", name, name)
+	return "", errors.New("connector binary not found: specify an absolute --connector-bin or SIQ_CONNECTOR_BIN_DIR; PATH lookup is disabled")
 }
 
 func isOfficialConnector(name string) bool {

@@ -1,0 +1,66 @@
+{
+  "schema_version": "opt08-content-version-business/v1",
+  "recorded_at": "2026-10-08T07:16:25Z",
+  "security_commit": "8f57b92f",
+  "security_code_commit": "8c473439",
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+  "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+  "previous_skill_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+  "installed_skill_sha256": "a38f8af2dfefc099c18b9876d2f8e565be77c72f5ccaf7ad1cdbd95a209759db",
+  "content_upgrade": {
+    "suffix": "v879",
+    "passed": true,
+    "check_count": 33,
+    "old_grant_id": "grt-si-5071d59aa888a3f0eae30f44ee5542242d409ac761dac4e6baf733373e397a58",
+    "old_grant_status": "revoked",
+    "replacement_grant_id": "grt-si-958dfcacce7524582e2bd6bb58d0dd0e3576c54503b758216eaefefac4c82595",
+    "old_install_id": "sin-663d84c9b87ca82509a4f9a75465f9edcd5633fa256e035f7d045b13ba5c0971",
+    "replacement_install_id": "sin-ea1e0c217b0cbf6ecbed9c4952f38d36adc7107ed40ce8d7c6371f60744d6595",
+    "update_id": "sup-f6488df6662359f984d24ecfbca4a8362e59aabcf91eb0b361c1e069c199106d",
+    "context_id": "sec-d62b986c6dd6e8c04846ca00338145f3",
+    "agent_grant_id": "grt-id-5c9bfc0e41508181b51d1c9888c6bc9f467e9b46b19e8e9c1053e38804711809",
+    "agent_grant_status": "deployed",
+    "write_receipt_count": 0,
+    "target_exists": false,
+    "request_run_sha256": "77cf408422bbe38393fbd63985c0c6fad205fc60e9223fdd98e867317d403e67",
+    "receipts_response_sha256": "8077db979ab9f0a75d17489769353985d1961d0d5c0567a55d11efd66aed0ce0",
+    "receipts": [
+      {
+        "seq": 0,
+        "receipt_id": "rcp-b30be176f22cf2eb3735f2188f339618",
+        "tool": "skill_view",
+        "effective_action": "allow",
+        "hash": "ea88ac8625f4d0001e426a976797897cbe05816c78495b6247e0a777c2e8890f"
+      },
+      {
+        "seq": 1,
+        "receipt_id": "rcp-11223f4014a18b93076ba3786ca0bda6",
+        "tool": "read_file",
+        "effective_action": "allow",
+        "hash": "a6fa79ff916acb28162fdb8334fcccd9d05c1bffb260a6a99ec402f4b8211666",
+        "prev_hash": "ea88ac8625f4d0001e426a976797897cbe05816c78495b6247e0a777c2e8890f"
+      }
+    ]
+  },
+  "writer_control": {
+    "suffix": "v880",
+    "passed": false,
+    "business_error_code": "consecutive_tool_errors",
+    "tool_error": "native_dispatch_unavailable",
+    "skill_view_receipt_id": "rcp-90c7b28db48fee28cf1a15241e6be3f3",
+    "skill_view_no_skill": true,
+    "read_receipt_count": 0,
+    "write_receipt_count": 0,
+    "v2_skill_context_issued": false,
+    "harness_failure": "AttributeError"
+  },
+  "supervisor_contract": {
+    "aligned_for_run": true,
+    "restored": true,
+    "unit_sha256": "02fb70569d9b198ea4aa7958b537483dc1022cd1ad0a71ac994c02e9cedd28df",
+    "env_sha256": "9a3440c207a4555d32c7adbf6b0f82fb78ac27586cc22ab0580e25105dd2bba8"
+  },
+  "model_unit_unchanged": true,
+  "bridge_left_inactive": true
+}

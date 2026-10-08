@@ -26,11 +26,18 @@ FROM python:3.12-slim-bookworm@sha256:782412e85d0f0984994c290652577d4018aff08145
 
 WORKDIR /workspace
 RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin appuser
+RUN apt-get update && apt-get install -y --no-install-recommends bubblewrap \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /workspace/.venv /workspace/.venv
 COPY --from=builder /workspace/alembic.ini /workspace/alembic.ini
 COPY --from=builder /workspace/migrations /workspace/migrations
 COPY --from=builder /workspace/app /workspace/app
+
+# Source files may originate from a restrictive developer umask. Normalize only
+# packaged code/config readability; keep root ownership and no appuser writes.
+RUN chmod -R u=rwX,go=rX /workspace/app /workspace/migrations \
+    && chmod 0644 /workspace/alembic.ini
 
 ENV PATH="/workspace/.venv/bin:$PATH" \
     PYTHONPATH=/workspace \

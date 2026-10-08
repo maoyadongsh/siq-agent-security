@@ -1,11 +1,11 @@
 package receipt
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/contractfixture"
 	"testing"
 
 	"siq-agent-security/apps/agentshield/internal/intent"
@@ -109,8 +109,11 @@ func TestAuthorityReceiptSamplesAndHistoricalVerification(t *testing.T) {
 		}
 	}
 	want, err := os.ReadFile(path)
-	if err != nil || !bytes.Equal(bytes.TrimSpace(want), got) {
-		t.Fatal("authority receipt sample differs", err)
+	if err != nil || json.Unmarshal(want, &historical) != nil || Verify([]Receipt{historical}, fx.k.Public()) != nil {
+		t.Fatal("historical authority sample invalid", err)
+	}
+	if same, err := contractfixture.EqualReceiptContent(got, want); err != nil || !same {
+		t.Fatal("authority receipt sample content differs", err)
 	}
 }
 

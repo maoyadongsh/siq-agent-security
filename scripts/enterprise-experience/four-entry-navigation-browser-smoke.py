@@ -2,7 +2,7 @@
 """ENT-018 企业端导航简化（四主入口 + 高级折叠区）浏览器验收。
 
 仅使用隔离模拟响应（127.0.0.1 本地 mock 控制面），不连接真实业务数据；
-VITE_DEV_MODE 构建仅用于模拟验收、不可发布。检查项：
+身份由 loopback 测试层会话提供，构建禁用开发身份。检查项：
 - 桌面四主入口（资产/权限/安全/审计）与默认折叠的高级区域；
 - 键盘展开高级入口、选择链接、焦点可见；
 - 直接访问旧管理 URL 时高级区域自动展开（不改变浏览器 URL）；
@@ -12,6 +12,9 @@ VITE_DEV_MODE 构建仅用于模拟验收、不可发布。检查项：
 - 前进/后退导航正确；
 - 无新增业务写请求、无浏览器未捕获异常。
 """
+
+from browser_fixture_identity import install_fixture_session
+
 
 import argparse
 import json
@@ -146,7 +149,7 @@ def main() -> int:
         "synthetic_identity": True,
         "destination_fixture": True,
         "production_iam": False,
-        "note": "VITE_DEV_MODE 模拟身份构建，仅用于导航交互验收，不可发布、不代表生产环境验收。",
+        "note": "测试层模拟会话，仅用于导航交互验收，不代表生产 IAM 验收。",
         "checks": checks,
         "page_errors": page_errors,
         "request_log_summary": None,
@@ -160,8 +163,8 @@ def main() -> int:
         temporary = Path(raw)
         web_build = temporary / "web-sim"
         env = {k: v for k, v in os.environ.items() if k in {"PATH", "LANG", "TZ", "HOME"}}
-        env.update(VITE_DEV_MODE="true", VITE_DEV_TENANT_ID="fixture-tenant",
-                   VITE_DEV_USER_ID="fixture-user")
+        env.update(VITE_DEV_MODE="false", VITE_APP="", SIQ_AS_WEB_ENV_DIR=str(temporary),
+                   VITE_API_BASE="/api/v1", VITE_IAM_URL="/api/iam")
         with (out / "build.log").open("x") as log:
             subprocess.run(["npm", "run", "build", "--", "--outDir", str(web_build)],
                            cwd=WEB, env=env, stdout=log, stderr=log, check=True, timeout=300)
@@ -184,6 +187,7 @@ def main() -> int:
                 page.on("pageerror", lambda err: page_errors.append(str(err)))
 
                 # ---- 1. 桌面：四主入口 + 默认折叠高级区域 ----
+                install_fixture_session(page)
                 page.goto(f"{base}/agents", wait_until="networkidle")
                 main_links = page.locator(".entnav-main a.nav-link")
                 labels = [main_links.nth(i).inner_text().strip() for i in range(main_links.count())]
@@ -203,11 +207,13 @@ def main() -> int:
                 # 资产子页面应保留唯一主入口高亮，标题仍区分清单与详情。
                 for route, title in (("/agents/skills", "技能清单"),
                                      ("/agents/fixture-agent", "资产详情")):
+                    install_fixture_session(page)
                     page.goto(f"{base}{route}", wait_until="networkidle")
                     active = page.locator(".entnav-main a.active[aria-current='page']")
                     check(f"{route} 归属唯一资产入口且标题正确",
                           active.count() == 1 and active.get_attribute("href") == "/agents"
                           and page.locator(".topbar-title").inner_text().strip() == title)
+                install_fixture_session(page)
                 page.goto(f"{base}/agents", wait_until="networkidle")
 
                 # ---- 2. 键盘展开 + 选择 + 焦点可见 ----
@@ -226,6 +232,7 @@ def main() -> int:
                 check("键盘选择高级入口链接可导航", page.url.rstrip("/") == f"{base}/overview")
 
                 # ---- 3. 直接访问旧管理 URL 自动展开（URL 不变）----
+                install_fixture_session(page)
                 page.goto(f"{base}/policies", wait_until="networkidle")
                 check("直达旧管理 URL 时高级区域自动展开",
                       toggle.get_attribute("aria-expanded") == "true" and
@@ -244,6 +251,7 @@ def main() -> int:
                       f"shown={advanced_texts}")
 
                 # ---- 5. 桌面图标折叠态仍可访问高级功能 ----
+                install_fixture_session(page)
                 page.goto(f"{base}/agents", wait_until="networkidle")
                 page.locator(".nav-collapse-btn").click()
                 page.wait_for_timeout(400)
@@ -261,7 +269,9 @@ def main() -> int:
                 page.screenshot(path=str(out / "desktop-collapsed.png"), animations="disabled")
 
                 # ---- 6. 前进/后退 ----
+                install_fixture_session(page)
                 page.goto(f"{base}/agents", wait_until="networkidle")
+                install_fixture_session(page)
                 page.goto(f"{base}/permissions", wait_until="networkidle")
                 page.go_back()
                 page.wait_for_url(f"{base}/agents")
@@ -273,6 +283,7 @@ def main() -> int:
                 mobile = browser.new_context(viewport={"width": 375, "height": 667})
                 mpage = mobile.new_page()
                 mpage.on("pageerror", lambda err: page_errors.append(str(err)))
+                install_fixture_session(mpage)
                 mpage.goto(f"{base}/agents", wait_until="networkidle")
                 mpage.locator(".hamburger").click()
                 mpage.wait_for_timeout(400)

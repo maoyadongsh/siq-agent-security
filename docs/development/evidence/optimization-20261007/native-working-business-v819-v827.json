@@ -1,0 +1,410 @@
+{
+  "date": "2026-10-08",
+  "business_head": "2a70587ab13a33bdaba9b5fa299b4ac8be594a23",
+  "security_source_commit": "78eabcccab0ebdbfe3489b8caf2b246a4f0a10ff",
+  "source_state": "working_tree_with_explicit_uncommitted_inputs",
+  "source_files": 1873,
+  "source_archive_sha256": "8437caadfa769db418d30824a922b936b4446e2dff830705e04d2dcfe9072b14",
+  "source_manifest_sha256": "6d44182dbe25b74ea47deceff2595b210c812579c8331935a34816d3dd33a1e0",
+  "build": {
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_sha256": "db2b7a522f6fe6789c3246b3ef5a4ce7ce32997747cd5153ab0c9f61ef03d7e8",
+    "skill_bundle_sha256": "f1ba92f63565a908a7d65dbb0d1581351a1bc070cd7fa12beb28acd2dd08b6e1",
+    "snapshot_manifest_sha256": "077f7996f9a50ce2f1f527f9376cf774496b502341232aa9b3690c0487080b3d",
+    "checks": {
+      "committed_overlay_and_pinned_hermes": true,
+      "committed_skill_bundle": true,
+      "fresh_native_snapshot": true,
+      "fixed_base_native_image_verified": true,
+      "active_image_records_and_profile_unchanged": true
+    },
+    "image_checks": {
+      "protected_files": true,
+      "protected_ancestors": true,
+      "native_config": true,
+      "legacy_environment_rejected": true,
+      "non_root": true,
+      "skill_inventory": true
+    }
+  },
+  "runtime": {
+    "schema_version": "working-candidate-installed-runtime/v1",
+    "python": "3.13.12",
+    "python_executable_sha256": "2b0644c7d784beddd62218cfce0d8137fd166f74d7d51c2bb660928e7f8a583a",
+    "distribution": "siq-openshell-control",
+    "version": "0.4.0",
+    "source_files_sha256": {
+      "siq_openshell_control/__init__.py": "01f1af7ebf9624ae87aedc68722dfb96a2921ef8dc6bb8f8d049e96c832b4203",
+      "siq_openshell_control/contract.py": "96b19b2dc0ea29e722fff3000f45bed072fc12aefddee9d349afae9c157dc883",
+      "siq_openshell_control/immutable_path_registry.py": "df882f8606421f425561066a7e467b8c127627ca6995d2e425f85e0dc00aa96f",
+      "siq_openshell_control/pool_concurrency.py": "45efe3b401cbfd3b09ea018fa3e6de50e63f864827efe1d227c1c4da9066e679",
+      "siq_openshell_control/pool_registry.py": "8fe4435bc7e7ecea8ce1f86c32cc0c8643de54f02c4c655b2840646638bba1ac",
+      "siq_openshell_control/state.py": "f3bc8682e2c565a235a4362f4a06a1d431d7220689817a7ca670647ff9095826"
+    },
+    "dependencies": {
+      "fastapi": "0.136.1",
+      "uvicorn": "0.46.0",
+      "sqlmodel": "0.0.38",
+      "sqlalchemy": "2.0.49",
+      "pydantic": "2.13.4",
+      "httpx": "0.28.1",
+      "psycopg": "3.3.4"
+    }
+  },
+  "source_namespace_probe": {
+    "without_private_users_exit_code": 226,
+    "with_private_users_exit_code": 226,
+    "worktree_preserved": true,
+    "result": "host systemd mount namespacing not supported"
+  },
+  "schema_version": "optimization-native-working-repetitions/v1",
+  "verification": {
+    "schema_version": "native-working-permissions-public-verification/v1",
+    "candidate_source_sha256": "f64f7ae0be476a98eb75855ba3a7023c37b7aae86800fd07fe8d4823c8cfa27d",
+    "working_tree_source_unchanged": true,
+    "source_inventory_unchanged": true,
+    "installed_runtime_unchanged": true,
+    "uncommitted_input_count": 289,
+    "receipts": {
+      "count": 18,
+      "all_content_hashes_verified": true,
+      "sequence_and_previous_hash_verified": true,
+      "all_ed25519_signatures_verified_with_public_key_only": true,
+      "sha256": "75bcc91695e350a2f255cddfe76a0363a93f6711eb3b1652003510ec03c0af92",
+      "public_key_base64": "frRO3gRqqc3I/rijvyVf9DMkYSIaNunT2QQzxTdCrRI=",
+      "head_hash": "a59d28ac524f35f662eb37366edc2760cfe1cd0409d8ab3813952fb3f5afeaf1"
+    },
+    "cases": {
+      "v819": {
+        "passed": true,
+        "tool": "read_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "c08a976078301f8b5aa071b11120e591b06dd374c32378d15c50c4119fa178b9",
+        "receipt_hash": "3b5fe98458776f1928eb9b24dd662096c75be5c5781be4722df5f609ef252e49",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true
+      },
+      "v820": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "request_run_sha256": "61f62325ee75e44b3e5448a2089b76196641f78b6dea473a30b47c71416895ef",
+        "receipt_hash": "81142d5617c1bfc672ee5952c567b6a31963a291a259d7a20c162a77dd58aa4f",
+        "resource_digest": "f67f2c3de25dbe893d578774cec9d7f9fc75e5f95a52bd297edb31d7dbded477",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_absent": true
+      },
+      "v821": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-research-draft",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "fceb8427dbfacc7f05e5f42708c8744aaf632f035eca6025accc2500f00e07e6",
+        "receipt_hash": "943889435c2bb106e37cdfeaa814915984324a4d2ae9a19ea75a1ba61df240b0",
+        "resource_digest": "81b8f931e51e79c2dd1d02d2519badfb97ae014105197f2da53c8877d1c56d41",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_sha256": "d33ddeee3884a5c65984d2bfff9b17f3dc9caff9faa948aaac10be1a3c9477d4",
+        "file_content_matches": true
+      },
+      "v822": {
+        "passed": true,
+        "tool": "read_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "575db12308a359dc5c883c054645f90863ce61e385f46506db84808267edce68",
+        "receipt_hash": "678a5254f431c052b002853bbe1e7f0e455eb74ed577c923407b3436eb2c2865",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true
+      },
+      "v823": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "request_run_sha256": "fab1447b0e91549ecb7fc6ae34f320441fdb9a83640c0188500dcbd6e571c681",
+        "receipt_hash": "53141827886300ad150fbf05434eac7ca6ec88c38b05cdbbec0e9548fff56823",
+        "resource_digest": "1440a8daadccfafe2b17d08fa9bb23b7cf4e354ad503ae91a3376037bfb0a488",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_absent": true
+      },
+      "v824": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-research-draft",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "3e41de1975fad25b92aad2da37157a5a015cbfc5ac00d68ca86dcac618feff92",
+        "receipt_hash": "ee80ba2564f7e2d1a76750338a21fbeb58564ae829711222df6b699f9a84175e",
+        "resource_digest": "b2594833f4ef77f2b6483ff7a3680bab95904644dc019ef8b4a7c530ccb69a7b",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_sha256": "81076fa7deb079832c881e7e571d85f35254f3fe0a5526f60a0f65c6263a89e0",
+        "file_content_matches": true
+      },
+      "v825": {
+        "passed": true,
+        "tool": "read_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "d4bee09b11589a6049a3d173fd3e9d2ed6435f14221d6dde02cc53d31f5e5ba9",
+        "receipt_hash": "e1821a855ce2d396dd465d41a0d1ec525de81d246940c564b8ac1acb8bfcfc33",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true
+      },
+      "v826": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "request_run_sha256": "6774afbc6bafa685a6d0778b35cd9bee506413c7c8a7d83cd8db19770a562b94",
+        "receipt_hash": "79b854e922ae8063a72bfd4393d61d2d0e00454acd4cc0892c7cb030a580f55d",
+        "resource_digest": "1bd8568adbd9ff81f412fb6196536d943a66bbdced54bd1ecd6de9be83774ef2",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_absent": true
+      },
+      "v827": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-research-draft",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "806db528021fac9e7045d4a770e4a4dd5ed2bdaee956aeb7324989aca16597d8",
+        "receipt_hash": "a59d28ac524f35f662eb37366edc2760cfe1cd0409d8ab3813952fb3f5afeaf1",
+        "resource_digest": "7c998529d74041ae082169f6f07b50ed9bbb7dd5b2eb6c0b0b7e3b1dcd19add8",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "context_signature_independently_verified": true,
+        "context_subject_install_and_loader_match": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_sha256": "e814bf24deff7b01730fa23def87cb97cb69e353db4270be2d1e75cade8a0151",
+        "file_content_matches": true
+      }
+    },
+    "cleanup": {
+      "v819": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v820": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v821": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v822": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v823": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v824": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v825": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v826": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v827": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      }
+    },
+    "same_agent_baseline_different_skill_grants": true,
+    "same_openshell_filesystem_policy_after_request_id_normalization": true,
+    "four_arm_evaluation_complete": false,
+    "repetitions_per_case": 3,
+    "clean_committed_deployment": false,
+    "OPT08_complete": false,
+    "signed_context_count": 9,
+    "context_verification_time_precision": "seconds"
+  },
+  "campaign": {
+    "schema_version": "native-working-repetition-campaign/v1",
+    "status": "completed",
+    "candidate_source_sha256": "f64f7ae0be476a98eb75855ba3a7023c37b7aae86800fd07fe8d4823c8cfa27d",
+    "planned_cases": [
+      [
+        "v822",
+        "read"
+      ],
+      [
+        "v823",
+        "read_only_write_denied"
+      ],
+      [
+        "v824",
+        "draft_write"
+      ],
+      [
+        "v825",
+        "read"
+      ],
+      [
+        "v826",
+        "read_only_write_denied"
+      ],
+      [
+        "v827",
+        "draft_write"
+      ]
+    ],
+    "completed": [
+      {
+        "case": "v822",
+        "permission_case": "read",
+        "exit_code": 0,
+        "business_passed": true,
+        "source_unchanged": true,
+        "cleanup_confirmed": true
+      },
+      {
+        "case": "v823",
+        "permission_case": "read_only_write_denied",
+        "exit_code": 0,
+        "business_passed": true,
+        "source_unchanged": true,
+        "cleanup_confirmed": true
+      },
+      {
+        "case": "v824",
+        "permission_case": "draft_write",
+        "exit_code": 0,
+        "business_passed": true,
+        "source_unchanged": true,
+        "cleanup_confirmed": true
+      },
+      {
+        "case": "v825",
+        "permission_case": "read",
+        "exit_code": 0,
+        "business_passed": true,
+        "source_unchanged": true,
+        "cleanup_confirmed": true
+      },
+      {
+        "case": "v826",
+        "permission_case": "read_only_write_denied",
+        "exit_code": 0,
+        "business_passed": true,
+        "source_unchanged": true,
+        "cleanup_confirmed": true
+      },
+      {
+        "case": "v827",
+        "permission_case": "draft_write",
+        "exit_code": 0,
+        "business_passed": true,
+        "source_unchanged": true,
+        "cleanup_confirmed": true
+      }
+    ]
+  },
+  "limits": [
+    "Nine independent model/business requests cover three permission cases; no universal or statistical guarantee.",
+    "Working candidate includes 289 inputs differing from business HEAD; clean committed deployment remains pending.",
+    "Offline verification proves historical receipt and context bindings, not present authorization or original filesystem effects.",
+    "Full lifecycle, four-arm comparison, enterprise behavior proof and platform acceptance remain incomplete."
+  ],
+  "harness_setup_failure": {
+    "exception": "KeyError",
+    "field": "expires_at",
+    "business_calls_before_failure": 0,
+    "correction": "read verified request issuer expiry instead of an absent parent identity field",
+    "original_log_sha256": "7fdfc1e3f99d5a2eeda017625ff5db61072b99c6b28dabecb7e09a44c93a09f6"
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-working-business-v819-v827.receipts.jsonl",
+      "sha256": "75bcc91695e350a2f255cddfe76a0363a93f6711eb3b1652003510ec03c0af92"
+    },
+    "contexts": {
+      "file": "native-working-business-v819-v827.contexts.json",
+      "sha256": "9bc8122b92a0832e4647af3984b5e66ed285d29e0ef04cb021ea20f9ac0e6833"
+    }
+  },
+  "private_result_sha256": {
+    "native-business-api-v819.json": "6373efe9a9f2cd7dd5d58b761a55c4fb589491138e9694d9d9784b9924e09a17",
+    "native-switch-v819-cleanup.json": "380ffb0923da9b0f27b24bd97a0e45d7d64c254ca41cba00bcabe8726ffa6f7f",
+    "native-business-api-v820.json": "f1c63acc9165911ee803e8c682d960fafb0bb6730b34d3a2657bd6fe7f322cac",
+    "native-switch-v820-cleanup.json": "006bdf7b65f62c9cb1f07ec348071fb9afb8a3bd92edd5ad3f5f21c338afb1b5",
+    "native-business-api-v821.json": "b5e19149c36fbcbc967978fdfe29005267df4a22b1abd7e005e4407eecf923e3",
+    "native-switch-v821-cleanup.json": "4a337473b4f4991648f1974f0606bb7f04a11c83830d9d1f1302fa79ceb45d22",
+    "native-business-api-v822.json": "5bd4ce8f36104245045f9875b1a3d5be0c1569edf981517153a884e7f3c37120",
+    "native-switch-v822-cleanup.json": "e46d3c5de7a635554f1a43fbe9be2209ca8da69adb3799b40c2cbd46f6b8128b",
+    "native-business-api-v823.json": "712d362fe50ef62a098b8d89f3714386885e2c87dee24e2fdef73b2fea9ae14c",
+    "native-switch-v823-cleanup.json": "261ec60bd976ec8f5230f58d487ae76f4f12ddd1ab7f53f27108e7ffd3b9b1e1",
+    "native-business-api-v824.json": "3d74e623bffe8c8d381726a0ede30aecdda39bbb8e70901f95d28af69d3d221c",
+    "native-switch-v824-cleanup.json": "6b6d806fe4be2e2833e1ab0e19dc89fcb59ed2fd835e61c66071ecf996fcdf3f",
+    "native-business-api-v825.json": "8f2a95985365f911c363a067299a53873af48e4ef4cbf0b53bd8f36c72345189",
+    "native-switch-v825-cleanup.json": "aac3001e416023742a1528a90ad250fa93996f2dc1af2c7bf78b71298647208a",
+    "native-business-api-v826.json": "7bd7d060bb495fe5437e4139a408f91b4c133951d13e63e5dc1704d7db20dcf0",
+    "native-switch-v826-cleanup.json": "14668f1ef9c525dba854d4259b28b8efd206d87fa677969b6daeb9490aaa5a02",
+    "native-business-api-v827.json": "1a2d21e1c202237acfb8a50d73eeb8543f16a2bfca44add230d808e09bf9c517",
+    "native-switch-v827-cleanup.json": "6f96ea2b761360e4f4cf04b8effa40ec2978853e49972781eac171431201ffe0",
+    "repeat-native-working-permissions-v822-v827.py": "75e0794e6bf27259bb5b94c0244f776a37f9fee18b51c0cb9ceb95790f9b0a39",
+    "verify-native-working-permissions-v819-v827.py": "204938dcb7472373c7bbfe6cc9858ce43846899f18cf42a0e4c4d6dde594f2cd"
+  }
+}

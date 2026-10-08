@@ -1,0 +1,80 @@
+{
+  "native_invocation": {
+    "call_id": "ncall-da9bb41d2874f5efb496fa9bb52371c1",
+    "call_signature": "e690f0d20019e4258aa6f961cb6d8051a02b8bd779d8e419dfc2d93625bc0ffbc2d884ab8aed0a1ce57574ccbf020e8af0c80917c0610f80d231b4d4fc8b0b08",
+    "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+    "session_signature": "71df09c334f3b4f45242d1df1d4b80e2e802dc592cf9a4d737fa9df8f7abf41f60474b4097ca2f270ce068399fc648f02374d4d510cad77d2667ca6a7e24160c",
+    "request_binding": "afccddd6bce1c40afa4b7a4f645d443f8dd82a59b67586e10ce92b49ca560134",
+    "agent_authority": {
+      "grant_id": "grt-agent-baseline",
+      "grant_digest": "0952967007d319a708f311cddce889f6458416975d66859118a226cbc7cddd23"
+    },
+    "no_skill": true,
+    "contexts": []
+  },
+  "schema_version": "runtime-receipt/v3",
+  "authority_status": "valid",
+  "policy_action": "allow",
+  "effective_action": "allow",
+  "principal": {
+    "type": "user",
+    "id": "synthetic-user"
+  },
+  "resource_refs": [
+    {
+      "domain": "filesystem",
+      "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+    }
+  ],
+  "record_type": "decision",
+  "task_seq": 1,
+  "receipt_id": "rcp-e0effaee04ee-120000.000000",
+  "chain_id": "local",
+  "seq": 0,
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "570474a404f148ac329ae440da7e46cf5a062295c94985e88e6834ab1275e469",
+  "sig": "c51d13eda906fdaa438985d6b1171bf652f95ef60f049926c48704123c3e69243ff8c50db5fe3f2cc9fecf1c6b6dc420b6a9e4479f56191c131f03aa5a6b8708",
+  "issued_at": "2026-09-14T12:00:00Z",
+  "platform": "hermes",
+  "session_id": "sess-1",
+  "action_id": "act-4d0f7184153b61a07c2b5ff8",
+  "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+  "task_id": "trusted-envelope",
+  "runtime_task_id": "task-1",
+  "intent_id": "fixture-intent",
+  "intent_binding": "bound",
+  "authority_revision": "fixture-revision",
+  "tool": "read_file",
+  "tool_call_id": "call-1",
+  "operation": "read",
+  "effects": [
+    "file.read"
+  ],
+  "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+  "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+  "action": "allow",
+  "advisory_action": null,
+  "reason": "granted by exact Agent and Skill authority intersection",
+  "reason_code": "allow",
+  "matched_grant_id": "grt-agent-baseline",
+  "matched_fact_ids": [
+    "fixture-read"
+  ],
+  "matched_rule_ids": [],
+  "taint_labels": [],
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  },
+  "enforcement_mode": "block",
+  "policy_revision": null,
+  "sandbox_id": null,
+  "model_key": null,
+  "engine": {
+    "version": "native-component-fixture",
+    "rulepack_version": 1
+  },
+  "decision_latency_ms": 0,
+  "hold": null
+}

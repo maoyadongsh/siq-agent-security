@@ -1,0 +1,154 @@
+{
+  "schema_version": "optimization-install-program-identity/v1",
+  "recorded_at": "2026-10-08T01:42:35.742574+00:00",
+  "candidate_base_commit": "d962be8d",
+  "source_sha256": {
+    "apps/agentshield/internal/adapterinstall/diagnostics.go": "1e8ff023d37b9bbd10c6410c283f493b75eddcbc047bb46b79a435d9ff9f5859",
+    "apps/agentshield/internal/adapterinstall/transaction.go": "2a4c0aedba2ae68695b880c0e8f494f59aac5d7a192d96258246ed46654041bf",
+    "apps/agentshield/internal/adapterinstall/integrity_test.go": "e2f411b83039d99cf29e68756fd367e66ac708f40f024104ee09590821823c97",
+    "apps/agentshield/internal/adapterinstall/program_integrity_test.go": "142dd218246a798f7e7ac5bf32b63daa6ddadd07cac866cf5eb60989d0aa0587",
+    "apps/agentshield/testdata/contracts/adapter-diagnostics-program-integrity.json": "7a6096fbde3faa69710ddbb21f2c362d91589b0c05cf3dbe38f6e1f4245ed935",
+    "apps/control-api/app/tests/test_schema_contracts.py": "6f46c0badbc4482fa8373da2b4ab274e951da228a8921889b119935fa069b9d2",
+    "skills/siq-agent-security/scripts/verify_manifest.py": "101bb2dba5c0cccfdc09fef32e992f6dcbfb2c7f6b65b4262e86bf9ed9f3d1f2",
+    "scripts/release/verify.py": "f214f21227d9659dcfc7ef950b62209d2dbe236054318c7640acd88d4676827f"
+  },
+  "full_go_suite": {
+    "top_level_passed": 1741,
+    "top_level_skipped": 34,
+    "pass_events_including_subtests": 4195
+  },
+  "targeted_suite": {
+    "top_level_passed": 45,
+    "top_level_skipped": 1,
+    "pass_events_including_subtests": 88
+  },
+  "schema_samples_passed": 4,
+  "go_vet": "passed",
+  "ruff": "passed",
+  "tracked_go_format": "passed",
+  "baseline_negative_cases": {
+    "program_content_changed": 3,
+    "program_missing": 1,
+    "same_content_different_path": 1
+  },
+  "builds": {
+    "linux-amd64": {
+      "passed": true,
+      "sha256": "cf54be1d95857ad31ca53fea2239de5a3651440b2f4ffebfa906157fce8d5e1d"
+    },
+    "linux-arm64": {
+      "passed": true,
+      "sha256": "56650940fe9d61ac77d75e434d4dcf8bb52867747368f1a17e3c3941a15d90f6"
+    },
+    "darwin-arm64": {
+      "passed": true,
+      "sha256": "047b3ec4331d23f06a81f276a2a8baa30dd7657d99fe5e85dadec485a51b9f0b"
+    },
+    "windows-amd64": {
+      "passed": true,
+      "sha256": "17a2b8d2450afc051d780ea601af7fe05a88500a914919f715120b9806300540"
+    }
+  },
+  "existing_release_verification": {
+    "schema_version": "siq-release-verification/v1",
+    "version": "0.4.0",
+    "expected_source_sha": "2cd61160849f50794c2dc632771a6e6ed6149eef",
+    "source_identity_scope": "descriptive metadata matched; publisher signature binds Skill and binary pins, not source attestation",
+    "official_signature_and_skill_content": "passed",
+    "four_binary_pins": "passed",
+    "asset_inventory_and_checksums": "passed",
+    "bundle_skill_zip_and_flat_binaries": "passed",
+    "trusted_installation_instructions": "passed",
+    "native_installation": {
+      "status": "not_run"
+    },
+    "published": "not_checked",
+    "assets": [
+      {
+        "name": "SHA256SUMS",
+        "sha256": "496c546636c24f286b9d85ee7dd5df1d0f67a028210567f56017f51e96199413",
+        "bytes": 681
+      },
+      {
+        "name": "SOURCE-INFO.json",
+        "sha256": "382300e8bad8d4b90a6453e9a35d5739a7f97234005e4fc1b0f08f2603c2f4fe",
+        "bytes": 25586
+      },
+      {
+        "name": "siq-agent-security-0.4.0-bundle.zip",
+        "sha256": "2c62f3999a0c0d0cb0801b1f17c8fb3dbbf2219718d3f5385fd4a1ea27e373ef",
+        "bytes": 47466097
+      },
+      {
+        "name": "siq-agent-security-darwin-arm64",
+        "sha256": "767e3b0093c71fb7cf8abd3f13189a203fca0596a5e698a2ce4c8e44dca5928d",
+        "bytes": 19434946
+      },
+      {
+        "name": "siq-agent-security-linux-amd64",
+        "sha256": "34c215ebac565662ebe891e3b88b34d1ccab9b6efc1c6901cbd8a74272069d0e",
+        "bytes": 20447394
+      },
+      {
+        "name": "siq-agent-security-linux-arm64",
+        "sha256": "3f94011395a1d01f7e99037efe71f1e5939b400d22d2ad60c0a8649b6e3fea70",
+        "bytes": 19202210
+      },
+      {
+        "name": "siq-agent-security-skill-0.4.0.zip",
+        "sha256": "0599ff40616e5d94ad7e34500332e7c07712f700c049e124c1181e2bde08a3c2",
+        "bytes": 34432
+      },
+      {
+        "name": "siq-agent-security-windows-amd64.exe",
+        "sha256": "55bcac2c7577a07011db0b4eacfb59f2656574b4d7b32e3d946d028976e83025",
+        "bytes": 21025280
+      }
+    ]
+  },
+  "existing_release_negative": {
+    "schema_version": "siq.existing-release-installation-integrity/v1",
+    "release_version": "0.4.0",
+    "source_sha": "2cd61160849f50794c2dc632771a6e6ed6149eef",
+    "archive_sha256": "2c62f3999a0c0d0cb0801b1f17c8fb3dbbf2219718d3f5385fd4a1ea27e373ef",
+    "verifier_sha256": "101bb2dba5c0cccfdc09fef32e992f6dcbfb2c7f6b65b4262e86bf9ed9f3d1f2",
+    "checks": {
+      "valid": {
+        "accepted": true,
+        "private_staged_copy_hash_matches": true
+      },
+      "skill_content_changed": {
+        "rejected": true,
+        "no_staged_program": true
+      },
+      "manifest_signature_changed": {
+        "rejected": true,
+        "no_staged_program": true
+      },
+      "binary_changed": {
+        "rejected": true,
+        "no_staged_program": true
+      },
+      "extra_skill_payload": {
+        "rejected": true,
+        "no_staged_program": true
+      }
+    },
+    "scope": "Current verifier compatibility against isolated copies of historical officially signed bundle; no candidate release issuance, no binary execution",
+    "temporary_copies_removed": true,
+    "original_archive_unchanged": true
+  },
+  "raw_log_sha256": {
+    "siq-opt12-program-negative.log": "a3a6e54f6bf66432a72904cd9688c30ae6932668441071a428ca2c57391aba92",
+    "siq-opt12-program-targeted.jsonl": "6f053c411a5515ee926c0e92b8b7449486862b233615449a4944067ab99b129c",
+    "siq-opt12-program-go-all.jsonl": "cbeebf5bb1354a4193b4ddd2f63307cc092b8fe3ab1d83b7096106778cfda8c6",
+    "siq-opt12-program-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "siq-opt12-program-schema.log": "aa67f2a4fb9973174fff1db415104ce7fb35247a5fe2e0960ffc17e0896cce03"
+  },
+  "scope": [
+    "New diagnostics and upgrade/rollback verified with isolated synthetic platform configuration.",
+    "Historical 0.4.0 officially signed bundle checked with current verifier; not current optimization candidate issuance or native execution.",
+    "No credentials, models, platform restart, daily state mutation, or published asset changes.",
+    "OPT-12 remains implementing until final candidate delivery identity is verified."
+  ]
+}

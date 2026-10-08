@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from app.adapters.openshell.contracts import BackendCapabilities, CapabilityItem, UnsupportedCapability
 from app.adapters.openshell.policy_compiler import compile_policy
 
@@ -31,8 +33,9 @@ def _caps(raw: dict) -> BackendCapabilities:
     )
 
 
-def test_policy_compile_vectors_match_live_compiler():
-    doc = json.loads(FIXTURE.read_text(encoding="utf-8"))
+@pytest.mark.parametrize("fixture", [FIXTURE, FIXTURE.with_name("policy_update_semantics_v1.json")])
+def test_policy_compile_vectors_match_live_compiler(fixture):
+    doc = json.loads(fixture.read_text(encoding="utf-8"))
     assert doc["schema"] == "policy_compile_vectors/v1"
     for vec in doc["vectors"]:
         caps = _caps(vec["capabilities"])

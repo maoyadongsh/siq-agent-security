@@ -1,0 +1,173 @@
+{
+  "schema_version": "siq.optimization-native-openshell-image-profile/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "component_verified_business_pending",
+  "channel_tests_passed": 43,
+  "image_boundary_tests_passed": 11,
+  "openshell": {
+    "schema_version": "siq.openshell-native-runtime-inspection/v1",
+    "namespace": "siq-opt08-e0eb66cfc6ad",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "model_calls": 0,
+    "daily_gateway_modified": false,
+    "docker": {
+      "image_matches": true,
+      "root_filesystem_readonly": false,
+      "label_keys": [
+        "ai.siq.hermes.integration-patch-sha256",
+        "ai.siq.hermes.patch-sha256",
+        "ai.siq.openshell.context-sha256",
+        "ai.siq.openshell.data-classification",
+        "ai.siq.openshell.runtime-config-sha256",
+        "ai.siq.qwen38.candidate-input-sha256",
+        "ai.siq.qwen38.compiled-config-sha256",
+        "ai.siq.qwen38.pg-query-sha256",
+        "ai.siq.qwen38.route",
+        "ai.siq.qwen38.snapshot-manifest-sha256",
+        "openshell.ai/managed-by",
+        "openshell.ai/sandbox-id",
+        "openshell.ai/sandbox-name",
+        "openshell.ai/sandbox-namespace",
+        "org.opencontainers.image.revision",
+        "org.opencontainers.image.title"
+      ]
+    },
+    "runtime": {
+      "native_probe_ready": true,
+      "pid": 43,
+      "status": {
+        "Uid": [
+          "1000",
+          "1000",
+          "1000",
+          "1000"
+        ],
+        "Gid": [
+          "1000",
+          "1000",
+          "1000",
+          "1000"
+        ],
+        "NSpid": [
+          "43"
+        ],
+        "CapPrm": [
+          "0000000000000000"
+        ],
+        "CapEff": [
+          "0000000000000000"
+        ],
+        "CapAmb": [
+          "0000000000000000"
+        ],
+        "NoNewPrivs": [
+          "1"
+        ],
+        "Seccomp": [
+          "2"
+        ]
+      },
+      "files": [
+        {
+          "path": "/opt/siq/native-profile-probe/bootstrap.py",
+          "uid": 0,
+          "gid": 0,
+          "mode": 292,
+          "write_open_errno": 13
+        },
+        {
+          "path": "/opt/siq/native-profile-probe/native_channel.py",
+          "uid": 0,
+          "gid": 0,
+          "mode": 292,
+          "write_open_errno": 13
+        }
+      ],
+      "channel_directory": "/tmp/siq-native-profile-43"
+    },
+    "host_process": {
+      "unique_container_cgroup_and_pid_depth_match": true,
+      "status_readable": true,
+      "root_code_readable": true,
+      "mountinfo_readable": true
+    },
+    "image_profile": {
+      "checks": {
+        "actual_openshell_process_image_and_skill_files": true,
+        "bidirectional_cross_pid_namespace_channel": true,
+        "same_namespace_socket_imposter_rejected": true,
+        "wrong_code_digest_rejected": true,
+        "wrong_interpreter_rejected": true,
+        "wrong_launch_arguments_rejected": true,
+        "wrong_artifact_rejected": true,
+        "undeclared_skill_file_rejected": true,
+        "mixed_mount_profile_rejected": true,
+        "missing_backend_rejected": true,
+        "runtime_cannot_open_protected_code_for_write": true
+      },
+      "image_id": "sha256:9b67375c4bf1496f242d539ca6ca0ad6d461094384f05da26649286310b9525f",
+      "artifact_sha256": "98c29a7dcacc1dde07ca6e8f68a78a5f9b4b515160baaff278fed191c5474d9c",
+      "files": {
+        "/opt/siq/native-profile-probe/native_channel.py": "60b95536a68e814c9bc855baea00d26c7c1720134e76d904575a5e31420b3952",
+        "/opt/siq/native-profile-probe/bootstrap.py": "709906190074204a56d0fc55c8a499f362da37521cf2844b2cceaf99d5a0dfe0",
+        "/opt/siq/native-profile-probe/skill/SKILL.md": "bce1f45c4ab858117b6ad06a7452660568436effbb99ef9eddb4acab374fb8ca"
+      },
+      "business_acceptance": false,
+      "model_calls": 0
+    },
+    "inspection_complete": true,
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true,
+    "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7"
+  },
+  "bind_profile_regression": {
+    "schema_version": "siq.native-runtime-guard-probe/v1",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "artifact_sha256": "491b80b07f9d8f1f36a0f8b6c1bf7d205a5daaf2e8d3a10808b507882e050329",
+    "checks": {
+      "actual_process_code_and_readonly_mounts": true,
+      "guarded_kernel_credential_channel": true,
+      "wrong_argv_sha256": true,
+      "wrong_executable_sha256": true,
+      "wrong_gid": true,
+      "wrong_artifact_sha256": true,
+      "wrong_code_files": true,
+      "backend_missing": true,
+      "wrong_host_object": true,
+      "undeclared_file": true,
+      "undeclared_file_cannot_restore_trust": true,
+      "undeclared_directory": true,
+      "undeclared_directory_cannot_restore_trust": true,
+      "code_symlink": true,
+      "code_symlink_cannot_restore_trust": true,
+      "changed_code": true,
+      "changed_code_cannot_restore_trust": true,
+      "unregistered_skill_mount": true,
+      "exited_process": true,
+      "kernel_rejects_writable_mount": true,
+      "kernel_rejects_shadow_mount": true
+    },
+    "model_calls": 0,
+    "backend": "owned_offline_docker",
+    "openshell_business_acceptance": false
+  },
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_runtime.py": "10be2a8cbc98f1511653c82a68d8877f40d66573fc58546d3c6200ab06e4e273",
+    "adapters/runtime/hermes-agentshield/native_channel.py": "60b95536a68e814c9bc855baea00d26c7c1720134e76d904575a5e31420b3952",
+    "adapters/runtime/hermes-agentshield/tests/test_native_channel.py": "b4ea1a029f56271bcfb96a51a9000d76d236a813031f08e07a72d6a63b77f218",
+    "adapters/runtime/hermes-agentshield/tests/test_host_runtime_image.py": "49ce6c3a15394b35ecef159786e2968942abcae99c357ca7cd62ae70bfc476e3",
+    "patches/hermes/run_openshell_runtime_probe.py": "80c5d8ed15ccea1d5780d8045ef126611737bc0aa9055ab8ec6aff9d3fbc5bae",
+    "patches/hermes/openshell_image_probe.py": "8ee27a574ffc868c1e7af812f7ab67e4ee26333532437bf211fde57248a411f1"
+  },
+  "limits": [
+    "Owned OpenShell component probe only; no actual Hermes model task or online Go Authority in this probe.",
+    "One synthetic image Skill; not two signed business Skill installations.",
+    "Same-process code control and root/kernel/trusted-launcher compromise are outside this profile.",
+    "No Windows/macOS native acceptance; no remote push or main CI claim."
+  ]
+}

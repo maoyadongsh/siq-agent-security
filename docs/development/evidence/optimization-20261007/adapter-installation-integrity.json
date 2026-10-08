@@ -1,0 +1,92 @@
+{
+  "schema_version": "optimization-installation-integrity-evidence/v1",
+  "recorded_at": "2026-10-08T01:29:00.234962+00:00",
+  "candidate_base_commit": "1403543a",
+  "scope": "Linux component and management HTTP handler verification with disposable synthetic homes; not native host enforcement",
+  "full_go_suite": {
+    "top_level_tests_passed": 1736,
+    "top_level_tests_skipped": 34,
+    "passed_test_events_including_subtests": 4185,
+    "packages_passed": 45,
+    "failed": false
+  },
+  "final_integrity_tests": {
+    "top_level_tests_passed": 7,
+    "top_level_tests_skipped": 0,
+    "passed_test_events_including_subtests": 15,
+    "packages_passed": 1,
+    "failed": false
+  },
+  "additional_http_test": {
+    "top_level_tests_passed": 1,
+    "top_level_tests_skipped": 0,
+    "passed_test_events_including_subtests": 1,
+    "packages_passed": 1,
+    "failed": false
+  },
+  "validation": {
+    "go_vet": "passed",
+    "schema_diagnosis_samples_passed": 3,
+    "schema_command": ".venv/bin/pytest -q app/tests/test_schema_contracts.py -k diagnosis (cwd: apps/control-api)",
+    "schema_initial_filter": "adapter_diagnostic selected no tests; corrected to diagnosis and passed 3",
+    "ruff": "passed after wrapping new parametrization line",
+    "gofmt_tracked_and_new_files": "passed",
+    "gofmt_directory_note": "unrelated untracked .tmp/fx01/refcalc.go is not formatted; preserved unchanged",
+    "native_host_acceptance": false
+  },
+  "baseline_negative": {
+    "removed_installations_misclassified": 3,
+    "corrupt_sealed_install_reported_ready": 1,
+    "forged_uninstall_claim_accepted": 1,
+    "positive_new_check_assertions": "also failed against baseline because the new check did not exist; not counted as vulnerabilities"
+  },
+  "runtime_sha256": {
+    "apps/agentshield/internal/adapterinstall/diagnostics.go": "130d9dbde88fe8c270753a4d4a39789b99b5d48f16fefcbe65782d5399ae1f69",
+    "apps/agentshield/internal/adapterinstall/transaction.go": "9ad849ac3095df32bf589981a0650201a69b8339aea80b427762c75894e5566a"
+  },
+  "candidate_source_sha256": {
+    "apps/agentshield/internal/adapterinstall/diagnostics.go": "130d9dbde88fe8c270753a4d4a39789b99b5d48f16fefcbe65782d5399ae1f69",
+    "apps/agentshield/internal/adapterinstall/transaction.go": "9ad849ac3095df32bf589981a0650201a69b8339aea80b427762c75894e5566a",
+    "apps/agentshield/internal/adapterinstall/integrity_test.go": "1abf59967acf338a68bba0704fbdc43792c538de7cc6585362b502019ddea8a0",
+    "apps/agentshield/internal/server/adapter_integrity_test.go": "eaa7256e6593d76e50fd0cabbc090c8504f0f30c3a5c2d2ff780b62e7a2c7883",
+    "apps/agentshield/testdata/contracts/adapter-diagnostics-integrity.json": "80eb88c7af14f0f2454233dc2c47a225050873f5e8a3bb7d8fe114f6f13425d4",
+    "apps/control-api/app/tests/test_schema_contracts.py": "6204fba0b4af821b78ee8c20074f15ca316c46038167f384f3bdef7932b50219",
+    "docs/adr/0059-adapter-installation-integrity.md": "1247b0bdedbceaabfee9367f231d20cda8bfbe93d24e863d0c3fcee5ff4aff15",
+    "docs/agentshield-dev-spec-v1.md": "fb3464f280fae548991c170b35209043149d707322f1298b1ffc538802653067"
+  },
+  "builds": {
+    "linux-amd64": {
+      "passed": true,
+      "sha256": "35305bfd12bcc6f1a584a324f1427c2fd187e7d1ff9fd666c83ea99952510bfd"
+    },
+    "linux-arm64": {
+      "passed": true,
+      "sha256": "d1f27a5a7d669a8a6f157999ad1997682eb607ee4f7ae0077dd9bbf1e7b413e7"
+    },
+    "darwin-arm64": {
+      "passed": true,
+      "sha256": "40e2ccef13d6216b3fea49029b8f529ec663d7237c8a6c6e0905f881dce9f6b7"
+    },
+    "windows-amd64": {
+      "passed": true,
+      "sha256": "66178c73450d89031fb952842eb2a45d1c2d22dde72390545d2c55c8740e9fcd"
+    }
+  },
+  "log_sha256": {
+    "siq-opt12-negative.log": "0934a845a37e11cca94ded564ce3e6b9935bc2241e54a7e251bedbd4963c09bb",
+    "siq-opt12-adapter.log": "25a8941b51312a5ca2ec1d10f9f8810e50c54b3e43e01c41ee4f29fb948f7b89",
+    "siq-opt12-go-all.jsonl": "e0c4f7c1dc4986836107ec662fc745fcc377615cf9fc824b5c1401510ba00bdb",
+    "siq-opt12-integrity-final.jsonl": "fce997bcf50f2ec0f27170ff2fefeb2b25cf2aa33c2a84db2b3cae6b22b661ed",
+    "siq-opt12-http.jsonl": "eab017745c54b59c1db753f527db8e9aabe92fbab8a26f1194f2e6a5a064f4ec",
+    "siq-opt12-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "siq-opt12-schema.log": "b5477f0fd5ccc8e3f7078ddee39a5a7b6ad51ea85dddd807bf6cbcb80fd1f61d"
+  },
+  "limitations": [
+    "The final fixture test replaced its one-off export with comparison against the saved schema sample and was rerun; production code did not change after full-suite start.",
+    "The management HTTP test was added after full-suite compilation and ran separately.",
+    "Native/opt-in/platform/performance skipped tests remain skipped; cross-compilation does not establish Windows/macOS acceptance.",
+    "Same-UID attackers able to replace the daemon or read backup keys are outside this protection claim.",
+    "No plugin invocation denial is claimed from diagnosis alone.",
+    "OPT-12 remains implementing; full project remains active."
+  ]
+}

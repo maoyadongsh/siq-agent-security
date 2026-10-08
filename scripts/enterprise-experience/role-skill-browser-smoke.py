@@ -1,4 +1,7 @@
 """Role scope history UI fixtures only: no live registration, upload or permissions."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import copy
 import functools
@@ -116,6 +119,7 @@ def main():
             errors = []
             page.on('pageerror', lambda _: errors.append('pageerror'))
             page.route('**/api/v1/**', route)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/agents/asset')
             panel = page.get_by_role('region', name='角色技能声明')
             expect(panel).to_contain_text('声明可见的技能名称（2）')

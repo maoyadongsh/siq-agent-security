@@ -7,6 +7,7 @@
 package receipt
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -137,6 +138,7 @@ type SkillAttributionLookup func(platform, sessionID, agentID string, claim *Ski
 // but failed verification; the engine must deny (authority class) and never
 // fall back to a baseline grant.
 type SkillContextVerification struct {
+	Native *NativeInvocationVerification
 	// Valid SEC fields (Invalid=false):
 	ContextID     string
 	EvidenceLevel string
@@ -183,6 +185,7 @@ type EngineInfo struct {
 
 // Receipt is the signed, chained record (receipt.schema.json).
 type Receipt struct {
+	NativeInvocation    *NativeInvocationEvidence     `json:"native_invocation,omitempty"`
 	SchemaVersion       string                        `json:"schema_version,omitempty"`
 	LocalOrigin         *pending.Record               `json:"local_origin,omitempty"`
 	ParameterProvenance []provenance.ParameterBinding `json:"parameter_provenance,omitempty"`
@@ -288,6 +291,7 @@ type Options struct {
 	// nil → no SEC ever applies and behavior is identical to pre-SEC builds.
 	// A matched-but-invalid SEC denies regardless of enforcement mode.
 	SkillContexts SkillContextLookup
+	NativeCalls   NativeCallLookup
 	// BaselineGrants returns the newest live grant without a skill scope for
 	// the agent; it is the second leg of the SEC permission intersection.
 	BaselineGrants    GrantLookup
@@ -430,6 +434,10 @@ var (
 func (e *Engine) Decide(req Request) (*Decision, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	var nonce [16]byte
+	if _, err := rand.Read(nonce[:]); err != nil {
+		return nil, errors.New("receipt: decision identity unavailable")
+	}
 	start := e.opts.Now()
 	req.selectedGrant = nil
 	parameterErr := runtimeaction.ValidateParameters(req.Params)
@@ -449,7 +457,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	// claim-derived attribution with a verified one; a matched-but-invalid SEC
 	// hard denies later via the authority path, regardless of mode.
 	var sec *SkillContextVerification
-	if !runtimeTaskInvalid {
+	if !runtimeTaskInvalid && parameterErr == nil {
 		sec = e.resolveSkillContext(req)
 	}
 	var resolvedIntent *IntentContract
@@ -465,7 +473,14 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	if sec != nil && !sec.Invalid {
 		// The SEC grant is server-selected authority; a trusted intent binding
 		// that pins a different grant conflicts and invalidates the context.
-		if req.selectedGrant != nil && req.selectedGrant.GrantID != sec.Grant.GrantID {
+		if sec.Native != nil {
+			if !nativeGrantMatches(req.selectedGrant, sec.Native.Evidence.AgentAuthority, req) {
+				sec = &SkillContextVerification{Invalid: true, ReasonCode: "native_skill_agent_conflict"}
+			} else {
+				// Intent keeps its exact baseline; Skill authorities only narrow it.
+				skillAttribution = nativeAttribution(sec)
+			}
+		} else if req.selectedGrant != nil && req.selectedGrant.GrantID != sec.Grant.GrantID {
 			sec = &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_grant_conflict"}
 		} else {
 			req.selectedGrant = sec.Grant
@@ -514,7 +529,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 					authorityErr = &intent.Violation{Code: "intent_task_mismatch"}
 				default:
 					if parameterErr == nil {
-						authorityErr = resolvedIntent.validate(req, start)
+						authorityErr = resolvedIntent.validateNative(req, start, sec)
 					}
 				}
 			}
@@ -551,6 +566,9 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	finishNormalization := e.stageTimer("runtime_action_normalization")
 	req.resourceProfile = verifiedResourceProfile(resolvedIntent)
 	descriptor := runtimeaction.DescribeForProfile(req.resourceProfile, req.Tool, req.Params)
+	if protected, ok := nativeSkillLoadDescriptor(req, sec); ok {
+		descriptor = protected
+	}
 	finishNormalization()
 	operation, effects := descriptor.Operation, descriptor.Effects
 	// Preserve the host task identity even when no Intent is bound. It remains
@@ -588,7 +606,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		ContextAssertionID:  req.ContextAssertionID,
 		RecordType:          "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
 		Principal: s.boundPrincipal, ResourceRefs: resourceRefs, ProvenanceRefs: append([]string(nil), s.boundProvenanceRefs...),
-		ReceiptID:         "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + start.Format("150405.000000"),
+		ReceiptID:         "rcp-" + hex.EncodeToString(nonce[:]),
 		IssuedAt:          start.Format(time.RFC3339),
 		Platform:          req.Platform,
 		SessionID:         req.SessionID,
@@ -625,7 +643,10 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 	// the final parameter set. If the adapter cannot name the call, the SEC
 	// cannot verify it and the decision must fail closed instead of recording
 	// an unbound verified attribution.
-	if sec != nil && !sec.Invalid {
+	if sec != nil && !sec.Invalid && sec.Native != nil {
+		rec.SchemaVersion, rec.NativeInvocation = "runtime-receipt/v3", sec.Native.Evidence
+	}
+	if sec != nil && !sec.Invalid && skillAttribution != nil {
 		binding, bindingErr := trustedcontext.CallBinding(req.Platform, req.SessionID, req.AgentID, runtimeTaskID, req.Tool, req.ToolCallID, req.Params)
 		if bindingErr != nil {
 			sec = &SkillContextVerification{Invalid: true, ReasonCode: "skill_context_invalid"}
@@ -719,7 +740,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		if rec.AuthorityStatus == "invalid" {
 			authority = runtimeauthz.Authority(rec.AuthorityReasonCode, rec.IntentBinding == "bound")
 		}
-		if policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req, start) && containsSecretLiteral(e.analyzer, paramsText) {
+		if (sec == nil || sec.Native == nil) && policy.Action == ActionDeny && strings.HasPrefix(policy.Reason, "tainted egress") && e.redactAllowed(req, start) && containsSecretLiteral(e.analyzer, paramsText) {
 			candidate := redactParams(e.analyzer, req.Params)
 			// Redaction is a data transform, never authority to skip host/path
 			// constraints or a per-tool human approval requirement.
@@ -874,6 +895,9 @@ func (e *Engine) resolveSkillAttribution(req Request) *SkillAttribution {
 // then follows the pre-SEC claim path unchanged). Lookup results that violate
 // the contract shape are treated as invalid (fail closed), never trusted.
 func (e *Engine) resolveSkillContext(req Request) *SkillContextVerification {
+	if native, handled := e.resolveNativeInvocation(req); handled {
+		return native
+	}
 	if e.opts.SkillContexts == nil {
 		return nil
 	}
@@ -935,6 +959,9 @@ func skillAttributionMatches(ref grant.SkillRef, a *SkillAttribution) bool {
 // SEC switches evaluation to the permission intersection of the SEC-bound
 // grant and the agent's baseline grant (N05/R01 §3.4).
 func (e *Engine) evaluate(req Request, s *session, descriptor runtimeaction.Descriptor, rec *Receipt, now time.Time, sec *SkillContextVerification) (string, string) {
+	if sec != nil && sec.Native != nil {
+		return e.evaluateNativeIntersection(req, s, descriptor, rec, now, sec)
+	}
 	if sec != nil {
 		return e.evaluateIntersection(req, s, descriptor, rec, now, sec)
 	}
@@ -1212,6 +1239,18 @@ func (e *Engine) AppendPendingObserved(p pending.Record) (*Receipt, error) {
 			rec.ParamsDigest = p.ActionDigest
 		}
 	}
+	if p.SourceID != "" {
+		legacyID := rec.ReceiptID
+		rawSource, err := hex.DecodeString(p.SourceID)
+		if err != nil || len(rawSource) != sha256.Size || hex.EncodeToString(rawSource) != p.SourceID {
+			return nil, fmt.Errorf("receipt: invalid pending source identity")
+		}
+		rec.ReceiptID = "rcp-pending-" + p.SourceID
+		existing, err := e.findPromotedPending(rec, legacyID)
+		if err != nil || existing != nil {
+			return existing, err
+		}
+	}
 	if err := e.opts.Chain.Append(&rec); err != nil {
 		return nil, err
 	}
@@ -1250,7 +1289,11 @@ func (e *Engine) resolveHoldLocked(held Receipt, approve bool, actorID string) (
 		if err != nil || current == nil || current.IntentID != held.IntentID || current.TaskID != held.TaskID || current.Digest != held.IntentDigest || current.AuthorityRevision != held.AuthorityRevision {
 			return nil, correlationError("hold_authority_changed")
 		}
-		if current.SelectedGrant != nil && current.SelectedGrant.GrantID != str(held.MatchedGrantID) {
+		if held.NativeInvocation != nil {
+			if !nativeGrantMatches(current.SelectedGrant, held.NativeInvocation.AgentAuthority, Request{Platform: held.Platform, AgentID: str(held.AgentID)}) {
+				return nil, correlationError("hold_authority_changed")
+			}
+		} else if current.SelectedGrant != nil && current.SelectedGrant.GrantID != str(held.MatchedGrantID) {
 			return nil, correlationError("hold_authority_changed")
 		}
 	}
@@ -1258,7 +1301,7 @@ func (e *Engine) resolveHoldLocked(held Receipt, approve bool, actorID string) (
 	if approve {
 		want = ActionAllow
 	}
-	if existing, err := e.findHoldResolution(held.ReceiptID); err != nil {
+	if existing, err := e.findHoldResolution(held); err != nil {
 		return nil, err
 	} else if existing != nil {
 		if existing.Action == want {
@@ -1310,19 +1353,42 @@ func holdResolutionID(heldID string) string {
 	return heldID + "-res"
 }
 
-func (e *Engine) findHoldResolution(heldID string) (*Receipt, error) {
-	all, err := e.opts.Chain.Read()
+func (e *Engine) findHoldResolution(held Receipt) (*Receipt, error) {
+	hash, err := hashOf(held)
+	if err != nil || held.ReceiptID == "" || hash != held.Hash {
+		return nil, ErrHoldConflict
+	}
+	var found *Receipt
+	seen := false
+	lastSeq, lastHash := -1, GenesisPrev
+	want := holdResolutionID(held.ReceiptID)
+	err = e.opts.Chain.walkVerified(func(r Receipt) error {
+		lastSeq, lastHash = r.Seq, r.Hash
+		if r.ReceiptID == held.ReceiptID {
+			if seen || r.Hash != held.Hash {
+				return ErrHoldConflict
+			}
+			seen = true
+		}
+		if r.ReceiptID == want {
+			if !seen || found != nil || r.RecordType != "hold_resolution" ||
+				r.DecisionReceiptID != held.ReceiptID || r.ActionID != held.ActionID ||
+				(r.Action != ActionAllow && r.Action != ActionDeny) {
+				return ErrHoldConflict
+			}
+			value := r
+			found = &value
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	want := holdResolutionID(heldID)
-	for i := len(all) - 1; i >= 0; i-- {
-		if all[i].ReceiptID == want && (all[i].Action == ActionAllow || all[i].Action == ActionDeny) {
-			r := all[i]
-			return &r, nil
-		}
+	seq, head := e.opts.Chain.Head()
+	if !seen || seq != lastSeq || head != lastHash {
+		return nil, ErrHoldConflict
 	}
-	return nil, nil
+	return found, nil
 }
 
 func holdExpired(held Receipt, now time.Time) error {

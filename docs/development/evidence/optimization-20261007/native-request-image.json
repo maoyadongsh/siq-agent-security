@@ -1,0 +1,109 @@
+{
+  "schema_version": "siq.optimization-native-request-image-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "business_branch": "codex/native-skill-business-20261007",
+  "business_bootstrap_commit": "6bd99149f6102cb3a711570d5ae076e1831f0799",
+  "business_full_integration_committed": false,
+  "candidate_sources_sha256": {
+    "scripts/openshell/build_native_request_image.py": "52b8ea54c2e78bf96b08750e6779fc7f268e67aa6c92a8c0f90d11b168df59c1",
+    "scripts/openshell/probe_native_request_bootstrap.py": "36141408a783159a76105fdd9548b1dd3ef96f82f2bdeaa7d4e1a32b0dd97b82",
+    "scripts/openshell/build_native_runtime_config.py": "f15db38cf1f12f384d6e66fed34b07a81030a786b25d9085b25a1afe75735a13",
+    "scripts/openshell/build_siq_analysis_mount_plan.py": "8a6f7601138b9a23ac1e5ec341e2ab2b656d7ca6346c146fcc9343e4d626efad",
+    "infra/openshell/sandbox/qwen38_candidate/native_entrypoint.py": "2efb908d2136658660d56f5f1039796634a24e9fd4ea11a2f8224798b4c3d498",
+    "infra/openshell/sandbox/qwen38_candidate/native_bootstrap.py": "e69534ff97043d0e5449ba008ae3c6cc02d46ccd83b0ac455ab3fa973cff2849",
+    "infra/openshell/sandbox/qwen38_candidate/native_runtime.py": "571f33da676464d0c3a178462c12a7dac3c30f919d2d28c994785b93c59b2dce",
+    "infra/openshell/sandbox/qwen38_candidate/validate_runtime.py": "6bfb53da65c2050d9473c26dbb9a3d238fd2ff5780f06f66d455c9ea821b21b1",
+    "scripts/openshell/tests/test_build_native_request_image.py": "6e69e2add303c2eab1455ad2ec4a55ee278ffa8da08c509c3f3ae53522e55fb1",
+    "scripts/openshell/tests/test_native_request_bootstrap.py": "ccf9d453d99e1490e13256b4f3669289fe8423ee36e3b3cae14741a764eae2eb"
+  },
+  "image": {
+    "artifact_sha256": "56708ed3023ea0f142366da833c6148e6785e397944c1afd2993efeb4dfc2d79",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "checks": {
+      "legacy_environment_rejected": true,
+      "native_config": true,
+      "non_root": true,
+      "protected_ancestors": true,
+      "protected_files": true
+    },
+    "dockerfile_sha256": "eec5cfb6adcf85fac2f27243494fa4e19b0f64d0659a32030cb5992f2bea9561",
+    "executable_sha256": "4e19d11f7a2ee55a0247c6ab3326419413fadecf4b7a52d719739cc1a924711b",
+    "gateway_entry": "/opt/hermes-agent/hermes-gateway",
+    "image_id": "sha256:2ab4685d166accfe244e0db4f443bdc4434f8b371a0358547e5e9698996ba0d2",
+    "input_sha256": "1d47a4aa698a7981dfcd56d7fb7e5e076af1f74f3769c4076a6fa7d85b21f694",
+    "native_entry": "/opt/siq/native-request/entrypoint.py",
+    "overlay_manifest_sha256": "35e857ff7cf4a5ecef45b554abae3a3434bb9e4d325a2217a2fcf2a0881537e8",
+    "production_eligible": false,
+    "protected_files": {
+      "/home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/config.yaml": "62c63cd362cea75a3bec981e3f7a9a31162204da7b9a3e197372f5624ac0fbfc",
+      "/opt/hermes-agent/HERMES-LICENSE": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6",
+      "/opt/hermes-agent/agent/agent_runtime_helpers.py": "79caa0c1f05d813b6bc351596ff9fe484e0aafd8b95e70831473e1881e338a27",
+      "/opt/hermes-agent/agent/tool_executor.py": "eae77739e3a85ff4864a02f94314a06ff20a2801e0be8f7332c889bf546c94ad",
+      "/opt/hermes-agent/hermes-gateway": "e13565853072da1fff72eb4fb9fcfecfcd9443885f3c939c8a9fc4bdd440b759",
+      "/opt/hermes-agent/model_tools.py": "1831c3fdb0776a2c5d4f7fdf8f19a05ee07c35b33f291b2165cc6da4f9b19b21",
+      "/opt/hermes-agent/run_agent.py": "5c3ea4682392f01fe9be4bc75c945421a603e76007037bdc0d6930d6b399452b",
+      "/opt/hermes-agent/siq_native_runtime/__init__.py": "0503c9e6296811c29e7aaaeaeae9aac7a1d5babe96e2f237fac4870e868e4699",
+      "/opt/hermes-agent/siq_native_runtime/native_bootstrap.py": "93dc9fc279bf58e0c9d7cc52b087b10807f47c15dde4901255811fa2212ff78a",
+      "/opt/hermes-agent/siq_native_runtime/native_channel.py": "3da75bddd49a7ed7fc6b501c4fa23640ec013446449a34dd689c47f0e58f0b99",
+      "/opt/hermes-agent/siq_native_runtime/native_dispatch.py": "457de82899253988e396998c5cd7024d418b4899d6575ea7ef11b30fbac55ebf",
+      "/opt/hermes-agent/siq_native_runtime/native_gateway.py": "42bf379551cd0f601eb1e7b82244ac87122c5147c664fd81d85f7b79358adeff",
+      "/opt/hermes-agent/siq_native_runtime/native_online.py": "6d87ea7f391697ae3ed6a72b5dd341e77fb67b284b431fbbef07e250261a4ab3",
+      "/opt/hermes-agent/siq_native_runtime/native_source.py": "cbcf6a9785db38443d9163a15714b5ce16d600bbcf80ec6150b12b4612260df0",
+      "/opt/hermes-agent/tools/registry.py": "cd6ac4438c49eade8e40e0d837597fa5fe78fd2d3e2182bc2fd11bcd43ea3231",
+      "/opt/hermes-agent/tools/skills_tool.py": "010e15fbb92d3923a7499e35689d04687c8f5d11191580402894d9f73b08d412",
+      "/opt/siq/native-request/bootstrap.py": "e69534ff97043d0e5449ba008ae3c6cc02d46ccd83b0ac455ab3fa973cff2849",
+      "/opt/siq/native-request/config.sha256": "3c19bb907887b9d214615d2ef394e6f4d631f42489c217e445f4db5dbc5f161e",
+      "/opt/siq/native-request/entrypoint.py": "2efb908d2136658660d56f5f1039796634a24e9fd4ea11a2f8224798b4c3d498",
+      "/opt/siq/native-request/native_config/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "/opt/siq/native-request/native_config/native_runtime.py": "571f33da676464d0c3a178462c12a7dac3c30f919d2d28c994785b93c59b2dce",
+      "/opt/siq/native-request/native_config/validate_runtime.py": "6bfb53da65c2050d9473c26dbb9a3d238fd2ff5780f06f66d455c9ea821b21b1"
+    },
+    "runtime_config_sha256": "62c63cd362cea75a3bec981e3f7a9a31162204da7b9a3e197372f5624ac0fbfc",
+    "runtime_state": "unverified",
+    "schema_version": "siq.openshell.native-request-image.v1",
+    "snapshot_manifest_sha256": "a111afee32507ce65395492ae9989c55e580675eb851dd758fd893fd65c9a2f2",
+    "status": "offline_verified"
+  },
+  "bootstrap_probe": {
+    "artifact_sha256": "56708ed3023ea0f142366da833c6148e6785e397944c1afd2993efeb4dfc2d79",
+    "authority_connected": false,
+    "checks": {
+      "api_key_not_in_argv": true,
+      "awaiting_host_only": true,
+      "fixed_gateway_argv": true,
+      "http_not_open_before_host": true,
+      "owned_container_removed": true,
+      "owned_gateway_stopped": true,
+      "private_channel_created": true,
+      "relaunch_rejected": true,
+      "uploaded_key_removed": true
+    },
+    "daily_business_verified": false,
+    "image_id": "sha256:2ab4685d166accfe244e0db4f443bdc4434f8b371a0358547e5e9698996ba0d2",
+    "model_calls": 0,
+    "probe_sha256": "36141408a783159a76105fdd9548b1dd3ef96f82f2bdeaa7d4e1a32b0dd97b82",
+    "schema_version": "siq.native-image-bootstrap-probe.v1"
+  },
+  "tests": {
+    "initial_native_image_config_bootstrap_passed": 41,
+    "final_native_image_passed": 26,
+    "final_native_image_overlap_initial": 16,
+    "final_native_image_added": 10,
+    "related_existing_runtime_config_snapshot_mount_passed": 73,
+    "ruff": "passed",
+    "diff_check": "passed"
+  },
+  "first_lint_failure": {
+    "rule": "E731",
+    "status": "fixed; final check passed"
+  },
+  "business_report": "docs/reports/native-request-image-progress-20261007.md",
+  "limits": [
+    "Actual offline Docker image and fixed Hermes bootstrap; Authority is not connected, model calls=0, daily business is not accepted.",
+    "Native image/config/build/consumer integration remains local pending review of existing necessary business dependencies; only standalone bootstrap/tests/contract/report committed this batch.",
+    "Approved business Skill mapping, native assets mount plan, builder/supervision/gateway/endpoint host PID handoff and real model/business revocation remain.",
+    "Existing current-image pointer and daily services were not changed; no production eligibility or cross-platform acceptance claimed."
+  ]
+}

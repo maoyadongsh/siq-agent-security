@@ -1,0 +1,32 @@
+{
+  "schema_version": "siq.native-business-delivery-scope-review/v1",
+  "business_commit": "b64216457907cda3ccc5143e110a9d328cc447a2",
+  "source_files_sha256": {
+    "scripts/openshell/enterprise_data_scope.py": "ec0f20d6075e897ab9e66d08a7df2cf283cdc6afc31712980051b5c331abd0ec",
+    "scripts/openshell/qwen38_request_contract.py": "9abb538e40bc18dd084abf0fd278aa2afc7dea74d2698805a56e19c49c8bf1a2",
+    "scripts/openshell/qwen38_request_bootstrap.py": "180729b1e7b3adb262e20f3b399a3e89a7ecc6151b4680a327e94d05fd743077",
+    "infra/openshell/sandbox/qwen38_candidate/request_bootstrap.py": "dcc9018b28459e779ae572df7c4b846f759f7a64be2bad0c2a4bf3b9c236da93",
+    "scripts/openshell/tests/test_enterprise_scope_contract.py": "9af088e45a6da2dcc642ffef19dd53fb5f835d14a77a4268977d64e305112210",
+    "scripts/openshell/tests/test_qwen38_request_bootstrap.py": "c731141dd775ab8fbd71d1385e085ba5e8c967f17b1ada5188dcc8bafb140ad3"
+  },
+  "checks": {
+    "isolated_six_file_pytest_passed": true,
+    "isolated_ruff_passed": true,
+    "consumer_scope_and_broker_tests_passed": true,
+    "old_malformed_inputs_reproduced": true,
+    "committed_sources_match_tested_bytes": true
+  },
+  "test_counts": {
+    "isolated": 51,
+    "worktree_consumers": 22
+  },
+  "static_closure": {
+    "snapshot_modules": 109,
+    "remaining_untracked": 61,
+    "scope": "Prior D3q static module closure; excludes dynamic assets and migrations"
+  },
+  "limits": [
+    "Only this six-file subset was isolated; full business checkout is not yet independently reproducible.",
+    "Malformed-input fix postdates v815/v816; those historical candidate identities are unchanged."
+  ]
+}

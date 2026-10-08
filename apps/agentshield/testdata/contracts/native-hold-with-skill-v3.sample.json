@@ -1,0 +1,433 @@
+[
+  {
+    "native_invocation": {
+      "call_id": "ncall-7bfc9c59cffa30021896e2a00830c482",
+      "call_signature": "835e6d6657e4e59bd5d7cabd6ac2d27d3309389625bf9ed564c88cb12f8464e483cdbe662bb71333a2c43c31babd7596277caf2c671e645dd977723a411c870e",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "0d1023c9591a59bbb5a9f12a9c03fc98f44d8a1fb0282ed9698978ef4bd26de3",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": false,
+      "contexts": [
+        {
+          "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+          "context_signature": "81a96b1789ca3a61d39964209b33b71921dadd21784652aaa94a476908fc1419c2dd16475d78d62ce1cf035a937a34b0ca3a3dffcbab482f68e5228325551502",
+          "authority": {
+            "grant_id": "grt-second-skill",
+            "grant_digest": "b814febeb0ba0efbd7ef0fc810b26c70099ca4854464ba51ff3f8dfa93698df9"
+          }
+        },
+        {
+          "context_id": "sec-f92364d605d38536f788fbcc0389c022",
+          "context_signature": "64aa21c9f1ed4392cb3fe5931a3c8b736ebf63f258c7302502d612529a5bf46405da88b730d844157766172ff8f49fd4a9b215f0339332ee7deb580d632e1708",
+          "authority": {
+            "grant_id": "grt-skill-1",
+            "grant_digest": "84ac0eccf876541100b5fb563a17d5e48b08a386a54d93aee93e3e38e34b6da1"
+          }
+        }
+      ]
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "hold",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "decision",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000",
+    "chain_id": "local",
+    "seq": 0,
+    "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "hash": "df6c26caabda82c7750830c9cce44b17ed26da18b88da29b2e9e04b982ff324b",
+    "sig": "507f9672f0f019c01fc017567533ba9d171403b715ec826ec2ea9def38255ce964d0dceb1c5149de5e154b6f3ec347e9a29bce074423b4249c2cb9915441540d",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "original",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+    "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+    "action": "hold",
+    "advisory_action": null,
+    "reason": "tool read_file requires human approval per grant grt-agent-baseline",
+    "reason_code": "runtime_denied",
+    "matched_grant_id": "grt-second-skill",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": 0,
+    "hold": {
+      "channel": "console",
+      "timeout_ms": 120000,
+      "resolved_by_receipt_id": null
+    },
+    "skill_attribution": {
+      "skill_id": "marketplace:skill:second",
+      "version": "1.2.0",
+      "content_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "status": "verified",
+      "evidence_level": "controlled_invocation",
+      "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+      "call_binding": "0d1023c9591a59bbb5a9f12a9c03fc98f44d8a1fb0282ed9698978ef4bd26de3"
+    }
+  },
+  {
+    "native_invocation": {
+      "call_id": "ncall-7bfc9c59cffa30021896e2a00830c482",
+      "call_signature": "835e6d6657e4e59bd5d7cabd6ac2d27d3309389625bf9ed564c88cb12f8464e483cdbe662bb71333a2c43c31babd7596277caf2c671e645dd977723a411c870e",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "0d1023c9591a59bbb5a9f12a9c03fc98f44d8a1fb0282ed9698978ef4bd26de3",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": false,
+      "contexts": [
+        {
+          "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+          "context_signature": "81a96b1789ca3a61d39964209b33b71921dadd21784652aaa94a476908fc1419c2dd16475d78d62ce1cf035a937a34b0ca3a3dffcbab482f68e5228325551502",
+          "authority": {
+            "grant_id": "grt-second-skill",
+            "grant_digest": "b814febeb0ba0efbd7ef0fc810b26c70099ca4854464ba51ff3f8dfa93698df9"
+          }
+        },
+        {
+          "context_id": "sec-f92364d605d38536f788fbcc0389c022",
+          "context_signature": "64aa21c9f1ed4392cb3fe5931a3c8b736ebf63f258c7302502d612529a5bf46405da88b730d844157766172ff8f49fd4a9b215f0339332ee7deb580d632e1708",
+          "authority": {
+            "grant_id": "grt-skill-1",
+            "grant_digest": "84ac0eccf876541100b5fb563a17d5e48b08a386a54d93aee93e3e38e34b6da1"
+          }
+        }
+      ]
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "allow",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "hold_resolution",
+    "decision_receipt_id": "rcp-e0effaee04ee-120000.000000",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000-res",
+    "chain_id": "local",
+    "seq": 1,
+    "prev_hash": "df6c26caabda82c7750830c9cce44b17ed26da18b88da29b2e9e04b982ff324b",
+    "hash": "cbd3c099bc2e61b215de4ffbe19840caaa5859f9d114294e232f624a5a2429e7",
+    "sig": "e1fee51cbcdf8795e3c1b43c30ca003e2d172ec1033fcb427540b1199c1b4a92834d78d9543889fac4730428b0760d091a3f5c56d16a7d92d19a86259ee92a0a",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "original",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+    "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+    "action": "allow",
+    "advisory_action": null,
+    "reason": "hold approved by synthetic-reviewer",
+    "reason_code": "runtime_denied",
+    "matched_grant_id": "grt-second-skill",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": null,
+    "hold": null,
+    "skill_attribution": {
+      "skill_id": "marketplace:skill:second",
+      "version": "1.2.0",
+      "content_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "status": "verified",
+      "evidence_level": "controlled_invocation",
+      "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+      "call_binding": "0d1023c9591a59bbb5a9f12a9c03fc98f44d8a1fb0282ed9698978ef4bd26de3"
+    }
+  },
+  {
+    "native_invocation": {
+      "call_id": "ncall-786735d4d140221adaeb0d42edfedb91",
+      "call_signature": "338723296f3d9b84ea8b92b258f55a43e84fe78d2b9b7e48382ae7914e9894de29c5d1f8911601292af029e2a6f90031d247c6ffd68cdde8b3dd960f5d07ce0d",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "ca534b4f22338491581ff740aba88463a2bcc1366e7a94b1bbcc16b5a24db128",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": false,
+      "contexts": [
+        {
+          "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+          "context_signature": "81a96b1789ca3a61d39964209b33b71921dadd21784652aaa94a476908fc1419c2dd16475d78d62ce1cf035a937a34b0ca3a3dffcbab482f68e5228325551502",
+          "authority": {
+            "grant_id": "grt-second-skill",
+            "grant_digest": "b814febeb0ba0efbd7ef0fc810b26c70099ca4854464ba51ff3f8dfa93698df9"
+          }
+        },
+        {
+          "context_id": "sec-f92364d605d38536f788fbcc0389c022",
+          "context_signature": "64aa21c9f1ed4392cb3fe5931a3c8b736ebf63f258c7302502d612529a5bf46405da88b730d844157766172ff8f49fd4a9b215f0339332ee7deb580d632e1708",
+          "authority": {
+            "grant_id": "grt-skill-1",
+            "grant_digest": "84ac0eccf876541100b5fb563a17d5e48b08a386a54d93aee93e3e38e34b6da1"
+          }
+        }
+      ]
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "allow",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "hold_reservation",
+    "decision_receipt_id": "rcp-e0effaee04ee-120000.000000",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000-exec",
+    "chain_id": "local",
+    "seq": 2,
+    "prev_hash": "cbd3c099bc2e61b215de4ffbe19840caaa5859f9d114294e232f624a5a2429e7",
+    "hash": "9be354e5b3a61071fa608b1f1d01416ac17009ce5a68a8b96278857c88604017",
+    "sig": "1dafaa347d826f089e79c45f241fb597193e02f04290443e822db918850d7d19abbe9316d09d2ff01a309f3ba450e74a684b4f40bb983f43cda50820474cb202",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "retry",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "e0effaee04ee2defc03afb2f8f8927df49466f29d3bd94e10abdb5e39e107b9c",
+    "params_excerpt": "/workspace/synthetic.txt\nnever-persist-this",
+    "action": "allow",
+    "advisory_action": null,
+    "reason": "approved hold execution reserved",
+    "reason_code": "hold_execution_reserved",
+    "matched_grant_id": "grt-second-skill",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": null,
+    "hold": null,
+    "skill_attribution": {
+      "skill_id": "marketplace:skill:second",
+      "version": "1.2.0",
+      "content_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "status": "verified",
+      "evidence_level": "controlled_invocation",
+      "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+      "call_binding": "ca534b4f22338491581ff740aba88463a2bcc1366e7a94b1bbcc16b5a24db128"
+    }
+  },
+  {
+    "native_invocation": {
+      "call_id": "ncall-786735d4d140221adaeb0d42edfedb91",
+      "call_signature": "338723296f3d9b84ea8b92b258f55a43e84fe78d2b9b7e48382ae7914e9894de29c5d1f8911601292af029e2a6f90031d247c6ffd68cdde8b3dd960f5d07ce0d",
+      "session_registration_id": "nsess-cc961c11cba9fce97e47e5716d0f0529",
+      "session_signature": "93caf55e008bbcf0b3ba55fcd7d02d0055e663ffe9e15cdda6079113890a3eaedafc6bc3fbdddee3a366fdf3dfde61bd0717dafd795f474602f3ef3eb5257508",
+      "request_binding": "ca534b4f22338491581ff740aba88463a2bcc1366e7a94b1bbcc16b5a24db128",
+      "agent_authority": {
+        "grant_id": "grt-agent-baseline",
+        "grant_digest": "3e431df76c6078b73b419cab69794eaedd3320c4e3bb21243963c5f003a382af"
+      },
+      "no_skill": false,
+      "contexts": [
+        {
+          "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+          "context_signature": "81a96b1789ca3a61d39964209b33b71921dadd21784652aaa94a476908fc1419c2dd16475d78d62ce1cf035a937a34b0ca3a3dffcbab482f68e5228325551502",
+          "authority": {
+            "grant_id": "grt-second-skill",
+            "grant_digest": "b814febeb0ba0efbd7ef0fc810b26c70099ca4854464ba51ff3f8dfa93698df9"
+          }
+        },
+        {
+          "context_id": "sec-f92364d605d38536f788fbcc0389c022",
+          "context_signature": "64aa21c9f1ed4392cb3fe5931a3c8b736ebf63f258c7302502d612529a5bf46405da88b730d844157766172ff8f49fd4a9b215f0339332ee7deb580d632e1708",
+          "authority": {
+            "grant_id": "grt-skill-1",
+            "grant_digest": "84ac0eccf876541100b5fb563a17d5e48b08a386a54d93aee93e3e38e34b6da1"
+          }
+        }
+      ]
+    },
+    "schema_version": "runtime-receipt/v3",
+    "authority_status": "valid",
+    "policy_action": "hold",
+    "effective_action": "allow",
+    "principal": {
+      "type": "user",
+      "id": "synthetic-user"
+    },
+    "resource_refs": [
+      {
+        "domain": "filesystem",
+        "digest": "b1ca314b9763f91e02422f0428d96937f0bdea392fe47e49d9fcf551178f6a9b"
+      }
+    ],
+    "record_type": "observation",
+    "decision_receipt_id": "rcp-e0effaee04ee-120000.000000-exec",
+    "task_seq": 1,
+    "receipt_id": "rcp-e0effaee04ee-120000.000000-exec-obs",
+    "chain_id": "local",
+    "seq": 3,
+    "prev_hash": "9be354e5b3a61071fa608b1f1d01416ac17009ce5a68a8b96278857c88604017",
+    "hash": "f6d1a941c071af0291ab65eb1955213de7ccf29fc51703409cf9a59d932226ba",
+    "sig": "f66331145d2597a1235abb3811caa1d0f038d3d80a3c2e42d446bdfa285743a624d9d3b6c828299a8438da859d14feb0334c3f7fc7fc8a547b043617bd30f101",
+    "issued_at": "2026-09-14T12:00:00Z",
+    "platform": "hermes",
+    "session_id": "sess-1",
+    "action_id": "act-36b3b1d7f9671c16288060ce",
+    "agent_id": "hri-aaaaaaaabbbbbbbbccccccccdddddddd",
+    "task_id": "trusted-envelope",
+    "runtime_task_id": "task-1",
+    "intent_id": "fixture-intent",
+    "intent_binding": "bound",
+    "authority_revision": "fixture-revision",
+    "tool": "read_file",
+    "tool_call_id": "retry",
+    "operation": "read",
+    "effects": [
+      "file.read"
+    ],
+    "params_digest": "cadbf27f4827ce0ed2948a56b2bae3117f7b69cde4015386011e4fee05d3d71c",
+    "params_excerpt": "synthetic approved result",
+    "action": "allow",
+    "advisory_action": null,
+    "reason": "correlated observation of tool result",
+    "reason_code": "observation_accepted",
+    "matched_grant_id": "grt-second-skill",
+    "matched_fact_ids": [
+      "fixture-read"
+    ],
+    "matched_rule_ids": [],
+    "taint_labels": [],
+    "trifecta": {
+      "private_data": false,
+      "untrusted_input": false,
+      "egress": false
+    },
+    "enforcement_mode": "block",
+    "policy_revision": null,
+    "sandbox_id": null,
+    "model_key": null,
+    "engine": {
+      "version": "native-hold-component-fixture",
+      "rulepack_version": 1
+    },
+    "decision_latency_ms": null,
+    "hold": null,
+    "skill_attribution": {
+      "skill_id": "marketplace:skill:second",
+      "version": "1.2.0",
+      "content_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "status": "verified",
+      "evidence_level": "controlled_invocation",
+      "context_id": "sec-de6cfb4098c5bbc806d452b40959c432",
+      "call_binding": "ca534b4f22338491581ff740aba88463a2bcc1366e7a94b1bbcc16b5a24db128"
+    }
+  }
+]

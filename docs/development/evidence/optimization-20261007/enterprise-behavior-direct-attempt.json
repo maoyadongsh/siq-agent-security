@@ -1,0 +1,336 @@
+{
+  "schema_version": "optimization-openshell-direct-attempt/v1",
+  "classification": "real_raw_tcp_differential_failed",
+  "synthetic_operation_binding": true,
+  "result": {
+    "schema_version": "openshell-behavior-result/v2",
+    "verification_id": "opv-bbbbb5ccc4fd4d128208a91ea88b044a",
+    "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+    "challenge_sha256": "cf034f3f528ba8a8f8a6814ce0735a9f170bae16738d9abb15889cffcec0d111",
+    "started_at": "2026-10-07T20:47:34.735134Z",
+    "finished_at": "2026-10-07T20:47:36.297725Z",
+    "before": {
+      "binding": {
+        "tenant_id": "component-tenant",
+        "environment_id": "component-environment",
+        "binding_id": "component-binding",
+        "deployment_id": "component-deployment",
+        "operation_id": "component-apply",
+        "target": "siq-behavior-d395f8c2a2de",
+        "gateway_fingerprint": "f988b20b6b5ac5c83931fd21d40a38c2dc74b497860cb9d007825ed9791b6678",
+        "policy_revision": "2",
+        "policy_digest": "fb37e33eb76aba90d7314e6f61c80cd989862122f0c79c1c38faf588f33ed8db",
+        "image_digest": "sha256:123ddf660f3b95ad12d4b667803febf0fd20c35dedc21b9b913b52b44c2d1dde",
+        "probe_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "protected_execution_sha256": "79b56f6555ac54c621fb58a373a912ff7cb28765cb86db284787494fa96d6d20"
+      },
+      "enforcement_mode": "unknown",
+      "allow_rules": [
+        {
+          "endpoint": "192.168.48.1:40109",
+          "program_path": "/opt/siq-behavior/allow"
+        }
+      ]
+    },
+    "after": {
+      "binding": {
+        "tenant_id": "component-tenant",
+        "environment_id": "component-environment",
+        "binding_id": "component-binding",
+        "deployment_id": "component-deployment",
+        "operation_id": "component-apply",
+        "target": "siq-behavior-d395f8c2a2de",
+        "gateway_fingerprint": "f988b20b6b5ac5c83931fd21d40a38c2dc74b497860cb9d007825ed9791b6678",
+        "policy_revision": "2",
+        "policy_digest": "fb37e33eb76aba90d7314e6f61c80cd989862122f0c79c1c38faf588f33ed8db",
+        "image_digest": "sha256:123ddf660f3b95ad12d4b667803febf0fd20c35dedc21b9b913b52b44c2d1dde",
+        "probe_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "protected_execution_sha256": "79b56f6555ac54c621fb58a373a912ff7cb28765cb86db284787494fa96d6d20"
+      },
+      "enforcement_mode": "unknown",
+      "allow_rules": [
+        {
+          "endpoint": "192.168.48.1:40109",
+          "program_path": "/opt/siq-behavior/allow"
+        }
+      ]
+    },
+    "observations": [
+      {
+        "round": 0,
+        "kind": "control_before",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:34.913799Z"
+      },
+      {
+        "round": 0,
+        "kind": "allow",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "/opt/siq-behavior/allow",
+        "program_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "outcome": "connection_refused",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.142895Z"
+      },
+      {
+        "round": 0,
+        "kind": "deny",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "/opt/siq-behavior/deny",
+        "program_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "outcome": "connection_refused",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.332396Z"
+      },
+      {
+        "round": 0,
+        "kind": "control_after",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.333017Z"
+      },
+      {
+        "round": 1,
+        "kind": "control_before",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.510280Z"
+      },
+      {
+        "round": 1,
+        "kind": "allow",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "/opt/siq-behavior/allow",
+        "program_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "outcome": "connection_refused",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.654888Z"
+      },
+      {
+        "round": 1,
+        "kind": "deny",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "/opt/siq-behavior/deny",
+        "program_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "outcome": "connection_refused",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.798973Z"
+      },
+      {
+        "round": 1,
+        "kind": "control_after",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.799733Z"
+      },
+      {
+        "round": 2,
+        "kind": "control_before",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:35.968045Z"
+      },
+      {
+        "round": 2,
+        "kind": "allow",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "/opt/siq-behavior/allow",
+        "program_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "outcome": "connection_refused",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:36.153425Z"
+      },
+      {
+        "round": 2,
+        "kind": "deny",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "/opt/siq-behavior/deny",
+        "program_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "outcome": "connection_refused",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:36.296837Z"
+      },
+      {
+        "round": 2,
+        "kind": "control_after",
+        "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:40109",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T20:47:36.297476Z"
+      }
+    ]
+  },
+  "challenge": {
+    "schema_version": "openshell-behavior-challenge/v1",
+    "verification_id": "opv-bbbbb5ccc4fd4d128208a91ea88b044a",
+    "nonce": "93610bf966ea01909cd43a73eb0c9caf53c3d14b78ef2753309cd5dbd10483c2",
+    "binding": {
+      "tenant_id": "component-tenant",
+      "environment_id": "component-environment",
+      "binding_id": "component-binding",
+      "deployment_id": "component-deployment",
+      "operation_id": "component-apply",
+      "target": "siq-behavior-d395f8c2a2de",
+      "gateway_fingerprint": "f988b20b6b5ac5c83931fd21d40a38c2dc74b497860cb9d007825ed9791b6678",
+      "policy_revision": "2",
+      "policy_digest": "fb37e33eb76aba90d7314e6f61c80cd989862122f0c79c1c38faf588f33ed8db",
+      "image_digest": "sha256:123ddf660f3b95ad12d4b667803febf0fd20c35dedc21b9b913b52b44c2d1dde",
+      "probe_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+      "protected_execution_sha256": "79b56f6555ac54c621fb58a373a912ff7cb28765cb86db284787494fa96d6d20"
+    },
+    "receiver_ipv4": "192.168.48.1",
+    "receiver_port": 40109,
+    "allow_path": "/opt/siq-behavior/allow",
+    "deny_path": "/opt/siq-behavior/deny",
+    "attempts": 3,
+    "timeout_ms": 2000,
+    "issued_at": "2026-10-07T20:47:34.547841Z",
+    "expires_at": "2026-10-07T20:52:34.547841Z"
+  },
+  "protection": {
+    "protected_execution_sha256": "79b56f6555ac54c621fb58a373a912ff7cb28765cb86db284787494fa96d6d20",
+    "facts": {
+      "schema_version": "openshell-behavior-protection/v1",
+      "approved": {
+        "container_id": "4078f94d18d6cba761e04f5a81efdced98ea4a32e9ec571b749b3c59e0bd08bf",
+        "image_digest": "sha256:123ddf660f3b95ad12d4b667803febf0fd20c35dedc21b9b913b52b44c2d1dde",
+        "namespace": "siq-opt05-a646114c19a9",
+        "sandbox_name": "siq-behavior-d395f8c2a2de",
+        "sandbox_id": "df02975d-5aae-404d-813a-42ded85802df",
+        "uid": 998,
+        "allow_path": "/opt/siq-behavior/allow",
+        "deny_path": "/opt/siq-behavior/deny",
+        "probe_sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf",
+        "supervisor_profile": "openshell-rootful-v0"
+      },
+      "container": {
+        "container_id": "4078f94d18d6cba761e04f5a81efdced98ea4a32e9ec571b749b3c59e0bd08bf",
+        "image_digest": "sha256:123ddf660f3b95ad12d4b667803febf0fd20c35dedc21b9b913b52b44c2d1dde",
+        "init_pid": 3687365,
+        "network": "siq-opt05-a646114c19a9",
+        "mount_destinations": [
+          "/etc/openshell/auth/sandbox.jwt",
+          "/etc/openshell/tls/client/ca.crt",
+          "/etc/openshell/tls/client/tls.crt",
+          "/etc/openshell/tls/client/tls.key",
+          "/opt/openshell/bin/openshell-sandbox"
+        ],
+        "namespace": "siq-opt05-a646114c19a9",
+        "sandbox_name": "siq-behavior-d395f8c2a2de",
+        "sandbox_id": "df02975d-5aae-404d-813a-42ded85802df",
+        "supervisor_profile": "openshell-rootful-v0"
+      },
+      "objects": [
+        {
+          "path": "/",
+          "uid": 0,
+          "gid": 0,
+          "mode": 493,
+          "kind": "directory"
+        },
+        {
+          "path": "/opt",
+          "uid": 0,
+          "gid": 0,
+          "mode": 493,
+          "kind": "directory"
+        },
+        {
+          "path": "/opt/siq-behavior",
+          "uid": 0,
+          "gid": 0,
+          "mode": 365,
+          "kind": "directory"
+        },
+        {
+          "path": "/opt/siq-behavior/allow",
+          "uid": 0,
+          "gid": 0,
+          "mode": 365,
+          "kind": "file",
+          "size": 4266435,
+          "sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf"
+        },
+        {
+          "path": "/opt/siq-behavior/deny",
+          "uid": 0,
+          "gid": 0,
+          "mode": 365,
+          "kind": "file",
+          "size": 4266435,
+          "sha256": "0cbb819f9824b275670f2208dc95a38483794a0c7ead2c640b6b4963b8249bbf"
+        }
+      ]
+    }
+  },
+  "candidate_validation": {
+    "accepted": false,
+    "reason": "behavior_control_or_allow_failed"
+  },
+  "receiver_arrivals": 6,
+  "probe_uid": 998,
+  "cleanup": {
+    "isolated_namespace": "siq-opt05-a646114c19a9",
+    "host_bind_mounts": false,
+    "live_check_started": true,
+    "health_probe_failures": 1,
+    "ready": true,
+    "acceptance_exit_code": 1,
+    "owned_gateway_stopped": true,
+    "original_configuration_unchanged": true,
+    "original_tls_files_unchanged": true,
+    "owned_network_empty": true,
+    "network_cleanup_returncode": 0,
+    "passed": false,
+    "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "template_sha256": "95edbf66fe24d61532c0636ddc605281316c8e799c02c9a957df7c7064cd5467"
+  },
+  "limits": [
+    "This real direct-TCP attempt failed. No deployment grade was promoted.",
+    "Tenant/deployment/operation identifiers are synthetic component bindings.",
+    "Policy-change invalidation and explicit-allow reversal were not executed after this precondition failed.",
+    "This attempt preceded the final independent Unix daemon peer check."
+  ]
+}

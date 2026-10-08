@@ -62,6 +62,12 @@ class Settings:
     task_signing_key_file: str | None
     cors_origins: tuple[str, ...]
     bootstrap_tenant_id: str
+    threat_scan_actor_limit: int = 20
+    threat_scan_tenant_limit: int = 60
+    threat_scan_concurrency: int = 2
+    threat_scan_isolation: str = "bwrap"
+    threat_scan_socket: str | None = None
+    threat_scan_service_uid: int | None = None
     request_id_header: str = "X-Request-ID"
 
     @property
@@ -69,8 +75,34 @@ class Settings:
         return self.database_url.startswith("sqlite")
 
 
+def _bounded_scan_setting(name: str, default: int, maximum: int) -> int:
+    try:
+        value = int(os.getenv(name, str(default)))
+        if 1 <= value <= maximum:
+            return value
+    except ValueError:
+        pass
+    raise RuntimeError(f"{name} must be an integer between 1 and {maximum}")
+
+
 def load_settings() -> Settings:
     dev_mode = _bool("SIQ_AS_DEV")
+    scan_isolation = os.getenv("SIQ_AS_THREAT_SCAN_ISOLATION", "process" if dev_mode else "bwrap")
+    if scan_isolation not in {"process", "bwrap", "bwrap-service"} or (not dev_mode and scan_isolation == "process"):
+        raise RuntimeError("SIQ_AS_THREAT_SCAN_ISOLATION requires bwrap or bwrap-service in production")
+    scan_socket, scan_uid = None, None
+    if scan_isolation == "bwrap-service":
+        scan_socket = os.getenv("SIQ_AS_THREAT_SCAN_SOCKET", "")
+        try:
+            scan_uid = int(os.getenv("SIQ_AS_THREAT_SCAN_SERVICE_UID", ""))
+        except ValueError:
+            raise RuntimeError("SIQ_AS_THREAT_SCAN_SERVICE_UID requires an explicit non-root UID") from None
+        if (not 1 <= scan_uid < 2**32 - 1 or scan_uid == os.getuid() or os.getuid() == 0
+                or not scan_socket.startswith("/") or "\x00" in scan_socket
+                or len(os.fsencode(scan_socket)) > 107
+                or any(part in {"", ".", ".."} for part in scan_socket.split("/")[1:])):
+            raise RuntimeError(
+                "bwrap-service requires a protected absolute socket path and distinct non-root service UID")
     database_url = os.getenv(
         "SIQ_AS_DATABASE_URL",
         "sqlite:///./dev.db" if dev_mode else "",
@@ -166,6 +198,12 @@ def load_settings() -> Settings:
         raise RuntimeError(str(exc)) from exc
 
     return Settings(
+        threat_scan_isolation=scan_isolation,
+        threat_scan_socket=scan_socket,
+        threat_scan_service_uid=scan_uid,
+        threat_scan_actor_limit=_bounded_scan_setting("SIQ_AS_THREAT_SCAN_ACTOR_LIMIT", 20, 1000),
+        threat_scan_tenant_limit=_bounded_scan_setting("SIQ_AS_THREAT_SCAN_TENANT_LIMIT", 60, 1000),
+        threat_scan_concurrency=_bounded_scan_setting("SIQ_AS_THREAT_SCAN_CONCURRENCY", 2, 16),
         database_url=database_url,
         dev_mode=dev_mode,
         oidc_jwks_url=oidc_jwks_url,

@@ -22,6 +22,13 @@ func (s *Server) traceSources(all []receipt.Receipt, indexes []int) ([]exportpkg
 	for _, index := range indexes {
 		rc := all[index]
 		row := exportpkg.TraceSourceInput{Seq: rc.Seq, ReceiptHash: rc.Hash, Status: "unavailable"}
+		// The v1 trace source describes a single Intent-bound Grant. Native
+		// authority is baseline plus a Skill ancestry, including explicit no-Skill.
+		// Do not label baseline admission metadata as the invoked Skill source.
+		if rc.SchemaVersion == "runtime-receipt/v3" || rc.NativeInvocation != nil {
+			out = append(out, row)
+			continue
+		}
 		if rc.MatchedGrantID != nil && *rc.MatchedGrantID != "" && rc.AgentID != nil {
 			subject := intent.HistoricalGrantSubject{
 				Platform: rc.Platform, SessionID: rc.SessionID, AgentID: *rc.AgentID, TaskID: rc.TaskID,

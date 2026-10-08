@@ -1,0 +1,119 @@
+{
+  "schema_version": "siq.optimization-native-openshell-backend-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "7a01ac13",
+  "tests": {
+    "related_tests_passed": 63,
+    "final_backend_tests_passed": 53,
+    "overlap": true,
+    "ruff": "passed"
+  },
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-native-openshell-backend-04",
+    "namespace": "siq-opt08-081eb1942da7",
+    "image_id": "sha256:2cee8fe692b02fb17906ab5798492c3e67114decf1b5a2e0227179a142daf10a",
+    "artifact_sha256": "476ec4fe2e988eb8384b47f03b1780112c8bc0ffbe3e66bd33c907a181feb65b",
+    "runtime_checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "host_loop_stopped": true,
+    "independent_host_effect_check": true,
+    "signed_chain_verified": true,
+    "receipt_count": 18,
+    "receipt_actions": {
+      "allow": 14,
+      "deny": 4
+    },
+    "business_client_start": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "parent_native_policy_checked": true,
+        "child_identity_checked": true,
+        "child_credential_path_checked": true,
+        "session_enrollment_checked": true,
+        "first_child_issued_by_business_client": true,
+        "first_child_session_enrolled": true,
+        "first_child_cancel_confirmed": true,
+        "cancelled_child_readback_refused": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "business_client_cancel_after_baseline_revocation": {
+      "schema_version": "siq.native-business-client-probe-result/v1",
+      "checks": {
+        "cancel_confirmed": true,
+        "exact_child_cancelled": true
+      },
+      "client_sha256": "de25ebb785556ca2cf09f07edf26a8c39ce77adfe4f418f66a5b10ca149efe20",
+      "probe_sha256": "134c146bf1cf910e2f3ebe6935c148213532ca293fbddef7ee9a641a40942d75"
+    },
+    "go_integration_seconds": 76.769,
+    "model_calls": 0,
+    "business_entry_acceptance": false
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "prior_attempts": [
+    {
+      "directory": "var/optimization-20261007/opt08-native-openshell-backend-01",
+      "result": "failed",
+      "cause": "Non-root host cannot stat root init PID namespace inode."
+    },
+    {
+      "directory": "var/optimization-20261007/opt08-native-openshell-backend-02",
+      "result": "failed",
+      "cause": "Diagnostic repetition confirmed PermissionError; only code location/type recorded."
+    },
+    {
+      "directory": "var/optimization-20261007/opt08-native-openshell-backend-03",
+      "result": "failed",
+      "cause": "Batch exceeded former 80-second observation deadline; separate Go checks passing do not prove complete runtime acceptance."
+    }
+  ],
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_openshell.py": "f99e5af7c9fe499b81ccf039ca596ce4f4e801dbb848bea790765226e8e6c47c",
+    "adapters/runtime/hermes-agentshield/tests/test_host_openshell.py": "b3b5b0cb03092b4f925f773b3fbe7a7d1eb7f1f54a204b44f595051ab306d0bd",
+    "patches/hermes/openshell_image_probe.py": "9b44410587243e5549a8015ba3f4ccc98f299a1f64a121099f2b070686c5e5a9",
+    "patches/hermes/openshell_online_probe.py": "2819d02604d7ea48d25c47bae4354f063f729e8abf4ab15ea99da28b7e231915",
+    "patches/hermes/run_openshell_runtime_probe.py": "eb4c026d1ee55e8ed620ff7b657a93ab21504e8b57b7f9577f92e9782d9fcb1b",
+    "packages/contracts/native-openshell-backend.v1.md": "6fa6ddc917377ad68be98bbe4151d06e4e85b8e0b71d1f09cc914ff34991149f"
+  },
+  "raw_result_sha256": {
+    "result.json": "b6e9909f336c6a04a1add5033afa2d89fa0adb6cbcc1420c622ebf430bb2ed7e",
+    "authority-result.json": "6c0a613551aac41419c1cf8196c1251c12392860736c371f599e935cdcf76ad2",
+    "business-client-start.json": "eba5ab4e0f884f5d8c4d4871b7b584c89c68a5b53a2ebd8aa46ba6355a5bd9eb",
+    "business-client-cancel.json": "c79a85c46e75c7f1a1be4173d2d0f0e66c1d59e053e061d1828f09176ff0f1c8"
+  },
+  "limits": [
+    "Real OpenShell/Hermes tools/Go HTTP; operator, Skill content and request parameters synthetic.",
+    "Read-only backend component is not the daily business builder/Supervisor integration.",
+    "Repeated Docker CLI inspection has measurable latency; this single run is not a performance benchmark.",
+    "Rootful Linux Docker only; no rootless/remote/context fallback.",
+    "Private host lifecycle handoff and actual business model acceptance remain pending."
+  ]
+}

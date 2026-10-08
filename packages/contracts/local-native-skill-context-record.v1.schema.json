@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/local-native-skill-context-record.v1.schema.json",
+  "title": "Native Skill signed history record V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "context",
+    "revocation"
+  ],
+  "properties": {
+    "context": {
+      "$ref": "skill-execution-context.v2.schema.json"
+    },
+    "revocation": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "skill-execution-context-revocation.v2.schema.json"
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "local-native-skill-context-record/v1"
+    }
+  }
+}

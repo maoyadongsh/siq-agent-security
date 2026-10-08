@@ -2,7 +2,7 @@
 """ENT-018-OVERVIEW 企业总览页四入口对齐与状态展示 浏览器验收。
 
 仅使用 127.0.0.1 本地静态服务 + 拦截模拟 API（不连接真实控制面）。
-VITE_DEV_MODE 模拟身份构建仅用于测试、不可发布；本脚本不是生产环境验收。
+生产配置构建与测试层模拟会话仅用于测试、不可发布；本脚本不是生产环境验收。
 检查项：
 - 加载时没有伪零值；成功统计与真实零值；异常统计值不显示为 0；
 - 失败显示错误，重试成功恢复；
@@ -11,6 +11,9 @@ VITE_DEV_MODE 模拟身份构建仅用于测试、不可发布；本脚本不是
 - 375/768/1024/1280/1440px 页面与内容区均无横向溢出；
 - 无新增业务写请求；无未捕获异常。
 """
+
+from browser_fixture_identity import install_fixture_session
+
 
 import argparse
 import json
@@ -162,7 +165,7 @@ def main() -> int:
         "synthetic_identity": True,
         "destination_fixture": True,
         "production_iam": False,
-        "note": "VITE_DEV_MODE 模拟身份构建 + 127.0.0.1 隔离 mock，仅用于总览交互验收，不可发布、不代表生产环境验收。",
+        "note": "生产配置构建与测试层模拟会话 + 127.0.0.1 隔离 mock，仅用于总览交互验收，不可发布、不代表生产环境验收。",
         "checks": checks,
         "page_errors": page_errors,
         "request_log_summary": None,
@@ -176,7 +179,8 @@ def main() -> int:
         temporary = Path(raw)
         web_build = temporary / "web-sim"
         env = {k: v for k, v in os.environ.items() if k in {"PATH", "LANG", "TZ", "HOME"}}
-        env.update(VITE_DEV_MODE="true", VITE_DEV_TENANT_ID="fixture-tenant", VITE_DEV_USER_ID="fixture-user")
+        env.update(SIQ_AS_WEB_ENV_DIR=str(temporary), VITE_APP="",
+                   VITE_API_BASE="/api/v1", VITE_IAM_URL="/api/iam", VITE_DEV_MODE="false", VITE_DEV_TENANT_ID="fixture-tenant", VITE_DEV_USER_ID="fixture-user")
         with (out / "build.log").open("x") as log:
             subprocess.run(["npm", "run", "build", "--", "--outDir", str(web_build)],
                            cwd=WEB, env=env, stdout=log, stderr=log, check=True, timeout=300)
@@ -202,6 +206,7 @@ def main() -> int:
                               "critical_findings": 0, "environments": 0, "edges_online": 0, "policies": 0}
             STATE.overview_fail = False
             STATE.overview_delay = 1.2
+            install_fixture_session(page)
             page.goto(f"{base}/overview", wait_until="domcontentloaded")
             page.wait_for_timeout(300)
             html = page.content()
@@ -300,6 +305,7 @@ def main() -> int:
             overflow_results = {}
             for width in [375, 768, 1024, 1280, 1440]:
                 page.set_viewport_size({"width": width, "height": 900})
+                install_fixture_session(page)
                 page.goto(f"{base}/overview", wait_until="domcontentloaded")
                 page.wait_for_timeout(400)
                 doc_overflow = page.evaluate(

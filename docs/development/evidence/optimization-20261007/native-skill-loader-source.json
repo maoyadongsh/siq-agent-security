@@ -1,0 +1,21 @@
+{
+  "schema_version": "optimization-source-evidence/v1",
+  "date": "2026-10-07",
+  "scope": "read-only cached image source identity; not runtime authorization acceptance",
+  "image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+  "candidate_record_sha256": "c7d9fa3528622b71fb89a4e7dfe14369dffcc89b365531114dca4e38308f591f",
+  "files": [
+    {
+      "path": "tools/skills_tool.py",
+      "sha256": "7e258db459eff5906e7a29f1e2c8fc061fbd46aadf5633ac49d1ea5949cfe3e4",
+      "bytes": 85778,
+      "has_skill_lifecycle": false
+    },
+    {
+      "path": "hermes_cli/plugins.py",
+      "sha256": "42be01f01014ae1a65b3dc879df687058b312c0226d596f902e03a3c1247c431",
+      "bytes": 311536,
+      "has_skill_lifecycle": true
+    }
+  ]
+}

@@ -3,9 +3,12 @@
 - 所有 /api/v1/** 请求由 Playwright route 拦截并返回合成 JSON，不连接真实控制面；
 - 仅验证：关联按钮旅程、表单同步、同条件重复不发请求、特殊字符原值、
   键盘可用、375/1280 无横向溢出、零业务写请求、零未捕获异常；
-- 使用 VITE_DEV_MODE=true 独立构建目录（仅模拟，不可发布）；
+- 使用 VITE_DEV_MODE=false + loopback session fixture 独立构建目录（仅模拟，不可发布）；
 - 输出两张关键截图 + 结构化 JSON 报告。
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -53,7 +56,7 @@ CONTEXT = {
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--web', type=Path, required=True, help='dev 构建目录（VITE_DEV_MODE=true，仅模拟）')
+    parser.add_argument('--web', type=Path, required=True, help='dev 构建目录（VITE_DEV_MODE=false + loopback session fixture，仅模拟）')
     parser.add_argument('--out-dir', type=Path, required=True)
     args = parser.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=False)
@@ -121,6 +124,7 @@ def main():
             page.on('pageerror', lambda e: errors.append(str(e)))
             page.on('console', lambda m: errors.append(m.text) if m.type == 'error' else None)
             page.route('**/api/v1/**', route)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/audit')
 
             # 1. 真实结果加载，关联按钮出现
@@ -222,7 +226,7 @@ def main():
         'schema_version': 'audit-correlation-browser-smoke/v1',
         'scope': 'control_plane_audit_correlation',
         'simulation_only': True,
-        'note': 'VITE_DEV_MODE=true 独立构建目录，全 API 拦截合成响应，仅模拟不可发布',
+        'note': 'VITE_DEV_MODE=false + loopback session fixture 独立构建目录，全 API 拦截合成响应，仅模拟不可发布',
         'checks': checks,
         'audit_calls': state['audit_calls'],
         'write_calls': state['write_calls'],

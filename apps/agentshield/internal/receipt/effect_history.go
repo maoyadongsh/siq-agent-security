@@ -81,7 +81,8 @@ func (e *Engine) HistoricalEffectActions(records []effectevidence.Record) (func(
 	if err != nil {
 		return nil, err
 	}
-	if lastSeq != e.opts.Chain.seq || lastHash != e.opts.Chain.head {
+	seq, head := e.opts.Chain.Head()
+	if lastSeq != seq || lastHash != head {
 		return nil, effectevidence.ErrCorrelation
 	}
 	out := map[pair]effectevidence.Action{}

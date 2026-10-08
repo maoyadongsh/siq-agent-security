@@ -1,0 +1,94 @@
+{
+  "schema_version": "optimization-openshell-behavior-journal-validation/v1",
+  "recorded_at": "2026-10-07T20:03:04.774056+00:00",
+  "base_commit": "53ae567aaf1e0c135bc5d1233975dee8817b17f2",
+  "result": "component_passed",
+  "validation": {
+    "pytest": {
+      "opt09-journal-focused": {
+        "tests": 166,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "opt09-journal-final": {
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "postgres": {
+      "passed": true,
+      "checks": {
+        "migrated_behavior_columns_match_model": true,
+        "migrated_nonce_uniqueness_present": true,
+        "test_bad_observations_are_retained_as_rejected_not_effective[0]": true,
+        "test_binding_revocation_between_claim_and_result_prevents_acceptance[0]": true,
+        "test_challenge_id_and_nonce_cannot_be_reused_for_different_operation[0]": true,
+        "test_collector_failure_is_unknown_and_never_eligible_again[0]": true,
+        "test_concurrent_workers_only_one_receives_execution_claim[0]": true,
+        "test_corrupt_persistent_claim_fails_closed[0]": true,
+        "test_corrupt_persistent_claim_fails_closed[1]": true,
+        "test_corrupt_persistent_claim_fails_closed[2]": true,
+        "test_corrupt_persistent_claim_fails_closed[3]": true,
+        "test_cross_deployment_and_stale_epoch_cannot_consume[0]": true,
+        "test_cross_tenant_cannot_prepare_read_or_claim[0]": true,
+        "test_expired_unstarted_probe_never_gets_claim[0]": true,
+        "test_late_result_cannot_turn_expired_run_into_acceptance[0]": true,
+        "test_lost_collector_process_cannot_be_resumed_or_replayed[0]": true,
+        "test_malformed_raw_error_and_credentials_are_not_stored[0]": true,
+        "test_missing_audit_rolls_back_state_and_does_not_return_new_claim[0]": true,
+        "test_missing_audit_rolls_back_state_and_does_not_return_new_claim[1]": true,
+        "test_missing_audit_rolls_back_state_and_does_not_return_new_claim[2]": true,
+        "test_missing_audit_rolls_back_state_and_does_not_return_new_claim[3]": true,
+        "test_missing_audit_rolls_back_state_and_does_not_return_new_claim[4]": true,
+        "test_missing_audit_rolls_back_state_and_does_not_return_new_claim[5]": true,
+        "test_new_worker_reads_durable_result_without_promoting_deployment[0]": true,
+        "test_nonempty_migration_downgrade_preserves_evidence[0]": true,
+        "test_observations_before_durable_claim_are_rejected[0]": true,
+        "test_other_worker_cannot_finish_or_abandon_claim[0]": true,
+        "test_parent_drift_before_claim_never_issues_execution_token[0]": true,
+        "test_parent_drift_before_claim_never_issues_execution_token[1]": true,
+        "test_parent_drift_before_claim_never_issues_execution_token[2]": true,
+        "test_parent_drift_before_claim_never_issues_execution_token[3]": true,
+        "test_remaining_window_must_cover_execution_budget[0]": true,
+        "test_result_consumed_once_even_when_same_worker_retries[0]": true,
+        "test_simultaneous_finish_only_one_result_is_consumed[0]": true,
+        "postgres_contended_claim_one_winner": true,
+        "postgres_contended_finish_one_winner": true,
+        "clean_migration_replay": true,
+        "empty_downgrade_reupgrade": true,
+        "nonempty_automatic_downgrade_refused": true,
+        "refused_downgrade_preserves_head": true
+      },
+      "image_id": "sha256:ff80089083d7365046af7f03d949a2defa14e0b09e14bd5b8f08a242291be8b2",
+      "migrated_head": "0031",
+      "model_calls": 0,
+      "openshell_calls": 0,
+      "external_database_access": false
+    },
+    "postgres_owned_container_removed": true,
+    "ruff": "passed",
+    "negative_before_fix": "test_observations_before_durable_claim_are_rejected: actual accepted, expected rejected; reproduced then fixed",
+    "model_calls": 0,
+    "openshell_calls": 0,
+    "production_state_mutations": 0
+  },
+  "source_sha256": {
+    "docs/adr/0058-enterprise-openshell-behavior-verification.md": "0fc02c3b2c90c5dbfabf3c0b6e10da51993b80491a55a2e5d4d031b15c62563d",
+    "apps/control-api/app/adapters/openshell/behavior_journal.py": "910fde715e38ae4b1716eaf785d7ea90be45df0e0658319b9f2c0bd07116d20c",
+    "apps/control-api/app/adapters/openshell/behavior_protocol.py": "4791a5625ddbcc6b6a1164fba1fa97be539ebb6e1a3656a72263fe8a634e3935",
+    "apps/control-api/app/models.py": "6ee5efcd175f0ef04bba28daa7d4e5dac3228bb0e39106cdfd3267f29743750e",
+    "apps/control-api/app/tests/test_openshell_behavior_journal.py": "07a4daebf4735b3624085499f6b831c6c037ded1b589d9448d1b6d06289d8ff4",
+    "apps/control-api/migrations/versions/0031_openshell_behavior_operation.py": "a04372edb8e24d384c47fc6272f66a8d179f603e4dcdb377f24fc3c3c86a31d9",
+    "scripts/enterprise-experience/behavior-postgres-check.py": "de26ef6c65c694e3ec45de9224bce32d5910828d5d20b7efd7886f8c56f04f96"
+  },
+  "limits": [
+    "Observations are synthetic; real ELF collector, enterprise API/UI, operator approval and target mutex wiring remain incomplete.",
+    "A new journal instance and lost-claim simulation establish stored-state behavior; no actual probe-process crash was performed.",
+    "Accepted journal observations do not promote deployment verification.",
+    "The independent PostgreSQL suite reuses 32 journal cases; counts are not additive to local pytest.",
+    "OPT-09 remains implementing and the full goal remains active."
+  ]
+}

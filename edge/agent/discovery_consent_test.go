@@ -7,11 +7,53 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
 	"siq-agent-security/edge/agent/canon"
 )
+
+func TestSignedLegacyTaskRequiresTrustedInstallPreservesIdentity(t *testing.T) {
+	s, task := consentFixture(t)
+	s.DiscoveryPlan, s.DiscoveryPlanSHA256 = nil, ""
+	s.SignerSeed = "synthetic-identity-not-for-signing"
+	t.Setenv("SIQ_EDGE_STATE_DIR", filepath.Join(t.TempDir(), "state"))
+	t.Setenv("PATH", t.TempDir())
+	t.Setenv("SIQ_CONNECTOR_BIN_DIR", "")
+	task.ExpiresAt = time.Now().Add(time.Minute).UTC().Format(time.RFC3339)
+	pub, key, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.ControlPlanePublicKey = base64.StdEncoding.EncodeToString(pub)
+	payload, err := canon.Decode(task.Payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+	wire, err := canon.Marshal(map[string]any{"task_id": task.TaskID, "task_type": task.TaskType, "environment_id": task.EnvironmentID, "payload": payload, "expires_at": task.ExpiresAt})
+	if err != nil {
+		t.Fatal(err)
+	}
+	task.Signature = base64.StdEncoding.EncodeToString(ed25519.Sign(key, wire))
+	before, err := json.Marshal(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rcpt, err := (&Runner{State: s}).Execute(context.Background(), task)
+	if err != nil || rcpt == nil || rcpt.Status != "failed" || rcpt.ErrorCode != "unsupported" || !strings.Contains(rcpt.ErrorMessage, "setup-enterprise") {
+		t.Fatalf("legacy task did not fail with migration guidance: %+v %v", rcpt, err)
+	}
+	after, err := json.Marshal(s)
+	if err != nil || string(before) != string(after) {
+		t.Fatal("refusal changed the enrolled identity")
+	}
+	cached, err := LookupExecReuse(task)
+	if err != nil || cached == nil || cached.ErrorCode != "unsupported" {
+		t.Fatal("refused task outcome was not journaled")
+	}
+}
 
 func consentFixture(t *testing.T) (*State, *Task) {
 	t.Helper()

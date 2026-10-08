@@ -1,0 +1,53 @@
+{
+  "schema_version": "runtime-receipt/v2",
+  "local_origin": {
+    "schema": "pending_decision/v2",
+    "recorded_at": "2026-10-07T01:00:00Z",
+    "platform": "workbuddy",
+    "enforcement_mode": "block",
+    "outcome": "unconfirmed",
+    "reason": "unavailable",
+    "signed": false,
+    "origin": "local_hook",
+    "stage": "observation",
+    "reason_code": "workbuddy_observation_unconfirmed"
+  },
+  "record_type": "local_failure",
+  "receipt_id": "rcp-pending-c13580cd9bab14f739de80ec755433a66fddb7efdd82b05e89ab9b2cbea4d64a",
+  "chain_id": "local",
+  "seq": 0,
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "bfeaa3534208ff2f98ceec65263f7e83859376f7cdac33e729ef0ec94256b26f",
+  "sig": "d3a010351f4630f4381ca5050199049d71c31311d572d9ebaf2b2a439a16da542eca93b42bac8b9da0694b3bc0b83132943ede892ba70b4c521b2bf361c6b009",
+  "issued_at": "2026-09-04T07:00:00.002Z",
+  "platform": "workbuddy",
+  "session_id": "",
+  "agent_id": null,
+  "tool": "",
+  "tool_call_id": null,
+  "params_digest": "4b94bd2aed7490deaac376f24f0dd94d20d1adaaca0aa3d9ca1cfae73bb404a5",
+  "params_excerpt": null,
+  "action": "unknown",
+  "advisory_action": null,
+  "reason": "promoted unsigned local hook event: unavailable",
+  "reason_code": "workbuddy_observation_unconfirmed",
+  "matched_grant_id": null,
+  "matched_fact_ids": [],
+  "matched_rule_ids": [],
+  "taint_labels": [],
+  "trifecta": {
+    "private_data": false,
+    "untrusted_input": false,
+    "egress": false
+  },
+  "enforcement_mode": "block",
+  "policy_revision": null,
+  "sandbox_id": null,
+  "model_key": null,
+  "engine": {
+    "version": "test",
+    "rulepack_version": 1
+  },
+  "decision_latency_ms": null,
+  "hold": null
+}

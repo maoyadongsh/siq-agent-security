@@ -157,7 +157,21 @@ export interface Receipt {
   authority_reason_code?: string;
   policy_action?: "allow" | "deny" | "hold" | "redact";
   effective_action?: "allow" | "deny" | "hold" | "redact";
-  schema_version?: 'runtime-receipt/v2';
+  schema_version?: 'runtime-receipt/v2' | 'runtime-receipt/v3';
+  native_invocation?: {
+    call_id: string;
+    call_signature: string;
+    session_registration_id: string;
+    session_signature: string;
+    request_binding: string;
+    agent_authority: { grant_id: string; grant_digest: string };
+    no_skill: boolean;
+    contexts: {
+      context_id: string;
+      context_signature: string;
+      authority: { grant_id: string; grant_digest: string };
+    }[];
+  };
   record_type?: 'decision' | 'observation' | 'hold_resolution' | 'hold_reservation' | 'hold_reconciliation' | 'local_failure';
   local_origin?: {
     schema: 'pending_decision/v2'; origin: 'local_hook'; signed: false; recorded_at: string;
@@ -198,7 +212,7 @@ export interface Receipt {
     skill_id?: string;
     version?: string;
     content_hash?: string;
-    evidence_level?: 'controlled_task' | 'controlled_session';
+    evidence_level?: 'controlled_task' | 'controlled_session' | 'controlled_invocation';
     context_id?: string;
     call_binding?: string;
   };
@@ -375,7 +389,7 @@ export interface LedgerFinding {
 }
 
 export interface RuntimeIdentity {
-
+  native_skill_policy?: { mode: 'required'; runtime_artifact_sha256: string };
   filesystem_profile?: WindowsFilesystemProfile;
   identity_id: string;
   instance_id: string;

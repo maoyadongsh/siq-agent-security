@@ -1,0 +1,40 @@
+{
+  "artifact_sha256": "116ce585865b1b1259489dc39676f8d5ecd3821a45a92804b98e8077869004be",
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "checks": {
+    "identity_pinned_to_artifact": true,
+    "installed_research_skill_matches_image_pin": true,
+    "owned_processes_stopped": true,
+    "private_profile_discovery": true,
+    "protected_image_bytes_match": true,
+    "public_management_pairing": true,
+    "public_serve_native_host": true,
+    "separate_agent_baseline": true,
+    "two_signed_business_installs": true
+  },
+  "image_id": "sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1",
+  "instance_id": "hi-2fb7a2320751b728f664d6cfbbbf6230",
+  "model_calls": 0,
+  "process_exit_codes": [0, 0],
+  "production_modified": false,
+  "runtime_state": "unverified",
+  "schema_version": "siq.native-business-authority-stage/v1",
+  "skills": [
+    {
+      "binding_id": "sab-e772690232933c737d8b27627bfcc76b4e154c07366a1a1fab6c4456dd063654",
+      "grant_id": "grt-si-e41f897efeb1a27768841fed0e2a0a854bfcb12007e06ca3cab7e4a043f2891f",
+      "install_id": "sin-8a5fb6363c4b89010ffce5d745fa2bb5fbeb806ec8d974cd1f0c3cf73b4bf190",
+      "name": "siq-company-evidence",
+      "source_sha256": "9f594a1bcba6cb9ce50f5c3d1960a1310444511f6a3d882c42a2b1ba847fed37",
+      "write_enabled": false
+    },
+    {
+      "binding_id": "sab-4072c0dbf0cbf43f500a5d376e9cbf72bda9eb4f82ef7dab503e3891ce47a4a2",
+      "grant_id": "grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484",
+      "install_id": "sin-9d9a1939dcb05c45442c5fa760faccfbf347d782c02c52580df09fca9e8f7218",
+      "name": "siq-research-draft",
+      "source_sha256": "a38f8af2dfefc099c18b9876d2f8e565be77c72f5ccaf7ad1cdbd95a209759db",
+      "write_enabled": true
+    }
+  ]
+}

@@ -1,0 +1,348 @@
+{
+  "schema_version": "optimization-enterprise-upgrade-journal-evidence/v1",
+  "date": "2026-10-08",
+  "parent_commit": "5d8b13a3bb4188b99ea2d42098342c10b316ced4",
+  "task": "OPT-11",
+  "task_status": "implementing",
+  "claim": "Private pending upgrade journal, recovery input inspection and ordinary task containment; no apply/recover CLI yet",
+  "component_verifier": "Internal explicit test double only for positive journal fixtures; production fixed publisher verifier explicitly rejects these synthetic releases",
+  "validation": {
+    "focused-001": {
+      "pass": {
+        "top_level": 11,
+        "including_subtests": 63
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    },
+    "wire-sample": {
+      "pass": {
+        "top_level": 1,
+        "including_subtests": 1
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    },
+    "full": {
+      "pass": {
+        "top_level": 235,
+        "including_subtests": 781
+      },
+      "fail": {
+        "top_level": 2,
+        "including_subtests": 2
+      },
+      "skip": {
+        "top_level": 2,
+        "including_subtests": 2
+      }
+    },
+    "race": {
+      "pass": {
+        "top_level": 19,
+        "including_subtests": 99
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    },
+    "regression-repair": {
+      "pass": {
+        "top_level": 3,
+        "including_subtests": 3
+      },
+      "fail": {
+        "top_level": 0,
+        "including_subtests": 0
+      },
+      "skip": {
+        "top_level": 0,
+        "including_subtests": 0
+      }
+    }
+  },
+  "aggregate_unique_tests": {
+    "passed_top_level": 238,
+    "passed_including_subtests": 784,
+    "skipped_top_level": 2,
+    "basis": "One full run with two failures caused by newly rejected group-writable test ancestors; chmod only owned fixture roots, rerun both failures plus one new ancestor rejection with race; no claim of a later full command exit 0"
+  },
+  "contract_tests": {
+    "passed": 26,
+    "new_journal_tests": 15,
+    "prior_review_tests": 11,
+    "note": "One line-length lint failure fixed without semantic changes; final Ruff passes"
+  },
+  "static_checks": {
+    "go_vet": "passed",
+    "ruff": "passed",
+    "gofmt": "passed",
+    "git_diff_check": "passed"
+  },
+  "native_cli": {
+    "schema_version": "opt11-upgrade-journal-native-checks/v1",
+    "binary_sha256": "44e4c621d55795affea68a626e6b3e83177c2d38e615b1720ba2e77ae80f74ab",
+    "checks": [
+      {
+        "marker": "partial",
+        "command": "tasks",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "partial",
+        "command": "serve",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "directory",
+        "command": "tasks",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "directory",
+        "command": "serve",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "symlink",
+        "command": "tasks",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "symlink",
+        "command": "serve",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "fifo",
+        "command": "tasks",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "fifo",
+        "command": "serve",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "enterprise_upgrade_pending",
+        "input_unchanged": true
+      },
+      {
+        "marker": "absent",
+        "command": "tasks",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "device_state_unavailable",
+        "input_unchanged": true
+      },
+      {
+        "marker": "absent",
+        "command": "serve",
+        "exit_code": 1,
+        "stdout_empty": true,
+        "expected_boundary": "device_state_unavailable",
+        "input_unchanged": true
+      }
+    ],
+    "checks_passed": 10,
+    "signed_upgrade_acceptance": false,
+    "service_manager_called": false,
+    "temporary_home_removed": true
+  },
+  "builds": [
+    {
+      "target": "linux-arm64",
+      "returncode": 0,
+      "sha256": "44e4c621d55795affea68a626e6b3e83177c2d38e615b1720ba2e77ae80f74ab",
+      "size": 9702176
+    },
+    {
+      "target": "linux-amd64",
+      "returncode": 0,
+      "sha256": "e96a91a2dd17a2d1e68a044d226ec32bc24bdf23b915e7084aefea46825cbe82",
+      "size": 10414754
+    },
+    {
+      "target": "darwin-arm64",
+      "returncode": 0,
+      "sha256": "91a6365d3ab34c9023024ab82fd74c9391e7ea4d0c07cda7b81ff9a35bf6b0c0",
+      "size": 9437778
+    },
+    {
+      "target": "windows-amd64",
+      "returncode": 0,
+      "sha256": "4a840494d88b2e9fa5305bc46defacb720fd3f9bbd75e2344050eae607266a53",
+      "size": 10030592
+    }
+  ],
+  "source_files": [
+    {
+      "path": "edge/agent/upgrade_journal_linux.go",
+      "sha256": "f2661d69c87719a4297c41db8910cfed7963d230a2a6f304b0f23ee549da91f2",
+      "bytes": 10900
+    },
+    {
+      "path": "edge/agent/upgrade_journal_linux_test.go",
+      "sha256": "a6d069c709788cc0577c2bbf13a295b937f7988b4dd57e5839e5729041e37e60",
+      "bytes": 15479
+    },
+    {
+      "path": "edge/agent/upgrade_review_linux.go",
+      "sha256": "09ee1c9dd575b447dda0725b700171979d16fd01fd52be714be45dd168d58b74",
+      "bytes": 10173
+    },
+    {
+      "path": "edge/agent/task_lock_linux.go",
+      "sha256": "ee0f26200556632de77f33555890e05e35e55ffbb3758242e89f9d8c774c58c4",
+      "bytes": 1455
+    },
+    {
+      "path": "edge/agent/serve.go",
+      "sha256": "e46669d58cf2ebfc0697950d4df348e06eed285ab3a2384be631f10ed36bd59d",
+      "bytes": 2211
+    },
+    {
+      "path": "edge/agent/main.go",
+      "sha256": "f28fdff3067637e507f17c98923e9978677bfb7de3483b4236c7d6ead479bb8c",
+      "bytes": 15317
+    },
+    {
+      "path": "edge/agent/installed_capabilities_test.go",
+      "sha256": "a0b6eb5a980562987e97a0f403932c6b15adfda0f9adae69d6fa5e31152fcc5e",
+      "bytes": 6969
+    },
+    {
+      "path": "edge/agent/registration_journal_test.go",
+      "sha256": "639f115de9fd476a2e3167587f0d0370f1eebbb0f054e96adffa4c14d75f651f",
+      "bytes": 2955
+    },
+    {
+      "path": "edge/agent/testdata/enterprise-upgrade-journal.synthetic.json",
+      "sha256": "8721e54b5b259d9c11c21f41c0fc14702c666450e44d78dff7046dd1b51bb92c",
+      "bytes": 4280
+    },
+    {
+      "path": "packages/contracts/enterprise-upgrade-journal.v1.md",
+      "sha256": "f91836e0283b72a2d12f3e80f4a1e37fee2cbf2c628204526bcbdc313ea420f2",
+      "bytes": 3245
+    },
+    {
+      "path": "packages/contracts/enterprise-upgrade-journal.v1.schema.json",
+      "sha256": "9271e339e3609ad6ec2b516e1326e7eacbfe9c5706993a1856c9de987a64f4e5",
+      "bytes": 1328
+    },
+    {
+      "path": "apps/control-api/app/tests/test_enterprise_upgrade_journal_contract.py",
+      "sha256": "79edf53b33f78dcac8c808909e6c97bb33c3495428c917d28eafae62f15de729",
+      "bytes": 3754
+    }
+  ],
+  "private_logs": [
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/contracts.log",
+      "sha256": "38b213ebe10a9da0daabb8ba58cf7bc88fd125dffcbcd357453762569c7c2490",
+      "bytes": 589
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/focused-001.jsonl",
+      "sha256": "177649d95aa1273125bc0c98e4c60a6ef4004c0ec4bb3865e5c1486d9959b3aa",
+      "bytes": 57032
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/full.jsonl",
+      "sha256": "c21e5dacd362bc5b22d8a2a2190c3f6716216884079241c0054a45bb3dbfc286",
+      "bytes": 660177
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/go-overlay.json",
+      "sha256": "41e5931c914c2d3e4e0a8b32f07e5b976b2904460cb78796fd166244e09354cb",
+      "bytes": 89
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/native-cli-driver.py",
+      "sha256": "5f0a80a7f63d54c05b568f3db15da0ad9382ff5a09d650dc250db76ce142901a",
+      "bytes": 2320
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/native-cli.json",
+      "sha256": "213dff80a1a7e2526e7443d4b1f4e25d3eccb28be447cf7952c9fd741e0d718b",
+      "bytes": 2322
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/race.jsonl",
+      "sha256": "22de9171465a8535d0ac21619038e16b94f93791ded16e70adc793bcc8775d14",
+      "bytes": 88512
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/regression-repair.jsonl",
+      "sha256": "1583d1e96722b5ad69732c1332cf70dfe22d47010a58d106f0835558105d5dda",
+      "bytes": 3263
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/ruff.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "bytes": 19
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "var/optimization-20261007/opt11-upgrade-journal-logs/wire-sample.jsonl",
+      "sha256": "990c4d0601bf0d85c1e5e69664ece19bb3711fc87431dac9c3acfaffecaed55e",
+      "bytes": 1392
+    }
+  ],
+  "unchanged_material": [
+    "docs/development-progress-20260906.md (unrelated tracked contributor modification)",
+    "edge/agent/crash_recovery_test.go (unrelated untracked test excluded via overlay)",
+    "historical evidence and unsigned a9a8e91e candidates"
+  ],
+  "limits": [
+    "No stopped-service check, unit/state switching, explicit recovery CLI or completion archive yet",
+    "No formal enterprise-release/v1 signed positive, publisher key use, service activation or device migration",
+    "Old binaries without pending containment must not be treated as crash-safe sources",
+    "Periodic consent is not automatically rebound: retire old confirmation through existing explicit online workflow before a new upgrade",
+    "No native Windows/macOS managed support; cross-builds are compilation only",
+    "Same-UID/root administrators remain trusted",
+    "No remote push/CI/merge"
+  ]
+}

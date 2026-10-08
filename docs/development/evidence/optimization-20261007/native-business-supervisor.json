@@ -1,0 +1,81 @@
+{
+  "schema_version": "siq.optimization-native-business-supervisor-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "business_head": "eb2bde333a552ddad7c493ea74b81b2358830644",
+  "implementation_committed": false,
+  "candidate_sources_sha256": {
+    "scripts/openshell/qwen38_candidate_supervisor.py": "a24b869cede0df63dcb393c43f4d175b2bc19eaaefac1dd44e2edc7369ca9f09",
+    "scripts/openshell/qwen38_supervisor_service.py": "300ee125ad43554229d95fcca5a86eb11f1f327062051d2853a97e29cb490c07",
+    "scripts/openshell/qwen38_request_native.py": "dfdf5b56dedb22410f57329c5f163fdb9c5495079c41eaed6d0383314095daac",
+    "scripts/openshell/tests/test_qwen38_request_native.py": "8ae1a713a6318ce5857170d0a6f0bba963fd4e3e4f0b8491e1d0562b5a36ee80",
+    "docs/architecture/native-skill-supervisor-integration-20261007.md": "ac96527df9a3391e2944aa2302b453911e769da7b8cb6c73a129e36a50077f97"
+  },
+  "preserved_baseline_sha256": {
+    "scripts/openshell/qwen38_candidate_supervisor.py": "fc43b69a7f59e2e0d9de8d4581fdd42b952fc04acdc82f7e2ecdbcacd4653921",
+    "scripts/openshell/qwen38_supervisor_service.py": "f4fe073a6d57a530567694d623719f34048cc8e16e010ce08abc7f7cacd373d2",
+    "apps/api/services/qwen38_request_builder.py": "61a8e18ebef7b3d398075f7fc17d4714b9cb2746ed9f39ec9224fee36992e16b",
+    "apps/api/services/qwen38_request_supervision.py": "905bd8d1c35069d1fe09478e044b30de1dd0e2b7864697421f714d910bf72380",
+    "apps/api/services/qwen38_request_gateway.py": "f16e3cd447af2d3ef0f945f375b0231e80bcd75212784f3726a9a6fa945fd2f9",
+    "apps/api/services/qwen38_request_endpoint.py": "1d80e1ad56b8f547ae47c705c5f38c3b7d8993fd721ae1171f044a3bf24afa93",
+    "scripts/openshell/qwen38_request_forward.py": "99f4519955f08f443352490014232ff5af6684a91334fd5034862c5bf54f0b8e"
+  },
+  "tests": {
+    "related_batch_passed": 135,
+    "related_batch_seconds": 7.77,
+    "final_native_subset_passed": 21,
+    "final_native_subset_seconds": 0.53,
+    "overlap": 14,
+    "new_cases_after_related_batch": 7,
+    "ruff": "passed",
+    "diff_check": "passed",
+    "initial_environment_error": "Security venv lacked sqlmodel (19 passed,116 setup errors); API venv lacked pytest; system python3 has required business test dependencies."
+  },
+  "dependency_inventory": {
+    "roots": [
+      "qwen38_candidate_supervisor",
+      "qwen38_supervisor_service",
+      "qwen38_request_native"
+    ],
+    "method": "Static local scripts/services import closure, including function-local imports; not complete dynamic deployment inventory.",
+    "local_module_count": 38,
+    "untracked_required_modules": [
+      "apps/api/services/openshell_data_scope.py",
+      "apps/api/services/qwen38_runtime_lease.py",
+      "scripts/openshell/agentshield_runtime_binding.py",
+      "scripts/openshell/agentshield_self_identity.py",
+      "scripts/openshell/audit_qwen38_local_candidate.py",
+      "scripts/openshell/authenticated_model_bridge.py",
+      "scripts/openshell/broker_admission_registry.py",
+      "scripts/openshell/build_agentshield_decision_relay_config.py",
+      "scripts/openshell/enterprise_data_scope.py",
+      "scripts/openshell/launch_agentshield_decision_relay.py",
+      "scripts/openshell/model_bridge_stream.py",
+      "scripts/openshell/probe_qwen38_provider.py",
+      "scripts/openshell/qwen38_business_broker.py",
+      "scripts/openshell/qwen38_candidate_gateway_owner.py",
+      "scripts/openshell/qwen38_candidate_host_guard.py",
+      "scripts/openshell/qwen38_candidate_identity.py",
+      "scripts/openshell/qwen38_candidate_lease.py",
+      "scripts/openshell/qwen38_candidate_renewal.py",
+      "scripts/openshell/qwen38_candidate_run_guard.py",
+      "scripts/openshell/qwen38_candidate_supervisor.py",
+      "scripts/openshell/qwen38_model_credential.py",
+      "scripts/openshell/qwen38_request_forward.py",
+      "scripts/openshell/qwen38_request_identity.py",
+      "scripts/openshell/qwen38_request_native.py",
+      "scripts/openshell/qwen38_request_relay.py",
+      "scripts/openshell/qwen38_supervisor_service.py",
+      "scripts/openshell/sandbox_resource_governance.py"
+    ],
+    "untracked_lines": 7380
+  },
+  "boundaries": [
+    "Actual Supervisor.supervise and RequestNative with real private records; authority, host-control and container lifecycle fixtures are explicit.",
+    "Daily builder, protected gateway, endpoint and model request acceptance remain incomplete.",
+    "Earlier live OpenShell run is a different candidate and is not combined into business acceptance.",
+    "Business runtime dependencies were pre-existing untracked files; preserve originals and audit necessary delivery closure before committing this batch."
+  ],
+  "business_report": "docs/reports/native-supervisor-integration-progress-20261007.md"
+}

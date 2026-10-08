@@ -524,6 +524,7 @@ func runWorkBuddyHook(in io.Reader, out io.Writer) error {
 
 func cmdServe(args []string) error {
 	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
+	nativeHost := fs.Bool("native-host", false, "enable private native-host connection for the Linux managed profile")
 	selectedDir := fs.String("state-dir", "", "explicit canonical initialized state directory (overrides environment)")
 	port := fs.Int("port", 0, "listen port (default from config.json, 47611)")
 	mode := fs.String("mode", "", "enforcement mode override: audit_only|warn|block")
@@ -625,6 +626,15 @@ func cmdServe(args []string) error {
 	if err != nil {
 		return err
 	}
+	var nativeRuntime *server.NativeRuntime
+	var nativeLookup receipt.NativeCallLookup
+	if *nativeHost {
+		nativeRuntime, err = server.OpenNativeRuntime(dir)
+		if err != nil {
+			return err
+		}
+		nativeLookup = nativeRuntime.Lookup
+	}
 	eng, err := receipt.New(receipt.Options{
 		Pack: pack, Chain: chain, Grants: st.ActiveGrant, EnforcementMode: cfg.EnforcementMode,
 		Version: Version, HoldChannel: cfg.HoldChannel, SessionIdleTTL: cfg.SessionIdleTTL(),
@@ -636,6 +646,7 @@ func cmdServe(args []string) error {
 		SkillAttributionEnforced: cfg.SkillAttributionEnforcement,
 		SkillContexts:            skillContexts.VerifyForEngine,
 		BaselineGrants:           st.BaselineGrant,
+		NativeCalls:              nativeLookup,
 	})
 	if err != nil {
 		return err
@@ -656,7 +667,8 @@ func cmdServe(args []string) error {
 	addr := fmt.Sprintf("127.0.0.1:%d", cfg.Port)
 	stop := make(chan os.Signal, 1)
 	srv, err := server.New(server.Deps{
-		StopWriter: writer, RequestStop: func() {
+		NativeRuntime: nativeRuntime,
+		StopWriter:    writer, RequestStop: func() {
 			select {
 			case stop <- os.Interrupt:
 			default:

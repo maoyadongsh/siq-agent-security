@@ -2,6 +2,8 @@
 
 同一 React/TypeScript 源码树提供个人与企业两种应用。个人控制台嵌入 Go 客户端，管理本机 Agent、Skill、授权、任务与隐私；企业控制台连接 Control API，以资产、权限、安全、审计为四个主入口，并保留工作台、总览、策略、变更、运行时绑定、环境和设置等高级入口。两者具有独立入口与身份上下文。
 
+2026-10-08 优化开发分支在“部署与审计”加入行为测评面板：展示运维模板范围、确认后按摘要发起测评、按原请求核对不明结果，并独立显示当前目标核验的限定等级和到期时间。只读账号不能发起探针。实际浏览器／Control API／OpenShell联验见[OPT-09验收](../../docs/development/optimization-opt09-completion-validation-20261008.md)。
+
 ## 选择构建模式
 
 | 模式 | 开发 / 构建 | 后端与输出 |
@@ -19,7 +21,7 @@ npm run build
 npm run build:local
 ```
 
-Windows PowerShell 可将 `npm` 写为 `npm.cmd`，无需修改 ExecutionPolicy。本地入口通过 Node 设置当前进程的 `VITE_APP=agentshield` 并调用锁定的 Vite，不依赖全局 Vite 或 POSIX 环境变量语法。两种构建均先运行 TypeScript 检查。
+Windows PowerShell 可将 `npm` 写为 `npm.cmd`，无需修改 ExecutionPolicy。本地入口通过 Node 设置当前进程的 `VITE_APP=agentshield` 并调用锁定的 Vite，不依赖全局 Vite 或 POSIX 环境变量语法。两种构建均先运行 TypeScript 检查。 所有分发构建（含 `build:local` 和自定义 mode）在 `VITE_DEV_MODE=true` 时拒绝执行；请在构建环境显式设为 `false`，或移除该开发开关。开发服务器仍允许显式开启；生产 API 不接受开发身份头，前端开关不构成授权。 浏览器模拟验收使用关闭该开关的构建，在 Playwright 测试层注入受控 loopback 会话；可通过 `SIQ_AS_WEB_ENV_DIR` 指向隔离的空环境目录，避免读取开发者 `.env.local`。该目录选项不绕过构建身份门禁。
 
 `dev:local` 默认监听 `127.0.0.1`、打开 `/overview`，并以本地应用处理 `/`、`/demo` 等 SPA 路由；附加参数示例为 `npm run dev:local -- --port 5174 --strictPort`。开发代理把 `/v1`、`/healthz`、`/ui-config.json` 发往 `127.0.0.1:47611`，需另行启动、配对该 daemon。端口与 Origin 处理见 [localProxy](dev/localProxy.ts)，不要通过删除服务端来源检查解决连接问题。
 
@@ -40,6 +42,8 @@ Windows PowerShell 可将 `npm` 写为 `npm.cmd`，无需修改 ExecutionPolicy�
 个人端入口在 [src/local](src/local/)，路由见 [App.tsx](src/local/App.tsx)，请求封装见 [api.ts](src/local/api.ts)。界面消费服务端事实，不生成签名、推断有效权限或把预览自动变成批准。通知只提示待办并打开详情，不能代替操作者确认。原文辅助采集失败不伪造内容，也不改变工具裁决。
 
 ## 开发验证与交付
+
+企业 Nginx 的既有 CSP 与本地 Go 入口使用一致的脚本、frame 和 MIME 防护策略。静态资产只有成功或条件缓存响应可长期缓存，缺失资源不缓存一年；本地管理 API/HTML/错误默认 no-store。[OPT-13 验收](../../docs/development/optimization-opt13-validation-20261007.md)包含真实 HTTP、Nginx 代理与浏览器正负检查，不替代生产网关或 IAM 联验。
 
 新增[个人浏览器接入与审计](../../evaluations/campaigns/20261006/reports/personal-runtime-browser-report.md)及[运行自检状态实测](../../evaluations/campaigns/20261006/reports/native-runtime-snapshot-report.md)：同候选接入、自检、活动关联、配置失效、取消和卸载有真实浏览器证据；自检 passed 不代表已撤销的业务授权仍可用。DGX 分析助手前端属于另一项目，其权限测评不能替代本 Web 全页面回归。
 

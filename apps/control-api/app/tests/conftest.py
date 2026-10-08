@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import base64
+import json
 import os
 import tempfile
 from pathlib import Path
@@ -16,9 +18,23 @@ _TMPDIR = tempfile.mkdtemp(prefix="siq-as-test-")
 os.environ["SIQ_AS_DATABASE_URL"] = f"sqlite:///{Path(_TMPDIR) / 'test.db'}"
 os.environ["SIQ_AS_SIGNING_KEY_FILE"] = str(Path(_TMPDIR) / "control-plane-signing.seed")
 os.environ["SIQ_AS_ENFORCEMENT_BACKEND"] = "fake"
+_RECOVERY_KEYRING = Path(_TMPDIR) / "synthetic-recovery-keys.json"
+_RECOVERY_KEYRING.write_text(json.dumps({
+    "active_key_id": "test-only", "keys": {"test-only": base64.b64encode(bytes(range(32))).decode()},
+}))
+_RECOVERY_KEYRING.chmod(0o600)
+os.environ["SIQ_AS_OPENSHELL_RECOVERY_KEYRING_FILE"] = str(_RECOVERY_KEYRING)
 
 import pytest
 from fastapi.testclient import TestClient
+
+
+@pytest.fixture(autouse=True)
+def isolated_scan_budget(monkeypatch):
+    # Each test owns a real budget; requests within a test still share limits.
+    from app import scan_budget
+
+    monkeypatch.setattr(scan_budget, "_budget", None)
 
 
 @pytest.fixture(scope="session")

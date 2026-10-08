@@ -1,0 +1,165 @@
+{
+  "schema_version": "optimization-native-working-business-validation/v1",
+  "date": "2026-10-08",
+  "business_head": "2a70587ab13a33bdaba9b5fa299b4ac8be594a23",
+  "security_source_commit": "78eabcccab0ebdbfe3489b8caf2b246a4f0a10ff",
+  "source_state": "working_tree_with_explicit_uncommitted_inputs",
+  "source_files": 1873,
+  "source_archive_sha256": "8437caadfa769db418d30824a922b936b4446e2dff830705e04d2dcfe9072b14",
+  "source_manifest_sha256": "6d44182dbe25b74ea47deceff2595b210c812579c8331935a34816d3dd33a1e0",
+  "build": {
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_sha256": "db2b7a522f6fe6789c3246b3ef5a4ce7ce32997747cd5153ab0c9f61ef03d7e8",
+    "skill_bundle_sha256": "f1ba92f63565a908a7d65dbb0d1581351a1bc070cd7fa12beb28acd2dd08b6e1",
+    "snapshot_manifest_sha256": "077f7996f9a50ce2f1f527f9376cf774496b502341232aa9b3690c0487080b3d",
+    "checks": {
+      "committed_overlay_and_pinned_hermes": true,
+      "committed_skill_bundle": true,
+      "fresh_native_snapshot": true,
+      "fixed_base_native_image_verified": true,
+      "active_image_records_and_profile_unchanged": true
+    },
+    "image_checks": {
+      "protected_files": true,
+      "protected_ancestors": true,
+      "native_config": true,
+      "legacy_environment_rejected": true,
+      "non_root": true,
+      "skill_inventory": true
+    }
+  },
+  "runtime": {
+    "schema_version": "working-candidate-installed-runtime/v1",
+    "python": "3.13.12",
+    "python_executable_sha256": "2b0644c7d784beddd62218cfce0d8137fd166f74d7d51c2bb660928e7f8a583a",
+    "distribution": "siq-openshell-control",
+    "version": "0.4.0",
+    "source_files_sha256": {
+      "siq_openshell_control/__init__.py": "01f1af7ebf9624ae87aedc68722dfb96a2921ef8dc6bb8f8d049e96c832b4203",
+      "siq_openshell_control/contract.py": "96b19b2dc0ea29e722fff3000f45bed072fc12aefddee9d349afae9c157dc883",
+      "siq_openshell_control/immutable_path_registry.py": "df882f8606421f425561066a7e467b8c127627ca6995d2e425f85e0dc00aa96f",
+      "siq_openshell_control/pool_concurrency.py": "45efe3b401cbfd3b09ea018fa3e6de50e63f864827efe1d227c1c4da9066e679",
+      "siq_openshell_control/pool_registry.py": "8fe4435bc7e7ecea8ce1f86c32cc0c8643de54f02c4c655b2840646638bba1ac",
+      "siq_openshell_control/state.py": "f3bc8682e2c565a235a4362f4a06a1d431d7220689817a7ca670647ff9095826"
+    },
+    "dependencies": {
+      "fastapi": "0.136.1",
+      "uvicorn": "0.46.0",
+      "sqlmodel": "0.0.38",
+      "sqlalchemy": "2.0.49",
+      "pydantic": "2.13.4",
+      "httpx": "0.28.1",
+      "psycopg": "3.3.4"
+    }
+  },
+  "verification": {
+    "schema_version": "native-working-permissions-public-verification/v1",
+    "candidate_source_sha256": "f64f7ae0be476a98eb75855ba3a7023c37b7aae86800fd07fe8d4823c8cfa27d",
+    "working_tree_source_unchanged": true,
+    "uncommitted_input_count": 289,
+    "receipts": {
+      "count": 6,
+      "all_content_hashes_verified": true,
+      "sequence_and_previous_hash_verified": true,
+      "all_ed25519_signatures_verified_with_public_key_only": true,
+      "sha256": "6dfb2b6bce41347402e02c23c1770bce19cfd607e9962b03b29c8f671c77be1b",
+      "public_key_base64": "frRO3gRqqc3I/rijvyVf9DMkYSIaNunT2QQzxTdCrRI=",
+      "head_hash": "943889435c2bb106e37cdfeaa814915984324a4d2ae9a19ea75a1ba61df240b0"
+    },
+    "cases": {
+      "v819": {
+        "passed": true,
+        "tool": "read_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "c08a976078301f8b5aa071b11120e591b06dd374c32378d15c50c4119fa178b9",
+        "receipt_hash": "3b5fe98458776f1928eb9b24dd662096c75be5c5781be4722df5f609ef252e49",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true
+      },
+      "v820": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-company-evidence",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "request_run_sha256": "61f62325ee75e44b3e5448a2089b76196641f78b6dea473a30b47c71416895ef",
+        "receipt_hash": "81142d5617c1bfc672ee5952c567b6a31963a291a259d7a20c162a77dd58aa4f",
+        "resource_digest": "f67f2c3de25dbe893d578774cec9d7f9fc75e5f95a52bd297edb31d7dbded477",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_absent": true
+      },
+      "v821": {
+        "passed": true,
+        "tool": "write_file",
+        "skill": "siq-research-draft",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "request_run_sha256": "fceb8427dbfacc7f05e5f42708c8744aaf632f035eca6025accc2500f00e07e6",
+        "receipt_hash": "943889435c2bb106e37cdfeaa814915984324a4d2ae9a19ea75a1ba61df240b0",
+        "resource_digest": "81b8f931e51e79c2dd1d02d2519badfb97ae014105197f2da53c8877d1c56d41",
+        "verified_skill_grant": true,
+        "agent_baseline_grant_matches": true,
+        "openshell_task_directory_writable": true,
+        "openshell_policy_explicitly_allows_task_directory_write": true,
+        "file_sha256": "d33ddeee3884a5c65984d2bfff9b17f3dc9caff9faa948aaac10be1a3c9477d4",
+        "file_content_matches": true
+      }
+    },
+    "cleanup": {
+      "v819": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v820": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "v821": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      }
+    },
+    "same_agent_baseline_different_skill_grants": true,
+    "same_openshell_filesystem_policy_after_request_id_normalization": true,
+    "four_arm_evaluation_complete": false,
+    "repetitions_per_case": 1,
+    "clean_committed_deployment": false,
+    "OPT08_complete": false
+  },
+  "receipt_schema_validated": 6,
+  "source_namespace_probe": {
+    "without_private_users_exit_code": 226,
+    "with_private_users_exit_code": 226,
+    "worktree_preserved": true,
+    "result": "host systemd mount namespacing not supported"
+  },
+  "limits": [
+    "One execution of each of three cases; no statistical guarantee",
+    "Working candidate includes 289 source inputs that differ from business HEAD; public HEAD alone does not reproduce this candidate",
+    "Mount and policy documents plus allowed write control support attribution; four-arm comparison remains pending",
+    "Nested context references checked for expected grants; not claiming complete independent native-context signature re-verification",
+    "Not a third-party certification; OPT-08 and OPT-10 incomplete"
+  ],
+  "private_result_sha256": {
+    "native-final-candidate-build.json": "7d0e3b4d3bafc314e55c5fd3d9316f35eb48fdb883352303bcaee1ee219d0dfd",
+    "native-working-runtime-v819.json": "e35fa5aa0a537c4c4a6cecb5369ecdd16bf32a60ad8890ec01be8b8c98b65b96",
+    "native-working-receipts-v819-v821-schema.json": "acc84db60f2060ec1124dab65ada2872064cd16ea69a7e10ce452d58fc1a4ef9",
+    "native-business-api-v819.json": "6373efe9a9f2cd7dd5d58b761a55c4fb589491138e9694d9d9784b9924e09a17",
+    "native-business-api-v820.json": "f1c63acc9165911ee803e8c682d960fafb0bb6730b34d3a2657bd6fe7f322cac",
+    "native-business-api-v821.json": "b5e19149c36fbcbc967978fdfe29005267df4a22b1abd7e005e4407eecf923e3",
+    "native-switch-v819-cleanup.json": "380ffb0923da9b0f27b24bd97a0e45d7d64c254ca41cba00bcabe8726ffa6f7f",
+    "native-switch-v820-cleanup.json": "006bdf7b65f62c9cb1f07ec348071fb9afb8a3bd92edd5ad3f5f21c338afb1b5",
+    "native-switch-v821-cleanup.json": "4a337473b4f4991648f1974f0606bb7f04a11c83830d9d1f1302fa79ceb45d22"
+  }
+}

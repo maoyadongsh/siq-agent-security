@@ -1,0 +1,80 @@
+{
+  "schema_version": "optimization-enterprise-upgrade-review/v1",
+  "recorded_at": "2026-10-08T02:18:00.121165+00:00",
+  "candidate_base_commit": "7c4b11d9bfdb07d1e0814fbff39b85d79a4da0b5",
+  "source_sha256": {
+    "edge/agent/main.go": "b3bea7b567a315c01bd01625b061e76320d349f170d3e49748429c53c7b05e93",
+    "edge/agent/upgrade_review_linux.go": "09ee1c9dd575b447dda0725b700171979d16fd01fd52be714be45dd168d58b74",
+    "edge/agent/upgrade_review_other.go": "9bb7d44f58acf3ba0a5720fe80f90e995fdbf97669524e3cdde5c33d5517ecc7",
+    "edge/agent/upgrade_review_linux_test.go": "8edf743a59db58e7e772c3c9d005365b6a462c9daf560ac900c80d485624af84",
+    "edge/agent/testdata/enterprise-upgrade-review.synthetic.json": "cb43054a0272662554ea9208873b01f07454e05149c9ab67745c1b29422f6958",
+    "packages/contracts/enterprise-upgrade-review.v1.md": "dca987dffbe79fe5dec3fd05e127da27a42cdd3f0ecc202dc600e21e6d620839",
+    "packages/contracts/enterprise-upgrade-review.v1.schema.json": "e231d9b36dcab0d4eab137755ce715ff42c2a5529481d984b6651b58624e6422",
+    "apps/control-api/app/tests/test_enterprise_upgrade_review_contract.py": "fb85b4d1931951ce475c9e72f8c3c4acca6e6721700ff580dac496aac7d94e92"
+  },
+  "full_go_suite": {
+    "top_level_passed": 226,
+    "top_level_skipped": 2,
+    "pass_events_including_subtests": 720
+  },
+  "targeted_race": {
+    "top_level_passed": 6,
+    "top_level_skipped": 0,
+    "pass_events_including_subtests": 31
+  },
+  "python_contract_tests_passed": 11,
+  "go_vet": "passed",
+  "changed_go_format": "passed",
+  "ruff": "passed",
+  "builds": {
+    "linux-arm64": {
+      "sha256": "b1bdaf5fc9e954eb68d6f87ed8ac9f14b99820a338730b1f0fe5d2e3266d584b",
+      "bytes": 9701782
+    },
+    "linux-amd64": {
+      "sha256": "b27694099aefddbb3a9858e466df45ecc13344c70cde205c5f29ac40b13a9c2d",
+      "bytes": 10409872
+    },
+    "darwin-arm64": {
+      "sha256": "46271427255564749e75977496cfb1b10256d8d127070fadc6e17f096e9b0f4d",
+      "bytes": 9437778
+    },
+    "windows-amd64": {
+      "sha256": "49db2477758d030f0da2ff7f8027af4b47f06865c6fe56cb94a8afd8858920eb",
+      "bytes": 10030592
+    }
+  },
+  "native_cli": {
+    "native_help": true,
+    "unsigned_native_review_rejected": true,
+    "installation_bytes_preserved": true,
+    "no_task_lock_created": true,
+    "no_private_token_output": true,
+    "binary_sha256": "b1bdaf5fc9e954eb68d6f87ed8ac9f14b99820a338730b1f0fe5d2e3266d584b"
+  },
+  "excluded_preexisting_untracked_test": "edge/agent/crash_recovery_test.go (Go overlay only; original file preserved)",
+  "raw_sha256": {
+    "var/optimization-20261007/opt11-upgrade-review-builds/builds.json": "dac773810c0e137044bba181f893e7c768a7b044260905e7e1dad952e8a8135a",
+    "var/optimization-20261007/opt11-upgrade-review-builds/native-cli.json": "71c5a643ab62ac80c11749f8d1687d33cd6e67a1519f39d085b25cf5ce227deb",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-all.jsonl": "353a28e29bb10545848e724a1aae4b536154cbf7d862e877e7545893f41cf480",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-cli-001.py": "3ddea1b406847b26bc9c269707c75f2750dec7ceda37e1f3bd6b620e9a4fa3c3",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-cli-final.log": "4c8625f52e080ab62a53e54a16c1a4eb81843c62866d66ae49d6ed4539ee4b0f",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-cli.py": "ed5268c791da9f9f41b2159dd6f7c00e402dc172d58dd9188ef443b62a603eef",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-contract.log": "d97a009f929c9b66a828ddf441f986d7bd842ac0c2eecc2876fb7f92421c9da1",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-final-002.jsonl": "d08b5a11fa1018ef2eace0a4630de01a2e9ab1f0b1eca21e9f200aaaef7ec2a3",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-final.jsonl": "6da6a19df50d2a2c9c23656f8783f742cce87257cffd908c45b094eefbcd54ff",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-focused.jsonl": "5aad5c5c5ffdeccf9b4f0aed8fc014d2160ff2f64e153ed0ccdbaee556af1fad",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-overlay.json": "41e5931c914c2d3e4e0a8b32f07e5b976b2904460cb78796fd166244e09354cb",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-race.jsonl": "d5029d816c842060e1a449c79225103b2fc6acccce8466c9964b6f842053bd0e",
+    "var/optimization-20261007/opt11-upgrade-review-logs/siq-opt11-upgrade-review-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "initial_native_cli_observation": "CLI first rejected group-writable intermediate fixture config directories; one-shot fixture chmod to 0700 then reached real signature rejection. No production policy relaxation. Initial script retained.",
+  "limits": [
+    "Successful review test uses an internal signature-verifier double; native CLI is only an unsigned/forged-source negative and help check.",
+    "Synthetic wire sample signature_verified=true is not a real publisher verification result.",
+    "Review does not create a task lock, control systemd, execute connectors, contact the control plane or mutate state.",
+    "Full apply transaction, intermediate-state containment, recovery, actual signed installation and upgrade acceptance remain open.",
+    "macOS/Windows and Linux amd64 were cross-built only; non-Linux review returns unsupported.",
+    "No private key read/signing, service installation or remote push."
+  ]
+}

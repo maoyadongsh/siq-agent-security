@@ -2,6 +2,8 @@ package pending
 
 import (
 	"bufio"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -46,15 +48,17 @@ func Promote(stateDir string, appendOne func(Record) error) (int, error) {
 		return 0, err
 	}
 	if start > len(lines) {
-		// Log truncated; reset cursor to len to avoid replaying missing lines as new.
-		if err := writeCursor(stateDir, len(lines)); err != nil {
-			return 0, err
-		}
-		return 0, nil
+		return 0, fmt.Errorf("pending: source truncated before cursor")
 	}
 
 	promoted := 0
-	for i := start; i < len(lines); i++ {
+	source := sha256.New()
+	_, _ = source.Write([]byte("pending-source/v1\x00"))
+	for i := 0; i < len(lines); i++ {
+		_, _ = fmt.Fprintf(source, "%d\x00%s\n", i+1, lines[i])
+		if i < start {
+			continue
+		}
 		line := strings.TrimSpace(lines[i])
 		if line == "" {
 			if err := writeCursor(stateDir, i+1); err != nil {
@@ -64,15 +68,16 @@ func Promote(stateDir string, appendOne func(Record) error) (int, error) {
 		}
 		var rec Record
 		if err := json.Unmarshal([]byte(line), &rec); err != nil {
-			return promoted, fmt.Errorf("pending: corrupt JSONL at line %d: %w", i+1, err)
+			return promoted, fmt.Errorf("pending: corrupt JSONL at line %d", i+1)
 		}
 		if rec.Schema == LocalSchemaID {
 			if err := decodeLocalRecord([]byte(line), &rec); err != nil {
 				return promoted, fmt.Errorf("pending: invalid local event at line %d", i+1)
 			}
 		} else if rec.Schema != "" && rec.Schema != SchemaID {
-			return promoted, fmt.Errorf("pending: unknown schema %q at line %d", rec.Schema, i+1)
+			return promoted, fmt.Errorf("pending: unknown schema at line %d", i+1)
 		}
+		rec.SourceID = hex.EncodeToString(source.Sum(nil))
 		if err := appendOne(rec); err != nil {
 			return promoted, err
 		}

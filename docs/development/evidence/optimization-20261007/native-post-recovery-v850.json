@@ -1,0 +1,214 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "L3DwgGQAsyHIqrDx9PgtZOstz4VU2j3BqdojARHaWNA=",
+      "count": 12,
+      "head_hash": "4ef1342457c45ca82e8cbc8e4bada98564f4285fff1ddfc26da3d88c95bb758f"
+    },
+    "signed_context_count": 6,
+    "cases": {
+      "crashed-v850": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "e8a5f69f9d3ca0a04630121918d1eaf7c6f0e1c074146511bd730552917fdf0a",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "0867650bd5a26e58ef499daded263775c84f57d448689ed76f8790ef61f134e7"
+      },
+      "recovered-v850": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "4ef1342457c45ca82e8cbc8e4bada98564f4285fff1ddfc26da3d88c95bb758f",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "2e387c0b212d929aaf481148dca9326f3f4bf1621f6e3e889243dc8e98f47825"
+      }
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-post-recovery-v850.receipts.jsonl",
+      "sha256": "bb834a541e8dfda7cc2f6f4c95ee34bdc4e9dacd7256239810571f7ef842e1d6"
+    },
+    "contexts": {
+      "file": "native-post-recovery-v850.contexts.json",
+      "sha256": "17f2a64bd5ae78c58603c054efb7d81313c911e3c43846a21452b979b49af318"
+    }
+  },
+  "candidate_inputs": {
+    "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+    "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+    "same_candidate_as_v848": true,
+    "business_input_count": 1874,
+    "registered_patch_count": 289,
+    "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+    "driver_sha256": {
+      "run-native-business-crash-v850.py": "74222139fb6606bbdceee37e011a12d7616910da1ac459424d0abb59434f984a",
+      "run-native-crash-owned-v850.py": "b6025ba6014104d5e6d014afb2922490b5f0d66cd66fb0e97d044dd1c48a3be1",
+      "deployment-driver.py": "65dd00eaa040151f3ccfc042e9b80f05d6711dcb58c1fd6c2756b4e0bc316bef"
+    }
+  },
+  "observations": {
+    "crashed": {
+      "SSE_event_counts": {
+        "delta": 1,
+        "progress": 44,
+        "run": 1,
+        "tool": 4
+      },
+      "events_sha256": "b384f88473ae380b066fe39cfecfa7d0bb545b414f759521fd8580473e173c53",
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "supervisor_errors": [],
+      "containment_events": [
+        "candidate_containment_failed stage=model_access_busy",
+        "candidate_containment_recovered stage=model_access"
+      ]
+    },
+    "recovered": {
+      "SSE_event_counts": {
+        "delta": 5,
+        "done": 1,
+        "progress": 12,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "events_sha256": "b6894928e72c2ad17ac3d4bf0c18f602e01186679df197801fd1f676719263b0",
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "supervisor_errors": [],
+      "containment_events": [],
+      "first_read_tool_error_then_success": true
+    }
+  },
+  "checks": {
+    "fresh_database_migrations": true,
+    "request_recovery_ready": true,
+    "legacy_recovery_disabled": true,
+    "SIGKILL_after_real_model_delta": true,
+    "execution_still_running_after_API_death": true,
+    "same_database_API_restarted": true,
+    "original_lease_expired_without_manual_update": true,
+    "restarted_API_recovery_ready": true,
+    "read_only_source_unchanged": true,
+    "model_delta_observed_before_crash": true,
+    "crashed_execution_authority_lost": true,
+    "API_finalizer_released_before_diagnostic_cleanup": true,
+    "model_bridge_stream_started_200": true,
+    "sandbox_supervisor_and_forward_absent": true,
+    "old_native_child_credential_401": true,
+    "native_child_revoked_before_diagnostic_cleanup": true,
+    "native_parent_still_active": true,
+    "new_request_single_run_done_no_error": true,
+    "new_request_marker_and_success": true,
+    "new_request_read_tool_completed": true,
+    "new_execution_completed_old_finalizer_unchanged": true,
+    "new_request_finalizer_released": true,
+    "new_model_bridge_correlated_200": true,
+    "new_sandbox_supervisor_and_forward_absent": true,
+    "new_old_native_child_credential_401": true,
+    "new_native_child_revoked_before_diagnostic_cleanup": true,
+    "new_native_parent_still_active": true,
+    "original_child_still_revoked_after_new_request": true,
+    "new_request_distinct_from_crashed_request": true,
+    "new_request_verified_skill_read_allowed": true,
+    "source_unchanged_after_both_requests": true,
+    "native_skill_read_allowed_before_API_crash": true,
+    "anonymous_analysis_denied": true,
+    "real_http_login": true,
+    "analyst_cannot_issue_grant": true,
+    "grant_retry_same_identity": true,
+    "analyst_cannot_revoke_grant": true,
+    "admin_http_revoke": true,
+    "business_settled_before_api_stop": true,
+    "candidate_listener_closed": true,
+    "business_runtime_cleanup_confirmed": true,
+    "temporary_database_removed": true,
+    "existing_service_identity_unchanged": true
+  },
+  "cleanup_checks": {
+    "owned_gateway_stopped": true,
+    "owned_bridge_stopped": true,
+    "original_model_unchanged": true
+  },
+  "deployment_checks": {
+    "business_sources_unchanged": true,
+    "original_service_files_restored": true
+  },
+  "recovery_wait_seconds": 110.85,
+  "new_receipt_count": 4,
+  "new_context_count": 2,
+  "prior_chain_receipts": 8,
+  "new_request_completed_on_same_restarted_API_and_database": true,
+  "old_request_resumed": false,
+  "database_assertions_source": "preregistered owned harness; not independently queried after temporary database removal",
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "prior_v849": {
+    "passed": false,
+    "record_sha256": "4c2fc97cab978dcd0f524491c6d1c7e5161c8ee1a233f8daaf7b4094f92adbc8",
+    "new_task_read_and_reply_checks_passed": true,
+    "harness_exit_code": 1,
+    "failure_review": "harness expected two immutable ActiveRunLease rows, but production per-session slot is intentionally reused; fixed assertion in v850; v849 is not a complete acceptance pass",
+    "cleanup_checks": {
+      "owned_gateway_stopped": true,
+      "owned_bridge_stopped": true,
+      "original_model_unchanged": true
+    },
+    "API_cleanup_checks": {
+      "candidate_listener_closed": true,
+      "business_runtime_cleanup_confirmed": true,
+      "temporary_database_removed": true,
+      "existing_service_identity_unchanged": true
+    },
+    "same_product_candidate": true
+  },
+  "post_recovery_assertions": {
+    "same_session_slot_reused_by_contract": true,
+    "original_finalization_sha256": "05ec675611544b7b2bdf5d607b72dc121803c068fb107a229c36f64a06d11e9d",
+    "old_child_401_checked_after_new_task": true
+  },
+  "api_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_identical": true,
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  },
+  "active_lease_component_check": {
+    "component_only": true,
+    "backend": "isolated SQLite in-memory",
+    "checks": {
+      "settled_session_slot_reused": true,
+      "new_run_distinct": true,
+      "stale_release_cannot_clear_new_run": true
+    }
+  },
+  "runtime_image": {
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "overlay_manifest_sha256": "db2b7a522f6fe6789c3246b3ef5a4ce7ce32997747cd5153ab0c9f61ef03d7e8",
+    "runtime_config_sha256": "6b442dabe2c48431373f9bfbbd85635bf518ba8e6dc3954e63b40521b6835bb8"
+  }
+}

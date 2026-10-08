@@ -125,9 +125,24 @@ jobs:
       - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86  # v5
       - name: Install
         run: uv sync --dev --locked
+      - name: Static scan sandbox prerequisite
+        run: |
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends bubblewrap apparmor-utils apparmor-profiles
+          # Ubuntu 24.04 blocks unprivileged user namespaces. Allow the system
+          # bwrap binary to create the scan sandbox namespace, without changing
+          # the launcher to share the host network.
+          if [ -f /usr/share/apparmor/extra-profiles/bwrap-userns-restrict ]; then
+            sudo install -m 0644 /usr/share/apparmor/extra-profiles/bwrap-userns-restrict /etc/apparmor.d/bwrap-userns-restrict
+            sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
+          fi
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
       - name: Ruff
         run: uv run ruff check app
       - name: Pytest（含租户隔离/职责分离/注册生命周期负向）
+        env:
+          SIQ_TEST_NATIVE_BWRAP: "1"
         run: uv run pytest
       - name: Python dependency audit
         run: uv run --with pip-audit pip-audit

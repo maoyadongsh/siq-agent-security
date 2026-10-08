@@ -310,3 +310,21 @@ def test_openshell_execution_is_never_replayed_after_effect(client, tenant_a, en
     for _ in range(2):
         assert post(client, tenant_a, request).json() == record
     assert runner.set_calls == 1
+    # A committed operation survives loss of the API's final state transaction.
+    recovery_url = f"/api/v1/deployments/{record['deployment_id']}/recovery"
+    recovery = client.get(recovery_url, headers=tenant_a)
+    assert recovery.status_code == 200, recovery.text
+    assert recovery.headers["cache-control"] == "no-store"
+    assert recovery.json()["state"] == ("unknown" if outcome == "adapter_failure" else "applied")
+    assert recovery.json()["automatic_replay_allowed"] is False
+    contract = Path(__file__).resolve().parents[4] / "packages/contracts/openshell-operation-recovery.v1.schema.json"
+    jsonschema.validate(recovery.json(), json.loads(contract.read_text()))
+    assert client.get(recovery_url, headers={**tenant_a, "X-Dev-Tenant-Id": "foreign"}).status_code == 404
+    assert client.get(recovery_url, headers={**tenant_a, "X-Dev-Roles": "unrecognized"}).status_code == 403
+    rollback = client.post(f"/api/v1/deployments/{record['deployment_id']}/rollback", headers=tenant_a, json={})
+    if outcome == "adapter_failure":
+        assert rollback.status_code == 409 and runner.set_calls == 1
+    else:
+        assert rollback.status_code == 200, rollback.text
+        assert rollback.json()["status"] == "rolled_back" and runner.set_calls == 2
+        assert client.get(recovery_url, headers=tenant_a).json()["state"] == "rolled_back"

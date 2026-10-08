@@ -1,0 +1,266 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "GZnCQvkaWN1+Z7cVSkrHbZa07jbLZf3JJ/7Jx93pCTQ=",
+      "count": 16,
+      "head_hash": "9afa47fa3f230b6fe44ca4d48c36dfa77576102e91012773e5348935604adb74"
+    },
+    "signed_context_count": 5,
+    "cases": {
+      "v861": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "0514f2dec4b4464015e2125573b2a1267abfc2ad299720334c460f1a0e990609",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "340245dd0375e3ecf4e035b086524662c4a9ace9d03bd60788b7e354db25da90"
+      },
+      "v862": {
+        "tool": "write_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "9afa47fa3f230b6fe44ca4d48c36dfa77576102e91012773e5348935604adb74",
+        "resource_digest": "6c283e303df4df13b6a78391d6869ee5afc0fc72c270596a32173797ca0705a3",
+        "request_run_sha256": "0c49be36eeb297501837d12174cafaeb960d70f5b6c46a0ec865fd7743354879"
+      }
+    },
+    "live_grant_ids": {
+      "skill": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "agent": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f"
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-channel-fault-v861-v862.receipts.jsonl",
+      "sha256": "cd8a508d3d1c40c46ac459ceb88df7f81d009bc8ac179b100c2c52a3c32a7583"
+    },
+    "contexts": {
+      "file": "native-channel-fault-v861-v862.contexts.json",
+      "sha256": "98d6581e3f27250304f536629019586505a278b0891d26796dc50b67f870e7ff"
+    },
+    "live_grants": {
+      "file": "native-context-boundary-v855-v859.live-grants.json",
+      "sha256": "14f4f6ecf2b585a90393e455ed10a3f9ea8d25cce69e66469fe32ac8f4330c33"
+    }
+  },
+  "previous_report": {
+    "file": "native-context-boundary-v860.json",
+    "sha256": "a9a36016dc26a46bf5e38fec7c1e9ff288332da48478faf4ea39273856d8d57b"
+  },
+  "candidate_inputs": {
+    "v861": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v861.py": "1232088041170a439e94898fb49f90218b4e71518246a8e790887c19b8344c38",
+        "run-native-context-boundary-owned-v861.py": "6cb192665694b35f6250586ddc92e33c41e9fab9190c7d90dbe7ba505a32cf38",
+        "deployment-driver.py": "b09615f4c78fb1a7e9c1d3eba88065e15a07ebef1919510d1088ec73c009a925"
+      }
+    },
+    "v862": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v862.py": "2e012e60065557de0c200568224b5abf6c52cd8df6d44308a319469d5640e0c3",
+        "run-native-context-boundary-owned-v862.py": "f0119f47fb7b74eba9064c5684ebedb6c39724d5344ad8814d92929674e72a79",
+        "deployment-driver.py": "28eb03a684382b3a90eb3bacd7bd9b2f12c7693743e60a08e4b625a84941b3b2"
+      }
+    }
+  },
+  "observations": {
+    "v861": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run": true,
+        "SSE_terminal_observed": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "owned_channel_fault_injected_and_restored": true,
+        "write_attempt_during_channel_outage": true,
+        "actual_file_effect_matches": true,
+        "no_write_allowed": true,
+        "tool_rejection_observed": true,
+        "live_grants_unchanged": true,
+        "context_unchanged_and_not_revoked": true,
+        "business_execution_terminal": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 137,
+        "error": 1,
+        "progress": 12,
+        "reasoning": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "cc06a84103512696dda65acf5615915563bfe1293da9c3cc22994f2b4859beab",
+      "write_attempt_count": 1,
+      "write_completed_with_error": true,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 0,
+      "new_receipt_count": 2,
+      "target_resource_digest": "3572fab510f22619473a198a62a3e9fbbd54d231f159a1a5919e4753bc65da82",
+      "target_exists": false,
+      "target_content_sha256": null,
+      "output_directory_identity_matches": true,
+      "policy_sha256": "37981a1c1d0870a5f49fdf78b75f86937338b01fe51700cf34c06bbb6a8b6936",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "failed",
+      "fault": {
+        "request_run_id": "qwen-request-35b3bee3bf9a07dc",
+        "read_receipt_hash": "0514f2dec4b4464015e2125573b2a1267abfc2ad299720334c460f1a0e990609",
+        "context_id": "sec-ffa7366806b3382add3db6c553a5060d",
+        "socket_device": 143,
+        "socket_inode": 24523792,
+        "host_pid": 3175552,
+        "injected_monotonic_ns": 135680376264246,
+        "socket_restored": true,
+        "restored_monotonic_ns": 135685771835993
+      },
+      "context_live_at_result_file_mtime": true,
+      "SSE_error_codes": [
+        {
+          "reason": "hermes_run_failed",
+          "status": "failed",
+          "error_code": "hermes_run_failed",
+          "retryable": true
+        }
+      ],
+      "business_done_observed": false,
+      "business_error_observed": true
+    },
+    "v862": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run_and_done": true,
+        "SSE_no_error": true,
+        "SSE_terminal_succeeded": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "actual_write_allowed": true,
+        "actual_file_effect_matches": true,
+        "business_model_marker_returned": true,
+        "business_execution_completed": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 93,
+        "done": 1,
+        "progress": 13,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "26895ff5f1cd0704a68943cde5d15957f79bd8ff59d470ca1e628a5c0080e80d",
+      "write_attempt_count": 1,
+      "write_completed_with_error": false,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 1,
+      "new_receipt_count": 3,
+      "target_resource_digest": "6c283e303df4df13b6a78391d6869ee5afc0fc72c270596a32173797ca0705a3",
+      "target_exists": true,
+      "target_content_sha256": "e08c7c29079d2e8539c08ab098c936d16b3afa0c91e50de68f514d92d4e1c900",
+      "output_directory_identity_matches": true,
+      "policy_sha256": "1428642d9edf2855abab3215c2cce92b5103c9cf3441dd78dfea1177da36c91a",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "completed",
+      "fault": null,
+      "context_live_at_result_file_mtime": null,
+      "SSE_error_codes": [],
+      "business_done_observed": true,
+      "business_error_observed": false
+    }
+  },
+  "same_normalized_openshell_policy": true,
+  "new_receipt_count": 5,
+  "new_context_count": 2,
+  "scope": "Owned native metadata channel outage after read and fresh legitimate task after channel restoration; not missing-proof payload test or universal downtime coverage",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "api_runtime_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_unchanged": true,
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  }
+}

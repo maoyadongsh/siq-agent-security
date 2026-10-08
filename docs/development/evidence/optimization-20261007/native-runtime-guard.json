@@ -1,0 +1,46 @@
+{
+  "schema_version": "siq.optimization-native-runtime-guard-evidence/v1",
+  "task": "OPT-08",
+  "phase": "D2f",
+  "date": "2026-10-07",
+  "status": "component_verified",
+  "production_enabled": false,
+  "probe": {
+    "schema_version": "siq.native-runtime-guard-probe/v1",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "artifact_sha256": "b1c3d4ad05648636484e6663c775915234350153630f95c7644058cf6e82f0f1",
+    "checks": {
+      "actual_process_code_and_readonly_mounts": true,
+      "guarded_kernel_credential_channel": true,
+      "wrong_argv_sha256": true,
+      "wrong_executable_sha256": true,
+      "wrong_gid": true,
+      "wrong_artifact_sha256": true,
+      "wrong_code_files": true,
+      "backend_missing": true,
+      "wrong_host_object": true,
+      "undeclared_file": true,
+      "undeclared_file_cannot_restore_trust": true,
+      "undeclared_directory": true,
+      "undeclared_directory_cannot_restore_trust": true,
+      "code_symlink": true,
+      "code_symlink_cannot_restore_trust": true,
+      "changed_code": true,
+      "changed_code_cannot_restore_trust": true,
+      "unregistered_skill_mount": true,
+      "exited_process": true,
+      "kernel_rejects_writable_mount": true,
+      "kernel_rejects_shadow_mount": true
+    },
+    "model_calls": 0,
+    "backend": "owned_offline_docker",
+    "openshell_business_acceptance": false
+  },
+  "ruff": "passed",
+  "regression_policy": "Focused real process/mount/channel probe; unchanged Go and Hermes suites not repeated.",
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_runtime.py": "de6f9b6287377fbe64e32b2f41c49c6cb8b0d790c7607e5fcebf93177027e240",
+    "adapters/runtime/hermes-agentshield/native_channel.py": "a8c51f351600875cfc13c07a07f918495d8a88f3362f8207b0cd983781d993b7",
+    "patches/hermes/run_runtime_guard_probe.py": "3ce36b31db5a664270b5067f6d9231b5750ecb57dbfd363cf27d367669fc1299"
+  }
+}

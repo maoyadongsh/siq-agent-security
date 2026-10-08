@@ -1,4 +1,7 @@
 """Isolated result-first onboarding browser test; all API responses are fixtures."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -86,6 +89,7 @@ def main():
             page.on('pageerror', lambda _: errors.append('pageerror'))
             page.route('**/api/v1/**', route)
             page.clock.install()
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/environments?environment=env')
             result = page.get_by_label('自动接入结果')
             expect(result).to_contain_text('尚未收到设备注册')

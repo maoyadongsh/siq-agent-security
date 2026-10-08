@@ -1,0 +1,312 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "/aSWZL6uxxA14qFk2DaufhSiZxVjQZKFPyXg9/9ler4=",
+      "count": 5,
+      "head_hash": "e3fa54c50327d1c42f25fb2a0071ef2541033629db5e1d79dbcadbdb1fe091a8"
+    },
+    "signed_context_count": 2,
+    "cases": {
+      "v853": {
+        "tool": "write_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "9806fec0a7b6a05e2b98b66be36357d2022269f5f4dc5a6fe35955607c92cf56",
+        "resource_digest": "cc743c034d5181ef6ab8dc09216a82acabf035ec9beed461542ae7f4836a71a3",
+        "request_run_sha256": "cde06e14c4b2ac25c4875869826f29919a66ab6a922ba46b06e1de84b60644b2"
+      },
+      "v854": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "e3fa54c50327d1c42f25fb2a0071ef2541033629db5e1d79dbcadbdb1fe091a8",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "5fe907bc7effc809d2a0a504d09b4a9b6b88a0d0f4079b35f4104ade6389dbea"
+      }
+    },
+    "grant_transition": {
+      "skill_grant_id": "grt-si-0a773cbf84e8b18f0260b32d83357c8a4f1dd85fad782f17a1d3949b98b74a5f",
+      "agent_grant_id": "grt-id-6109f58a3144cd14b8f31d005be4df7f81f075e35a520f6aff0e1ea5f64a8748"
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-skill-grant-effect-v853-v854.receipts.jsonl",
+      "sha256": "1ca432e82dd812792e4c1c1ac78024e1671544962eeb4fe42fc9c8ea70470c8e"
+    },
+    "contexts": {
+      "file": "native-skill-grant-effect-v853-v854.contexts.json",
+      "sha256": "41b42db6c945403d483302bf73b8f0c5abd2c1efdb356dd59ef024b8bdae45c9"
+    },
+    "grant_snapshots": {
+      "file": "native-skill-grant-effect-v853-v854.grant-snapshots.json",
+      "sha256": "bf95d1f2b367beca7e2c56caafcac6aaaa0067d9d7ed6872d631c167ad7edae5"
+    }
+  },
+  "candidate_inputs": {
+    "v853": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-grant-effect-v853.py": "4ad804fa748abffff1e3542aed4f45b5adba871bb003a538e180a046d486cf90",
+        "run-native-grant-effect-owned-v853.py": "bc418b827fb36bff4c8198dd2c6afa6cf14f8984e1d9c135b25890e5eb5a45bb",
+        "deployment-driver.py": "feca7070d4fba833d44c4146b81f936b558fd62c0143985822b9dbd954c97bcc"
+      }
+    },
+    "v854": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-grant-effect-v854.py": "4ad804fa748abffff1e3542aed4f45b5adba871bb003a538e180a046d486cf90",
+        "run-native-grant-effect-owned-v854.py": "1b40ff1408bb3a40341f2ccfca717a177cfc390f086a8164a9f2689b26daed4c",
+        "deployment-driver.py": "e6eb4f2f63b07d886fc3d64a9986f9527891623936ec6c1345b0e6e58c09e9de"
+      }
+    }
+  },
+  "observations": {
+    "v853": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run_and_done": true,
+        "SSE_no_error": true,
+        "SSE_terminal_succeeded": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "actual_write_allowed": true,
+        "actual_file_effect_matches": true,
+        "business_model_marker_returned": true,
+        "business_execution_completed": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "event_log_sha256": "1153331e6961137d157ccbb2416610e6f4c95b1be318d902e1d34b0681eb814c",
+      "write_attempt_count": 1,
+      "write_target_preview_matches": true,
+      "write_completed_with_error": false,
+      "write_receipt_count": 1,
+      "write_reason_codes": [
+        "allow"
+      ],
+      "target_resource_digest": "cc743c034d5181ef6ab8dc09216a82acabf035ec9beed461542ae7f4836a71a3",
+      "target_exists": true,
+      "target_content_sha256": "90049cf93b10b87cdc7de7c75f11b7c125965e89d9f7cae183497f733f6ab777",
+      "output_directory_identity_matches": true,
+      "openshell_policy_allows_task_output": true,
+      "policy_sha256": "894de159ef28ab04ab7923bbe406832e8a4189b5f7583115a8348755c194aa19",
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "SSE_event_counts": {
+        "delta": 116,
+        "done": 1,
+        "progress": 12,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      }
+    },
+    "v854": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run_and_done": true,
+        "SSE_no_error": true,
+        "SSE_terminal_succeeded": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "skill_grant_revocation_confirmed": true,
+        "attempt_after_skill_grant_revocation_returned": true,
+        "actual_file_effect_matches": true,
+        "no_write_allowed": true,
+        "tool_rejection_observed": true,
+        "business_model_marker_returned": true,
+        "business_execution_completed": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "event_log_sha256": "ad5ed600e674515801d35a52fd9472487ba5e38c21ba156cdd1d146c90b05ca7",
+      "write_attempt_count": 1,
+      "write_target_preview_matches": true,
+      "write_completed_with_error": true,
+      "write_receipt_count": 0,
+      "write_reason_codes": [],
+      "target_resource_digest": "d148233bd371df487d05c416e37e0679f08cb9d781b395972741deed260bd68a",
+      "target_exists": false,
+      "target_content_sha256": null,
+      "output_directory_identity_matches": true,
+      "openshell_policy_allows_task_output": true,
+      "policy_sha256": "23b097023947fe6032d4e0a9c7892e67e8a9cbe92f8dd0a154e74283542061bd",
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "SSE_event_counts": {
+        "delta": 68,
+        "done": 1,
+        "progress": 13,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      }
+    }
+  },
+  "same_normalized_openshell_policy": true,
+  "revocation_order": {
+    "write_attempt_after_HTTP_revoke_return": true,
+    "observed_delta_seconds": 6.844386489,
+    "read_receipt_hash": "e3fa54c50327d1c42f25fb2a0071ef2541033629db5e1d79dbcadbdb1fe091a8",
+    "before_state_revision": 3,
+    "after_state_revision": 4,
+    "signed_snapshots_prove_states_not_monotonic_timing": true
+  },
+  "new_receipt_count": 5,
+  "new_context_count": 2,
+  "fresh_Authority_chain": true,
+  "scope": "one same-candidate business writer control and one real write attempt after Skill Grant revocation; separate Agent baseline and normalized OpenShell policy unchanged",
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "api_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "before_after_identical": true,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  },
+  "preliminary_trials": {
+    "v851": {
+      "passed": true,
+      "failure": null,
+      "result_sha256": "ccccee7124b17f316b97d8e7808b046006dac4d7d9e006ac2b3d93e9a3d57e8a",
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run_and_done": true,
+        "SSE_no_error": true,
+        "SSE_terminal_succeeded": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "actual_write_allowed": true,
+        "actual_file_effect_matches": true,
+        "business_model_marker_returned": true,
+        "business_execution_completed": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "harness_exit_code": 0,
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      }
+    },
+    "v852": {
+      "passed": false,
+      "failure": "candidate_agent_baseline_unexpectedly_revoked",
+      "result_sha256": "96dcd759c8699f590f312db5ebce8161723387a7cc2185287ce9ca2c295d7e4a",
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "harness_exit_code": 1,
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "failure_review": "Harness incorrectly required the unchanged Agent baseline to remain approved after deployment; actual baseline was deployed. Skill Grant was revoked before this assertion. No complete post-revocation tool-effect claim is made for v852. A fresh separate Authority was used for v853/v854; the historical revoked Grant was not restored."
+    }
+  },
+  "temporal_observation_limit": "Tool started is an SSE observation timestamp, not an independent kernel/tool-handler start timestamp; 6.844 seconds is the observed interval after HTTP revoke response, not a revocation SLA."
+}

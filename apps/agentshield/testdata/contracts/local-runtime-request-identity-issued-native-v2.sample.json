@@ -1,0 +1,34 @@
+{
+  "credential_path": "/synthetic/credential.token",
+  "identity": {
+    "actor_id": "fixture-human",
+    "agent_id": "hri-11111111111111111111111111111111",
+    "created_at": "2026-10-07T00:00:00Z",
+    "grant_ref": {
+      "admission_id": "adm-native-readback-fixture",
+      "grant_id": "grt-native-readback-fixture",
+      "permission_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "identity_id": "ri-44444444444444444444444444444444",
+    "instance_id": "hi-11111111111111111111111111111111",
+    "native_skill_policy": {
+      "mode": "required",
+      "runtime_artifact_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "platform": "hermes",
+    "runtime_state": "unverified",
+    "session_ttl_seconds": 240,
+    "status": "issued"
+  },
+  "request": {
+    "execution_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "expires_at": "2026-10-07T00:04:00Z",
+    "issuer_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "parent_identity_id": "ri-33333333333333333333333333333333",
+    "parent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "request_id": "qwen-request-2222222222222222",
+    "scope_id": "aaaaaaaaaaaaaaaaaaaaaaaa",
+    "session_namespace": "siq:openshell:pool:aaaaaaaaaaaaaaaaaaaaaaaa:qwen-request-2222222222222222:siq_analysis"
+  },
+  "schema_version": "local-runtime-request-identity-issued/v2"
+}

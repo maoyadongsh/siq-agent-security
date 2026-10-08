@@ -73,6 +73,14 @@ func main() {
 		err = cmdRetireSchedule(ctx, os.Args[2:])
 	case "install-user-service":
 		err = cmdInstallUserService(ctx, os.Args[2:])
+	case "upgrade-capabilities":
+		err = cmdUpgradeCapabilities(os.Args[2:])
+	case "apply-enterprise-upgrade":
+		err = cmdApplyEnterpriseUpgrade(ctx, os.Args[2:])
+	case "recover-enterprise-upgrade":
+		err = cmdRecoverEnterpriseUpgrade(ctx, os.Args[2:])
+	case "review-enterprise-upgrade":
+		err = cmdReviewEnterpriseUpgrade(ctx, os.Args[2:])
 	case "user-service-status":
 		err = cmdUserServiceStatus(ctx, os.Args[2:])
 	case "setup-enterprise":
@@ -110,6 +118,10 @@ commands:
   recover-registration --control-plane ORIGIN --environment ID
                                                            Linux: recover a pending initial registration
   prepare-install --help                                   Linux: validate confirmed plan and stage files only
+  upgrade-capabilities                                    Linux: read-only upgrade protocol support
+  apply-enterprise-upgrade --help                          Linux: explicitly switch stopped service configuration
+  recover-enterprise-upgrade --help                        Linux: finish or restore the exact pending upgrade
+  review-enterprise-upgrade --help                         Linux: review signed old/new installation; no changes
   verify-enterprise-release --release FILE [--bundle DIR]   Linux: verify publisher and optionally all artifacts; no install
   serve                                                    Linux: heartbeat and task polling until stopped
   service-unit --binary PATH --state-dir PATH --connector-dir PATH
@@ -311,16 +323,16 @@ func cmdTasks(ctx context.Context, args []string) error {
 	if err := parseFlags(fs, args); err != nil {
 		return err
 	}
-	state, err := LoadState()
-	if err != nil {
-		return err
-	}
-	cli := newAuthedClient(state)
 	release, err := acquireTaskLock()
 	if err != nil {
 		return err
 	}
 	defer release()
+	state, err := LoadState()
+	if err != nil {
+		return err
+	}
+	cli := newAuthedClient(state)
 	return executePendingTasks(ctx, state, cli)
 }
 
@@ -369,7 +381,7 @@ func cmdRunOnce(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("run-once", flag.ContinueOnError)
 	connector := fs.String("connector", "hermes", "connector name (hermes|openclaw|docker|directory|systemd|kubernetes|process|mcp|piagent|workbuddy|dify|siq)")
 	scopeJSON := fs.String("scope", "", "connector scope as JSON (default: connector default scope)")
-	binOverride := fs.String("connector-bin", "", "explicit connector binary path")
+	binOverride := fs.String("connector-bin", "", "explicit absolute development connector path (not managed release verification)")
 	if err := parseFlags(fs, args); err != nil {
 		return err
 	}
@@ -377,7 +389,7 @@ func cmdRunOnce(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("run-once: connector=%s binary=%s", *connector, bin)
+	log.Printf("run-once: explicit development connector=%s (not managed release verification)", *connector)
 
 	cc, err := NewSubprocessConnector(ctx, bin, SubprocessOptions{Name: *connector, Version: agentVersion})
 	if err != nil {

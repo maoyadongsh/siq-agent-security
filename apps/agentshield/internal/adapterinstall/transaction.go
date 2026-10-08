@@ -217,6 +217,16 @@ func finishOperation(dir string, claim operationClaim, status string) error {
 }
 
 func latestManagedRecord(dir, platform string, namespace ...string) (*Record, bool, error) {
+	plan, found, err := latestManagedPlan(dir, platform, namespace...)
+	if err != nil || plan == nil {
+		return nil, found, err
+	}
+	return &plan.payload.Record, found, nil
+}
+
+// Keep the authenticated installation identity available to read-only
+// diagnostics without adding fields to historical records or rewriting them.
+func latestManagedPlan(dir, platform string, namespace ...string) (*Plan, bool, error) {
 	key := platform
 	if len(namespace) > 0 {
 		key = namespace[0]
@@ -246,17 +256,19 @@ func latestManagedRecord(dir, platform string, namespace ...string) (*Record, bo
 			return nil, true, ErrRecoveryRequired
 		}
 		if status == "committed" {
+			// Authenticate the action as well as the ownership. A plaintext
+			// uninstall claim must not hide a sealed install operation.
+			plan, err := unsealPlan(dir, claim)
+			if err != nil || operationKey(planOptions(plan)) != key {
+				return nil, true, errors.New("adapter: authenticated ownership unavailable")
+			}
 			if claim.Action == "uninstall" {
 				return nil, true, errNoInstallRecord
 			}
 			if claim.Action != "install" {
 				return nil, true, errors.New("adapter: invalid recorded action")
 			}
-			plan, err := unsealPlan(dir, claim)
-			if err != nil || operationKey(planOptions(plan)) != key {
-				return nil, true, errors.New("adapter: authenticated ownership unavailable")
-			}
-			return &plan.payload.Record, true, nil
+			return plan, true, nil
 		}
 		raw = nil
 	}

@@ -74,6 +74,21 @@ func matches(actual any, op string, wanted any, values []any) bool {
 
 // Authorize is deterministic and consumes only the verified contract and runtime facts.
 func (c Contract) Authorize(platform, agent, principal, tool string, params map[string]any, now time.Time) error {
+	return c.authorizeDescriptor(platform, agent, principal, tool, params, now, runtimeaction.DescribeForProfile(c.ResourceProfile(), tool, params))
+}
+
+// AuthorizeNativeSkillLoad is used only after the engine verifies the complete
+// live native invocation. It does not skip identity, expiry, tool, effect or
+// parameter/resource constraints, and does not authorize the subsequent file read.
+func (c Contract) AuthorizeNativeSkillLoad(platform, agent, principal, tool string, params map[string]any, now time.Time) error {
+	descriptor, ok := runtimeaction.ProtectedSkillLoadDescriptor(platform, tool, params)
+	if !ok {
+		return violation("runtime_effect_unknown")
+	}
+	return c.authorizeDescriptor(platform, agent, principal, tool, params, now, descriptor)
+}
+
+func (c Contract) authorizeDescriptor(platform, agent, principal, tool string, params map[string]any, now time.Time, descriptor runtimeaction.Descriptor) error {
 	if err := c.Validate(); err != nil {
 		return err
 	}
@@ -95,7 +110,6 @@ func (c Contract) Authorize(platform, agent, principal, tool string, params map[
 	if !found {
 		return violation("intent_tool_not_allowed")
 	}
-	descriptor := runtimeaction.DescribeForProfile(c.ResourceProfile(), tool, params)
 	if descriptor.ResourceError == runtimeaction.ErrParameterBudget {
 		return violation("runtime_parameter_budget_exceeded")
 	}

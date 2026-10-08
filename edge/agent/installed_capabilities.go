@@ -102,7 +102,7 @@ func validCapabilityLabels(values []string, required bool) bool {
 }
 
 func probeInstalledConnector(ctx context.Context, path string, selected installplan.Connector) (*protocol.ConnectorCapabilities, *protocol.ValidationResult, error) {
-	c, err := NewSubprocessConnector(ctx, path, SubprocessOptions{Name: selected.ID, Version: agentVersion, Timeout: 5 * time.Second, MaxOutputBytes: 64 << 10, MaxStderrBytes: 1024})
+	c, err := NewVerifiedSubprocessConnector(ctx, path, selected.ArtifactSHA256, SubprocessOptions{Name: selected.ID, Version: agentVersion, Timeout: 5 * time.Second, MaxOutputBytes: 64 << 10, MaxStderrBytes: 1024})
 	if err != nil {
 		return nil, nil, errInstalledCapabilities
 	}

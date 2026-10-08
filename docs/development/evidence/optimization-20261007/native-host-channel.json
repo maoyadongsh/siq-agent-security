@@ -1,0 +1,37 @@
+{
+  "schema_version": "siq.native-host-channel-validation/v1",
+  "recorded_at": "2026-10-07T06:08:21.969245+00:00",
+  "scope": "component_and_offline_container_transport_only",
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/native_channel.py": "a8c51f351600875cfc13c07a07f918495d8a88f3362f8207b0cd983781d993b7",
+    "adapters/runtime/hermes-agentshield/tests/test_native_channel.py": "abb34ca3c5b915d6ff0342ab51177abfd7ad088d481e36a37ff30acb45b626f7",
+    "scripts/personal-experience/native-host-container-probe.py": "b6fc33f570d2aee1de63e10175f04156512c7deaa40b05fdf35f4d05d4dcd6eb"
+  },
+  "kernel_probe": {
+    "schema_version": "siq.native-host-peer-probe/v1",
+    "platform": "linux",
+    "synthetic_only": true,
+    "message_credentials_are_actual_sender": true,
+    "inherited_socket_peer_credentials_are_not_sender": true,
+    "pidfd_reports_exit": true,
+    "message_complete": true
+  },
+  "container_probe": {
+    "schema_version": "siq.native-host-container-probe/v1",
+    "image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "scope": "offline_docker_transport_only",
+    "hermes_execution": false,
+    "openshell_execution": false,
+    "model_calls": 0,
+    "checks": {
+      "inherited_socket_child_rejected": true,
+      "only_pinned_host_visible_pid_dispatched": true,
+      "allowed_process_received_response": true,
+      "tool_child_received_no_success": true,
+      "socket_mount_readonly": true,
+      "container_exit_invalidates_pin": true
+    }
+  },
+  "application_authority_enabled": false,
+  "trusted_launcher_enabled": false
+}

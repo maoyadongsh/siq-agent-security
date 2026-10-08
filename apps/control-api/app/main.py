@@ -28,6 +28,7 @@ from app.routers import (
     deployment_batch_draft,
     deployment_batch_execute,
     deployment_batch_result,
+    deployment_behavior,
     deployment_impact,
     deployment_preview,
     deployment_submission,
@@ -54,6 +55,7 @@ from app.routers import (
     skill_upload,
     threat,
 )
+from app.scan_body_limit import ScanBodyLimit
 from app.security import Identity, ensure_permission, get_identity
 
 logger = logging.getLogger("siq-agent-security")
@@ -87,6 +89,8 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+app.add_middleware(ScanBodyLimit)
 
 # CORS：dev 模式便于本地联调；生产默认同源（空列表），仅显式安全白名单可放开。
 app.add_middleware(
@@ -169,6 +173,7 @@ for router in (
     deployment_batch_draft.router,
     deployment_batch_execute.router,
     deployment_batch_result.router,
+    deployment_behavior.router,
     deployment_submission.router,
     change_review.router,
     console.router,

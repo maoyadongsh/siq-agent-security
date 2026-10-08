@@ -1,0 +1,617 @@
+{
+  "schema_version": "optimization-openshell-coordinator-evidence/v1",
+  "recorded_at": "2026-10-07T21:22:04.034152+00:00",
+  "scope": "real owned gateway and durable internal coordinator; synthetic authority in disposable SQLite; no authenticated API",
+  "challenge": {
+    "schema_version": "openshell-behavior-challenge/v2",
+    "verification_id": "opv-dc8dc6f75aa74508981f4c2c065e275e",
+    "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+    "binding": {
+      "tenant_id": "t",
+      "environment_id": "e",
+      "binding_id": "b",
+      "deployment_id": "d",
+      "operation_id": "opo-d40b4a79e047f65cc50043b55a6e4746ab51deddb936129b",
+      "target": "siq-behavior-97e1603c3d8d",
+      "gateway_fingerprint": "7fefbf2f083dfc7bf4f25420fdd457b20594e6ecf3f8d70a896ffde8b84ec944",
+      "policy_revision": "2",
+      "policy_digest": "bbe1a4c2827c6aafed46d86d78d98f11440ad56295307754ffc511f65592b127",
+      "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+      "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+      "protected_execution_sha256": "29fd978962cbae76c93f3c0be24d388059a5fb1c93e524348d4e82bdea01c6c1"
+    },
+    "receiver_ipv4": "192.168.48.1",
+    "receiver_port": 44537,
+    "allow_path": "/opt/siq-behavior/allow",
+    "deny_path": "/opt/siq-behavior/deny",
+    "attempts": 3,
+    "timeout_ms": 2000,
+    "issued_at": "2026-10-07T21:20:11.892253Z",
+    "expires_at": "2026-10-07T21:25:11.532130Z",
+    "transport": {
+      "mode": "http_connect",
+      "proxy_ipv4": "10.200.0.1",
+      "proxy_port": 3128
+    }
+  },
+  "observed_result": {
+    "schema_version": "openshell-behavior-result/v3",
+    "verification_id": "opv-dc8dc6f75aa74508981f4c2c065e275e",
+    "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+    "challenge_sha256": "379f2447047e4aaaaa510517bd4e0f1ca055eed04868bbd5d0682696a0d05686",
+    "started_at": "2026-10-07T21:20:11.934659Z",
+    "finished_at": "2026-10-07T21:20:16.150192Z",
+    "before": {
+      "binding": {
+        "tenant_id": "t",
+        "environment_id": "e",
+        "binding_id": "b",
+        "deployment_id": "d",
+        "operation_id": "opo-d40b4a79e047f65cc50043b55a6e4746ab51deddb936129b",
+        "target": "siq-behavior-97e1603c3d8d",
+        "gateway_fingerprint": "7fefbf2f083dfc7bf4f25420fdd457b20594e6ecf3f8d70a896ffde8b84ec944",
+        "policy_revision": "2",
+        "policy_digest": "bbe1a4c2827c6aafed46d86d78d98f11440ad56295307754ffc511f65592b127",
+        "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+        "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "protected_execution_sha256": "29fd978962cbae76c93f3c0be24d388059a5fb1c93e524348d4e82bdea01c6c1"
+      },
+      "enforcement_mode": "unknown",
+      "allow_rules": [
+        {
+          "endpoint": "192.168.48.1:44537",
+          "program_path": "/opt/siq-behavior/allow"
+        }
+      ],
+      "transport": {
+        "mode": "http_connect",
+        "proxy_ipv4": "10.200.0.1",
+        "proxy_port": 3128
+      }
+    },
+    "after": {
+      "binding": {
+        "tenant_id": "t",
+        "environment_id": "e",
+        "binding_id": "b",
+        "deployment_id": "d",
+        "operation_id": "opo-d40b4a79e047f65cc50043b55a6e4746ab51deddb936129b",
+        "target": "siq-behavior-97e1603c3d8d",
+        "gateway_fingerprint": "7fefbf2f083dfc7bf4f25420fdd457b20594e6ecf3f8d70a896ffde8b84ec944",
+        "policy_revision": "2",
+        "policy_digest": "bbe1a4c2827c6aafed46d86d78d98f11440ad56295307754ffc511f65592b127",
+        "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+        "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "protected_execution_sha256": "29fd978962cbae76c93f3c0be24d388059a5fb1c93e524348d4e82bdea01c6c1"
+      },
+      "enforcement_mode": "unknown",
+      "allow_rules": [
+        {
+          "endpoint": "192.168.48.1:44537",
+          "program_path": "/opt/siq-behavior/allow"
+        }
+      ],
+      "transport": {
+        "mode": "http_connect",
+        "proxy_ipv4": "10.200.0.1",
+        "proxy_port": 3128
+      }
+    },
+    "observations": [
+      {
+        "round": 0,
+        "kind": "control_before",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T21:20:12.195930Z",
+        "transport": "direct_tcp",
+        "proxy_endpoint": "",
+        "proxy_status": 0,
+        "proxy_error": ""
+      },
+      {
+        "round": 0,
+        "kind": "allow",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "/opt/siq-behavior/allow",
+        "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "outcome": "connected",
+        "elapsed_ms": 57,
+        "observed_at": "2026-10-07T21:20:12.644991Z",
+        "transport": "http_connect",
+        "proxy_endpoint": "10.200.0.1:3128",
+        "proxy_status": 200,
+        "proxy_error": ""
+      },
+      {
+        "round": 0,
+        "kind": "deny",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "/opt/siq-behavior/deny",
+        "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "outcome": "proxy_denied",
+        "elapsed_ms": 26,
+        "observed_at": "2026-10-07T21:20:13.057973Z",
+        "transport": "http_connect",
+        "proxy_endpoint": "10.200.0.1:3128",
+        "proxy_status": 403,
+        "proxy_error": "policy_denied"
+      },
+      {
+        "round": 0,
+        "kind": "control_after",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T21:20:13.313934Z",
+        "transport": "direct_tcp",
+        "proxy_endpoint": "",
+        "proxy_status": 0,
+        "proxy_error": ""
+      },
+      {
+        "round": 1,
+        "kind": "control_before",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T21:20:13.526515Z",
+        "transport": "direct_tcp",
+        "proxy_endpoint": "",
+        "proxy_status": 0,
+        "proxy_error": ""
+      },
+      {
+        "round": 1,
+        "kind": "allow",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "/opt/siq-behavior/allow",
+        "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "outcome": "connected",
+        "elapsed_ms": 5,
+        "observed_at": "2026-10-07T21:20:13.938985Z",
+        "transport": "http_connect",
+        "proxy_endpoint": "10.200.0.1:3128",
+        "proxy_status": 200,
+        "proxy_error": ""
+      },
+      {
+        "round": 1,
+        "kind": "deny",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "/opt/siq-behavior/deny",
+        "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "outcome": "proxy_denied",
+        "elapsed_ms": 6,
+        "observed_at": "2026-10-07T21:20:14.303950Z",
+        "transport": "http_connect",
+        "proxy_endpoint": "10.200.0.1:3128",
+        "proxy_status": 403,
+        "proxy_error": "policy_denied"
+      },
+      {
+        "round": 1,
+        "kind": "control_after",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T21:20:14.558100Z",
+        "transport": "direct_tcp",
+        "proxy_endpoint": "",
+        "proxy_status": 0,
+        "proxy_error": ""
+      },
+      {
+        "round": 2,
+        "kind": "control_before",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T21:20:14.808233Z",
+        "transport": "direct_tcp",
+        "proxy_endpoint": "",
+        "proxy_status": 0,
+        "proxy_error": ""
+      },
+      {
+        "round": 2,
+        "kind": "allow",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "/opt/siq-behavior/allow",
+        "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "outcome": "connected",
+        "elapsed_ms": 4,
+        "observed_at": "2026-10-07T21:20:15.244161Z",
+        "transport": "http_connect",
+        "proxy_endpoint": "10.200.0.1:3128",
+        "proxy_status": 200,
+        "proxy_error": ""
+      },
+      {
+        "round": 2,
+        "kind": "deny",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "sandbox_exec",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "/opt/siq-behavior/deny",
+        "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "outcome": "proxy_denied",
+        "elapsed_ms": 6,
+        "observed_at": "2026-10-07T21:20:15.713440Z",
+        "transport": "http_connect",
+        "proxy_endpoint": "10.200.0.1:3128",
+        "proxy_status": 403,
+        "proxy_error": "policy_denied"
+      },
+      {
+        "round": 2,
+        "kind": "control_after",
+        "nonce": "4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513",
+        "origin": "control_plane_host",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "",
+        "program_sha256": "",
+        "outcome": "connected",
+        "elapsed_ms": 0,
+        "observed_at": "2026-10-07T21:20:15.930476Z",
+        "transport": "direct_tcp",
+        "proxy_endpoint": "",
+        "proxy_status": 0,
+        "proxy_error": ""
+      }
+    ]
+  },
+  "explicit_allow_challenge": {
+    "schema_version": "openshell-behavior-challenge/v2",
+    "verification_id": "opv-42aba87f1dcb49afa855916a5c395bb5",
+    "nonce": "1a0e9373af705e0ded4999003c47cfe195ad23ddd7fcb6c626e398c5ba5da878",
+    "binding": {
+      "tenant_id": "t",
+      "environment_id": "e",
+      "binding_id": "b",
+      "deployment_id": "d",
+      "operation_id": "opo-d40b4a79e047f65cc50043b55a6e4746ab51deddb936129b",
+      "target": "siq-behavior-97e1603c3d8d",
+      "gateway_fingerprint": "7fefbf2f083dfc7bf4f25420fdd457b20594e6ecf3f8d70a896ffde8b84ec944",
+      "policy_revision": "3",
+      "policy_digest": "fa2b872fa500dd8d6e72cd892856e7f4ab217fe34acf59be86a7f1f57a8f2462",
+      "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+      "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+      "protected_execution_sha256": "29fd978962cbae76c93f3c0be24d388059a5fb1c93e524348d4e82bdea01c6c1"
+    },
+    "receiver_ipv4": "192.168.48.1",
+    "receiver_port": 44537,
+    "allow_path": "/opt/siq-behavior/allow",
+    "deny_path": "/opt/siq-behavior/deny",
+    "attempts": 3,
+    "timeout_ms": 2000,
+    "issued_at": "2026-10-07T21:20:21.746094Z",
+    "expires_at": "2026-10-07T21:25:21.746094Z",
+    "transport": {
+      "mode": "http_connect",
+      "proxy_ipv4": "10.200.0.1",
+      "proxy_port": 3128
+    }
+  },
+  "live_check": {
+    "passed": true,
+    "schema_version": "openshell-behavior-live-check/v1",
+    "checks": {
+      "actual_openshell_target_and_program_protection": true,
+      "real_durable_policy_apply": true,
+      "same_run_durable_behavior_and_no_replay": true,
+      "database_revocation_prevents_new_probe": true,
+      "three_round_actual_allow_deny_controls_accepted": true,
+      "receiver_observed_only_nine_allowed_control_arrivals": true,
+      "real_policy_change_invalidates_old_observations": true,
+      "same_elf_path_connects_after_explicit_policy_allow": true,
+      "receiver_stopped": true,
+      "owned_sandbox_deleted": true,
+      "dedicated_gateway_empty_after_cleanup": true,
+      "original_metadata_unchanged": true
+    },
+    "target": "siq-behavior-97e1603c3d8d",
+    "namespace": "siq-opt05-94c9d293766d",
+    "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+    "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+    "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+    "synthetic_operation_binding": false,
+    "deployment_grade_promoted": false,
+    "model_calls": 0,
+    "independently_resolved_probe_uid": 998,
+    "observed_container_runtime": {
+      "cap_add": [
+        "SYS_ADMIN",
+        "NET_ADMIN",
+        "SYS_PTRACE",
+        "SYSLOG"
+      ],
+      "privileged": false,
+      "user": "0",
+      "userns": ""
+    },
+    "synthetic_database_authority": true,
+    "approved_transport": {
+      "mode": "http_connect",
+      "proxy_ipv4": "10.200.0.1",
+      "proxy_port": 3128
+    },
+    "candidate_validation": {
+      "accepted": true,
+      "reason": "behavior_candidate_observations_accepted"
+    },
+    "agent_reports": [
+      {
+        "schema_version": "openshell-behavior-agent/v2",
+        "verification_id": "opv-42aba87f1dcb49afa855916a5c395bb5",
+        "nonce": "1a0e9373af705e0ded4999003c47cfe195ad23ddd7fcb6c626e398c5ba5da878",
+        "endpoint": "192.168.48.1:44537",
+        "program_path": "/opt/siq-behavior/deny",
+        "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "uid": 998,
+        "outcome": "connected",
+        "elapsed_ms": 5,
+        "transport": "http_connect",
+        "proxy_endpoint": "10.200.0.1:3128",
+        "proxy_status": 200,
+        "proxy_error": ""
+      }
+    ],
+    "formerly_denied_after_explicit_allow": {
+      "round": 0,
+      "kind": "deny",
+      "nonce": "1a0e9373af705e0ded4999003c47cfe195ad23ddd7fcb6c626e398c5ba5da878",
+      "origin": "sandbox_exec",
+      "endpoint": "192.168.48.1:44537",
+      "program_path": "/opt/siq-behavior/deny",
+      "program_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+      "outcome": "connected",
+      "elapsed_ms": 5,
+      "observed_at": "2026-10-07T21:20:22.162066Z",
+      "transport": "http_connect",
+      "proxy_endpoint": "10.200.0.1:3128",
+      "proxy_status": 200,
+      "proxy_error": ""
+    },
+    "receiver_markers": [
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-dc8dc6f75aa74508981f4c2c065e275e 4da90671d5ed656155f7b5ceb3658473914d59efa63e30112c43642e5ba78513\n",
+      "SIQ-BEHAVIOR/1 opv-42aba87f1dcb49afa855916a5c395bb5 1a0e9373af705e0ded4999003c47cfe195ad23ddd7fcb6c626e398c5ba5da878\n"
+    ]
+  },
+  "coordination": {
+    "schema_version": "behavior-coordinated-live-fixture/v1",
+    "passed": true,
+    "database_backend": "disposable_sqlite",
+    "synthetic_database_authority": true,
+    "authenticated_api": false,
+    "real_durable_apply": true,
+    "same_run_behavior_state": "accepted",
+    "repeat_does_not_reexecute": true,
+    "revoked_binding_prevents_new_operation": true,
+    "audit_actions": [
+      "openshell.behavior.prepared",
+      "openshell.behavior.running",
+      "openshell.behavior.accepted"
+    ],
+    "verification_id": "opv-dc8dc6f75aa74508981f4c2c065e275e",
+    "deployment_grade_promoted": false,
+    "recorded_at": "2026-10-07T21:20:16.212962+00:00"
+  },
+  "approved_profiles": {
+    "schema_version": "openshell-behavior-profiles/v1",
+    "profiles": [
+      {
+        "binding": {
+          "tenant_id": "t",
+          "environment_id": "e",
+          "binding_id": "b",
+          "deployment_id": "d",
+          "operation_id": "opo-d40b4a79e047f65cc50043b55a6e4746ab51deddb936129b",
+          "target": "siq-behavior-97e1603c3d8d",
+          "gateway_fingerprint": "7fefbf2f083dfc7bf4f25420fdd457b20594e6ecf3f8d70a896ffde8b84ec944",
+          "policy_revision": "2",
+          "policy_digest": "bbe1a4c2827c6aafed46d86d78d98f11440ad56295307754ffc511f65592b127",
+          "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+          "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+          "protected_execution_sha256": "29fd978962cbae76c93f3c0be24d388059a5fb1c93e524348d4e82bdea01c6c1"
+        },
+        "receiver_ipv4": "192.168.48.1",
+        "receiver_port": 44537,
+        "allow_path": "/opt/siq-behavior/allow",
+        "deny_path": "/opt/siq-behavior/deny",
+        "attempts": 3,
+        "timeout_ms": 2000,
+        "issued_at": "2026-10-07T21:20:11.532130Z",
+        "expires_at": "2026-10-07T21:25:11.532130Z",
+        "transport": {
+          "mode": "http_connect",
+          "proxy_ipv4": "10.200.0.1",
+          "proxy_port": 3128
+        },
+        "profile_id": "owned-acceptance",
+        "gateway_name_sha256": "768231e2dac5e0c859d5c0284ab63b3ce25a0dacdf93c177ac239ec8cecfee73",
+        "protection": {
+          "container_id": "08094b43303b3cd926ee977691a7ec11066625200532a8ac31ee01ddbc6cd224",
+          "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+          "namespace": "siq-opt05-94c9d293766d",
+          "sandbox_name": "siq-behavior-97e1603c3d8d",
+          "sandbox_id": "9a811af6-322e-411e-b2e7-61778d9f03d3",
+          "uid": 998,
+          "allow_path": "/opt/siq-behavior/allow",
+          "deny_path": "/opt/siq-behavior/deny",
+          "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+          "supervisor_profile": "openshell-rootful-v0"
+        }
+      }
+    ]
+  },
+  "protected_execution": {
+    "protected_execution_sha256": "29fd978962cbae76c93f3c0be24d388059a5fb1c93e524348d4e82bdea01c6c1",
+    "facts": {
+      "schema_version": "openshell-behavior-protection/v1",
+      "approved": {
+        "container_id": "08094b43303b3cd926ee977691a7ec11066625200532a8ac31ee01ddbc6cd224",
+        "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+        "namespace": "siq-opt05-94c9d293766d",
+        "sandbox_name": "siq-behavior-97e1603c3d8d",
+        "sandbox_id": "9a811af6-322e-411e-b2e7-61778d9f03d3",
+        "uid": 998,
+        "allow_path": "/opt/siq-behavior/allow",
+        "deny_path": "/opt/siq-behavior/deny",
+        "probe_sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df",
+        "supervisor_profile": "openshell-rootful-v0"
+      },
+      "container": {
+        "container_id": "08094b43303b3cd926ee977691a7ec11066625200532a8ac31ee01ddbc6cd224",
+        "image_digest": "sha256:ea5c48273e4c11b782e788a734a32e3b8043f2d22e1c341e0f297482aae9eefc",
+        "init_pid": 3906379,
+        "network": "siq-opt05-94c9d293766d",
+        "mount_destinations": [
+          "/etc/openshell/auth/sandbox.jwt",
+          "/etc/openshell/tls/client/ca.crt",
+          "/etc/openshell/tls/client/tls.crt",
+          "/etc/openshell/tls/client/tls.key",
+          "/opt/openshell/bin/openshell-sandbox"
+        ],
+        "namespace": "siq-opt05-94c9d293766d",
+        "sandbox_name": "siq-behavior-97e1603c3d8d",
+        "sandbox_id": "9a811af6-322e-411e-b2e7-61778d9f03d3",
+        "supervisor_profile": "openshell-rootful-v0"
+      },
+      "objects": [
+        {
+          "path": "/",
+          "uid": 0,
+          "gid": 0,
+          "mode": 493,
+          "kind": "directory"
+        },
+        {
+          "path": "/opt",
+          "uid": 0,
+          "gid": 0,
+          "mode": 493,
+          "kind": "directory"
+        },
+        {
+          "path": "/opt/siq-behavior",
+          "uid": 0,
+          "gid": 0,
+          "mode": 365,
+          "kind": "directory"
+        },
+        {
+          "path": "/opt/siq-behavior/allow",
+          "uid": 0,
+          "gid": 0,
+          "mode": 365,
+          "kind": "file",
+          "size": 6135154,
+          "sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df"
+        },
+        {
+          "path": "/opt/siq-behavior/deny",
+          "uid": 0,
+          "gid": 0,
+          "mode": 365,
+          "kind": "file",
+          "size": 6135154,
+          "sha256": "0d8c89512c9f373725abf44595801fc2c16b3dd1f7a86f88e66ab50fdf49f7df"
+        }
+      ]
+    }
+  },
+  "owned_gateway": {
+    "isolated_namespace": "siq-opt05-94c9d293766d",
+    "host_bind_mounts": false,
+    "live_check_started": true,
+    "health_probe_failures": 1,
+    "ready": true,
+    "acceptance_exit_code": 0,
+    "owned_gateway_stopped": true,
+    "original_configuration_unchanged": true,
+    "original_tls_files_unchanged": true,
+    "owned_network_empty": true,
+    "network_cleanup_returncode": 0,
+    "passed": true,
+    "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+    "template_sha256": "95edbf66fe24d61532c0636ddc605281316c8e799c02c9a957df7c7064cd5467"
+  },
+  "independent_database_readback": {
+    "single_behavior_record": true,
+    "stored_challenge_result_exact_match": true,
+    "epoch": 2,
+    "parent_apply": {
+      "id": "opo-d40b4a79e047f65cc50043b55a6e4746ab51deddb936129b",
+      "state": "applied",
+      "applied_revision": "2",
+      "applied_digest": "bbe1a4c2827c6aafed46d86d78d98f11440ad56295307754ffc511f65592b127"
+    },
+    "behavior_audit_actions": [
+      "openshell.behavior.prepared",
+      "openshell.behavior.running",
+      "openshell.behavior.accepted"
+    ]
+  },
+  "source_sha256": {
+    "apps/control-api/app/adapters/openshell/behavior_profiles.py": "2671972204644e0602aee661d8942438c804c0340bd05551b98911133be5914b",
+    "apps/control-api/app/adapters/openshell/behavior_coordinator.py": "19bd20ae2486844368188b52152f273825d605cf87ba98b0dd9d2826092a8296",
+    "apps/control-api/app/adapters/openshell/behavior_journal.py": "be3a4ab0d5006176912aa28d4157af7a7db18430dd3f609475af609d79ad9808",
+    "scripts/enterprise-experience/behavior_coordinated_fixture.py": "8062e06e5b40190e9d54980fd1e9a21145476cdd96e5110f65d701f279a5ffc0",
+    "scripts/enterprise-experience/openshell-behavior-live-check.py": "d79579fc68c6853bf804d32176ac666d2dcd5944653c5c2ad196b504a5d00a25",
+    "scripts/enterprise-experience/owned-openshell-recovery-check.py": "b3f52c039d385758b1c8ce9cec76e0ac732658ce76b0b09fb9d208e7496b3b4f",
+    "apps/control-api/app/tests/test_openshell_behavior_coordinator.py": "0c3ab3da45f0ee62e08259d85052f513ff0b4014e6b4d8923ea56331884d8d7d"
+  },
+  "tests": {
+    "coordinator": 25,
+    "journal": 32,
+    "total": 57,
+    "live_checks": 12
+  },
+  "limits": [
+    "No authenticated production API or UI",
+    "SQLite is explicit isolated dev acceptance; no production database touched",
+    "Required authorizers use synthetic disposable database identities in this harness",
+    "No deployment grade promotion; production target assignment and authorization integration pending",
+    "No model calls, remote CI or main merge"
+  ]
+}

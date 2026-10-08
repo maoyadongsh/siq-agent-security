@@ -32,12 +32,10 @@ import {
   protocolErrorMessage,
 } from './protocol';
 import { parseListMeta, type ListMeta } from './listMeta';
+import { DEV_IDENTITY as DEV_MODE } from './devMode';
 
 /** 控制面 API 基础地址（默认同源，由网关/开发代理转发） */
 export const API_BASE: string = import.meta.env.VITE_API_BASE ?? '/api/v1';
-
-/** 开发模式身份注入开关（生产必须为 false，禁止身份伪造头） */
-const DEV_MODE: boolean = import.meta.env.VITE_DEV_MODE === 'true';
 
 /** 请求超时（ms）：控制面不可达时快速失败，避免页面挂起 */
 const REQUEST_TIMEOUT_MS = 5000;

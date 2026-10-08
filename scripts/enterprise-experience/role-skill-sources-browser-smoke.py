@@ -1,4 +1,7 @@
 """Role/skill source UI, synthetic responses only; not production acceptance."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -110,6 +113,7 @@ def main():
             page = browser.new_page(viewport={'width': 1280, 'height': 1000})
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.route('**/*', intercept)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/agents/agt-one')
             panel = page.get_by_role('region', name='角色与技能安装来源', exact=True)
             expect(panel).to_contain_text('历史目录来源匹配')

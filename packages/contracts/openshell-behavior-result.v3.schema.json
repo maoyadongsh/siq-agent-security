@@ -1,0 +1,343 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "verification_id",
+    "nonce",
+    "challenge_sha256",
+    "started_at",
+    "finished_at",
+    "before",
+    "after",
+    "observations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "openshell-behavior-result/v3"
+    },
+    "verification_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 36,
+      "pattern": "^opv-[a-f0-9]{32}$"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "challenge_sha256": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "started_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+      "format": "date-time"
+    },
+    "before": {
+      "$ref": "#/$defs/readback"
+    },
+    "after": {
+      "$ref": "#/$defs/readback"
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 40,
+      "items": {
+        "$ref": "#/$defs/observation"
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/openshell-behavior-result.v3.schema.json",
+  "title": "Operation-bound enterprise OpenShell behavior observations V2",
+  "$defs": {
+    "readback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding",
+        "enforcement_mode",
+        "allow_rules",
+        "transport"
+      ],
+      "properties": {
+        "binding": {
+          "$ref": "#/$defs/binding"
+        },
+        "enforcement_mode": {
+          "enum": [
+            "block",
+            "unknown",
+            "warn",
+            "audit_only"
+          ]
+        },
+        "allow_rules": {
+          "type": "array",
+          "maxItems": 512,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "endpoint",
+              "program_path"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 21,
+                "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}:[0-9]{1,5}$"
+              },
+              "program_path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512,
+                "pattern": "^/[A-Za-z0-9_./-]+$"
+              }
+            }
+          }
+        },
+        "transport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "proxy_ipv4",
+            "proxy_port"
+          ],
+          "properties": {
+            "mode": {
+              "const": "http_connect"
+            },
+            "proxy_ipv4": {
+              "type": "string",
+              "maxLength": 15,
+              "format": "ipv4"
+            },
+            "proxy_port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          }
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "round",
+        "kind",
+        "nonce",
+        "origin",
+        "endpoint",
+        "program_path",
+        "program_sha256",
+        "outcome",
+        "elapsed_ms",
+        "observed_at",
+        "transport",
+        "proxy_endpoint",
+        "proxy_status",
+        "proxy_error"
+      ],
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "kind": {
+          "enum": [
+            "control_before",
+            "allow",
+            "deny",
+            "control_after"
+          ]
+        },
+        "nonce": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "origin": {
+          "enum": [
+            "sandbox_exec",
+            "control_plane_host"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 21,
+          "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}:[0-9]{1,5}$"
+        },
+        "program_path": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "program_sha256": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "outcome": {
+          "enum": [
+            "connected",
+            "timeout",
+            "connection_refused",
+            "connection_reset",
+            "dns_failure",
+            "probe_error",
+            "proxy_denied"
+          ]
+        },
+        "elapsed_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 11000
+        },
+        "observed_at": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+          "format": "date-time"
+        },
+        "transport": {
+          "enum": [
+            "direct_tcp",
+            "http_connect"
+          ]
+        },
+        "proxy_endpoint": {
+          "type": "string",
+          "maxLength": 21
+        },
+        "proxy_status": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 599
+        },
+        "proxy_error": {
+          "enum": [
+            "",
+            "policy_denied",
+            "other"
+          ]
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_id",
+        "environment_id",
+        "binding_id",
+        "deployment_id",
+        "operation_id",
+        "target",
+        "gateway_fingerprint",
+        "policy_revision",
+        "policy_digest",
+        "image_digest",
+        "probe_sha256",
+        "protected_execution_sha256"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "environment_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "binding_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "deployment_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "operation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "gateway_fingerprint": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_digest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "image_digest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 71,
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "probe_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "protected_execution_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "description": "Observations from the trusted collector, not a client claim of enforcement. Requires semantic validation, current authority/readback and atomic durable consumption; never authorizes execution by shape alone."
+}

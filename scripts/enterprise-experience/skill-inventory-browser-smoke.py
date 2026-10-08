@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Isolated enterprise skill UI checks; mocked API, no live credentials or uploads."""
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -96,6 +99,7 @@ def main():
             errors = []
             page.on('pageerror', lambda _: errors.append('pageerror'))
             page.route('**/api/v1/**', route)
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/agents/skills')
             expect(page.get_by_role('heading', name='skill-a', exact=True)).to_be_visible()
             expect(page.get_by_text('已连接', exact=True)).to_be_visible()

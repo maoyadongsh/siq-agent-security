@@ -1,0 +1,568 @@
+{
+  "schema_version": "siq.delivery-headers-validation/v1",
+  "binary_sha256": "bbf7fb68a6ddec8a33e366ecd8890c185c751c4c8ab1409a597af5f67b1e2244",
+  "nginx_image": "sha256:e7b8033f1661e1939b4b796ed059b388e193039947dc4b9a99c56881d3a700c5",
+  "nginx_pinned_reference": "nginx:1.29.7-alpine3.23@sha256:e7257f1ef28ba17cf7c248cb8ccf6f0c6e0228ab9c315c152f9c203cd34cf6d1",
+  "enterprise_html_sha256": "b1d3c28dbe7569e80cba2f808f654a2594534b6a13bc7703b4b2d90a06c6e76d",
+  "product_nginx_config_sha256": "eb8aaed1d179b91d3fc9ce4c00cfcf607abdf23f4be35b213a76ce143596c957",
+  "header_config_sha256": "6fe078690449e2560f7a4ba93653771b0788e6a042642c316b08e8c6df4b777d",
+  "scope": "isolated_local_binary_and_real_nginx_with_controlled_proxy",
+  "production_gateway_verified": false,
+  "production_iam_verified": false,
+  "dns_rebinding_chain_tested": false,
+  "model_calls": 0,
+  "responses": {
+    "local": [
+      {
+        "case": "html",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "case": "spa",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html; charset=utf-8"
+        }
+      },
+      {
+        "case": "javascript",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "text/javascript; charset=utf-8"
+        }
+      },
+      {
+        "case": "stylesheet",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "text/css; charset=utf-8"
+        }
+      },
+      {
+        "case": "font",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "font/woff2"
+        }
+      },
+      {
+        "case": "head",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "text/javascript; charset=utf-8"
+        }
+      },
+      {
+        "case": "range",
+        "status": 206,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "text/javascript; charset=utf-8"
+        }
+      },
+      {
+        "case": "missing_asset",
+        "status": 404,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/plain; charset=utf-8"
+        }
+      },
+      {
+        "case": "extensionless_asset",
+        "status": 404,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/plain; charset=utf-8"
+        }
+      },
+      {
+        "case": "method",
+        "status": 405,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/plain; charset=utf-8"
+        }
+      },
+      {
+        "case": "config",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "application/json"
+        }
+      },
+      {
+        "case": "unauthorized",
+        "status": 401,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "application/json"
+        }
+      },
+      {
+        "case": "host_rejection",
+        "status": 403,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/plain; charset=utf-8"
+        }
+      },
+      {
+        "case": "origin_rejection",
+        "status": 403,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "application/json"
+        }
+      }
+    ],
+    "enterprise_direct": [
+      {
+        "case": "html",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-cache",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "spa",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-cache",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "javascript",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "application/javascript"
+        }
+      },
+      {
+        "case": "stylesheet",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "text/css"
+        }
+      },
+      {
+        "case": "font",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "font/woff2"
+        }
+      },
+      {
+        "case": "head",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "application/javascript"
+        }
+      },
+      {
+        "case": "range",
+        "status": 206,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "application/javascript"
+        }
+      },
+      {
+        "case": "missing_asset",
+        "status": 404,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "extensionless_asset",
+        "status": 404,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "method",
+        "status": 405,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "health",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/plain"
+        }
+      },
+      {
+        "case": "conditional_asset",
+        "status": 304,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": null
+        }
+      }
+    ],
+    "enterprise_proxy": [
+      {
+        "case": "html",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-cache",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "spa",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-cache",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "javascript",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "application/javascript"
+        }
+      },
+      {
+        "case": "stylesheet",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "text/css"
+        }
+      },
+      {
+        "case": "font",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "font/woff2"
+        }
+      },
+      {
+        "case": "head",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "application/javascript"
+        }
+      },
+      {
+        "case": "range",
+        "status": 206,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": "application/javascript"
+        }
+      },
+      {
+        "case": "missing_asset",
+        "status": 404,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "extensionless_asset",
+        "status": 404,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "method",
+        "status": 405,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/html"
+        }
+      },
+      {
+        "case": "health",
+        "status": 200,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "no-store",
+          "Content-Type": "text/plain"
+        }
+      },
+      {
+        "case": "conditional_asset",
+        "status": 304,
+        "headers": {
+          "Content-Security-Policy": "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+          "Cache-Control": "public, max-age=31536000, immutable",
+          "Content-Type": null
+        }
+      }
+    ]
+  },
+  "checks": {
+    "local_pair_and_cookie_restore": true,
+    "local_management_navigation_with_styles": true,
+    "local_browser": {
+      "inline_script_rejected": true,
+      "off_origin_connect_rejected": true,
+      "wrong_script_mime_rejected": true
+    },
+    "local_logout": true,
+    "enterprise_production_login_renders_with_styles": true,
+    "enterprise_browser": {
+      "inline_script_rejected": true,
+      "off_origin_connect_rejected": true,
+      "wrong_script_mime_rejected": true
+    },
+    "local_framing_rejected": true,
+    "enterprise_framing_rejected": true,
+    "blocked_connects_have_no_receiver_effect": true
+  },
+  "recorded_at": "2026-10-07T06:33:38.988979+00:00",
+  "source_sha256": {
+    "apps/agentshield/internal/httpsecurity/headers.go": "65213a2ecbd8ecfbca8b153b98fdb05b966607a41889a7c259f057361e9b59a6",
+    "apps/agentshield/internal/httpsecurity/headers_test.go": "765c61e569bc54882bd40eac10bca5ee2b2029768a12b63f7665cefa52a60cec",
+    "apps/agentshield/internal/server/server.go": "ab7a1f761b701acb3113fed16a70f526981933cebb93655c57e3a734c67b4e40",
+    "apps/agentshield/internal/server/browser_headers_test.go": "ac5dfd182a14242ce30a8f2b1a725ebc60f72b206507dfdaa3f21cde5ce40833",
+    "apps/agentshield/internal/ui/ui.go": "d0d195b1eb0005bd0b5dd4b73fd93ac28d73f686a8c6d0e67164df151e8216d6",
+    "apps/agentshield/internal/ui/ui_test.go": "bfc23e74547b53a826bb36dbaf07d9eba04330abbd6d4abec14b6fe1ce8995a8",
+    "apps/web/nginx.conf": "eb8aaed1d179b91d3fc9ce4c00cfcf607abdf23f4be35b213a76ce143596c957",
+    "apps/web/security-headers.inc": "6fe078690449e2560f7a4ba93653771b0788e6a042642c316b08e8c6df4b777d",
+    "scripts/personal-experience/delivery-headers-browser-smoke.py": "667694a0167044e0ec667ba442924bac1e039b8b75d8da625b7dd23885c5c203"
+  },
+  "cross_build_sha256": {
+    "linux-arm64": "bbf7fb68a6ddec8a33e366ecd8890c185c751c4c8ab1409a597af5f67b1e2244",
+    "linux-amd64": "328dceb7152ae5315cd57f8ce14e55eb8f1a27aa43bf2d74bb6d028ea0859e18",
+    "darwin-arm64": "c697f71c10cd75fbc71b0d23b450d96474fe0d5b0473aff02c183283b965155e",
+    "windows-amd64": "d2644955ecad895f3240529c1e880e4bf95d9f7a990d24cd70a1bb6dc09f1640"
+  },
+  "enterprise_build_tree_sha256": "bd7ecc2f671aacd0a45c44aaa2d1d5a9bb4871e1dfcd7b4f87bc2b9ccb629d95",
+  "enterprise_tree_hash_format": "sorted POSIX relative path + NUL + SHA256(file bytes) + LF, UTF-8",
+  "validation": {
+    "go_passing_packages": 45,
+    "go_no_test_packages": 10,
+    "go_vet_passed": true,
+    "race_packages": [
+      "server",
+      "ui",
+      "httpsecurity"
+    ],
+    "enterprise_production_build_passed": true,
+    "browser_response_cases": 38,
+    "owned_test_resources_removed": true
+  }
+}

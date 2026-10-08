@@ -53,3 +53,5 @@ go -C apps/agentshield test ./...
 共享合同由 Go 输出、Python schema 校验及规范化/签名固定向量交叉验证；运行时对照见 [runtime-security](../../benchmarks/runtime-security/README.md)，端到端研究应用见 [Secure Agent](../secure-agent/README.md)。[四目标源码检查](../../docs/evidence/repository-reorganization-final-20260919/README.md)覆盖隔离构建与基础启动，不覆盖所有系统服务和宿主旅程。
 
 工具钩子只保护已接入路径；同用户恶意进程、宿主绕过、观察器可信度和原文采集授权有各自边界。Linux 当前接入 OpenClaw/Hermes，macOS/Windows 接入范围另含 WorkBuddy；实现存在、组件测试和正式版原生验收分别见[平台入口](../../platforms/README.md)。
+
+2026-10-08 优化开发分支增强了接入完整性诊断：已有安装而钩子缺失、密封记录损坏或伪造卸载动作会显示配置异常；诊断不会自动产生阻断，也不改变桌面信任边界。实现与验证见[OPT-12第一批记录](../../docs/development/optimization-opt12-integrity-validation-20261008.md)。

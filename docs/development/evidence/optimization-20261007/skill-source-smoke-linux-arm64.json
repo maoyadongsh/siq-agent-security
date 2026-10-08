@@ -1,0 +1,16 @@
+{
+  "schema_version": "siq-skill-source-smoke/v1",
+  "source_sha": "297d9ebcac8057a1c080d5bacf1a386439a6b60c",
+  "source_dirty": true,
+  "checked_at_utc": "2026-10-08T07:49:12.321419+00:00",
+  "target": "linux/arm64",
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "skill_document_sha256": "8efca17f5844b977dcc6831cb931134313a56ba72ef5f5313f235e871197536a",
+  "unsigned_source_bootstrap_refused_without_writes": true,
+  "self_admission": "admit_with_conditions",
+  "fresh_start_status_pair_console_stop": "passed",
+  "init_serve_status_pair_console_stop": "passed",
+  "ssh_ui_guidance_and_print_only": "passed",
+  "scope": "source build setup in isolated state; not a signed installation package, host integration, desktop or background service acceptance",
+  "published": false
+}

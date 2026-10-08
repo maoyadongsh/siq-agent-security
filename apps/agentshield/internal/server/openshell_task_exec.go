@@ -209,11 +209,7 @@ func (s *Server) openshellTaskExecute(w http.ResponseWriter, r *http.Request) {
 	// Every authorization pre-check runs before the reservation is consumed,
 	// so a rejected submission never burns the human approval.
 	if _, err := s.validateOpenShellTaskExecutionBinding(body); err != nil {
-		code := http.StatusForbidden
-		if err.Error() == "openshell_task_instance_unconfirmed" {
-			code = http.StatusConflict
-		}
-		writeJSON(w, code, map[string]string{"error": err.Error(), "reason_code": err.Error()})
+		writeJSON(w, bindingStatus(err), map[string]string{"error": err.Error(), "reason_code": err.Error()})
 		return
 	}
 	// A matching policy readback alone is not a load acknowledgement. Check

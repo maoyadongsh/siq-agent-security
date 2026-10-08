@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/skill-execution-context.v2.schema.json",
+  "title": "Signed native skill invocation context V2",
+  "description": "Native invocation provenance with separate pinned Agent and Skill grants; signature and shape alone do not authorize execution. ADR-056 defines live verification and exact per-call binding requirements.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "skill-execution-context/v2"
+    },
+    "context_id": {
+      "type": "string",
+      "pattern": "^sec-[0-9a-f]{32}$"
+    },
+    "issuer_id": {
+      "const": "local-admin"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "instance_id",
+        "agent_id",
+        "session_id",
+        "task_id"
+      ],
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^hi-[0-9a-f]{32}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^hri-[0-9a-f]{32}$"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_id",
+        "content_hash"
+      ],
+      "properties": {
+        "skill_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "install": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "install_id",
+        "claim_signature"
+      ],
+      "properties": {
+        "install_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "claim_signature": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{128}$"
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "grant_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "grant_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "签发时 daemon 现场计算的 grant canonical 字节 sha256；调用方提供的值一律忽略"
+        }
+      }
+    },
+    "evidence_level": {
+      "const": "controlled_invocation"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    },
+    "agent_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "grant_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "grant_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "签发时 daemon 现场计算的 grant canonical 字节 sha256；调用方提供的值一律忽略"
+        }
+      }
+    },
+    "loader": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "load_id",
+        "skill_file_sha256",
+        "runtime_artifact_sha256"
+      ],
+      "properties": {
+        "load_id": {
+          "type": "string",
+          "pattern": "^nload-[0-9a-f]{32}$"
+        },
+        "skill_file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "runtime_artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "parent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_id",
+        "signature"
+      ],
+      "properties": {
+        "context_id": {
+          "type": "string",
+          "pattern": "^sec-[0-9a-f]{32}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{128}$"
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "context_id",
+    "issuer_id",
+    "subject",
+    "skill",
+    "install",
+    "authority",
+    "evidence_level",
+    "issued_at",
+    "expires_at",
+    "signing_schema",
+    "signature",
+    "agent_authority",
+    "loader"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "evidence_level": {
+            "const": "controlled_task"
+          }
+        },
+        "required": [
+          "evidence_level"
+        ]
+      },
+      "then": {
+        "properties": {
+          "subject": {
+            "required": [
+              "task_id"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

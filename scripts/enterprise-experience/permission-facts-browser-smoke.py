@@ -3,6 +3,9 @@
 模拟验收专用：不连接真实控制面，不能证明后端授权或生产环境已验收。
 用法：python permission-facts-browser-smoke.py --web <构建目录> --out-dir <证据目录>
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -156,6 +159,7 @@ def main():
 
             # 1. 加载中不得展示成功零值
             state['mode'] = 'hold'
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/permissions')
             expect(page.get_by_text('正在加载权限事实')).to_be_visible()
             expect(page.get_by_label('权限事实状态概览（仅统计已加载记录）')).to_have_count(0)
@@ -264,18 +268,21 @@ def main():
 
             # 9. 后端成功返回空列表（区别于断连与无匹配）
             state['mode'] = 'empty'
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/permissions')
             expect(page.get_by_text('后端成功返回空列表')).to_be_visible()
             checks['empty_list_distinct'] = True
 
             # 10. 断连：明确失败，不冒充空清单
             state['mode'] = 'down'
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/permissions')
             expect(page.get_by_text('未连接 — 控制面暂不可达')).to_be_visible()
             expect(page.get_by_text('后端成功返回空列表')).to_have_count(0)
             checks['disconnect_not_empty_list'] = True
 
             state['mode'] = 'unknown-enums'
+            install_fixture_session(page)
             page.goto(f'http://127.0.0.1:{server.server_port}/permissions')
             expect(page.get_by_label('未知 3 条', exact=True)).to_be_visible()
             expect(page.locator('.pf-item')).to_have_count(3)

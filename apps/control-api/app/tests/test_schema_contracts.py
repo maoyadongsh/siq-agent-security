@@ -352,7 +352,10 @@ def test_personal_discovery_contracts_and_inferred_relationships() -> None:
         assert list(validator.iter_errors({**relationship, "state": "effective"}))
 
 
-@pytest.mark.parametrize("sample", ["adapter-diagnostics.json", "adapter-diagnostics-linux.json"])
+@pytest.mark.parametrize("sample", [
+    "adapter-diagnostics.json", "adapter-diagnostics-linux.json", "adapter-diagnostics-integrity.json",
+    "adapter-diagnostics-program-integrity.json",
+])
 def test_adapter_configuration_diagnosis_never_claims_runtime_verification(sample: str) -> None:
     schema = json.loads((CONTRACTS / "local-adapter-diagnostics.v1.schema.json").read_text(encoding="utf-8"))
     Draft7Validator.check_schema(schema)
@@ -3384,11 +3387,13 @@ def test_local_state_format_marker_contract() -> None:
         ("local-state-format.v2", "local-state-format-v2"),
         ("local-state-status.v1", "local-state-status"),
         ("local-state-status.v1", "local-state-status-reader4"),
+        ("local-state-status.v1", "local-state-status-reader5"),
         ("local-state-migration-result.v1", "local-state-migration-result"),
         ("local-state-migration-plan.v1", "local-state-migration-plan"),
         ("skill-manifest.v3", "skill-manifest.v3.sample"),
         ("skill-manifest.v3", "skill-manifest.v3.reader3.sample"),
         ("skill-manifest.v3", "skill-manifest.v3.reader4.sample"),
+        ("skill-manifest.v3", "skill-manifest.v3.reader5.sample"),
     ],
 )
 def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:
@@ -3410,6 +3415,17 @@ def test_n01_state_protocol_contracts(schema_name: str, sample: str) -> None:
     elif schema_name == "skill-manifest.v3":
         capability = data["state_compatibility"]
         assert list(validator.iter_errors(data | {"state_compatibility": capability | {"reader_version": 0}}))
+        from cryptography.exceptions import InvalidSignature
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+        public = Ed25519PrivateKey.from_private_bytes(bytes([7]) * 32).public_key()
+        unsigned = {k: v for k, v in data.items() if k != "signature"}
+        canonical = json.dumps(unsigned, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode()
+        public.verify(bytes.fromhex(data["signature"]), canonical)
+        unsigned["state_compatibility"] = capability | {"reader_version": capability["reader_version"] + 1}
+        changed = json.dumps(unsigned, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode()
+        with pytest.raises(InvalidSignature):
+            public.verify(bytes.fromhex(data["signature"]), changed)
 
 
 def test_d01_task_execution_request_contracts() -> None:
@@ -4022,3 +4038,19 @@ def test_registered_project_instances_v3_go_sample() -> None:
     row = next(row for row in data["instances"] if row["source"] == "registered_project")
     forged = {**row, "diagnosis": {**row["diagnosis"], "runtime_state": "verified"}}
     assert list(validator.iter_errors({**data, "instances": [forged]}))
+
+
+@pytest.mark.parametrize('version', ['v1', 'v2'])
+def test_pending_source_receipt_retains_existing_wire_contract(version):
+    schema_file = 'receipt.schema.json' if version == 'v1' else 'receipt.v2.schema.json'
+    schema = json.loads((CONTRACTS / schema_file).read_text())
+    sample = CONTRACTS.parents[1] / 'apps/agentshield/testdata/contracts' / f'receipt-pending-source-{version}.json'
+    receipt = json.loads(sample.read_text())
+    Draft7Validator(schema).validate(receipt)
+    assert receipt['receipt_id'].startswith('rcp-pending-')
+    assert len(receipt['receipt_id'].removeprefix('rcp-pending-')) == 64
+    assert 'source_id' not in receipt and 'SourceID' not in receipt
+    if version == 'v2':
+        assert receipt['record_type'] == 'local_failure'
+        assert receipt['local_origin']['signed'] is False
+        assert receipt['action'] == 'unknown'

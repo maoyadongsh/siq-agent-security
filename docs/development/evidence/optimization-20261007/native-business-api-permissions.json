@@ -1,0 +1,375 @@
+{
+  "schema_version": "siq.optimization.native-business-api-permissions.v1",
+  "task": "OPT-08",
+  "batch": "D3p",
+  "date": "2026-10-07",
+  "status": "implementing",
+  "accepted_tasks": 9,
+  "total_tasks": 16,
+  "matrix": {
+    "schema_version": "siq.native-business-permission-matrix-review/v1",
+    "cases": [
+      {
+        "suffix": "v811",
+        "run_id": "qwen-request-9aae55b13e70ba0d",
+        "skill": "siq-company-evidence",
+        "tool": "read_file",
+        "action": "allow",
+        "reason_code": "allow",
+        "checks": {
+          "HTTP_200": true,
+          "exact_action": true,
+          "signed_exact_resource": true,
+          "exact_installed_skill_context": true,
+          "verified_skill_attribution": true,
+          "model_bridge_correlated": true,
+          "source_unchanged": true,
+          "runtime_cleanup_confirmed": true,
+          "database_removed": true,
+          "actual_metadata_answer": true
+        },
+        "passed": true,
+        "receipt_hash": "45c78d321ae31afceaae51a5e9fb264560f76de2fd2f3a5679f7bed252ab218f",
+        "resource_sha256": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "original_harness_passed": true
+      },
+      {
+        "suffix": "v812",
+        "run_id": "qwen-request-6fb98fdb4bfbb606",
+        "skill": "siq-company-evidence",
+        "tool": "write_file",
+        "action": "deny",
+        "reason_code": "grant_scope_violation",
+        "checks": {
+          "HTTP_200": true,
+          "exact_action": true,
+          "signed_exact_resource": true,
+          "exact_installed_skill_context": true,
+          "verified_skill_attribution": true,
+          "model_bridge_correlated": true,
+          "source_unchanged": true,
+          "runtime_cleanup_confirmed": true,
+          "database_removed": true,
+          "actual_effect_absent": true
+        },
+        "passed": true,
+        "receipt_hash": "89640eb3f9973e2cd0bb5f7d494532e8222512f41b374501fc7ce4c1796a5d02",
+        "resource_sha256": "08af96a3f64f4b9a3b0c48cfc2bcfb4b38f0607b1a3812434d14a9db208632a3",
+        "original_harness_passed": false,
+        "verifier_correction": "Use canonical resource_refs, not params_excerpt; ensure_ascii=True. Original run and failed verifier outputs retained, no model replay."
+      },
+      {
+        "suffix": "v813",
+        "run_id": "qwen-request-10f9657156729909",
+        "skill": "siq-research-draft",
+        "tool": "write_file",
+        "action": "allow",
+        "reason_code": "allow",
+        "checks": {
+          "HTTP_200": true,
+          "exact_action": true,
+          "signed_exact_resource": true,
+          "exact_installed_skill_context": true,
+          "verified_skill_attribution": true,
+          "model_bridge_correlated": true,
+          "source_unchanged": true,
+          "runtime_cleanup_confirmed": true,
+          "database_removed": true,
+          "actual_effect_content": true
+        },
+        "passed": true,
+        "receipt_hash": "438132da43ba461355407d949102e2148f9c7584d1bd7132835b0878c63f66cf",
+        "resource_sha256": "a6e49c5912ac7993f0bae33f548ce0f9784aec113d25e220e6226fe9c8782d1b",
+        "original_harness_passed": false,
+        "verifier_correction": "Use canonical resource_refs, not params_excerpt; ensure_ascii=True. Original run and failed verifier outputs retained, no model replay."
+      }
+    ],
+    "financial_report_acceptance": false,
+    "production_ready": false,
+    "chain_verification": {
+      "chain": "local",
+      "head_hash": "438132da43ba461355407d949102e2148f9c7584d1bd7132835b0878c63f66cf",
+      "head_seq": 7,
+      "receipts": 8,
+      "verified": true
+    },
+    "passed": true
+  },
+  "public_receipt_verification": {
+    "records": 8,
+    "all_content_hashes_verified": true,
+    "sequence_and_previous_hash_verified": true,
+    "all_ed25519_signatures_verified_with_public_key_only": true,
+    "receipts_sha256": "91550c9ccad883bd69f5d3dff4107d9cbc8d66a7bf70a84ca74408e311352df4",
+    "public_key_sha256": "bd421d4e8bcde673a8e377f253b3544ebf3e0aa039dc4cbbcab49048bc49e030",
+    "head_hash": "438132da43ba461355407d949102e2148f9c7584d1bd7132835b0878c63f66cf"
+  },
+  "resource_cleanup": {
+    "owned_candidate_gateway_stopped": true,
+    "owned_bridge_returned_to_inactive": true,
+    "candidate_containers_absent": true,
+    "original_model_service_unchanged": true,
+    "stale_original_pid_backup_retained": true
+  },
+  "retained_run_cleanup": {
+    "schema_version": "siq.native-business-retained-cleanup/v1",
+    "original_run_id": "qwen-request-37a456ac90c5e432",
+    "original_execution_failed": true,
+    "original_origin_verified": true,
+    "original_startup_finalizer_released": true,
+    "container_absent": true,
+    "original_supervisor_stopped": true,
+    "temporary_database_removed": true,
+    "database_name_sha256": "4947d489a7daa6a871e315d853ed1ef846615c73f17b965985c2c2fd7a15a267"
+  },
+  "directory_policy_probe": {
+    "exit": 0,
+    "run": "187b894cfe4f1e4d",
+    "checks": {
+      "read/": 13,
+      "read/tmp": "ok",
+      "path/": "ok",
+      "path/tmp": "ok"
+    }
+  },
+  "image": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "checks": {
+      "legacy_environment_rejected": true,
+      "native_config": true,
+      "non_root": true,
+      "protected_ancestors": true,
+      "protected_files": true,
+      "skill_inventory": true
+    },
+    "dockerfile_sha256": "e3776c1a52d504e8441faae0482b1d19277405d30c30579a10d7d18abb880c8f",
+    "executable_sha256": "4e19d11f7a2ee55a0247c6ab3326419413fadecf4b7a52d719739cc1a924711b",
+    "gateway_entry": "/opt/hermes-agent/hermes-gateway",
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "input_sha256": "07c714fbb5acfc6898a2d68cce63dd3197ba4f54f205dc18200a981dc1d0ca40",
+    "native_entry": "/opt/siq/native-request/entrypoint.py",
+    "overlay_manifest_sha256": "db2b7a522f6fe6789c3246b3ef5a4ce7ce32997747cd5153ab0c9f61ef03d7e8",
+    "production_eligible": false,
+    "protected_files": {
+      "/home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/config.yaml": "6b442dabe2c48431373f9bfbbd85635bf518ba8e6dc3954e63b40521b6835bb8",
+      "/home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/skills/siq-company-evidence/SKILL.md": "9f594a1bcba6cb9ce50f5c3d1960a1310444511f6a3d882c42a2b1ba847fed37",
+      "/home/maoyd/siq-research-engine/data/hermes/home/profiles/siq_analysis/skills/siq-research-draft/SKILL.md": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "/opt/hermes-agent/HERMES-LICENSE": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6",
+      "/opt/hermes-agent/agent/agent_runtime_helpers.py": "79caa0c1f05d813b6bc351596ff9fe484e0aafd8b95e70831473e1881e338a27",
+      "/opt/hermes-agent/agent/tool_executor.py": "eae77739e3a85ff4864a02f94314a06ff20a2801e0be8f7332c889bf546c94ad",
+      "/opt/hermes-agent/hermes-gateway": "e13565853072da1fff72eb4fb9fcfecfcd9443885f3c939c8a9fc4bdd440b759",
+      "/opt/hermes-agent/model_tools.py": "1831c3fdb0776a2c5d4f7fdf8f19a05ee07c35b33f291b2165cc6da4f9b19b21",
+      "/opt/hermes-agent/run_agent.py": "5c3ea4682392f01fe9be4bc75c945421a603e76007037bdc0d6930d6b399452b",
+      "/opt/hermes-agent/siq_native_runtime/__init__.py": "0503c9e6296811c29e7aaaeaeae9aac7a1d5babe96e2f237fac4870e868e4699",
+      "/opt/hermes-agent/siq_native_runtime/native_bootstrap.py": "ff7f2db3f9f8d870b4a109ee6d0b7821d1273e73abd1c5317b79e57139c16f2c",
+      "/opt/hermes-agent/siq_native_runtime/native_channel.py": "3da75bddd49a7ed7fc6b501c4fa23640ec013446449a34dd689c47f0e58f0b99",
+      "/opt/hermes-agent/siq_native_runtime/native_dispatch.py": "457de82899253988e396998c5cd7024d418b4899d6575ea7ef11b30fbac55ebf",
+      "/opt/hermes-agent/siq_native_runtime/native_gateway.py": "42bf379551cd0f601eb1e7b82244ac87122c5147c664fd81d85f7b79358adeff",
+      "/opt/hermes-agent/siq_native_runtime/native_online.py": "6d87ea7f391697ae3ed6a72b5dd341e77fb67b284b431fbbef07e250261a4ab3",
+      "/opt/hermes-agent/siq_native_runtime/native_source.py": "9d3b1922e201acfd5cd601153a0a8bddacfe059f97613c90f4ed323e207c3ad8",
+      "/opt/hermes-agent/tools/registry.py": "cd6ac4438c49eade8e40e0d837597fa5fe78fd2d3e2182bc2fd11bcd43ea3231",
+      "/opt/hermes-agent/tools/skills_tool.py": "010e15fbb92d3923a7499e35689d04687c8f5d11191580402894d9f73b08d412",
+      "/opt/siq/native-request/bootstrap.py": "073abad6aa051c1ae94899b3adec69bfb91adefc7bea2bc54d4b8f547fc9424c",
+      "/opt/siq/native-request/config.sha256": "fc2fd2957b555edd090c392b731054622b4b7ffb5035b24bc334761e7e1b9ce7",
+      "/opt/siq/native-request/entrypoint.py": "c410758bc8a74815181f050a9804b7c2e86909d297963edb9fdbe9eeff222804",
+      "/opt/siq/native-request/native_config/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "/opt/siq/native-request/native_config/native_runtime.py": "61a7ebbf15667cb6274fca0b5a94bfd58645f24312caa2bc2798d6195649badc",
+      "/opt/siq/native-request/native_config/validate_runtime.py": "6bfb53da65c2050d9473c26dbb9a3d238fd2ff5780f06f66d455c9ea821b21b1"
+    },
+    "runtime_config_sha256": "6b442dabe2c48431373f9bfbbd85635bf518ba8e6dc3954e63b40521b6835bb8",
+    "runtime_state": "unverified",
+    "schema_version": "siq.openshell.native-request-image.v2",
+    "skill_bundle_sha256": "f1ba92f63565a908a7d65dbb0d1581351a1bc070cd7fa12beb28acd2dd08b6e1",
+    "skills": [
+      {
+        "files": {
+          "SKILL.md": "9f594a1bcba6cb9ce50f5c3d1960a1310444511f6a3d882c42a2b1ba847fed37"
+        },
+        "name": "siq-company-evidence"
+      },
+      {
+        "files": {
+          "SKILL.md": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12"
+        },
+        "name": "siq-research-draft"
+      }
+    ],
+    "snapshot_manifest_sha256": "077f7996f9a50ce2f1f527f9376cf774496b502341232aa9b3690c0487080b3d",
+    "status": "offline_verified"
+  },
+  "validation": {
+    "security_source_bootstrap_gateway_passed": 115,
+    "business_bootstrap_passed": 15,
+    "business_native_gateway_and_endpoint_passed": 43,
+    "ruff": "passed",
+    "counts_are_scoped_not_cumulative": true
+  },
+  "runtime_changes": {
+    "actual_API_own_distributions_updated_with_copy_mode": true,
+    "original_distributions_backed_up": true,
+    "business_var_mode_before": "0770",
+    "business_var_mode_after": "0750",
+    "business_qwen38_state_mode_before": "0775",
+    "business_qwen38_state_mode_after": "0755",
+    "third_party_dependencies_changed": false,
+    "original_model_restarted": false,
+    "ordinary_API_service_restarted": false
+  },
+  "runs": [
+    {
+      "suffix": "v801",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "ec4196bf9afa90a7c3ad5f8a5821e18847bb0cf8d7f9c2611042f138fb49b48b"
+    },
+    {
+      "suffix": "v802",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "cd258034cdd16e579e9dde2d35b174d352eecc1679f3f393c50ca48539c7e3dc"
+    },
+    {
+      "suffix": "v803",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "cd258034cdd16e579e9dde2d35b174d352eecc1679f3f393c50ca48539c7e3dc"
+    },
+    {
+      "suffix": "v804",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "cd258034cdd16e579e9dde2d35b174d352eecc1679f3f393c50ca48539c7e3dc"
+    },
+    {
+      "suffix": "v805",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "cd258034cdd16e579e9dde2d35b174d352eecc1679f3f393c50ca48539c7e3dc"
+    },
+    {
+      "suffix": "v806",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "cd258034cdd16e579e9dde2d35b174d352eecc1679f3f393c50ca48539c7e3dc"
+    },
+    {
+      "suffix": "v807",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "cd258034cdd16e579e9dde2d35b174d352eecc1679f3f393c50ca48539c7e3dc"
+    },
+    {
+      "suffix": "v808",
+      "original_harness_passed": false,
+      "HTTP_status": 503,
+      "failure": "candidate_business_http_failed",
+      "model_bridge_statuses": [],
+      "sha256": "cd258034cdd16e579e9dde2d35b174d352eecc1679f3f393c50ca48539c7e3dc"
+    },
+    {
+      "suffix": "v809",
+      "original_harness_passed": false,
+      "HTTP_status": 200,
+      "failure": "candidate_business_result_unconfirmed",
+      "model_bridge_statuses": [
+        200,
+        200,
+        200
+      ],
+      "sha256": "4256bb03b17c70df98c28f82f1681516c2ced7f7262663efa9f1c7e84dde8efc"
+    },
+    {
+      "suffix": "v810",
+      "original_harness_passed": false,
+      "HTTP_status": 200,
+      "failure": "candidate_business_result_unconfirmed",
+      "model_bridge_statuses": [
+        200,
+        200
+      ],
+      "sha256": "653f32accaf23e07df11ef2c292f5316f68b10b1eb952905d7fa3da41f29808a"
+    },
+    {
+      "suffix": "v811",
+      "original_harness_passed": true,
+      "HTTP_status": 200,
+      "failure": null,
+      "model_bridge_statuses": [
+        200,
+        200
+      ],
+      "sha256": "a77a7f092799a436eb9fccf5a5ab88b1a821828fa60e74baeb67101f0dcbb148"
+    },
+    {
+      "suffix": "v812",
+      "original_harness_passed": false,
+      "HTTP_status": 200,
+      "failure": "candidate_business_result_unconfirmed",
+      "model_bridge_statuses": [
+        200,
+        200
+      ],
+      "sha256": "c6c07e5519d030efc13fdde6aa21d9d46f07639ef1d47ad527657e60ce99c491"
+    },
+    {
+      "suffix": "v813",
+      "original_harness_passed": false,
+      "HTTP_status": 200,
+      "failure": "candidate_business_result_unconfirmed",
+      "model_bridge_statuses": [
+        200,
+        200
+      ],
+      "sha256": "8393c72f825c0b929306779054f080d2212ad3f058971fca338c6b223368df41"
+    }
+  ],
+  "source_sha256": {
+    "siq-agent-security/adapters/runtime/hermes-agentshield/native_bootstrap.py": "ff7f2db3f9f8d870b4a109ee6d0b7821d1273e73abd1c5317b79e57139c16f2c",
+    "siq-agent-security/adapters/runtime/hermes-agentshield/native_source.py": "9d3b1922e201acfd5cd601153a0a8bddacfe059f97613c90f4ed323e207c3ad8",
+    "siq-agent-security/adapters/runtime/hermes-agentshield/tests/test_native_bootstrap.py": "9402c3d1729ff1babb567de60c811f90ad95965a310794214f64796b4a527aea",
+    "siq-agent-security/adapters/runtime/hermes-agentshield/tests/test_native_source.py": "0a64e4e861fdd2c7fbd8fd99a6e80b0fff1f4c6a708d6960b0ca6018c5cb2d5c",
+    "siq-research-engine/infra/openshell/sandbox/qwen38_candidate/native_bootstrap.py": "073abad6aa051c1ae94899b3adec69bfb91adefc7bea2bc54d4b8f547fc9424c",
+    "siq-research-engine/infra/openshell/sandbox/qwen38_candidate/native_entrypoint.py": "c410758bc8a74815181f050a9804b7c2e86909d297963edb9fdbe9eeff222804",
+    "siq-research-engine/scripts/openshell/tests/test_native_request_bootstrap.py": "1aeceb31d3cd5adfcb58c2f345a28411a9c647ae0a6397fb40102f123dcdf52c",
+    "siq-research-engine/apps/api/services/qwen38_native_request_gateway.py": "9b0d0681006837431317da7f646fe8a1411a474231c287c1d19bce76d3d2dd0b",
+    "siq-research-engine/apps/api/services/qwen38_request_endpoint.py": "7c8c78f1943c04ed10b799ca9993effa3c9df458b6c5159320f5715a6d94a0ad",
+    "siq-research-engine/apps/api/tests/test_qwen38_native_request_gateway.py": "79947112e5ef866ecafeae0796070bc022977e97ec18e2ead782a1e31f5d2861"
+  },
+  "local_harness_sha256": {
+    "run-native-business-api.py": "0832fd33d0b22973803349c27c1798845e57807b1e9b5c3369707954bb464522",
+    "run-native-business-api-read-v811.py": "ac4995e528c6970d00ec49f738f5f137ec0c01ef7e0649463116b19c67cb510e",
+    "review-native-business-matrix.py": "817420e02544557358436c9e2e66803f7bbaccab96ffba42553eb0af776cb173",
+    "review-native-business-denial.py": "38b1e4b811df0c5c2ce1ba55006b929a3df8e244262ed886a7bf5c09a92a75fc",
+    "export-native-business-receipts.py": "d2993aca161ed2cc7c7b4a30f3554901a8176db56a8750bda2dab7fd22cbce97",
+    "recover-native-v801.py": "5d9935660b9b8446ad877f5f82ab2579a5efe451e43375bc0a891b1afe81c392"
+  },
+  "local_results_sha256": {
+    "native-business-permission-matrix-review.json": "87b553991f81b4d9d195f6967bbeb3a27759a58e7989253bbe217adedc09c560",
+    "native-business-denial-v812-review.json": "76331668e119811349243a101d6c026db705eacb5746485c41112720cdf97808",
+    "native-business-denial-v812-review-v2.json": "591f45db2c77a1c32246cdc634148acf10d09043f3432535aba1bcb68e737fee",
+    "native-business-public-verification.json": "fa8b9813de43e1404735236b4821f45b207b52c9bdaaffedabc37c52b4887cbe",
+    "native-v801-cleanup.json": "05420c0d73c4e682b9255652a6e10009d08616cf59f139fddbf889ec626dd806",
+    "native-business-resource-cleanup.json": "2bc999c7f8278cb5fdd17663ba6d4b9ec81d46e71c0e8a9cf697fff2b10fa033"
+  },
+  "limits": [
+    "Local isolated candidate business API on DGX Spark, synthetic users and explicitly approved local authority; not production IAM or independent third-party certification.",
+    "The current API passed company metadata read, read-only Skill write denial, and separate draft Skill write; same-request switching, concurrent daily business tasks, complete revocation/drift/upgrade/approval retry/network matrix remain.",
+    "Financial report generation is not accepted; v810 final answer was blocked by unchanged financial-evidence guard. v811 explicitly tested Hermes permissions and company metadata.",
+    "Business API dependency closure still requires review and complete commit; no remote push or final CI."
+  ]
+}

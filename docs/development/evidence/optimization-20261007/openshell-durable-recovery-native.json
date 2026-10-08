@@ -1,0 +1,80 @@
+{
+  "schema_version": "optimization-native-evidence/v1",
+  "recorded_at": "2026-10-07T04:13:13.171980+00:00",
+  "work_package": "OPT-05",
+  "production_eligible": false,
+  "identity_profile": "isolated development API and synthetic browser session; explicit owned-target authority",
+  "scope": "native OpenShell on DGX Spark; independent API process exact rollback and real network behavior",
+  "historical_evidence_modified": false,
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+  "sandbox_image_id": "sha256:bcf4897ab8f95ec875847998297da98d16a44c8741c62c738d917f0eb8d35097",
+  "host_business_bind_mounts": false,
+  "checks": {
+    "owned_sandbox_created": true,
+    "non_root_execution_ready": true,
+    "owned_target_explicit_operator_assignment": true,
+    "allow_browser_real_submit_and_refresh": true,
+    "allow_real_deployment_readback_and_no_replay": true,
+    "allowed_request_succeeds": true,
+    "deny_browser_real_submit_and_refresh": true,
+    "deny_real_deployment_readback_and_no_replay": true,
+    "same_request_refused_after_revocation": true,
+    "independent_api_process_durable_rollback": true,
+    "exact_rollback_and_allowed_behavior_recovered": true,
+    "owned_sandbox_deleted": true,
+    "other_sandbox_catalog_unchanged": true,
+    "original_gateway_metadata_unchanged": true
+  },
+  "network_probes": [
+    {
+      "expected": "allow",
+      "exit_code": 0,
+      "http_code": "200",
+      "explicit_http_403": false,
+      "stdout_digest": "0a43632854a0078ae1768ef8065d3a49bc4cdfc53da4af60cb4db73d467519a8",
+      "stderr_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "expected": "deny",
+      "exit_code": 22,
+      "http_code": "000",
+      "explicit_http_403": true,
+      "stdout_digest": "9aa2ae5a2ed41cfaec69957e34f200cd4b13d390be97c53bdb19001a44893368",
+      "stderr_digest": "e85a8cbf6458f846675a9fd218c04399e808ed1f6629e19c4dd964125cd967c9"
+    },
+    {
+      "expected": "allow_after_rollback",
+      "exit_code": 0,
+      "http_code": "200",
+      "explicit_http_403": false,
+      "stdout_digest": "0a43632854a0078ae1768ef8065d3a49bc4cdfc53da4af60cb4db73d467519a8",
+      "stderr_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "cleanup": {
+    "owned_gateway_stopped": true,
+    "owned_network_empty": true,
+    "original_configuration_unchanged": true,
+    "original_tls_files_unchanged": true,
+    "network_cleanup_returncode": 0
+  },
+  "source_sha256": {
+    "apps/control-api/app/adapters/openshell/durable_operations.py": "aa5d337d13ae41161b56cd916767ae8c2e32f00011020d2f8034babf62442aca",
+    "apps/control-api/app/adapters/openshell/operation_journal.py": "25ce121b64c598d0a693be6639cc7f7b5aa123da4187e2dc8ca915ca661cde84",
+    "apps/control-api/app/adapters/openshell/operation_registry.py": "91e3bc835e9b6f3c90db85d4bcfaf13c14ed60a139e8e81bd4f67d65f730a8fa",
+    "apps/control-api/app/adapters/openshell/sealed_snapshot.py": "11270b8ba8d2872a02042099c996e64407c738076ac2bd6d6f38f716806dd43b",
+    "apps/control-api/app/adapters/openshell/recovery_keys.py": "192ec16acff0a92c25579d638e86d0618690766bc1008153187b3969a2f00479",
+    "apps/control-api/app/adapters/openshell/target_mutex.py": "cc81c8f0c496fde0fa835ce2411bc0c416bf963f4901e0ce8b4d67212320dec7",
+    "apps/control-api/app/adapters/openshell/cli_backend.py": "b8a1fdc51f26c42b205c34cb38a98419a3ca1ee65dd9bbf87738f1e1081d7165",
+    "apps/control-api/app/openshell_recovery.py": "4570872b96728fd2698554b2b114e9ca43dc0196df968fee987590e4a4789748",
+    "apps/control-api/app/routers/policies.py": "80de39e74d8707ec2ac772fe18f428768bd9ef055aa6083216233cf9483abcf8",
+    "packages/contracts/openshell-operation-recovery.v1.schema.json": "4919973a26fd37b6f6631cc357f12c58f930be9c590a5aa9f1f8434d61ca4342",
+    "scripts/enterprise-experience/owned-openshell-recovery-check.py": "aa8bcbe0616821dd2fefc58effb4512bbc9d36fbb966d1dbd922d3a58d334014",
+    "scripts/enterprise-experience/openshell-deployment-live-check.py": "d4a73e2c574f43f4ca48ba58d51db0aca8961c7c4f9c6266ff66b4d80c4c5fb0",
+    "scripts/enterprise-experience/openshell-recovery-live-worker.py": "876318050da7dedb9e825f9241c4a10130c26cb5056172767d61157b030d35e5",
+    "scripts/enterprise-experience/deployment-live-browser-worker.py": "e2bb048f56aae59f0b2c6dd2f1a16c7dcd95b992616ff7ac1a6bafb316763469"
+  },
+  "web_manifest_sha256": "28b7a761b98ae526828d644acb545e42709ff6b7786920cb34a4cbf401ffb57b",
+  "raw_evidence_reference": "var/optimization-20261007/opt05-reproducible-native-001"
+}

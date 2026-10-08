@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-08",
+  "business_head": "2a70587ab13a33bdaba9b5fa299b4ac8be594a23",
+  "security_source_commit": "78eabcccab0ebdbfe3489b8caf2b246a4f0a10ff",
+  "source_state": "working_tree_with_explicit_uncommitted_inputs",
+  "source_files": 1873,
+  "source_archive_sha256": "8437caadfa769db418d30824a922b936b4446e2dff830705e04d2dcfe9072b14",
+  "source_manifest_sha256": "6d44182dbe25b74ea47deceff2595b210c812579c8331935a34816d3dd33a1e0",
+  "build": {
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "base_image_id": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "overlay_sha256": "db2b7a522f6fe6789c3246b3ef5a4ce7ce32997747cd5153ab0c9f61ef03d7e8",
+    "skill_bundle_sha256": "f1ba92f63565a908a7d65dbb0d1581351a1bc070cd7fa12beb28acd2dd08b6e1",
+    "snapshot_manifest_sha256": "077f7996f9a50ce2f1f527f9376cf774496b502341232aa9b3690c0487080b3d",
+    "checks": {
+      "committed_overlay_and_pinned_hermes": true,
+      "committed_skill_bundle": true,
+      "fresh_native_snapshot": true,
+      "fixed_base_native_image_verified": true,
+      "active_image_records_and_profile_unchanged": true
+    },
+    "image_checks": {
+      "protected_files": true,
+      "protected_ancestors": true,
+      "native_config": true,
+      "legacy_environment_rejected": true,
+      "non_root": true,
+      "skill_inventory": true
+    }
+  },
+  "runtime": {
+    "schema_version": "working-candidate-installed-runtime/v1",
+    "python": "3.13.12",
+    "python_executable_sha256": "2b0644c7d784beddd62218cfce0d8137fd166f74d7d51c2bb660928e7f8a583a",
+    "distribution": "siq-openshell-control",
+    "version": "0.4.0",
+    "source_files_sha256": {
+      "siq_openshell_control/__init__.py": "01f1af7ebf9624ae87aedc68722dfb96a2921ef8dc6bb8f8d049e96c832b4203",
+      "siq_openshell_control/contract.py": "96b19b2dc0ea29e722fff3000f45bed072fc12aefddee9d349afae9c157dc883",
+      "siq_openshell_control/immutable_path_registry.py": "df882f8606421f425561066a7e467b8c127627ca6995d2e425f85e0dc00aa96f",
+      "siq_openshell_control/pool_concurrency.py": "45efe3b401cbfd3b09ea018fa3e6de50e63f864827efe1d227c1c4da9066e679",
+      "siq_openshell_control/pool_registry.py": "8fe4435bc7e7ecea8ce1f86c32cc0c8643de54f02c4c655b2840646638bba1ac",
+      "siq_openshell_control/state.py": "f3bc8682e2c565a235a4362f4a06a1d431d7220689817a7ca670647ff9095826"
+    },
+    "dependencies": {
+      "fastapi": "0.136.1",
+      "uvicorn": "0.46.0",
+      "sqlmodel": "0.0.38",
+      "sqlalchemy": "2.0.49",
+      "pydantic": "2.13.4",
+      "httpx": "0.28.1",
+      "psycopg": "3.3.4"
+    }
+  },
+  "schema_version": "optimization-native-business-evidence/v1",
+  "verification": {
+    "receipts": {
+      "count": 32,
+      "head_hash": "ffa98e1c0117f8640566743cde20dc4a28b0d53e4d23b96c2871ae9a436f956d",
+      "public_key_base64": "frRO3gRqqc3I/rijvyVf9DMkYSIaNunT2QQzxTdCrRI="
+    },
+    "signed_context_count": 17,
+    "cases": {
+      "v830": {
+        "receipt_hash": "88e37eff85526bec978a10cb327405b954e98a9321d629851ead1141225208c8",
+        "tool": "write_file",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "resource_digest": "6633377d8b972d0aaebb8f99b6ba3e6269c1c5c5a71a24fd156ce954e555d92e",
+        "request_run_sha256": "c8fbd63990fad4ac1f3216a394b3a15a7beb1f3565794540a222f1494f7b3837"
+      },
+      "v831": {
+        "receipt_hash": "2a175a2a21b3fbeafda82c32dde4388151b73e5e2faa4d8f766b45300491c3e7",
+        "tool": "write_file",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "resource_digest": "0a34472742ea6ff1d22713e2045de4862a12b6eb4e7518cefe1486b75d2911c1",
+        "request_run_sha256": "82d7c2061047aa0add6b020cf9d461def4a0a65c59eabf0e43738c02abbb757d"
+      },
+      "v832": {
+        "receipt_hash": "ffa98e1c0117f8640566743cde20dc4a28b0d53e4d23b96c2871ae9a436f956d",
+        "tool": "write_file",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "resource_digest": "df7e16d5ca130933908a43b43da86c3b0fc2f1259bff559dcf1c58ca4106c818",
+        "request_run_sha256": "ee3a75fa5734b561313ca72dee3fd2f77283fd50091199711e66c7c7835efd98"
+      }
+    }
+  },
+  "independent_observation": {
+    "passed": true,
+    "cases": {
+      "v830": {
+        "passed": true,
+        "actual_skill_loads": 2,
+        "actual_write_attempts": 1,
+        "file_absent": true,
+        "both_skill_grants_retained": true,
+        "signed_parent_link_verified": true,
+        "openshell_task_directory_writable": true,
+        "all_business_and_cleanup_checks_passed": true
+      },
+      "v831": {
+        "passed": true,
+        "actual_skill_loads": 2,
+        "actual_write_attempts": 1,
+        "file_absent": true,
+        "both_skill_grants_retained": true,
+        "signed_parent_link_verified": true,
+        "openshell_task_directory_writable": true,
+        "all_business_and_cleanup_checks_passed": true
+      },
+      "v832": {
+        "passed": true,
+        "actual_skill_loads": 2,
+        "actual_write_attempts": 1,
+        "file_absent": true,
+        "both_skill_grants_retained": true,
+        "signed_parent_link_verified": true,
+        "openshell_task_directory_writable": true,
+        "all_business_and_cleanup_checks_passed": true
+      }
+    },
+    "prior_23_receipts_unchanged": true,
+    "same_agent_baseline": true,
+    "same_normalized_filesystem_policy": true,
+    "candidate_source_sha256": "f64f7ae0be476a98eb75855ba3a7023c37b7aae86800fd07fe8d4823c8cfa27d",
+    "source_unchanged": true,
+    "repetitions": 3
+  },
+  "limits": [
+    "Working candidate includes 289 inputs differing from business HEAD; clean deployment remains pending.",
+    "Three sequential business requests verify same-task Skill switching, not parallel task isolation.",
+    "Full lifecycle, four-arm evaluation, enterprise and platform gates remain incomplete."
+  ],
+  "artifacts": {
+    "receipts": {
+      "file": "native-working-switch-v830-v832.receipts.jsonl",
+      "sha256": "adfadacf03d6f8ce7fb68aac2169a72e3f537bd23213676916115d1f52eca1e5"
+    },
+    "contexts": {
+      "file": "native-working-switch-v830-v832.contexts.json",
+      "sha256": "c9a35e18620baa51cbd45ec6f057c9c9156301808198d7cd95d9044034f55995"
+    }
+  },
+  "private_result_sha256": {
+    "run-native-business-switch-v830.py": "34b06f3bed81fc0f67c878a29f6ba883dfc06dcd9bb329f9895fe61c5ee197ea",
+    "repeat-native-working-switch-v830-v832.py": "306d13f1bf11bece80cd9f0f89aaa58249fa60e957b8f1ecbf265105454e23b9",
+    "verify-publish-native-switch-v830-v832.py": "938812597106e5b32fb6ff2056760b9714a7a8161ad5a52c5acddad84ff30baf",
+    "native-business-api-v830.json": "4bc57f1fa74cf864f824227405033024c496fd31dcb4ee805fa12c164531aad4",
+    "native-business-api-v831.json": "dd141d29cf28a8a61089b07cde7f54bdee38075208b571825d9db77e5e57fe98",
+    "native-business-api-v832.json": "c4cfe1c8b5b559baafb0ebfbac701b27d4c4cd6b8dc4677724860b7f305db892",
+    "native-switch-v830-cleanup.json": "64c8851b9f72c0f2ca5637711bcdc3fae8e8fd46ee5ac6fbbaa925d03fe5daf8",
+    "native-switch-v831-cleanup.json": "7406eb62609e734d1df73d6d7a8c7531f8dc1d530ef0373402a10a667b4f17ef",
+    "native-switch-v832-cleanup.json": "2ce32dfd8f7ff2f17f940ac67695b2015d13b5285e11403e72a292c2d6acfbbc"
+  }
+}

@@ -118,6 +118,10 @@ func (s *Server) openshellApply(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 400, map[string]any{"error": "target and expected_revision required"})
 		return
 	}
+	if body.Network == nil {
+		writeJSON(w, 400, map[string]any{"error": "explicit network array required"})
+		return
+	}
 	result, err := s.d.Openshell.ApplyAndVerify(body.Target, body.Network, body.ExpectedRevision, body.ExpectAllow, body.ExpectDeny)
 	if err != nil {
 		var conflict *openshell.RevisionConflict

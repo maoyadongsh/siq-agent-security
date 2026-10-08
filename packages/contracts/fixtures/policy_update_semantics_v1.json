@@ -1,0 +1,418 @@
+{
+  "schema": "policy_compile_vectors/v1",
+  "contract": "desired-policy-update-semantics.v1.md",
+  "known_keys": [
+    "audit",
+    "data_scope_refs",
+    "enforcement_mode",
+    "exceptions",
+    "filesystem",
+    "model_routing",
+    "network",
+    "policy_id",
+    "process",
+    "resources",
+    "secrets",
+    "selector",
+    "status",
+    "tool_policies",
+    "tools",
+    "version"
+  ],
+  "vectors": [
+    {
+      "name": "omitted",
+      "expect": "ok",
+      "desired": {},
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact": {
+        "version": 1
+      },
+      "artifact_hash": "2430f1a2ad2982d0067885488a4c89e21ad1d7c83b115ba8f1b20acc88dfaea8",
+      "unsupported": [],
+      "needs_generation": false,
+      "enforcement_mode": "audit_only"
+    },
+    {
+      "name": "null_domains",
+      "expect": "ok",
+      "desired": {
+        "filesystem": null,
+        "process": null,
+        "network": null
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact": {
+        "version": 1
+      },
+      "artifact_hash": "2430f1a2ad2982d0067885488a4c89e21ad1d7c83b115ba8f1b20acc88dfaea8",
+      "unsupported": [],
+      "needs_generation": false,
+      "enforcement_mode": "audit_only"
+    },
+    {
+      "name": "empty_filesystem",
+      "expect": "ok",
+      "desired": {
+        "filesystem": {}
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact": {
+        "version": 1,
+        "filesystem_policy": {
+          "read_only": [],
+          "read_write": []
+        }
+      },
+      "artifact_hash": "f8c50f809b8ef16c4d863540a0fafd6c9277a813b5617814253e40a76fcc5804",
+      "unsupported": [],
+      "needs_generation": true,
+      "enforcement_mode": "audit_only"
+    },
+    {
+      "name": "one_filesystem_list",
+      "expect": "ok",
+      "desired": {
+        "filesystem": {
+          "read_only": [
+            "/data"
+          ]
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact": {
+        "version": 1,
+        "filesystem_policy": {
+          "read_only": [
+            "/data"
+          ],
+          "read_write": []
+        }
+      },
+      "artifact_hash": "df3d11abe13c2e7866c11418356e683c80321d9e6141076d48f26a1aae594e12",
+      "unsupported": [],
+      "needs_generation": true,
+      "enforcement_mode": "audit_only"
+    },
+    {
+      "name": "empty_process",
+      "expect": "ok",
+      "desired": {
+        "process": {}
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact": {
+        "version": 1,
+        "process": {}
+      },
+      "artifact_hash": "3abd2adb147e302798e82c9b988dc4d2fefaf1e120ac79a72467889637d1dcd1",
+      "unsupported": [],
+      "needs_generation": true,
+      "enforcement_mode": "audit_only"
+    },
+    {
+      "name": "process_null_field",
+      "expect": "ok",
+      "desired": {
+        "process": {
+          "run_as": null
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact": {
+        "version": 1,
+        "process": {
+          "run_as": null
+        }
+      },
+      "artifact_hash": "97c3ecf80f56e4667ec7f0e89626f88f7445226e4d717e8489042fb3ac7b8018",
+      "unsupported": [],
+      "needs_generation": true,
+      "enforcement_mode": "audit_only"
+    },
+    {
+      "name": "clear_network",
+      "expect": "ok",
+      "desired": {
+        "network": []
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "artifact": {
+        "version": 1,
+        "network_policies": []
+      },
+      "artifact_hash": "1804a8ff499ab6f8ef7fd50f14a9889d76fa3d0c61b2801c399162a867afdb18",
+      "unsupported": [],
+      "needs_generation": false,
+      "enforcement_mode": "audit_only"
+    },
+    {
+      "name": "unknown_filesystem",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "filesystem": {
+          "include_workdir": false
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "filesystem_policy_unknown_field"
+    },
+    {
+      "name": "filesystem_delete",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "filesystem": {
+          "$delete": [
+            "read_only"
+          ]
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "filesystem_policy_unknown_field"
+    },
+    {
+      "name": "null_list",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "filesystem": {
+          "read_only": null
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "filesystem_policy_invalid"
+    },
+    {
+      "name": "string_list",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "filesystem": {
+          "read_only": "/secret"
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "filesystem_policy_invalid"
+    },
+    {
+      "name": "bool_list",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "filesystem": {
+          "read_only": false
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "filesystem_policy_invalid"
+    },
+    {
+      "name": "non_string_path",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "filesystem": {
+          "read_write": [
+            1
+          ]
+        }
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "filesystem_policy_invalid"
+    },
+    {
+      "name": "filesystem_array",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "filesystem": []
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "filesystem_policy_invalid"
+    },
+    {
+      "name": "process_array",
+      "expect": "reject_unknown_keys",
+      "desired": {
+        "process": []
+      },
+      "capabilities": {
+        "backend": "openshell",
+        "schema_version": "siq.openshell.policy.v1",
+        "dynamic_network_update": true,
+        "provider_credential_injection": false,
+        "items": {
+          "enforcement_mode.audit_only": {
+            "status": "supported",
+            "semantics": "observe",
+            "basis": "t"
+          }
+        }
+      },
+      "error_contains": "process_policy_invalid"
+    }
+  ]
+}

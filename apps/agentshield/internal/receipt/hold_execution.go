@@ -153,7 +153,16 @@ func (e *Engine) ReserveHoldExecution(req HoldExecutionReserve) (*HoldExecutionS
 	reservation.DecisionReceiptID = a.decision.ReceiptID
 	reservation.IssuedAt = now.Format(time.RFC3339Nano)
 	reservation.ToolCallID = &req.RetryToolCallID
-	if reservation.SkillAttribution != nil && reservation.SkillAttribution.Status == SkillAttributionVerified {
+	if a.decision.NativeInvocation != nil {
+		retry := Request{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, TaskID: req.TaskID, RuntimeTaskID: req.RuntimeTaskID,
+			Tool: req.Tool, ToolCallID: req.RetryToolCallID, Params: req.Params}
+		sec, err := e.nativeRetryAuthority(retry, a.decision)
+		if err != nil {
+			return nil, err
+		}
+		reservation.NativeInvocation = sec.Native.Evidence
+		reservation.SkillAttribution = nativeAttribution(sec)
+	} else if reservation.SkillAttribution != nil && reservation.SkillAttribution.Status == SkillAttributionVerified {
 		binding, bindingErr := trustedcontext.CallBinding(req.Platform, req.SessionID, req.AgentID, holdRequestRuntimeTaskID(req.TaskID, req.RuntimeTaskID), req.Tool, req.RetryToolCallID, req.Params)
 		if bindingErr != nil {
 			return nil, ErrHoldExecutionInvalid
@@ -176,6 +185,9 @@ func (e *Engine) ReserveHoldExecution(req HoldExecutionReserve) (*HoldExecutionS
 		return nil, err
 	}
 	a.reservation = &reservation
+	if reservation.NativeInvocation != nil {
+		a.nativeReservationOwned = true
+	}
 	return holdExecutionProjection(a, deadline, "reserved", "hold_execution_reserved"), nil
 }
 

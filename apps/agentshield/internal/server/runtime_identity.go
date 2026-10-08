@@ -183,19 +183,17 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 			runtimeIdentityError(w, err)
 			return
 		}
-		version := "local-runtime-identities/v1"
-		for _, item := range items {
-			if item.FilesystemProfile != "" {
-				version = "local-runtime-identities/v2"
-			}
-		}
-		writeJSON(w, 200, map[string]any{"schema_version": version, "items": items})
+		writeJSON(w, 200, map[string]any{"schema_version": runtimeIdentityListVersion(items), "items": items})
 	case http.MethodPost:
 		var req runtimeidentity.CreateRequest
 		if !readRuntimeIdentityCreate(w, r, &req) {
 			return
 		}
 		if !runtimeIdentityResponseReady(w, r) {
+			return
+		}
+		if req.NativeSkillPolicy != nil && !s.nativeIdentityCreationReady() {
+			writeJSON(w, 503, map[string]string{"error": "native_skill_runtime_unavailable"})
 			return
 		}
 		record, err := s.runtimeIdentities.Create(req)
@@ -213,11 +211,7 @@ func (s *Server) runtimeIdentityCollection(w http.ResponseWriter, r *http.Reques
 			runtimeIdentityError(w, err)
 			return
 		}
-		version := "local-runtime-identity-issued/v1"
-		if record.SchemaVersion == "local-runtime-identity/v2" {
-			version = "local-runtime-identity-issued/v2"
-		}
-		writeJSON(w, 201, map[string]any{"schema_version": version, "identity": summary, "credential_path": path})
+		writeJSON(w, 201, runtimeIdentityIssued(record, summary, path))
 	default:
 		w.WriteHeader(405)
 	}
@@ -290,5 +284,35 @@ func (s *Server) runtimeSessionEnroll(w http.ResponseWriter, r *http.Request) {
 	if record.Platform == "workbuddy" {
 		version = "local-runtime-session-enrolled/v2"
 	}
-	writeJSON(w, 200, map[string]any{"schema_version": version, "identity_id": record.IdentityID, "platform": record.Platform, "agent_id": record.AgentID, "session_id": req.SessionID, "binding_id": b.BindingID, "intent_id": b.IntentID, "expires_at": b.ExpiresAt})
+	response := map[string]any{"schema_version": version, "identity_id": record.IdentityID, "platform": record.Platform, "agent_id": record.AgentID, "session_id": req.SessionID, "binding_id": b.BindingID, "intent_id": b.IntentID, "expires_at": b.ExpiresAt}
+	if record.NativeSkillPolicy != nil {
+		response["schema_version"] = "local-runtime-session-enrolled/v3"
+		response["native_skill_policy"] = record.NativeSkillPolicy
+		response["runtime_state"] = "unverified"
+	}
+	writeJSON(w, 200, response)
+}
+
+func runtimeIdentityListVersion(items []runtimeidentity.Summary) string {
+	version := "local-runtime-identities/v1"
+	for _, item := range items {
+		if item.NativeSkillPolicy != nil {
+			return "local-runtime-identities/v3"
+		}
+		if item.FilesystemProfile != "" {
+			version = "local-runtime-identities/v2"
+		}
+	}
+	return version
+}
+
+func runtimeIdentityIssued(record runtimeidentity.Record, summary runtimeidentity.Summary, path string) map[string]any {
+	version := "local-runtime-identity-issued/v1"
+	if record.FilesystemProfile != "" {
+		version = "local-runtime-identity-issued/v2"
+	}
+	if record.NativeSkillPolicy != nil {
+		version = "local-runtime-identity-issued/v3"
+	}
+	return map[string]any{"schema_version": version, "identity": summary, "credential_path": path}
 }

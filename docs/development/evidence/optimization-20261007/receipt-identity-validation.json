@@ -1,0 +1,109 @@
+{
+  "schema_version": "optimization-validation/v1",
+  "task": "OPT-15",
+  "date": "2026-10-08",
+  "base_commit": "b89d8d1202c9d41ec9deddd2c00be791e8dcf9ad",
+  "scope": "Online decision receipt identity and unambiguous historical hold resolution; no native platform acceptance claim.",
+  "source_sha256": {
+    "apps/agentshield/internal/receipt/engine.go": "667a129681b5677e69b07fae2f1280787f5b7d6fdf71ffb0ed854a89fae2bfbf",
+    "apps/agentshield/internal/receipt/decision_identity_test.go": "dcb4f3243c908bb68e18568f328eafd62b43fe630195e2f4f2dca64f113482cb",
+    "apps/agentshield/internal/server/hold_identity_test.go": "78aa09c17a78159efb3d24d1ee3dcd861788c468e245651cfb20c262d2c810b1",
+    "apps/agentshield/internal/contractfixture/receipts.go": "e1768223208f4a621c88b459a1cada7f37ccb94fcb249fa6d7f1a6207e0b404b",
+    "apps/agentshield/internal/contractfixture/receipts_test.go": "aa6fd969ea1381fb9aedcdb6e34571cbff727c8fa16eaeaa5887ef7bd556fa18",
+    "apps/agentshield/internal/receipt/receipt_test.go": "884c4956d97beeade1496ba9395abdf376ac39c6118ad8c5b06bbcf3b3615776",
+    "apps/agentshield/internal/receipt/authority_gate_test.go": "548a58f768b9bb790b782d5ed413d4f1752be2a9e44b8fa3612a21f62b5cf4d6",
+    "apps/agentshield/internal/skillcontext/native_engine_test.go": "131125ad0d2155dcb54b58435d10be9e13590a7fd276553a1b8b61d090301ded",
+    "apps/agentshield/internal/skillcontext/native_hold_integration_test.go": "a093621caf0de15e5d026204df1012c88ae16e1fd670783e2d98426e2997b39e",
+    "docs/agentshield-dev-spec-v1.md": "fb231d0edd7af4e37f561c0899c146848cb26c17dcd7ecbe4ab5a9624b0a9a60"
+  },
+  "old_behavior_reproduced": {
+    "TestDecisionIdentitySurvivesRepeatedClockAndRestart": "FAIL: repeated clock reused receipt identity",
+    "TestHoldRejectsHistoricalDuplicateIdentity": "FAIL: ambiguous approval returned no error"
+  },
+  "go_batches": [
+    {
+      "log_sha256": "06ae19eb6d7582601def0b825d170091f6f0d23b8f9244c8b4e03c285d456576",
+      "top_level": {
+        "pass": 1742,
+        "skip": 34,
+        "fail": 4
+      },
+      "including_subtests": {
+        "pass": 4195,
+        "skip": 36,
+        "fail": 8
+      },
+      "packages": {
+        "skip": 10,
+        "pass": 43,
+        "fail": 2
+      }
+    },
+    {
+      "log_sha256": "154344c6c357ba3390ec644e46b96c17842a91fd267e17d1cfdf8855be679e47",
+      "top_level": {
+        "pass": 247,
+        "skip": 2
+      },
+      "including_subtests": {
+        "pass": 793,
+        "skip": 2
+      },
+      "packages": {
+        "pass": 3
+      }
+    }
+  ],
+  "latest_per_test_union": {
+    "top_level": {
+      "pass": 1748,
+      "skip": 34
+    },
+    "including_subtests": {
+      "pass": 4205,
+      "skip": 36
+    },
+    "packages": {
+      "skip": 10,
+      "pass": 46
+    }
+  },
+  "checks": {
+    "go_vet_all": true,
+    "scoped_gofmt_clean": true,
+    "targeted_receipt_server_race": true,
+    "receipt_schema_tests_passed": 17,
+    "historical_contract_samples_unchanged": true
+  },
+  "builds": [
+    {
+      "target": "linux/amd64",
+      "sha256": "4632ab6384e07da5f70a5d5f35437f4f3545525c750902ed7802eb5b41895c49",
+      "bytes": 26159959
+    },
+    {
+      "target": "linux/arm64",
+      "sha256": "32577145e7a7da83adf83ce3497620f5b3a79c9dc15fcb1dc2f849968fedd1ff",
+      "bytes": 24566507
+    },
+    {
+      "target": "darwin/arm64",
+      "sha256": "642860dd70273ddab24af90876dcabb6fa7625554d7877e96b7dc0b5b9662223",
+      "bytes": 25024434
+    },
+    {
+      "target": "windows/amd64",
+      "sha256": "94e004570c0cc70e7af95026fbb442d376dcb239f7639f8a3f6f01934fb2235a",
+      "bytes": 26713088
+    }
+  ],
+  "limits": [
+    "Initial full suite failed four top-level deterministic fixture comparisons; affected receipt/skillcontext and new contractfixture packages subsequently passed. Counts are deduplicated latest outcomes, not a second full-suite run.",
+    "Random identity generation adds no user-configurable identity/entropy override. Collision risk is cryptographic, not mathematical impossibility.",
+    "Historical duplicate identities retain valid signatures but cannot be approved by ambiguous ID. No historical receipt is rewritten.",
+    "Management approval uses a linear streaming signature check; no large-history performance result.",
+    "Builds are not signed publisher releases or native Windows/macOS acceptance.",
+    "Existing real-business frozen candidate precedes this fix; final candidate core permissions matrix remains required."
+  ],
+  "OPT15_complete": false
+}

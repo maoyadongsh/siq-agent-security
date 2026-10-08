@@ -1,0 +1,46 @@
+{
+  "schema_version": "siq.native-skill-source-validation/v1",
+  "recorded_at": "2026-10-07T06:21:34.252098+00:00",
+  "scope": "source_snapshot_component_and_pinned_source_review",
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/native_source.py": "9e1fcedb44fa0ebc01ea585c694f96e8fa78c80b42129e847a35dcac16a009ce",
+    "adapters/runtime/hermes-agentshield/tests/test_native_source.py": "52edfd92dd172db36f4164d8b869fcdadbc7ae1731af11d540cc85139c693468",
+    "apps/control-api/app/tests/test_native_skill_source_contract.py": "75731cdcad49d2536e03e96d993b6d948f096b2d10706e276aa874d9e5a88b6b",
+    "packages/contracts/native-skill-source.v1.schema.json": "053e20192c082a234f9d0f976d80095c9ab1a03cd9bdbc159bc1dbc9905c9e2c"
+  },
+  "reviewed_business_source": {
+    "image": "sha256:fe5bdcebbc09b2099a3b387a675a4e8d879b8491bdc6246d93fbc8abb51e1f02",
+    "files": {
+      "model_tools.py": {
+        "sha256": "5227bfe30f7c3f6eb20d064f648420138031e038d38eac2829d25b749739ad11",
+        "bytes": 76703
+      },
+      "tools/registry.py": {
+        "sha256": "f95d011cae75f0426dd77cb1e25df6bebb61a067d795312df297cb877dd616f5",
+        "bytes": 56079
+      },
+      "run_agent.py": {
+        "sha256": "5b2e7083680e6c728f2306adc73e5f814c444aaa9ff3e3b840206142c67a7149",
+        "bytes": 438027
+      },
+      "hermes_cli/lifecycle.py": {
+        "sha256": "e820ed8114d7062d53223113cc053c737d4ced6b624ce1fbe88f79ad8b2a26bd",
+        "bytes": 1957
+      },
+      "tools/skills_tool.py": {
+        "sha256": "7e258db459eff5906e7a29f1e2c8fc061fbd46aadf5633ac49d1ea5949cfe3e4",
+        "bytes": 85778
+      }
+    }
+  },
+  "validation": {
+    "focused_tests": 47,
+    "hermes_adapter_tests": 230,
+    "related_contract_tests": 293,
+    "authenticated_channel_integration_included_in_focused_tests": true,
+    "model_calls": 0
+  },
+  "hermes_native_hooks_connected": false,
+  "openshell_execution": false,
+  "application_authority_enabled": false
+}

@@ -1,0 +1,268 @@
+{
+  "sec-59e5736601593a9466af456d71f0b815": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-59e5736601593a9466af456d71f0b815",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-b98d1a9aafb833b94170de6beaf641d8",
+      "agent_id": "hri-b98d1a9aafb833b94170de6beaf641d8",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-2db31721113cf648:siq_analysis:78b8dc7f295ff93c4517652ad48cee182e071674a782759625b11c9be90658c3",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-2db31721113cf648:siq_analysis:f3c0a529c216150ddd44c8207ade39124f8382e627b418d1aba643d4f664b52d"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-709dde5ad827b724b3cb6b160ca307dd32e9fe242c38e89882d3e8280fc0a38e",
+      "claim_signature": "9d9e4572b66f9c5d713fb6e864f8383ca59bfd304ef2834f5246f9a64b9756dc0e6bfb7161e91d4c5db136d40f5a6807a457b836b9ab64d30ebeb20b76d2060e"
+    },
+    "authority": {
+      "grant_id": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "grant_digest": "852ca29c2c820b41fc4d821ec2a1bd12b3310bb532a32a97d3ad6134e34f9357"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T04:58:05.802054847Z",
+    "expires_at": "2026-10-08T05:07:12.605432Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "9542d7cdc7ad6cbbd44a61c99878bbceb2798cea1d1cdd18f17be62036cc357c2a5eb82b803f8579a259c6014c5a4772613092671f102dd8b66269a2b9c46e03",
+    "agent_authority": {
+      "grant_id": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f",
+      "grant_digest": "7babafb3182c758cdbd905b4329bf5fd616eac67e203d9da8314ca02c8e00a5a"
+    },
+    "loader": {
+      "load_id": "nload-23c61cb1097645238b2afca4fa8fed61",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "sec-107ae7bde1c460c35236dc7f379bdaaf": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-107ae7bde1c460c35236dc7f379bdaaf",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-b98d1a9aafb833b94170de6beaf641d8",
+      "agent_id": "hri-b98d1a9aafb833b94170de6beaf641d8",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-117370240663bbab:siq_analysis:ba35c39bb2efb686faa6e55a46c9171c0f7241f1d1bdc84600c6151266485d3e",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-117370240663bbab:siq_analysis:c1ee1f2ce2aa665bc5348a6d45e3fb3be0ea36479f021cae280f933279387268"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-709dde5ad827b724b3cb6b160ca307dd32e9fe242c38e89882d3e8280fc0a38e",
+      "claim_signature": "9d9e4572b66f9c5d713fb6e864f8383ca59bfd304ef2834f5246f9a64b9756dc0e6bfb7161e91d4c5db136d40f5a6807a457b836b9ab64d30ebeb20b76d2060e"
+    },
+    "authority": {
+      "grant_id": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "grant_digest": "852ca29c2c820b41fc4d821ec2a1bd12b3310bb532a32a97d3ad6134e34f9357"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T05:00:06.895761355Z",
+    "expires_at": "2026-10-08T05:09:19Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "15a700acc4abba1f245db4dbe04c6bf5d78e9cab1773a74a6fe33a27c7a8f96c54273c7f71c1a21e141689a1ec114d20d4ae52ed82f422c941dc9ee23730e807",
+    "agent_authority": {
+      "grant_id": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f",
+      "grant_digest": "7babafb3182c758cdbd905b4329bf5fd616eac67e203d9da8314ca02c8e00a5a"
+    },
+    "loader": {
+      "load_id": "nload-78385d06164d463e81762c356bf26b61",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "sec-0f334a620ddf9f9cfc8c4fe35b1b4bf7": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-0f334a620ddf9f9cfc8c4fe35b1b4bf7",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-b98d1a9aafb833b94170de6beaf641d8",
+      "agent_id": "hri-b98d1a9aafb833b94170de6beaf641d8",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-1eb7fc7e143aa72b:siq_analysis:144ec5c561a949317984bfb7b0c4eede8c572de62d2d814707a08edcadf65e2f",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-1eb7fc7e143aa72b:siq_analysis:1d20816e6db8d1e4b986f6572d5ff864a131f559c4c0bb091b05b9166ed2a285"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-709dde5ad827b724b3cb6b160ca307dd32e9fe242c38e89882d3e8280fc0a38e",
+      "claim_signature": "9d9e4572b66f9c5d713fb6e864f8383ca59bfd304ef2834f5246f9a64b9756dc0e6bfb7161e91d4c5db136d40f5a6807a457b836b9ab64d30ebeb20b76d2060e"
+    },
+    "authority": {
+      "grant_id": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "grant_digest": "852ca29c2c820b41fc4d821ec2a1bd12b3310bb532a32a97d3ad6134e34f9357"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T05:05:26.190594635Z",
+    "expires_at": "2026-10-08T05:14:35.311287Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "b7da6b153ae73304f54d4744d7b7f048f3f60f4db47b7f60ab7e5e93438fc0cd51f25998f2758ee0fc31027713b0241cbf92f14fae78e69139528835665c3f07",
+    "agent_authority": {
+      "grant_id": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f",
+      "grant_digest": "7babafb3182c758cdbd905b4329bf5fd616eac67e203d9da8314ca02c8e00a5a"
+    },
+    "loader": {
+      "load_id": "nload-fe55aa6c8f794c3380b8b58c7b542a98",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "sec-ffa7366806b3382add3db6c553a5060d": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-ffa7366806b3382add3db6c553a5060d",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-b98d1a9aafb833b94170de6beaf641d8",
+      "agent_id": "hri-b98d1a9aafb833b94170de6beaf641d8",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-35b3bee3bf9a07dc:siq_analysis:9cbfed170c430c49c63a21a72fa8e647ad1f753e5caca54e10cf4d4fb2f0d9b9",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-35b3bee3bf9a07dc:siq_analysis:552eca722647576854f3a7c2faf5fbf6cbc09b6b8c68893cfc0a46daa6ad7264"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-709dde5ad827b724b3cb6b160ca307dd32e9fe242c38e89882d3e8280fc0a38e",
+      "claim_signature": "9d9e4572b66f9c5d713fb6e864f8383ca59bfd304ef2834f5246f9a64b9756dc0e6bfb7161e91d4c5db136d40f5a6807a457b836b9ab64d30ebeb20b76d2060e"
+    },
+    "authority": {
+      "grant_id": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "grant_digest": "852ca29c2c820b41fc4d821ec2a1bd12b3310bb532a32a97d3ad6134e34f9357"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T05:18:55.603120826Z",
+    "expires_at": "2026-10-08T05:28:09.605715Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "a157551dd463c6c7d956a04703f0ca3f4bdad7a1e524591074aedd20c044ccb33e82084cd292eafcd7888fe854b9c41864db9507836d7254e6524101f9c0d909",
+    "agent_authority": {
+      "grant_id": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f",
+      "grant_digest": "7babafb3182c758cdbd905b4329bf5fd616eac67e203d9da8314ca02c8e00a5a"
+    },
+    "loader": {
+      "load_id": "nload-0223cfecb06b4530930789dbd7dc9bbf",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "sec-8c7f85b254d3ddd2f9bbac3a17d81428": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-8c7f85b254d3ddd2f9bbac3a17d81428",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-b98d1a9aafb833b94170de6beaf641d8",
+      "agent_id": "hri-b98d1a9aafb833b94170de6beaf641d8",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-e32c8fa02fb4c579:siq_analysis:cbbc5f4b2c9903d9b1b6480e0304668f68fe68329ba81b639045495ddbac728e",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-e32c8fa02fb4c579:siq_analysis:8f80a387f09fb15aedea506ff001b50da0236a3ce0b8a39675a2aded93842148"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-709dde5ad827b724b3cb6b160ca307dd32e9fe242c38e89882d3e8280fc0a38e",
+      "claim_signature": "9d9e4572b66f9c5d713fb6e864f8383ca59bfd304ef2834f5246f9a64b9756dc0e6bfb7161e91d4c5db136d40f5a6807a457b836b9ab64d30ebeb20b76d2060e"
+    },
+    "authority": {
+      "grant_id": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "grant_digest": "852ca29c2c820b41fc4d821ec2a1bd12b3310bb532a32a97d3ad6134e34f9357"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T05:20:44.576640051Z",
+    "expires_at": "2026-10-08T05:29:55Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "834d755bba9ca2c8cdeadcc2d46bacb88286c4b18d87bbe353b5bf58678927940a7d7df2cf012939237b85a795173726f358c213582874adbef8366450af7c08",
+    "agent_authority": {
+      "grant_id": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f",
+      "grant_digest": "7babafb3182c758cdbd905b4329bf5fd616eac67e203d9da8314ca02c8e00a5a"
+    },
+    "loader": {
+      "load_id": "nload-71491f0763f043819cd7ee0f55a6b809",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "sec-469bb8bc742e40724d6139df7a41ae8a": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-469bb8bc742e40724d6139df7a41ae8a",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-b98d1a9aafb833b94170de6beaf641d8",
+      "agent_id": "hri-b98d1a9aafb833b94170de6beaf641d8",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-b497ca55077446fc:siq_analysis:c7278f9dac4cb5a0344e66d0a53aa68e5a04eced07aa5a3ebb743875454626f6",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-b497ca55077446fc:siq_analysis:94ef92e9cc70e403256b07f381a5b4ea0e2be97e31b296b445550281543d219c"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-709dde5ad827b724b3cb6b160ca307dd32e9fe242c38e89882d3e8280fc0a38e",
+      "claim_signature": "9d9e4572b66f9c5d713fb6e864f8383ca59bfd304ef2834f5246f9a64b9756dc0e6bfb7161e91d4c5db136d40f5a6807a457b836b9ab64d30ebeb20b76d2060e"
+    },
+    "authority": {
+      "grant_id": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "grant_digest": "852ca29c2c820b41fc4d821ec2a1bd12b3310bb532a32a97d3ad6134e34f9357"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T05:27:49.371471235Z",
+    "expires_at": "2026-10-08T05:36:28.855198Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "4674e4313553e69341b9a213c7331c1e0566114daf4f23a54dd0f97e536b8fa1fa6f53c637b1578353287c050d6f149f4eff0f0679964d51e264c2d4de3ca70e",
+    "agent_authority": {
+      "grant_id": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f",
+      "grant_digest": "7babafb3182c758cdbd905b4329bf5fd616eac67e203d9da8314ca02c8e00a5a"
+    },
+    "loader": {
+      "load_id": "nload-1ea9a95eb7e842c8b157e7435482bea0",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "sec-fe7fc8c2e5e7ffd718a591fcf8f94213": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-fe7fc8c2e5e7ffd718a591fcf8f94213",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-b98d1a9aafb833b94170de6beaf641d8",
+      "agent_id": "hri-b98d1a9aafb833b94170de6beaf641d8",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-41d9cf1be6e1c727:siq_analysis:4558815395b129f7a0a418f7f253d66431580633a4499d1a161e09792e5f0d80",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-41d9cf1be6e1c727:siq_analysis:e8cd11b79de29a3a34f845948d317a304649c2710797871dfe0ecc3a6c79ee59"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-709dde5ad827b724b3cb6b160ca307dd32e9fe242c38e89882d3e8280fc0a38e",
+      "claim_signature": "9d9e4572b66f9c5d713fb6e864f8383ca59bfd304ef2834f5246f9a64b9756dc0e6bfb7161e91d4c5db136d40f5a6807a457b836b9ab64d30ebeb20b76d2060e"
+    },
+    "authority": {
+      "grant_id": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "grant_digest": "852ca29c2c820b41fc4d821ec2a1bd12b3310bb532a32a97d3ad6134e34f9357"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T05:29:35.053143282Z",
+    "expires_at": "2026-10-08T05:38:50.990133Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "7549d258f1ab74486f9c7b0c01dddb808831584025b59fc528011efdc88d80149e39edbf01a1a31f176c12303d95e0d6e6a8c0d9b31ceebab4070831c557ae0f",
+    "agent_authority": {
+      "grant_id": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f",
+      "grant_digest": "7babafb3182c758cdbd905b4329bf5fd616eac67e203d9da8314ca02c8e00a5a"
+    },
+    "loader": {
+      "load_id": "nload-c700cf20c2d24de895e109d1bfc4b7f4",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  }
+}

@@ -524,6 +524,7 @@ class Deployment(Base):
     change_request_id: Mapped[str] = mapped_column(String(64), ForeignKey("change_request.id"))
     # P0-1：target 服务端从 RuntimeBinding.backend_target_id 解析，客户端不可指定
     target: Mapped[str] = mapped_column(String(128))
+    execution_backend: Mapped[str | None] = mapped_column(String(32), nullable=True)
     runtime_binding_id: Mapped[str | None] = mapped_column(
         String(64), ForeignKey("runtime_binding.id"), nullable=True, index=True
     )
@@ -535,6 +536,72 @@ class Deployment(Base):
     # pending|sent|verifying|effective|failed|rolled_back
     status: Mapped[str] = mapped_column(String(16), default="pending", index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class OpenShellBehaviorOperation(Base):
+    """Single-use probe coordination; accepted observations are not a deployment grade."""
+
+    __tablename__ = "openshell_behavior_operation"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "nonce_sha256", name="uq_openshell_behavior_nonce"),
+        CheckConstraint("epoch >= 0", name="ck_openshell_behavior_epoch"),
+        CheckConstraint(
+            "(profile_id IS NULL AND profile_sha256 IS NULL) OR "
+            "(profile_id IS NOT NULL AND profile_sha256 IS NOT NULL)",
+            name="ck_openshell_behavior_profile_pair",
+        ),
+        CheckConstraint(
+            "state IN ('prepared','running','accepted','rejected','unknown','expired')",
+            name="ck_openshell_behavior_state",
+        ),
+    )
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    deployment_id: Mapped[str] = mapped_column(String(64), ForeignKey("deployment.id"), index=True)
+    operation_id: Mapped[str] = mapped_column(String(64), ForeignKey("openshell_operation.id"))
+    challenge: Mapped[dict] = mapped_column(JSON)
+    challenge_digest: Mapped[str] = mapped_column(String(64))
+    profile_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    profile_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    nonce_sha256: Mapped[str] = mapped_column(String(64))
+    state: Mapped[str] = mapped_column(String(32), default="prepared")
+    epoch: Mapped[int] = mapped_column(Integer, default=0)
+    owner_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    result_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    reason_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
+class OpenShellOperation(Base):
+    """Private encrypted recovery journal; never serialized as a public receipt."""
+
+    __tablename__ = "openshell_operation"
+    __table_args__ = (
+        UniqueConstraint("deployment_id", name="uq_openshell_operation_deployment"),
+        CheckConstraint("epoch >= 0", name="ck_openshell_operation_epoch"),
+        CheckConstraint(
+            "state IN ('prepared','applying','applied','rollback_pending','rolled_back','unknown')",
+            name="ck_openshell_operation_state",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(64), ForeignKey("tenant.id"), index=True)
+    deployment_id: Mapped[str] = mapped_column(String(64), ForeignKey("deployment.id"))
+    origin: Mapped[dict] = mapped_column(JSON)
+    sealed_snapshot: Mapped[dict] = mapped_column(JSON)
+    state: Mapped[str] = mapped_column(String(32))
+    epoch: Mapped[int] = mapped_column(Integer, default=0)
+    applied_revision: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    applied_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    restored_revision: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    restored_digest: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
 class EdgeTask(Base):

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security/contracts/native-skill-managed-session.v1.schema.json",
+  "title": "Trusted native Skill managed session",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "native-skill-managed-session/v1"
+    },
+    "issuer_id": {
+      "const": "local-admin"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signing_schema": {
+      "const": "local_canonical/v1"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{128}$"
+    },
+    "agent_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grant_id",
+        "grant_digest"
+      ],
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "grant_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "\u7b7e\u53d1\u65f6 daemon \u73b0\u573a\u8ba1\u7b97\u7684 grant canonical \u5b57\u8282 sha256\uff1b\u8c03\u7528\u65b9\u63d0\u4f9b\u7684\u503c\u4e00\u5f8b\u5ffd\u7565"
+        }
+      }
+    },
+    "registration_id": {
+      "type": "string",
+      "pattern": "^nsess-[0-9a-f]{32}$"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "instance_id",
+        "agent_id",
+        "session_id"
+      ],
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^hi-[0-9a-f]{32}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^hri-[0-9a-f]{32}$"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    },
+    "runtime_artifact_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "issuer_id",
+    "issued_at",
+    "expires_at",
+    "signing_schema",
+    "signature",
+    "agent_authority",
+    "registration_id",
+    "subject",
+    "runtime_artifact_sha256"
+  ]
+}

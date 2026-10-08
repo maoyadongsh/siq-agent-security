@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq.dev/contracts/deployment-behavior-profiles.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "deployment_id",
+    "profiles"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "deployment-behavior-profiles/v1"
+    },
+    "deployment_id": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "profiles": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "profile_id",
+          "profile_sha256",
+          "issued_at",
+          "expires_at",
+          "timeout_ms",
+          "scope"
+        ],
+        "properties": {
+          "profile_id": {
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          },
+          "profile_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "maxLength": 64
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timeout_ms": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 10000
+          },
+          "scope": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "policy_revision",
+              "policy_digest",
+              "transport",
+              "endpoint",
+              "allow_path",
+              "deny_path",
+              "attempts"
+            ],
+            "properties": {
+              "target": {
+                "type": "string",
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+              },
+              "policy_revision": {
+                "type": "string",
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+              },
+              "policy_digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$",
+                "maxLength": 64
+              },
+              "transport": {
+                "enum": [
+                  "direct_tcp",
+                  "http_connect"
+                ]
+              },
+              "endpoint": {
+                "type": "string",
+                "maxLength": 21
+              },
+              "allow_path": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "deny_path": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "attempts": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 10
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

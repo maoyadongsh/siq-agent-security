@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "native-host-verified v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "nonce",
+    "subject",
+    "artifact_sha256",
+    "expires_at",
+    "install_mounts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "native-host-verified/v1"
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "instance_id",
+        "agent_id",
+        "session_id"
+      ],
+      "properties": {
+        "platform": {
+          "const": "hermes"
+        },
+        "instance_id": {
+          "type": "string",
+          "pattern": "^hi-[a-f0-9]{32}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^hri-[a-f0-9]{32}$"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        },
+        "task_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+        }
+      }
+    },
+    "artifact_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "install_mounts": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instance_id",
+          "install_id",
+          "claim_signature",
+          "host_root",
+          "runtime_root"
+        ],
+        "properties": {
+          "instance_id": {
+            "type": "string",
+            "pattern": "^hi-[a-f0-9]{32}$"
+          },
+          "install_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+          },
+          "claim_signature": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{128}$"
+          },
+          "host_root": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 4096,
+            "pattern": "^/"
+          },
+          "runtime_root": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 4096,
+            "pattern": "^/"
+          }
+        }
+      }
+    }
+  },
+  "$comment": "See native-host-online.v1.md for authentication, 64 KiB framing, kernel verification, canonical paths and live lease constraints. Samples contain synthetic credentials only."
+}

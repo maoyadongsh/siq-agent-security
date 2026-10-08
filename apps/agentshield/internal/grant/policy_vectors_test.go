@@ -12,7 +12,16 @@ import (
 )
 
 func TestPolicyCompileVectorsV1(t *testing.T) {
-	raw, err := os.ReadFile(policyCompileFixturePath(t))
+	checkPolicyVectors(t, policyCompileFixturePath(t))
+}
+
+func TestPolicyUpdateSemanticsV1(t *testing.T) {
+	checkPolicyVectors(t, filepath.Join(filepath.Dir(policyCompileFixturePath(t)), "policy_update_semantics_v1.json"))
+}
+
+func checkPolicyVectors(t *testing.T, path string) {
+	t.Helper()
+	raw, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}

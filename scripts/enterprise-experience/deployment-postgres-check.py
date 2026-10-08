@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Ephemeral loopback PostgreSQL migration and durable deployment race checks."""
 
+import base64
 import hashlib
 import importlib.util
 import json
@@ -27,6 +28,7 @@ def worker():
     from app.main import app
     from app.routers import deployment_submission as route
     from app.tests import test_deployment_submission as tests
+    from app.tests import test_optimization_boundaries as boundary_tests
     from fastapi.testclient import TestClient
     from sqlalchemy import text
 
@@ -42,6 +44,15 @@ def worker():
             headers=headers,
             json={"name": "isolated-postgres", "mode": "enforce"},
         ).json()
+        for endpoint in ("policies", "deployments", "runtime-bindings"):
+            for requested, expected in ((-1, 50), (0, 50), (1, 1), (200, 200), (201, 200)):
+                boundary_tests.test_lists_use_bounded_compatible_limits(
+                    client, headers, endpoint, requested, expected
+                )
+        boundary_tests.test_lists_expose_next_page_without_cross_tenant_rows(
+            client, headers, {**headers, "X-Dev-Tenant-Id": "other-pg-tenant"}, env
+        )
+        checks["postgres_bounded_pagination_and_tenant_isolation"] = True
         tests.test_durable_submit_replay_and_exact_readback(client, headers, env)
         checks["postgres_submit_replay_and_audit"] = True
         for name in [
@@ -129,6 +140,48 @@ def worker():
             assert connection.scalar(text("SELECT count(*) FROM deployment_submission")) == before
             connection.rollback()
         checks["populated_reservations_direct_migration_guard"] = True
+        spec = importlib.util.spec_from_file_location(
+            "device_scope_migration",
+            ROOT / "apps/control-api/migrations/versions/0020_discovery_device_scope.py",
+        )
+        migration = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(migration)
+        with pytest.raises(RuntimeError, match="device-scoped discovery cannot be merged"):
+            migration.downgrade()
+        checks["device_scope_direct_downgrade_refused"] = True
+        from app.db import session_scope
+        from app.models import Deployment
+        from sqlalchemy import select
+
+        with session_scope() as session:
+            row = session.scalar(select(Deployment).where(
+                Deployment.execution_backend == "fake", Deployment.status == "sent",
+            ))
+            assert row is not None
+            dep_id, original_status = row.id, row.status
+        with pytest.MonkeyPatch.context() as patch:
+            patch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "none")
+            denied = client.post(f"/api/v1/deployments/{dep_id}/rollback", headers=headers, json={})
+            assert denied.status_code == 409 and denied.json()["detail"] == "deployment_backend_changed"
+        with session_scope() as session:
+            assert session.get(Deployment, dep_id).status == original_status
+        checks["postgres_backend_origin_survives_configuration_switch"] = True
+        spec = importlib.util.spec_from_file_location(
+            "backend_origin_migration", ROOT / "apps/control-api/migrations/versions/0029_deployment_backend_origin.py",
+        )
+        migration = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(migration)
+        with get_engine().connect() as connection:
+            before = connection.scalar(text("SELECT count(*) FROM deployment WHERE execution_backend IS NOT NULL"))
+            assert before > 0
+            with (
+                Operations.context(MigrationContext.configure(connection)),
+                pytest.raises(RuntimeError, match="deployment backend origin must be preserved"),
+            ):
+                migration.downgrade()
+            assert connection.scalar(text("SELECT count(*) FROM deployment WHERE execution_backend IS NOT NULL")) == before
+            connection.rollback()
+        checks["backend_origin_direct_downgrade_refused"] = True
     print(json.dumps({"passed": True, "checks": checks}))
 
 
@@ -201,6 +254,11 @@ def main():
         else:
             raise RuntimeError("isolated PostgreSQL readiness timeout")
         with tempfile.TemporaryDirectory(prefix="siq-pg-submission-") as temporary:
+            recovery_keys = Path(temporary) / "synthetic-recovery-keys.json"
+            recovery_keys.write_text(json.dumps({
+                "active_key_id": "test-only", "keys": {"test-only": base64.b64encode(secrets.token_bytes(32)).decode()},
+            }))
+            recovery_keys.chmod(0o600)
             settings = {
                 k: v for k, v in os.environ.items() if k in ("PATH", "HOME", "LANG")
             }
@@ -210,6 +268,7 @@ def main():
                     "SIQ_AS_ENFORCEMENT_BACKEND": "fake",
                     "SIQ_AS_DATABASE_URL": f"postgresql+psycopg://postgres:{password}@127.0.0.1:{port}/postgres",
                     "SIQ_AS_SIGNING_KEY_FILE": str(Path(temporary) / "signing.seed"),
+                    "SIQ_AS_OPENSHELL_RECOVERY_KEYRING_FILE": str(recovery_keys),
                 }
             )
             api = ROOT / "apps/control-api"
@@ -256,9 +315,9 @@ def main():
             )
             assert (
                 down.returncode != 0
-                and "device-scoped discovery cannot be merged" in down.stderr
+                and "openshell recovery journal must be preserved" in down.stderr
             )
-            proof["checks"]["device_scope_automatic_downgrade_refused"] = True
+            proof["checks"]["journal_automatic_downgrade_refused"] = True
             with psycopg.connect(
                 host="127.0.0.1", port=int(port), dbname="postgres",
                 user="postgres", password=password, connect_timeout=2,
@@ -286,14 +345,45 @@ def main():
             (out / "scheduler-refused-downgrade.log").write_text(
                 (scheduler_down.stdout + scheduler_down.stderr).replace(password, "[REDACTED]")
             )
-            assert scheduler_down.returncode != 0 and "discovery schedule history must be preserved" in scheduler_down.stderr
+            assert scheduler_down.returncode != 0 and "openshell recovery journal must be preserved" in scheduler_down.stderr
             with psycopg.connect(
                 host="127.0.0.1", port=int(port), dbname="postgres",
                 user="postgres", password=password, connect_timeout=2,
             ) as connection:
                 assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == migrated_head
                 assert connection.execute("SELECT count(*) FROM discovery_schedule_run").fetchone()[0] == 1
-            proof["checks"]["scheduler_postgres_populated_downgrade_refused"] = True
+                before_journal = connection.execute("SELECT count(*) FROM openshell_operation").fetchone()[0]
+            proof["checks"]["automatic_downgrade_keeps_scheduler_history"] = True
+            journal_worker = ROOT / "scripts/enterprise-experience/openshell-journal-postgres-worker.py"
+            journal_result = run(
+                [sys.executable, str(journal_worker)], cwd=api,
+                env={**settings, "SIQ_JOURNAL_PG_FIXTURE": "ephemeral-harness-only"},
+            )
+            (out / "journal-worker.log").write_text(
+                (journal_result.stdout + journal_result.stderr).replace(password, "[REDACTED]")
+            )
+            assert journal_result.returncode == 0, "journal PostgreSQL check failed; inspect redacted log"
+            journal_proof = json.loads(journal_result.stdout)
+            assert journal_proof["passed"] is True
+            proof["checks"].update(journal_proof["checks"])
+            journal_down = run(
+                [str(api / ".venv/bin/alembic"), "downgrade", "0029"], cwd=api, env=settings,
+            )
+            (out / "journal-refused-downgrade.log").write_text(
+                (journal_down.stdout + journal_down.stderr).replace(password, "[REDACTED]")
+            )
+            assert (
+                journal_down.returncode != 0
+                and "openshell recovery journal must be preserved" in journal_down.stderr
+            )
+            with psycopg.connect(
+                host="127.0.0.1", port=int(port), dbname="postgres",
+                user="postgres", password=password, connect_timeout=2,
+            ) as connection:
+                assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == migrated_head
+                assert connection.execute("SELECT count(*) FROM openshell_operation").fetchone() == (before_journal + 1,)
+            proof["checks"]["journal_populated_downgrade_preserves_history"] = True
+            proof["journal_worker_sha256"] = hashlib.sha256(journal_worker.read_bytes()).hexdigest()
             proof.update(
                 {
                     "schema_version": "deployment-postgres-check/v1",

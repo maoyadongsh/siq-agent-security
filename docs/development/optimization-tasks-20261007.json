@@ -1,0 +1,558 @@
+{
+  "schema_version": "optimization-tasks/v1",
+  "plan": "docs/development/SIQ_Agent_Security_优化开发方案_20261007-102651.md",
+  "branch": "codex/security-optimization-20261007",
+  "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+  "tasks": [
+    {
+      "id": "OPT-00",
+      "title": "基线与既有任务去重",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "main 与 origin/main 均为 c41347579ebe67c7f732d0e523722e489f831039；受跟踪文件起始无修改",
+        "分支 codex/security-optimization-20261007 已创建",
+        "已对照 SEC-F01–SEC-F10；OPT-06 关联 F05，OPT-03/14 关联 F08，OPT-15 的性能子项关联 F06；其余旧项不隐式扩展进本轮",
+        "开发环境 Linux arm64 / Go 1.26.5 / Node 22.22.2；跨平台原生环境在对应工作包核实"
+      ],
+      "residual_limits": []
+    },
+    {
+      "id": "OPT-01",
+      "title": "回执链并发一致性",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt01-opt02-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "同一 Chain 对象内同步；不替代 OS/跨进程 Writer；不改变已提交签名行遇 checkpoint 失败语义"
+      ]
+    },
+    {
+      "id": "OPT-02",
+      "title": "生产构建与身份边界",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt01-opt02-validation-20261007.md",
+        "docs/development/optimization-opt02-consumers-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "受控 OIDC/JWKS 测试，不是客户 IdP 联验；前端构建不代替后端授权"
+      ]
+    },
+    {
+      "id": "OPT-03",
+      "title": "扫描资源预算与限流",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F08"
+      ],
+      "evidence": [
+        "docs/development/optimization-opt03-opt14-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "进程内配额；多副本总预算由部署分配，不宣称共享集群限流。"
+      ]
+    },
+    {
+      "id": "OPT-04",
+      "title": "错误输入与分页",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt04-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "pending 进程诊断不等于持久幂等；OPT-06 单独验证；交叉构建不代替原生平台验收。"
+      ]
+    },
+    {
+      "id": "OPT-05",
+      "title": "OpenShell持久化回滚与后端绑定",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt05-backend-validation-20261007.md",
+        "docs/development/optimization-opt05-journal-validation-20261007.md",
+        "docs/development/optimization-opt05-online-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "未知外部写入结果不自动重放；目标锁仅约束同数据库的协作写者，不阻止外部管理员或替代后端原子 CAS。",
+        "真实联验使用 OpenShell 0.0.83 与隔离开发身份，不代表客户生产 IAM、任意版本或 Windows/macOS 原生验收。"
+      ]
+    },
+    {
+      "id": "OPT-06",
+      "title": "pending提升幂等",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F05"
+      ],
+      "evidence": [
+        "docs/development/optimization-opt06-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "旧式无来源记录不能猜测去重；不修复来源日志改写/轮换；大型历史扫描性能留在 OPT-15。"
+      ]
+    },
+    {
+      "id": "OPT-07",
+      "title": "策略语义与部署入口",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt07-validation-20261007.md"
+      ],
+      "residual_limits": [
+        "静态 generation 仍不支持，明确拒绝而非动态应用；企业与本地管理员入口采用不同身份合同，不宣称相同审批流程。",
+        "本批为语义、受控 CLI 入口矩阵与现有回归；真实业务同候选效果由 OPT-08–10 验收。"
+      ]
+    },
+    {
+      "id": "OPT-08",
+      "title": "日常Skill上下文",
+      "status": "implementing",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/adr/0056-native-skill-invocation-authority.md",
+        "docs/development/optimization-opt08-context-validation-20261007.md",
+        "docs/development/optimization-opt08-store-validation-20261007.md",
+        "docs/development/optimization-opt08-call-validation-20261007.md",
+        "docs/development/optimization-opt08-engine-validation-20261007.md",
+        "docs/development/optimization-opt08-hold-validation-20261007.md",
+        "docs/development/optimization-opt08-compat-validation-20261007.md",
+        "docs/development/optimization-opt08-consumers-validation-20261007.md",
+        "docs/development/optimization-opt08-enrollment-validation-20261007.md",
+        "docs/development/optimization-opt08-readback-validation-20261007.md",
+        "docs/development/optimization-opt08-channel-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-channel.json",
+        "docs/development/optimization-opt08-source-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-skill-source.json",
+        "docs/development/optimization-opt08-dispatch-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-hermes-dispatch.json",
+        "docs/development/optimization-opt08-host-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-bridge.json",
+        "docs/development/optimization-opt08-install-source-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-install-source.json",
+        "docs/development/optimization-opt08-runtime-guard-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-runtime-guard.json",
+        "docs/development/optimization-opt08-online-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-online.json",
+        "docs/development/optimization-opt08-image-profile-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-openshell-image-profile.json",
+        "docs/development/optimization-opt08-joined-runtime-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-openshell-online.json",
+        "docs/development/optimization-opt08-lifecycle-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-openshell-lifecycle.json",
+        "docs/development/optimization-opt08-management-enrollment-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-runtime-enrollment.json",
+        "docs/development/optimization-opt08-runtime-bootstrap-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-runtime-bootstrap.json",
+        "docs/development/optimization-opt08-request-identity-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-request-identity.json",
+        "docs/development/optimization-opt08-gateway-entry-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-gateway-entry.json",
+        "docs/development/optimization-opt08-business-identity-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-business-identity-client.json",
+        "docs/development/optimization-opt08-host-loop-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-loop.json",
+        "docs/development/optimization-opt08-openshell-backend-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-openshell-backend.json",
+        "docs/development/optimization-opt08-host-session-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-host-session.json",
+        "docs/development/optimization-opt08-host-control-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-business-supervisor.json",
+        "docs/development/evidence/optimization-20261007/native-runtime-config.json",
+        "docs/development/evidence/optimization-20261007/native-request-image.json",
+        "docs/development/evidence/optimization-20261007/native-request-assets.json",
+        "docs/development/evidence/optimization-20261007/native-request-wiring.json",
+        "docs/development/evidence/optimization-20261007/native-business-skills.json",
+        "docs/development/optimization-opt08-business-api-validation-20261007.md",
+        "docs/development/optimization-opt08-switch-validation-20261007.md",
+        "docs/development/optimization-opt08-context-management-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-scope-review.json",
+        "docs/development/optimization-opt08-business-revocation-validation-20261007.md",
+        "docs/development/optimization-opt08-runtime-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-runtime-review.json",
+        "docs/development/optimization-opt08-lifecycle-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-lifecycle-review.json",
+        "docs/development/optimization-opt08-config-policy-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-config-policy-review.json",
+        "docs/development/optimization-opt08-image-relay-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-image-relay-review.json",
+        "docs/development/optimization-opt08-api-authority-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-api-authority-review.json",
+        "docs/development/optimization-opt08-supervisor-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-supervisor-review.json",
+        "docs/development/optimization-opt08-candidate-assets-delivery-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-delivery-candidate-assets-review.json",
+        "docs/development/evidence/optimization-20261007/native-request-orchestration-prereview.json",
+        "docs/development/optimization-opt08-request-api-delivery-validation-20261008.md",
+        "docs/development/optimization-opt08-working-business-validation-20261008.md",
+        "docs/development/optimization-opt08-opt10-repetitions-validation-20261008.md",
+        "docs/development/optimization-opt08-install-drift-validation-20261008.md",
+        "docs/development/optimization-opt08-switch-repetitions-validation-20261008.md",
+        "docs/development/optimization-opt08-clean-api-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/clean-business-api.json",
+        "docs/development/optimization-opt08-business-revoke-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-revoke-v834.json",
+        "docs/development/evidence/optimization-20261007/native-business-revoke-v837.json",
+        "docs/development/optimization-opt08-terminal-cleanup-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-startup-diagnostics-v838-v841.json",
+        "docs/development/evidence/optimization-20261007/native-business-revoke-v842-v844.json",
+        "docs/development/optimization-opt08-crash-expiry-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-crash-v845.json",
+        "docs/development/evidence/optimization-20261007/native-queue-expiry-v846.json",
+        "docs/development/optimization-opt08-containment-repair-validation-20261008.md",
+        "docs/development/optimization-opt08-post-recovery-validation-20261008.md",
+        "docs/development/optimization-opt08-skill-grant-effect-validation-20261008.md",
+        "docs/development/optimization-opt08-context-boundary-validation-20261008.md",
+        "docs/development/optimization-opt08-explicit-no-skill-validation-20261008.md",
+        "docs/development/optimization-opt08-native-channel-fault-validation-20261008.md",
+        "docs/development/optimization-opt08-call-binding-effect-validation-20261008.md",
+        "docs/development/optimization-opt08-natural-expiry-validation-20261008.md",
+        "docs/development/optimization-opt08-authority-replacement-validation-20261008.md",
+        "docs/development/optimization-opt08-concurrent-business-validation-20261008.md",
+        "docs/development/optimization-opt08-content-version-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-content-version-r04.json",
+        "docs/development/optimization-opt08-content-version-business-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-content-version-business-v879.json",
+        "docs/development/optimization-opt08-v2-image-business-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-content-version-v2-image-v881.json",
+        "docs/development/evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json",
+        "docs/development/evidence/optimization-20261007/native-overlay-unmapped-image-20261008n.json",
+        "docs/development/evidence/optimization-20261007/native-unmapped-image-authority-20261008n.json",
+        "docs/development/evidence/optimization-20261007/native-unmapped-image-execute-20261008n.json",
+        "apps/agentshield/internal/runtimeaction/normalize.go",
+        "apps/agentshield/internal/receipt/resource_scope_test.go",
+        "docs/development/evidence/optimization-20261007/native-execute-code-network-v887.json"
+      ],
+      "residual_limits": [
+        "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
+        "D2c1 文件快照组件已验证：47 项定向、230 项 Hermes 适配器全套及 293 项相关合同通过；真实文件元数据可经 D2b 通道传递。组件未接入原生普通/插件/缓存读取，不代表加载或最终调用管控已启用；固定镜像源代码调查明确了缓存、预处理和最终分发接入位置。 此为 D2c1 当批边界，原生函数接线已由后续 D2c2 增量完成。",
+        "D2c2 固定镜像原生普通/插件/缓存读取、任务作用域、最终分发和不支持直达路由拒绝已实现；真实 Hermes 函数离线探针 21 项通过，但 Authority 回调为合成夹具，未连接真实 Go 裁决、OpenShell 或业务 API。全适配器首轮 252 通过、1 失败；修复任务结束后的锁阻塞，受影响套件 24 项通过，不重复无关全量。完整可信启动器与在线桥接、同候选日常业务验收仍未完成；新身份 HTTP 创建保持关闭。",
+        "D2d 宿主生命周期到 v2 SEC/原生调用 Store/真实 receipt.Engine 的应用桥接已完成组件验证；不同 Skill 的祖先交集、独立任务正向及跨重启调用拒绝通过。一轮 Go 全量 45 包通过、10 包无测试；最终增量相关三包、skillcontext race、vet 与四目标构建通过。运行进程与安装映射仍为夹具回调，Python→认证传输→daemon 尚未连成产品路径；新身份 HTTP 创建保持关闭。",
+        "D2e 已实现实际签名安装/运行授权/真实文件来源解析，发现并修复 Hermes 安装归属硬链接对被单链接读取器拒绝的问题。默认仍单链接；受管模式要求实际安装归属和必需挂载验证。真实 Python 读取器与 Go 安装解析同步联验通过；实际进程和容器挂载回调仍待可信启动器实现，尚未连接产品认证传输与在线裁决。",
+        "D2f 已实现后端中立的实际进程/代码/只读挂载核验；固定镜像独立 Docker 后端与真实内核凭据通道联验 21 项通过。仅核验本次拥有的离线容器，不是 OpenShell 后端接入或真实业务验收；认证宿主发布、Go serve 接线与日常入口仍待完成。新身份创建保持关闭，主任务完成数仍为 9/16。",
+        "D2g 已实现显式 serve --native-host、独立凭据发布、固定私有 Unix socket 逐次回查及真实 /v1/decide 唯一调用绑定；实际 Go Authority/HTTP 联验使用合成运行核验器，Python 实际通道/HTTP 映射使用合成裁决响应。Go 全量 45 包、定向 race/vet/四目标构建、Hermes 264 项统一回归与最终相关 5 项、6 项协议合同和镜像 21 项探针通过。真实 OpenShell 启动器、日常业务、人工审批重试交互及同候选验收未完成，新身份 HTTP 创建仍关闭。",
+        "D2h 已适配实际 OpenShell 的 root 所有且非 root 不可写镜像文件与双向内核通道；43 项通道、11 项文件边界、11 项实际 OpenShell 组件检查和 21 项旧 bind profile 回归通过。真实沙箱中 Python 探针及一个合成 Skill 不代表 Hermes 模型任务、在线 Go Authority 或两个真实业务 Skill 的端到端验收；新身份创建仍关闭，主任务保持 9/16。",
+        "D2i 已完成同一次实际 OpenShell/Hermes 原生工具→宿主认证转发→真实 Go HTTP Authority→签名安装来源→实际文件效果的 8 项联验，8 条签名回执通过，含读 Skill 写入拒绝、切换保留祖先和独立写 Skill 正向。修复固定租约到期漂移与受保护 skill_view 分类；Python 30 项、Go 五包完整/三包定向 race、vet 和四目标构建通过。Skill 内容与操作员为合成测试材料，Go 服务由 opt-in 测试启动；模型/日常业务入口、撤权等剩余场景尚未验收，新身份 HTTP 创建仍关闭。",
+        "D2j 实际 OpenShell/Hermes/Go 联验 18 项检查通过，23 次原生工具尝试产生 18 条签名回执（14 allow、4 deny）；重放、结束后调用和三种撤权共 5 次在裁决前拒绝，不伪称 deny 回执。覆盖同进程并发 reader/writer 隔离、SEC/Skill Grant/Agent 基线撤销及未受影响任务正向，宿主核对文件效果。仅测试材料与私有测试操作员撤权；日常入口、网络效果、过期/升级/漂移及审批重试未完成，9/16 保持不变。",
+        "D3a 限定开放已定义的创建 v3：显式 native-host 完整绑定与私有配置仍有效，现有管理鉴权和批准基线约束不变，读回仍 unverified；实际 OpenShell 18 项检查改用真实 HTTP 配对/身份发行/会话登记通过。Go 全量45包、server定向race、全量vet、四目标构建、16项Python合同通过。此项替代历史 D2 创建入口关闭状态；Go服务仍为测试夹具启动，日常受保护启动器、真实业务接入及其余验收未完成，9/16不变。",
+        "D3b 已实现受保护 ImageBootstrap：进程一次性初始化、排他私有通道目录、固定跨 PID namespace 凭据、关闭/漂移/fork/超时失败关闭，不读环境替换身份、不接受可替换裁决回调。39项新增启动测试、相关共138项Python通过；实际OpenShell使用该初始化器并核验其制品摘要，18项权限检查通过。该组件不是日常网关启动器，业务API/模型及其余验收仍待接入，9/16保持。",
+        "D3c 修复原生 namespace 与真实请求身份不兼容：共用严格 ASCII 组件校验、派生会话不超过256字节。真实HTTP签发子身份、错误namespace拒绝及子凭据运行18项权限检查通过；163项相关Python、Go身份定向与server vet通过。业务请求参数仍为合成，日常业务入口和业务授权生命周期未完成，9/16保持。",
+        "D3d 固定hermes-gateway入口在同一PID先初始化再调用真实gateway.run.main，拒绝旧插件环境和任意额外参数。62项相关Python、固定镜像真实离线网关8项和原生函数21项通过；网关探针的启动socket为合成协调设施，不证明在线Authority或业务验收。业务身份客户端/宿主监管与日常API/模型接入仍未完成，9/16保持。",
+        "D3e 在独立业务分支新增原生身份HTTP客户端，49项定向测试通过；真实Go HTTP首次签发/登记/取消与撤销后拒绝、运行身份幂等读回及父基线撤销后精确取消均通过，同次OpenShell18项检查通过。业务改动单独提交，既有用户工作保留。客户端尚未接入日常builder/Supervisor，业务授权/租约与模型闭环继续，9/16不变。",
+        "D3f 已实现固定租约宿主持续循环：空闲等待保持、坏包/已连接超时/停止/到期/guard失效拒绝，fork后控制及失败后重启拒绝；88项相关Python通过，最终循环15项通过（新增2项），Ruff通过。实际OpenShell18项权限检查、18条签名回执及线程/沙箱清理通过；业务客户端HTTP联验保持通过。日常builder/Supervisor、业务授权生命周期和模型闭环尚未验收，9/16不变。",
+        "D3g 将验收脚本的OpenShell后端归属回调替换为正式宿主组件，固定本机rootful Docker、完整容器/镜像/namespace、进程清单和内核cgroup/NSpid；失败永久拒绝。53项最终后端专项通过，相关阶段63项通过（重叠）；真实OpenShell18项权限检查、18条签名回执及清理通过。非root读取root init namespace失败及批次总等待超时已保留并修复，逐请求期限未放宽。组件仍未接入日常Supervisor跨进程生命周期和真实模型业务，9/16不变。",
+        "D3h 已实现HostSession统一编排与BusinessGuard：绑定真实监管者pidfd、固定整体期限及最多90秒心跳，过期/退出/停止后拒绝，续期不能复活；循环退出未确认时保留在用资源。最终91项相关定向通过；实际OpenShell18项检查、18条签名回执、4次合成业务续期及完整会话资源清理通过。线程创建失败清理修复由增量单测覆盖，live宿主加载修复前host_online摘要单列。尚未提供认证跨进程业务控制，未验收日常API/模型，9/16不变。",
+        "D3i 已实现认证跨进程 HostControl 与业务独立消费者：内核凭据绑定监管者 PID、私有配置/端点固定、有界处理器和不可复活句柄。53项相关定向、额外2项配额负向、业务21项通过；真实OpenShell独立业务消费者启动/4次续期/停止，18项权限检查、18条签名回执及清理通过。CLI仅启动/停止组件验证，真实联验在宿主进程嵌入同一HostControl；日常builder/Supervisor/API/模型尚未验收，9/16不变。",
+        "D3j 已在业务Supervisor接入显式v6与RequestNative：当轮业务授权/租约先于宿主start/renew，准备态不能通过运行态检查，未知清理仍执行资源回收且保留失败。相关135项通过，最终原生专项21项（与前者14项重叠，新增7项）通过；均为组件夹具，非真实业务模型验收。业务核心依赖中27模块未跟踪，本批源码尚未提交，修改前快照已保留；需审查必要依赖后科学交付。builder/网关/endpoint接线继续，9/16不变。",
+        "D3k 已实现显式原生配置编译、v4 fresh快照与挂载校验，保留模型/委派/无密钥限制，关闭旧插件且旧启动器拒绝原生配置。原生16项通过；相关74通过1失败，失败源于既有Qwen路由候选摘要漂移。经10项真实模型/制品静态核验后修正摘要，失败项复跑与路由13项通过；审计外部晋级门禁仍未完成，无模型调用。固定原生镜像/builder/网关/endpoint尚未接入，业务增量尚未提交，9/16不变。",
+        "D3l 已构建独立受保护原生业务镜像：实际镜像5项及真实Hermes启动交接9项检查通过，宿主接管前HTTP未开放，重复启动拒绝且清理确认。首轮专项41项、最终镜像专项26项（新增10）、相关旧配置/快照/挂载73项通过。自包含bootstrap/测试已在业务分支提交，其余必要依赖仍待审查；无Authority接管或模型调用，未替换日常服务。builder/assets/网关/endpoint与真实业务尚未验收，9/16不变。",
+        "D3m 已接入显式原生镜像选择、计划v2/资产v2、请求配置与镜像摘要绑定、原生无旧relay网络策略和新旧恢复记录分离。原有相关86项、新原生部署/策略10项、完整恢复41项、启动恢复与最终原生资产36项通过（后者包含首轮原生14项和新增1项）。系统/uv测试解释器收集问题已通过使用真实API venv并仅追加测试工具解决，来源校验保留。核对确认旧mount计划本就无配置bind，纠正D3l推测；未启动沙箱/模型，实际身份/监管/网关PID/endpoint接线仍未完成。业务源修改待必要依赖审查提交，9/16不变。",
+        "D3n 已接通原生签发/API监管、无旧relay的forward、容器宿主PID观察、固定镜像网关交接、v2端点以及原claim builder/私有配置selector。签发监管恢复53项、进程/旧forward32项、相关旧链路111项、新旧selector62项与最终原生63项通过（各批重叠）。首次环境缺少Wiki access_scope及硬链接安装问题在独立venv以本机源码wheel/copy安装解决，来源校验保留，日常API环境未修改。独立进程观察器/测试/合同报告已在业务4a25b38提交，完整业务源码闭包仍待审查。当前镜像缺少批准业务Skill；真实API/模型及完整生命周期尚未验收，9/16不变。",
+        "D3o 已加入两项真实业务Skill、固定清单导出、原生配置v2与受保护镜像v2；最终72项定向和17项相关API回归通过。实际镜像6项、启动交接9项检查通过，真实Hermes发现两项业务Skill，同时如实记录skill_manage可见但未获授权。实际serve --native-host/独立宿主通过公开管理API完成两项批准安装、独立Agent基线和制品绑定，8项检查通过；重启同一状态后业务客户端签发/登记/取消子身份，未登记运行拒绝，8项检查通过。未调用模型，未验证真实读写效果；私有状态保留、日常环境未修改。业务依赖闭包与真实业务生命周期仍待完成，9/16不变。",
+        "D3v 三批运行依赖提交业务7c410f6/98fd1cc/7eecae8，隔离验证分别98/34/82项通过，Ruff通过；路由消费者13项另计。修复NaN接受及namespace中overflow UID误当root，显式摘要绑定匿名私有执行副本。实际受限systemd三项检查、桥启动/401/精确停止通过，模型未重启；memfd首轮失败保留。原109模块闭包尚有54个未跟踪模块，完整交付/最终同候选业务回归未完成，历史候选证据不改写。",
+        "D3w–D3y 三批必要业务依赖交付d40ad53/f50d3b6/f2e8006，隔离38/62/26项与Ruff通过，工作树消费者1/121项另计。修复资源参数覆盖及异常租约phase跳过在线撤权，错误owner记录保留；固定上游两份补丁零fuzz重放并与候选源码摘要一致。未调用实际模型/沙箱或改动真实授权；原109模块闭包仍42个未跟踪，完整交付和最终同候选业务回归待完成。",
+        "业务配置／数据授权／策略四批交付e8a4acd/2d96fe8/50c1b83/0fd5d5a；隔离35通过1跳过、81通过、76通过、181通过，Ruff通过，最终加强CLI负向单项通过（重叠）。修复出网分类畸形字段TypeError和负向测试提前失败假通过；补齐公开profile资产并交付原未满足的policy消费者。依赖均取已提交版本，最终文件摘要与提交核对；未调用模型或改动真实服务。原109模块仍39个未跟踪，完整交付／最终同候选验收继续，OPT-08与9/16不变。",
+        "原生镜像与relay兼容依赖交付业务bae0a50/4ac075a，隔离88/22项与Ruff通过；隔离源码实际复核既有业务镜像六项保护检查和四份资产摘要，通过且无模型调用。修复离线检查空集合误通过、relay描述符冲突及check-only虚报非特权。原109模块仍36个未跟踪；基镜像资产、API/监管完整交付与最终候选验收继续，OPT-08与9/16保持。",
+        "业务API授权／执行租约及连续迁移依赖交付5be2a77/c8ee0df，隔离迁移24项、API64项及Ruff通过。修复ORM缓存导致账户／grant／执行租约旧状态被复用，以及快照到期瞬间误接受，11项旧负向已复现。真实临时PostgreSQL验证迁移回放与审计失败回滚，容器已清理；未访问日常业务库或模型。主链交付至021，工作区022–024保留；Supervisor集成完整用例留待后批。原109模块仍34个未跟踪，完整交付及最终同候选验收继续，OPT-08与9/16不变。",
+        "监管／原生身份／受管转发六模块、两服务模板和五测试文件交付业务6a4e8b6，隔离49文件155项与Ruff通过；先前保留的API租约接管集成用例完整交付。fork／锁／信号为真实本地组件，systemd、Authority和业务资源切断仍为夹具，未安装服务或调用模型。原109模块剩28个未跟踪；候选镜像15份动态输入摘要一致但交付审查未完成。完整编排／撤权／同候选业务验收继续，OPT-08与9/16不变。",
+        "候选镜像／MCP／报告资产交付业务f2bdc8b，105文件隔离验证109项及Ruff通过；两补丁实际回放和九wheel来源／许可核对通过。查明旧镜像只有配置校验器来源不同，代回旧摘要可完整复算旧构建身份；当前源码离线构建新镜像56c3d4d6ad39，七项运行检查及42个输入摘要通过。保留旧快照／镜像／证据，不激活服务、不调用模型；夹具发布不冒充生产审批。原109模块剩26个未交付，完整编排与最终新鲜候选验收继续，OPT-08与9/16不变。",
+        "请求编排组件预审：独立226文件、61份选定源码／测试，486项通过、Ruff通过。使用HEAD离线构建并核验的控制包，补齐HEAD动态资源；未修改日常API环境。代码尚未提交，聊天API入口及相关完整集成用例仍待交付审查；不能把组件预审视为OPT-08或同候选业务验收。9/16保持。",
+        "请求编排与业务API完整依赖交付业务2a70587：110份选定输入的最终隔离API回归523项通过；修复原生请求因缺旧canary字段而漏导出安全生命周期事件，旧反例复现、相关45项通过（与523重叠）。Ruff基线104条、本批102条既有B008、新增0。保留报告归档等无关工作区改动及初始失败；未启动真实业务或调用模型。最终新鲜候选／生命周期／四臂验收继续，OPT-08与9/16保持。",
+        "原生真实业务v819–v821：合法读取、只读Skill实际拒写、写入Skill实际可写均通过；6条回执独立验签／链验证及v3 schema通过，文件效果对应。两个写入用例Agent基线相同、OpenShell可写挂载与归一化文件系统策略相同，SIQ按Skill Grant区别裁决。干净源码映射遇systemd 226/NAMESPACE；实测采用冻结工作区1873输入（289项与HEAD不同），前后字节一致，不能冒充干净提交验收。自有资源回收、原模型未重启；每例一次，重复／生命周期／四臂与完整交付继续，9/16保持。",
+        "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
+        "安装内容漂移真实对照v828/v829通过：同一获批写入Skill正常读写成功；读取后受控修改宿主安装SKILL.md内容，后续实际write_file报错、目标不存在，无伪造deny回执。原字节／inode／硬链接关系恢复，源码与模型不变，自有资源清理；新增5条回执，与原18条组成23条链，11份SEC公钥／schema核验通过。仅一组安装源漂移对照，其他生命周期／四臂与干净交付继续，9/16保持。",
+        "同工作候选v830–v832完成三次同请求Skill切换：两次原生加载均允许，实际write_file均因grant_scope_violation拒绝、目标不存在；两个Grant和签名父上下文保留，OpenShell任务目录可写。新增9条回执／6份SEC，完整32条链／17份SEC独立验签、父子绑定与schema通过；公开核验工具5项相关回归及Ruff通过。原模型、业务源码不变，自有资源清理。该组不是并发隔离，干净交付／其余生命周期／四臂／平台验收继续，9/16保持。",
+        "业务f73e566统一请求所有权状态路径，保留缺失/权限/损坏拒绝。242项相关回归通过；14项新检查在干净导出独立复验通过（重叠子集）。新venv复制安装同提交4个自有wheel后，真实HTTP授权/幂等/撤销及恢复就绪11项检查通过，关闭时1483模块条目无工作区源码导入，15个自有包模块绑定对应13个文件字节匹配。临时资源清理、日常服务不变；保留初始未就绪、旧包来源差异、非受信安装目录与硬链接拒绝。未调用模型，原生Skill完整业务/四臂/平台验收继续，OPT-08/10与总体11/16保持。",
+        "真实业务撤权v834试点通过：当前SEC Git导出二进制与登记1874输入/289补丁的f73e566业务工作候选，原生Skill加载/读取后撤销业务授权，活动查询403、SSE失权无done、子凭据401、父身份有效、约25.287秒终态及资源回收。2回执/1 SEC独立验签schema通过。v835重复启动失败且已回收，v836按规则未执行；不宣称三次通过或撤权后实际写入拒绝。业务74d9024新增固定允许列表端点诊断，26项定向通过，仅诊断改进不是启动修复。遵循OPT-10分别登记跨仓补丁，不把完整业务仓路径重构另作前提；完整矩阵和最终全栈冻结仍必需。OPT-08/10与11/16保持。",
+        "诊断候选74d9024的v837真实撤权复测通过，约38.375秒终态；相同1874输入范围重新冻结，候选摘要52596e44。新增2回执/1 SEC，累计4回执/2 SEC独立验签及schema通过；原服务配置恢复、模型不变。v835启动失败没有复现，仍未解决，不能合并为同候选三连通过。两轮撤权后监管单元保留failed/exit-code状态但进程PID0，资源回收与服务退出状态分开记录；后续继续启动可靠性、撤权后工具尝试和其余矩阵。",
+        "业务7e52689为原进程/原handle的stop增加有界终止确认重试，不重试start/renew、不放宽身份校验。旧实现2项反例失败，相关86项及Ruff通过。v838–v841四次真实启动/取消通过但v835启动失败未复现、未解决。修复候选v842–v844三次真实模型输出后业务撤权通过，约32.879/30.811/24.314秒终态；不再出现close_native或containment_failed，撤权触发failed_closed仍保留systemd failed/退出1、PID0。新增6回执/3 SEC，完整10回执/5 SEC及3个请求绑定独立核验通过。v843/v844各有首次读取报错后重试成功，未认定为防御成绩。后两轮API依赖11663文件/4链接前后不变，非全栈冻结。原模型/配置恢复、自有资源清理。撤权后工具尝试、启动/读取错误归因、其余矩阵/平台/签名交付继续；11/16不变。",
+        "同业务候选7e52689新增v845真实Skill读取/模型输出后API SIGKILL与原数据库重启试点，原租约自然失效且未接管/续租，约126.976秒转authority_lost、子凭据401、最终资源回收；首次containment_failed后ExecStopPost recover通过，failed/退出1状态保留。v846真实排队Grant自然到期约59.404秒后受控503、pending released、无沙箱/模型/新增回执，合成占位保持且由所有者释放。新增2回执/1 SEC，完整12回执/6 SEC及新请求绑定独立核验；源码/驱动/pending/终态复核通过，11663依赖文件/4链接前后不变。每例仅1次试点，数据库断言源于现场固定驱动，非事后重查；运行中SEC到期、恢复后新任务、其余矩阵/平台/签名交付继续，11/16保持。",
+        "业务8851724修复在途模型流占锁导致的首次清理失败：仅明确admission锁超时且沙箱删除/空清单已确认时，对原运行模型凭据轮换追加一次重试，其余失败保持失败。75项不同相关检查通过；诊断v847复现model_access失败且锁由自有桥持有，修复v848真实API崩溃复测记录busy→recovered、监管退出0/PID0、业务authority_lost及资源清理通过。约139.098秒恢复等待不是低延迟SLA。两候选分别登记，独立新Authority链4回执/2 SEC/2请求绑定验签通过；依赖11663文件/4链接前后不变，非全栈冻结。其余生命周期/四臂/平台/正式签名继续，11/16保持。",
+        "同修复候选8851724完成v850真实API崩溃自然恢复后新合法请求：43项现场检查通过，同API/数据库/会话的新run加载Skill、读取并完成模型输出；旧终态摘要不变、旧子凭据仍401，新请求最终释放，两监管服务退出0/PID0，源码/配置/原模型保持。恢复等待110.850秒；模型生成耗时另计，新任务首次read_file报错后重试成功，原因未定。v849因把按会话复用的活动租约槽误当历史表而失败，按合同修正驱动并保留失败，不修改产品或补记通过；隔离组件3个不变量核对通过。新增4回执/2 SEC，含v849等既有记录共12回执/6 SEC和本轮2请求绑定独立验签；依赖11663文件/4链接前后不变。剩余生命周期/四臂/平台/签名交付继续，11/16保持。",
+        "同候选8851724完成v853/v854真实Skill撤权效果对照：合法加载/读取/写入及文件内容匹配27项通过；读取后HTTP撤销writer Grant，约6.844秒后观察到实际write_file尝试报错、目标不存在，30项通过。完整Agent基线签名和安装内容不变，剔除请求标识后的OpenShell策略相同且均允许任务输出目录。5回执/2 SEC/3签名Grant快照独立核验；拒写发生在回执之前，无虚构deny。v852因脚本错将正常deployed基线要求为approved而失败，使用新隔离Authority按完整签名内容比较后复测，保留失败且未恢复旧撤销Grant。离线核验器16项及Ruff通过。依赖11663文件/4链接不变，非全栈冻结；剩余生命周期/上下文/四臂/平台/签名继续，11/16保持。",
+        "同候选8851724完成v855合法读写、v856读取后仅撤销SEC并实际拒写、v858新合法任务新SEC读写，27/30/27项通过。Skill和Agent完整授权、安装内容、归一化OpenShell可写策略不变；旧SEC保持撤销。10回执/3SEC/1签名撤销/2Grant快照及4请求决定绑定独立核验；3完整通过例占8回执。v857将可信无Skill误当未知归属而预期错误，保留失败；v859无Skill按Agent基线实际允许且文件匹配，23/24项通过，但财务证据护栏替换回答，整例失败且监管退出1/PID0、资源清理确认。离线核验器33项及Ruff通过。依赖11663文件/4链接不变，非全栈冻结；未知归属/到期/并发/四臂/平台/签名及回答护栏归因继续，11/16保持。",
+        "可信无Skill完整复测v860同候选30项通过：无Skill加载/无SEC，签名no_skill write allow、实际文件与模型回复标记匹配、监管退出0/PID0及资源清理。只读分类器4项定位v859原提示触发Wiki全文财务证据分支；明确Hermes runtime任务后走既有诊断分类，追加财务问题仍要求证据，未修改护栏。保留v857/v859失败；最终v855/v856/v858/v860四完整通过例占9回执，累计链11回执/3SEC/1撤销/2Grant及4请求绑定独立核验。34项回归与Ruff通过（包含前33项），依赖11663文件/4链接不变；未知归属/到期/并发/四臂/平台/签名继续，11/16保持。",
+        "同候选8851724完成v861原生元数据通道失联与v862新任务恢复：读取后只移走本任务socket，约5.396秒窗口内实际write_file报错、文件不存在、无写入回执；原socket按inode恢复，完整Grant/SEC不变，业务failed/hermes_run_failed且资源释放，故障检查30项通过。新任务加载/读取/写入及结果27项通过。两监管均退出0/PID0；归一化OpenShell可写策略一致。新增5回执/2SEC，完整16回执/5SEC/2新请求绑定与有效Grant签名核验通过；依赖11663文件/4链接不变。未改产品或核验器、不重复无关测试；未知证明/到期/并发/四臂/平台/签名继续，11/16保持。",
+        "同候选8851724完成v863正常代理对照32项和v864缺失tool_call_id负向33项。合法加载/读取后，仅从唯一实际写入HTTP请求移除调用标识，身份/任务/参数/认证/完整Grant和SEC不变；Authority实际409 native_host_unavailable、工具错误、文件不存在，无伪造deny。正常字节透传对照200 allow并实际写入。两例业务completed及监管退出0/PID0，输出OpenShell可写策略一致；新增5回执/2SEC，完整21回执/7SEC/2新请求绑定及Grant独立核验通过。依赖11663文件/4链接不变，代理及自有资源清理；未改产品、不重复无关测试。自然到期/并发/其他错配/四臂/平台/签名继续，11/16保持；已请求原生Windows/macOS接入信息。",
+        "同候选8851724新增Skill Grant自然到期真实对照：v867到期前合法加载/读取/写入29项通过；v869读取后用pidfd暂停自有Hermes约106秒，正式420秒Grant自然到期后恢复，约0.088秒后观察实际write_file报错、文件不存在，31项通过。SEC及原生子身份尚未到期、Agent基线有效，完整签名内容/归一化可写策略不变，无主动撤销或改时钟。两例业务completed、监管退出0/PID0，资源/配置恢复。新Authority完整8回执/3SEC/2Grant及2请求绑定独立核验，通过例占5回执/2SEC；v865错误SEC截止断言失败、v866未执行、v868缺少os.pidfd_open失败均保留，后用预检查通过的libc pidfd接口复测，不改产品。API依赖11663文件/4链接不变。SEC单独到期、续期/更新、并发、资源入口、最终矩阵/平台/签名继续，11/16保持。",
+        "同候选8851724完成正式Skill授权换代：独立批准相同内容的新Grant，通过公开compare/plan/commit/activate撤销旧Grant并建立新安装。v870实际读取后暂停自有Hermes约0.368秒完成更新，恢复后实际write_file报错、文件不存在，32项通过；v871显式绑定新安装的独立新任务加载/读取/写入31项通过。Agent基线及Skill字节不变，SEC自身未到期，输出目录仍可写；两例业务completed、监管退出0/PID0，配置/资源恢复。新Authority 5回执/2SEC/4Grant/4安装更新记录及2任务绑定独立核验；新增离线换代签名/关联检查，50项相关回归（新增16项）和Ruff通过。API依赖11663文件/4链接不变。此为相同内容授权换代，不代替内容版本升级或旧授权原地续期；并发/资源入口/最终矩阵/平台/签名继续，11/16保持。",
+        "同候选8851724完成v872两个真实业务HTTP请求并发在途：writer实际加载/读取后暂停约2.202秒，reader真实请求在单槽队列等待，三次重叠观察跨度约1.131秒；writer实际写入成功并释放后reader加载自己的只读Skill，实际写入签名deny grant_scope_violation且文件不存在。36项现场检查通过，两业务completed、监管退出0/PID0；同Agent、不同会话/任务/Skill、归一化可写OpenShell策略相同、Grant及源数据不变。完整6回执/2SEC/3Grant及2任务绑定独立核验，离线核验器59项（新增9项）与Ruff通过，API依赖11663文件/4链接不变。证明当前单槽业务架构下真实并发请求的排队及权限隔离，不宣称两个沙箱同时执行或压力容量；内容版本升级、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。",
+        "当前安全提交8c473439的Hermes原生内容版本升级16项通过：V1与V2内容哈希不同，确认前取消不改V1，明确更新替换字节并撤销V1 Grant，旧决策凭据被拒且无新回执或文件效果，V2需新身份和SEC后实际读取执行，4条回执链验签通过。本地确定性模型，不是DGX日常业务入口，也不能并入v870/v872。日常业务内容版本、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。",
+        "当前安全二进制aa25999e与业务8851724完成v879日常内容版本拒绝：33项通过，SKILL.md由014ac378改为a38f8af2，旧Grant撤销，恢复后的写入没有回执也没有文件。执行期间临时对齐SIQ_RUNTIME_ROOT监管合同并按原字节恢复，模型单元不变。v880新任务未执行读取或写入，工具结果为native_dispatch_unavailable，没有V2 Skill上下文；核验脚本随后AttributeError。不是最终矩阵。资源/工具入口、四臂、平台和签名继续，11/16保持。",
+        "当前安全二进制aa25999e与业务8851724完成v881：新建请求镜像sha256:a3be2a4a、制品c5e3e318，受保护SKILL.md钉为a38f8af2，并签发绑定该制品的新运行时身份。33项通过，read_file与write_file均为allow，目标文件存在。skill_view回执为no_skill；读取和写入回执绑定Grant grt-si-fd97d2ac2c65f04438255b92e9f9be9b69ffa21e9fea8cac7ecba9ad20b3d59e。监管合同临时对齐后按原字节恢复，模型单元不变。这是镜像已含V2字节的新身份执行，不是v879同一身份在旧镜像070e9423上原地换字节后的续跑；v880仍说明旧镜像钉住V1时V2安装无法加载。不是最终矩阵。资源/工具入口、四臂、平台和签名继续，11/16保持。",
+        "离线请求镜像 sha256:73153d1a83ff1cc9e041b3d6366f85e5a25ea696653559971d941d73d3ed78ac、制品 461046804f3f3da95ee34c007801af18cacfaeb25e22dcec71f226806219f30c 已包含宿主路由提前拒绝和 allow 之后的检查点。覆盖层清单 04d39fdddc18acaff3658e16da4070cfd26b89ca3443b333833d262efa26c651。Skill 钉仍为 a38f8af2 与 9f594a1b。production_eligible 为 false，runtime_state 为 unverified，未登记身份，未调用模型。冻结镜像 sha256:dc22c450 与 sha256:a3be2a4a 未改。OPT-08 保持 implementing，11/16 不变。",
+        "镜像 sha256:534d18c9、制品 116ce585 已用公开管理接口登记新运行时身份 hi-2fb7a2320751b728f664d6cfbbbf6230。两项业务 Skill 安装字节与镜像钉一致：研究 Skill Grant grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484 可写，公司证据 Grant grt-si-e41f897efeb1a27768841fed0e2a0a854bfcb12007e06ca3cab7e4a043f2891f 只读。九项登记检查为 true，model_calls 为 0，自有进程已停止，production_modified 为 false，runtime_state 仍为 unverified。这不是工具执行或网络效果。OPT-08 保持 implementing，11/16 不变。",
+        "v886 在镜像 sha256:534d18c9、制品 116ce585、身份 hi-2fb7a2320751b728f664d6cfbbbf6230 上完成一次日常入口：33 项检查为 true，业务 completed。skill_view 回执 rcp-23db5954f2aaeb119dd8987425f938da 无 Skill 上下文；read_file rcp-1830841a4e9b0b53ab53a2350756796f 与 write_file rcp-2c3444ba542f04a525b876a0ac132993 均为 allow，并绑定可写 Grant grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484。目标文件存在，内容摘要 a3764f24947ac98006420f11a931596ff1e6c7cceb578a5823fc924aeb7312b6。监管合同已按原字节恢复，模型单元不变，自有网关和桥已停止。这次没有覆盖网络效果、未注册工具、借权或四臂。OPT-08 保持 implementing，11/16 不变。",
+        "web_extract 的实际参数是 urls，原先只检查顶层 url。仅有 urls 时会被当成没有目标而拒绝；同时带上已授权 url 和未授权 urls 时，决定可能放行而工具读取 urls。现在 url、host 和 urls 里的每一项都必须是可授权的 http(s) 目标，对象优先取 url，否则取 href，任一畸形项拒绝整次调用。TestWebExtractAuthorizesEveryURL 与既有精确端口用例通过。这是引擎合同，不是日常网络效果。OPT-08 保持 implementing，11/16 不变。",
+        "日常工具集里的 execute_code 会用沙箱 Python 执行源码，而该解释器可以连接数据代理。原先工具名获授权后，源码里的 URL 不进入主机检查。现在与 terminal 一样：未授权工具拒绝；源码含 URL 时只放行已授权主机，未授权主机拒绝。TestExecuteCodeAuthorizesEmbeddedURL 通过。这是引擎合同，不是日常网络连接。OPT-08 保持 implementing，11/16 不变。",
+        "v887 在镜像 sha256:534d18c9、制品 116ce585、身份 hi-1280d157950d13097a1d048815558558 上通过日常入口调用一次 execute_code。二进制 940e3b7b 已包含主机检查。Agent 基线 grt-id-89de643ef7ef0af4e5094b5d002e4daa068af08682f43fa7eae3d6fb58d539dd 与研究 Skill Grant grt-si-ffc4cb396436b4d608864a1c772962bdc96d8537542213b3f848e5930834e23a 都包含该工具和 host.openshell.internal:18794；只读公司证据 Grant 不包含。回执 rcp-115e4fae7f00828b52495484c7f1d98e 为 deny，原因 runtime_effect_unknown，效果是 process.exec、network.request、unknown，无 Skill 上下文。工具完成时带错误，探测文件不存在。业务 HTTP 200 且 completed。监管合同已恢复，模型 MainPID 221774 未变，自有网关和桥已停止。这是拒绝与未连接一致的负向结果，不是放行后的实际网络连接。OPT-08 保持 implementing，11/16 不变。",
+        "已知效果的数据代理工具是 mcp__siq_business__research_generate_report：参数形状正确时描述符不含 unknown。600519-贵州茅台 2025 年报状态是 needs_review，但 600036-招商银行等公司的状态是 ready。共享实现 run_analysis_report.py、factcheck_cli.py 和 pg_query.py 的模式都是 0775。生成准备只检查分析脚本，0775 会在任何子进程之前拒绝，因此本机到不了 factcheck_cli 里的 broker_postgresql_query。没有改这些文件的权限或公司数据，没有再跑模型。这不是放行后的网络连接。OPT-08 保持 implementing，11/16 不变。",
+        "业务 f6cce13 在启动子进程前检查固定程序链，包括分析脚本导入和执行的程序，以及 factcheck_cli.py、generate_factcheck_html.py 和 agents/hermes/profiles/shared/scripts/pg_query.py。可写、符号链接或非常规文件都会以 report_generation_implementation_invalid 拒绝，且不留下尝试标记。定向 16 项通过，其中新增可写事实核查和可写查询客户端两项。本机这些文件仍是 0775 或 0664，准备阶段继续在子进程之前拒绝，没有改权限、没有改公司数据、没有再跑模型。这不是放行后的网络连接。OPT-08 保持 implementing，11/16 不变。",
+        "业务 b3701ce 把候选镜像锁中的 research_report_generation.py 从 eb4efe608a74e03fa3e7851c24623f4acce40ecef62162d45913682a3e3b10bd 改为 c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad。改锁之前镜像构建测试报 business_mcp_source_digest_mismatch；改锁后构建上下文测试与报告生成 25 项通过。已登记镜像 sha256:534d18c9 仍是旧生成器，没有重建镜像，没有再跑模型。OPT-08 保持 implementing，11/16 不变。",
+        "只读检查已登记镜像 sha256:534d18c9：research_report_generation.py 为 0444、摘要 eb4efe60，仍是只检查分析脚本的旧生成器。镜像内 run_analysis_report.py、factcheck_cli.py、generate_factcheck_html.py 以及其余固定程序均为 root、nlink 1、0444 或 0555。请求挂载只绑定公司目录、公开元数据和本次写入目录，不覆盖这些程序。因此本机 0775/0664 不会拦沙箱里的子进程；那只适用于直接在本机树上运行生成器。当前没有 18794 监听，没有再跑模型，也还没有放行后的数据代理连接。OPT-08 保持 implementing，11/16 不变。"
+      ]
+    },
+    {
+      "id": "OPT-09",
+      "title": "OpenShell行为证据",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt09-protocol-validation-20261008.md",
+        "docs/development/optimization-opt09-journal-validation-20261008.md",
+        "docs/development/optimization-opt09-elf-channel-validation-20261008.md",
+        "docs/development/optimization-opt09-protection-validation-20261008.md",
+        "docs/development/optimization-opt09-connect-validation-20261008.md",
+        "docs/development/optimization-opt09-coordinator-validation-20261008.md",
+        "docs/development/optimization-opt09-api-validation-20261008.md",
+        "docs/development/optimization-opt09-completion-validation-20261008.md"
+      ],
+      "residual_limits": [
+        "ADR-058及企业OpenShell单次挑战／v2观测合同、纯校验器完成；58项新用例和63项v1回归共121项通过，Ruff通过。覆盖时效／nonce／范围／前后策略与保护身份／三臂和前后可达性约束。全部为合成组件证据；纯校验器不承担持久CAS或认证，生产部署仍只做配置读回。持久协调／真实ELF收集器／API前端接线和真实三臂验收继续，总体9/16保持。",
+        "企业行为验证持久台账、单向状态／CAS、一次领取／消费、父操作来源核对与0031迁移完成。定向166项及最终台账32项通过（重叠），真实临时PostgreSQL40项通过，含两组实际行锁竞争、六状态审计回滚及非空降级保留。领取前观测误接受已复现并修复；Ruff通过。全部观测仍为合成材料，真实ELF收集器、API／授权／目标互斥及前端接线和真实三臂验收继续；生产等级未提升，总体9/16保持。",
+        "静态Go ELF、agent v1观测合同与有界回显通道完成；真实本机TCP／ELF和协议兼容共160项通过（39新＋58协议＋63历史），Ruff／Go vet／gofmt通过。无策略拦截的三轮12次连接全部成功时，校验器明确拒绝防护有效结论；错误回显、EOF、超时、reset、拒绝和伪造报告均分列。没有真实OpenShell调用，自报身份不替代独立保护核验；目标保护观察器、企业协调API／前端和真实三臂继续，总体9/16保持。",
+        "独立Docker保护观察器、v1保护事实及ELF低权限检查完成：84项保护／通道、最终46项保护（重叠）及12项真实Docker检查通过；Ruff／Go vet通过。真实OpenShell三次尝试保留：启动capability模板与镜像UID998已修正，003实际保护通过但原始TCP允许／拒绝各三次均refused、六次主机对照成功，校验器正确不予采信。全部自有网关／沙箱／网络清理，原模板及TLS不变；需新增显式代理通道协议并完成真实差分、协调API／前端，OPT-09与9/16保持。",
+        "显式CONNECT挑战v2／结果v3／agent v2及持久台账兼容完成，相关172个不同用例分批通过（初次schema引用失败修复，重叠不累加）；新ELF真实Docker保护12项通过。真实独立OpenShell同目标三轮允许3/3、明确policy_denied拒绝3/3、主机前后对照6/6，接收端9条标识；原拒绝路径显式授权后新挑战连通、再收到1条，旧策略证据失效。9项真实检查及清理通过，公开观测离线核验通过。生产认证协调／目标互斥／可信代理模板／API前端及等级生命周期仍待接线；合成operation绑定不冒充生产端到端，OPT-09与总体9/16保持。",
+        "操作员批准模板与内部持久协调器完成：模板文件／祖先权限及完整目标绑定、每臂授权复核、共享目标互斥、提交后联网、完成事务授权与二次期限检查。57项定向通过；真实专用OpenShell的持久策略下发、同次持久行为收集、重复不重放、数据库绑定撤权、三轮差分及清理共12项通过，独立查询确认唯一accepted/epoch2及三条审计、父操作revision/digest吻合。真实运行使用隔离SQLite与合成审批身份，生产认证API／目标授权链／前端及等级生命周期尚待接线；未提升部署等级，OPT-09与9/16保持。",
+        "认证行为API、批准模板持久绑定及0032迁移完成：167项定向回归、真实临时PostgreSQL43项通过；专用OpenShell12项及同次认证API6项检查通过（有重叠）。实际RS256认证、三臂探测、重复不重放、撤权拒绝与三条主体审计完成；独立读库／协议／schema复核通过。身份发行者及审批为合成材料，数据库为开发SQLite、请求经ASGI；不冒充生产IdP／PostgreSQL同次端到端。原配置不变，自有资源清理；前端及等级生命周期仍待接线，OPT-09与9/16保持。",
+        "企业OpenShell行为证据闭环适用范围验收完成：批准模板预览与v2摘要绑定、accepted态独立核验、当前限定等级／审计、前端时效及不重放恢复已接线。后端154项、前端31项、PostgreSQL48项通过；同次真实OpenShell13项／API9项及实际浏览器HTTP核验通过，故障浏览器9项另计且不混淆。实际策略变更使等级转unverified，历史accepted不改写；自有资源清理。生产IdP、持续监控和未覆盖路径不作通过声明，其他任务与最终交付继续。OPT-09记done，总体10/16（62.5%）。"
+      ]
+    },
+    {
+      "id": "OPT-10",
+      "title": "同候选业务回归",
+      "status": "implementing",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt08-opt10-repetitions-validation-20261008.md",
+        "docs/development/optimization-opt08-install-drift-validation-20261008.md",
+        "docs/development/optimization-opt08-switch-repetitions-validation-20261008.md",
+        "docs/development/optimization-opt08-clean-api-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/clean-business-api.json",
+        "docs/development/optimization-opt08-business-revoke-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-revoke-v834.json",
+        "docs/development/evidence/optimization-20261007/native-business-revoke-v837.json",
+        "docs/development/optimization-opt08-terminal-cleanup-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-startup-diagnostics-v838-v841.json",
+        "docs/development/evidence/optimization-20261007/native-business-revoke-v842-v844.json",
+        "docs/development/optimization-opt08-crash-expiry-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-business-crash-v845.json",
+        "docs/development/evidence/optimization-20261007/native-queue-expiry-v846.json",
+        "docs/development/optimization-opt08-containment-repair-validation-20261008.md",
+        "docs/development/optimization-opt08-post-recovery-validation-20261008.md",
+        "docs/development/optimization-opt08-skill-grant-effect-validation-20261008.md",
+        "docs/development/optimization-opt08-context-boundary-validation-20261008.md",
+        "docs/development/optimization-opt08-explicit-no-skill-validation-20261008.md",
+        "docs/development/optimization-opt08-native-channel-fault-validation-20261008.md",
+        "docs/development/optimization-opt08-call-binding-effect-validation-20261008.md",
+        "docs/development/optimization-opt08-natural-expiry-validation-20261008.md",
+        "docs/development/optimization-opt08-authority-replacement-validation-20261008.md",
+        "docs/development/optimization-opt08-concurrent-business-validation-20261008.md",
+        "docs/development/optimization-opt08-content-version-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-content-version-r04.json",
+        "docs/development/optimization-opt08-content-version-business-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-content-version-business-v879.json",
+        "docs/development/optimization-opt08-v2-image-business-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/native-content-version-v2-image-v881.json",
+        "apps/agentshield/internal/receipt/receipt_test.go",
+        "apps/agentshield/internal/skillcontext/native_host_test.go",
+        "patches/hermes/build_native_overlay.py",
+        "patches/hermes/test_build_native_overlay.py",
+        "adapters/runtime/hermes-agentshield/native_dispatch.py",
+        "adapters/runtime/hermes-agentshield/tests/test_native_dispatch.py",
+        "docs/development/evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json",
+        "docs/development/evidence/optimization-20261007/native-overlay-unmapped-image-20261008n.json",
+        "docs/development/evidence/optimization-20261007/native-unmapped-image-authority-20261008n.json",
+        "docs/development/evidence/optimization-20261007/native-unmapped-image-execute-20261008n.json",
+        "apps/agentshield/internal/runtimeaction/normalize.go",
+        "apps/agentshield/internal/receipt/resource_scope_test.go",
+        "docs/development/evidence/optimization-20261007/native-execute-code-network-v887.json"
+      ],
+      "residual_limits": [
+        "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
+        "安装内容漂移真实对照v828/v829通过：同一获批写入Skill正常读写成功；读取后受控修改宿主安装SKILL.md内容，后续实际write_file报错、目标不存在，无伪造deny回执。原字节／inode／硬链接关系恢复，源码与模型不变，自有资源清理；新增5条回执，与原18条组成23条链，11份SEC公钥／schema核验通过。仅一组安装源漂移对照，其他生命周期／四臂与干净交付继续，9/16保持。",
+        "同工作候选v830–v832完成三次同请求Skill切换：两次原生加载均允许，实际write_file均因grant_scope_violation拒绝、目标不存在；两个Grant和签名父上下文保留，OpenShell任务目录可写。新增9条回执／6份SEC，完整32条链／17份SEC独立验签、父子绑定与schema通过；公开核验工具5项相关回归及Ruff通过。原模型、业务源码不变，自有资源清理。该组不是并发隔离，干净交付／其余生命周期／四臂／平台验收继续，9/16保持。",
+        "业务f73e566统一请求所有权状态路径，保留缺失/权限/损坏拒绝。242项相关回归通过；14项新检查在干净导出独立复验通过（重叠子集）。新venv复制安装同提交4个自有wheel后，真实HTTP授权/幂等/撤销及恢复就绪11项检查通过，关闭时1483模块条目无工作区源码导入，15个自有包模块绑定对应13个文件字节匹配。临时资源清理、日常服务不变；保留初始未就绪、旧包来源差异、非受信安装目录与硬链接拒绝。未调用模型，原生Skill完整业务/四臂/平台验收继续，OPT-08/10与总体11/16保持。",
+        "真实业务撤权v834试点通过：当前SEC Git导出二进制与登记1874输入/289补丁的f73e566业务工作候选，原生Skill加载/读取后撤销业务授权，活动查询403、SSE失权无done、子凭据401、父身份有效、约25.287秒终态及资源回收。2回执/1 SEC独立验签schema通过。v835重复启动失败且已回收，v836按规则未执行；不宣称三次通过或撤权后实际写入拒绝。业务74d9024新增固定允许列表端点诊断，26项定向通过，仅诊断改进不是启动修复。遵循OPT-10分别登记跨仓补丁，不把完整业务仓路径重构另作前提；完整矩阵和最终全栈冻结仍必需。OPT-08/10与11/16保持。",
+        "诊断候选74d9024的v837真实撤权复测通过，约38.375秒终态；相同1874输入范围重新冻结，候选摘要52596e44。新增2回执/1 SEC，累计4回执/2 SEC独立验签及schema通过；原服务配置恢复、模型不变。v835启动失败没有复现，仍未解决，不能合并为同候选三连通过。两轮撤权后监管单元保留failed/exit-code状态但进程PID0，资源回收与服务退出状态分开记录；后续继续启动可靠性、撤权后工具尝试和其余矩阵。",
+        "业务7e52689为原进程/原handle的stop增加有界终止确认重试，不重试start/renew、不放宽身份校验。旧实现2项反例失败，相关86项及Ruff通过。v838–v841四次真实启动/取消通过但v835启动失败未复现、未解决。修复候选v842–v844三次真实模型输出后业务撤权通过，约32.879/30.811/24.314秒终态；不再出现close_native或containment_failed，撤权触发failed_closed仍保留systemd failed/退出1、PID0。新增6回执/3 SEC，完整10回执/5 SEC及3个请求绑定独立核验通过。v843/v844各有首次读取报错后重试成功，未认定为防御成绩。后两轮API依赖11663文件/4链接前后不变，非全栈冻结。原模型/配置恢复、自有资源清理。撤权后工具尝试、启动/读取错误归因、其余矩阵/平台/签名交付继续；11/16不变。",
+        "同业务候选7e52689新增v845真实Skill读取/模型输出后API SIGKILL与原数据库重启试点，原租约自然失效且未接管/续租，约126.976秒转authority_lost、子凭据401、最终资源回收；首次containment_failed后ExecStopPost recover通过，failed/退出1状态保留。v846真实排队Grant自然到期约59.404秒后受控503、pending released、无沙箱/模型/新增回执，合成占位保持且由所有者释放。新增2回执/1 SEC，完整12回执/6 SEC及新请求绑定独立核验；源码/驱动/pending/终态复核通过，11663依赖文件/4链接前后不变。每例仅1次试点，数据库断言源于现场固定驱动，非事后重查；运行中SEC到期、恢复后新任务、其余矩阵/平台/签名交付继续，11/16保持。",
+        "业务8851724修复在途模型流占锁导致的首次清理失败：仅明确admission锁超时且沙箱删除/空清单已确认时，对原运行模型凭据轮换追加一次重试，其余失败保持失败。75项不同相关检查通过；诊断v847复现model_access失败且锁由自有桥持有，修复v848真实API崩溃复测记录busy→recovered、监管退出0/PID0、业务authority_lost及资源清理通过。约139.098秒恢复等待不是低延迟SLA。两候选分别登记，独立新Authority链4回执/2 SEC/2请求绑定验签通过；依赖11663文件/4链接前后不变，非全栈冻结。其余生命周期/四臂/平台/正式签名继续，11/16保持。",
+        "同修复候选8851724完成v850真实API崩溃自然恢复后新合法请求：43项现场检查通过，同API/数据库/会话的新run加载Skill、读取并完成模型输出；旧终态摘要不变、旧子凭据仍401，新请求最终释放，两监管服务退出0/PID0，源码/配置/原模型保持。恢复等待110.850秒；模型生成耗时另计，新任务首次read_file报错后重试成功，原因未定。v849因把按会话复用的活动租约槽误当历史表而失败，按合同修正驱动并保留失败，不修改产品或补记通过；隔离组件3个不变量核对通过。新增4回执/2 SEC，含v849等既有记录共12回执/6 SEC和本轮2请求绑定独立验签；依赖11663文件/4链接前后不变。剩余生命周期/四臂/平台/签名交付继续，11/16保持。",
+        "同候选8851724完成v853/v854真实Skill撤权效果对照：合法加载/读取/写入及文件内容匹配27项通过；读取后HTTP撤销writer Grant，约6.844秒后观察到实际write_file尝试报错、目标不存在，30项通过。完整Agent基线签名和安装内容不变，剔除请求标识后的OpenShell策略相同且均允许任务输出目录。5回执/2 SEC/3签名Grant快照独立核验；拒写发生在回执之前，无虚构deny。v852因脚本错将正常deployed基线要求为approved而失败，使用新隔离Authority按完整签名内容比较后复测，保留失败且未恢复旧撤销Grant。离线核验器16项及Ruff通过。依赖11663文件/4链接不变，非全栈冻结；剩余生命周期/上下文/四臂/平台/签名继续，11/16保持。",
+        "同候选8851724完成v855合法读写、v856读取后仅撤销SEC并实际拒写、v858新合法任务新SEC读写，27/30/27项通过。Skill和Agent完整授权、安装内容、归一化OpenShell可写策略不变；旧SEC保持撤销。10回执/3SEC/1签名撤销/2Grant快照及4请求决定绑定独立核验；3完整通过例占8回执。v857将可信无Skill误当未知归属而预期错误，保留失败；v859无Skill按Agent基线实际允许且文件匹配，23/24项通过，但财务证据护栏替换回答，整例失败且监管退出1/PID0、资源清理确认。离线核验器33项及Ruff通过。依赖11663文件/4链接不变，非全栈冻结；未知归属/到期/并发/四臂/平台/签名及回答护栏归因继续，11/16保持。",
+        "可信无Skill完整复测v860同候选30项通过：无Skill加载/无SEC，签名no_skill write allow、实际文件与模型回复标记匹配、监管退出0/PID0及资源清理。只读分类器4项定位v859原提示触发Wiki全文财务证据分支；明确Hermes runtime任务后走既有诊断分类，追加财务问题仍要求证据，未修改护栏。保留v857/v859失败；最终v855/v856/v858/v860四完整通过例占9回执，累计链11回执/3SEC/1撤销/2Grant及4请求绑定独立核验。34项回归与Ruff通过（包含前33项），依赖11663文件/4链接不变；未知归属/到期/并发/四臂/平台/签名继续，11/16保持。",
+        "同候选8851724完成v861原生元数据通道失联与v862新任务恢复：读取后只移走本任务socket，约5.396秒窗口内实际write_file报错、文件不存在、无写入回执；原socket按inode恢复，完整Grant/SEC不变，业务failed/hermes_run_failed且资源释放，故障检查30项通过。新任务加载/读取/写入及结果27项通过。两监管均退出0/PID0；归一化OpenShell可写策略一致。新增5回执/2SEC，完整16回执/5SEC/2新请求绑定与有效Grant签名核验通过；依赖11663文件/4链接不变。未改产品或核验器、不重复无关测试；未知证明/到期/并发/四臂/平台/签名继续，11/16保持。",
+        "同候选8851724完成v863正常代理对照32项和v864缺失tool_call_id负向33项。合法加载/读取后，仅从唯一实际写入HTTP请求移除调用标识，身份/任务/参数/认证/完整Grant和SEC不变；Authority实际409 native_host_unavailable、工具错误、文件不存在，无伪造deny。正常字节透传对照200 allow并实际写入。两例业务completed及监管退出0/PID0，输出OpenShell可写策略一致；新增5回执/2SEC，完整21回执/7SEC/2新请求绑定及Grant独立核验通过。依赖11663文件/4链接不变，代理及自有资源清理；未改产品、不重复无关测试。自然到期/并发/其他错配/四臂/平台/签名继续，11/16保持；已请求原生Windows/macOS接入信息。",
+        "同候选8851724新增Skill Grant自然到期真实对照：v867到期前合法加载/读取/写入29项通过；v869读取后用pidfd暂停自有Hermes约106秒，正式420秒Grant自然到期后恢复，约0.088秒后观察实际write_file报错、文件不存在，31项通过。SEC及原生子身份尚未到期、Agent基线有效，完整签名内容/归一化可写策略不变，无主动撤销或改时钟。两例业务completed、监管退出0/PID0，资源/配置恢复。新Authority完整8回执/3SEC/2Grant及2请求绑定独立核验，通过例占5回执/2SEC；v865错误SEC截止断言失败、v866未执行、v868缺少os.pidfd_open失败均保留，后用预检查通过的libc pidfd接口复测，不改产品。API依赖11663文件/4链接不变。SEC单独到期、续期/更新、并发、资源入口、最终矩阵/平台/签名继续，11/16保持。",
+        "同候选8851724完成正式Skill授权换代：独立批准相同内容的新Grant，通过公开compare/plan/commit/activate撤销旧Grant并建立新安装。v870实际读取后暂停自有Hermes约0.368秒完成更新，恢复后实际write_file报错、文件不存在，32项通过；v871显式绑定新安装的独立新任务加载/读取/写入31项通过。Agent基线及Skill字节不变，SEC自身未到期，输出目录仍可写；两例业务completed、监管退出0/PID0，配置/资源恢复。新Authority 5回执/2SEC/4Grant/4安装更新记录及2任务绑定独立核验；新增离线换代签名/关联检查，50项相关回归（新增16项）和Ruff通过。API依赖11663文件/4链接不变。此为相同内容授权换代，不代替内容版本升级或旧授权原地续期；并发/资源入口/最终矩阵/平台/签名继续，11/16保持。",
+        "同候选8851724完成v872两个真实业务HTTP请求并发在途：writer实际加载/读取后暂停约2.202秒，reader真实请求在单槽队列等待，三次重叠观察跨度约1.131秒；writer实际写入成功并释放后reader加载自己的只读Skill，实际写入签名deny grant_scope_violation且文件不存在。36项现场检查通过，两业务completed、监管退出0/PID0；同Agent、不同会话/任务/Skill、归一化可写OpenShell策略相同、Grant及源数据不变。完整6回执/2SEC/3Grant及2任务绑定独立核验，离线核验器59项（新增9项）与Ruff通过，API依赖11663文件/4链接不变。证明当前单槽业务架构下真实并发请求的排队及权限隔离，不宣称两个沙箱同时执行或压力容量；内容版本升级、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。",
+        "当前安全提交8c473439的Hermes原生内容版本升级16项通过：V1与V2内容哈希不同，确认前取消不改V1，明确更新替换字节并撤销V1 Grant，旧决策凭据被拒且无新回执或文件效果，V2需新身份和SEC后实际读取执行，4条回执链验签通过。本地确定性模型，不是DGX日常业务入口，也不能并入v870/v872。日常业务内容版本、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。",
+        "当前安全二进制aa25999e与业务8851724完成v879日常内容版本拒绝：33项通过，SKILL.md由014ac378改为a38f8af2，旧Grant撤销，恢复后的写入没有回执也没有文件。执行期间临时对齐SIQ_RUNTIME_ROOT监管合同并按原字节恢复，模型单元不变。v880新任务未执行读取或写入，工具结果为native_dispatch_unavailable，没有V2 Skill上下文；核验脚本随后AttributeError。不是最终矩阵。资源/工具入口、四臂、平台和签名继续，11/16保持。",
+        "当前安全二进制aa25999e与业务8851724完成v881：新建请求镜像sha256:a3be2a4a、制品c5e3e318，受保护SKILL.md钉为a38f8af2，并签发绑定该制品的新运行时身份。33项通过，read_file与write_file均为allow，目标文件存在。skill_view回执为no_skill；读取和写入回执绑定Grant grt-si-fd97d2ac2c65f04438255b92e9f9be9b69ffa21e9fea8cac7ecba9ad20b3d59e。监管合同临时对齐后按原字节恢复，模型单元不变。这是镜像已含V2字节的新身份执行，不是v879同一身份在旧镜像070e9423上原地换字节后的续跑；v880仍说明旧镜像钉住V1时V2安装无法加载。不是最终矩阵。资源/工具入口、四臂、平台和签名继续，11/16保持。",
+        "已部署且只包含 write_file 与 /home/u/work/out 写权限的 Grant 下，规范 write_file 允许；write、edit、patch、Write_File、write-file 和 opt10_unmapped_tool 均因工具名未授权而拒绝；只有嵌套 path、没有顶层 path 的 write_file 因资源不可用拒绝。原生宿主在已准备的 read_file 调用上改用 write_file 绑定时拒绝并使任务失效。这是引擎和宿主决定，不是日常宿主实际执行观察，也不能代替最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。",
+        "顺序执行的宿主路由拒绝原先位于前置钩子、检查点和 execute 之后。覆盖层生成现在在这些副作用之前调用 require_registry_dispatch；夹具与已构建覆盖层还原后的钉住源码形状均通过。已经发出的请求镜像 sha256:a3be2a4a 仍是旧注入位置，本批没有重建镜像或调用模型。最终矩阵、四臂、平台和签名继续，OPT-10 保持 implementing，11/16 不变。",
+        "原生配置 checkpoints.enabled 为 true。write_file、patch 和破坏性 terminal 原先在 _begin_tool_execution 里、SIQ allow 之前写入检查点。覆盖层现在从开始阶段移除该写入，并只在 call() 确认 allow 之后、工具体执行之前运行同一检查点；拒绝不调用回调。钉住的 tool_executor.py 变换和定向测试通过。已经发出的请求镜像 sha256:a3be2a4a 仍是旧注入，本批没有重建镜像或调用模型。最终矩阵、四臂、平台和签名继续，OPT-10 保持 implementing，11/16 不变。",
+        "新离线请求镜像 sha256:73153d1a83ff1cc9e041b3d6366f85e5a25ea696653559971d941d73d3ed78ac、制品 461046804f3f3da95ee34c007801af18cacfaeb25e22dcec71f226806219f30c 含当前覆盖层：宿主路由在副作用前拒绝，write_file、patch 和破坏性 terminal 的检查点只在 allow 之后。六项离线检查为 true，production_eligible 为 false，未登记身份，未调用模型。冻结镜像 sha256:dc22c450 与 sha256:a3be2a4a 未改。这不是最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。",
+        "未注册工具名原先在 registry.dispatch 里于 call_scope 之前返回 Unknown tool，不产生决定。覆盖层现在先调用 call_scope，拒绝不会进入 handler；允许但没有注册项时仍返回 Unknown tool 且不执行。新离线镜像 sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1、制品 116ce585865b1b1259489dc39676f8d5ecd3821a45a92804b98e8077869004be，registry 摘要 d85035e380e2c9d2d9732b35f00f351742cbc51d28e047ec3655c34cee82d54f。六项离线检查为 true，production_eligible 为 false，未登记身份，未调用模型。OPT-10 保持 implementing，11/16 不变。",
+        "同一镜像 sha256:534d18c9 已登记运行时身份 hi-2fb7a2320751b728f664d6cfbbbf6230，绑定制品 116ce585。可写研究 Grant grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484，只读公司 Grant grt-si-e41f897efeb1a27768841fed0e2a0a854bfcb12007e06ca3cab7e4a043f2891f。登记时未调用模型，服务已停止，runtime_state 为 unverified。不是最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。",
+        "v886 用该身份完成一次日常 read_file 与 write_file，33 项检查为 true，写入回执 rcp-2c3444ba542f04a525b876a0ac132993 为 allow，文件摘要 a3764f24947ac98006420f11a931596ff1e6c7cceb578a5823fc924aeb7312b6。请求摘要 8c463875cd0bd0bfae5e69b25e4c39f75569c2902fcc4f794a854549f810bf97。未注册工具、别名、网络效果、四臂、平台和签名仍未覆盖。OPT-10 保持 implementing，11/16 不变。",
+        "web_extract 现在对 urls 的每一项做与 url 相同的端点授权。已授权地址可以通过，夹带未授权地址、file URL、空列表和非字符串项都会拒绝。定向测试通过。尚未在日常入口观察实际网络请求。OPT-10 保持 implementing，11/16 不变。",
+        "execute_code 获授权后，源码中的 URL 现在必须命中已授权主机；未授权主机拒绝。TestExecuteCodeAuthorizesEmbeddedURL 通过。尚未在日常入口观察实际网络连接。OPT-10 保持 implementing，11/16 不变。",
+        "v887 日常入口对已授权 execute_code 的决定是 deny runtime_effect_unknown。回执同时含 network.request 和 unknown，意图合同拒绝未知效果，工具没有写出探测文件。这不是放行后的网络连接。OPT-10 保持 implementing，11/16 不变。",
+        "已知效果的报告生成工具在本机到不了数据代理：分析脚本模式 0775，准备阶段在子进程之前拒绝。代理调用在 factcheck_cli 的 broker_postgresql_query，本机不会执行到那里。没有改脚本权限或公司数据，没有再跑模型。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。",
+        "业务 f6cce13 把事实核查和查询客户端纳入同一道实现检查：可写 factcheck_cli.py 或 pg_query.py 不再启动报告进程。定向 16 项通过。本机程序仍可写，日常入口仍不会连上数据代理。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。",
+        "业务 b3701ce 将候选镜像锁钉到含该检查的生成器 c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad。已登记镜像 sha256:534d18c9 尚未包含这版生成器。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。",
+        "已登记镜像 sha256:534d18c9 内的报告程序是 root 所有且不可写；请求挂载不覆盖它们。本机脚本模式不决定沙箱能否启动子进程。18794 当前没有监听，没有新的日常网络效果。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。"
+      ]
+    },
+    {
+      "id": "OPT-11",
+      "title": "连接器可信执行",
+      "status": "implementing",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/adr/0057-enterprise-connector-execution.md",
+        "docs/development/optimization-opt11-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/connector-execution.json",
+        "docs/development/optimization-opt11-release-preparation-20261008.md",
+        "docs/development/optimization-opt11-upgrade-review-validation-20261008.md",
+        "docs/development/optimization-opt11-upgrade-journal-validation-20261008.md",
+        "docs/development/optimization-opt11-upgrade-apply-validation-20261008.md",
+        "docs/development/optimization-opt11-upgrade-candidates-20261008.md"
+      ],
+      "residual_limits": [
+        "Linux 描述符固定启动、签名安装来源接线、开发显式配置、资源边界和迁移拒绝已实现；Edge 689 项通过、2 项条件跳过，定向 race、vet、四目标构建通过。新摘要升级仅合成程序组件验证，正式签名包安装/升级与真实设备迁移未验收；Windows/macOS 受管入口明确 unsupported，未运行原生平台验收。",
+        "已实现升级 pending 日志、已知中间态只读恢复核验、任务阻断与先锁后读；本批 238 个顶层测试累计通过（784 含子测试，2 条既有条件跳过），其中全量首轮两份夹具权限失败经修复定向 race 通过。尚无配置切换/恢复 CLI、正式签名升级或实际设备迁移验收，不能把此组件记录当成升级完成。",
+        "后续增量已实现 apply/recover CLI、签名来源程序的描述符固定恢复协议探测、停服条件解析、持久切换和完成归档；组件正向仍用验签/服务管理器替身。最终全量 251 顶层通过（820 含子测试、2 既有跳过），进程直接退出恢复与协议精确匹配 race、38 合同、最终四目标构建与真实 CLI 10 检查通过。正式签名包与真实 systemd/迁移验收仍缺，保持 implementing；替代上一批尚无 CLI 的阶段描述。",
+        "63a8cfc0 固定 297 个 Git 输入，生成未签名企业候选 .3/.4 与候选外独立构建验证器。原生恢复协议及版本读回、16 ELF/ZIP 摘要、6 connector describe、2 开发扫描、伪造签名/setup/finalize 拒绝通过；独立导出 31 顶层/131 含子测试升级回归通过。旧 .1/.2 缺恢复入口已实际确认并保留。仍缺受控签发、真实服务与设备迁移验收，不计为完成。",
+        "个人客户端用户单元的同字节切换与回滚已在 OPT-15 另记，不能代替企业候选 .3/.4 的受控签发、真实企业服务升级或设备迁移。OPT-11 保持 implementing。",
+        "2026-10-08 确认：Windows 与 macOS 受管连接器原生证据暂时不实施，保持 blocked。Linux 上的受控签发、真实企业服务升级和设备迁移继续。OPT-11 保持 implementing，11/16 不变。"
+      ]
+    },
+    {
+      "id": "OPT-12",
+      "title": "钩子完整性",
+      "status": "implementing",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/adr/0059-adapter-installation-integrity.md",
+        "docs/development/optimization-opt12-integrity-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/adapter-installation-integrity.json",
+        "docs/development/optimization-opt12-protected-hook-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/protected-hook-execution.json",
+        "docs/development/optimization-opt12-program-identity-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/install-program-identity.json",
+        "docs/development/optimization-opt12-current-overlay-hook-20261008.md",
+        "docs/development/evidence/optimization-20261007/protected-hook-current-overlay-20261008.json"
+      ],
+      "residual_limits": [
+        "安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。",
+        "受保护钩子实效联验完成：独立OpenShell＋当前Hermes原生工具＋真实Go Authority下，两个正常写入成功，钩子／清单六次改写删除替换均拒绝；管理员注入代码漂移后实际写入被拒且无副作用，恢复字节不复活旧guard。002完整18项检查通过，50项组件和9项证据回归通过；001清理复验异常保留且资源已清理。仅合成批准Skill、无模型，非日常业务／正式发行验收；OPT-12继续implementing，总体10/16保持。",
+        "安装程序身份读回完成：复用密封计划的准确路径和BinaryDigest，发现程序改写／删除／异路径；旧计划无摘要为unknown，明确升级后认可新身份，中断恢复重新核对旧身份。五个旧反例复现；Go全量1741顶层通过／34跳过，定向45项与合同4项、vet/Ruff/格式/四目标构建通过。当前验证器另复核历史0.4.0真实签名包及四类篡改拒绝，不能冒充当前候选签发或原生验收；OPT-12继续implementing，总体10/16保持。",
+        "2026-10-08 确认：Windows 与 macOS 原生安装验收暂时不实施，保持 blocked。当前候选的发行身份与 Linux 受保护加载继续。OPT-12 保持 implementing，11/16 不变。",
+        "2026-10-08 当前覆盖层在独立 OpenShell 上完成 Linux 受保护加载：镜像 sha256:12f1c8d9，18 项检查为真，钩子和清单六次改写删除替换被拒绝。registry 与 tool_executor 摘要和已登记镜像 sha256:534d18c9 的覆盖层一致，native_dispatch 与当前源码一致。无模型，合成 Skill，不是该请求镜像本身，也不是发行签名身份。Windows/macOS 仍 blocked。OPT-12 保持 implementing，11/16 不变。"
+      ]
+    },
+    {
+      "id": "OPT-13",
+      "title": "交付安全头",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [],
+      "evidence": [
+        "docs/development/optimization-opt13-validation-20261007.md",
+        "docs/development/evidence/optimization-20261007/delivery-headers.json"
+      ],
+      "residual_limits": [
+        "受控真实 Nginx 代理链不替代客户生产 Gateway/TLS 配置；企业验证未登录页面，本地真实 daemon 验证正常管理会话。未测试完整 DNS rebinding 链，不宣称其实证防御；保留现有 unsafe-inline 样式策略。"
+      ]
+    },
+    {
+      "id": "OPT-14",
+      "title": "扫描进程隔离",
+      "status": "done",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F08"
+      ],
+      "evidence": [
+        "docs/development/optimization-opt03-opt14-validation-20261007.md",
+        "docs/development/optimization-opt14-host-service-validation-20261008.md"
+      ],
+      "residual_limits": [
+        "原生 bwrap 与独立宿主服务/真实 Docker 路径已验收；容器内直接 namespace 仍拒绝，不放宽默认安全配置。",
+        "真实 HTTP 使用开发身份与隔离 SQLite；生产 IdP/PostgreSQL、rootless UID 映射及其他主机须按部署单独核验。"
+      ]
+    },
+    {
+      "id": "OPT-15",
+      "title": "跨平台验收与有界清理",
+      "status": "implementing",
+      "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
+      "source_tasks": [
+        "SEC-F06"
+      ],
+      "evidence": [
+        "docs/development/optimization-opt15-receipt-identity-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/receipt-identity-validation.json",
+        "docs/development/optimization-opt15-receipt-lookup-validation-20261008.md",
+        "docs/development/optimization-opt15-closure-validation-20261008.md",
+        "docs/development/optimization-opt15-request-limit-validation-20261008.md",
+        "docs/development/optimization-opt15-bounded-cleanup-20261008.md",
+        "docs/development/evidence/optimization-20261007/skill-source-smoke-linux-arm64.json",
+        "docs/development/optimization-opt15-linux-upgrade-20261008.md",
+        "docs/development/evidence/optimization-20261007/linux-user-service-upgrade-20261008.json",
+        "docs/development/optimization-opt15-linux-deny-20261008.md",
+        "docs/development/evidence/optimization-20261007/linux-daemon-deny-recovery-20261008.json"
+      ],
+      "residual_limits": [
+        "新在线 decision 使用 rcp- 加 128 位密码学随机值；固定时钟重复请求、引擎重建和历史重复 ID 审批拒绝已复现并修复。receipt/server/skillcontext 最终复测通过，合同样例未改写。审批仍是管理路径的线性验签，未证明大型历史库性能；任务追踪等只按 ReceiptID 取值的入口尚未逐项确认；token 哈希、依赖锁定、生产 assert 与请求超限状态码未在本子项改动。四目标构建不等于 Windows/macOS 原生验收。OPT-15 保持 implementing，总体仍为 11/16。",
+        "会话/任务绑定、预留哈希和任务链定位已改为重复 receipt_id 失败关闭：修复前绑定返回 openshell_decision_missing 并采用第一条。HTTP 409、唯一旧 ID 对照、OpenShell server 回归、vet 及四目标编译通过。对账/观察末条覆盖、线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。",
+        "同一预留的第二条签名对账或观察不再按末条采信：修复前 deny 之后的 allow 被任务查询选中。现返回 openshell_receipt_ambiguous。单条对照、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。",
+        "decide/observe 超限正文修复前返回 400 invalid decision request，现返回 413 decision_request_too_large，不进入引擎。hold 超限返回 413，畸形仍为 400，链头不变。定向测试、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、token 哈希、依赖锁定和原生平台验收仍未收口。",
+        "有界清理已核对且不改代码：Go 模块无第三方 require，故无 go.sum；web package-lock 与 control-api uv.lock 已固定实际版本。审批线性过程是验签本身，验签前索引会重新引入重复 ID 取值。三处 panic 仍是规范编码或启动随机源失败。观察者、刷新和管理配对码已是 SHA-256；access token 仍须留在刷新记录中才能恢复会话，只改 map 键不能从内存去掉它。Windows/macOS 无原生机器，记为 blocked，不用交叉编译代替。OPT-15 保持 implementing，11/16 不变。",
+        "当前二进制 aa25999e 在本机 linux/arm64 隔离状态完成一次源码启动检查：未签名 Skill 引导拒绝且不写状态；admit_with_conditions；start 与 init/serve 的 status、pair、控制台和停止通过；SSH 指导不回显连接串。工作树另有无关未提交文件，source_dirty 为 true。这不是签名安装包、宿主集成、越权拒绝、升级或后台服务验收。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。",
+        "当前二进制 aa25999e 在本机 systemd 用户会话完成临时实例升级与回滚：开发清单不打断原进程；同一字节候选替换进程且配置不变；端口冲突失败后按恢复事务完成，再回滚到健康原单元。临时单元已消失。这不是企业签名包、版本兼容升级、设备迁移或越权决定拒绝。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。",
+        "当前二进制 aa25999e 的新建隔离状态：无凭据和未知凭据的 decide 返回 401；决策凭据在没有 Grant 时对 write_file 返回 deny grant_missing，目标文件不存在。停止后再次 serve，凭据保留且写入仍拒绝，4 条回执验签通过。别名 write 与未映射工具也是 grant_missing，不能当作已授权工具的别名隔离。不是签名安装。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。",
+        "2026-10-08 确认：当前开发环境没有 Windows 与 macOS 原生机器，这两项目标暂时不实施。状态保持 blocked，不记为通过，交叉编译不代替原生安装、启动、授权、拒绝、升级或恢复。Linux 本机与 DGX 适用项继续。OPT-15 保持 implementing，11/16 不变。"
+      ]
+    }
+  ],
+  "research": [
+    {
+      "id": "RES-01",
+      "status": "planned",
+      "scope": "feasibility only; no automatic implementation"
+    },
+    {
+      "id": "RES-02",
+      "status": "planned",
+      "scope": "feasibility only; no automatic implementation"
+    },
+    {
+      "id": "RES-03",
+      "status": "planned",
+      "scope": "feasibility only; no automatic implementation"
+    }
+  ]
+}

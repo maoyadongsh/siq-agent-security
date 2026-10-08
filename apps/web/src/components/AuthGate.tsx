@@ -4,7 +4,7 @@ import { registerUnauthorizedHandler, restoreSession } from '@/api/session';
 import { Icon } from '@/components/icons';
 import LoginPage from '@/pages/LoginPage';
 
-const DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true';
+import { DEV_IDENTITY as DEV_MODE } from '@/api/devMode';
 
 /**
  * 平台嵌入：先尝试 IAM refresh cookie，没有会话则展示本控制台登录页。

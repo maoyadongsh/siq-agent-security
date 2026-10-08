@@ -1,0 +1,356 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "HSuh1P8R8dpX+k5RyhYqrYTbb4ZocoMMIBjjjFKUWLc=",
+      "count": 10,
+      "head_hash": "c9aa48ef0449260e1ac9d6e174886f771732136c2401b15bea014acf82d14c3b"
+    },
+    "signed_context_count": 5,
+    "cases": {
+      "v842": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "a1de6f39f60b9ea103f8c7c6cf32190c2d725ed52299b2c6c3e760e8b6f6a58e",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "cf5a7de9c9c28275be2e0b6545dbc93a1c71fcceaa20da9ae7a26b3f8fc14598"
+      },
+      "v843": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "9461fd04da864370b9c7c3f8c317a7f0a9c2e6e4c2efb369b06051f308a96b23",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "37d84aaad19532c56dbe09e4d19a8f10ebad7c25128c2c676fc0f05d9cbaf845"
+      },
+      "v844": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "c9aa48ef0449260e1ac9d6e174886f771732136c2401b15bea014acf82d14c3b",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "0577a47c78f99552558f24ba0009e56c7dc75b47c5492c18580de3942c023d6f"
+      }
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-business-revoke-v842-v844.receipts.jsonl",
+      "sha256": "e3e12e7636eaef1464690b1799df30bf97b8b2feda756895a67ca4095a8c2c36"
+    },
+    "contexts": {
+      "file": "native-business-revoke-v842-v844.contexts.json",
+      "sha256": "93143dee682fe8d188e6db344b25350609ea9551385294abe1ecdbb4a1c64ba3"
+    }
+  },
+  "observations": {
+    "v842": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "business_grant_revoked_after_model_output": true,
+        "independent_active_read_denied_403": true,
+        "revoked_stream_has_no_success_done": true,
+        "original_stream_reports_read_authorization_lost": true,
+        "read_only_source_unchanged": true,
+        "model_delta_observed_before_revoke": true,
+        "revoked_execution_failed_without_success": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_stream_started_200": true,
+        "sandbox_supervisor_and_forward_absent": true,
+        "old_native_child_credential_401": true,
+        "native_child_revoked_before_diagnostic_cleanup": true,
+        "native_parent_still_active": true,
+        "native_skill_read_allowed_before_business_revoke": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "SSE_event_counts": {
+        "delta": 1,
+        "error": 1,
+        "progress": 11,
+        "run": 1,
+        "tool": 4
+      },
+      "revocation_to_terminal_seconds": 32.879,
+      "cleanup": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "events_sha256": "9e9a6b6ae8844d8f38dc59c08fc1575a68090e973a2d9160e36d0d1fdc38a7ce",
+      "tool_completions": [
+        {
+          "tool": "skill_view",
+          "error": false
+        },
+        {
+          "tool": "read_file",
+          "error": false
+        }
+      ],
+      "initial_tool_error_is_defense_success": false,
+      "supervisor_failure_stages": [
+        {
+          "stage": "guard_tick",
+          "category": "run_guard"
+        }
+      ],
+      "supervisor_error_codes": [
+        "supervisor_failed_closed"
+      ],
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "exit-code",
+        "ExecMainStatus": "1",
+        "ActiveState": "failed"
+      },
+      "native_cleanup_confirmation_failed": false
+    },
+    "v843": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "business_grant_revoked_after_model_output": true,
+        "independent_active_read_denied_403": true,
+        "revoked_stream_has_no_success_done": true,
+        "original_stream_reports_read_authorization_lost": true,
+        "read_only_source_unchanged": true,
+        "model_delta_observed_before_revoke": true,
+        "revoked_execution_failed_without_success": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_stream_started_200": true,
+        "sandbox_supervisor_and_forward_absent": true,
+        "old_native_child_credential_401": true,
+        "native_child_revoked_before_diagnostic_cleanup": true,
+        "native_parent_still_active": true,
+        "native_skill_read_allowed_before_business_revoke": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "SSE_event_counts": {
+        "delta": 9,
+        "error": 1,
+        "progress": 17,
+        "reasoning": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "revocation_to_terminal_seconds": 30.811,
+      "cleanup": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "events_sha256": "0a6bf8b51f9837933afd9ef03b387bcd0653ec47a79da7c4fc3d476ceeeda838",
+      "tool_completions": [
+        {
+          "tool": "skill_view",
+          "error": false
+        },
+        {
+          "tool": "read_file",
+          "error": true
+        },
+        {
+          "tool": "read_file",
+          "error": false
+        }
+      ],
+      "initial_tool_error_is_defense_success": false,
+      "supervisor_failure_stages": [
+        {
+          "stage": "guard_tick",
+          "category": "run_guard"
+        }
+      ],
+      "supervisor_error_codes": [
+        "supervisor_failed_closed"
+      ],
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "exit-code",
+        "ExecMainStatus": "1",
+        "ActiveState": "failed"
+      },
+      "native_cleanup_confirmation_failed": false
+    },
+    "v844": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "business_grant_revoked_after_model_output": true,
+        "independent_active_read_denied_403": true,
+        "revoked_stream_has_no_success_done": true,
+        "original_stream_reports_read_authorization_lost": true,
+        "read_only_source_unchanged": true,
+        "model_delta_observed_before_revoke": true,
+        "revoked_execution_failed_without_success": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_stream_started_200": true,
+        "sandbox_supervisor_and_forward_absent": true,
+        "old_native_child_credential_401": true,
+        "native_child_revoked_before_diagnostic_cleanup": true,
+        "native_parent_still_active": true,
+        "native_skill_read_allowed_before_business_revoke": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "SSE_event_counts": {
+        "delta": 1,
+        "error": 1,
+        "progress": 13,
+        "run": 1,
+        "tool": 6
+      },
+      "revocation_to_terminal_seconds": 24.314,
+      "cleanup": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "events_sha256": "22fc232374a891b216e3625cee13ff377b3cae4349e9095efd93b52ba343ba45",
+      "tool_completions": [
+        {
+          "tool": "skill_view",
+          "error": false
+        },
+        {
+          "tool": "read_file",
+          "error": true
+        },
+        {
+          "tool": "read_file",
+          "error": false
+        }
+      ],
+      "initial_tool_error_is_defense_success": false,
+      "supervisor_failure_stages": [
+        {
+          "stage": "guard_tick",
+          "category": "run_guard"
+        }
+      ],
+      "supervisor_error_codes": [
+        "supervisor_failed_closed"
+      ],
+      "supervisor_systemd": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "exit-code",
+        "ExecMainStatus": "1",
+        "ActiveState": "failed"
+      },
+      "native_cleanup_confirmation_failed": false
+    }
+  },
+  "candidate_source_sha256": "21a4251e6649912be86a34ecc3ec8b5b8a77744b1d058c6ec45ce184469f52ae",
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "business_head": "7e526896409eaf1a960c07c7b63008d72b7bce6b",
+  "registered_patch_files": 289,
+  "business_input_files": 1874,
+  "candidate_inputs": {
+    "v842": {
+      "source_archive_sha256": "97168d63329dc42d5b8727af5935a1f48d8028bf480ab5fbd71dcc46baa9137b",
+      "registered_driver_sha256": {
+        "run-native-business-grant-revoke-v842.py": "009790076c035ba4082fe44a0cc06c7bdfd0c6654baa0c7a76276a8a0535cf4e",
+        "run-native-revoke-owned-v842.py": "1ac7981fcce2b2b63fc9c47a54fd9e14ba90544b0ab329da8d118405fd2724a1",
+        "deployment-driver.py": "94091c4bce018d3df507ded054404aa80abc9813343860af6d2d1985eef58e7f"
+      }
+    },
+    "v843": {
+      "source_archive_sha256": "97168d63329dc42d5b8727af5935a1f48d8028bf480ab5fbd71dcc46baa9137b",
+      "registered_driver_sha256": {
+        "run-native-business-grant-revoke-v843.py": "009790076c035ba4082fe44a0cc06c7bdfd0c6654baa0c7a76276a8a0535cf4e",
+        "run-native-revoke-owned-v843.py": "ac74b57cec585c7f9710f4883fb0e172e3e97d3af54509717988f9503bd162fc",
+        "deployment-driver.py": "f62f17597bfc06132517067b51617b983adc9e5ff5ba8c7aa8396da7c760193f"
+      }
+    },
+    "v844": {
+      "source_archive_sha256": "97168d63329dc42d5b8727af5935a1f48d8028bf480ab5fbd71dcc46baa9137b",
+      "registered_driver_sha256": {
+        "run-native-business-grant-revoke-v844.py": "009790076c035ba4082fe44a0cc06c7bdfd0c6654baa0c7a76276a8a0535cf4e",
+        "run-native-revoke-owned-v844.py": "4bda5a62384ce05056d83e72940d8b29f4382de9fba03ebdd5dfaeb22738f176",
+        "deployment-driver.py": "825bfe1eb8f35451889cfa14d16dfb8c6ca329a019c50fe8001d2bc279d01e3a"
+      }
+    }
+  },
+  "frozen_archives_match_manifest": true,
+  "business_revoke_repetitions_passed": 3,
+  "new_receipt_count": 6,
+  "new_context_count": 3,
+  "historical_receipt_count": 4,
+  "after_revoke_tool_attempt_observed": false,
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "historical_startup_failure_resolved": false,
+  "full_stack_dependency_freeze_complete": false,
+  "api_dependency_inventory": {
+    "verified_cases": [
+      "v843",
+      "v844"
+    ],
+    "file_count": 11663,
+    "symlink_count": 4,
+    "bytes": 425683505,
+    "editable_source_roots": 8,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_identical": true,
+    "added_removed_changed_files": 0,
+    "before_record_sha256": "edb7110b78eebfce8683807b930a2b9f8ea50759e694ebc10d6bc3f9744a36e3",
+    "after_record_sha256": "a21d1450f63dd982358ec17466b61074f3647596a84e7ae8f5e1f330579c5871",
+    "collector_sha256": "9382790a8d6fd52d1b0459ab638835de32c15549de4acf02c6b31b2eba87b8d7",
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory",
+    "covers_v842_from_before_execution": false
+  }
+}

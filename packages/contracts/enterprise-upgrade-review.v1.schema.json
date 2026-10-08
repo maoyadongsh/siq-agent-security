@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security.local/contracts/enterprise-upgrade-review.v1.schema.json",
+  "title": "Read-only enterprise upgrade review; not an installation or service activation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "intent",
+    "confirmation_sha256",
+    "publisher_signature_verified",
+    "service_activity",
+    "connector_capabilities_verified",
+    "requires_explicit_confirmation",
+    "installed",
+    "business_permissions_granted"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "enterprise-upgrade-review/v1"
+    },
+    "status": {
+      "const": "reviewed_not_applied"
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "device_identity",
+        "tenant_id",
+        "environment_id",
+        "control_plane_origin",
+        "state_path",
+        "state_file_sha256",
+        "unit_path",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "enterprise-upgrade-intent/v1"
+        },
+        "device_identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "control_plane_origin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state_path": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 4096,
+          "pattern": "^/"
+        },
+        "state_file_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "unit_path": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 4096,
+          "pattern": "^/"
+        },
+        "from": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stage_path",
+            "plan",
+            "unit_sha256"
+          ],
+          "properties": {
+            "stage_path": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 4096,
+              "pattern": "^/"
+            },
+            "plan": {
+              "$ref": "https://siq-agent-security.local/contracts/enterprise-install-plan.v1.schema.json"
+            },
+            "unit_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "to": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stage_path",
+            "plan",
+            "unit_sha256"
+          ],
+          "properties": {
+            "stage_path": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 4096,
+              "pattern": "^/"
+            },
+            "plan": {
+              "$ref": "https://siq-agent-security.local/contracts/enterprise-install-plan.v1.schema.json"
+            },
+            "unit_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "confirmation_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "publisher_signature_verified": {
+      "const": true
+    },
+    "service_activity": {
+      "const": "not_checked"
+    },
+    "connector_capabilities_verified": {
+      "const": false
+    },
+    "requires_explicit_confirmation": {
+      "const": true
+    },
+    "installed": {
+      "const": false
+    },
+    "business_permissions_granted": {
+      "const": false
+    }
+  }
+}

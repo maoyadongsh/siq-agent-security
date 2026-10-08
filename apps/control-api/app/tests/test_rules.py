@@ -946,45 +946,9 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
 
     # 建策略并部署（fake 后端闭环）
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
-    from app.adapters.openshell.cli_backend import OpenShellCliBackend
-    from app.adapters.openshell.contracts import (
-        BackendCapabilities,
-        DeploymentReceipt,
-        PolicySnapshot,
-        VerificationReport,
-    )
+    from app.tests.test_policy_flow import _fake_cli_backend
 
-    class FakeCli(OpenShellCliBackend):
-        def __init__(self):
-            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
-
-        def probe(self):
-            return BackendCapabilities(
-                backend="openshell", schema_version="v1", dynamic_network_update=True,
-                handshake_verified=True, handshake_gateway="fixture", endpoint_fingerprint="e" * 64,
-            )
-
-        def read_effective_policy(self, target):
-            return PolicySnapshot(target=target, revision="1", network=[])
-
-        def plan_change(self, target, compiled):
-            from app.adapters.openshell.contracts import ChangePlan
-
-            return ChangePlan(
-                target=target, kind="dynamic", expected_revision="1", artifact_hash=compiled.artifact_hash
-            )
-
-        def apply_dynamic(self, target, plan, expected_revision):
-            return DeploymentReceipt(backend_revision="2", evidence={"snapshot_hash": "h"})
-
-        def verify(self, target, checks, receipt):
-            return VerificationReport(
-                passed=True,
-                allow_checks=[{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])],
-                deny_checks=[{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])],
-            )
-
-    monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: FakeCli())
+    fake = _fake_cli_backend(monkeypatch)
 
     import uuid as _uuid
 
@@ -1032,7 +996,7 @@ def test_agent_policies_and_enforcement_status(client, tenant_a, env_a, monkeypa
     )
     assert binding.status_code == 201, binding.text
     from app.tests.binding_helpers import assign_target_authority
-    assign_target_authority(monkeypatch, tmp_path, binding.json()["id"], FakeCli())
+    assign_target_authority(monkeypatch, tmp_path, binding.json()["id"], fake)
     dep = client.post(
         "/api/v1/deployments",
         json={"change_request_id": cr["id"], "environment_id": env_a["id"], "binding_id": binding.json()["id"]},

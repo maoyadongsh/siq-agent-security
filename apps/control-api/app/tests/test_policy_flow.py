@@ -578,72 +578,8 @@ def test_list_endpoints_tenant_isolated(client, tenant_a, tenant_b):
 def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_iso, monkeypatch, tmp_path):
     """§14.4：回滚传递完整操作绑定，并执行当前授权重验。"""
     monkeypatch.setenv("SIQ_AS_ENFORCEMENT_BACKEND", "openshell-cli")
-    from app.adapters.openshell.cli_backend import OpenShellCliBackend
-    from app.adapters.openshell.contracts import (
-        BackendCapabilities,
-        DeploymentReceipt,
-        PolicySnapshot,
-        RollbackAuthorization,
-        RollbackReceipt,
-        VerificationReport,
-    )
-
-    class FakeCli(OpenShellCliBackend):
-        def __init__(self):
-            super().__init__(runner=lambda a: (1, "", "unused"), env_script="/n")
-            self.rollbacks: list[str] = []
-
-        def probe(self):
-            return BackendCapabilities(
-                backend="openshell", schema_version="v1", dynamic_network_update=True,
-                handshake_verified=True, handshake_gateway="fixture", endpoint_fingerprint="d" * 64,
-            )
-
-        def read_effective_policy(self, target):
-            return PolicySnapshot(target=target, revision="1", network=[])
-
-        def plan_change(self, target, compiled):
-            from app.adapters.openshell.contracts import ChangePlan
-
-            return ChangePlan(
-                target=target, kind="dynamic", expected_revision="1", artifact_hash=compiled.artifact_hash
-            )
-
-        def apply_dynamic(self, target, plan, expected_revision):
-            return DeploymentReceipt(
-                backend_revision="9",
-                operation_id="opo-route-test",
-                target=target,
-                base_revision="1",
-                base_policy_digest="a" * 64,
-                applied_policy_digest="b" * 64,
-                result="applied",
-                evidence={"gateway_policy_hash": "h"},
-            )
-
-        def verify(self, target, checks, receipt):
-            return VerificationReport(
-                passed=True,
-                level="readback_verified",
-                allow_checks=[{"endpoint": e, "result": "allow"} for e in checks.get("expect_allow", [])],
-                deny_checks=[{"endpoint": e, "result": "deny"} for e in checks.get("expect_deny", [])],
-            )
-
-        def rollback(self, target, receipt, authorizer=None):
-            assert receipt.operation_id == "opo-route-test"
-            assert receipt.base_revision == "1"
-            assert authorizer is not None
-            current = PolicySnapshot(target=target, revision="9", policy_digest="b" * 64)
-            restore = PolicySnapshot(target=target, revision="1", policy_digest="a" * 64)
-            if authorizer(RollbackAuthorization(receipt.operation_id, target, current, restore)) is not True:
-                from app.adapters.openshell.contracts import VerificationFailed
-
-                raise VerificationFailed("openshell_rollback_authorization_failed")
-            self.rollbacks.append(target)
-            return RollbackReceipt(restored_revision="15", restored_digest="a" * 64, result="restored")
-
-    fake = FakeCli()
-    monkeypatch.setattr("app.routers.policies.OpenShellCliBackend", lambda: fake)
+    fake = _fake_cli_backend(monkeypatch)
+    original_policy = dict(fake.active_policy)
 
     target = f"s-rollback-{uuid.uuid4().hex[:8]}"
     binding, asset_id, _ = make_binding(client, tenant_a, env_iso["id"], backend="openshell-cli", target=target)
@@ -668,8 +604,12 @@ def test_rollback_invokes_bound_backend_operation(client, tenant_a, env_iso, mon
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["status"] == "rolled_back"
-    assert body["verification"]["rollback"]["restored_revision"] == "15"
-    assert fake.rollbacks == [target]
+    assert body["verification"]["rollback"]["restored_revision"] == "3"
+    assert fake.active_policy == original_policy
+    assert len(fake.applied) == 2
+    replay = client.post(f"/api/v1/deployments/{dep['id']}/rollback", json={}, headers=tenant_a)
+    assert replay.status_code == 200 and replay.json() == body
+    assert len(fake.applied) == 2
 
 
 def test_rollback_rejects_revoked_runtime_binding(client, tenant_a, env_iso, monkeypatch, tmp_path):

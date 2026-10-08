@@ -1,0 +1,264 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "rAg4I/RqrGGWthezJyYEY68LGeExdOjCujuyGHltvGs=",
+      "count": 6,
+      "head_hash": "1dc18f0ad6f0abe4e1b6d5f0ef07949ba884de632d146ff630d1379922c2dccb"
+    },
+    "signed_context_count": 2,
+    "cases": {
+      "v872-writer": {
+        "tool": "write_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "0614f06c515cf89a82b30ce036a5d46860b7714a88822017963cca618efc0d00",
+        "resource_digest": "667b66e26dc8442df7eb36106a0923ba9355f3cdd4d8603a33c6707ce2840846",
+        "request_run_sha256": "45e1d36f2c70afbe6532006d00368f493be8e6c023f14b3ac772343c8e64be35"
+      },
+      "v872-reader": {
+        "tool": "write_file",
+        "effective_action": "deny",
+        "reason_code": "grant_scope_violation",
+        "receipt_hash": "1dc18f0ad6f0abe4e1b6d5f0ef07949ba884de632d146ff630d1379922c2dccb",
+        "resource_digest": "5aeac9308bf536090b5aca0d20b11a3c294b699d460ea773bf197de64743eb66",
+        "request_run_sha256": "869846be2b75b7d885a90c0a5cedda338f0d795c24d184a7f3d1e561935ba4ff"
+      }
+    },
+    "grant_inventory_ids": {
+      "agent": "grt-id-c6bc058828d27cec91081ba0eedcdd8aedf3b592f8bd77b1ab613ed5a5e7512b",
+      "skills": [
+        "grt-si-4c2ebff2130259086dd7aa82a9dd66c8cd5a3ff1688c2b5c56aa146fa68b4981",
+        "grt-si-9d4bb9abe9e9674758658dea31b5e6836a999f5afee43e16321d6e747fced058"
+      ]
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-concurrent-v872.receipts.jsonl",
+      "sha256": "78a3a16712504c6c7925e23b83a9f473a3da9b54eedc122056df2d0bf77daf89"
+    },
+    "contexts": {
+      "file": "native-concurrent-v872.contexts.json",
+      "sha256": "b7f8f1d52be24430d8e48960b77988e2c509f777fd48056a7aa4248124c1e91e"
+    },
+    "grant_inventory": {
+      "file": "native-concurrent-v872.grant-inventory.json",
+      "sha256": "d77fa174436f103d8e6663229f10f2009f827b2cb9fa832d77073df455eb85de"
+    }
+  },
+  "candidate_inputs": {
+    "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+    "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+    "frozen_file_count": 1874,
+    "registered_patch_count": 289,
+    "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+    "driver_sha256": {
+      "run-native-business-context-boundary-v872.py": "e37d81feb89e2a8fb1507f5cb36359ea0ed4e53d9ca853f007765de8184d035c",
+      "run-native-context-boundary-owned-v872.py": "ad999c78e5715e9bd7b3a70696e6209ad379b1b1151512c496730f9f830c5351",
+      "deployment-driver.py": "598253fb8e17299da9afe456e794e06850ecb7d888f3436917fd4deaf1e61e41",
+      "stage-native-concurrent-authority-20261008j.py": "8d3db9d75ee6c5ef2bd9229a30680f78a12e90870dc186a3fd1bd1e6214543a7"
+    }
+  },
+  "checks": {
+    "fresh_database_migrations": true,
+    "request_recovery_ready": true,
+    "legacy_recovery_disabled": true,
+    "writer_exact_skill_context": true,
+    "writer_actual_read_allowed": true,
+    "writer_actual_write_attempt": true,
+    "writer_model_marker_returned": true,
+    "writer_write_allowed": true,
+    "writer_file_matches": true,
+    "writer_finalizer_released": true,
+    "writer_model_bridge_correlated_200": true,
+    "reader_exact_skill_context": true,
+    "reader_actual_read_allowed": true,
+    "reader_actual_write_attempt": true,
+    "reader_model_marker_returned": true,
+    "reader_write_denied": true,
+    "reader_target_absent": true,
+    "reader_finalizer_released": true,
+    "reader_model_bridge_correlated_200": true,
+    "two_distinct_sessions": true,
+    "three_real_queue_observations": true,
+    "writer_resumed": true,
+    "grants_unchanged": true,
+    "source_unchanged": true,
+    "gateway_owner_released": true,
+    "anonymous_analysis_denied": true,
+    "real_http_login": true,
+    "analyst_cannot_issue_grant": true,
+    "grant_retry_same_identity": true,
+    "analyst_cannot_revoke_grant": true,
+    "admin_http_revoke": true,
+    "business_settled_before_api_stop": true,
+    "candidate_listener_closed": true,
+    "business_runtime_cleanup_confirmed": true,
+    "temporary_database_removed": true,
+    "existing_service_identity_unchanged": true
+  },
+  "cleanup_checks": {
+    "owned_gateway_stopped": true,
+    "owned_bridge_stopped": true,
+    "original_model_unchanged": true
+  },
+  "deployment_checks": {
+    "business_sources_unchanged": true,
+    "original_service_files_restored": true
+  },
+  "observations": {
+    "writer": {
+      "business_execution_status": "completed",
+      "SSE_event_counts": {
+        "progress": 16,
+        "reasoning": 1,
+        "tool": 6,
+        "replace": 1,
+        "run": 1,
+        "delta": 63,
+        "done": 1
+      },
+      "target_resource_digest": "667b66e26dc8442df7eb36106a0923ba9355f3cdd4d8603a33c6707ce2840846",
+      "target_exists": true,
+      "target_content_sha256": "472d0fed7af38673cb447595bdec4c1f88460f874092e72baff20c6dbde8fe04",
+      "write_receipt_count": 1,
+      "write_reason_codes": [
+        "allow"
+      ],
+      "submitted_monotonic_ns": 138352678085165,
+      "stream_completed_monotonic_ns": 138444404885963,
+      "request_run_sha256": "45e1d36f2c70afbe6532006d00368f493be8e6c023f14b3ac772343c8e64be35",
+      "session_sha256": "287c43e95ae4ceae58ff91fda17ce62980f8422a39372220295b680d54af619b",
+      "event_log_sha256": "a0028c5500e11e03a96e8696582e50a92f2f0334aad16beee1b271f068dd6c88",
+      "write_attempt_count": 1,
+      "write_error": false,
+      "output_directory_identity_matches": true,
+      "policy_sha256": "fb306eab092b3524a23f94cca8027e44ed1c9117dae22b6f47cb8ab70e75377e",
+      "openshell_policy_allows_task_output": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "request_finalized": true
+    },
+    "reader": {
+      "business_execution_status": "completed",
+      "SSE_event_counts": {
+        "progress": 14,
+        "reasoning": 1,
+        "tool": 6,
+        "replace": 1,
+        "run": 1,
+        "delta": 81,
+        "done": 1
+      },
+      "target_resource_digest": "5aeac9308bf536090b5aca0d20b11a3c294b699d460ea773bf197de64743eb66",
+      "target_exists": false,
+      "target_content_sha256": null,
+      "write_receipt_count": 1,
+      "write_reason_codes": [
+        "grant_scope_violation"
+      ],
+      "submitted_monotonic_ns": 138420638267738,
+      "stream_completed_monotonic_ns": 138536036632650,
+      "request_run_sha256": "869846be2b75b7d885a90c0a5cedda338f0d795c24d184a7f3d1e561935ba4ff",
+      "session_sha256": "3500f728e047347f4eef5a8e1bb3a23e9e0f3e122500ec2650212e8e1d8bd408",
+      "event_log_sha256": "1a672b2d74339aee0961ea71ab0139bb33bf501b1b62536a37742d298891fb1e",
+      "write_attempt_count": 1,
+      "write_error": true,
+      "output_directory_identity_matches": true,
+      "policy_sha256": "994ec5822dfb6f1417e0603aa1d027845cb6e1f8c5300027ad410359f941294d",
+      "openshell_policy_allows_task_output": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "request_finalized": true
+    }
+  },
+  "queue_observations": [
+    {
+      "observed_monotonic_ns": 138421208436734,
+      "observed_wall_ns": 1791439479863178133,
+      "reader_pending_phase": "pending",
+      "reader_directory_exists": false,
+      "reader_receipt_count": 0,
+      "both_HTTP_inflight": true,
+      "active_row_count": 2,
+      "pending_binding_matches": true,
+      "writer_owner_run_sha256": "45e1d36f2c70afbe6532006d00368f493be8e6c023f14b3ac772343c8e64be35",
+      "reader_run_sha256": "869846be2b75b7d885a90c0a5cedda338f0d795c24d184a7f3d1e561935ba4ff",
+      "sandbox_count": 1,
+      "only_writer_sandbox": true
+    },
+    {
+      "observed_monotonic_ns": 138421771671779,
+      "observed_wall_ns": 1791439480426413706,
+      "reader_pending_phase": "pending",
+      "reader_directory_exists": false,
+      "reader_receipt_count": 0,
+      "both_HTTP_inflight": true,
+      "active_row_count": 2,
+      "pending_binding_matches": true,
+      "writer_owner_run_sha256": "45e1d36f2c70afbe6532006d00368f493be8e6c023f14b3ac772343c8e64be35",
+      "reader_run_sha256": "869846be2b75b7d885a90c0a5cedda338f0d795c24d184a7f3d1e561935ba4ff",
+      "sandbox_count": 1,
+      "only_writer_sandbox": true
+    },
+    {
+      "observed_monotonic_ns": 138422339349710,
+      "observed_wall_ns": 1791439480994090837,
+      "reader_pending_phase": "pending",
+      "reader_directory_exists": false,
+      "reader_receipt_count": 0,
+      "both_HTTP_inflight": true,
+      "active_row_count": 2,
+      "pending_binding_matches": true,
+      "writer_owner_run_sha256": "45e1d36f2c70afbe6532006d00368f493be8e6c023f14b3ac772343c8e64be35",
+      "reader_run_sha256": "869846be2b75b7d885a90c0a5cedda338f0d795c24d184a7f3d1e561935ba4ff",
+      "sandbox_count": 1,
+      "only_writer_sandbox": true
+    }
+  ],
+  "pause_observation": {
+    "record_sha256": "ce9d3fcfea983a295d0f648235f4a8ce76037e4a4267e6ddbbbc5b8e7731c0d8",
+    "resumed": true,
+    "paused_wall_ns": 1791439479292738400,
+    "paused_monotonic_ns": 138420637998681,
+    "resumed_wall_ns": 1791439481494474966,
+    "resumed_monotonic_ns": 138422839736671
+  },
+  "writer_finalizer_mtime_ns": 1791439510373200358,
+  "reader_first_tool_observed_wall_ns": 1791439558268542465,
+  "reader_started_tools_after_writer_finalized": true,
+  "same_normalized_openshell_policy": true,
+  "concurrent_HTTP_requests": true,
+  "simultaneous_sandbox_execution": false,
+  "same_process_parallel_skill_execution": false,
+  "scope": "Two real concurrent business HTTP requests and distinct sessions; existing single-owner gateway serializes execution. Three snapshots of pending reader behind paused actual writer; after writer cleanup reader actually writes and is denied by own readonly Skill. Not simultaneous model/sandbox execution; no synthetic reservation.",
+  "new_receipt_count": 6,
+  "new_context_count": 2,
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "api_runtime_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_unchanged": true,
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  }
+}

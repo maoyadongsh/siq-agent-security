@@ -1,0 +1,186 @@
+{
+  "schema_version": "siq.optimization.delivery-review/v1",
+  "date": "2026-10-08",
+  "task": "OPT-08",
+  "batches": [
+    {
+      "commit": "5be2a77dca8437304830167ef1a3f92818b39abb",
+      "local_record": "api-migrations-delivery-review.json",
+      "review": {
+        "base": "4ac075aa11bb8bfeb5a6a8cff1f90ee3c6dba1e1",
+        "files": {
+          "apps/api/services/usage_service.py": "3419f9f0ee6616c64df6a7200e9c860d2a11a4380197ff13ccffc199a7fd2c4e",
+          "apps/api/tests/fixtures/migrations/v008/001_create_auth_tables.sql": "e6ce1bb36045fdb42181ab95427fa9ab00d954ad4fdb1b3e6d718e8a657a0364",
+          "apps/api/tests/fixtures/migrations/v008/002_create_meeting_tables.sql": "835261491fa000dbab587a3a30febe6c9e3904ce6bd17936892a5b75bdf239b5",
+          "apps/api/tests/fixtures/migrations/v008/003_create_meeting_import_tables.sql": "5028bdbbd49ddaebb6248d9df25516e7182d1bdec2cd9948d79f101fdf31fbbb",
+          "apps/api/tests/fixtures/migrations/v008/004_create_meeting_native_capture_tables.sql": "6c2bc3636ec27e3af8a03ced994ff9cbf9c3cf32a1f237fdcab54509ba1b1e3c",
+          "apps/api/tests/fixtures/migrations/v008/005_create_meeting_native_capture_finalization_tables.sql": "c0b44555dadb296b8ee9bdc76ced95170cd6f204681e1b1bea1d4f59ca9b6de4",
+          "apps/api/tests/fixtures/migrations/v008/006_create_runtime_coordination_tables.sql": "581de7e587b74ceada556f5a836b4a02d005b32c7453aa6344f8d008df5feef8",
+          "apps/api/tests/fixtures/migrations/v008/007_create_meeting_native_capture_manifest_entries.sql": "d5251930b75137b094878165b2ca5ad7e463315ab5cbcca7ed8783fdcaac5f7d",
+          "apps/api/tests/fixtures/migrations/v008/008_add_meeting_native_capture_epoch_manifest_digest.sql": "363572d2e96c93fc314ea9b878273227b6ce76fc8b4a7d6e8b328395b1c5db02",
+          "apps/api/tests/fixtures/migrations/v008/snapshot.json": "7b879951a28f9331b3cd799ba1acdc4d26803abc43258647f51190d7de0d4914",
+          "apps/api/scripts/migration_governance.py": "81adbad8fb5bce8bf51e5ce835f36e876b25f6f178b49afecda2eb708366916d",
+          "apps/api/scripts/migration_prerequisites.py": "9c44e6e93eea84c00b3b5ed0a625f68550a77cde8202b055a136236b594d21d9",
+          "apps/api/scripts/run_migrations.py": "4b8d456b2bff543828672136359e9dcc379297e2fcc2ec2183c9897c7da984ad",
+          "apps/api/scripts/audit_migrations.py": "4807709758f30b8d2b05b77985ee7519e6b8edd21029295002eac72134874432",
+          "apps/api/tests/test_migration_governance.py": "164209d6a90efc8a98756dc86bfdc349b9a8e9c606bb043959ccacb38343431a",
+          "apps/api/tests/test_migration_prerequisites.py": "73dac97d4857e7d11fa51d3b357a970c4c485c05c9ce889d074ff80ce91bf037",
+          "apps/api/migrations/001_create_auth_tables.sql": "4d97bb176840cba3fa4c16ec96495ecef64ee8e5bb1a4cdc7baaee4f50814863",
+          "apps/api/migrations/002_create_meeting_tables.sql": "835261491fa000dbab587a3a30febe6c9e3904ce6bd17936892a5b75bdf239b5",
+          "apps/api/migrations/003_create_meeting_import_tables.sql": "5028bdbbd49ddaebb6248d9df25516e7182d1bdec2cd9948d79f101fdf31fbbb",
+          "apps/api/migrations/004_create_meeting_native_capture_tables.sql": "6c2bc3636ec27e3af8a03ced994ff9cbf9c3cf32a1f237fdcab54509ba1b1e3c",
+          "apps/api/migrations/005_create_meeting_native_capture_finalization_tables.sql": "c0b44555dadb296b8ee9bdc76ced95170cd6f204681e1b1bea1d4f59ca9b6de4",
+          "apps/api/migrations/006_create_runtime_coordination_tables.sql": "581de7e587b74ceada556f5a836b4a02d005b32c7453aa6344f8d008df5feef8",
+          "apps/api/migrations/007_create_meeting_native_capture_manifest_entries.sql": "d5251930b75137b094878165b2ca5ad7e463315ab5cbcca7ed8783fdcaac5f7d",
+          "apps/api/migrations/008_add_meeting_native_capture_epoch_manifest_digest.sql": "363572d2e96c93fc314ea9b878273227b6ce76fc8b4a7d6e8b328395b1c5db02",
+          "apps/api/migrations/009_add_user_token_version.sql": "4a12763e3e72b22e44b13fb4772dc35d7a849b23c594b5e0a5c37458ab9b6c1e",
+          "apps/api/migrations/010_create_workflow_queue_jobs.sql": "9581c52072a12d94764709c96cb16da36ea5f09b98ca45280e3ae2c7914e1ec2",
+          "apps/api/migrations/011_create_document_parse_batches.sql": "8dbd60c9cad4628453caa76d21f8c9db3c2cb262087fc702373842ae8229ba4b",
+          "apps/api/migrations/012_create_agent_memory_core_schema.sql": "8349f499b6d95d54a0b85b0b3092bba75a05483e4280c0c5cdb2494586375043",
+          "apps/api/migrations/013_add_durable_background_job_payloads.sql": "24d1d3a9fba197b88363bcb0dc88e1fca621587830dfb52342bfd93070566f57",
+          "apps/api/migrations/014_repair_document_parse_batch_defaults.sql": "a79366e200808b9c5242454db866e512a71c79120ee1b89f99c46695cc6ad71c",
+          "apps/api/migrations/015_add_user_artifact_owner_key.sql": "61cb9ff1025af48942afa2abeb6cdb54cc15423b9b9deeb5bc19692f0ad7eee8",
+          "apps/api/migrations/016_create_proposal_archive_tables.sql": "3a7beba235ada5025bd7ab98021560d74e873d35f8e52da29b72b4b0a7a3b112",
+          "apps/api/migrations/017_create_proposal_pre_review_tables.sql": "a23aa9c7078e79236cfe1957ac8b5478f9ed0c330fd7c391b6be1f4f227b803f",
+          "apps/api/migrations/018_create_proposal_pre_review_records.sql": "a0322861af86481062ee3ae00af3532093206337563eb0173e7d0e0aee4bc24b",
+          "apps/api/migrations/019_add_proposal_archive_parse_fields.sql": "dc048c13b2268c031ac2064676d954352b3bf695c114e72fe5914a0f77e7abef",
+          "apps/api/migrations/020_create_openshell_data_grants.sql": "6e1e6a512888de05c7567fd21b3261bdbb4fd888210abf7829418148dca0df61",
+          "apps/api/migrations/021_add_openshell_data_grant_request_key.sql": "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",
+          "apps/api/migration_prerequisites/checksums.json": "b6fb8a2257c7281916739ea8ffcc1e4b89d8dd75db96e622a523985994459563",
+          "apps/api/migration_prerequisites/001_create_user_artifacts.sql": "8deca50e7e6216e1373f7ba6479dcfe8b1cdfb57ed17b735174569cc1d2564ba",
+          "apps/api/migrations/checksums.json": "3a45da6a767f5f56f4e36edfb753ccbedca4f44ccda1770b95fe0f3179a368f5"
+        },
+        "pytest": {
+          "exit_code": 0,
+          "summary": "24 passed in 3.06s"
+        },
+        "ruff": {
+          "exit_code": 0,
+          "output": "All checks passed!\n"
+        }
+      }
+    },
+    {
+      "commit": "c8ee0df66e4d11f1c1c0c6de492fc546e7d5e959",
+      "local_record": "native-api-authority-delivery-review.json",
+      "review": {
+        "schema_version": "delivery-review/v1",
+        "dependency_base_commit": "5be2a77dca8437304830167ef1a3f92818b39abb",
+        "selected_files": {
+          "apps/api/services/openshell_data_scope.py": "f5b8e4dbf6ccd9c4cc9f3c10d639735a08c11512927798620bb6ee2b113b706f",
+          "apps/api/services/qwen38_runtime_lease.py": "1ee7d8f03ae629fcad67012ed2d10e565cf0ffaf60658f8cfdfbd2d6cd464b2e",
+          "apps/api/services/runtime_coordination.py": "1eb7e15e66c9ed2679b1f4d0f6b218d8ca12b10ced27e7ffbc0d060ece996483",
+          "apps/api/tests/test_openshell_data_scope.py": "bb567f45649aceace92702bec588ca10b375cc2714261206a881b58acce7140f",
+          "apps/api/tests/test_qwen38_runtime_lease.py": "ff5428b2a47d57469926b23e1e6af8530bd266bdcd8fb8fe68877bc195f4130a",
+          "apps/api/tests/test_openshell_candidate_reauthorization.py": "26d021665cadf271e729af4438f2bdfb1b54d666d03c260d049e399340a9ccde",
+          "apps/api/tests/test_openshell_data_grant_storage.py": "6cf1382313afb8ef2b4fb60032bf22fc41d4fa73d52571d0fc0f0332ac9174b5"
+        },
+        "files": {
+          "apps/api/migrations/020_create_openshell_data_grants.sql": "6e1e6a512888de05c7567fd21b3261bdbb4fd888210abf7829418148dca0df61",
+          "apps/api/migrations/021_add_openshell_data_grant_request_key.sql": "2b084b3e488c756db3a2be660aa32bef5d531fc5a87678669b4aa52fe01025a7",
+          "apps/api/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "apps/api/services/auth_service.py": "8599ae4ec45524ff7e4474f39a7c860c073cf5e4e861dff1d131818482b2aa6f",
+          "apps/api/services/openshell_data_scope.py": "f5b8e4dbf6ccd9c4cc9f3c10d639735a08c11512927798620bb6ee2b113b706f",
+          "apps/api/services/path_config.py": "4135edf742f288be8105bb058e4ee7a8437489c3a404ec6aaf7d033dc3ce685c",
+          "apps/api/services/qwen38_runtime_lease.py": "1ee7d8f03ae629fcad67012ed2d10e565cf0ffaf60658f8cfdfbd2d6cd464b2e",
+          "apps/api/services/runtime_coordination.py": "1eb7e15e66c9ed2679b1f4d0f6b218d8ca12b10ced27e7ffbc0d060ece996483",
+          "apps/api/services/usage_service.py": "3419f9f0ee6616c64df6a7200e9c860d2a11a4380197ff13ccffc199a7fd2c4e",
+          "apps/api/tests/test_openshell_candidate_reauthorization.py": "26d021665cadf271e729af4438f2bdfb1b54d666d03c260d049e399340a9ccde",
+          "apps/api/tests/test_openshell_data_grant_storage.py": "6cf1382313afb8ef2b4fb60032bf22fc41d4fa73d52571d0fc0f0332ac9174b5",
+          "apps/api/tests/test_openshell_data_scope.py": "bb567f45649aceace92702bec588ca10b375cc2714261206a881b58acce7140f",
+          "apps/api/tests/test_qwen38_runtime_lease.py": "ff5428b2a47d57469926b23e1e6af8530bd266bdcd8fb8fe68877bc195f4130a",
+          "apps/api/tests/test_runtime_coordination.py": "bd21eb6d68850697ae04c6ccd023a68a6542f6dfec46e11b1ef1a3620cec0a8a",
+          "scripts/openshell/broker_admission_registry.py": "ab72f432e813ddc362bd616ff39e0ae86b587fb1e40af7b99abe9a0abefc2a6a",
+          "scripts/openshell/broker_request_identity.py": "262971f2ff2c144ebf55f25c9d0b7ccbb94005f9b3093c10cc1e8aa2e795d623",
+          "scripts/openshell/enterprise_data_scope.py": "ec0f20d6075e897ab9e66d08a7df2cf283cdc6afc31712980051b5c331abd0ec",
+          "scripts/openshell/qwen38_candidate_identity.py": "9fdca0de75cccfaa58e25802cf421214869d4d9c35d0591abd0afefb9fb8a6f6",
+          "scripts/openshell/qwen38_candidate_lease.py": "b67350cb663ca626e05ff738cc5a66d7afc95273c6d16639819dfb85811ead7e",
+          "scripts/openshell/qwen38_candidate_renewal.py": "98c2c34fd09b1ada25a66a83ac77f9fbac80f5764cd6ccd8280ad587ceb5ab06",
+          "scripts/openshell/qwen38_candidate_run_guard.py": "29d686e7c052675280d70927a93706a99505f4b83a263c841f8131013bf58c79"
+        },
+        "isolated_pytest": {
+          "exit_code": 0,
+          "summary": "64 passed, 35 warnings in 10.52s"
+        },
+        "owning_repo_ruff": {
+          "exit_code": 0,
+          "output": "All checks passed!\n"
+        },
+        "no_actual_business_data_or_model_calls": true
+      }
+    }
+  ],
+  "postgres_runs": [
+    {
+      "image": "sha256:ff80089083d7365046af7f03d949a2defa14e0b09e14bd5b8f08a242291be8b2",
+      "network": "none",
+      "business_database_access": false,
+      "harness_exit_code": 0,
+      "container_stop_exit_code": 0,
+      "container_absent": true
+    },
+    {
+      "image": "sha256:ff80089083d7365046af7f03d949a2defa14e0b09e14bd5b8f08a242291be8b2",
+      "network": "none",
+      "business_database_access": false,
+      "harness_exit_code": 0,
+      "container_stop_exit_code": 0,
+      "container_absent": true
+    }
+  ],
+  "retained_initial_records": {
+    "native-api-authority-delivery-original-review.json": "ea4c202d475a3de797be1acb3303e03255c7f4203c6dd76cbaa083a15c7b8738",
+    "native-api-authority-cached-lease-negative.json": "e0b0dd6bc76abda9df73b2489330994e4c33e0529bd250a5e02416146b1fbdcb",
+    "api-migrations-delivery-initial-review.json": "620d8527d7048f62e534204da119daf34565ed04ad7a1a0917aae7e90e46ecad"
+  },
+  "negative_regressions": {
+    "account_or_grant_cache": 6,
+    "snapshot_exact_expiry": 1,
+    "execution_lease_cache": 4
+  },
+  "remaining_untracked_in_original_closure": [
+    "apps/api/services/business_run_result_model.py",
+    "apps/api/services/qwen38_native_request_gateway.py",
+    "apps/api/services/qwen38_native_request_issuer.py",
+    "apps/api/services/qwen38_native_request_launch.py",
+    "apps/api/services/qwen38_native_request_profile.py",
+    "apps/api/services/qwen38_recovery_manager.py",
+    "apps/api/services/qwen38_request_admission.py",
+    "apps/api/services/qwen38_request_assets.py",
+    "apps/api/services/qwen38_request_builder.py",
+    "apps/api/services/qwen38_request_deployment.py",
+    "apps/api/services/qwen38_request_endpoint.py",
+    "apps/api/services/qwen38_request_finalizer.py",
+    "apps/api/services/qwen38_request_gateway.py",
+    "apps/api/services/qwen38_request_heartbeat.py",
+    "apps/api/services/qwen38_request_http.py",
+    "apps/api/services/qwen38_request_issuer.py",
+    "apps/api/services/qwen38_request_origin.py",
+    "apps/api/services/qwen38_request_pending.py",
+    "apps/api/services/qwen38_request_queue.py",
+    "apps/api/services/qwen38_request_recovery.py",
+    "apps/api/services/qwen38_request_runtime.py",
+    "apps/api/services/qwen38_request_sandbox.py",
+    "apps/api/services/qwen38_request_selector.py",
+    "apps/api/services/qwen38_request_startup.py",
+    "apps/api/services/qwen38_request_supervision.py",
+    "apps/api/services/runtime_startup_guard.py",
+    "scripts/openshell/build_qwen38_candidate_image.py",
+    "scripts/openshell/prepare_qwen38_business_mcp.py",
+    "scripts/openshell/qwen38_candidate_supervisor.py",
+    "scripts/openshell/qwen38_request_forward.py",
+    "scripts/openshell/qwen38_request_identity.py",
+    "scripts/openshell/qwen38_request_native.py",
+    "scripts/openshell/qwen38_request_relay.py",
+    "scripts/openshell/qwen38_supervisor_service.py"
+  ],
+  "remaining_count": 34,
+  "limits": [
+    "No daily business database or model calls.",
+    "Migration prefix delivered through 021; working tree 022–024 retained.",
+    "API management routing and supervisor/recovery/revocation delivery remain pending.",
+    "Supervisor integration test moved intact to dedicated pending file; not counted in 64.",
+    "PostgreSQL storage test account/audit tables use ORM fixtures; full numbered-chain replay independently verified.",
+    "OPT-08 remains implementing; overall 9/16."
+  ]
+}

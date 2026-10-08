@@ -1,0 +1,116 @@
+{
+  "schema_version": "siq.native-business-context-revocation-review/v1",
+  "passed": true,
+  "checks": {
+    "five_receipt_chain_signatures_verified": true,
+    "candidate_binary_matches_staged_authority": true,
+    "v815_harness_and_cleanup_passed": true,
+    "v815_exact_write_attempt_observed": true,
+    "control_signed_write_allowed": true,
+    "control_expected_bytes_exist": true,
+    "control_tool_completed_without_error": true,
+    "v816_harness_and_cleanup_passed": true,
+    "v816_exact_write_attempt_observed": true,
+    "revoked_exact_loaded_writer_context": true,
+    "revocation_signature_matches_original": true,
+    "history_preserved_and_retry_identical": true,
+    "wrong_signature_rejected": true,
+    "allowed_read_precedes_revocation": true,
+    "actual_attempt_after_revocation_response": true,
+    "post_revocation_tool_error": true,
+    "post_revocation_target_absent_including_symlinks": true,
+    "no_post_revocation_write_receipt": true
+  },
+  "candidate": {
+    "security_implementation_commit": "48bdba45",
+    "contract_commit": "a3756716",
+    "binary_sha256": "4d49184507eaac5ae38a8f5e3a1be4429c753a04713ad68522f556a001738fe1",
+    "image_id": "sha256:dc22c45069ef34d107220ca5253ca6f2c572fc6b035f434b1b16948e67a88d21",
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2",
+    "writer_grant_id": "grt-si-4753b93bf3e70a9377bf60f5beff21d7e08d03bb7c95a1ae19c3a0578bd17abb",
+    "writer_install_id": "sin-7086d0d2eae1a21c69c37e43cacc2d887f4b79ef610a60fa49e2b8da35d5d359"
+  },
+  "cases": {
+    "v815": {
+      "run_id": "qwen-request-e5de76e420405963",
+      "receipt_sequences": [
+        0,
+        1,
+        2
+      ],
+      "tools": [
+        "skill_view",
+        "read_file",
+        "write_file"
+      ],
+      "target_relative": "data/wiki/companies/600519-贵州茅台/analysis/runs/qwen-request-e5de76e420405963/permission-proof-v815.txt",
+      "resource_sha256": "f55a19999bdeeb40919406d5696a049b4f9374af729981ecb3ad0085b3750934",
+      "file_sha256": "e566654a484b841e99907197aa798951a67e00b86b44b920c15bad1d023484c9",
+      "SSE_event_counts": {
+        "delta": 77,
+        "done": 1,
+        "progress": 14,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      }
+    },
+    "v816": {
+      "run_id": "qwen-request-c6f0368c05a55953",
+      "receipt_sequences": [
+        3,
+        4
+      ],
+      "tools": [
+        "skill_view",
+        "read_file"
+      ],
+      "target_relative": "data/wiki/companies/600519-贵州茅台/analysis/runs/qwen-request-c6f0368c05a55953/permission-proof-v816.txt",
+      "resource_sha256": "7f9595df7e3678a50884da15a1427875599bc3cd8bba1131e3c8d7cde04d0b0e",
+      "file_sha256": null,
+      "SSE_event_counts": {
+        "delta": 77,
+        "done": 1,
+        "progress": 13,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      }
+    }
+  },
+  "source_evidence_sha256": {
+    "native-business-api-v815.json": "fa78be7c54076da82b37cefd324b6bcc00a09630176ffa225a429a7897933939",
+    "native-switch-v815-cleanup.json": "c26b89b2cc3cde922ceb37d1939e8d017fb2435d8afdb8e44407c2f49d149c84",
+    "run-native-revoke-owned-v815.py": "96f8f5fefa2d1d007df3c12add401db15a5c3bc9a2f33afda394085508112b81",
+    "private_v815_events": "6d6b5ab2556b30928d7dfae4bab8906e5325c3b224f16d26a350f4f4534b857f",
+    "private_revocation_record": "93c0695c780791384399f4e8a8677f2a10dab4561f5539145eac881a8816155f",
+    "native-business-api-v816.json": "b5c14fc4f204af69c5242b7fbb0726521cb87b042908c3a114c0a4315810a8a2",
+    "native-switch-v816-cleanup.json": "33f0a59e1c6a09f0e862bdad3dca858dfae663b980b1a79ee7d26a91f234e20a",
+    "run-native-revoke-owned-v816.py": "da348a9e227866ffd07797532c84399c201a36edacd3319e005c21871661d238",
+    "private_v816_events": "8b6362941b1a758af933c4c3e17bf65bb5e6349c46cf98a0fde4ae28df1e0a92",
+    "run-native-business-revoke.py": "cee332d873fb1dc754a2ac35f5e7e60e218fdf57132ded921157c285bf69d0a3",
+    "review-native-business-revoke.py": "e08858b1508c59a2e6499ac52557941c8eef8c1ea5f6f857a87d473572b40008"
+  },
+  "revocation_to_write_observation_ms": 6140.288,
+  "limits": [
+    "SSE tool error is a boolean, not a signed fine-grained rejection reason.",
+    "Rejected write produced no decision receipt; do not count it as a deny receipt.",
+    "Timing is local controller observation, not a claim of distributed clock synchronization.",
+    "Two model requests demonstrate these cases, not statistical coverage or full lifecycle acceptance.",
+    "The business dependency delivery review remains incomplete."
+  ],
+  "artifacts": {
+    "receipts": "native-business-context-revocation.receipts.jsonl",
+    "public_key": "native-business-context-revocation.public-key.json",
+    "context_and_revocation": "native-business-context-revocation.signed.json",
+    "tool_observations": "native-business-context-revocation.tools.json"
+  },
+  "artifact_sha256": {
+    "native-business-context-revocation.receipts.jsonl": "25f184976db3c7c10d3af3f0b7d0a98c542f6967374b718b7adf45cb00842bce",
+    "native-business-context-revocation.public-key.json": "d4c6dd05e0ac8fe49cdba67091b73feeb0932ead38055b485900769dfe5ee4d3",
+    "native-business-context-revocation.signed.json": "0b7c19e13df5d1b2d89f3eff563cd3192cadea57d0783d25d47da28c8f1437d7",
+    "native-business-context-revocation.tools.json": "e812d86510c604503b29c3341861b71e8a5c4b1aa5e0e910f25c06e8b276e951"
+  }
+}

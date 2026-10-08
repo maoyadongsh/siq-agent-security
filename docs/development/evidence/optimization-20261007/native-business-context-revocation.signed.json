@@ -1,0 +1,49 @@
+{
+  "context": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-91a237f1069e98562fa7e53aba7a9d84",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-8db4559ecf0db19bcb78bd8a9bfe9025",
+      "agent_id": "hri-8db4559ecf0db19bcb78bd8a9bfe9025",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-c6f0368c05a55953:siq_analysis:7352eced09b784638d18f7a2639ff567565bbcc26bdb5dd6e40585259a828e94",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-c6f0368c05a55953:siq_analysis:8f7e00584d568b701d303913131db6a1c03963531d9b81a32b53677163a34eb4"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-7086d0d2eae1a21c69c37e43cacc2d887f4b79ef610a60fa49e2b8da35d5d359",
+      "claim_signature": "ab9f65d0556cd2a6c3bf9d6db4d2699c65627afd0a4ea3e2bfabe21c769d0d3d8d3f9b9c96e9e01b8a92cc25392c6f7163b36d12a9db7e086de1205f42e14401"
+    },
+    "authority": {
+      "grant_id": "grt-si-4753b93bf3e70a9377bf60f5beff21d7e08d03bb7c95a1ae19c3a0578bd17abb",
+      "grant_digest": "ff5c3adc30faa613fb867c6db515b0f9e547a6bdf4bf5ff425f43472411ff9f0"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-07T15:15:12.54809991Z",
+    "expires_at": "2026-10-07T15:24:22.713047Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "fc55748ee7f7e2db7ed3f6e8f97fabacd7a4e3243cf6ea9135254e1c1b89ec7c3e58d374dca74bd21fdffffc258fa8f8a80f8cb3132353e7e58c3684db617701",
+    "agent_authority": {
+      "grant_id": "grt-id-4f0dba98cf17884baa50431dda6468968d8ceb5db6504616a82eca38bf99b4fc",
+      "grant_digest": "4cb8a0f1a82877f3adbf25def7d62ecc69156c2e08227937f9e3fa2e24537be6"
+    },
+    "loader": {
+      "load_id": "nload-675a880f1d304394b0c9adcc140b9b97",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "revocation": {
+    "schema_version": "skill-execution-context-revocation/v2",
+    "context_id": "sec-91a237f1069e98562fa7e53aba7a9d84",
+    "issuer_id": "local-admin",
+    "revoked_at": "2026-10-07T15:15:22.289294405Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "f36a4ab6dd5ff3a3f6652f912faed2686cfc8358d6b50052ca4390fa438ce3550d6b4ad0b885dd029bd1b21acd522eefe1a62792ac5cea7a16d486bbf265700a",
+    "context_signature": "fc55748ee7f7e2db7ed3f6e8f97fabacd7a4e3243cf6ea9135254e1c1b89ec7c3e58d374dca74bd21fdffffc258fa8f8a80f8cb3132353e7e58c3684db617701"
+  }
+}

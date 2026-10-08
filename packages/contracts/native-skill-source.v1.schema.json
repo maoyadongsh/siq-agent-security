@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Actual native Skill source snapshot; metadata only, not authority",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "skill_file", "content_file", "text_sha256", "decoding", "cache_hit"],
+  "properties": {
+    "schema_version": {"const": "native-skill-source/v1"},
+    "skill_file": {"$ref": "#/definitions/file"},
+    "content_file": {"$ref": "#/definitions/file"},
+    "text_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "decoding": {"const": "utf-8-sig-replace-universal-newlines/v1"},
+    "cache_hit": {"type": "boolean"}
+  },
+  "definitions": {
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path_sha256", "sha256", "bytes"],
+      "properties": {
+        "path_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "bytes": {"type": "integer", "minimum": 0, "maximum": 1048576}
+      }
+    }
+  },
+  "$comment": "Only metadata. Full subject/task and trusted runtime provenance belong to the future application event envelope. A normal observer return does not authorize tool execution. Path digest hashes canonical absolute UTF-8 bytes; source hash covers raw file bytes, text hash covers normalized UTF-8 text before any Hermes wrappers. File hash is not an installed package hash."
+}

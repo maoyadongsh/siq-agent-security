@@ -40,9 +40,22 @@ func OpenWithInstances(dir string, key *signing.Key, intents *intent.Store, reso
 }
 
 func validCreateProfile(req CreateRequest) bool {
+	if req.SchemaVersion == "local-runtime-identity-create/v3" {
+		return !req.ConfirmFilesystemProfile && validNativePolicy(req.NativeSkillPolicy)
+	}
+	if req.NativeSkillPolicy != nil {
+		return false
+	}
 	return req.SchemaVersion == "local-runtime-identity-create/v1" && !req.ConfirmFilesystemProfile || req.SchemaVersion == "local-runtime-identity-create/v2" && req.ConfirmFilesystemProfile
 }
 func validRecordProfile(r Record) bool {
+	if r.SchemaVersion == "local-runtime-identity/v4" || r.SchemaVersion == "local-runtime-identity/v5" {
+		return validNativePolicy(r.NativeSkillPolicy) && r.Platform == "hermes" && r.FilesystemProfile == "" && r.GrantRef.PermissionDigestSchema == "" &&
+			((r.SchemaVersion == "local-runtime-identity/v4" && r.RequestScope == nil) || (r.SchemaVersion == "local-runtime-identity/v5" && validRequestScope(r.RequestScope)))
+	}
+	if r.NativeSkillPolicy != nil {
+		return false
+	}
 	switch r.SchemaVersion {
 	case "local-runtime-identity/v1":
 		return r.RequestScope == nil && r.Platform != "workbuddy" && r.FilesystemProfile == "" && r.GrantRef.PermissionDigestSchema == ""
@@ -54,7 +67,7 @@ func validRecordProfile(r Record) bool {
 	return false
 }
 func recordGrantProfileMatches(r Record, g *grant.Grant) bool {
-	return g != nil && validRecordProfile(r) && ((r.SchemaVersion == "local-runtime-identity/v1" || r.SchemaVersion == "local-runtime-identity/v3") && g.SchemaVersion == "" || r.SchemaVersion == "local-runtime-identity/v2" && g.SchemaVersion == "grant/v2" && g.FilesystemProfile == r.FilesystemProfile)
+	return g != nil && validRecordProfile(r) && (r.NativeSkillPolicy == nil || g.Skill == nil) && (posixIdentity(r) && g.SchemaVersion == "" || r.SchemaVersion == "local-runtime-identity/v2" && g.SchemaVersion == "grant/v2" && g.FilesystemProfile == r.FilesystemProfile)
 }
 func (s *Store) checkRecordProfile(r Record) error {
 	if r.SchemaVersion == "local-runtime-identity/v2" {
@@ -77,6 +90,12 @@ func (s *Store) checkRecordProfile(r Record) error {
 	return nil
 }
 func (s *Store) creationProfile(req CreateRequest, platform string, g *grant.Grant) (string, error) {
+	if req.SchemaVersion == "local-runtime-identity-create/v3" {
+		if platform != "hermes" || !validCreateProfile(req) || g == nil || g.SchemaVersion != "" || g.Skill != nil {
+			return "", ErrInvalid
+		}
+		return "", nil
+	}
 	if req.SchemaVersion == "local-runtime-identity-create/v1" {
 		if platform == "workbuddy" || g == nil || g.SchemaVersion != "" {
 			return "", ErrInvalid
@@ -115,6 +134,9 @@ func (r *Record) UnmarshalJSON(raw []byte) error {
 		return ErrInvalid
 	}
 	for name := range fields {
+		if strings.EqualFold(name, "native_skill_policy") && (name != "native_skill_policy" || (value.SchemaVersion != "local-runtime-identity/v4" && value.SchemaVersion != "local-runtime-identity/v5")) {
+			return ErrInvalid
+		}
 		if strings.EqualFold(name, "filesystem_profile") && (name != "filesystem_profile" || value.SchemaVersion != "local-runtime-identity/v2") {
 			return ErrInvalid
 		}
@@ -122,7 +144,7 @@ func (r *Record) UnmarshalJSON(raw []byte) error {
 	if !validRecordProfile(Record(value)) {
 		return ErrInvalid
 	}
-	if (value.SchemaVersion == "local-runtime-identity/v2" || value.SchemaVersion == "local-runtime-identity/v3") && !exactRecordFields(raw, value.SchemaVersion) {
+	if value.SchemaVersion != "local-runtime-identity/v1" && !exactRecordFields(raw, value.SchemaVersion) {
 		return ErrInvalid
 	}
 	*r = Record(value)
@@ -135,9 +157,13 @@ func exactRecordFields(raw []byte, version string) bool {
 	for i := 0; i < typ.NumField(); i++ {
 		required[strings.Split(typ.Field(i).Tag.Get("json"), ",")[0]] = true
 	}
-	if version == "local-runtime-identity/v2" {
+	if version != "local-runtime-identity/v4" && version != "local-runtime-identity/v5" {
+		delete(required, "native_skill_policy")
+	}
+	if version == "local-runtime-identity/v2" || version == "local-runtime-identity/v4" {
 		delete(required, "request_scope")
-	} else {
+	}
+	if version != "local-runtime-identity/v2" {
 		delete(required, "filesystem_profile")
 	}
 	d := json.NewDecoder(bytes.NewReader(raw))

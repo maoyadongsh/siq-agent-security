@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Own a disposable sandbox; exercise actual control API deployment and rollback."""
 import argparse
+import base64
 import contextlib
 import hashlib
 import json
@@ -13,6 +14,7 @@ import tempfile
 import threading
 import time
 import uuid
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -78,6 +80,11 @@ def main():
                               check=True, capture_output=True, text=True).stdout.strip()
     with tempfile.TemporaryDirectory(prefix='siq-live-deployment-') as temporary:
         root = Path(temporary)
+        recovery_keys = root / 'recovery-keys.json'
+        recovery_keys.write_text(json.dumps({
+            'active_key_id': 'fixture', 'keys': {'fixture': base64.b64encode(os.urandom(32)).decode()},
+        }))
+        recovery_keys.chmod(0o600)
         baseline = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL', 'USER')}
         os.environ.clear()
         os.environ.update(baseline)
@@ -96,6 +103,7 @@ def main():
         os.environ.update({'SIQ_AS_DEV': '1', 'SIQ_AS_ALLOW_SQLITE': '1',
             'SIQ_AS_DATABASE_URL': 'sqlite:///' + str(root / 'control.db'),
             'SIQ_AS_SIGNING_KEY_FILE': str(root / 'signing.seed'),
+            'SIQ_AS_OPENSHELL_RECOVERY_KEYRING_FILE': str(recovery_keys),
             'SIQ_AS_ENFORCEMENT_BACKEND': 'openshell-cli',
             'SIQ_AS_OPENSHELL_CLI_BIN': str(CLI), 'SIQ_AS_OPENSHELL_GATEWAY_ENDPOINT': ENDPOINT,
             'SIQ_AS_OPENSHELL_GATEWAY_INSECURE': '0'})
@@ -216,6 +224,24 @@ network_policies: {}
                     session.commit()
                 binding = post('/runtime-bindings', {'agent_instance_id': instance_id,
                     'environment_id': env['id'], 'backend': 'openshell-cli', 'backend_target_id': target}, 201)
+                # Explicit operator assignment for the sandbox this harness owns.
+                # This is not an assertion about another tenant/customer's targets.
+                authority_path = root / 'owned-target-authority.json'
+                now = datetime.now(UTC)
+                authority_path.write_text(json.dumps({
+                    'schema_version': 'enterprise-runtime-target-authority/v1',
+                    'issued_at': (now - timedelta(minutes=1)).isoformat(),
+                    'expires_at': (now + timedelta(hours=1)).isoformat(),
+                    'assignments': [{
+                        'id': 'owned-harness-target', 'tenant_id': 'dev-tenant',
+                        'environment_id': env['id'], 'asset_id': asset_id, 'agent_instance_id': instance_id,
+                        'backend_target_id': target, 'endpoint_fingerprint': caps.endpoint_fingerprint,
+                        'gateway_name_sha256': sha(caps.handshake_gateway.encode()),
+                    }],
+                }))
+                authority_path.chmod(0o600)
+                os.environ['SIQ_AS_OPENSHELL_TARGET_AUTHORITY_FILE'] = str(authority_path)
+                checks['owned_target_explicit_operator_assignment'] = True
                 def deploy(network, label):
                     desired = post('/policies', {'name': '独立验收-' + label, 'selector': {'agent_ids': [asset_id]},
                         'network': network, 'enforcement_mode': 'block'}, 201)
@@ -277,7 +303,15 @@ network_policies: {}
                 result['denial_log_matching_lines'] = sum('example.com' in line and
                     any(term in line for term in ('deny', 'denied', 'block', 'reject')) for line in text.splitlines())
                 checks['same_request_refused_after_revocation'] = True
-                post('/deployments/' + deny['deployment_id'] + '/rollback', {})
+                with (out / 'recovery-worker.log').open('wb') as recovery_log:
+                    subprocess.run([
+                        sys.executable, str(ROOT / 'scripts/enterprise-experience/openshell-recovery-live-worker.py'),
+                        '--deployment', deny['deployment_id'], '--out', str(out / 'recovery-worker.json'),
+                    ], env={**os.environ, 'SIQ_OWNED_GATEWAY_RECOVERY_FIXTURE': 'ephemeral-harness-only'},
+                        stdout=recovery_log, stderr=subprocess.STDOUT, timeout=90, check=True)
+                recovery = json.loads((out / 'recovery-worker.json').read_text())
+                assert recovery['passed'] and recovery['api_process_pid'] != os.getpid()
+                checks['independent_api_process_durable_rollback'] = True
                 restored = backend.read_effective_policy(target)
                 assert restored.policy_digest == allowed_policy.policy_digest, 'rollback did not restore exact prior policy'
                 assert network_probe('allow_after_rollback'), 'restored allowance did not recover behavior'

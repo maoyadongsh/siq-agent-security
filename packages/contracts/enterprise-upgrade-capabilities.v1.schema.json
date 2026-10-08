@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siq-agent-security.local/contracts/enterprise-upgrade-capabilities.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "pending_protocol",
+    "confirmation_protocol",
+    "task_lock"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "enterprise-upgrade-capabilities/v1"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "pending_protocol": {
+      "const": "enterprise-upgrade-pending/v1"
+    },
+    "confirmation_protocol": {
+      "const": "enterprise-upgrade-intent/v1"
+    },
+    "task_lock": {
+      "const": true
+    }
+  }
+}

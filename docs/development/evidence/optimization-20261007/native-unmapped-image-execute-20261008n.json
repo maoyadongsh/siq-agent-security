@@ -1,0 +1,51 @@
+{
+  "artifact_sha256": "116ce585865b1b1259489dc39676f8d5ecd3821a45a92804b98e8077869004be",
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "business_execution_status": "completed",
+  "business_http_status": 200,
+  "case": "v886",
+  "checks_true": 33,
+  "cleanup": {
+    "original_model_unchanged": true,
+    "owned_bridge_stopped": true,
+    "owned_gateway_stopped": true,
+    "supervisor_contract_restored": true
+  },
+  "image_id": "sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1",
+  "instance_id": "hi-2fb7a2320751b728f664d6cfbbbf6230",
+  "passed": true,
+  "receipts": [
+    {
+      "action": "allow",
+      "contexts": 0,
+      "hash": "26d942028b0ec1ba4204386607cfda325645be9e7731227cba66f6bf31d7c264",
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "receipt_id": "rcp-23db5954f2aaeb119dd8987425f938da",
+      "tool": "skill_view"
+    },
+    {
+      "action": "allow",
+      "contexts": 1,
+      "grant_id": "grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484",
+      "hash": "aab5d8ba0032d1f629e72e144f52c4236c1c48ff04ec6555ff8fa378d9bb7efc",
+      "prev_hash": "26d942028b0ec1ba4204386607cfda325645be9e7731227cba66f6bf31d7c264",
+      "receipt_id": "rcp-1830841a4e9b0b53ab53a2350756796f",
+      "tool": "read_file"
+    },
+    {
+      "action": "allow",
+      "contexts": 1,
+      "grant_id": "grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484",
+      "hash": "8e7a202532f21aba05dce7219e1cf0bed71c366f5ee037839b41acb10ee8dc37",
+      "prev_hash": "aab5d8ba0032d1f629e72e144f52c4236c1c48ff04ec6555ff8fa378d9bb7efc",
+      "receipt_id": "rcp-2c3444ba542f04a525b876a0ac132993",
+      "tool": "write_file"
+    }
+  ],
+  "receipts_response_sha256": "ae7172d624c35af88e6d68be310afd669c9a93d94ff90ce6db4e6661036651cf",
+  "request_run_sha256": "8c463875cd0bd0bfae5e69b25e4c39f75569c2902fcc4f794a854549f810bf97",
+  "schema_version": "siq.native-unmapped-image-execute/v1",
+  "target_content_sha256": "a3764f24947ac98006420f11a931596ff1e6c7cceb578a5823fc924aeb7312b6",
+  "target_exists": true,
+  "write_reason_code": "allow"
+}

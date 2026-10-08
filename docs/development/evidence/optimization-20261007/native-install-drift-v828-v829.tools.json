@@ -1,0 +1,78 @@
+{
+  "v828": [
+    {
+      "tool": "skill_view",
+      "status": "started",
+      "error": null,
+      "observed_monotonic_ns": 99571460544705
+    },
+    {
+      "tool": "read_file",
+      "status": "started",
+      "error": null,
+      "observed_monotonic_ns": 99571462612593
+    },
+    {
+      "tool": "skill_view",
+      "status": "completed",
+      "error": false,
+      "observed_monotonic_ns": 99577088520397
+    },
+    {
+      "tool": "read_file",
+      "status": "completed",
+      "error": false,
+      "observed_monotonic_ns": 99577090594381
+    },
+    {
+      "tool": "write_file",
+      "status": "started",
+      "error": null,
+      "observed_monotonic_ns": 99583727560180
+    },
+    {
+      "tool": "write_file",
+      "status": "completed",
+      "error": false,
+      "observed_monotonic_ns": 99586181481266
+    }
+  ],
+  "v829": [
+    {
+      "tool": "skill_view",
+      "status": "started",
+      "error": null,
+      "observed_monotonic_ns": 99669005734939
+    },
+    {
+      "tool": "read_file",
+      "status": "started",
+      "error": null,
+      "observed_monotonic_ns": 99669011985467
+    },
+    {
+      "tool": "skill_view",
+      "status": "completed",
+      "error": false,
+      "observed_monotonic_ns": 99674933112274
+    },
+    {
+      "tool": "read_file",
+      "status": "completed",
+      "error": false,
+      "observed_monotonic_ns": 99674936356107
+    },
+    {
+      "tool": "write_file",
+      "status": "started",
+      "error": null,
+      "observed_monotonic_ns": 99681309330383
+    },
+    {
+      "tool": "write_file",
+      "status": "completed",
+      "error": true,
+      "observed_monotonic_ns": 99682563482002
+    }
+  ]
+}

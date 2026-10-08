@@ -9,20 +9,23 @@ from __future__ import annotations
 
 import threading
 import time
-from collections import defaultdict, deque
+from collections import deque
 
 
 class SlidingWindowLimiter:
-    def __init__(self, *, limit: int, window_seconds: float, clock=time.monotonic):
+    def __init__(self, *, limit: int, window_seconds: float, max_keys: int = 4096, clock=time.monotonic):
         if limit < 1:
             raise ValueError("limit must be >= 1")
         if window_seconds <= 0:
             raise ValueError("window_seconds must be > 0")
+        if max_keys < 1:
+            raise ValueError("max_keys must be >= 1")
+        self.max_keys = max_keys
         self.limit = limit
         self.window_seconds = window_seconds
         self._clock = clock
         self._lock = threading.Lock()
-        self._hits: dict[str, deque[float]] = defaultdict(deque)
+        self._hits: dict[str, deque[float]] = {}
         self.rejected_total = 0
 
     def allow(self, key: str) -> tuple[bool, int]:
@@ -30,7 +33,15 @@ class SlidingWindowLimiter:
         now = self._clock()
         cutoff = now - self.window_seconds
         with self._lock:
-            q = self._hits[key]
+            if key not in self._hits:
+                for stale in list(self._hits):
+                    queue = self._hits[stale]
+                    if not queue or queue[-1] <= cutoff:
+                        del self._hits[stale]
+                if len(self._hits) >= self.max_keys:
+                    self.rejected_total += 1
+                    return False, max(1, int(self.window_seconds) + 1)
+            q = self._hits.setdefault(key, deque())
             while q and q[0] <= cutoff:
                 q.popleft()
             if len(q) >= self.limit:

@@ -1,0 +1,39 @@
+{
+  "artifact_sha256": "116ce585865b1b1259489dc39676f8d5ecd3821a45a92804b98e8077869004be",
+  "binary_sha256": "940e3b7b9f08f88a07ee9a63fedb9039725a464882f7f94b5c970312fde1f2d6",
+  "business_execution_status": "completed",
+  "business_http_status": 200,
+  "case": "v887",
+  "cleanup": {
+    "original_model_unchanged": true,
+    "owned_bridge_stopped": true,
+    "owned_gateway_stopped": true,
+    "supervisor_contract_restored": true
+  },
+  "decision_matched_no_connection": true,
+  "grants": {
+    "agent_baseline": "grt-id-89de643ef7ef0af4e5094b5d002e4daa068af08682f43fa7eae3d6fb58d539dd",
+    "company_evidence": "grt-si-cd5716e01e79186c2accef5607b711a4c0c97102e04d8c0a5a2904c8b8b4fc68",
+    "research_draft": "grt-si-ffc4cb396436b4d608864a1c772962bdc96d8537542213b3f848e5930834e23a"
+  },
+  "image_id": "sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1",
+  "instance_id": "hi-1280d157950d13097a1d048815558558",
+  "model_main_pid": 221774,
+  "positive_network_effect": false,
+  "probe_file_exists": false,
+  "receipt": {
+    "action": "deny",
+    "contexts": 0,
+    "effects": ["process.exec", "network.request", "unknown"],
+    "hash": "f953c851d559ea7bc5eb271c9533ac1328057c3beede2f24af0fde2d46fb71ac",
+    "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "reason_code": "runtime_effect_unknown",
+    "receipt_id": "rcp-115e4fae7f00828b52495484c7f1d98e",
+    "seq": 0,
+    "tool": "execute_code"
+  },
+  "receipts_response_sha256": "851785e570baf6fbc3284c3beae5837617e50c5f232840df325f61721bde05a6",
+  "request_run_sha256": "12bdc028ab2dedf095ede88b8a220487ab1050cf689f346526fc2b4a7b5da6fd",
+  "schema_version": "siq.native-execute-code-network-deny/v1",
+  "tool_completed_with_error": true
+}

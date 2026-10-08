@@ -1,0 +1,34 @@
+{
+  "schema_version": "siq.native-business-delivery-review/v1",
+  "business_commit": "547a2740268377d8c51178a5fa20db1c5aaa6684",
+  "security_runtime_commit": "91ecbc61d86a7ee786a28c76a744f8240af9bff8",
+  "scope": "Static import closure from native selector/gateway, image builder and runtime compiler; not a full deployment inventory.",
+  "closure_before_delivery": {
+    "roots": [
+      "apps/api/services/qwen38_request_selector.py",
+      "apps/api/services/qwen38_native_request_gateway.py",
+      "scripts/openshell/build_native_request_image.py",
+      "scripts/openshell/build_native_runtime_config.py"
+    ],
+    "modules": 109,
+    "untracked": 66,
+    "lines": 45051,
+    "inventory_sha256": "6738c9086fa24e37d02f01ef06d0a652bb3972ac06083d394eb80dddd79a29ae"
+  },
+  "delivered_files": {
+    "infra/openshell/sandbox/qwen38_candidate/validate_runtime.py": "6bfb53da65c2050d9473c26dbb9a3d238fd2ff5780f06f66d455c9ea821b21b1",
+    "infra/openshell/sandbox/qwen38_candidate/native_runtime.py": "61a7ebbf15667cb6274fca0b5a94bfd58645f24312caa2bc2798d6195649badc",
+    "scripts/openshell/tests/test_validate_qwen38_candidate_runtime.py": "c916e1d1d9a0a41a465a29392200198c30d2799465f0b9378c977f3cf8556dd9",
+    "scripts/openshell/tests/test_native_runtime_validation.py": "19b5d27289f9976fb32075d7566e18a6253344d3b8867c6530cbe34933c8e7ba"
+  },
+  "isolated_validation": {
+    "tests_passed": 27,
+    "exit_code": 0,
+    "PYTHONPATH_removed": true,
+    "working_tree_imports_used": false,
+    "ruff_passed": true,
+    "earlier_attempt": "Explicit /usr/bin/python3 lacked pytest; retained as environment failure before collection."
+  },
+  "full_business_delivery_complete": false,
+  "production_ready": false
+}

@@ -10,6 +10,9 @@ func (e *Engine) RecheckReservedExecution(req HoldExecutionStatusRequest) error 
 	if !validateExecutionStatusRequest(req, a) || a.reservation == nil || a.observation != nil || a.reconciliation != nil {
 		return ErrHoldExecutionConflict
 	}
+	if a.decision.NativeInvocation != nil && (!a.nativeReservationOwned || a.nativeExecutionChecked) {
+		return correlationError("hold_native_reservation_not_owned")
+	}
 	now := e.opts.Now()
 	deadline, err := holdExecutionDeadline(a.decision)
 	if err != nil || !now.Before(deadline) || !now.Before(a.expires) {
@@ -18,6 +21,15 @@ func (e *Engine) RecheckReservedExecution(req HoldExecutionStatusRequest) error 
 	original := HoldStatusRequest{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, TaskID: req.TaskID, RuntimeTaskID: req.RuntimeTaskID, Tool: req.Tool, ToolCallID: str(a.decision.ToolCallID), ActionID: req.ActionID, DecisionReceiptID: req.DecisionReceiptID, Params: req.Params}
 	if !e.holdAuthorityCurrent(original, a.decision, now) {
 		return correlationError("hold_authority_changed")
+	}
+	if a.decision.NativeInvocation != nil {
+		retry := Request{Platform: req.Platform, SessionID: req.SessionID, AgentID: req.AgentID, TaskID: req.TaskID, RuntimeTaskID: req.RuntimeTaskID,
+			Tool: req.Tool, ToolCallID: req.RetryToolCallID, Params: req.Params}
+		sec, err := e.nativeRetryAuthority(retry, a.decision)
+		if err != nil || !sameNativeCallEvidence(sec, a.reservation.NativeInvocation) {
+			return correlationError("hold_authority_changed")
+		}
+		a.nativeExecutionChecked = true
 	}
 	return nil
 }

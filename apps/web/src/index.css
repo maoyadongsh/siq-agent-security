@@ -2529,3 +2529,15 @@ a,
   .change-execution-dialog .modal-actions { flex-wrap: wrap; }
   .change-execution-dialog .modal-actions .btn { flex: 1; min-height: 44px; }
 }
+
+.deployment-behavior { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.deployment-behavior h5 { margin: 12px 0; font-size: 1rem; }
+.behavior-scope { display: grid; grid-template-columns: minmax(88px, auto) minmax(0, 1fr); gap: 6px 14px; font-size: 0.9rem; }
+.behavior-scope dt { color: var(--text-secondary); }
+.behavior-scope dd { margin: 0; overflow-wrap: anywhere; }
+.behavior-history { list-style: none; padding: 0; }
+.behavior-history li, .behavior-assessment, .behavior-collection { padding: 14px; margin-top: 12px; border: 1px solid var(--border); border-radius: var(--radius-card); }
+.behavior-collection select { display: block; max-width: 100%; margin-top: 8px; }
+.behavior-confirm { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0; }
+.behavior-confirm input { width: 18px; flex-shrink: 0; margin-top: 3px; }
+@media (max-width: 560px) { .deployment-behavior .btn { min-height: 44px; max-width: 100%; white-space: normal; } }

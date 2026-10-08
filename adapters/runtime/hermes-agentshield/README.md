@@ -61,6 +61,8 @@ siq-agent-security adapter uninstall hermes --instance <返回的实例ID>
 
 ## 已知限制
 
+优化分支中的 `native_channel.py`、`native_source.py`、`native_dispatch.py` 与 `host_runtime.py` 用于原生宿主接入，现有插件安装器不会自动安装或启用它们。固定镜像补丁已接入普通/插件/缓存读取与最终工具分发；实际安装解析、真实进程和只读挂载分别完成组件验证。已提供显式启用的认证宿主发布与 Go 在线裁决接线；OpenShell 启动器和日常业务尚未完成，不能表述为产品权限闭环已验收。进展见 [OPT-08 台账](../../../docs/development/optimization-progress-20261007.md)。
+
 - L1 安装门禁：Hermes 无装前钩子；用 `siq-agent-security admit <src>` 后再 `hermes skills install`，或让 `siq-agent-security serve` 周期盘点 `~/.hermes/skills` 标出未准入 Skill。
 - `agent_id` 默认取 `HERMES_PROFILE` 或 `default`，需与 grant 的 `subject.id` 一致。
 
@@ -93,6 +95,10 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 
 新配置可引用由本机管理 API 发行的独立实例身份：`runtime_identity_id`、固定 `agent_id` 和 `token_path`。凭据只在本机文件保存，发行响应提供路径，不返回秘密正文。`pre_tool_call` 使用 Hermes 的真实 `session_id` 调用 `/v1/runtime-sessions`；服务根据身份自动创建权限包络并固定已批准 Grant，适配器不自行生成或签发权限。没有原生 session 时不会用任务 ID 或默认值替代。
 
+原生调用级 Skill 管控正在 OPT-08 中实施。携带必需策略的新身份使用独立的 `local-runtime-session-enrolled/v3` 响应，含 `native_skill_policy`，运行状态仍为 `unverified`。本版旧路径插件只接受精确 v1 登记响应；遇到新版本或旧版本夹带原生策略时，在 block/warn/audit_only 中均拒绝后续工具决策。D3a 已按 [原生身份管理接入](../../../packages/contracts/native-runtime-enrollment.v1.md)限定开放创建 v3：必须显式启用并完成在线宿主接线，仍需管理会话和已批准基线；签发本身不证明运行保护。本插件不能用于该原生身份，必须通过受保护原生运行路径接入；日常业务尚未验收，进展见 [优化台账](../../../docs/development/optimization-progress-20261007.md)。
+
+同目录的 `native_channel.py` 是正在接入的 Linux 薄元数据通道，使用固定进程句柄及逐包内核凭据，不持有管理密钥，不负责授权。它尚未由本插件导入或安装。`host_runtime.py` 在必需启动后端核验之上检查实际进程、代码与只读挂载，已完成 [D2f 离线联验](../../../docs/development/optimization-opt08-runtime-guard-validation-20261007.md)；认证发布与在线参数绑定已在 [D2g](../../../docs/development/optimization-opt08-online-validation-20261007.md) 接线，日常 OpenShell 仍未完成；不能将受控 Docker 探针称作 OpenShell 业务验收。
+
 如果用户在 SIQ 隐私设置启用独立原文仓，并为该会话对应任务明确创建唯一的参数或输出 Grant，已管理插件会调用运行时身份专用的 `/v1/raw-task-content/native-captures`。pre hook 仅在工具获准后提交最终参数；post hook 还须以真实 tool_call_id 关联同一允许裁决，宿主为阻断调用触发的 post hook 不采集阻断文本。适配器不持有 task_id、原文 Grant、签名许可或管理凭据。嵌套 JSON 展开为 JSON Pointer 字段，服务端继续整项排除 secret/凭据键和值。不可表示、超限、未授权、重叠授权、不可达或仓异常会放弃本次辅助采集，不改变工具裁决和结果；请求本机等待上限 250ms。该功能默认关闭，也不适用于产品运行自检和旧全局决策凭据。
 
 已管理实例在登记、认证、授权读取失败时，所有模式均阻止调用；正常资源策略仍保留 warn/audit_only 的建议语义。环境不能替换已配置的实例主体。管理 API、其他实例/会话不能共用该凭据；撤销后新旧会话均失去访问能力。连接失败的本机 pending 记录明确为未签名拒绝，不能当作服务端回执或结果证据。
@@ -111,3 +117,13 @@ python3 scripts/validate-mcp-provenance.py --hermes-bridge --out /tmp/hermes-mcp
 “管理实例 → 调整当前权限”会创建独立待批准草稿，保留原范围、拒绝、逐次审批条件和到期时间；编辑与批准期间仍使用旧身份。可在同一窗口显式保存新有效期。准备完成后确认停用旧身份，再使用新授权并确认接入；切换期间工具调用会被阻止，应重新开启原平台会话。新身份不能接管旧会话，切换失败不会复活旧凭据。原 Grant、策略和回执保留可追溯。
 
 接口和幂等/并发边界见 [ADR-030](../../../docs/adr/0030-permission-revision-drafts.md)。[权限换发验证](../../../docs/evidence/personal-experience/permission-revision-20260910/verification.json)分别记录浏览器流程、真实 Hermes CLI 新会话及 HTTP 负向；不能据此推定实际 Skill 版本归属已可信。
+
+`host_online.py` 仅供可信宿主启动器使用，其独立发布凭据不进入 Hermes；`native_online.py` 只映射内核元数据通道与运行时裁决请求。daemon 须显式 `serve --native-host` 并读到私有连接配置；未配置或核验不可用时不放行原生身份。配置与启用边界见 [在线协议](../../../packages/contracts/native-host-online.v1.md)。
+
+可信启动器可使用 [HostLoop](../../../packages/contracts/native-host-loop.v1.md) 在固定业务租约内持续服务已登记进程，正常空闲继续等待，已连接请求失败、停止、到期或实际 guard 失效均拒绝。循环不续租、不替代业务授权，所属启动器负责在目录上下文退出后关闭 guard 并精确回收沙箱。[真实 OpenShell 联验](../../../docs/development/optimization-opt08-host-loop-validation-20261007.md)已通过，日常业务 builder/Supervisor 与模型闭环仍待验收。
+
+`host_openshell.OpenShellBackend` 提供正式的[本机 OpenShell 后端归属核验](../../../packages/contracts/native-openshell-backend.v1.md)，逐次核对固定 Docker 端点、完整容器/镜像、OpenShell 标签和内核进程归属，不能由模型指定端点或命令。该组件已替代验收脚本回调并通过[真实联验](../../../docs/development/optimization-opt08-openshell-backend-validation-20261007.md)，目前仅支持 Linux rootful Docker；业务监管与跨平台验收状态保持独立。
+
+`host_session.HostSession` 组合以上资源，并通过 [BusinessGuard](../../../packages/contracts/native-host-session.v1.md) 绑定真实业务监管者 pidfd、固定整体期限和最多90秒的授权心跳。心跳必须来自监管者的既有业务授权复查，不能自动授权或使过期会话复活。该进程内编排已完成[组件与真实链路验证](../../../docs/development/optimization-opt08-host-session-validation-20261007.md)，跨进程控制已由下述 HostControl 提供，日常业务接线仍待验收。
+
+`host_control.HostControl` 通过 [native-host-control/v1](../../../packages/contracts/native-host-control.v1.md) 私有 Unix 通道控制会话，监管者 PID 来自内核凭据。显式宿主入口为 `python3 -I -B host_service.py --connection <私有发布配置> --control <私有控制配置> --port <本机daemon端口>`；配置与凭据不得传入沙箱。业务消费者已完成[跨进程真实联验](../../../docs/development/optimization-opt08-host-control-validation-20261007.md)，此入口不会自动接管日常网关；日常 Supervisor 必须先复查业务授权与租约，再报告续期。

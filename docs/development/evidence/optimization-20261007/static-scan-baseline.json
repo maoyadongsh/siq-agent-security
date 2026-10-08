@@ -1,0 +1,42 @@
+{
+  "machine": "aarch64",
+  "python": "3.13.12",
+  "results": [
+    {
+      "sample": "ordinary",
+      "bytes": 25,
+      "sha256": "b1290c2c492498f06782e28e4a98653e3ba58e639cecb2a93b4ed2b1b0fa75a4",
+      "seconds": 0.00014463600382441655,
+      "cpu_seconds": 0.00014352000000000115,
+      "maxrss_kib": 30720,
+      "matches": 0
+    },
+    {
+      "sample": "deep",
+      "bytes": 8003,
+      "sha256": "d62bd1ab7f6c9788f7f7b975901d630911f0437ed7f80d581d54926812646de0",
+      "seconds": 0.002625588000228163,
+      "cpu_seconds": 0.002624272000000004,
+      "maxrss_kib": 30728,
+      "matches": 1
+    },
+    {
+      "sample": "long",
+      "bytes": 1000004,
+      "sha256": "5c896cd59148f0c642b0bb3ff8262767ad93c938c56ca151eabd6f8306090254",
+      "seconds": 0.23329993399966042,
+      "cpu_seconds": 0.23328056000000003,
+      "maxrss_kib": 33544,
+      "matches": 1
+    },
+    {
+      "sample": "maximum",
+      "bytes": 1048576,
+      "sha256": "ea17f93b90a8e26b414296c773fda54464e1c490caa0637f9fad6b09fe83d9e1",
+      "seconds": 1.4853658590000123,
+      "cpu_seconds": 1.485337808,
+      "maxrss_kib": 448536,
+      "matches": 0
+    }
+  ]
+}

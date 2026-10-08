@@ -146,6 +146,11 @@ Windows Writer 恢复增量（2026-09-18，Issue #79）：Windows 专属实现�
 Windows 回收在同一个 DELETE + 只读、禁止共享的文件句柄内读取有界锁内容、验证普通单链接且非重解析点、确认死亡，并通过 SetFileInformationByHandle 将该对象排他重命名到同目录唯一 stale 名。不能先读路径再按路径 rename；并发回收失败应拒绝，不得移动新持有者的锁。锁文件格式及新锁 O_EXCL 发布不变，旧锁保留原始字节；stale 目标已存在时不得覆盖。此保证限定于已打开的锁对象与合作 Writer，并非防任意同用户替换父目录的沙箱。非 Windows 恢复行为不在本增量中改写。
 - 子命令（`admit`/`grant`）与 `serve` 同时运行时，通过 HTTP 提交给 `serve` 写入；`serve` 未运行则子命令在写锁下直接写文件。
 - 回执链：`serve` 内存持有 `(seq, hash)`；写入顺序 = 先 append 行、`fsync`、再更新 `HEAD`。恢复时以文件最后一行为准，`HEAD` 只是加速。2026-09-28 Windows 回归观察到 HEAD 原子换入返回 Access Denied，具体占用来源未确认；该可重建提示更新失败不撤销已 fsync 的签名行，继续发布独立受管 checkpoint。签名行写入/fsync/关闭和受管 checkpoint 失败仍报错，HEAD 不成为信任锚或回放许可。
+- **OPT-01 并发一致性（2026-10-07）：** 每个 Chain 实例以读写锁统一保护 seq/hash、checkpoint 配置和追加过程。Append 从选取前序到签名行持久化、内存链头更新、HEAD 提示及 checkpoint 发布串行化；Head 返回同一次更新的一致快照。Read/ReadLimited/内部验签扫描与本实例追加互斥，任务快照在同一读锁内读取历史、链头与 checkpoint。锁顺序为 Engine → Chain，Chain 不反向获取 Engine；扫描回调不得重入 Chain。PublishFromChain 在 Chain 锁内取头并发布，避免陈旧快照覆盖本实例较新追加的 checkpoint。该锁不替代 state Writer 跨进程约束，也不防同 UID 文件篡改。HEAD 提示失败仍非权威错误；checkpoint 失败仍返回错误且已持久化的签名行不回滚，不可仅凭错误盲目重放。回执字节、签名及既有合同保持不变。
+- **OPT-02 构建身份边界（2026-10-07）：** 控制面 Web 开发身份注入仅在 DEV 且非 PROD 且 VITE_DEV_MODE=true 时生效；所有 Vite build 入口（包括 local embed、自定义 mode）解析配置后如发现 VITE_DEV_MODE=true 则拒绝构建，缺省或 false 不注入。开发服务器的显式开关保留。生产后端仍仅按 OIDC 验证身份，不采信 X-Dev-*；有效 JWT 不被并存的开发头改写。本约束不把前端防线当后端授权，也不修改用户本地环境文件。
+- **OPT-04 输入与盘点失败（2026-10-07）：** 资产 confirm/dismiss 仅接受一个完整、非 null 的 JSON 对象；畸形、尾随第二对象及超过 64 KiB 的 body 在读取台账或产生状态修改前拒绝（格式 400、超限 413）。保留未知字段的既有兼容性。盘点加载 admission 失败时返回类别错误，不将损坏或不可读状态当作空 admission 列表；已有可观察缓存降级规则保持。
+- **OPT-04 pending 补录可观察性：** GET /v1/status 增加进程内 pending_promotion 诊断（status=unknown/ok/failed、attempts、failures、last_promoted）。尚未尝试为 unknown；补录失败保留 unsigned 队列，并记 failed 与累积失败数；恢复后下一次正常尝试可转 ok。诊断仅表示最近补录尝试，不代表全部审计完整、业务授权或已发生工具效果，不包含原始错误或事件内容；重启后计数重置。在线决定继续遵循自身回执／Authority 不变量。
+- **OPT-06 补录幂等（2026-10-07）：** 只追加的 pending JSONL 以 `pending-source/v1` 域分离、物理行号与截至本行的完整前缀 SHA-256 定义来源事件；相同内容的两行是两个事件，重读同一行是同一事件。来源摘要仅在内部传递，不写入或改写 pending v1/v2。新提升回执使用 `rcp-pending-<完整 64 位来源摘要>` 作为稳定 ID（既有 receipt_id 字符串合同不变），其余 v1/v2 观测语义、签名与哈希算法不变。追加前在已验签链中查找完整 ID 并校验稳定载荷；已提交者返回既有回执，随后补进游标。Engine 锁串行化查找与追加；不以旧 12 位摘要推断同一事件。旧式同内容回执但缺少来源身份时，不能证明其与当前行对应，返回历史来源不明确错误供复核，不修改旧回执或判定旧签名无效。游标大于现存行数明确失败，不静默重置。日志轮换、改写或状态目录复制不是新事件来源；本轮不自动修复这类来源变化。直接旧接口未提供来源摘要时保留原有生成行为，不宣称具备来源幂等。进度计数表示已处理并推进游标的行数，包含恢复时识别的已提交行，不是新增回执数量。
 - 不可变版本按 ADR-012 先在同目录私有暂存文件完成写入/Sync，再排他发布最终版本名；版本占用只允许重试下一序号，不能返回伪成功。读者不得看见未完成暂存或把损坏最新版本忽略为空。
 - grant 状态变迁（approve/reject/deploy/revoke/patch-desired/effective/resolve-overlap）必须带 `expected_revision`（当前磁盘版本序号）；冲突返回 409，不得静默追加成功。创建响应与 `GET /v1/grants/{id}` 返回 `state_revision`。该 CAS 不替代多文档审计事务（DEV03）。
 - **高影响批准（DEV02-B）：** `approve` 前须 `POST /v1/grants/{id}/challenge` 取得单次 `challenge_id`+`nonce`；挑战绑定 grant digest、scope digest、subject/platform 与 `expected_revision`，TTL 5 分钟，消费后不可重放。grant 正文或 desired 变更会使 digest 失配。desktop-same-uid 下挑战不是 OS 隔离边界，不宣称防止同 UID 自批。
@@ -357,7 +362,19 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 
 移植 `policy_compiler.compile_policy` 语义：能力表驱动（`BackendCapabilities`）、unknown 视为 unsupported、fs/process → `needs_generation=true`、网络 → 若 `dynamic_network_update=false` 也 `needs_generation`。Go 实现与 Python 对同一 DesiredPolicy 输出的 `artifact_hash` 必须一致（对等测试）。
 
+2026-10-07 OPT-07 增量按 `packages/contracts/desired-policy-update-semantics.v1.md`：省略/null 域不更新；空 filesystem 对象明确清空两条路径列表，空 process 对象是空字段补丁，空 network 列表明确清空网络许可。filesystem 未知字段、非字符串列表或非对象静态段必须拒绝，不静默丢弃。新增共享向量与历史向量分别验证，不改历史签名材料。静态差异仍只产生 generation 需求，不能通过网络部署升级成 effective。
+
+本地管理员 `/v1/openshell/apply` 是明确的网络替换命令，必须提供非 null 的 network 数组；缺少或 null 在后端访问前拒绝，`[]` 才表示明确清空。它不接收企业 DesiredPolicy 静态段，也不代替企业审批。CLI 仍要求显式 allow/binary；会话执行入口由可信 Grant 推导网络集合。
+
 ### 3.8 `internal/receipt` 与决策 API（规格，W1 余量）
+
+OPT-15（2026-10-08）回执关联增量：新在线 decision 的 `receipt_id` 使用 `rcp-` 加 128 位密码学随机值的十六进制编码，不从参数摘要或日内时间推导。随机源失败时不签发该决定，不退回时间戳。字段仍为不透明字符串，既有 receipt v1/v2/v3 格式、规范化、签名和链哈希不变；pending 来源幂等 ID、派生 observation/resolution/reservation ID 保留。适配器不得解析 ID 的内部结构。
+
+审批在已有验签链中确认原 hold 唯一存在且与传入签名载荷一致，再查找唯一且关联相同动作的历史 resolution；重复原 ID、重复 resolution 或错配关联返回 hold conflict（原 HTTP 409），不能选择最后一条、借用另一动作批准或改写历史。重复 ID 是语义歧义，不把原签名标记为无效。单条唯一的旧格式回执仍可按原授权、到期和执行预留规则审批。此检查为管理审批路径的流式线性验签，不向每次 Decide 引入整链扫描；不承诺大规模查询性能已优化。
+
+OpenShell 会话与任务执行绑定、预留哈希读取、任务状态／停止／对账定位，只接受已验签链中仅出现一次的 `receipt_id`。重复时绑定与任务查询返回 `openshell_receipt_ambiguous`（HTTP 409），哈希读取失败关闭，不得改用第一条或最后一条。同一预留若有两条签名对账或两条匹配观察，同样返回该冲突，不能用后写入的结论覆盖先前结论。唯一且缺少 Grant 的旧决定仍返回原缺失结果。一条对账或一条观察保持原投影。回滚授权若遇到同一预留 ID 的不同哈希，保持原有拒绝。
+
+`POST /v1/decide` 与 `POST /v1/observe` 在进入决策处理前读取正文：全局决策凭据上限 4 MiB，范围凭据上限 1 MiB。超过上限返回 413 `decision_request_too_large`，不恢复正文、不调用引擎。畸形或身份字段不完整仍返回 400。`POST /v1/hold/{id}` 正文超过 64 KiB 返回 413，格式错误仍返回 400；两种拒绝都不改链。
 
 #### 3.8.1 HTTP
 
@@ -2652,3 +2669,76 @@ WorkBuddy Windows 新文件及回滚恢复的排他发布同样使用已验证�
 这是当前升级/回退工作流的数据能力门禁，不是永久提升存储 marker。操作者必须使用当前任务绑定的兼容程序执行回退；手工运行旧 EXE 无此新预检，会在读取 v2 pending 或验证回执时失败关闭。不得删除 pending、回执或回放整个旧状态规避门禁。回退到 reader/writer 3 仅适用于尚无 v2 记录的状态；需要修复时使用支持这些记录的已签名发行。
 
 实例权限草稿的首次创建入口在原 Grant publication 锁与 commit 锁内区分已完成事务和未发布事务。已完成的同一初始 Grant 必须返回修订冲突，由 HTTP 重新验证签名、来源、实例及策略后以 200/reused=true 读回；只有第一次成功发布返回 201/reused=false。通用 CommitGrant 的显式幂等恢复语义保留，未完成事务不靠复用响应掩盖；审计、签名及 Grant 版本不改写。该细化修正已复现的 Windows 并发多次 201，不产生新权限。
+
+
+## OPT-08 原生调用上下文增量（2026-10-07）
+
+按 ADR-056 新增独立 `skill-execution-context/v2`，与既有 v1 同时保留。A 阶段仅实现结构/签名文档，agent_authority 必须为与 Skill authority 不同的精确 Grant 引用；subject 的 Agent ID 由 instance ID 派生且 task 必填，loader 保留宿主复核的原生加载与制品摘要，父上下文引用绑定签名且不可自引用。v2 最长租约一小时，签名文档不授予执行权限；持久化、调用绑定、实时双 Grant/祖先交集与业务加载接入须独立完成后才可启用。不能将 v2 数据类型存在表述为自动 Skill 管控已完成。
+
+B1 按 ADR-056 的持久上下文约束新增独立 v2 上下文/撤销目录、精确加载幂等、八层父链与 4096 条容量上限。所有依赖必须显式供应；签发和实时验证都重验 Agent/Skill Grant、安装、session、任务与加载来源。撤销签名绑定原上下文签名，审计失败不发布。此组件仍不作为在线授权入口；v1 文件与读取语义保持不变。
+
+B2 按 ADR-056 新增可信原生受管会话与精确调用的独立签名记录。会话固定原 baseline 和运行制品，调用固定原生 task/call ID、工具和最终参数摘要；精确上下文与显式无 Skill 证明互斥，未知拒绝。签发与执行前重验宿主事实，不提供缺记录回退；调用记录不替代执行预留。B2 存储组件不隐式启用 HTTP/Engine，受管模式须由后续可信 enrollment 门禁固定。
+
+C1 按 ADR-056 引入精确 native call 的引擎查询与交集，Intent 固定 Agent baseline，逐一收紧所有 Skill 祖先。必需上下文错误为 authority hard deny；静默参数脱敏改写不得继承原绑定。新原生回执使用独立 runtime-receipt/v3 保存完整调用/会话/权限链证据，v1/v2 字节保持。C1 不接入 serve；审批重试暂时明确拒绝，待 C2 补齐原调用/重试调用活体复验与状态 reader/writer 兼容，再进入真实宿主集成。
+
+C2a 按 ADR-056 解除 C1 的原生 hold 临时拒绝：状态检查和预留前重验原调用，预留还必须命中可信宿主登记的不同 retry call ID，并核对相同 session、baseline 和完整上下文链；reservation 保存重试调用本身的 v3 证据。执行前重复核验两条调用；读取/重启不再次授权，已预留无 observation 仍 uncertain。此批仍不启用 serve，C2 的 reader/writer 及 UI/导出兼容继续实施。
+
+C2b 将当前发行声明 reader/writer 能力提升至 5，表示能读取原生受管会话、调用、v2 上下文及 v3 回执。保持已有存储 marker 和历史签名字节；不通过改写旧状态强制迁移。升级/回退预检取候选 reader、writer 较小值：低于 5 时，四个原生状态目录任一个非空（含暂存残留）或存在 v3/未知回执即拒绝；低于 4 时还拒绝 v2 本地失败事件。检查复用私密目录快照和日志读取预算，无法确认兼容则失败关闭，并在暂存、服务切换、恢复前按原事务重验。新清单和诊断样例单独保存 reader5 版本，旧 reader4 样例不改写。本检查不验证历史签名，不是同 UID 用户直接启动旧二进制的 OS 隔离；可信宿主和消费者兼容仍须另行完成。
+
+C2c 回执页保留 v1/v2 归属说明，增加 v3 调用级上下文展示。只有本次服务端链验签结果严格为 true，且 v3 完整调用/会话/授权引用形状、上下文链与归属绑定一致时才显示调用级可信；未知版本、缺失、矛盾、超深或重复上下文均显示未验证。明确无 Skill 的完整证明显示使用 Agent 基线，不伪造 Skill 归属。展示说明区分历史上下文证据、当前授权、业务效果与模型指令因果。既有脱敏导出继续遵守原投影合同，不直接复制原生会话、Skill 名称或参数；通过完整原始 v3 回执验签后导出来源 hash，不能将投影签名冒充原始执行授权。旧 v1 追踪来源不能表达原生权限链，遇到 v3 或原生证明时明确标记来源 unavailable，不能把基线准入记录误当作调用 Skill。controlsync 仍仅同步准入证据，不新增未定义的回执同步协议。
+
+D1 按 ADR-056 新增签名 runtime identity v4/v5，将 `native_skill_policy.mode=required` 与运行制品摘要固定在根身份并继承到请求级身份。新创建请求采用 v3，原创建与身份版本不增加可选字段。模式查询只依据有效签名根身份，不依赖会话、调用或 SEC 记录存在与否；hri 根身份缺失/冲突/撤销或 Grant 失效均失败关闭。该组件不开放新 HTTP 创建入口；后续可信宿主接入与 Engine wiring 必须使用此必需模式和制品摘要，未接入前不能声称在线保护完成。
+
+D1 查询桥接通过 `NativeCallStore.RequiredLookup` 将有效身份策略与已有精确原生调用验证绑定，并校验会话制品摘要。HTTP 在尚未配置原生查询时拒绝携带新策略的身份，返回固定 503；管理创建入口仍不接受新版本。低于 reader/writer 5 的候选还须通过有界旧身份格式预检（512 条、每条 16 KiB）；原生身份即使尚无调用，也不能回退到不理解此策略的发行。实际宿主验证、版本化管理读回及 serve 接线仍属后续集成。
+
+D2a 按 ADR-056 为原生身份读回新增 identity-issued/v3、request-identity-issued/v2、identity-self/v2、session-enrolled/v3 与混合 identities/v3。只从签名记录投影 native_skill_policy，runtime_state 仍为 unverified；旧版本不夹带策略。混合列表有任意原生条目即用 v3，Windows/旧式条目保持原形状。前端校验新策略、平台/路径及响应版本，旧适配器拒绝新会话合同；当前创建入口保持关闭，不因读回成功启用原生执行。
+
+D2b 按 ADR-056 增加 Linux 薄元数据通道：可信启动器固定进程 pidfd/PID/UID，Unix SEQPACKET 每包核对 SCM_CREDENTIALS，拒绝继承连接的其他进程、重放、截断、额外描述符和退出宿主。标准库 Python 可在缺少 os.pidfd_open 时调用当前 libc 的 pidfd_open；能力缺失即拒绝。事件/响应合同只定义 64 KiB 有界传输与递增序号，不授予权限。处理器、受保护启动归属/制品、业务事件及实际 OpenShell 挂载接入仍需独立完成，组件不自动安装或启用。
+
+D2c1 增加 `native-skill-source/v1` 文件快照组件，先解决实际读取与摘要一致、支持文件归属、缓存重新核验和固定解码语义。单文件 1 MiB、单任务 256 源、路径 4096 UTF-8 字节/128 组件；逐级 NOFOLLOW、普通文件/单硬链接、读前后及回调后元数据与路径核验。观察回调必需，失败后 reader 停止；缓存未见过、内容漂移、fork、关闭后使用拒绝。摘要只对应正文解码前/后，不包括后续 Hermes banner，也不证明整个安装或授权。实现边界和未接入条件以 ADR-056 D2c1 为准；不得因此启用原生身份创建或绕过既有决策。
+
+OPT-08 D2d 的宿主应用桥接按 [native-host-bridge/v1](../packages/contracts/native-host-bridge.v1.md) 串接任务、真实来源解析、v2 SEC 及精确调用绑定。所有宿主依赖必需且有界；失效任务不得回退无 Skill。内存事实不从签名文件恢复，重启后缺少可信登记即拒绝。该组件不直接开放 HTTP 发布能力或新身份创建；产品启用仍取决于完整可信启动器与在线接线。
+
+实际安装来源解析按 [native-install-source/v1](../packages/contracts/native-install-source.v1.md) 读取签名清单及当前批准安装的真实文件。可信启动器固定的宿主/容器映射与必需实际挂载校验不能由模型声明替代；源事件不提供宿主路径或 Grant。两次有效安装验证夹住有界文件读取，正文不返回或持久化，仅核对原始与固定解码后的摘要。不改变安装写入例外或旧运行绑定协议。
+
+## OPT-13：交付入口响应头增量（2026-10-07）
+
+本地 HTTP 服务在 loopback/Host/Origin 检查之前设置统一响应头，覆盖成功、重定向和拒绝响应：CSP 与企业静态入口现有策略一致（self 脚本、self 连接、禁止 frame/object、限制 base/form，样式保留 unsafe-inline），并设置 nosniff、X-Frame-Options DENY、strict-origin-when-cross-origin Referrer-Policy、禁用 camera/microphone/geolocation。不设置 HTTP HSTS，不增加 HTML meta CSP，不扩展 CORS 或改变现有 Host/Origin 检查。
+
+本地 API、HTML、配置、错误默认 Cache-Control no-store；实际存在的 Vite assets 文件可使用 public/max-age=31536000/immutable，支持 HEAD/304/206。静态目录不列出内容，缺失 assets 即使无扩展名也必须 404，不能套用 SPA 回退。独立 UI handler 也设置同一响应头，避免脱离主路由时遗漏。
+
+企业 Nginx 保持现有 CSP，assets 仅 200/206/304 可长期缓存，错误响应 no-store；health 明确单一 text/plain 类型并 no-store。验证须经过实际 Nginx 与本地二进制响应，覆盖 HTML、资产、SPA、错误及适用代理链，再进行浏览器正常会话/导航与注入、跨站限制检查。受控代理夹具不冒充外部生产网关；未执行完整 DNS rebinding 链时不得声称其实证防御。
+
+OPT-08 D2g 按 [native-host-online/v1](../packages/contracts/native-host-online.v1.md) 增加显式 `serve --native-host` 与宿主专用元数据发布端点。只读取本状态目录内 0600 私有连接配置，通过固定 Unix socket 有界反查运行事实，独立凭据不赋予管理权限。真实 `/v1/decide` 在现有身份认证后对必需原生调用唯一 Bind，使用构造时固定的原生查询器，非 allow/异常关闭在途调用。旧入口和新身份创建门禁保持；组件联验不能代替实际启动器与业务验收。
+
+OPT-08 D2h 按 [native-runtime-image-profile/v1](../packages/contracts/native-runtime-image-profile.v1.md) 显式适配 OpenShell 根文件系统可写、代码由 root 保护的部署。原只读 bind profile 保持不变；镜像 profile 逐次核验实际进程、根拥有且不可被非 root 写入的祖先/代码/Skill 清单，固定镜像与后端归属。通道只在已验证进程目录 fd 内创建，客户端核对每包宿主 PID namespace 投影与 UID/GID；任何替换、凭据不符或核验失败均拒绝。组件探针须使用独立网关和独有沙箱，不改变日常业务网关或宣称业务验收完成。
+
+OPT-08 D2i：按 [native-decision-relay/v1](../packages/contracts/native-decision-relay.v1.md)，显式可信启动器可以通过已认证的双向 Unix 通道转交现有 `/v1/decide` 请求，避免为 OpenShell 额外开放宿主网络。固定运行身份凭据仅在宿主持有，模型不能指定端点或凭据；主体与实际进程逐次核验，Go 仍必须唯一绑定已 Prepare 的调用。只返回原裁决 action/receipt_id，任何失败不执行、不重试、不伪造回执；原生命周期与 HTTP 新身份创建门禁不变。
+
+OPT-08 D2i 联验补充：宿主核验到期时间固定于登记，单调时钟与真实 guard 每次重验，避免 UTC 重算漂移。原生 `skill_view` 仅在完整有效原生调用证据下按受保护 `skill.load/tool.invoke` 工作流分类，参数严格限于规范相对 name/file_path；正文仍必须经 Go 真实安装来源同步校验。普通同名工具、缺证据或非法参数保持 unknown，不通过放宽全局效果表解决加载问题。
+
+OPT-08 D3a：按 [native-runtime-enrollment/v1](../packages/contracts/native-runtime-enrollment.v1.md)，既有管理身份端点可在显式 `serve --native-host` 且同一在线宿主依赖完整绑定、私有配置身份仍有效时处理已定义的创建 v3。未接线在写入前返回 503，语法错误 400；旧版本保持。签发只固定已批准基线及制品要求，读回始终 `unverified`，不能替代实际进程登记和逐次反向核验。该增量替代前述 D2 临时关闭创建门禁，但不将日常业务接入标为完成。
+
+OPT-08 D3b：按 [native-runtime-bootstrap/v1](../packages/contracts/native-runtime-bootstrap.v1.md)，覆盖包提供受保护启动初始化组件 ImageBootstrap。只接受启动器固定的非秘密主体、namespace 和排他通道目录；实际 UID/GID、目录身份、固定端点、逐包跨 PID namespace 凭据及配置一次性均必须核验。初始化不接受可替换回调、命令或凭据，不发出允许决定；失败不回退普通插件。覆盖包摘要包含本模块，生产启用和日常业务验收仍分开完成。
+
+OPT-08 D3c：按 [native-session-namespace/v1](../packages/contracts/native-session-namespace.v1.md)，原生初始化和分发共享 1–191 字符、非空 ASCII 冒号组件的 namespace 校验，原样保留真实请求身份前缀。派生会话最长 256 字节，服务端现有请求范围校验不放宽；实际联验须用 HTTP 签发子身份并仅将子凭据交给宿主转发器，验证错范围拒绝及继承基线撤权。
+
+OPT-08 D3d：按 [native-gateway-entry/v1](../packages/contracts/native-gateway-entry.v1.md)，候选覆盖包新增固定 `hermes-gateway` 入口，先初始化原生通道，再在同一 PID 调用既有 gateway.run.main。拒绝旧插件环境混入，不接受任意模块/命令，ready 仍 unverified；宿主身份、业务授权、租约及真实业务验收独立保持。
+
+OPT-08 D3e：业务原生消费者按 [native-business-identity-client/v1](../packages/contracts/native-business-identity-client.v1.md) 严格校验现有版本化 HTTP 读回，不扩展 Go 管理授权。业务仓库独立客户端保管宿主凭据并支持父权限失效后的精确取消；专属联验输入/探针不是生产路由或业务授权来源。
+
+OPT-08 D3f：按 [native-host-loop/v1](../packages/contracts/native-host-loop.v1.md)，accept 空闲超时与已接受请求失败明确区分；宿主循环在固定业务租约内持续服务已有 DecisionRelay，停止/到期/真实 guard 失效后不转交允许响应。业务 Supervisor 仍负责业务授权、撤权触发和精确容器回收。
+
+OPT-08 D3g：按 [native-openshell-backend/v1](../packages/contracts/native-openshell-backend.v1.md)，正式宿主组件逐次核对本机固定 Docker 端点、完整容器/镜像/OpenShell 归属及真实 cgroup/PID namespace；固定只读命令、有界等待，失败永久失效。不能继续依赖测试脚本回调作为日常后端实现，亦不以该组件代替业务授权和原生 RuntimeGuard。
+
+OPT-08 D3h：按 [native-host-session/v1](../packages/contracts/native-host-session.v1.md)，HostSession 统一管理真实后端/guard、业务监管者 pidfd、固定整体期限与最多90秒的业务心跳边界、共享Verifier登记及宿主循环。续期仅来自原可信监管者已完成的业务授权复查，过期不能恢复；关闭失败不得提前释放在途线程资源。进程内编排不是跨进程业务接入的完成证明。
+
+OPT-08 D3i：按 [native-host-control/v1](../packages/contracts/native-host-control.v1.md)，独立私有Unix控制通道只向可信业务监管器开放HostSession生命周期；内核连接/逐包凭据共同派生监管者PID，外层控制凭据与内层运行身份凭据独立且不进入沙箱。固定端点和资源上限，原handle不重启，续期不接管；传输与进程内组件通过仍不等于日常模型业务验收。
+
+OPT-08 D3s：按 [native-skill-context-management/v1](../packages/contracts/native-skill-context-management.v1.md) 为已有原生v2 SEC增加独立 `/v2/skill-contexts` 管理读取、分页及精确撤销。管理凭据才能操作，不提供模型或管理员伪造原生加载的签发入口；历史读取与撤销不依赖运行宿主仍在线。撤销绑定原始签名、先审计、只追加签名墓碑，陈旧签名冲突，重复确认返回同一墓碑。v1接口及签名字节不变；读取不是实时权限证明，撤销不撤回已经完成的副作用。
+
+### OPT-12：安装归属完整性诊断增量（2026-10-08）
+
+按 ADR-0059，适配器只读诊断在入口文件存在性判定前检查当前实例的密封安装事务；已安装但入口与整个插件目录丢失不再显示未安装。损坏、未结束或无法认证的操作产生 installation_record/fail 及 incomplete。安装与卸载动作都须先通过原密封计划验证，再解释为当前安装或已卸载；不信任明文 action/Record 作为替代身份。检查不读决策凭据、不执行插件、不写配置。无受保护历史记录时保留原兼容检查，runtime_state 仍为 unverified。本增量沿用 diagnostics/v1 开放 check code，不改变合同结构；检测到漂移不自动产生工具拒绝，也不提升同 UID 的信任档位。
+
+OPT-12安装程序读回复用密封安装计划的BinaryDigest，不新增Record字段或改写历史事务；独立诊断新增installation_program。准确程序路径和当前有界文件摘要均匹配才显示pass；缺失／变化为fail，旧计划缺摘要为unknown。新程序经用户明确预览、应用及原有审计流程后成为新安装身份；诊断不自动认可升级或覆盖旧记录。仍是当前文件快照，不等于官方发行签名或同UID执行隔离。

@@ -6,6 +6,9 @@ B. 创建回归（新建策略表单）：POST 仅被 Playwright mock 拦截，�
 模拟验收专用：不连接真实控制面，不构成真实策略创建或生产验收。
 用法：python policy-explorer-browser-smoke.py --web <构建目录> --out-dir <证据目录>
 """
+
+from browser_fixture_identity import install_fixture_session
+
 import argparse
 import functools
 import json
@@ -157,6 +160,7 @@ def main():
 
             # ---------- 阶段 A：只读（零业务写请求） ----------
             state['mode'] = 'hold'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('正在加载策略')).to_be_visible()
             expect(page.get_by_text('匹配 0 条', exact=False)).to_have_count(0)
@@ -240,9 +244,11 @@ def main():
 
             # 空列表与失败区分
             state['mode'] = 'empty'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('后端成功返回空列表')).to_be_visible()
             state['mode'] = 'down'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('未连接 — 控制面暂不可达')).to_be_visible()
             expect(page.get_by_text('后端成功返回空列表')).to_have_count(0)
@@ -251,6 +257,7 @@ def main():
             # 无页面权限：导航链接消失、直达被拒
             state['access'] = False
             state['mode'] = 'paged'
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('当前账号无法访问此页面')).to_be_visible()
             expect(page.locator('nav').get_by_text('策略中心')).to_have_count(0)
@@ -259,6 +266,7 @@ def main():
             state['access'] = True
 
             # 五视口无横向溢出（文档 + .content）
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('匹配 4 条 / 已加载 4 条', exact=False).first).to_be_visible()
             row1b = page.locator('.policy-explorer-row', has_text='旧版阻断策略')
@@ -285,6 +293,7 @@ def main():
             checks['a_readonly_zero_writes'] = True
 
             # ---------- 阶段 B：创建回归（POST 仅到 mock） ----------
+            install_fixture_session(page)
             page.goto(base)
             expect(page.get_by_text('匹配 4 条 / 已加载 4 条', exact=False).first).to_be_visible()
 

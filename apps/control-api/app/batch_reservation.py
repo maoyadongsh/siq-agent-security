@@ -65,7 +65,7 @@ def reserve_batch(draft_id, body: drafts.DraftRevalidate, session, identity):
             deployment = Deployment(
                 tenant_id=identity.tenant_id, environment_id=item.environment_id, change_request_id=item.change_id,
                 target=item.target, runtime_binding_id=item.binding_id, to_revision=f"policy-{item.policy_version}",
-                status="pending",
+                status="pending", execution_backend=item.backend,
             )
             session.add(deployment)
             session.flush()

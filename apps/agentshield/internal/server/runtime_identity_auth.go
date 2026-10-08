@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/subtle"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -89,7 +90,14 @@ func (s *Server) authorizeDecision(w http.ResponseWriter, r *http.Request, crede
 	}
 	raw, err := io.ReadAll(http.MaxBytesReader(w, r.Body, limit))
 	if err != nil {
-		writeJSON(w, 400, map[string]string{"error": "invalid decision request"})
+		code := 400
+		message := "invalid decision request"
+		var oversized *http.MaxBytesError
+		if errors.As(err, &oversized) {
+			code = http.StatusRequestEntityTooLarge
+			message = "decision_request_too_large"
+		}
+		writeJSON(w, code, map[string]string{"error": message})
 		return false
 	}
 
@@ -107,7 +115,12 @@ func (s *Server) authorizeDecision(w http.ResponseWriter, r *http.Request, crede
 		return true
 	}
 	if strings.HasPrefix(credential, "ri-") {
-		if _, err = s.runtimeIdentities.AuthorizeSession(credential, platform, agent, session); err == nil {
+		var identity runtimeidentity.Record
+		if identity, _, err = s.runtimeIdentities.AuthorizeSessionContext(credential, platform, agent, session); err == nil {
+			if identity.NativeSkillPolicy != nil && !s.d.Engine.NativeCallsConfigured() {
+				writeJSON(w, 503, map[string]string{"error": "native_skill_runtime_unavailable"})
+				return false
+			}
 			if platform == "workbuddy" && !workBuddyRuntimeCall(r.URL.Path, raw) {
 				writeJSON(w, 400, map[string]string{"error": "invalid_workbuddy_call_identity"})
 				return false

@@ -7,6 +7,20 @@
 
 以下为企业控制面说明。
 
+### 策略更新语义（OPT-07）
+
+策略域省略/null 表示不更新，不表示删除。filesystem 对象替换 `read_only` 与 `read_write` 两个列表，缺省列表为空；未知字段或非法列表拒绝。`network: []` 明确清空网络许可，`process: {}` 则是空字段补丁。静态内容变化需 generation，当前动态部署不支持时明确拒绝；网络更新保留完整静态段及后端扩展。详见[版本化语义合同](../packages/contracts/desired-policy-update-semantics.v1.md)。
+
+旧 `/deployments` 仍受支持并执行当前审批、绑定与目标授权检查；预览提交、持久 submission 和批量执行另要求相应摘要。各入口的职责与验证见 [OPT-07 记录](development/optimization-opt07-validation-20261007.md)。
+
+### 威胁扫描资源边界（OPT-03）
+
+`POST /api/v1/assets/{id}/threat-scan` 在对象定位和权限检查后，以验证身份的 tenant/actor 计费。每进程默认每 60 秒 actor 20 次、tenant 汇总 60 次、全局同时分析 2 次；全部条件原子检查，通过才记一次预算。预算耗尽返回 429、固定错误类别和 `Retry-After`，不写 Finding、隔离或成功扫描记录。解码、内容绑定及分析均在并发槽内，异常必释放槽位；无效内容也消耗已获预算。拒绝分类计数只保留进程聚合值，不保留内容、身份或凭据。
+
+进程内最多保留 4,096 个 tenant/actor 配额键，过期回收；容量满时拒绝新键，不能淘汰活跃配额绕过限流。注册限流器同样有键数上界。扫描请求在 JSON 解析前最多读取 8 MiB（容纳 1 MiB 文本的 JSON Unicode 转义）；不依赖 `Content-Length`，分块超限也返回 413。解码前检查编码长度，解码后仍执行原有 1 MiB 内容限制。
+
+这些是单进程保护，不是 CPU 强制终止或集群共享配额。多 worker/副本的总额最多为各实例预算之和，部署须按实例数分配并在入口设置全局请求/连接限制；强制 CPU/内存隔离由 OPT-14 验收。默认值为保守初始值，实测记录完成前不标称吞吐保证。
+
 ---
 
 独立部署的智能体安全管控面（Agent Security Control Plane）：把"谁、以什么目的、对什么资源、执行什么动作"的决策，转化为可执行、可观测、可审计的运行约束。
@@ -200,6 +214,22 @@ cd ../../edge/agent && go run . run-once --connector hermes --connector-bin ../.
 | 下游 | siq-notify / siq-document-engine / siq-memory / siq-flow-engine / siq-workbench | 当前无直接集成；事件经 Outbox → Webhook 外发，未来可接 siq-notify 事件摄取 | 规划中 |
 
 跨仓依赖编号（D1–D9）与阶段前置关系详见开发计划 §3。
+
+## 优化批次：列表与错误边界（2026-10-07）
+
+OPT-04 将策略、部署和运行时绑定列表接入既有分页合同：limit 小于 1 使用默认 50，大于 200 截至 200；响应头返回实际 limit、returned、truncated 和必要 next cursor，响应体保持数组。沿用现有 clamp_limit，不为这三个入口另建不兼容规则。游标分页仍按已验证租户过滤。
+
+OpenShell 编译入口的不可达、编译拒绝和校验失败只对外返回固定类别及 error digest，不回显底层异常、路径或验证器自由文本。保持既有状态码和拒绝语义；不把编译失败转为成功或 empty policy。
+
+### OPT-05：原部署后端来源
+
+新部署、单项 reservation 和批量 reservation 在外部执行前记录不可由请求正文覆盖的 `execution_backend`，由服务端已授权的 prepared/preview 结果提供。回滚按该记录选择分支；当前配置必须与原后端一致，否则 409 `deployment_backend_changed`，不得跳过 OpenShell 就标记 rolled_back。
+
+历史空值只可从原 deployment 绑定的、同租户/环境/目标的 RuntimeBinding 恢复分类；缺失或冲突时拒绝自动回滚。分类不代替活体授权链、binding 状态和网关身份复验。迁移新增可空列，不猜测批量回填；降级若会丢弃已记录的后端来源必须拒绝。
+
+企业 OpenShell 写入使用迁移 0030 的加密操作台账及目标跨进程锁，要求独立 `SIQ_AS_OPENSHELL_RECOVERY_KEYRING_FILE`。先提交带审计的 pending reservation，再提交 prepared/applying 操作意图，之后才调用外部命令；回滚对应 rollback_pending/rolled_back。密钥缺失或恢复材料无法认证时拒绝，不回退到内存快照。密钥格式、权限、保留与轮换见 [ADR-055](adr/0055-durable-openshell-operation-recovery.md)。上线前先迁移并配置全部 worker 的同一独立密钥环；不得删除仍被历史操作引用的旧密钥。
+
+已持久化的重复回滚只返回历史确认，不再次执行后端写入，也不声称当前策略未被后续操作改变。applying/rollback_pending/unknown 的不确定结果禁止自动重放；历史缺少持久操作记录时拒绝自动恢复。组件与接入阶段的准确验证状态见[优化台账](development/optimization-progress-20261007.md)，不以代码合入代替真实故障恢复验收。
 
 ## 开发与测试
 

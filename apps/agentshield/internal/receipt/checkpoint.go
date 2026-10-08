@@ -186,7 +186,9 @@ func (s *CheckpointStore) PublishFromChain(c *Chain) error {
 	if c == nil {
 		return errors.New("receipt: nil chain")
 	}
-	seq, tip := c.Head()
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	seq, tip := c.seq, c.head
 	if seq < 0 || tip == "" || tip == GenesisPrev {
 		return errors.New("receipt: empty chain has no tip to checkpoint")
 	}
@@ -276,6 +278,8 @@ func checkpointMap(doc ManagedCheckpointDoc) (map[string]any, error) {
 
 // AttachCheckpointStore enables auto-publish after successful Append (managed mode).
 func (c *Chain) AttachCheckpointStore(s *CheckpointStore) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.cpStore = s
 }
 

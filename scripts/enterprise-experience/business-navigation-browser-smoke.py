@@ -1,8 +1,13 @@
 """Control console + actual signed Edge ingest/API; synthetic destination only.
 
+
+
 The research resolver/body permission journey has its own browser evidence.
 This check proves the console button, configured URL and no-referrer behavior.
 """
+
+from browser_fixture_identity import install_fixture_session
+
 
 import argparse
 import json
@@ -41,7 +46,8 @@ def main():
             env.update(SIQ_AS_DEV="1", SIQ_AS_ALLOW_SQLITE="1", SIQ_AS_DATABASE_URL=f"sqlite:///{temporary}/api.db",
                 SIQ_AS_SIGNING_KEY_FILE=str(temporary / "signing.seed"), SIQ_AS_ENFORCEMENT_BACKEND="fake",
                 SIQ_AS_BUSINESS_WEB_ORIGINS=json.dumps({"dev-tenant": endpoint}),
-                VITE_DEV_MODE="true", VITE_DEV_TENANT_ID="dev-tenant", VITE_DEV_USER_ID="fixture-operator")
+                VITE_DEV_MODE="false", SIQ_AS_WEB_ENV_DIR=str(temporary), VITE_APP="",
+                VITE_API_BASE="/api/v1", VITE_IAM_URL="/api/iam", VITE_DEV_TENANT_ID="dev-tenant", VITE_DEV_USER_ID="fixture-operator")
             web = temporary / "web"
             subprocess.run(["npm", "run", "build", "--", "--outDir", str(web)], cwd=root / "apps/web", env=env,
                            stdout=log, stderr=log, check=True, timeout=60)
@@ -98,6 +104,15 @@ uvicorn.run(app,host="127.0.0.1",port=''' + str(port) + ''',log_level="error",ac
                     browser = pw.chromium.launch(headless=True)
                     page = browser.new_page(viewport={"width":1280,"height":1000},
                                             locale="zh-CN", reduced_motion="reduce")
+                    def fixture_identity(route):
+                        if not route.request.url.startswith(endpoint + "/api/v1/"):
+                            route.abort()
+                            return
+                        route.continue_(headers={**route.request.headers,
+                            "X-Dev-Tenant-Id": "dev-tenant", "X-Dev-User-Id": "fixture-operator",
+                            "X-Dev-Roles": "tenant_admin,security_admin,agent_owner,platform_operator"})
+                    page.route("**/api/v1/**", fixture_identity)
+                    install_fixture_session(page)
                     page.goto(endpoint + "/agents/" + asset["id"])
                     link = page.get_by_role("link", name="查看业务运行结果", exact=True)
                     expect(link).to_have_attribute(

@@ -1,0 +1,182 @@
+{
+  "schema_version": "optimization-protected-hook-evidence/v1",
+  "recorded_at": "2026-10-08T10:26:56Z",
+  "source_commit": "1a07fa8a2ae60645566f89a13dca04ffe7f13a91",
+  "scope": "DGX Spark/Linux owned OpenShell + current overlay + actual Hermes tools + isolated Go signed Authority; synthetic approved Skill and no model",
+  "compared_with": {
+    "previous_probe_image": "sha256:02d703298fe3f002d970466c15ef9a47fdcef8e37e4211be6ca77ace540a904a",
+    "enrolled_request_image": "sha256:534d18c9f06dfaa7822a484c756b80644911c8e4176191d9221d5c1a9173b2d1",
+    "registry_sha256_matches_enrolled_overlay": true,
+    "tool_executor_sha256_matches_enrolled_overlay": true,
+    "native_dispatch_sha256_matches_source": true,
+    "same_image_as_enrolled_request": false
+  },
+  "execution": {
+    "schema_version": "siq.hook-integrity-openshell-probe/v1",
+    "checks": {
+      "independent_allowed_effects": true,
+      "guard_verified_after_runtime_mutation_attempts": true,
+      "independent_drift_effect_absent": true,
+      "runtime_guard_permanently_closed": true,
+      "independent_restored_effect_absent": true,
+      "actual_hook_bytes_restored": true,
+      "closed_guard_does_not_recover": true,
+      "cleanup_recheck_reported_invalid_runtime": true,
+      "host_session_resources_closed": true,
+      "actual_signed_receipt_chain_verified": true,
+      "actual_writer_skill_loaded": true,
+      "allowed_write_before_attempts": true,
+      "runtime_cannot_mutate_hook_or_manifest": true,
+      "allowed_write_after_refused_mutations": true,
+      "code_drift_refuses_actual_write": true,
+      "restored_bytes_do_not_revive_runtime": true,
+      "terminal_context_cleanup_refused": true,
+      "no_denied_file_effect": true
+    },
+    "attempts": [
+      {
+        "target": "siq_native_runtime/native_dispatch.py",
+        "operation": "write",
+        "refused": true,
+        "unchanged": true
+      },
+      {
+        "target": "siq_native_runtime/native_dispatch.py",
+        "operation": "delete",
+        "refused": true,
+        "unchanged": true
+      },
+      {
+        "target": "siq_native_runtime/native_dispatch.py",
+        "operation": "replace",
+        "refused": true,
+        "unchanged": true
+      },
+      {
+        "target": "manifest.json",
+        "operation": "write",
+        "refused": true,
+        "unchanged": true
+      },
+      {
+        "target": "manifest.json",
+        "operation": "delete",
+        "refused": true,
+        "unchanged": true
+      },
+      {
+        "target": "manifest.json",
+        "operation": "replace",
+        "refused": true,
+        "unchanged": true
+      }
+    ],
+    "image_id": "sha256:12f1c8d96dcba6081bff71358a2134c7abb628926d685e8be7e16fff2eb86f6b",
+    "artifact_sha256": "8573522ec2dd41fb1c03cc66c6d8325e25d2050de83157c75ba58bbd19239acd",
+    "files": {
+      "/opt/hermes-agent/tools/skills_tool.py": "010e15fbb92d3923a7499e35689d04687c8f5d11191580402894d9f73b08d412",
+      "/opt/hermes-agent/tools/registry.py": "d85035e380e2c9d2d9732b35f00f351742cbc51d28e047ec3655c34cee82d54f",
+      "/opt/hermes-agent/model_tools.py": "1831c3fdb0776a2c5d4f7fdf8f19a05ee07c35b33f291b2165cc6da4f9b19b21",
+      "/opt/hermes-agent/run_agent.py": "5c3ea4682392f01fe9be4bc75c945421a603e76007037bdc0d6930d6b399452b",
+      "/opt/hermes-agent/agent/agent_runtime_helpers.py": "79caa0c1f05d813b6bc351596ff9fe484e0aafd8b95e70831473e1881e338a27",
+      "/opt/hermes-agent/agent/tool_executor.py": "6c966ae864c5593a0a0ce7caa6b0681e087a005d0a517440278ba5524bc0d725",
+      "/opt/hermes-agent/siq_native_runtime/native_dispatch.py": "c3f72d2e2d73f61adb9b1d67bda771691b8ce2510cfb6488f77dc5b3206dd895",
+      "/opt/hermes-agent/siq_native_runtime/native_source.py": "9d3b1922e201acfd5cd601153a0a8bddacfe059f97613c90f4ed323e207c3ad8",
+      "/opt/hermes-agent/siq_native_runtime/native_channel.py": "3da75bddd49a7ed7fc6b501c4fa23640ec013446449a34dd689c47f0e58f0b99",
+      "/opt/hermes-agent/siq_native_runtime/native_online.py": "6d87ea7f391697ae3ed6a72b5dd341e77fb67b284b431fbbef07e250261a4ab3",
+      "/opt/hermes-agent/siq_native_runtime/native_bootstrap.py": "ff7f2db3f9f8d870b4a109ee6d0b7821d1273e73abd1c5317b79e57139c16f2c",
+      "/opt/hermes-agent/siq_native_runtime/native_gateway.py": "42bf379551cd0f601eb1e7b82244ac87122c5147c664fd81d85f7b79358adeff",
+      "/opt/hermes-agent/siq_native_runtime/__init__.py": "cf7889df55c640e10a0a65f5eecabd1892fed141f9901266ec4b51a71cb47c8a",
+      "/opt/hermes-agent/hermes-gateway": "e13565853072da1fff72eb4fb9fcfecfcd9443885f3c939c8a9fc4bdd440b759",
+      "/opt/hermes-agent/HERMES-LICENSE": "821556e6336796450ab852d375117b48a4887e71d255794fd6318d99982a5ab6",
+      "/opt/siq/native-business/bootstrap.py": "8f792d9f1ade877b107547de434eba04be9eba4ddf01be8504eaf5ec67b19d15",
+      "/opt/siq/native-business/skills/writer/SKILL.md": "26b49b759030d498acbcb7e2f05f12ab8a9db471b4210b1aa34e1b4ce7432ac0",
+      "/opt/siq/native-business/skills/reader/SKILL.md": "6061d006c47d311d601d17c859236535fe5b983c8415764e33ffc21436ff7a18"
+    },
+    "injected_target": "/opt/hermes-agent/siq_native_runtime/native_dispatch.py",
+    "before_sha256": "c3f72d2e2d73f61adb9b1d67bda771691b8ce2510cfb6488f77dc5b3206dd895",
+    "injected_sha256": "00e880842a25efbcebdbcbf74c68d8ce4301968a3405387c13c591d98f922f44",
+    "receipt_count": 3,
+    "model_calls": 0,
+    "synthetic_skill_content": true,
+    "actual_hermes_tools": true,
+    "business_entry_acceptance": false
+  },
+  "checks_are_not_independent_sample_count": true,
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "gateway_binary_sha256": "d3546877b42699fd93133698316262f8d03ed2683f53bdce8c1987db43210317",
+  "cli_sha256": "04158e0e24a621a60bcc6b390672853d58cbc5ed7412ac5e0a15d4cffeee17b7",
+  "runtime_identity": {
+    "pid": 43,
+    "uid": 1000,
+    "gid": 1000,
+    "runtime_state": "unverified"
+  },
+  "receipt_projection": [
+    {
+      "schema_version": "runtime-receipt/v3",
+      "tool": "skill_view",
+      "tool_call_id": "integrity-load",
+      "action": "allow",
+      "receipt_id": "rcp-bcbed85fe3a21847863b46105b4d8d4c",
+      "hash": "0d8e0f14d91004df44eca954833cb0b8e19437cd6e29192c56e0eef511fe0944"
+    },
+    {
+      "schema_version": "runtime-receipt/v3",
+      "tool": "write_file",
+      "tool_call_id": "integrity-before",
+      "action": "allow",
+      "receipt_id": "rcp-9d343d3ab04a7e3bb54fed00d19cce3f",
+      "hash": "9c3fabc3f9cc91ad54ab5c32d38aba5ab7a8096343947403dbae1bb6746c296d"
+    },
+    {
+      "schema_version": "runtime-receipt/v3",
+      "tool": "write_file",
+      "tool_call_id": "integrity-after-attempts",
+      "action": "allow",
+      "receipt_id": "rcp-a9893995f6af863536a1248ec1b75608",
+      "hash": "f16ef232b08df70afee68796ba872ae6db27a5633e586e5ba978c9e3d5f2b575"
+    }
+  ],
+  "receipt_proof_scope": "Original Go Authority verified full chain with its own temporary key. Projection is not an independently verifiable signed export. Refused drift calls produced no new Go receipt.",
+  "raw_directory": "var/optimization-20261007/opt12-protected-hook-003",
+  "raw_sha256": {
+    "result.json": "dd810c293e140f0332576355eeecb4b9c20ec0228956591ca0526f8719686e6d",
+    "integrity-result.json": "3acd2c0b6ca697a3cb81af70563bd29c7ac4ce1aad9c415f1a338048c4a6212d",
+    "authority-result.json": "b437917806ad94f505c33f5c9868de380921f6ff10ec37b04aabe542077ee7da",
+    "authority-go-test.log": "394facf2b5a1b45b6212d397131101afda9dc5a598c25d976a82a0d14e38a745",
+    "command.log": "4c4910a06929d79c80eeadc10c7260bab196908ec6591d77b8969ee1835c38a0"
+  },
+  "runtime_source_sha256": {
+    "adapters/runtime/hermes-agentshield/host_runtime.py": "10be2a8cbc98f1511653c82a68d8877f40d66573fc58546d3c6200ab06e4e273",
+    "adapters/runtime/hermes-agentshield/host_openshell.py": "f99e5af7c9fe499b81ccf039ca596ce4f4e801dbb848bea790765226e8e6c47c",
+    "adapters/runtime/hermes-agentshield/host_session.py": "13ba369cd62e54daa0b2843a852385bb3398a4bbfc864cb53bf9a33e2802daa7",
+    "adapters/runtime/hermes-agentshield/host_online.py": "dd057195c93a0f413d4e6f05fc23bb751b6c685a06e8ee429c32a044d4205d3e",
+    "adapters/runtime/hermes-agentshield/native_channel.py": "3da75bddd49a7ed7fc6b501c4fa23640ec013446449a34dd689c47f0e58f0b99",
+    "adapters/runtime/hermes-agentshield/native_dispatch.py": "c3f72d2e2d73f61adb9b1d67bda771691b8ce2510cfb6488f77dc5b3206dd895",
+    "adapters/runtime/hermes-agentshield/native_source.py": "9d3b1922e201acfd5cd601153a0a8bddacfe059f97613c90f4ed323e207c3ad8",
+    "adapters/runtime/hermes-agentshield/native_online.py": "6d87ea7f391697ae3ed6a72b5dd341e77fb67b284b431fbbef07e250261a4ab3",
+    "adapters/runtime/hermes-agentshield/native_bootstrap.py": "ff7f2db3f9f8d870b4a109ee6d0b7821d1273e73abd1c5317b79e57139c16f2c"
+  },
+  "harness_source_sha256": {
+    "patches/hermes/build_native_overlay.py": "7979a03c2e0f1a4f22ed781be77cc229acb8978c3b11307721a14b1743f18ec9",
+    "patches/hermes/run_openshell_runtime_probe.py": "08d0d20cfb41d91c30f9cb435778255a8b626bf076a60c2e8334698526610212",
+    "patches/hermes/openshell_online_probe.py": "82eefc1777109b2da8ad8394bde4b5df7f72baacf5f82a4e9ea266fa405f55d1",
+    "patches/hermes/openshell_integrity_probe.py": "d70823942b0c60a752fe0e101295a81c372ecc74dd6f36c66b608d567cf73049",
+    "patches/hermes/openshell_integrity_bootstrap.py": "8f792d9f1ade877b107547de434eba04be9eba4ddf01be8504eaf5ec67b19d15",
+    "patches/hermes/test_integrity_probe.py": "50b6ea78bd61679058689ba126f8ecc514b56c7111af2cd5169cd2ad12f66561"
+  },
+  "limits": [
+    "synthetic skill content",
+    "no model",
+    "not the enrolled request image",
+    "not a signed release identity",
+    "windows and macos not run"
+  ]
+}

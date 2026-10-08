@@ -1,0 +1,341 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "uxvRDMKWs13JqslmtEz4u37wwtFCstuQYyPtN8clbY0=",
+      "count": 8,
+      "head_hash": "51fe32b431f80780d1980e77756764e697087c5e78e7bee8f9f282639a984ea0"
+    },
+    "signed_context_count": 3,
+    "cases": {
+      "v867": {
+        "tool": "write_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "4e485a3ef04fabf0479a6eddaa98c96fed28dbba15a68fdba485d013ea0a7dfa",
+        "resource_digest": "f1b17e6c84a7eb31cfbabbedfebdbd64163ae65766cd15ff0f08f135beece846",
+        "request_run_sha256": "ae85e830ac487c8fa998ff45e6801a8d30b6048a04a28229f860796ea3a58d40"
+      },
+      "v869": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "51fe32b431f80780d1980e77756764e697087c5e78e7bee8f9f282639a984ea0",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "0235b6a938a6f225232acce8c0bfee4801e7f5b08a975ef09aa9fa1976fa2398"
+      }
+    },
+    "live_grant_ids": {
+      "skill": "grt-si-a9d132836e2061cc4b9ece87dad354bbbe7e02b747b4e3504eaeb281ee324d97",
+      "agent": "grt-id-7b9ee1b0158f3c7fcc1e2751b691b54c41c796bf2612d2541c74b93677856763"
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-expiry-v867-v869.receipts.jsonl",
+      "sha256": "b9f867a9e03ff1696dcd06690a2cf1e024d47f096504eb7b85b12e8777618f04"
+    },
+    "contexts": {
+      "file": "native-expiry-v867-v869.contexts.json",
+      "sha256": "a875129e88831935f0f01eee6de3959b26119c8104321ba1ebf66166849f0033"
+    },
+    "live_grants": {
+      "file": "native-expiry-v867-v869.live-grants.json",
+      "sha256": "3b0d488884c4495635c8c7d75f0aa6d24a70794bf9a0d0fceae6ed2b9b80e150"
+    }
+  },
+  "candidate_inputs": {
+    "v867": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v867.py": "e1ad61e37c712fbd941706469e477b1315d91f82b5b1b8d7126ff2639314a8a4",
+        "run-native-context-boundary-owned-v867.py": "522ce711899965448b81367bad9c74c1e1dd23e00b479ba7c48059f6b2081ad1",
+        "deployment-driver.py": "0e08a0cd0e2963bc0ed4e3ab56dcdd4e865ccdd3671152239e36d0a8f05a08e1",
+        "stage-native-expiry-authority-20261008h.py": "9841e84bea45feff95d197196246a90c4dcecafc32c6d7cf8692ca95d4c81a5e"
+      }
+    },
+    "v869": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v869.py": "e6fb05895636c8ea99afaccce8cce1906aaeaf4b33ae89a1243f358f972758cf",
+        "run-native-context-boundary-owned-v869.py": "3190b6aab86679fcb4edac8b3b32899e6f4eb3da4b2580838efcfe019adeafa8",
+        "deployment-driver.py": "1142abc1c9277a9d74481166906059588c3e637dfc16ff5a72c934dcb8aeddc6"
+      }
+    }
+  },
+  "observations": {
+    "v867": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run": true,
+        "SSE_terminal_observed": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "actual_write_allowed": true,
+        "actual_file_effect_matches": true,
+        "signed_grants_unchanged": true,
+        "context_unchanged_and_not_revoked": true,
+        "write_before_grant_expiry": true,
+        "business_normal_terminal_success": true,
+        "business_execution_terminal": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 70,
+        "done": 1,
+        "progress": 16,
+        "reasoning": 2,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "8c5b386bbe29e827828dbaa5ea09c07a50fc78a3f9eb96ae5a5be5c2a8164f31",
+      "write_attempt_count": 1,
+      "write_completed_with_error": false,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 1,
+      "new_receipt_count": 3,
+      "target_resource_digest": "f1b17e6c84a7eb31cfbabbedfebdbd64163ae65766cd15ff0f08f135beece846",
+      "target_exists": true,
+      "target_content_sha256": "b673631cf46c687b6bec21db800ccb6f9299f015404522eff8662b8859a31116",
+      "output_directory_identity_matches": true,
+      "policy_sha256": "df7e9cdcaf5152864b92305e83d17a54744fab95066f8971c2d0f5935b981fd8",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "completed",
+      "expiry_observation": {
+        "request_run_id": "qwen-request-0665005c6ecb4238",
+        "read_receipt_hash": "85de72756d1f626027e979d991f48e3c303caef7688b32c8504075e9ae00a488",
+        "context_id": "sec-8ce5b015d18bc97119bf808319422e05",
+        "grant_expires_at": "2026-10-08T05:48:02.312050877Z",
+        "context_expires_at": "2026-10-08T05:51:12Z",
+        "observed_read_wall_ns": 1791438133464153911,
+        "runtime_resumed": false,
+        "paused": false
+      },
+      "write_attempt_observed_wall_ns": 1791438144568217744,
+      "write_attempt_observed_monotonic_ns": 137085913476697,
+      "grant_and_context_content_unchanged": true,
+      "SSE_error_codes": [],
+      "business_done_observed": true,
+      "business_error_observed": false
+    },
+    "v869": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run": true,
+        "SSE_terminal_observed": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "owned_runtime_paused_and_resumed": true,
+        "write_attempt_after_natural_expiry": true,
+        "write_attempt_after_runtime_resumed": true,
+        "actual_file_effect_matches": true,
+        "no_write_allowed": true,
+        "tool_rejection_observed": true,
+        "signed_grants_unchanged": true,
+        "context_unchanged_and_not_revoked": true,
+        "business_execution_terminal": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 125,
+        "done": 1,
+        "progress": 30,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "bf99f0f6818dd67670d8f0b8eff058adf2e7b97a0b481617afc5b53ebe00cba5",
+      "write_attempt_count": 1,
+      "write_completed_with_error": true,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 0,
+      "new_receipt_count": 2,
+      "target_resource_digest": "14f82538de01ae49ec2c39653ee40104b8f4791e5ccf6750e0a64743bfa9ea3a",
+      "target_exists": false,
+      "target_content_sha256": null,
+      "output_directory_identity_matches": true,
+      "policy_sha256": "7c02f2630df0b01ce415dd765ce59e42060e7ea1e841d819a3264a439904318a",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "completed",
+      "expiry_observation": {
+        "request_run_id": "qwen-request-d48fcfb4b0b18c52",
+        "read_receipt_hash": "51fe32b431f80780d1980e77756764e697087c5e78e7bee8f9f282639a984ea0",
+        "context_id": "sec-ea1dcc90497b629e60ce5236cd48df36",
+        "grant_expires_at": "2026-10-08T05:48:02.312050877Z",
+        "context_expires_at": "2026-10-08T05:55:01.89001Z",
+        "observed_read_wall_ns": 1791438378301634312,
+        "runtime_resumed": true,
+        "paused": true,
+        "host_pid": 3440962,
+        "process_start_ticks": "13724903",
+        "record_sha256": "299e4b15a0161e8a02602e8aa1b748d37610a65bb743ab6633d35876778ebae9",
+        "child_expires_at": "2026-10-08T05:55:02Z",
+        "paused_wall_ns": 1791438378312286674,
+        "paused_monotonic_ns": 137319657546635,
+        "expired_observed_wall_ns": 1791438484312125362,
+        "expired_observed_monotonic_ns": 137425657389307,
+        "resumed_wall_ns": 1791438484312217987,
+        "resumed_monotonic_ns": 137425657477996
+      },
+      "write_attempt_observed_wall_ns": 1791438484400215398,
+      "write_attempt_observed_monotonic_ns": 137425745474495,
+      "grant_and_context_content_unchanged": true,
+      "SSE_error_codes": [],
+      "business_done_observed": true,
+      "business_error_observed": false
+    }
+  },
+  "same_normalized_openshell_policy": true,
+  "new_receipt_count": 8,
+  "new_context_count": 3,
+  "accepted_case_receipt_count": 5,
+  "historical_failed_receipt_count": 3,
+  "fresh_Authority_chain": true,
+  "scope": "420 sec writer Skill Grant set via formal pending expiry edit before approval; natural expiry while SEC deadline remains in future. Owned native process paused/resumed using pidfd, actual attempted write denied. Not SEC expiry, no revocation or clock edits. live_grants artifact is signed historical snapshot, not current-time authorization.",
+  "security_commit": "32e10d54c176b7cdf80a5336a2e248c385dee20a",
+  "security_binary_sha256": "a25158e2518b64f773f7261cb7fa4d419f4536a9042b9fb3532faa0e7a2df1c2",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "historical_trials": {
+    "v865": {
+      "passed": false,
+      "failure": "candidate_expiry_deadlines_invalid",
+      "scope": "Incorrect test assertion expected SEC deadline <= Skill Grant deadline; observed write allow before expiry after observer disconnected, no success backfill.",
+      "review": {
+        "passed": false,
+        "failure": "candidate_expiry_deadlines_invalid",
+        "signed_receipt_count": 3,
+        "write_allow_count": 1,
+        "target_exists": true,
+        "target_sha256": "f80f57e85da923f8bc264c644359268174776e83209d90083f7ecf2dbbfe8333",
+        "finalizer_phase": "released",
+        "supervisor_state": {
+          "MainPID": "0",
+          "ControlPID": "0",
+          "Result": "success",
+          "ExecMainStatus": "0",
+          "ActiveState": "inactive"
+        },
+        "cleanup_checks": {
+          "owned_gateway_stopped": true,
+          "owned_bridge_stopped": true,
+          "original_model_unchanged": true
+        },
+        "deployment_checks": {
+          "business_sources_unchanged": true,
+          "original_service_files_restored": true
+        },
+        "v866_executed": false,
+        "observer_stopped_before_write_observation": true
+      }
+    },
+    "v866": {
+      "executed": false,
+      "reason": "paired control harness failed"
+    },
+    "v868": {
+      "passed": false,
+      "failure": "AttributeError",
+      "cause": "API Python does not expose os.pidfd_open; failed before pause. Replaced harness call with preflighted libc pidfd_open.",
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "pause_performed": false,
+      "private_failure_record_sha256": "9827288a3d71196192650c39d2468c6de40ff2651228ce8d2bb10a92d521df43"
+    }
+  },
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "api_runtime_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_unchanged": true,
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  }
+}

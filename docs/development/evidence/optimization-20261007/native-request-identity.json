@@ -1,0 +1,78 @@
+{
+  "schema_version": "siq.optimization-native-request-identity-evidence/v1",
+  "date": "2026-10-07",
+  "task": "OPT-08",
+  "status": "implementing",
+  "source_base_commit": "d5f9c731",
+  "python_tests_passed": 163,
+  "actual_run": {
+    "directory": "var/optimization-20261007/opt08-openshell-request-identity-01",
+    "namespace": "siq-opt08-eb55414021cc",
+    "image_id": "sha256:8fb776abdcd5720dec3fa11f5f468f6c7fed3156f731f5910c9a499101cf5d42",
+    "artifact_sha256": "d68c8fd6c12eb1d4a0d30002f53e83abfe3d303f7655fe0348d3566d096aa031",
+    "session_namespace": "siq:openshell:pool:aaaaaaaaaaaaaaaaaaaaaaaa:qwen-request-2222222222222222:siq_analysis",
+    "bootstrap_runtime_state": "unverified",
+    "checks": {
+      "real_reader_skill_loaded": true,
+      "reader_real_read_allowed": true,
+      "reader_write_denied_without_effect": true,
+      "real_second_skill_loaded": true,
+      "switch_preserves_reader_ancestor_limit": true,
+      "independent_writer_skill_loaded": true,
+      "writer_real_write_allowed": true,
+      "writer_outside_scope_denied_without_effect": true,
+      "consumed_call_id_cannot_change_parameters_and_replay": true,
+      "ended_task_cannot_execute": true,
+      "concurrent_reader_keeps_own_permissions": true,
+      "concurrent_writer_keeps_own_permissions": true,
+      "context_write_allowed_before_revocation": true,
+      "revoked_context_cannot_execute": true,
+      "separate_context_still_allowed_before_grant_revocation": true,
+      "revoked_skill_grant_cannot_execute": true,
+      "other_skill_still_allowed_before_agent_revocation": true,
+      "revoked_agent_cannot_read": true
+    },
+    "management_http_issuance": true,
+    "receipt_count": 18,
+    "request_identity_http_issuance": true,
+    "request_namespace_enforced": true,
+    "revocations": {
+      "baseline": true,
+      "context": true,
+      "writer": true
+    },
+    "session_http_enrollment": true,
+    "signed_chain_verified": true,
+    "signed_allow": 14,
+    "signed_deny": 4,
+    "model_calls": 0,
+    "business_entry_acceptance": false,
+    "go_integration_seconds": 21.849
+  },
+  "cleanup": {
+    "owned_sandbox_delete_exit": 0,
+    "owned_network_empty": true,
+    "network_cleanup_exit": 0,
+    "original_configuration_unchanged": true,
+    "original_tls_unchanged": true
+  },
+  "source_sha256": {
+    "adapters/runtime/hermes-agentshield/native_dispatch.py": "457de82899253988e396998c5cd7024d418b4899d6575ea7ef11b30fbac55ebf",
+    "adapters/runtime/hermes-agentshield/native_bootstrap.py": "93dc9fc279bf58e0c9d7cc52b087b10807f47c15dde4901255811fa2212ff78a",
+    "adapters/runtime/hermes-agentshield/tests/test_native_dispatch.py": "09977d2a2d400901fd194dde73433cb6f2758a397a9dad10632e3277b9b10e00",
+    "adapters/runtime/hermes-agentshield/tests/test_native_bootstrap.py": "71972392ffffcfb7f02cb02d24bae1229746de8480ad0e52f301ec9060726b89",
+    "apps/agentshield/internal/server/native_openshell_integration_test.go": "eea6f8ae50dd1f2b882ffa20f52071ce24bc214f25494a202fa163fc62878210",
+    "patches/hermes/openshell_online_probe.py": "80c3983e18d9485852873a479ccf43ab61c48558f253dcfec95c6c00b76d42e1",
+    "packages/contracts/native-session-namespace.v1.md": "89abf6c32759a464c92bdda8f76001984b10bed6b187298988f99cc45384cb5a"
+  },
+  "raw_result_sha256": {
+    "result.json": "e2525893ec03eacbbdc501d8f2caacb242a2773b6723287c65ec053a0468078f",
+    "authority-result.json": "42613819661f6fff732b072f1e70d52fee27a8b39cc634a72c8e55e107b08a7d"
+  },
+  "limits": [
+    "Request issuer uses the real HTTP contract with synthetic operator, request ID and execution digest; business authorization/lease was not exercised.",
+    "Skill content is synthetic; tools, OpenShell process, signed installs, HTTP decisions and host-observed effects are real.",
+    "Daily business entry, model loop, business cancellation, expiry/drift/upgrade and approval retry remain pending.",
+    "Only Go integration test changed; focused request/enrollment regression and server vet passed. No repeat of unrelated full Go/UI suites."
+  ]
+}
