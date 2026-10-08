@@ -127,12 +127,18 @@ jobs:
         run: uv sync --dev --locked
       - name: Static scan sandbox prerequisite
         run: |
-          sudo apt-get update && sudo apt-get install -y --no-install-recommends bubblewrap
-          # Ubuntu 24.04 runners block unprivileged user namespaces. The scan
-          # launcher still uses bwrap --unshare-all; only the runner policy changes.
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends bubblewrap apparmor-utils apparmor-profiles
+          # Ubuntu 24.04 blocks unprivileged user namespaces. Allow the system
+          # bwrap binary to create the scan sandbox namespace, without changing
+          # the launcher to share the host network.
+          if [ -f /usr/share/apparmor/extra-profiles/bwrap-userns-restrict ]; then
+            sudo install -m 0644 /usr/share/apparmor/extra-profiles/bwrap-userns-restrict /etc/apparmor.d/bwrap-userns-restrict
+            sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
+          fi
           if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
             sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           fi
+          bwrap --unshare-all --die-with-parent -- /bin/true
       - name: Ruff
         run: uv run ruff check app
       - name: Pytest（含租户隔离/职责分离/注册生命周期负向）

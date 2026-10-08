@@ -3,6 +3,7 @@ import base64
 import json
 import os
 import socket
+import subprocess
 import time
 from dataclasses import asdict
 from pathlib import Path
@@ -151,7 +152,12 @@ except OSError: pass
 sock=socket.socket(); sock.settimeout(.3)
 assert sock.connect_ex(('127.0.0.1',{port})) != 0
 print(json.dumps({{'hidden':True,'readonly':True,'host_network_denied':True}}))'''
-        result = json.loads(exchange(command('bwrap', code=code), b''))
+        argv = command('bwrap', code=code)
+        try:
+            result = json.loads(exchange(argv, b''))
+        except ScanFailure as error:
+            detail = subprocess.run(argv, input=b'', capture_output=True).stderr.decode('utf-8', 'replace')
+            raise AssertionError(detail.strip() or str(error)) from None
         assert all(result.values())
     monkeypatch.setenv('SIQ_AS_THREAT_SCAN_ISOLATION', 'bwrap')
     assert scan_execution.analyze(b'echo hello', filename='x.sh').matches == []

@@ -227,7 +227,7 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 
 [OPT-15 Linux 未授权拒绝](optimization-opt15-linux-deny-20261008.md)：当前二进制 `aa25999e` 在无 Grant 的隔离状态拒绝无凭据和未知凭据，已认证写入为 `grant_missing` 且没有文件。停止后再次启动仍拒绝，4 条回执验签通过。别名和未映射工具同一原因被拒绝，不能算已授权工具的入口隔离。总体仍为 11/16（68.75%）。
 
-[OPT-10 已授权写入的工具身份](../apps/agentshield/internal/receipt/receipt_test.go)：`TestGrantedWriteFileRejectsAliasUnmappedAndNested` 在只授予 `write_file` 时允许规范写入，并拒绝 `write`、`edit`、`patch`、大小写变体、连字符别名、未映射工具，以及缺少顶层路径的嵌套参数。`TestNativeHostRefusesInvalidTransitions/wrong_tool` 确认已准备的 `read_file` 不能改用 `write_file` 绑定。这是引擎和宿主决定，不是日常宿主的实际执行观察。最终矩阵、四臂、平台和签名继续，总体仍为 11/16（68.75%）。
+[OPT-10 已授权写入的工具身份](../../apps/agentshield/internal/receipt/receipt_test.go)：`TestGrantedWriteFileRejectsAliasUnmappedAndNested` 在只授予 `write_file` 时允许规范写入，并拒绝 `write`、`edit`、`patch`、大小写变体、连字符别名、未映射工具，以及缺少顶层路径的嵌套参数。`TestNativeHostRefusesInvalidTransitions/wrong_tool` 确认已准备的 `read_file` 不能改用 `write_file` 绑定。这是引擎和宿主决定，不是日常宿主的实际执行观察。最终矩阵、四臂、平台和签名继续，总体仍为 11/16（68.75%）。
 
 [OPT-10 宿主路由提前拒绝](../../patches/hermes/build_native_overlay.py)：顺序执行里，`todo`、`memory` 等宿主路由原先会先经过前置钩子和检查点，然后才被 `require_registry_dispatch` 拒绝。覆盖层现在在这些副作用之前拒绝。已发出的请求镜像 `sha256:a3be2a4a` 仍是旧注入位置，本批没有重建镜像或调用模型。总体仍为 11/16（68.75%）。
 
@@ -251,10 +251,10 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 
 [OPT-08 已知效果代理路径](../../apps/agentshield/internal/runtimeaction/report_generation.go)：`mcp__siq_business__research_generate_report` 在参数形状正确时只有已知效果。`600519-贵州茅台` 的 2025 年报状态是 `needs_review`；`600036-招商银行` 等公司的状态是 `ready`。`run_analysis_report.py`、`factcheck_cli.py` 和 `pg_query.py` 的模式都是 `0775`。生成准备只检查分析脚本，因此会在子进程之前拒绝，到不了 `factcheck_cli` 中的 `broker_postgresql_query`。没有改这些文件的权限或公司数据，没有再跑模型。这不是放行后的网络连接。总体仍为 11/16（68.75%）。
 
-[OPT-08 固定程序链](../../../../siq-research-engine/scripts/openshell/research_report_generation.py)：业务 `f6cce13` 在启动子进程前检查分析脚本会导入或执行的固定程序，包括 `factcheck_cli.py`、`generate_factcheck_html.py` 和 `agents/hermes/profiles/shared/scripts/pg_query.py`。可写、符号链接或非常规文件返回 `report_generation_implementation_invalid`，不留下尝试标记。定向 16 项通过。本机这些文件仍是 `0775` 或 `0664`，准备阶段继续拒绝，没有改权限、没有改公司数据、没有再跑模型。总体仍为 11/16（68.75%）。
+OPT-08 固定程序链（业务仓库 `scripts/openshell/research_report_generation.py`）：业务 `f6cce13` 在启动子进程前检查分析脚本会导入或执行的固定程序，包括 `factcheck_cli.py`、`generate_factcheck_html.py` 和 `agents/hermes/profiles/shared/scripts/pg_query.py`。可写、符号链接或非常规文件返回 `report_generation_implementation_invalid`，不留下尝试标记。定向 16 项通过。本机这些文件仍是 `0775` 或 `0664`，准备阶段继续拒绝，没有改权限、没有改公司数据、没有再跑模型。总体仍为 11/16（68.75%）。
 
-[OPT-08 镜像锁](../../../../siq-research-engine/infra/openshell/sandbox/qwen38_candidate/business-mcp.lock.json)：业务 `b3701ce` 把候选镜像锁里的 `research_report_generation.py` 钉为 `c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad`。改锁前构建测试返回 `business_mcp_source_digest_mismatch`，改锁后相关 25 项通过。已登记镜像 `sha256:534d18c9` 仍是旧生成器，没有重建镜像，没有再跑模型。总体仍为 11/16（68.75%）。
+OPT-08 镜像锁（业务仓库 `infra/openshell/sandbox/qwen38_candidate/business-mcp.lock.json`）：业务 `b3701ce` 把候选镜像锁里的 `research_report_generation.py` 钉为 `c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad`。改锁前构建测试返回 `business_mcp_source_digest_mismatch`，改锁后相关 25 项通过。已登记镜像 `sha256:534d18c9` 仍是旧生成器，没有重建镜像，没有再跑模型。总体仍为 11/16（68.75%）。
 
-[OPT-08 镜像内程序](../../../../siq-research-engine/scripts/openshell/build_siq_analysis_mount_plan.py)：只读进入已登记镜像 `sha256:534d18c9`。其中 `research_report_generation.py` 是 `0444`、摘要前缀 `eb4efe60`。分析脚本、事实核查和查询客户端均为 root 所有、`nlink` 1、`0444` 或 `0555`。请求挂载只绑定公司目录、公开元数据和本次写入目录，不覆盖这些程序。本机文件的 `0775`/`0664` 只在直接跑本机树时拒绝，不会拦沙箱里的子进程。当前没有 `18794` 监听，没有再跑模型，也还没有放行后的数据代理连接。总体仍为 11/16（68.75%）。
+OPT-08 镜像内程序（业务仓库 `scripts/openshell/build_siq_analysis_mount_plan.py`）：只读进入已登记镜像 `sha256:534d18c9`。其中 `research_report_generation.py` 是 `0444`、摘要前缀 `eb4efe60`。分析脚本、事实核查和查询客户端均为 root 所有、`nlink` 1、`0444` 或 `0555`。请求挂载只绑定公司目录、公开元数据和本次写入目录，不覆盖这些程序。本机文件的 `0775`/`0664` 只在直接跑本机树时拒绝，不会拦沙箱里的子进程。当前没有 `18794` 监听，没有再跑模型，也还没有放行后的数据代理连接。总体仍为 11/16（68.75%）。
 
 [OPT-12 当前覆盖层受保护加载](optimization-opt12-current-overlay-hook-20261008.md)：源码 `1a07fa8a` 在独立 OpenShell 中构建镜像 `sha256:12f1c8d9`，制品 `8573522e`。18 项检查为真，钩子和清单的六次写、删、替换被拒绝。三条 allow 回执由真实 Go 权限服务验签。`registry.py` 与 `tool_executor.py` 的摘要和已登记镜像 `sha256:534d18c9` 的覆盖层一致。这次没有调用模型，Skill 是合成夹具，镜像也不是那张已登记请求镜像。发行签名身份以及 Windows/macOS 原生安装仍未验收。总体仍为 11/16（68.75%）。
