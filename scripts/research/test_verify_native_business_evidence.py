@@ -10,7 +10,15 @@ from pathlib import Path
 import pytest
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from verify_native_business_evidence import canonical, verify, verify_grant_transition
+from verify_native_business_evidence import (
+    canonical,
+    native_grant_digest,
+    validators,
+    verify,
+    verify_context_revocations,
+    verify_grant_transition,
+    verify_live_grants,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "docs/development/evidence/optimization-20261007/native-working-business-v819-v827.json"
@@ -158,4 +166,140 @@ def test_grant_artifact_without_binding_is_not_silently_ignored(tmp_path):
     del doc["verification"]["grant_transition"]
     report.write_text(json.dumps(doc))
     with pytest.raises(ValueError, match="grant_transition_binding_missing"):
+        verify(report, ROOT / "packages/contracts")
+
+
+def context_revocation_fixture():
+    key, sign, *_ = grant_transition_fixture()
+    context_id = "sec-" + "a" * 32
+    # The outer verifier authenticates the contexts first; this helper only
+    # exercises the exact binding of a tombstone to that verified inventory.
+    contexts = {context_id: {"signature": "a" * 128, "issued_at": "2026-10-08T05:00:00Z"}}
+    tombstone = sign({
+        "schema_version": "skill-execution-context-revocation/v2",
+        "context_id": context_id, "issuer_id": "local-admin",
+        "revoked_at": "2026-10-08T05:00:01Z", "context_signature": "a" * 128,
+        "signing_schema": "local_canonical/v1",
+    })
+    schema = validators(ROOT / "packages/contracts")["skill-execution-context-revocation.v2.schema.json"]
+    return key, sign, contexts, tombstone, schema
+
+
+def test_signed_context_revocation_is_bound_to_exact_context():
+    key, _, contexts, tombstone, schema = context_revocation_fixture()
+    verify_context_revocations(canonical({tombstone["context_id"]: tombstone}), key, contexts, 1, schema)
+
+
+def test_recomputed_tombstone_artifact_hash_cannot_hide_changed_revocation():
+    key, _, contexts, tombstone, schema = context_revocation_fixture()
+    tombstone["revoked_at"] = "2026-10-08T05:00:02Z"
+    with pytest.raises(InvalidSignature):
+        verify_context_revocations(canonical({tombstone["context_id"]: tombstone}), key, contexts, 1, schema)
+
+
+@pytest.mark.parametrize("change,reason", [
+    ({"context_id": "sec-" + "b" * 32}, "context_revocation_identity_mismatch"),
+    ({"context_signature": "b" * 128}, "context_revocation_signature_binding_mismatch"),
+    ({"revoked_at": "2026-10-08T04:59:59Z"}, "context_revocation_time_invalid"),
+])
+def test_validly_signed_wrong_tombstone_cannot_revoke_another_context(change, reason):
+    key, sign, contexts, tombstone, schema = context_revocation_fixture()
+    tombstone = sign({**tombstone, **change})
+    with pytest.raises(ValueError, match=reason):
+        verify_context_revocations(canonical({tombstone["context_id"]: tombstone}), key, contexts, 1, schema)
+
+
+def test_context_revocation_count_cannot_be_boolean():
+    key, _, contexts, tombstone, schema = context_revocation_fixture()
+    with pytest.raises(ValueError, match="context_revocation_count_mismatch"):
+        verify_context_revocations(canonical({tombstone["context_id"]: tombstone}), key, contexts, True, schema)
+
+
+def live_grant_fixture():
+    key, sign, snapshots, *_ = grant_transition_fixture()
+    live = {"skill": snapshots["skill_before"], "agent": snapshots["agent_baseline"]}
+    binding = {"skill": "skill", "agent": "agent"}
+    authorities = {role: {"grant_id": binding[role], "grant_digest": native_grant_digest(grant)}
+                   for role, grant in live.items()}
+    contexts = {"context": {"authority": authorities["skill"], "agent_authority": authorities["agent"]}}
+    return key, sign, live, binding, contexts
+
+
+def test_signed_live_grants_are_bound_to_context_authorities():
+    key, _, live, binding, contexts = live_grant_fixture()
+    verify_live_grants(canonical(live), key, binding, contexts, {})
+
+
+@pytest.mark.parametrize("status", ["pending_approval", "revoked"])
+def test_signed_inactive_grant_cannot_be_presented_as_live(status):
+    key, sign, live, binding, contexts = live_grant_fixture()
+    live["skill"] = sign({**live["skill"], "status": status})
+    with pytest.raises(ValueError, match="live_grant_status_invalid"):
+        verify_live_grants(canonical(live), key, binding, contexts, {})
+
+
+def test_valid_live_grants_cannot_be_substituted_across_contexts():
+    key, _, live, binding, contexts = live_grant_fixture()
+    contexts["context"]["authority"]["grant_id"] = "other"
+    with pytest.raises(ValueError, match="live_grant_context_binding_mismatch"):
+        verify_live_grants(canonical(live), key, binding, contexts, {})
+
+
+def test_live_grant_digest_binds_exact_signed_permissions():
+    key, sign, live, binding, contexts = live_grant_fixture()
+    live["skill"] = sign({**live["skill"], "facts": []})
+    with pytest.raises(ValueError, match="live_grant_context_binding_mismatch"):
+        verify_live_grants(canonical(live), key, binding, contexts, {})
+
+
+def test_no_skill_receipt_still_requires_matching_agent_authority():
+    key, _, live, binding, contexts = live_grant_fixture()
+    receipts = {"row": {"native_invocation": {
+        "contexts": [], "no_skill": True,
+        "agent_authority": {"grant_id": "agent", "grant_digest": "0" * 64},
+    }}}
+    with pytest.raises(ValueError, match="live_grant_receipt_binding_mismatch"):
+        verify_live_grants(canonical(live), key, binding, contexts, receipts)
+
+
+def test_native_grant_digest_matches_go_generic_float_numbers():
+    grant = {"desired_policy_ref": {"version": 2}, "status": "approved"}
+    expected = hashlib.sha256(b'{"desired_policy_ref":{"version":2.0},"status":"approved"}').hexdigest()
+    assert native_grant_digest(grant) == expected
+    assert hashlib.sha256(canonical(grant)).hexdigest() != expected
+
+
+CONTEXT_REPORT = ROOT / "docs/development/evidence/optimization-20261007/native-context-boundary-v855-v859.json"
+
+
+def test_real_context_revocation_bundle_includes_partial_case_without_claiming_success():
+    result = verify(CONTEXT_REPORT, ROOT / "packages/contracts")
+    assert result["receipts"] == 10 and result["signed_contexts"] == 3
+    assert result["signed_context_revocations"] == 1 and result["signed_live_grants"] == 2
+    assert result["case_decision_bindings"] == 4
+    assert not result["post_revocation_execution_reobserved"]
+    document = json.loads(CONTEXT_REPORT.read_text())
+    assert document["accepted_cases"] == ["v855", "v856", "v858"]
+    assert not document["supplementary_v859"]["passed"]
+
+
+def test_real_context_revocation_tampering_fails_after_artifact_rehash(tmp_path):
+    report, doc = copy_bundle(tmp_path, CONTEXT_REPORT)
+    path = tmp_path / doc["artifacts"]["context_revocations"]["file"]
+    tombstones = json.loads(path.read_text())
+    next(iter(tombstones.values()))["context_signature"] = "0" * 128
+    replace_artifact(report, doc, "context_revocations", canonical(tombstones))
+    with pytest.raises(InvalidSignature):
+        verify(report, ROOT / "packages/contracts")
+
+
+@pytest.mark.parametrize("binding,reason", [
+    ("context_revocation_count", "context_revocation_binding_missing"),
+    ("live_grant_ids", "live_grant_binding_missing"),
+])
+def test_optional_context_artifacts_must_not_be_silently_ignored(tmp_path, binding, reason):
+    report, doc = copy_bundle(tmp_path, CONTEXT_REPORT)
+    del doc["verification"][binding]
+    report.write_text(json.dumps(doc))
+    with pytest.raises(ValueError, match=reason):
         verify(report, ROOT / "packages/contracts")

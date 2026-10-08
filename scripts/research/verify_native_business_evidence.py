@@ -12,6 +12,7 @@ import base64
 import hashlib
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
@@ -21,6 +22,13 @@ from referencing import Registry, Resource
 
 def canonical(value: object) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+
+
+def native_grant_digest(grant: dict) -> str:
+    # skillcontext.GrantDigest unmarshals into map[string]any, whose numbers
+    # are float64. This differs from the integer-preserving signing payload.
+    generic = json.loads(canonical(grant), parse_int=float)
+    return hashlib.sha256(canonical(generic)).hexdigest()
 
 
 def require(condition: bool, reason: str) -> None:
@@ -48,7 +56,8 @@ def validators(contracts: Path) -> dict:
             registry = registry.with_resource(schema["$id"], Resource.from_contents(schema))
     return {
         name: Draft202012Validator(schemas[name], registry=registry)
-        for name in ("receipt.v3.schema.json", "skill-execution-context.v2.schema.json")
+        for name in ("receipt.v3.schema.json", "skill-execution-context.v2.schema.json",
+                     "skill-execution-context-revocation.v2.schema.json")
     }
 
 
@@ -78,6 +87,51 @@ def verify_grant_transition(raw: bytes, key: Ed25519PublicKey, binding: dict,
                 and len(invocation["contexts"]) == 1
                 and invocation["contexts"][0]["authority"]["grant_id"] == before["grant_id"],
                 "grant_transition_case_binding_mismatch")
+
+
+def verify_context_revocations(raw: bytes, key: Ed25519PublicKey, contexts: dict,
+                               count: int, schema: Draft202012Validator) -> None:
+    """Bind immutable revocations to the already verified historical contexts."""
+    tombstones = json.loads(raw)
+    require(type(count) is int and count > 0 and isinstance(tombstones, dict)
+            and len(tombstones) == count, "context_revocation_count_mismatch")
+    for context_id, tombstone in tombstones.items():
+        schema.validate(tombstone)
+        key.verify(bytes.fromhex(tombstone["signature"]),
+                   canonical({k: v for k, v in tombstone.items() if k != "signature"}))
+        require(context_id == tombstone["context_id"] and context_id in contexts,
+                "context_revocation_identity_mismatch")
+        context = contexts[context_id]
+        require(tombstone["context_signature"] == context["signature"],
+                "context_revocation_signature_binding_mismatch")
+        issued = datetime.fromisoformat(context["issued_at"].replace("Z", "+00:00"))
+        revoked = datetime.fromisoformat(tombstone["revoked_at"].replace("Z", "+00:00"))
+        require(issued.tzinfo is not None and revoked.tzinfo is not None and revoked >= issued,
+                "context_revocation_time_invalid")
+
+
+def verify_live_grants(raw: bytes, key: Ed25519PublicKey, binding: dict, contexts: dict,
+                       receipts: dict) -> None:
+    snapshots = json.loads(raw)
+    require(set(snapshots) == set(binding) == {"skill", "agent"}, "live_grant_inventory_mismatch")
+    for role, grant in snapshots.items():
+        key.verify(bytes.fromhex(grant["signature"]),
+                   canonical({k: v for k, v in grant.items() if k != "signature"}))
+        require(grant["grant_id"] == binding[role], "live_grant_identity_mismatch")
+        require(grant["status"] in {"approved", "deployed", "effective"}, "live_grant_status_invalid")
+    require(binding["skill"] != binding["agent"], "live_grant_roles_not_distinct")
+    authorities = {
+        role: {"grant_id": binding[role], "grant_digest": native_grant_digest(grant)}
+        for role, grant in snapshots.items()
+    }
+    for context in contexts.values():
+        require(context["authority"] == authorities["skill"]
+                and context["agent_authority"] == authorities["agent"],
+                "live_grant_context_binding_mismatch")
+    # Explicit no-Skill calls have no SEC; bind their Agent authority as well.
+    for receipt in receipts.values():
+        require(receipt["native_invocation"]["agent_authority"] == authorities["agent"],
+                "live_grant_receipt_binding_mismatch")
 
 
 def verify(report: Path, contracts: Path) -> dict:
@@ -164,6 +218,22 @@ def verify(report: Path, contracts: Path) -> dict:
         verify_grant_transition(payloads["grant_snapshots"], key, verification["grant_transition"],
                                 verification["cases"], by_hash)
         grant_result = {"signed_grant_snapshots": 3, "grant_transition_order_reobserved": False}
+    revocation_result = {}
+    if "context_revocations" in payloads or "context_revocation_count" in verification:
+        require("context_revocations" in payloads and "context_revocation_count" in verification,
+                "context_revocation_binding_missing")
+        count = verification["context_revocation_count"]
+        verify_context_revocations(payloads["context_revocations"], key, contexts, count,
+                                   schemas["skill-execution-context-revocation.v2.schema.json"])
+        revocation_result = {"signed_context_revocations": count,
+                             "post_revocation_execution_reobserved": False}
+    live_grant_result = {}
+    if "live_grants" in payloads or "live_grant_ids" in verification:
+        require("live_grants" in payloads and "live_grant_ids" in verification,
+                "live_grant_binding_missing")
+        verify_live_grants(payloads["live_grants"], key, verification["live_grant_ids"], contexts,
+                           by_hash)
+        live_grant_result = {"signed_live_grants": 2}
     return {
         "cryptographic_bundle_verified": True,
         "receipts": len(rows),
@@ -172,6 +242,8 @@ def verify(report: Path, contracts: Path) -> dict:
         "original_filesystem_effects_reobserved": False,
         "current_execution_authorized": False,
         **grant_result,
+        **revocation_result,
+        **live_grant_result,
     }
 
 
