@@ -149,6 +149,7 @@
         "docs/development/evidence/optimization-20261007/native-runtime-guard.json",
         "docs/development/optimization-opt08-online-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/native-host-online.json",
+        "docs/development/evidence/optimization-20261007/native-request-image-generator-20261008p.json",
         "docs/development/optimization-opt08-image-profile-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/native-openshell-image-profile.json",
         "docs/development/optimization-opt08-joined-runtime-validation-20261007.md",
@@ -304,7 +305,8 @@
         "已知效果的数据代理工具是 mcp__siq_business__research_generate_report：参数形状正确时描述符不含 unknown。600519-贵州茅台 2025 年报状态是 needs_review，但 600036-招商银行等公司的状态是 ready。共享实现 run_analysis_report.py、factcheck_cli.py 和 pg_query.py 的模式都是 0775。生成准备只检查分析脚本，0775 会在任何子进程之前拒绝，因此本机到不了 factcheck_cli 里的 broker_postgresql_query。没有改这些文件的权限或公司数据，没有再跑模型。这不是放行后的网络连接。OPT-08 保持 implementing，11/16 不变。",
         "业务 f6cce13 在启动子进程前检查固定程序链，包括分析脚本导入和执行的程序，以及 factcheck_cli.py、generate_factcheck_html.py 和 agents/hermes/profiles/shared/scripts/pg_query.py。可写、符号链接或非常规文件都会以 report_generation_implementation_invalid 拒绝，且不留下尝试标记。定向 16 项通过，其中新增可写事实核查和可写查询客户端两项。本机这些文件仍是 0775 或 0664，准备阶段继续在子进程之前拒绝，没有改权限、没有改公司数据、没有再跑模型。这不是放行后的网络连接。OPT-08 保持 implementing，11/16 不变。",
         "业务 b3701ce 把候选镜像锁中的 research_report_generation.py 从 eb4efe608a74e03fa3e7851c24623f4acce40ecef62162d45913682a3e3b10bd 改为 c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad。改锁之前镜像构建测试报 business_mcp_source_digest_mismatch；改锁后构建上下文测试与报告生成 25 项通过。已登记镜像 sha256:534d18c9 仍是旧生成器，没有重建镜像，没有再跑模型。OPT-08 保持 implementing，11/16 不变。",
-        "只读检查已登记镜像 sha256:534d18c9：research_report_generation.py 为 0444、摘要 eb4efe60，仍是只检查分析脚本的旧生成器。镜像内 run_analysis_report.py、factcheck_cli.py、generate_factcheck_html.py 以及其余固定程序均为 root、nlink 1、0444 或 0555。请求挂载只绑定公司目录、公开元数据和本次写入目录，不覆盖这些程序。因此本机 0775/0664 不会拦沙箱里的子进程；那只适用于直接在本机树上运行生成器。当前没有 18794 监听，没有再跑模型，也还没有放行后的数据代理连接。OPT-08 保持 implementing，11/16 不变。"
+        "只读检查已登记镜像 sha256:534d18c9：research_report_generation.py 为 0444、摘要 eb4efe60，仍是只检查分析脚本的旧生成器。镜像内 run_analysis_report.py、factcheck_cli.py、generate_factcheck_html.py 以及其余固定程序均为 root、nlink 1、0444 或 0555。请求挂载只绑定公司目录、公开元数据和本次写入目录，不覆盖这些程序。因此本机 0775/0664 不会拦沙箱里的子进程；那只适用于直接在本机树上运行生成器。当前没有 18794 监听，没有再跑模型，也还没有放行后的数据代理连接。OPT-08 保持 implementing，11/16 不变。",
+        "离线请求镜像 sha256:485abc0270dab40f79b565d263c8d9220eaee965108c3880b64e8d1e622e713b、制品 fd024b0e3ffa0026a79f8b53c9ae0be9b868c512855dc67b5e4a0ad06c74af50 使用记录架构 siq.openshell.native-request-image.v4。受保护生成器 research_report_generation.py 为 c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad，root、nlink 1、0444。六项离线检查为 true，production_eligible 为 false，runtime_state 为 unverified。同一镜像内 research_business_tools_mcp.py 为 4628b99a4d709295aae0de4c173d4bc943474b1458980084c6387ae35443e266，publish_verified_report.py 为 cbde1e54b117e039a8e9559e7b3aaec3033293d98fea22677ee4193743283ed1。v1/v2 记录仍可核验，已登记镜像 sha256:534d18c9 内生成器仍是 eb4efe608a74e03fa3e7851c24623f4acce40ecef62162d45913682a3e3b10bd。current-image.json 摘要仍是 c7d9fa3528622b71fb89a4e7dfe14369dffcc89b365531114dca4e38308f591f。未登记身份，未调用模型。原生镜像构建 54 项通过。这不是日常网络效果、四臂、平台或签名。OPT-08 保持 implementing，11/16 不变。"
       ]
     },
     {
@@ -341,6 +343,7 @@
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
       "evidence": [
+        "docs/development/evidence/optimization-20261007/native-request-image-generator-20261008p.json",
         "docs/development/optimization-opt08-opt10-repetitions-validation-20261008.md",
         "docs/development/optimization-opt08-install-drift-validation-20261008.md",
         "docs/development/optimization-opt08-switch-repetitions-validation-20261008.md",
@@ -420,7 +423,8 @@
         "已知效果的报告生成工具在本机到不了数据代理：分析脚本模式 0775，准备阶段在子进程之前拒绝。代理调用在 factcheck_cli 的 broker_postgresql_query，本机不会执行到那里。没有改脚本权限或公司数据，没有再跑模型。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。",
         "业务 f6cce13 把事实核查和查询客户端纳入同一道实现检查：可写 factcheck_cli.py 或 pg_query.py 不再启动报告进程。定向 16 项通过。本机程序仍可写，日常入口仍不会连上数据代理。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。",
         "业务 b3701ce 将候选镜像锁钉到含该检查的生成器 c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad。已登记镜像 sha256:534d18c9 尚未包含这版生成器。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。",
-        "已登记镜像 sha256:534d18c9 内的报告程序是 root 所有且不可写；请求挂载不覆盖它们。本机脚本模式不决定沙箱能否启动子进程。18794 当前没有监听，没有新的日常网络效果。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。"
+        "已登记镜像 sha256:534d18c9 内的报告程序是 root 所有且不可写；请求挂载不覆盖它们。本机脚本模式不决定沙箱能否启动子进程。18794 当前没有监听，没有新的日常网络效果。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。",
+        "离线请求镜像 sha256:485abc0270dab40f79b565d263c8d9220eaee965108c3880b64e8d1e622e713b、制品 fd024b0e3ffa0026a79f8b53c9ae0be9b868c512855dc67b5e4a0ad06c74af50 含锁钉生成器 c61417ff204d457d00b730b8f383fb3209a416b5b00f583c49010120bbf3c2ad。六项离线检查为 true，未登记、未激活 current-image.json、未调用模型。已登记镜像 sha256:534d18c9 的生成器仍是 eb4efe608a74e03fa3e7851c24623f4acce40ecef62162d45913682a3e3b10bd。最终矩阵、四臂、平台和签名继续。OPT-10 保持 implementing，11/16 不变。"
       ]
     },
     {
