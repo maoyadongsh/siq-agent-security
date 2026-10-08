@@ -313,10 +313,13 @@
       "evidence": [
         "docs/adr/0059-adapter-installation-integrity.md",
         "docs/development/optimization-opt12-integrity-validation-20261008.md",
-        "docs/development/evidence/optimization-20261007/adapter-installation-integrity.json"
+        "docs/development/evidence/optimization-20261007/adapter-installation-integrity.json",
+        "docs/development/optimization-opt12-protected-hook-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/protected-hook-execution.json"
       ],
       "residual_limits": [
-        "安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。"
+        "安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。",
+        "受保护钩子实效联验完成：独立OpenShell＋当前Hermes原生工具＋真实Go Authority下，两个正常写入成功，钩子／清单六次改写删除替换均拒绝；管理员注入代码漂移后实际写入被拒且无副作用，恢复字节不复活旧guard。002完整18项检查通过，50项组件和9项证据回归通过；001清理复验异常保留且资源已清理。仅合成批准Skill、无模型，非日常业务／正式发行验收；OPT-12继续implementing，总体10/16保持。"
       ]
     },
     {

@@ -47,16 +47,16 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def run(output, *, image_profile=False, online=False):
+def run(output, *, image_profile=False, online=False, integrity=False):
     try:
-        _run(output, image_profile=image_profile, online=online)
+        _run(output, image_profile=image_profile, online=online, integrity=integrity)
     finally:
-        if online:
+        if online or integrity:
             from openshell_online_probe import close
             close()
 
 
-def _run(output, *, image_profile=False, online=False):
+def _run(output, *, image_profile=False, online=False, integrity=False):
     output.mkdir(mode=0o700, parents=True, exist_ok=False)
     original = sha(TEMPLATE)
     config = tomllib.loads(TEMPLATE.read_text())
@@ -89,7 +89,10 @@ def _run(output, *, image_profile=False, online=False):
         return completed
 
     prepared = None
-    if online:
+    if integrity:
+        from openshell_integrity_probe import prepare
+        prepared = prepare(output, command)
+    elif online:
         from openshell_online_probe import prepare
         prepared = prepare(output, command)
     elif image_profile:
@@ -188,7 +191,7 @@ network_policies: {}
             exec_log = output / 'command.log'
             with exec_log.open('wb') as observed:
                 execution = subprocess.Popen([str(CLI), '--gateway', NAME, 'sandbox', 'exec', '--name', sandbox,
-                    '--no-tty', '--timeout', '140' if online else '50', '--', *argv], env=env,
+                    '--no-tty', '--timeout', '140' if online or integrity else '50', '--', *argv], env=env,
                     stdin=subprocess.DEVNULL, stdout=observed, stderr=subprocess.STDOUT)
                 deadline = time.monotonic() + 20
                 while True:
@@ -227,11 +230,13 @@ network_policies: {}
                     except PermissionError:
                         result['host_process'][name + '_readable'] = False
                 if prepared:
-                    if online:
+                    if integrity:
+                        from openshell_integrity_probe import verify
+                    elif online:
                         from openshell_online_probe import verify
                     else:
                         from openshell_image_probe import verify
-                    result['native_online' if online else 'image_profile'] = verify(prepared, peer=peer, cid=cid, namespace=namespace,
+                    result['hook_integrity' if integrity else 'native_online' if online else 'image_profile'] = verify(prepared, peer=peer, cid=cid, namespace=namespace,
                         sandbox=sandbox, init_pid=init_pid, init_groups=init_groups, row=rows[0],
                         command=command, exec_log=exec_log)
             result['inspection_complete'] = True
@@ -269,5 +274,6 @@ if __name__ == '__main__':
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--image-profile', action='store_true')
     group.add_argument('--online', action='store_true')
+    group.add_argument('--integrity', action='store_true', help='Actual hook protection and drift refusal; no model')
     args = parser.parse_args()
-    run(args.output.resolve(), image_profile=args.image_profile, online=args.online)
+    run(args.output.resolve(), image_profile=args.image_profile, online=args.online, integrity=args.integrity)

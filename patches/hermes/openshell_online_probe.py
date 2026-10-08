@@ -116,7 +116,7 @@ def close():
         _owned = None
 
 
-def prepare(output, command):
+def prepare(output, command, *, bootstrap_path=None):
     global _owned
     context = output / "image-context"
     context.mkdir(mode=0o700)
@@ -126,7 +126,7 @@ def prepare(output, command):
     # Do not overwrite protected image directories with a host umask's 0775.
     for path in (overlay, *overlay.rglob("*")):
         path.chmod(0o555 if path.is_dir() else 0o444)
-    bootstrap = Path(__file__).with_name("openshell_online_bootstrap.py")
+    bootstrap = bootstrap_path or Path(__file__).with_name("openshell_online_bootstrap.py")
     shutil.copyfile(bootstrap, context / "bootstrap.py")
     skills = context / "skills"
     for name in ("reader", "writer"):

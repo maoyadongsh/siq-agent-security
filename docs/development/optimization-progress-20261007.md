@@ -156,3 +156,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [企业OpenShell行为闭环验收](optimization-opt09-completion-validation-20261008.md)：企业OpenShell行为证据闭环适用范围验收完成：批准模板预览与v2摘要绑定、accepted态独立核验、当前限定等级／审计、前端时效及不重放恢复已接线。后端154项、前端31项、PostgreSQL48项通过；同次真实OpenShell13项／API9项及实际浏览器HTTP核验通过，故障浏览器9项另计且不混淆。实际策略变更使等级转unverified，历史accepted不改写；自有资源清理。生产IdP、持续监控和未覆盖路径不作通过声明，其他任务与最终交付继续。OPT-09记done，总体10/16（62.5%）。
 
 [钩子安装归属与漂移诊断第一批](optimization-opt12-integrity-validation-20261008.md)：安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。
+
+[受保护钩子与执行拒绝联验](optimization-opt12-protected-hook-validation-20261008.md)：受保护钩子实效联验完成：独立OpenShell＋当前Hermes原生工具＋真实Go Authority下，两个正常写入成功，钩子／清单六次改写删除替换均拒绝；管理员注入代码漂移后实际写入被拒且无副作用，恢复字节不复活旧guard。002完整18项检查通过，50项组件和9项证据回归通过；001清理复验异常保留且资源已清理。仅合成批准Skill、无模型，非日常业务／正式发行验收；OPT-12继续implementing，总体10/16保持。
