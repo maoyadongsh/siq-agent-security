@@ -546,6 +546,11 @@ class OpenShellBehaviorOperation(Base):
         UniqueConstraint("tenant_id", "nonce_sha256", name="uq_openshell_behavior_nonce"),
         CheckConstraint("epoch >= 0", name="ck_openshell_behavior_epoch"),
         CheckConstraint(
+            "(profile_id IS NULL AND profile_sha256 IS NULL) OR "
+            "(profile_id IS NOT NULL AND profile_sha256 IS NOT NULL)",
+            name="ck_openshell_behavior_profile_pair",
+        ),
+        CheckConstraint(
             "state IN ('prepared','running','accepted','rejected','unknown','expired')",
             name="ck_openshell_behavior_state",
         ),
@@ -556,6 +561,8 @@ class OpenShellBehaviorOperation(Base):
     operation_id: Mapped[str] = mapped_column(String(64), ForeignKey("openshell_operation.id"))
     challenge: Mapped[dict] = mapped_column(JSON)
     challenge_digest: Mapped[str] = mapped_column(String(64))
+    profile_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    profile_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
     nonce_sha256: Mapped[str] = mapped_column(String(64))
     state: Mapped[str] = mapped_column(String(32), default="prepared")
     epoch: Mapped[int] = mapped_column(Integer, default=0)

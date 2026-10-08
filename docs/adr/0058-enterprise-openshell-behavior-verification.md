@@ -70,3 +70,13 @@ Daemon archive 的接口语义参见 [Docker Engine API](https://docs.docker.com
 内部协调器复用既有跨进程 target_mutex，依次执行授权复核／当前模板及目标保护复核／策略读回、持久 prepare、持久 claim，再启动固定模板探针。每一臂前重新检查授权、模板字节、网关、策略和程序保护；结束后再次读回，校验并在同一完成事务中复核数据库授权。外部探测不占用数据库写事务。上层必须提供请求身份复核及完成事务的授权回调；这些回调不是待测工作负载可选项。
 
 对同一 verification_id 的后续调用仅读取已有操作，不重新执行，包括未领取的 prepared。失败或授权变化后运行记录转 unknown；若数据库／审计不可写，则保留原 running 供到期确认，不能伪称清理完成或重试联网。模板、数据库授权或目标互斥不满足时不开始探针。该内部协调阶段尚不对外开放生产 API，也不自动提升部署等级；API／UI／证据时效接线分别验收。
+
+## 认证收集 API 与历史查询
+
+POST `/api/v1/deployments/{id}/behavior-verifications` 只接受 deployment-behavior-start/v1 的 verification_id 和 profile_id，不接受租户、端点、路径、nonce 或结果上传；要求 policy:manage 与 policy:read。GET 集合／单条历史只要求 policy:read；均先租户定位对象再判权限。当前阶段返回 deployment-behavior-operation/v1 的持久状态、范围和时间，明确 current_enforcement_verified=false；accepted 只表示该次观测采信，不在历史查询时推断当前仍生效。等级生命周期和 UI 尚待接入，不通过该标志提前宣称完成。
+
+API 将原认证请求交给每臂授权回调，重新验证身份与令牌时效；数据库回调复核当前租户、enforce 环境、有效部署／绑定／来源身份／策略选择器、批准链和操作员目标归属。网关查询在数据库事务外执行；最终回调使用已验证令牌的截止时间、固定网关事实和当前文件授权，不在结果写事务内取远端 JWKS 或发送探针。任何失败均不提升等级。
+
+迁移0032为行为操作增加可空 profile_id／profile_sha256 并约束同时存在或同时为空。新协调器持久绑定批准模板及其文件摘要；旧记录保留空值，不反填为新版本受控执行。重试已存在的相同ID／profile只读回原状态，不启动进程、修复配置或继续prepared；同ID改profile返回冲突，跨租户／部署ID不披露既有记录。历史GET不调用网关、不执行探针，也不改变已保存观测。
+
+历史列表默认20条、最多100条，通过 X-SIQ-List-* 头标明截断，不把当前页冒充全部记录；单条按ID查询。历史读回不依赖当前恢复密钥或模板文件。已接受记录即使超过挑战有效期也保留 accepted 历史状态，time_window=expired 与 current_enforcement_verified=false 明确区分历史观测和当前保证。

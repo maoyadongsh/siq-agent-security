@@ -43,8 +43,9 @@ class Wire(BaseModel):
 
     @field_validator("issued_at", "expires_at", "started_at", "finished_at", "observed_at", check_fields=False)
     @classmethod
-    def valid_timestamp(cls, value: str) -> str:
-        _time(value)
+    def valid_timestamp(cls, value: str | None) -> str | None:
+        if value is not None:
+            _time(value)
         return value
 
 

@@ -236,7 +236,8 @@ def test_prepared_crash_is_not_a_network_retry(database, rig):
     c = rig.coordinator._challenge(rig.profile, ID, nonce="e" * 64,
                                   issued_at=rig.profile.issued_at, expires_at=rig.profile.expires_at)
     before = rig.coordinator._readback(load_behavior_profile("test", now=NOW))
-    rig.coordinator.journal.prepare(c.model_dump(), before)
+    approved = load_behavior_profile("test", now=NOW)
+    rig.coordinator.journal.prepare(c.model_dump(), before, profile_id="test", profile_sha256=approved.file_sha256)
     fact = rig.coordinator.run("test", ID)
     assert fact.state == "prepared" and not rig.calls
 

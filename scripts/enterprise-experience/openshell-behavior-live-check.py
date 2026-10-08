@@ -33,6 +33,7 @@ def main():
     parser.add_argument("--probe-sha256", required=True)
     parser.add_argument("--namespace", required=True)
     parser.add_argument("--coordinated", action="store_true")
+    parser.add_argument("--authenticated-api", action="store_true")
     args = parser.parse_args()
     assert re.fullmatch(r"sha256:[a-f0-9]{64}", args.image)
     assert re.fullmatch(r"[a-f0-9]{64}", args.probe_sha256)
@@ -190,9 +191,13 @@ def main():
         network = [{"effect": "allow", "endpoint": f"{host}:{port}", "binary_paths": [ALLOW]}]
         policy["network_policies"] = network_rules_to_gateway(network)
         policy_file.write_text(yaml.safe_dump(policy, sort_keys=False))
-        if args.coordinated:
+        if args.coordinated or args.authenticated_api:
             from behavior_coordinated_fixture import CoordinatedFixture
-            coordinated = CoordinatedFixture(out, backend, target)
+            if args.authenticated_api:
+                from behavior_api_fixture import ApiFixture
+                coordinated = ApiFixture(out, backend, target)
+            else:
+                coordinated = CoordinatedFixture(out, backend, target)
             coordinated.apply(network)
             checks["real_durable_policy_apply"] = True
         else:

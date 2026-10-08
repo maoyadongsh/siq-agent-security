@@ -14,6 +14,7 @@ import hmac
 import json
 import threading
 from dataclasses import dataclass, field
+from datetime import datetime
 from functools import lru_cache
 
 import jwt
@@ -174,14 +175,14 @@ def _verify_jwt(token: str) -> dict:
                 audience=settings.jwt_audience,
                 options={"require": ["sub", "exp", "iat", "iss", "aud"]},
             )
-        except jwt.exceptions.InvalidTokenError as exc:
+        except (jwt.exceptions.InvalidTokenError, ValueError, TypeError, OverflowError) as exc:
             raise HTTPException(status_code=401, detail="invalid_token") from exc
     else:
         # dev 回退：共享密钥 HS256，仅无 JWKS 时
         secret = _dev_secret()
         try:
             claims = jwt.decode(token, secret, algorithms=["HS256"], audience=settings.jwt_audience)
-        except jwt.exceptions.InvalidTokenError as exc:
+        except (jwt.exceptions.InvalidTokenError, ValueError, TypeError, OverflowError) as exc:
             raise HTTPException(status_code=401, detail="invalid_token") from exc
     return claims
 
@@ -264,3 +265,30 @@ def forbid_anonymous(identity: Identity) -> Identity:
     if not identity.is_authenticated:
         raise HTTPException(status_code=401, detail="missing_credentials")
     return identity
+
+
+def get_identity_with_expiry(request: Request) -> tuple[Identity, datetime | None]:
+    """Fresh authentication for bounded active operations, retaining verified expiry.
+
+    The deadline is derived from verified claims, never unverified JWT payloads.
+    Existing ordinary API identity semantics remain unchanged.
+    """
+    from datetime import UTC, datetime
+    from math import isfinite
+
+    if settings.dev_mode and request.headers.get("X-Dev-Tenant-Id"):
+        return get_identity(request), None
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        raise HTTPException(401, "missing_credentials")
+    claims = _verify_jwt(auth.removeprefix("Bearer ").strip())
+    expires = claims.get("exp")
+    try:
+        if type(expires) not in (int, float) or not isfinite(expires):
+            raise ValueError
+        deadline = datetime.fromtimestamp(expires, UTC)
+        if deadline <= datetime.now(UTC):
+            raise ValueError
+    except (ValueError, OverflowError, OSError):
+        raise HTTPException(401, "invalid_token") from None
+    return _identity_from_claims(claims), deadline

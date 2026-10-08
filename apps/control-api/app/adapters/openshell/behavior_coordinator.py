@@ -78,7 +78,8 @@ class BehaviorCoordinator:
                     {"endpoint": rule["endpoint"], "program_path": path}
                     for rule in snapshot.network for path in rule["binary_paths"]]}
 
-    def _existing(self, verification_id: str, profile: BehaviorProfile) -> BehaviorFact | None:
+    def _existing(self, verification_id: str, approved: ApprovedBehaviorProfile) -> BehaviorFact | None:
+        profile = approved.profile
         try:
             fact = self.journal.read(verification_id)
         except BehaviorJournalError as error:
@@ -87,7 +88,8 @@ class BehaviorCoordinator:
             return None
         expected = self._challenge(profile, verification_id, nonce=fact.challenge["nonce"],
                                    issued_at=fact.challenge["issued_at"], expires_at=fact.challenge["expires_at"])
-        if fact.challenge != expected.model_dump():
+        if (fact.challenge != expected.model_dump()
+            or (fact.profile_id, fact.profile_sha256) != (profile.profile_id, approved.file_sha256)):
             raise AdapterError("behavior_profile_operation_conflict")
         # A crash between prepare and claim is deliberately not resumed by POST.
         # A caller must create a new ID, preventing surprising probe replay.
@@ -113,7 +115,7 @@ class BehaviorCoordinator:
             raise AdapterError("behavior_profile_scope_mismatch")
         self.authorize(profile)
         with target_mutex(self.engine, profile.binding.gateway_fingerprint, profile.binding.target):
-            existing = self._existing(verification_id, profile)
+            existing = self._existing(verification_id, approved)
             if existing is not None:
                 return existing
             before = self._readback(approved)
@@ -126,7 +128,7 @@ class BehaviorCoordinator:
             valid, reason = validate_behavior_challenge(raw, before, now=now)
             if not valid:
                 raise AdapterError(reason)
-            self.journal.prepare(raw, before)
+            self.journal.prepare(raw, before, profile_id=profile.profile_id, profile_sha256=approved.file_sha256)
             self._current_profile(approved)
             self.authorize(profile)
             claim = self.journal.claim(verification_id, before)

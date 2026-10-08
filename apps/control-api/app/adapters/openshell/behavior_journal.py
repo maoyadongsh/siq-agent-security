@@ -11,6 +11,7 @@ import copy
 import hashlib
 import hmac
 import json
+import re
 import secrets
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -58,6 +59,8 @@ class BehaviorFact:
     reason_code: str | None
     challenge: dict = field(repr=False)
     result: dict | None = field(repr=False)
+    profile_id: str | None = None
+    profile_sha256: str | None = None
 
 
 @dataclass(frozen=True)
@@ -66,6 +69,53 @@ class BehaviorClaim:
     epoch: int
     owner_token: str = field(repr=False)
     challenge: dict = field(repr=False)
+
+
+def _profile_reference(profile_id, profile_sha256):
+    if profile_id is None and profile_sha256 is None:
+        return
+    if (not isinstance(profile_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", profile_id)
+        or not isinstance(profile_sha256, str) or not re.fullmatch(r"[a-f0-9]{64}", profile_sha256)):
+        raise BehaviorJournalError("behavior_profile_reference_invalid")
+
+
+def behavior_fact(row: OpenShellBehaviorOperation, tenant_id: str, deployment_id: str) -> BehaviorFact:
+    _profile_reference(row.profile_id, row.profile_sha256)
+    try:
+        challenge = parse_behavior_challenge(row.challenge)
+    except (ValidationError, ValueError, TypeError):
+        raise BehaviorJournalError("behavior_record_invalid") from None
+    if (challenge_digest(challenge) != row.challenge_digest or challenge.verification_id != row.id
+        or challenge.binding.tenant_id != tenant_id or row.tenant_id != tenant_id
+        or challenge.binding.deployment_id != deployment_id or row.deployment_id != deployment_id
+        or challenge.binding.operation_id != row.operation_id
+        or hashlib.sha256(challenge.nonce.encode()).hexdigest() != row.nonce_sha256
+        or _time(challenge.expires_at).replace(tzinfo=None) != row.expires_at
+        or type(row.epoch) is not int or row.epoch != _EPOCHS.get(row.state)):
+        raise BehaviorJournalError("behavior_record_invalid")
+    ran = row.state in ("running", "accepted", "rejected", "unknown")
+    if ran:
+        if (not isinstance(row.owner_sha256, str) or len(row.owner_sha256) != 64
+            or any(c not in "0123456789abcdef" for c in row.owner_sha256)
+            or not isinstance(row.started_at, datetime)
+            or not _time(challenge.issued_at).replace(tzinfo=None) <= row.started_at < row.expires_at):
+            raise BehaviorJournalError("behavior_record_invalid")
+    elif row.owner_sha256 is not None or row.started_at is not None:
+        raise BehaviorJournalError("behavior_record_invalid")
+    if ((row.state == "accepted" and row.result is None)
+        or (row.state not in ("accepted", "rejected") and row.result is not None)):
+        raise BehaviorJournalError("behavior_record_invalid")
+    if row.result is not None:
+        try:
+            result = parse_behavior_result(row.result).model_dump(mode="json")
+        except (ValidationError, ValueError, TypeError):
+            raise BehaviorJournalError("behavior_record_invalid") from None
+        if _digest(result) != row.result_digest:
+            raise BehaviorJournalError("behavior_record_invalid")
+    elif row.result_digest is not None:
+        raise BehaviorJournalError("behavior_record_invalid")
+    return BehaviorFact(row.id, row.state, row.epoch, row.reason_code,
+                        copy.deepcopy(row.challenge), copy.deepcopy(row.result), row.profile_id, row.profile_sha256)
 
 
 class BehaviorJournal:
@@ -102,41 +152,7 @@ class BehaviorJournal:
         return row
 
     def _fact(self, row: OpenShellBehaviorOperation) -> BehaviorFact:
-        try:
-            challenge = parse_behavior_challenge(row.challenge)
-        except (ValidationError, ValueError, TypeError):
-            raise BehaviorJournalError("behavior_record_invalid") from None
-        if (challenge_digest(challenge) != row.challenge_digest or challenge.verification_id != row.id
-            or challenge.binding.tenant_id != self.tenant_id or row.tenant_id != self.tenant_id
-            or challenge.binding.deployment_id != self.deployment_id or row.deployment_id != self.deployment_id
-            or challenge.binding.operation_id != row.operation_id
-            or hashlib.sha256(challenge.nonce.encode()).hexdigest() != row.nonce_sha256
-            or _time(challenge.expires_at).replace(tzinfo=None) != row.expires_at
-            or type(row.epoch) is not int or row.epoch != _EPOCHS.get(row.state)):
-            raise BehaviorJournalError("behavior_record_invalid")
-        ran = row.state in ("running", "accepted", "rejected", "unknown")
-        if ran:
-            if (not isinstance(row.owner_sha256, str) or len(row.owner_sha256) != 64
-                or any(c not in "0123456789abcdef" for c in row.owner_sha256)
-                or not isinstance(row.started_at, datetime)
-                or not _time(challenge.issued_at).replace(tzinfo=None) <= row.started_at < row.expires_at):
-                raise BehaviorJournalError("behavior_record_invalid")
-        elif row.owner_sha256 is not None or row.started_at is not None:
-            raise BehaviorJournalError("behavior_record_invalid")
-        if ((row.state == "accepted" and row.result is None)
-            or (row.state not in ("accepted", "rejected") and row.result is not None)):
-            raise BehaviorJournalError("behavior_record_invalid")
-        if row.result is not None:
-            try:
-                result = parse_behavior_result(row.result).model_dump(mode="json")
-            except (ValidationError, ValueError, TypeError):
-                raise BehaviorJournalError("behavior_record_invalid") from None
-            if _digest(result) != row.result_digest:
-                raise BehaviorJournalError("behavior_record_invalid")
-        elif row.result_digest is not None:
-            raise BehaviorJournalError("behavior_record_invalid")
-        return BehaviorFact(row.id, row.state, row.epoch, row.reason_code,
-                            copy.deepcopy(row.challenge), copy.deepcopy(row.result))
+        return behavior_fact(row, self.tenant_id, self.deployment_id)
 
     def _live_parent(self, session: Session, challenge: BehaviorChallenge) -> None:
         binding = challenge.binding
@@ -186,7 +202,9 @@ class BehaviorJournal:
               "deployment", resource_id=self.deployment_id,
               summary={"verification_id": row.id, "operation_id": row.operation_id, "epoch": row.epoch,
                        "challenge_sha256": row.challenge_digest, "result_sha256": row.result_digest,
-                       "reason_code": row.reason_code})
+                       "reason_code": row.reason_code,
+                       **({"profile_id": row.profile_id, "profile_sha256": row.profile_sha256}
+                          if row.profile_id is not None else {})})
 
     def _transition(self, session: Session, row: OpenShellBehaviorOperation, state: str, **values) -> BehaviorFact:
         if state not in _TRANSITIONS.get(row.state, set()):
@@ -204,7 +222,11 @@ class BehaviorJournal:
         session.flush()
         return self._fact(row)
 
-    def prepare(self, challenge: dict, current_readback: dict) -> BehaviorFact:
+    def prepare(
+        self, challenge: dict, current_readback: dict, *,
+        profile_id: str | None = None, profile_sha256: str | None = None,
+    ) -> BehaviorFact:
+        _profile_reference(profile_id, profile_sha256)
         try:
             expected = parse_behavior_challenge(challenge)
         except (ValidationError, ValueError, TypeError):
@@ -216,7 +238,8 @@ class BehaviorJournal:
             with self.sessions.begin() as session:
                 existing = session.scalar(self._query(expected.verification_id).with_for_update())
                 if existing is not None:
-                    if existing.challenge_digest != digest:
+                    if (existing.challenge_digest != digest
+                        or (existing.profile_id, existing.profile_sha256) != (profile_id, profile_sha256)):
                         raise BehaviorJournalError("behavior_challenge_conflict")
                     return self._fact(existing)
                 valid, reason = validate_behavior_challenge(challenge, current_readback, now=self._now())
@@ -227,6 +250,7 @@ class BehaviorJournal:
                     id=expected.verification_id, tenant_id=self.tenant_id, deployment_id=self.deployment_id,
                     operation_id=expected.binding.operation_id, challenge=expected.model_dump(mode="json"),
                     challenge_digest=digest, nonce_sha256=hashlib.sha256(expected.nonce.encode()).hexdigest(),
+                    profile_id=profile_id, profile_sha256=profile_sha256,
                     state="prepared", epoch=0, expires_at=_time(expected.expires_at).replace(tzinfo=None),
                 )
                 session.add(row)
@@ -236,7 +260,8 @@ class BehaviorJournal:
         except IntegrityError:
             with self.sessions() as session:
                 existing = session.scalar(self._query(expected.verification_id))
-                if existing is not None and existing.challenge_digest == digest:
+                if (existing is not None and existing.challenge_digest == digest
+                    and (existing.profile_id, existing.profile_sha256) == (profile_id, profile_sha256)):
                     return self._fact(existing)
             raise BehaviorJournalError("behavior_challenge_conflict") from None
 

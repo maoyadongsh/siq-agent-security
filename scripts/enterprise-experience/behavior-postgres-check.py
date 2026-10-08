@@ -176,11 +176,45 @@ def main():
             assert downgrade.returncode != 0 and "behavior evidence must be preserved" in downgrade.stderr
             with psycopg.connect(host="127.0.0.1", port=port, dbname="postgres", user="postgres",
                                  password=password) as connection:
-                assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == ("0031",)
+                assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == ("0032",)
                 assert connection.execute("SELECT count(*) FROM openshell_behavior_operation").fetchone()[0] > 0
             proof["checks"].update(clean_migration_replay=True, empty_downgrade_reupgrade=True,
                                    nonempty_automatic_downgrade_refused=True, refused_downgrade_preserves_head=True)
-            proof.update(image_id=image_result.stdout.strip(), migrated_head="0031", model_calls=0,
+            legacy_down = run([str(API / ".venv/bin/alembic"), "downgrade", "0031"], cwd=API, env=settings)
+            (out / "legacy-downgrade.log").write_text(legacy_down.stdout + legacy_down.stderr)
+            assert legacy_down.returncode == 0
+            legacy_up = run([str(API / ".venv/bin/alembic"), "upgrade", "head"], cwd=API, env=settings)
+            (out / "legacy-upgrade.log").write_text(legacy_up.stdout + legacy_up.stderr)
+            assert legacy_up.returncode == 0
+            with psycopg.connect(host="127.0.0.1", port=port, dbname="postgres", user="postgres",
+                                 password=password) as connection:
+                rows = connection.execute(
+                    "SELECT id,profile_id,profile_sha256 FROM openshell_behavior_operation"
+                ).fetchall()
+                assert rows and all(row[1:] == (None, None) for row in rows)
+                proof["checks"]["legacy_rows_preserved_without_invented_profile"] = True
+                try:
+                    with connection.transaction():
+                        connection.execute("UPDATE openshell_behavior_operation SET profile_id='approved'")
+                except psycopg.errors.CheckViolation:
+                    proof["checks"]["partial_profile_reference_database_rejected"] = True
+                else:
+                    raise AssertionError("profile metadata pair constraint missing")
+                connection.execute(
+                    "UPDATE openshell_behavior_operation SET profile_id=%s,profile_sha256=%s WHERE id=%s",
+                    ("approved", "a" * 64, rows[0][0]),
+                )
+            profile_down = run([str(API / ".venv/bin/alembic"), "downgrade", "0031"], cwd=API, env=settings)
+            (out / "profile-retention.log").write_text(profile_down.stdout + profile_down.stderr)
+            assert profile_down.returncode != 0 and "operator profile evidence must be preserved" in profile_down.stderr
+            with psycopg.connect(host="127.0.0.1", port=port, dbname="postgres", user="postgres",
+                                 password=password) as connection:
+                assert connection.execute("SELECT version_num FROM alembic_version").fetchone() == ("0032",)
+                assert connection.execute(
+                    "SELECT profile_id,profile_sha256 FROM openshell_behavior_operation WHERE id=%s", (rows[0][0],)
+                ).fetchone() == ("approved", "a" * 64)
+            proof["checks"]["profile_evidence_downgrade_refused_and_preserved"] = True
+            proof.update(image_id=image_result.stdout.strip(), migrated_head="0032", model_calls=0,
                          openshell_calls=0, external_database_access=False)
             (out / "result.json").write_text(json.dumps(proof, indent=2) + "\n")
     finally:

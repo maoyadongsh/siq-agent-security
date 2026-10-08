@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "$id": "https://siq.dev/contracts/deployment-behavior-operation.v1.schema.json",
+  "properties": {
+    "schema_version": {
+      "const": "deployment-behavior-operation/v1"
+    },
+    "verification_id": {
+      "type": "string",
+      "maxLength": 36,
+      "pattern": "^opv-[a-f0-9]{32}$"
+    },
+    "deployment_id": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "profile_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state": {
+      "enum": [
+        "prepared",
+        "running",
+        "accepted",
+        "rejected",
+        "unknown",
+        "expired"
+      ]
+    },
+    "reason_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 80
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "observed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "time_window": {
+      "enum": [
+        "within",
+        "expired"
+      ]
+    },
+    "current_enforcement_verified": {
+      "const": false
+    },
+    "observation_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 40
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "policy_revision",
+        "policy_digest",
+        "transport",
+        "endpoint",
+        "allow_path",
+        "deny_path",
+        "attempts"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+        },
+        "policy_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "maxLength": 64
+        },
+        "transport": {
+          "enum": [
+            "direct_tcp",
+            "http_connect"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "maxLength": 21
+        },
+        "allow_path": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "deny_path": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 10
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "verification_id",
+    "deployment_id",
+    "profile_id",
+    "state",
+    "reason_code",
+    "issued_at",
+    "expires_at",
+    "observed_at",
+    "time_window",
+    "current_enforcement_verified",
+    "observation_count",
+    "scope"
+  ]
+}

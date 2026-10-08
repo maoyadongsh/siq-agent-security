@@ -25,7 +25,9 @@ def main():
     parser.add_argument("--behavior-image")
     parser.add_argument("--probe-sha256")
     parser.add_argument("--behavior-coordinated", action="store_true")
+    parser.add_argument("--behavior-api", action="store_true")
     args = parser.parse_args()
+    assert not args.behavior_api or args.behavior_image
     assert not args.behavior_coordinated or args.behavior_image
     repo = Path(__file__).resolve().parents[2]
     original = args.gateway_template.resolve(strict=True)
@@ -164,6 +166,8 @@ def main():
                                "--namespace", namespace]
                     if args.behavior_coordinated:
                         command.append("--coordinated")
+                    if args.behavior_api:
+                        command.append("--authenticated-api")
                 else:
                     command = [sys.executable,
                                str(repo / "scripts/enterprise-experience/openshell-deployment-live-check.py"),
