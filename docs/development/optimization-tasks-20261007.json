@@ -302,12 +302,14 @@
         "docs/development/optimization-opt11-release-preparation-20261008.md",
         "docs/development/optimization-opt11-upgrade-review-validation-20261008.md",
         "docs/development/optimization-opt11-upgrade-journal-validation-20261008.md",
-        "docs/development/optimization-opt11-upgrade-apply-validation-20261008.md"
+        "docs/development/optimization-opt11-upgrade-apply-validation-20261008.md",
+        "docs/development/optimization-opt11-upgrade-candidates-20261008.md"
       ],
       "residual_limits": [
         "Linux 描述符固定启动、签名安装来源接线、开发显式配置、资源边界和迁移拒绝已实现；Edge 689 项通过、2 项条件跳过，定向 race、vet、四目标构建通过。新摘要升级仅合成程序组件验证，正式签名包安装/升级与真实设备迁移未验收；Windows/macOS 受管入口明确 unsupported，未运行原生平台验收。",
         "已实现升级 pending 日志、已知中间态只读恢复核验、任务阻断与先锁后读；本批 238 个顶层测试累计通过（784 含子测试，2 条既有条件跳过），其中全量首轮两份夹具权限失败经修复定向 race 通过。尚无配置切换/恢复 CLI、正式签名升级或实际设备迁移验收，不能把此组件记录当成升级完成。",
-        "后续增量已实现 apply/recover CLI、签名来源程序的描述符固定恢复协议探测、停服条件解析、持久切换和完成归档；组件正向仍用验签/服务管理器替身。最终全量 251 顶层通过（820 含子测试、2 既有跳过），进程直接退出恢复与协议精确匹配 race、38 合同、最终四目标构建与真实 CLI 10 检查通过。正式签名包与真实 systemd/迁移验收仍缺，保持 implementing；替代上一批尚无 CLI 的阶段描述。"
+        "后续增量已实现 apply/recover CLI、签名来源程序的描述符固定恢复协议探测、停服条件解析、持久切换和完成归档；组件正向仍用验签/服务管理器替身。最终全量 251 顶层通过（820 含子测试、2 既有跳过），进程直接退出恢复与协议精确匹配 race、38 合同、最终四目标构建与真实 CLI 10 检查通过。正式签名包与真实 systemd/迁移验收仍缺，保持 implementing；替代上一批尚无 CLI 的阶段描述。",
+        "63a8cfc0 固定 297 个 Git 输入，生成未签名企业候选 .3/.4 与候选外独立构建验证器。原生恢复协议及版本读回、16 ELF/ZIP 摘要、6 connector describe、2 开发扫描、伪造签名/setup/finalize 拒绝通过；独立导出 31 顶层/131 含子测试升级回归通过。旧 .1/.2 缺恢复入口已实际确认并保留。仍缺受控签发、真实服务与设备迁移验收，不计为完成。"
       ]
     },
     {

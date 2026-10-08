@@ -1,0 +1,186 @@
+{
+  "schema_version": "optimization-enterprise-upgrade-candidate-evidence/v1",
+  "date": "2026-10-08",
+  "source_commit": "63a8cfc063b8c229adc3cade2c6b1754a9e5709a",
+  "task": "OPT-11",
+  "status": "unsigned_candidates_ready_for_controlled_signing_not_installed",
+  "review": {
+    "source_commit": "63a8cfc063b8c229adc3cade2c6b1754a9e5709a",
+    "reviewed_paths": [
+      "edge/agent",
+      "connectors/hermes",
+      "connectors/openclaw",
+      "connectors/directory",
+      "LICENSE",
+      "NOTICE",
+      "LICENSES",
+      "THIRD_PARTY_NOTICES.md"
+    ],
+    "files": 297,
+    "method": "Git blob inventory fixed independently of packaging output; prior reviewed source plus committed upgrade review/journal/apply and tests; no external human sign-off claimed",
+    "untracked_excluded": [
+      "edge/agent/crash_recovery_test.go"
+    ],
+    "source_inventory_sha256": "d9d85350c4b497c1bff6fd37901ab4968fa2e16b5c5877f901bbd72a9cd36054"
+  },
+  "preflight": {
+    "candidates": [
+      {
+        "artifact_count": 8,
+        "artifact_sha256": {
+          "bin/amd64/directory-connector": "c9a6a8130c0dfded546d9baf16b0d03202bfa5c9f86d2e59e35e8ba29c862d64",
+          "bin/amd64/edge-agent": "5d61cc2913f8a9dd01919b98c68b638c9e37f493b233a61bc95e4ff320cd8c09",
+          "bin/amd64/hermes-connector": "b05893996ba354cdbe544ef83101fbf8edeb35d65eb91f143e99be14c1c52f17",
+          "bin/amd64/openclaw-connector": "f873f81111dff36919455a71bf04df3979230cbc4f78d03d84c0b0cb4e9a541b",
+          "bin/arm64/directory-connector": "0e6f926d7a656f9a72c9ea790d45a8ef5ab36e8e7587a6966fde01d73837197f",
+          "bin/arm64/edge-agent": "cc862e1d42f1290e1a86e22d14539aa6ca7e8852ce949dd9bb5803b7f873ae3b",
+          "bin/arm64/hermes-connector": "10f4a27ebab1aa7c9a8984f355ae9912cda73cab1ff35570ae72020397222c6c",
+          "bin/arm64/openclaw-connector": "621ee1a4c216e278b2bc9fbaac56c2a4ea1388a5c1b255d03851d016c4edb107"
+        },
+        "explicit_development_scan": true,
+        "finalizer_rejected_without_output": true,
+        "native_describe": {
+          "directory": true,
+          "hermes": true,
+          "openclaw": true
+        },
+        "native_upgrade_capabilities": {
+          "confirmation_protocol": "enterprise-upgrade-intent/v1",
+          "pending_protocol": "enterprise-upgrade-pending/v1",
+          "schema_version": "enterprise-upgrade-capabilities/v1",
+          "task_lock": true,
+          "version": "0.1.0-opt11.20261008.3"
+        },
+        "path": "/home/maoyd/siq-artifacts/optimization-20261008-enterprise/63a8cfc0-candidate-3",
+        "setup_rejected_before_state_registration_stage": true,
+        "signing_input_sha256": "47d4e04af9cf824f590a837494e01d9c11dfccb689e33465d29e1d33e66d1690",
+        "unsigned_and_forged_signature_rejected": true,
+        "version": "0.1.0-opt11.20261008.3",
+        "zip_sha256": "d02f049ee61ea30121a862aa78f00c9b0d092d2f0c4b163ec065543c081f966e"
+      },
+      {
+        "artifact_count": 8,
+        "artifact_sha256": {
+          "bin/amd64/directory-connector": "9827d794214952ee32b9ad60d41a079609a215d8e2c8f574e90cd80ef726cef0",
+          "bin/amd64/edge-agent": "a9c469f35810c6b158cb8ccf04e53e4da75d5101ae3045d9cb4373a27d14b86d",
+          "bin/amd64/hermes-connector": "e5a132ad9d6328e8555897a7bd8cea9a37ca2f4ea385937f3e35d8f77c355fe8",
+          "bin/amd64/openclaw-connector": "f3d87b7f2f385989e8a842f6c160d4f408e2873c6698cba815b83cab28cb56d0",
+          "bin/arm64/directory-connector": "98a67df3bd67a22ec4d0263f356e0c300343b9acfb8a937b7ce73e0cdba0a0ae",
+          "bin/arm64/edge-agent": "e725c08c73e74b297888f2d494597f69503a531e3a2b47792053d135a8310be8",
+          "bin/arm64/hermes-connector": "76fe857429bd05599ce89bc837845763cd3aeb770bbad7ee2b93ef826a7d8523",
+          "bin/arm64/openclaw-connector": "a4dbb951f97810c3251b422a3eeca9eaef7fdfd4374099bc9ea4fe368c5a5fdc"
+        },
+        "explicit_development_scan": true,
+        "finalizer_rejected_without_output": true,
+        "native_describe": {
+          "directory": true,
+          "hermes": true,
+          "openclaw": true
+        },
+        "native_upgrade_capabilities": {
+          "confirmation_protocol": "enterprise-upgrade-intent/v1",
+          "pending_protocol": "enterprise-upgrade-pending/v1",
+          "schema_version": "enterprise-upgrade-capabilities/v1",
+          "task_lock": true,
+          "version": "0.1.0-opt11.20261008.4"
+        },
+        "path": "/home/maoyd/siq-artifacts/optimization-20261008-enterprise/63a8cfc0-candidate-4",
+        "setup_rejected_before_state_registration_stage": true,
+        "signing_input_sha256": "c8c63679c4cb49ebd0eb58aee02f66d9f569800cd33a528cde3641347c0906c9",
+        "unsigned_and_forged_signature_rejected": true,
+        "version": "0.1.0-opt11.20261008.4",
+        "zip_sha256": "5d081056b69ba52492bebfcdffec8f126c5d2bf20368aff97c3cfe4763a9653f"
+      }
+    ],
+    "earlier_candidates_protocol_missing": [
+      {
+        "binary_sha256": "726d43362702b7a964d5949b5bf39b69250ae124bb759b505430bfc5241ee77f",
+        "candidate": 1,
+        "exit_code": 2
+      },
+      {
+        "binary_sha256": "a1b95609b79fb1d25760d38ce9ac033ddc73f767f6d2b2c4adb3dada596f1021",
+        "candidate": 2,
+        "exit_code": 2
+      }
+    ],
+    "owned_receiver_closed": true,
+    "registration_requests_observed": 0,
+    "source_commit": "63a8cfc063b8c229adc3cade2c6b1754a9e5709a",
+    "status": "unsigned_preflight_passed_not_installation_acceptance",
+    "verifier_sha256": "59cade43faac84b6cf4de5f527c86eb9a46511f611cd089424c288e1f9c9e438"
+  },
+  "independent_verifier": {
+    "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/independent-edge-verifier",
+    "bytes": 9717432,
+    "sha256": "59cade43faac84b6cf4de5f527c86eb9a46511f611cd089424c288e1f9c9e438"
+  },
+  "independence": "separate Git export and build, same implementation/compiler; not external certification",
+  "clean_export_upgrade_tests": {
+    "top_level_passed": 31,
+    "including_subtests_passed": 131,
+    "failed": 0,
+    "source_inventory_unchanged_after_run": true,
+    "selection": "go test -json . -run ^TestUpgrade -count=1; no overlay or untracked worktree input"
+  },
+  "private_records": [
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/review.json",
+      "bytes": 636,
+      "sha256": "41e276fde91bfe822fc52816be79604c89019751926e3235c14d0e28c3b7a03d"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/reviewed-source-inventory.json",
+      "bytes": 56401,
+      "sha256": "d9d85350c4b497c1bff6fd37901ab4968fa2e16b5c5877f901bbd72a9cd36054"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/candidate-3.log",
+      "bytes": 82,
+      "sha256": "95ae7c38beaf3b793259c8d5eee62ba0823db403fec94e6bb4b34203dddcabe0"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/candidate-4.log",
+      "bytes": 82,
+      "sha256": "95ae7c38beaf3b793259c8d5eee62ba0823db403fec94e6bb4b34203dddcabe0"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/source.tar",
+      "bytes": 10997760,
+      "sha256": "df5a593d584853e571545573547e372c67b6f02bf22af34fb1fa7f1c6be0280e"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/prepare.py",
+      "bytes": 2887,
+      "sha256": "4616752141926701113f4239ca05fac53ce9644a73080e37f38c2c439ffd38fc"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/preflight.py",
+      "bytes": 8380,
+      "sha256": "ccacc8327a0fafc1ca189661614c14445580c9a6fa022644d77adb658fe5b65c"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/preflight.log",
+      "bytes": 179,
+      "sha256": "3a863555d3a834eca2977eff9a00526a9b4cf4cc0c409847fa309b827b26d0cc"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/preflight-result.json",
+      "bytes": 4405,
+      "sha256": "e5e2b3c01fe732c666fa4abf5dfdd75ba300cc8268632177b0a365c7b0414918"
+    },
+    {
+      "path": "/home/maoyd/siq/siq-agent-security/var/optimization-20261007/opt11-upgrade-candidates/upgrade-tests.jsonl",
+      "bytes": 115859,
+      "sha256": "1a4c4af4df22032dc00743a03c83df0f39876f3f21cbbc4f953cc5c6d515544f"
+    }
+  ],
+  "limits": [
+    "Unsigned and non-installable; no publisher private key read or used, no trust-root modification",
+    "Same committed code with two version stamps: artifact-update identity and recovery protocol preparation, not a different-feature comparison",
+    "Positive signed installation, real systemd upgrade, device migration and business effect still outstanding",
+    "Earlier candidates preserved and measured as lacking new upgrade-capabilities entry",
+    "Working business candidate namespace restriction remains unresolved; read-only inspection only this batch",
+    "No remote push, release, CI or merge"
+  ]
+}
