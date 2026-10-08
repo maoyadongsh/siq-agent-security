@@ -210,3 +210,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-15 矛盾闭合记录](optimization-opt15-closure-validation-20261008.md)：同一预留先记 deny 再记 allow 时，任务查询采用后一条 allow，已复现。第二条对账或匹配观察现返回 openshell_receipt_ambiguous；单条 deny 对账仍按原投影。OpenShell server 回归、vet 和四目标编译通过。请求边界与原生平台验收继续，总体仍为 11/16。
 
 [OPT-15 请求超限状态](optimization-opt15-request-limit-validation-20261008.md)：超过 4 MiB 的 decide/observe 正文修复前返回 400 invalid decision request，已复现。现返回 413 decision_request_too_large，不进入引擎；畸形正文仍为 400。hold 超过 64 KiB 返回 413，链头不变。定向测试、OpenShell server 回归、vet 和四目标编译通过。线性扫描、生产 assert、token 哈希和原生平台验收继续，总体仍为 11/16。
+
+[OPT-08 Hermes 内容版本](optimization-opt08-content-version-validation-20261008.md)：当前安全提交 8c473439 上，Hermes 原生 V1→V2 更新 16 项通过。两次内容哈希不同；更新替换字节并撤销 V1 Grant，旧决策凭据被拒且没有新回执或文件效果；V2 使用新安装、新身份和新 SEC，实际读取执行，4 条回执验签通过。本地确定性模型，不是日常业务入口，不能并入 v870/v872。日常业务内容版本、资源/工具入口和最终矩阵继续，总体仍为 11/16。
