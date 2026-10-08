@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"siq-agent-security/apps/agentshield/internal/contractfixture"
 	"strings"
 	"testing"
 	"time"
@@ -157,8 +158,12 @@ func TestSignedNativeHoldLifecycleAndSamples(t *testing.T) {
 				}
 			}
 			want, err := os.ReadFile(p)
-			if err != nil || string(want) != string(b) {
-				t.Fatal("lifecycle vector drift; regenerate this test explicitly", err)
+			var historical []receipt.Receipt
+			if err != nil || json.Unmarshal(want, &historical) != nil || receipt.Verify(historical, f.f.key.Public()) != nil {
+				t.Fatal("historical lifecycle vector invalid", err)
+			}
+			if same, err := contractfixture.EqualReceiptContent(b, want); err != nil || !same {
+				t.Fatal("lifecycle vector content drift", err)
 			}
 			fresh, err := receipt.New(f.opts)
 			if err != nil {

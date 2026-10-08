@@ -439,13 +439,18 @@
     {
       "id": "OPT-15",
       "title": "跨平台验收与有界清理",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [
         "SEC-F06"
       ],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/development/optimization-opt15-receipt-identity-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/receipt-identity-validation.json"
+      ],
+      "residual_limits": [
+        "新在线 decision 使用 rcp- 加 128 位密码学随机值；固定时钟重复请求、引擎重建和历史重复 ID 审批拒绝已复现并修复。receipt/server/skillcontext 最终复测通过，合同样例未改写。审批仍是管理路径的线性验签，未证明大型历史库性能；任务追踪等只按 ReceiptID 取值的入口尚未逐项确认；token 哈希、依赖锁定、生产 assert 与请求超限状态码未在本子项改动。四目标构建不等于 Windows/macOS 原生验收。OPT-15 保持 implementing，总体仍为 11/16。"
+      ]
     }
   ],
   "research": [

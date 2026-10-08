@@ -1,10 +1,10 @@
 package skillcontext
 
 import (
-	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/contractfixture"
 	"testing"
 	"time"
 
@@ -78,8 +78,12 @@ func TestNativeStoreEngineIntegrationAndContractSamples(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !bytes.Equal(b, want) {
-				t.Fatal("native receipt sample drift; regenerate this integration test explicitly")
+			var historical receipt.Receipt
+			if err = json.Unmarshal(want, &historical); err != nil || receipt.Verify([]receipt.Receipt{historical}, f.key.Public()) != nil {
+				t.Fatal("historical native receipt invalid", err)
+			}
+			if same, err := contractfixture.EqualReceiptContent(b, want); err != nil || !same {
+				t.Fatal("native receipt sample content drift", err)
 			}
 			rows, err := chain.Read()
 			if err != nil || receipt.Verify(rows, f.key.Public()) != nil {

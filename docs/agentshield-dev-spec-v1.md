@@ -368,6 +368,10 @@ draft ─► pending_approval ─► approved ─► deployed ─► effective
 
 ### 3.8 `internal/receipt` 与决策 API（规格，W1 余量）
 
+OPT-15（2026-10-08）回执关联增量：新在线 decision 的 `receipt_id` 使用 `rcp-` 加 128 位密码学随机值的十六进制编码，不从参数摘要或日内时间推导。随机源失败时不签发该决定，不退回时间戳。字段仍为不透明字符串，既有 receipt v1/v2/v3 格式、规范化、签名和链哈希不变；pending 来源幂等 ID、派生 observation/resolution/reservation ID 保留。适配器不得解析 ID 的内部结构。
+
+审批在已有验签链中确认原 hold 唯一存在且与传入签名载荷一致，再查找唯一且关联相同动作的历史 resolution；重复原 ID、重复 resolution 或错配关联返回 hold conflict（原 HTTP 409），不能选择最后一条、借用另一动作批准或改写历史。重复 ID 是语义歧义，不把原签名标记为无效。单条唯一的旧格式回执仍可按原授权、到期和执行预留规则审批。此检查为管理审批路径的流式线性验签，不向每次 Decide 引入整链扫描；不承诺大规模查询性能已优化。
+
 #### 3.8.1 HTTP
 
 - 监听 `127.0.0.1:<port>`（默认 47611，`config.json` 可改）；拒绝非 loopback 远端地址。`Host` 必须是 `127.0.0.1` / `localhost` / `::1` 且端口与监听端口一致，否则 403（DNS rebinding 工程控制；完整浏览器链见 DEV18 记录）。

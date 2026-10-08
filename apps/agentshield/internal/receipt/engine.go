@@ -7,6 +7,7 @@
 package receipt
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -433,6 +434,10 @@ var (
 func (e *Engine) Decide(req Request) (*Decision, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	var nonce [16]byte
+	if _, err := rand.Read(nonce[:]); err != nil {
+		return nil, errors.New("receipt: decision identity unavailable")
+	}
 	start := e.opts.Now()
 	req.selectedGrant = nil
 	parameterErr := runtimeaction.ValidateParameters(req.Params)
@@ -601,7 +606,7 @@ func (e *Engine) Decide(req Request) (*Decision, error) {
 		ContextAssertionID:  req.ContextAssertionID,
 		RecordType:          "decision", TaskSeq: s.taskSeq, ParentActionID: s.parentActionID,
 		Principal: s.boundPrincipal, ResourceRefs: resourceRefs, ProvenanceRefs: append([]string(nil), s.boundProvenanceRefs...),
-		ReceiptID:         "rcp-" + hex.EncodeToString(digest[:])[:12] + "-" + start.Format("150405.000000"),
+		ReceiptID:         "rcp-" + hex.EncodeToString(nonce[:]),
 		IssuedAt:          start.Format(time.RFC3339),
 		Platform:          req.Platform,
 		SessionID:         req.SessionID,
@@ -1296,7 +1301,7 @@ func (e *Engine) resolveHoldLocked(held Receipt, approve bool, actorID string) (
 	if approve {
 		want = ActionAllow
 	}
-	if existing, err := e.findHoldResolution(held.ReceiptID); err != nil {
+	if existing, err := e.findHoldResolution(held); err != nil {
 		return nil, err
 	} else if existing != nil {
 		if existing.Action == want {
@@ -1348,19 +1353,42 @@ func holdResolutionID(heldID string) string {
 	return heldID + "-res"
 }
 
-func (e *Engine) findHoldResolution(heldID string) (*Receipt, error) {
-	all, err := e.opts.Chain.Read()
+func (e *Engine) findHoldResolution(held Receipt) (*Receipt, error) {
+	hash, err := hashOf(held)
+	if err != nil || held.ReceiptID == "" || hash != held.Hash {
+		return nil, ErrHoldConflict
+	}
+	var found *Receipt
+	seen := false
+	lastSeq, lastHash := -1, GenesisPrev
+	want := holdResolutionID(held.ReceiptID)
+	err = e.opts.Chain.walkVerified(func(r Receipt) error {
+		lastSeq, lastHash = r.Seq, r.Hash
+		if r.ReceiptID == held.ReceiptID {
+			if seen || r.Hash != held.Hash {
+				return ErrHoldConflict
+			}
+			seen = true
+		}
+		if r.ReceiptID == want {
+			if !seen || found != nil || r.RecordType != "hold_resolution" ||
+				r.DecisionReceiptID != held.ReceiptID || r.ActionID != held.ActionID ||
+				(r.Action != ActionAllow && r.Action != ActionDeny) {
+				return ErrHoldConflict
+			}
+			value := r
+			found = &value
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	want := holdResolutionID(heldID)
-	for i := len(all) - 1; i >= 0; i-- {
-		if all[i].ReceiptID == want && (all[i].Action == ActionAllow || all[i].Action == ActionDeny) {
-			r := all[i]
-			return &r, nil
-		}
+	seq, head := e.opts.Chain.Head()
+	if !seen || seq != lastSeq || head != lastHash {
+		return nil, ErrHoldConflict
 	}
-	return nil, nil
+	return found, nil
 }
 
 func holdExpired(held Receipt, now time.Time) error {

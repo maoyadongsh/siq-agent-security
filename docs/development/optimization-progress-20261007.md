@@ -25,7 +25,7 @@
 | OPT-12 | 钩子完整性 | implementing | 待结合对应模块继续核对 |
 | OPT-13 | 交付安全头 | done | 待结合对应模块继续核对 |
 | OPT-14 | 扫描进程隔离 | done | SEC-F08 |
-| OPT-15 | 跨平台验收与有界清理 | planned | SEC-F06 |
+| OPT-15 | 跨平台验收与有界清理 | implementing | SEC-F06 |
 
 ## 当前验证
 
@@ -202,3 +202,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [D3 授权换代与新任务恢复](optimization-opt08-authority-replacement-validation-20261008.md)：同候选8851724完成正式Skill授权换代：独立批准相同内容的新Grant，通过公开compare/plan/commit/activate撤销旧Grant并建立新安装。v870实际读取后暂停自有Hermes约0.368秒完成更新，恢复后实际write_file报错、文件不存在，32项通过；v871显式绑定新安装的独立新任务加载/读取/写入31项通过。Agent基线及Skill字节不变，SEC自身未到期，输出目录仍可写；两例业务completed、监管退出0/PID0，配置/资源恢复。新Authority 5回执/2SEC/4Grant/4安装更新记录及2任务绑定独立核验；新增离线换代签名/关联检查，50项相关回归（新增16项）和Ruff通过。API依赖11663文件/4链接不变。此为相同内容授权换代，不代替内容版本升级或旧授权原地续期；并发/资源入口/最终矩阵/平台/签名继续，11/16保持。
 
 [D3 真实并发请求的排队与权限隔离](optimization-opt08-concurrent-business-validation-20261008.md)：同候选8851724完成v872两个真实业务HTTP请求并发在途：writer实际加载/读取后暂停约2.202秒，reader真实请求在单槽队列等待，三次重叠观察跨度约1.131秒；writer实际写入成功并释放后reader加载自己的只读Skill，实际写入签名deny grant_scope_violation且文件不存在。36项现场检查通过，两业务completed、监管退出0/PID0；同Agent、不同会话/任务/Skill、归一化可写OpenShell策略相同、Grant及源数据不变。完整6回执/2SEC/3Grant及2任务绑定独立核验，离线核验器59项（新增9项）与Ruff通过，API依赖11663文件/4链接不变。证明当前单槽业务架构下真实并发请求的排队及权限隔离，不宣称两个沙箱同时执行或压力容量；内容版本升级、资源/工具入口、最终矩阵/四臂/平台/签名继续，11/16保持。
+
+[OPT-15 回执标识](optimization-opt15-receipt-identity-validation-20261008.md)：固定时钟下相同参数会生成重复 decision ID，历史重复 ID 的审批会选中一条而不拒绝；两项反例已复现。新 ID 改为 128 位随机值，随机源失败不签发；审批在验签链中要求原 hold 与 resolution 唯一且关联一致，歧义返回原有 409。历史样例未改写。定向测试、receipt/skillcontext 包、合同比较、vet 与既有四目标构建记录通过。查询入口、请求边界、token 哈希和原生平台验收继续；总体仍为 11/16（68.75%）。

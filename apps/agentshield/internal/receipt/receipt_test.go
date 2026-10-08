@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"siq-agent-security/apps/agentshield/internal/contractfixture"
 	"strings"
 	"testing"
 	"time"
@@ -347,8 +348,12 @@ func TestReceiptSampleIsCurrent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("missing sample (AGENTSHIELD_UPDATE_SAMPLES=1): %v", err)
 	}
-	if !bytes.Equal(bytes.TrimSpace(want), got) {
-		t.Fatal("receipt sample drifted; regenerate with AGENTSHIELD_UPDATE_SAMPLES=1")
+	var historical Receipt
+	if err = json.Unmarshal(want, &historical); err != nil || Verify([]Receipt{historical}, fx.k.Public()) != nil || Verify([]Receipt{d.Receipt}, fx.k.Public()) != nil {
+		t.Fatal("sample or current signature invalid", err)
+	}
+	if same, err := contractfixture.EqualReceiptContent(got, want); err != nil || !same {
+		t.Fatal("receipt sample content drifted", err)
 	}
 }
 
