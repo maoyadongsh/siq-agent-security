@@ -324,3 +324,31 @@ func TestImportedGrantCannotUseImplicitAuthorityInAnyMode(t *testing.T) {
 		})
 	}
 }
+
+func TestExecuteCodeAuthorizesEmbeddedURL(t *testing.T) {
+	g := deployedGrant(t, "hermes", false)
+	denied, err := newFixture(t, "block", g, false).eng.Decide(req("hermes", "execute_code", map[string]any{
+		"code": "import urllib.request\nurllib.request.urlopen('https://api.github.com/zen')\n",
+	}))
+	if err != nil || denied.Action != ActionDeny || !strings.Contains(denied.Reason, "not granted") {
+		t.Fatal("ungranted execute_code", denied, err)
+	}
+	g.Facts = append(g.Facts, scopedFact("code", "tool", "tool.invoke", "execute_code", "allow"))
+	fx := newFixture(t, "block", g, false)
+	allowed, err := fx.eng.Decide(req("hermes", "execute_code", map[string]any{
+		"code": "import urllib.request\nurllib.request.urlopen('https://api.github.com/zen')\n",
+	}))
+	if err != nil || allowed.Action != ActionAllow {
+		t.Fatal("granted host", allowed, err)
+	}
+	evil, err := fx.eng.Decide(req("hermes", "execute_code", map[string]any{
+		"code": "import urllib.request\nurllib.request.urlopen('https://evil.example/x')\n",
+	}))
+	if err != nil || evil.Action != ActionDeny || !strings.Contains(evil.Reason, "evil.example:443") {
+		t.Fatal("ungranted host", evil, err)
+	}
+	plain, err := fx.eng.Decide(req("hermes", "execute_code", map[string]any{"code": "print(1)\n"}))
+	if err != nil || plain.Action != ActionAllow {
+		t.Fatal("code without a network target", plain, err)
+	}
+}

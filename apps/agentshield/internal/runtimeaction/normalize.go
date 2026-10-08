@@ -51,7 +51,7 @@ func normalizeEffects(tool string, params map[string]any) (operation string, eff
 		return "send", []string{EffectMessageSend}
 	case "web_fetch", "web_extract", "web_search", "http", "http_request", "fetch", "browser_navigate", "webfetch", "websearch", "browser":
 		return "request", []string{EffectNetworkRequest}
-	case "exec", "terminal", "bash", "shell", "process", "sh", "python", "python3", "node", "powershell", "pwsh":
+	case "exec", "terminal", "bash", "shell", "process", "sh", "python", "python3", "node", "powershell", "pwsh", "execute_code":
 		effects := []string{EffectProcessExec}
 		for _, value := range params {
 			if text, ok := value.(string); ok {
