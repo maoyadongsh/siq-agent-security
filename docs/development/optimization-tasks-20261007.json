@@ -413,7 +413,8 @@
         "已实现升级 pending 日志、已知中间态只读恢复核验、任务阻断与先锁后读；本批 238 个顶层测试累计通过（784 含子测试，2 条既有条件跳过），其中全量首轮两份夹具权限失败经修复定向 race 通过。尚无配置切换/恢复 CLI、正式签名升级或实际设备迁移验收，不能把此组件记录当成升级完成。",
         "后续增量已实现 apply/recover CLI、签名来源程序的描述符固定恢复协议探测、停服条件解析、持久切换和完成归档；组件正向仍用验签/服务管理器替身。最终全量 251 顶层通过（820 含子测试、2 既有跳过），进程直接退出恢复与协议精确匹配 race、38 合同、最终四目标构建与真实 CLI 10 检查通过。正式签名包与真实 systemd/迁移验收仍缺，保持 implementing；替代上一批尚无 CLI 的阶段描述。",
         "63a8cfc0 固定 297 个 Git 输入，生成未签名企业候选 .3/.4 与候选外独立构建验证器。原生恢复协议及版本读回、16 ELF/ZIP 摘要、6 connector describe、2 开发扫描、伪造签名/setup/finalize 拒绝通过；独立导出 31 顶层/131 含子测试升级回归通过。旧 .1/.2 缺恢复入口已实际确认并保留。仍缺受控签发、真实服务与设备迁移验收，不计为完成。",
-        "个人客户端用户单元的同字节切换与回滚已在 OPT-15 另记，不能代替企业候选 .3/.4 的受控签发、真实企业服务升级或设备迁移。OPT-11 保持 implementing。"
+        "个人客户端用户单元的同字节切换与回滚已在 OPT-15 另记，不能代替企业候选 .3/.4 的受控签发、真实企业服务升级或设备迁移。OPT-11 保持 implementing。",
+        "2026-10-08 确认：Windows 与 macOS 受管连接器原生证据暂时不实施，保持 blocked。Linux 上的受控签发、真实企业服务升级和设备迁移继续。OPT-11 保持 implementing，11/16 不变。"
       ]
     },
     {
@@ -497,7 +498,8 @@
         "有界清理已核对且不改代码：Go 模块无第三方 require，故无 go.sum；web package-lock 与 control-api uv.lock 已固定实际版本。审批线性过程是验签本身，验签前索引会重新引入重复 ID 取值。三处 panic 仍是规范编码或启动随机源失败。观察者、刷新和管理配对码已是 SHA-256；access token 仍须留在刷新记录中才能恢复会话，只改 map 键不能从内存去掉它。Windows/macOS 无原生机器，记为 blocked，不用交叉编译代替。OPT-15 保持 implementing，11/16 不变。",
         "当前二进制 aa25999e 在本机 linux/arm64 隔离状态完成一次源码启动检查：未签名 Skill 引导拒绝且不写状态；admit_with_conditions；start 与 init/serve 的 status、pair、控制台和停止通过；SSH 指导不回显连接串。工作树另有无关未提交文件，source_dirty 为 true。这不是签名安装包、宿主集成、越权拒绝、升级或后台服务验收。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。",
         "当前二进制 aa25999e 在本机 systemd 用户会话完成临时实例升级与回滚：开发清单不打断原进程；同一字节候选替换进程且配置不变；端口冲突失败后按恢复事务完成，再回滚到健康原单元。临时单元已消失。这不是企业签名包、版本兼容升级、设备迁移或越权决定拒绝。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。",
-        "当前二进制 aa25999e 的新建隔离状态：无凭据和未知凭据的 decide 返回 401；决策凭据在没有 Grant 时对 write_file 返回 deny grant_missing，目标文件不存在。停止后再次 serve，凭据保留且写入仍拒绝，4 条回执验签通过。别名 write 与未映射工具也是 grant_missing，不能当作已授权工具的别名隔离。不是签名安装。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。"
+        "当前二进制 aa25999e 的新建隔离状态：无凭据和未知凭据的 decide 返回 401；决策凭据在没有 Grant 时对 write_file 返回 deny grant_missing，目标文件不存在。停止后再次 serve，凭据保留且写入仍拒绝，4 条回执验签通过。别名 write 与未映射工具也是 grant_missing，不能当作已授权工具的别名隔离。不是签名安装。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。",
+        "2026-10-08 确认：当前开发环境没有 Windows 与 macOS 原生机器，这两项目标暂时不实施。状态保持 blocked，不记为通过，交叉编译不代替原生安装、启动、授权、拒绝、升级或恢复。Linux 本机与 DGX 适用项继续。OPT-15 保持 implementing，11/16 不变。"
       ]
     }
   ],

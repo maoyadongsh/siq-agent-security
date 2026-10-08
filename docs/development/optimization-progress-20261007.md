@@ -8,6 +8,8 @@
 
 当前主任务验收：**11/16（68.75%）**。最新完成OPT-14；下方批次段落保留当时状态，不作为当前总数。
 
+2026-10-08：Windows 与 macOS 原生验收暂时不实施，状态为 blocked。Linux 本机与 DGX 适用项继续。
+
 | 任务 | 内容 | 状态 | 旧任务映射 |
 | --- | --- | --- | --- |
 | OPT-00 | 基线与既有任务去重 | done | 本批新增／现有流程复用 |
@@ -232,3 +234,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-10 允许后检查点](../../adapters/runtime/hermes-agentshield/native_dispatch.py)：原生配置 `checkpoints.enabled` 为 true。`write_file`、`patch` 和破坏性 `terminal` 原先在 SIQ 决定前写入检查点。覆盖层现在只在 `call()` 确认 allow 之后、工具体执行之前写入；拒绝不调用回调。已发出的请求镜像 `sha256:a3be2a4a` 仍是旧注入，本批没有重建镜像或调用模型。总体仍为 11/16（68.75%）。
 
 [OPT-10 离线镜像](evidence/optimization-20261007/native-overlay-after-allow-image-20261008m.json)：新请求镜像 `sha256:73153d1a83ff1cc9e041b3d6366f85e5a25ea696653559971d941d73d3ed78ac`，制品 `461046804f3f3da95ee34c007801af18cacfaeb25e22dcec71f226806219f30c`。它包含宿主路由提前拒绝，以及 allow 之后才写入的检查点。六项离线检查通过，`production_eligible` 为 false，未登记身份，未调用模型。冻结镜像 `sha256:dc22c450` 与 `sha256:a3be2a4a` 未改。总体仍为 11/16（68.75%）。
+
+[平台范围](optimization-tasks-20261007.json)：2026-10-08 确认当前环境没有 Windows 与 macOS 原生机器，这两项暂时不实施，状态保持 blocked。交叉编译不计入原生验收。Linux 本机与 DGX 适用项继续。总体仍为 11/16（68.75%）。
