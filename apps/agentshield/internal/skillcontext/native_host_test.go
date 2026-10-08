@@ -159,7 +159,7 @@ func TestNativeHostSwitchCacheAndParentSnapshot(t *testing.T) {
 	f.bind("after-switch", c)
 }
 func TestNativeHostRefusesInvalidTransitions(t *testing.T) {
-	for _, name := range []string{"missing_task", "wrong_binding", "selected_load", "repeat_bind", "repeat_call", "source_unverified", "source_changed", "unknown_cache", "wrong_parent", "runtime_dead", "end", "restart", "audit_failure"} {
+	for _, name := range []string{"missing_task", "wrong_binding", "wrong_tool", "selected_load", "repeat_bind", "repeat_call", "source_unverified", "source_changed", "unknown_cache", "wrong_parent", "runtime_dead", "end", "restart", "audit_failure"} {
 		t.Run(name, func(t *testing.T) {
 			f := newHostFixture(t)
 			p := map[string]any{"path": "/workspace/visible.txt"}
@@ -174,6 +174,9 @@ func TestNativeHostRefusesInvalidTransitions(t *testing.T) {
 				f.prepare(id, "", p)
 				p["path"] = "/elsewhere"
 				_, err = f.host.Bind(f.subject, "read_file", id, p)
+			case "wrong_tool":
+				f.prepare(id, "", p)
+				_, err = f.host.Bind(f.subject, "write_file", id, p)
 			case "selected_load":
 				err = f.host.Prepare(f.subject, "read_file", id, strings.Repeat("a", 64), load)
 			case "repeat_bind":
