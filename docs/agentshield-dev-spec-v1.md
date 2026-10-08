@@ -2728,3 +2728,7 @@ OPT-08 D3h：按 [native-host-session/v1](../packages/contracts/native-host-sess
 OPT-08 D3i：按 [native-host-control/v1](../packages/contracts/native-host-control.v1.md)，独立私有Unix控制通道只向可信业务监管器开放HostSession生命周期；内核连接/逐包凭据共同派生监管者PID，外层控制凭据与内层运行身份凭据独立且不进入沙箱。固定端点和资源上限，原handle不重启，续期不接管；传输与进程内组件通过仍不等于日常模型业务验收。
 
 OPT-08 D3s：按 [native-skill-context-management/v1](../packages/contracts/native-skill-context-management.v1.md) 为已有原生v2 SEC增加独立 `/v2/skill-contexts` 管理读取、分页及精确撤销。管理凭据才能操作，不提供模型或管理员伪造原生加载的签发入口；历史读取与撤销不依赖运行宿主仍在线。撤销绑定原始签名、先审计、只追加签名墓碑，陈旧签名冲突，重复确认返回同一墓碑。v1接口及签名字节不变；读取不是实时权限证明，撤销不撤回已经完成的副作用。
+
+### OPT-12：安装归属完整性诊断增量（2026-10-08）
+
+按 ADR-0059，适配器只读诊断在入口文件存在性判定前检查当前实例的密封安装事务；已安装但入口与整个插件目录丢失不再显示未安装。损坏、未结束或无法认证的操作产生 installation_record/fail 及 incomplete。安装与卸载动作都须先通过原密封计划验证，再解释为当前安装或已卸载；不信任明文 action/Record 作为替代身份。检查不读决策凭据、不执行插件、不写配置。无受保护历史记录时保留原兼容检查，runtime_state 仍为 unverified。本增量沿用 diagnostics/v1 开放 check code，不改变合同结构；检测到漂移不自动产生工具拒绝，也不提升同 UID 的信任档位。

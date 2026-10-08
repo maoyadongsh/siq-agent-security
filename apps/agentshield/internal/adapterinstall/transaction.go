@@ -246,15 +246,17 @@ func latestManagedRecord(dir, platform string, namespace ...string) (*Record, bo
 			return nil, true, ErrRecoveryRequired
 		}
 		if status == "committed" {
+			// Authenticate the action as well as the ownership. A plaintext
+			// uninstall claim must not hide a sealed install operation.
+			plan, err := unsealPlan(dir, claim)
+			if err != nil || operationKey(planOptions(plan)) != key {
+				return nil, true, errors.New("adapter: authenticated ownership unavailable")
+			}
 			if claim.Action == "uninstall" {
 				return nil, true, errNoInstallRecord
 			}
 			if claim.Action != "install" {
 				return nil, true, errors.New("adapter: invalid recorded action")
-			}
-			plan, err := unsealPlan(dir, claim)
-			if err != nil || operationKey(planOptions(plan)) != key {
-				return nil, true, errors.New("adapter: authenticated ownership unavailable")
 			}
 			return &plan.payload.Record, true, nil
 		}

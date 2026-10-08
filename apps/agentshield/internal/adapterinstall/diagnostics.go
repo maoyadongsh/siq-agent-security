@@ -61,6 +61,16 @@ func Inspect(opts Options) Diagnosis {
 		d.NextSteps = append(d.NextSteps, "此实例接入已移除；重新接入需重新预览，卸载不恢复已停用身份。")
 		return d
 	}
+	installed, _, recordErr := latestManagedRecord(opts.StateDir, opts.Platform, operationKey(opts))
+	if recordErr != nil && !errors.Is(recordErr, errNoInstallRecord) {
+		d.ConfigurationState = "incomplete"
+		d.check("installation_record", "fail", "安装事务未完成、记录损坏或无法认证；不能确认当前安装归属")
+		d.NextSteps = append(d.NextSteps, "检查接入操作和恢复记录；保留现场，不以替换插件清单消除告警。")
+		return d
+	}
+	if installed != nil {
+		d.check("installation_record", "pass", "已核验状态目录中的密封安装记录；不代表宿主已加载或具备隔离保护")
+	}
 	root := opts.configRoot()
 	plugin := filepath.Join(root, "plugins", product.PluginDir())
 	entry := filepath.Join(plugin, "index.ts")
@@ -70,6 +80,12 @@ func Inspect(opts Options) Diagnosis {
 		entry = filepath.Join(root, "settings.json")
 	}
 	if _, err := os.Lstat(entry); errors.Is(err, os.ErrNotExist) {
+		if installed != nil {
+			d.ConfigurationState = "incomplete"
+			d.check("adapter_files", "fail", "已有安装记录，但钩子或宿主配置入口缺失")
+			d.NextSteps = append(d.NextSteps, "重新预览接入修复；钩子缺失可能使宿主绕过调用，诊断不等于已经阻断。")
+			return d
+		}
 		managedWorkBuddy := false
 		if opts.Platform == WorkBuddy {
 			_, managed, managedErr := WorkBuddyManagedConfigReference(opts.Home, opts.StateDir)

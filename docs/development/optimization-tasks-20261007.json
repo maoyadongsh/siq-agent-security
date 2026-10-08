@@ -307,11 +307,17 @@
     {
       "id": "OPT-12",
       "title": "钩子完整性",
-      "status": "planned",
+      "status": "implementing",
       "baseline": "c41347579ebe67c7f732d0e523722e489f831039",
       "source_tasks": [],
-      "evidence": [],
-      "residual_limits": []
+      "evidence": [
+        "docs/adr/0059-adapter-installation-integrity.md",
+        "docs/development/optimization-opt12-integrity-validation-20261008.md",
+        "docs/development/evidence/optimization-20261007/adapter-installation-integrity.json"
+      ],
+      "residual_limits": [
+        "安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。"
+      ]
     },
     {
       "id": "OPT-13",

@@ -22,7 +22,7 @@
 | OPT-09 | OpenShell行为证据 | done | 待结合对应模块继续核对 |
 | OPT-10 | 同候选业务回归 | implementing | 待结合对应模块继续核对 |
 | OPT-11 | 连接器可信执行 | implementing | 待结合对应模块继续核对 |
-| OPT-12 | 钩子完整性 | planned | 待结合对应模块继续核对 |
+| OPT-12 | 钩子完整性 | implementing | 待结合对应模块继续核对 |
 | OPT-13 | 交付安全头 | done | 待结合对应模块继续核对 |
 | OPT-14 | 扫描进程隔离 | implementing | SEC-F08 |
 | OPT-15 | 跨平台验收与有界清理 | planned | SEC-F06 |
@@ -154,3 +154,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [企业认证行为API与真实OpenShell接线](optimization-opt09-api-validation-20261008.md)：认证行为API、批准模板持久绑定及0032迁移完成：167项定向回归、真实临时PostgreSQL43项通过；专用OpenShell12项及同次认证API6项检查通过（有重叠）。实际RS256认证、三臂探测、重复不重放、撤权拒绝与三条主体审计完成；独立读库／协议／schema复核通过。身份发行者及审批为合成材料，数据库为开发SQLite、请求经ASGI；不冒充生产IdP／PostgreSQL同次端到端。原配置不变，自有资源清理；前端及等级生命周期仍待接线，OPT-09与9/16保持。
 
 [企业OpenShell行为闭环验收](optimization-opt09-completion-validation-20261008.md)：企业OpenShell行为证据闭环适用范围验收完成：批准模板预览与v2摘要绑定、accepted态独立核验、当前限定等级／审计、前端时效及不重放恢复已接线。后端154项、前端31项、PostgreSQL48项通过；同次真实OpenShell13项／API9项及实际浏览器HTTP核验通过，故障浏览器9项另计且不混淆。实际策略变更使等级转unverified，历史accepted不改写；自有资源清理。生产IdP、持续监控和未覆盖路径不作通过声明，其他任务与最终交付继续。OPT-09记done，总体10/16（62.5%）。
+
+[钩子安装归属与漂移诊断第一批](optimization-opt12-integrity-validation-20261008.md)：安装归属／漂移诊断首批完成：修复已安装钩子全删误报未安装、密封材料损坏仍显示就绪及明文伪造卸载绕过计划认证。Go全量1736顶层通过／34跳过，最终完整性7项与新增管理接口1项、合同3项通过；vet、Ruff、受控源码格式与四目标构建通过。组件诊断不冒充原生宿主强制阻断；完整发行身份、受保护加载和实际执行后果继续，OPT-12为implementing，总体10/16保持。
