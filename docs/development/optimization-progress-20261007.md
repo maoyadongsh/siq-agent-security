@@ -212,3 +212,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-15 请求超限状态](optimization-opt15-request-limit-validation-20261008.md)：超过 4 MiB 的 decide/observe 正文修复前返回 400 invalid decision request，已复现。现返回 413 decision_request_too_large，不进入引擎；畸形正文仍为 400。hold 超过 64 KiB 返回 413，链头不变。定向测试、OpenShell server 回归、vet 和四目标编译通过。线性扫描、生产 assert、token 哈希和原生平台验收继续，总体仍为 11/16。
 
 [OPT-08 Hermes 内容版本](optimization-opt08-content-version-validation-20261008.md)：当前安全提交 8c473439 上，Hermes 原生 V1→V2 更新 16 项通过。两次内容哈希不同；更新替换字节并撤销 V1 Grant，旧决策凭据被拒且没有新回执或文件效果；V2 使用新安装、新身份和新 SEC，实际读取执行，4 条回执验签通过。本地确定性模型，不是日常业务入口，不能并入 v870/v872。日常业务内容版本、资源/工具入口和最终矩阵继续，总体仍为 11/16。
+
+[OPT-08 日常内容版本拒绝](optimization-opt08-content-version-business-validation-20261008.md)：当前安全二进制 aa25999e 与业务 8851724 的 v879 在日常模型上 33 项通过。SKILL.md 由 014ac378 换成 a38f8af2，旧 Grant 撤销；暂停恢复后的 write_file 没有回执，目标文件不存在。已安装监管单元与当前 `SIQ_RUNTIME_ROOT` 合同不一致，产品安装拒绝覆盖；本轮临时对齐后按原字节恢复，模型单元不变。v880 新任务没有读取或写入，工具结果为 native_dispatch_unavailable，没有 V2 Skill 上下文。资源/工具入口、四臂、平台和签名继续，总体仍为 11/16（68.75%）。
