@@ -246,3 +246,5 @@ OPT-08 保持 implementing。[A 合同](optimization-opt08-context-validation-20
 [OPT-08 网络参数](../../apps/agentshield/internal/receipt/resource_scope.go)：`web_extract` 实际读取 `urls`。裁决现在要求 `url`、`host` 和 `urls` 中的每个 http(s) 目标都已授权；对象优先使用 `url`，否则使用 `href`。畸形项会拒绝整次调用。定向测试通过。这还不是日常入口上的网络效果。总体仍为 11/16（68.75%）。
 
 [OPT-08 代码执行网络](../../apps/agentshield/internal/runtimeaction/normalize.go)：日常工具 `execute_code` 用沙箱 Python 运行源码。工具名获授权后，源码里的 URL 原先不检查主机。现在未授权工具拒绝；含 URL 时只放行已授权主机。定向测试通过。这还不是日常入口上的网络连接。总体仍为 11/16（68.75%）。
+
+[OPT-08 代码执行拒绝](evidence/optimization-20261007/native-execute-code-network-v887.json)：v887 在镜像 `sha256:534d18c9` 上让日常入口调用一次 `execute_code`。基线和可写 Skill Grant 都包含该工具以及 `host.openshell.internal:18794`。回执 `rcp-115e4fae7f00828b52495484c7f1d98e` 为 deny，原因 `runtime_effect_unknown`；效果里已有 `network.request`，同时有 `unknown`。工具报错，探测文件不存在。模型进程未变，自有网关和桥已停止。这是拒绝与未连接一致，不是一次放行后的网络连接。总体仍为 11/16（68.75%）。

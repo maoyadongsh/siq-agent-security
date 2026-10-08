@@ -235,7 +235,8 @@
         "docs/development/evidence/optimization-20261007/native-unmapped-image-authority-20261008n.json",
         "docs/development/evidence/optimization-20261007/native-unmapped-image-execute-20261008n.json",
         "apps/agentshield/internal/runtimeaction/normalize.go",
-        "apps/agentshield/internal/receipt/resource_scope_test.go"
+        "apps/agentshield/internal/receipt/resource_scope_test.go",
+        "docs/development/evidence/optimization-20261007/native-execute-code-network-v887.json"
       ],
       "residual_limits": [
         "A/B1/B2/C1/C2a/C2b/C2c/D1/D2a/D2b 已完成各自组件验证。新增 Linux 无管理密钥元数据通道，经逐包内核凭据和 pidfd 验证；实际固定业务镜像的离线 Docker 探针通过继承连接子进程拒绝、只读挂载和退出失效，但未运行 Hermes/OpenShell/模型。签名身份策略、精确调用、版本化读回保持原门禁。可信启动器归属/制品核验、版本化加载/调用事件、受保护挂载、serve 接线和日常业务效果仍未完成；新管理创建入口保持关闭。原 v1 追踪来源明确 unavailable，完整证明保留 v3 回执。不可表述为产品验收完成。",
@@ -298,7 +299,8 @@
         "镜像 sha256:534d18c9、制品 116ce585 已用公开管理接口登记新运行时身份 hi-2fb7a2320751b728f664d6cfbbbf6230。两项业务 Skill 安装字节与镜像钉一致：研究 Skill Grant grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484 可写，公司证据 Grant grt-si-e41f897efeb1a27768841fed0e2a0a854bfcb12007e06ca3cab7e4a043f2891f 只读。九项登记检查为 true，model_calls 为 0，自有进程已停止，production_modified 为 false，runtime_state 仍为 unverified。这不是工具执行或网络效果。OPT-08 保持 implementing，11/16 不变。",
         "v886 在镜像 sha256:534d18c9、制品 116ce585、身份 hi-2fb7a2320751b728f664d6cfbbbf6230 上完成一次日常入口：33 项检查为 true，业务 completed。skill_view 回执 rcp-23db5954f2aaeb119dd8987425f938da 无 Skill 上下文；read_file rcp-1830841a4e9b0b53ab53a2350756796f 与 write_file rcp-2c3444ba542f04a525b876a0ac132993 均为 allow，并绑定可写 Grant grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484。目标文件存在，内容摘要 a3764f24947ac98006420f11a931596ff1e6c7cceb578a5823fc924aeb7312b6。监管合同已按原字节恢复，模型单元不变，自有网关和桥已停止。这次没有覆盖网络效果、未注册工具、借权或四臂。OPT-08 保持 implementing，11/16 不变。",
         "web_extract 的实际参数是 urls，原先只检查顶层 url。仅有 urls 时会被当成没有目标而拒绝；同时带上已授权 url 和未授权 urls 时，决定可能放行而工具读取 urls。现在 url、host 和 urls 里的每一项都必须是可授权的 http(s) 目标，对象优先取 url，否则取 href，任一畸形项拒绝整次调用。TestWebExtractAuthorizesEveryURL 与既有精确端口用例通过。这是引擎合同，不是日常网络效果。OPT-08 保持 implementing，11/16 不变。",
-        "日常工具集里的 execute_code 会用沙箱 Python 执行源码，而该解释器可以连接数据代理。原先工具名获授权后，源码里的 URL 不进入主机检查。现在与 terminal 一样：未授权工具拒绝；源码含 URL 时只放行已授权主机，未授权主机拒绝。TestExecuteCodeAuthorizesEmbeddedURL 通过。这是引擎合同，不是日常网络连接。OPT-08 保持 implementing，11/16 不变。"
+        "日常工具集里的 execute_code 会用沙箱 Python 执行源码，而该解释器可以连接数据代理。原先工具名获授权后，源码里的 URL 不进入主机检查。现在与 terminal 一样：未授权工具拒绝；源码含 URL 时只放行已授权主机，未授权主机拒绝。TestExecuteCodeAuthorizesEmbeddedURL 通过。这是引擎合同，不是日常网络连接。OPT-08 保持 implementing，11/16 不变。",
+        "v887 在镜像 sha256:534d18c9、制品 116ce585、身份 hi-1280d157950d13097a1d048815558558 上通过日常入口调用一次 execute_code。二进制 940e3b7b 已包含主机检查。Agent 基线 grt-id-89de643ef7ef0af4e5094b5d002e4daa068af08682f43fa7eae3d6fb58d539dd 与研究 Skill Grant grt-si-ffc4cb396436b4d608864a1c772962bdc96d8537542213b3f848e5930834e23a 都包含该工具和 host.openshell.internal:18794；只读公司证据 Grant 不包含。回执 rcp-115e4fae7f00828b52495484c7f1d98e 为 deny，原因 runtime_effect_unknown，效果是 process.exec、network.request、unknown，无 Skill 上下文。工具完成时带错误，探测文件不存在。业务 HTTP 200 且 completed。监管合同已恢复，模型 MainPID 221774 未变，自有网关和桥已停止。这是拒绝与未连接一致的负向结果，不是放行后的实际网络连接。OPT-08 保持 implementing，11/16 不变。"
       ]
     },
     {
@@ -376,7 +378,8 @@
         "docs/development/evidence/optimization-20261007/native-unmapped-image-authority-20261008n.json",
         "docs/development/evidence/optimization-20261007/native-unmapped-image-execute-20261008n.json",
         "apps/agentshield/internal/runtimeaction/normalize.go",
-        "apps/agentshield/internal/receipt/resource_scope_test.go"
+        "apps/agentshield/internal/receipt/resource_scope_test.go",
+        "docs/development/evidence/optimization-20261007/native-execute-code-network-v887.json"
       ],
       "residual_limits": [
         "冻结工作候选v819–v827完成读取、只读拒写、授权可写各三次独立业务请求；18条回执和9份SEC独立验签、schema及文件效果核对通过，源码清单／已安装运行包保持一致。新增公开离线核验器，5项真实证据／篡改／跨请求替换／重复计数检查及Ruff通过。OPT-10进入implementing；289项未提交输入、干净部署、剩余生命周期／四臂与平台验收仍待完成，总体9/16保持。",
@@ -408,7 +411,8 @@
         "同一镜像 sha256:534d18c9 已登记运行时身份 hi-2fb7a2320751b728f664d6cfbbbf6230，绑定制品 116ce585。可写研究 Grant grt-si-9a2746cc4c02f1fa9bcadbd7b42248b973b7ce7833ca3da15585bf89405aa484，只读公司 Grant grt-si-e41f897efeb1a27768841fed0e2a0a854bfcb12007e06ca3cab7e4a043f2891f。登记时未调用模型，服务已停止，runtime_state 为 unverified。不是最终矩阵、四臂、平台或签名。OPT-10 保持 implementing，11/16 不变。",
         "v886 用该身份完成一次日常 read_file 与 write_file，33 项检查为 true，写入回执 rcp-2c3444ba542f04a525b876a0ac132993 为 allow，文件摘要 a3764f24947ac98006420f11a931596ff1e6c7cceb578a5823fc924aeb7312b6。请求摘要 8c463875cd0bd0bfae5e69b25e4c39f75569c2902fcc4f794a854549f810bf97。未注册工具、别名、网络效果、四臂、平台和签名仍未覆盖。OPT-10 保持 implementing，11/16 不变。",
         "web_extract 现在对 urls 的每一项做与 url 相同的端点授权。已授权地址可以通过，夹带未授权地址、file URL、空列表和非字符串项都会拒绝。定向测试通过。尚未在日常入口观察实际网络请求。OPT-10 保持 implementing，11/16 不变。",
-        "execute_code 获授权后，源码中的 URL 现在必须命中已授权主机；未授权主机拒绝。TestExecuteCodeAuthorizesEmbeddedURL 通过。尚未在日常入口观察实际网络连接。OPT-10 保持 implementing，11/16 不变。"
+        "execute_code 获授权后，源码中的 URL 现在必须命中已授权主机；未授权主机拒绝。TestExecuteCodeAuthorizesEmbeddedURL 通过。尚未在日常入口观察实际网络连接。OPT-10 保持 implementing，11/16 不变。",
+        "v887 日常入口对已授权 execute_code 的决定是 deny runtime_effect_unknown。回执同时含 network.request 和 unknown，意图合同拒绝未知效果，工具没有写出探测文件。这不是放行后的网络连接。OPT-10 保持 implementing，11/16 不变。"
       ]
     },
     {
