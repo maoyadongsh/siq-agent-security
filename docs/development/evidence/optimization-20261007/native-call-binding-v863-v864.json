@@ -1,0 +1,315 @@
+{
+  "schema_version": "optimization-native-business-evidence/v1",
+  "build": {
+    "artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+  },
+  "verification": {
+    "receipts": {
+      "public_key_base64": "GZnCQvkaWN1+Z7cVSkrHbZa07jbLZf3JJ/7Jx93pCTQ=",
+      "count": 21,
+      "head_hash": "620b548d73561871f6dc2c04eb6d9a52e581bedb182bd5fc9ced22feab5c5763"
+    },
+    "signed_context_count": 7,
+    "cases": {
+      "v863": {
+        "tool": "write_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "6ce36c49f7b016166f179214a887721e73188e8d9660621773bb597c3617ce6e",
+        "resource_digest": "2661d1d0038c48eadb046aa12d69f02a7406d0dd14c6d6b60e195819f375f350",
+        "request_run_sha256": "0f0113ba8667288846c93f2903d20149bdf5c4850abc9babf901a78063778fe6"
+      },
+      "v864": {
+        "tool": "read_file",
+        "effective_action": "allow",
+        "reason_code": "allow",
+        "receipt_hash": "620b548d73561871f6dc2c04eb6d9a52e581bedb182bd5fc9ced22feab5c5763",
+        "resource_digest": "341e64808b80dc83d6fd8b54a66bdf66a363c025e36150a4226951e70c764aa0",
+        "request_run_sha256": "272c8676c93b1bcaedbc9fe3ee2337bbfa24be9c8fe1d80813a91f19ea6516de"
+      }
+    },
+    "live_grant_ids": {
+      "skill": "grt-si-bb5e926fb2c537d13505077220368dc4df9f3d4590167278ffb672aae1f0f5c6",
+      "agent": "grt-id-e7f42024d50f99464b37d76964ff57a8c6f287c7ba5e89507de7aaa8863d863f"
+    }
+  },
+  "artifacts": {
+    "receipts": {
+      "file": "native-call-binding-v863-v864.receipts.jsonl",
+      "sha256": "00c3bb085553e8a1a47c3df9c914e93d089ee55d6011ab553c3f2d9f1c356ae9"
+    },
+    "contexts": {
+      "file": "native-call-binding-v863-v864.contexts.json",
+      "sha256": "8cfbac0c9146124fc7f167af39f42da824b7195bad71d05bfb88ea1e93e76558"
+    },
+    "live_grants": {
+      "file": "native-context-boundary-v855-v859.live-grants.json",
+      "sha256": "14f4f6ecf2b585a90393e455ed10a3f9ea8d25cce69e66469fe32ac8f4330c33"
+    }
+  },
+  "previous_report": {
+    "file": "native-channel-fault-v861-v862.json",
+    "sha256": "e3589698d959e63bbf720a5de41b0eb984749e056e1f161b88fc177dd0a034a2"
+  },
+  "candidate_inputs": {
+    "v863": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v863.py": "05d36ea44b23d9acbc68c434e76b0a326ac889c3a32dba8371fca2b89878e804",
+        "run-native-context-boundary-owned-v863.py": "ef8f21435318bcb7808d8538ee68e3117950ab252500d3eff68d5aa4509322a5",
+        "deployment-driver.py": "ffd81719f84133613287f1b125ae69d2b46c156fb59dd3db2d8a2441e70ad0c4",
+        "native_call_binding_fault_proxy.py": "22117a91f4f5e914fa126ab3c6427781fb735ef6c19f9a035018f7bdb2385a73"
+      }
+    },
+    "v864": {
+      "business_commit": "8851724e2c1c41a79649e72f2a54fd80756c988c",
+      "candidate_source_sha256": "5bbf4e90636c45ed58d801de1481d5bb10a216ecb68390e587bea18efc791521",
+      "frozen_file_count": 1874,
+      "registered_patch_count": 289,
+      "archive_sha256": "98b90ab52f27eb1336abb8147f3d16ea739b5b026241b62872424f77d30cc7c8",
+      "driver_sha256": {
+        "run-native-business-context-boundary-v864.py": "05d36ea44b23d9acbc68c434e76b0a326ac889c3a32dba8371fca2b89878e804",
+        "run-native-context-boundary-owned-v864.py": "1cdd86c1bcf0f1ca9b386e35854b060fa291028bb7cc71203813a002107bbbc6",
+        "deployment-driver.py": "76b0fbba640e307e7c3b6d422b71fb21a4326f3b5d4943c65c7eda12b364d2f6",
+        "native_call_binding_fault_proxy.py": "22117a91f4f5e914fa126ab3c6427781fb735ef6c19f9a035018f7bdb2385a73"
+      }
+    }
+  },
+  "observations": {
+    "v863": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run": true,
+        "SSE_terminal_observed": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "actual_write_allowed": true,
+        "actual_file_effect_matches": true,
+        "live_grants_unchanged": true,
+        "context_unchanged_and_not_revoked": true,
+        "proxy_no_internal_error": true,
+        "exactly_one_targeted_write": true,
+        "proxy_control_bytes_unchanged": true,
+        "proxy_control_authority_allow": true,
+        "business_execution_terminal": true,
+        "positive_business_completed": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 95,
+        "done": 1,
+        "progress": 17,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "9503568420db6dc0f1c9cae7a62985f1f1e5f03907b17cb45ee20e4280574701",
+      "write_attempt_count": 1,
+      "write_completed_with_error": false,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 1,
+      "new_receipt_count": 3,
+      "target_resource_digest": "2661d1d0038c48eadb046aa12d69f02a7406d0dd14c6d6b60e195819f375f350",
+      "target_exists": true,
+      "target_content_sha256": "82bddc3b845a6dbbccabf25e8ddee52f8c50e97f2baccdd7dd5e60d6f3394bd5",
+      "output_directory_identity_matches": true,
+      "policy_sha256": "69a96caefdfba84a230b7470e1e00a5dd941ef5cf344ccff2ae6617af112913a",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "completed",
+      "fault": {
+        "request_run_id": "qwen-request-b497ca55077446fc",
+        "read_receipt_hash": "5d77e4744610028a421b414d7676db5b6adae68b5670bb49f1df7fb8e2980f7a",
+        "context_id": "sec-469bb8bc742e40724d6139df7a41ae8a",
+        "armed_monotonic_ns": 136214179256494,
+        "mode": "writer_control"
+      },
+      "context_live_at_result_file_mtime": true,
+      "proxy_summary": {
+        "path": "/v1/decide",
+        "targeted": true,
+        "http_status": 200,
+        "sent_monotonic_ns": 136221588111944,
+        "received_monotonic_ns": 136222576677290,
+        "incoming_body_sha256": "a0a2dcff19bfbb480e73b82dfadbb130852172d7d16c7624bce2f598d1fc186e",
+        "forwarded_body_sha256": "a0a2dcff19bfbb480e73b82dfadbb130852172d7d16c7624bce2f598d1fc186e",
+        "mode": "writer_control",
+        "response": {
+          "action": "allow",
+          "effective_action": "allow",
+          "reason_code": "allow",
+          "receipt_id": "rcp-45df65b7085d-052800.846492"
+        },
+        "response_sha256": "8f242ad88ea6336cf80945f74fbfa38a1180e9d16ec4b10a1fda942623c1889e"
+      },
+      "changed_request_fields": [],
+      "subject_and_params_unchanged": true,
+      "proxy_record_sha256": "66dd8d96677f98cefb2dc5dd32822083e6bb7c847f3cbd0a39d2194d874997af",
+      "non_targeted_bytes_unchanged": true,
+      "proxy_listener_closed": true,
+      "SSE_error_codes": [],
+      "business_done_observed": true,
+      "business_error_observed": false
+    },
+    "v864": {
+      "checks": {
+        "fresh_database_migrations": true,
+        "request_recovery_ready": true,
+        "legacy_recovery_disabled": true,
+        "SSE_single_run": true,
+        "SSE_terminal_observed": true,
+        "read_only_source_unchanged": true,
+        "actual_read_allowed": true,
+        "writer_context_on_read": true,
+        "actual_write_attempt_observed": true,
+        "call_binding_fault_armed": true,
+        "actual_file_effect_matches": true,
+        "no_write_allowed": true,
+        "tool_rejection_observed": true,
+        "live_grants_unchanged": true,
+        "context_unchanged_and_not_revoked": true,
+        "proxy_no_internal_error": true,
+        "exactly_one_targeted_write": true,
+        "only_call_identifier_removed": true,
+        "authority_missing_binding_rejected": true,
+        "business_execution_terminal": true,
+        "API_finalizer_released_before_diagnostic_cleanup": true,
+        "model_bridge_correlated_200": true,
+        "anonymous_analysis_denied": true,
+        "real_http_login": true,
+        "analyst_cannot_issue_grant": true,
+        "grant_retry_same_identity": true,
+        "analyst_cannot_revoke_grant": true,
+        "admin_http_revoke": true,
+        "business_settled_before_api_stop": true,
+        "candidate_listener_closed": true,
+        "business_runtime_cleanup_confirmed": true,
+        "temporary_database_removed": true,
+        "existing_service_identity_unchanged": true
+      },
+      "cleanup_checks": {
+        "owned_gateway_stopped": true,
+        "owned_bridge_stopped": true,
+        "original_model_unchanged": true
+      },
+      "deployment_checks": {
+        "business_sources_unchanged": true,
+        "original_service_files_restored": true
+      },
+      "SSE_event_counts": {
+        "delta": 146,
+        "done": 1,
+        "progress": 15,
+        "reasoning": 1,
+        "replace": 1,
+        "run": 1,
+        "tool": 6
+      },
+      "event_log_sha256": "2a383b15bb4c9f7e477c7caa9eda89485ea8e5fdc4446546f4d4e38c0693ded1",
+      "write_attempt_count": 1,
+      "write_completed_with_error": true,
+      "write_target_preview_matches": true,
+      "write_receipt_count": 0,
+      "new_receipt_count": 2,
+      "target_resource_digest": "054bf39a3cbb857288236283791dfe8f9687736b22c58e0dbff437eacdd4a6b1",
+      "target_exists": false,
+      "target_content_sha256": null,
+      "output_directory_identity_matches": true,
+      "policy_sha256": "8c150b12e36e596b43ab182c9e3f877cc0834b6547b41fa1c945f5491433f7b3",
+      "openshell_policy_allows_task_output": true,
+      "request_finalized": true,
+      "supervisor_state": {
+        "MainPID": "0",
+        "ControlPID": "0",
+        "Result": "success",
+        "ExecMainStatus": "0",
+        "ActiveState": "inactive"
+      },
+      "business_execution_status": "completed",
+      "fault": {
+        "request_run_id": "qwen-request-41d9cf1be6e1c727",
+        "read_receipt_hash": "620b548d73561871f6dc2c04eb6d9a52e581bedb182bd5fc9ced22feab5c5763",
+        "context_id": "sec-fe7fc8c2e5e7ffd718a591fcf8f94213",
+        "armed_monotonic_ns": 136319727224032,
+        "mode": "call_id_missing"
+      },
+      "context_live_at_result_file_mtime": true,
+      "proxy_summary": {
+        "path": "/v1/decide",
+        "targeted": true,
+        "http_status": 409,
+        "sent_monotonic_ns": 136330839827346,
+        "received_monotonic_ns": 136330942568056,
+        "incoming_body_sha256": "10f6b901272036299844f6cfb1255ebc6511cbae872cb334bfa29b39e7af93d0",
+        "forwarded_body_sha256": "302e8496b543bc2d0c92c5ac16705d325292d7d7d8512f6f055b36b71ceb02ec",
+        "mode": "call_id_missing",
+        "response": {
+          "error": "native_host_unavailable"
+        },
+        "response_sha256": "5b79765a31bc65c4a1d5b5ca5db459d2ef6b0025dc58ff4b9850b649059cff23"
+      },
+      "changed_request_fields": [
+        "tool_call_id"
+      ],
+      "subject_and_params_unchanged": true,
+      "proxy_record_sha256": "250e90350117001e36a2cb00bccb496b9bde5eae262000844ecf81801453c89d",
+      "non_targeted_bytes_unchanged": true,
+      "proxy_listener_closed": true,
+      "SSE_error_codes": [],
+      "business_done_observed": true,
+      "business_error_observed": false
+    }
+  },
+  "same_normalized_openshell_policy": true,
+  "new_receipt_count": 5,
+  "new_context_count": 2,
+  "scope": "Owned loopback HTTP proxy; pass-through control and only tool_call_id removed from real authenticated write request; actual upstream 409, no write effect. Not missing Skill loading or universal unknown-context coverage.",
+  "OPT08_complete": false,
+  "OPT10_complete": false,
+  "four_arm_complete": false,
+  "full_stack_dependency_freeze_complete": false,
+  "api_runtime_dependency_inventory": {
+    "files": 11663,
+    "symlinks": 4,
+    "content_sha256": "ec6da2fd01ce3ea539f3fc333ced90be3a7f6f17a469e54132d49f522979bd34",
+    "before_after_unchanged": true,
+    "scope": "API venv, Python stdlib, editable source roots and probe-loaded native libraries; not a complete OS or model-runtime inventory"
+  }
+}
