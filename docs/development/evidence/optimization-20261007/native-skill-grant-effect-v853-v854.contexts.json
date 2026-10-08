@@ -1,0 +1,78 @@
+{
+  "sec-86d9a326149e015662cce11f630b5a57": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-86d9a326149e015662cce11f630b5a57",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-6c3b0035ea76bad3c02e8beb89263321",
+      "agent_id": "hri-6c3b0035ea76bad3c02e8beb89263321",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-a776921e509be262:siq_analysis:47ef128df73c6cd12492817883843abd1f6b7076f6604440daf948382b73ad2b",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-a776921e509be262:siq_analysis:2dee6c0351e21f0d650a4c3310fefe2b665db494935ecd3204f8d174df633236"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-7cde898b7b0e8960f187a1f86763a1457872d95e4f053ac55d8c3aea2a39357e",
+      "claim_signature": "51bed130d3645ca9c57396d55aa98f9583c4ae0085be2be0652e0f590db1c860ecd21a0c116e644af68da44d2314dd7338436eee126c4fa2bb97cad77dce1a00"
+    },
+    "authority": {
+      "grant_id": "grt-si-0a773cbf84e8b18f0260b32d83357c8a4f1dd85fad782f17a1d3949b98b74a5f",
+      "grant_digest": "bb9e1c709128a4e876d1cc803c6c4956ce5711bcbc5698749f6db25b23e41b98"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T04:49:25.308309273Z",
+    "expires_at": "2026-10-08T04:58:39Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "4b7c4b020c11f7172f00ff5433f7faf036906e1be70e23fa5328de64f19ff788a8de72260011cd61200b8c4fbd4631111d96f6079aca99492e160fd9363ddd04",
+    "agent_authority": {
+      "grant_id": "grt-id-6109f58a3144cd14b8f31d005be4df7f81f075e35a520f6aff0e1ea5f64a8748",
+      "grant_digest": "0f0a845550c99fec8ccaa685028adad929d30c346eb2977f0554968183cefaf3"
+    },
+    "loader": {
+      "load_id": "nload-cb7766a1d6b74b698148a2bfa4246dbf",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  },
+  "sec-aac38d02a4b18b358e01f55ae61fd6c3": {
+    "schema_version": "skill-execution-context/v2",
+    "context_id": "sec-aac38d02a4b18b358e01f55ae61fd6c3",
+    "issuer_id": "local-admin",
+    "subject": {
+      "platform": "hermes",
+      "instance_id": "hi-6c3b0035ea76bad3c02e8beb89263321",
+      "agent_id": "hri-6c3b0035ea76bad3c02e8beb89263321",
+      "session_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-ae84e2d9285898b0:siq_analysis:6718c5cdb07f93d1331288650dd3d44bb3caa97ad174af6f107dbbca902f3a6e",
+      "task_id": "siq:openshell:pool:7025f3f8b5186fe8a87f8a12:qwen-request-ae84e2d9285898b0:siq_analysis:a7dc4ef3a4a9fdc0d5d056c1a78812d4a8282240fb3210b1dee262f85cb9cee6"
+    },
+    "skill": {
+      "skill_id": "local_dir:siq-research-draft@40f001a5f1ac",
+      "content_hash": "40f001a5f1ac9273b6c5228fece4aba7868069873b38a3ba2de4b71499216112"
+    },
+    "install": {
+      "install_id": "sin-7cde898b7b0e8960f187a1f86763a1457872d95e4f053ac55d8c3aea2a39357e",
+      "claim_signature": "51bed130d3645ca9c57396d55aa98f9583c4ae0085be2be0652e0f590db1c860ecd21a0c116e644af68da44d2314dd7338436eee126c4fa2bb97cad77dce1a00"
+    },
+    "authority": {
+      "grant_id": "grt-si-0a773cbf84e8b18f0260b32d83357c8a4f1dd85fad782f17a1d3949b98b74a5f",
+      "grant_digest": "bb9e1c709128a4e876d1cc803c6c4956ce5711bcbc5698749f6db25b23e41b98"
+    },
+    "evidence_level": "controlled_invocation",
+    "issued_at": "2026-10-08T04:51:04.59551919Z",
+    "expires_at": "2026-10-08T05:00:14.71243Z",
+    "signing_schema": "local_canonical/v1",
+    "signature": "38fe3c0a11e31cd68db0037098cad52455329d669efd4811068ddd4e86c4a70b64ff1402448c4cc715e619247f25df404651fb983994ed6f8635d4995ee03505",
+    "agent_authority": {
+      "grant_id": "grt-id-6109f58a3144cd14b8f31d005be4df7f81f075e35a520f6aff0e1ea5f64a8748",
+      "grant_digest": "0f0a845550c99fec8ccaa685028adad929d30c346eb2977f0554968183cefaf3"
+    },
+    "loader": {
+      "load_id": "nload-71d41511c7e147b982b1668a25fca18e",
+      "skill_file_sha256": "014ac3788981848b9917115b8701ad7483bd9067a22c1939f5588d2cce0c7b12",
+      "runtime_artifact_sha256": "070e94236ba603b6e7cff70f217e3a43e15f20dd7213cb03cabade3c2cf553b2"
+    }
+  }
+}

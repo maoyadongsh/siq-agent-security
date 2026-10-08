@@ -52,6 +52,34 @@ def validators(contracts: Path) -> dict:
     }
 
 
+def verify_grant_transition(raw: bytes, key: Ed25519PublicKey, binding: dict,
+                            cases: dict, receipts: dict) -> None:
+    """Verify signed states and identities, not the original transition timing."""
+    snapshots = json.loads(raw)
+    require(set(snapshots) == {"skill_before", "skill_after", "agent_baseline"},
+            "grant_snapshot_inventory_mismatch")
+    for grant in snapshots.values():
+        key.verify(bytes.fromhex(grant["signature"]),
+                   canonical({k: v for k, v in grant.items() if k != "signature"}))
+    before, after, agent = (snapshots[name] for name in
+                            ("skill_before", "skill_after", "agent_baseline"))
+    require(before["grant_id"] == after["grant_id"] == binding["skill_grant_id"]
+            and agent["grant_id"] == binding["agent_grant_id"]
+            and agent["grant_id"] != before["grant_id"], "grant_transition_identity_mismatch")
+    require(before["status"] == "approved" and after["status"] == "revoked"
+            and agent["status"] in {"approved", "deployed", "effective"},
+            "grant_transition_status_mismatch")
+    require({k: v for k, v in before.items() if k not in {"signature", "status"}}
+            == {k: v for k, v in after.items() if k not in {"signature", "status"}},
+            "grant_transition_permissions_changed")
+    for case in cases.values():
+        invocation = receipts[case["receipt_hash"]]["native_invocation"]
+        require(invocation["agent_authority"]["grant_id"] == agent["grant_id"]
+                and len(invocation["contexts"]) == 1
+                and invocation["contexts"][0]["authority"]["grant_id"] == before["grant_id"],
+                "grant_transition_case_binding_mismatch")
+
+
 def verify(report: Path, contracts: Path) -> dict:
     document = json.loads(report.read_text())
     require(document["schema_version"] in {
@@ -129,6 +157,13 @@ def verify(report: Path, contracts: Path) -> dict:
         runs = set(re.findall(r"qwen-request-[a-f0-9]+", row["session_id"]))
         require(len(runs) == 1 and hashlib.sha256(next(iter(runs)).encode()).hexdigest()
                 == case["request_run_sha256"], "case_request_mismatch")
+    grant_result = {}
+    if "grant_snapshots" in payloads or "grant_transition" in verification:
+        require("grant_snapshots" in payloads and "grant_transition" in verification,
+                "grant_transition_binding_missing")
+        verify_grant_transition(payloads["grant_snapshots"], key, verification["grant_transition"],
+                                verification["cases"], by_hash)
+        grant_result = {"signed_grant_snapshots": 3, "grant_transition_order_reobserved": False}
     return {
         "cryptographic_bundle_verified": True,
         "receipts": len(rows),
@@ -136,6 +171,7 @@ def verify(report: Path, contracts: Path) -> dict:
         "case_decision_bindings": len(verification["cases"]),
         "original_filesystem_effects_reobserved": False,
         "current_execution_authorized": False,
+        **grant_result,
     }
 
 
