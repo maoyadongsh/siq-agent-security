@@ -1,0 +1,1430 @@
+{
+  "files": {
+    "LICENSE": {
+      "bytes": 10280,
+      "executable": false,
+      "sha256": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff"
+    },
+    "LICENSES/CC-BY-4.0.txt": {
+      "bytes": 17023,
+      "executable": false,
+      "sha256": "d557539df68e771cc1eedcc91d13f70fca930e508d11eedcafa4b15db49e3744"
+    },
+    "LICENSES/Go-BSD-3-Clause.txt": {
+      "bytes": 1453,
+      "executable": false,
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+    },
+    "LICENSES/README.md": {
+      "bytes": 1888,
+      "executable": false,
+      "sha256": "500df100e50fe44f1f23d6131d38c92e259788a6cc0146fcbe624d6cf0e25e8e"
+    },
+    "LICENSES/scope.json": {
+      "bytes": 1891,
+      "executable": false,
+      "sha256": "59bb5f0011008885799f77e087f21376284474b632d4091cb9cef13ec7d503ec"
+    },
+    "LICENSES/third-party/@braintree__sanitize-url-7.1.0--package__LICENSE": {
+      "bytes": 1066,
+      "executable": false,
+      "sha256": "0984740e0c3d725c8044dec7edcefe1dbce180ef5a7bc710c251e19607000158"
+    },
+    "LICENSES/third-party/@chevrotain__cst-dts-gen-11.0.3--package__LICENSE.txt": {
+      "bytes": 11358,
+      "executable": false,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "LICENSES/third-party/@chevrotain__gast-11.0.3--package__LICENSE.txt": {
+      "bytes": 11358,
+      "executable": false,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "LICENSES/third-party/@chevrotain__regexp-to-ast-11.0.3--package__LICENSE.txt": {
+      "bytes": 11358,
+      "executable": false,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "LICENSES/third-party/@chevrotain__utils-11.0.3--package__LICENSE.txt": {
+      "bytes": 11358,
+      "executable": false,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "LICENSES/third-party/@fontsource__dm-serif-display-5.3.0--LICENSE": {
+      "bytes": 4599,
+      "executable": false,
+      "sha256": "e9d4ced9825bf03a6b634c37fe8ae974f6d1b80fbb0bd3ae9b089987e4dc541b"
+    },
+    "LICENSES/third-party/@fontsource__inter-5.3.0--LICENSE": {
+      "bytes": 4477,
+      "executable": false,
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+    },
+    "LICENSES/third-party/@fontsource__noto-serif-sc-5.3.0--LICENSE": {
+      "bytes": 4314,
+      "executable": false,
+      "sha256": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3"
+    },
+    "LICENSES/third-party/@fontsource__playfair-display-5.3.0--LICENSE": {
+      "bytes": 4630,
+      "executable": false,
+      "sha256": "c052aafd2a71e90bcee6e69f475029d430a10d548c08ffcae350171f0e9668b1"
+    },
+    "LICENSES/third-party/@iconify__utils-2.1.33--package__license.txt": {
+      "bytes": 1083,
+      "executable": false,
+      "sha256": "a86793ac023162ce98b91899601c15f6712f44943163c4f92a0a4bf89152b3bf"
+    },
+    "LICENSES/third-party/chevrotain-11.0.3--package__LICENSE.txt": {
+      "bytes": 11358,
+      "executable": false,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "LICENSES/third-party/chevrotain-allstar-0.3.1--package__LICENSE": {
+      "bytes": 1068,
+      "executable": false,
+      "sha256": "1db2cfbc7ce5fa3b82699b4ac4badce8984084d25b5308ece00f5c9b1381a0a5"
+    },
+    "LICENSES/third-party/cookie-1.1.1--LICENSE": {
+      "bytes": 1175,
+      "executable": false,
+      "sha256": "c02110eedc16c7114f1a9bdc026c65626ce1d9c7e27fd51a8e0feee8a48a6858"
+    },
+    "LICENSES/third-party/cose-base-1.0.3--package__LICENSE": {
+      "bytes": 1081,
+      "executable": false,
+      "sha256": "5fb3cf4a14c3c5af6e473a192df8bca10c77754e3a0c6492c79fb92a76a5478a"
+    },
+    "LICENSES/third-party/cose-base-2.2.0--package__LICENSE": {
+      "bytes": 1081,
+      "executable": false,
+      "sha256": "5fb3cf4a14c3c5af6e473a192df8bca10c77754e3a0c6492c79fb92a76a5478a"
+    },
+    "LICENSES/third-party/cytoscape-3.30.2--package__LICENSE": {
+      "bytes": 1082,
+      "executable": false,
+      "sha256": "a29c0d78a54de204b78357976c3d272a573b8592d0478b9db07af3f1da31a65a"
+    },
+    "LICENSES/third-party/cytoscape-3.30.2--package__license-update.js": {
+      "bytes": 1255,
+      "executable": false,
+      "sha256": "dc621a910b0a2312e3c3db1cf281d93c6170ccc7e69a55d6ca782afe621473e9"
+    },
+    "LICENSES/third-party/cytoscape-cose-bilkent-4.1.0--package__LICENSE": {
+      "bytes": 1084,
+      "executable": false,
+      "sha256": "440fc58a56a12814e417d2b341da89b050da052dc75bdb235607d37ec5fe74ef"
+    },
+    "LICENSES/third-party/cytoscape-fcose-2.2.0--package__LICENSE": {
+      "bytes": 1079,
+      "executable": false,
+      "sha256": "2837634f403949215760fcdd2fa1ed0c64875d02099ecc8318c704b852f1421d"
+    },
+    "LICENSES/third-party/d3-7.9.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "3e6849627f74ff73c257a3ae1efb574015d94fc1035c05ec3c15805165efcbc4"
+    },
+    "LICENSES/third-party/d3-array-2.12.1--package__LICENSE": {
+      "bytes": 1475,
+      "executable": false,
+      "sha256": "0747bebeb06b10954913149be9b9a8bdf6fad3e6fdcbd9f9524e7a94c13d2cea"
+    },
+    "LICENSES/third-party/d3-array-3.2.4--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "3e6849627f74ff73c257a3ae1efb574015d94fc1035c05ec3c15805165efcbc4"
+    },
+    "LICENSES/third-party/d3-axis-3.0.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-brush-3.0.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-chord-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-color-3.1.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    "LICENSES/third-party/d3-contour-4.0.2--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e51cba0e4fa1d8c078e15319868f2b90188f413f9ce9dac1043b62db32901e93"
+    },
+    "LICENSES/third-party/d3-delaunay-6.0.4--package__LICENSE": {
+      "bytes": 757,
+      "executable": false,
+      "sha256": "582c3022bd01942336095f92b58a90b1be624dc547d987555c6c956512dd24c1"
+    },
+    "LICENSES/third-party/d3-dispatch-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-drag-3.0.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-dsv-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "7842a82012622e5a37bfe4f6c1b67cd3bae6350716b5bf87f36cea0bdc1319dc"
+    },
+    "LICENSES/third-party/d3-ease-3.0.1--package__LICENSE": {
+      "bytes": 1504,
+      "executable": false,
+      "sha256": "b989d9085148d21ff64a75e14462aefa06b2589a55553b07b1460c70081c7d08"
+    },
+    "LICENSES/third-party/d3-fetch-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "ffdc17dc9040006bddeb891c95bfbb492e86d6bc64a4a4233666febab1be35e0"
+    },
+    "LICENSES/third-party/d3-force-3.0.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-format-3.1.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-geo-3.1.1--package__LICENSE": {
+      "bytes": 1857,
+      "executable": false,
+      "sha256": "3e3edc1224eec9c39cd26491a21304a62883c1e5b6a65c5283ccc7a6cc94baee"
+    },
+    "LICENSES/third-party/d3-hierarchy-3.1.2--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-interpolate-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-path-1.0.9--package__LICENSE": {
+      "bytes": 1475,
+      "executable": false,
+      "sha256": "b8265327ab678f554800e71188b1cc6b1ff57522e292d2b1c0be66f27cf328b6"
+    },
+    "LICENSES/third-party/d3-path-3.1.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "a09b0d6d76e768fca2085fad05743ee81ddd11946bcda160a3cf5e1081a479aa"
+    },
+    "LICENSES/third-party/d3-polygon-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-quadtree-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-random-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-sankey-0.12.3--package__LICENSE": {
+      "bytes": 1471,
+      "executable": false,
+      "sha256": "2bf785e778d67a4f5266cffcd4f2cc5bb98cde73791666e7efeb8002ba32dfa5"
+    },
+    "LICENSES/third-party/d3-scale-4.0.2--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-scale-chromatic-3.1.0--package__LICENSE": {
+      "bytes": 1423,
+      "executable": false,
+      "sha256": "0986d93944902cca9af86824b6a641b4b7c2d10602fc510c433a8bcd443919fe"
+    },
+    "LICENSES/third-party/d3-selection-3.0.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-shape-1.3.7--package__LICENSE": {
+      "bytes": 1475,
+      "executable": false,
+      "sha256": "7eea8533ea92bd8c32a901e89ecb0305890905bb12711449565ddff96891146d"
+    },
+    "LICENSES/third-party/d3-shape-3.2.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    "LICENSES/third-party/d3-time-3.1.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    "LICENSES/third-party/d3-time-format-4.1.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-timer-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-transition-3.0.1--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/d3-zoom-3.0.0--package__LICENSE": {
+      "bytes": 731,
+      "executable": false,
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    "LICENSES/third-party/dagre-d3-es-7.0.11--package__LICENSE.md": {
+      "bytes": 1328,
+      "executable": false,
+      "sha256": "d01eb84ccce437dbf5fd40853bceea0f287930920acea066597a4a25ead63858"
+    },
+    "LICENSES/third-party/dayjs-1.11.13--package__LICENSE": {
+      "bytes": 1072,
+      "executable": false,
+      "sha256": "5faab7526d055651be3aab769d58897be6bd91f3d39d137f25f12dba1b31d5dc"
+    },
+    "LICENSES/third-party/debug-4.3.7--package__LICENSE": {
+      "bytes": 1139,
+      "executable": false,
+      "sha256": "3a61c6c96caf5c1d9b623fb9b04c822b783dfcb78aa7e49c76a3f643e6ed7f95"
+    },
+    "LICENSES/third-party/dompurify-3.2.1--package__LICENSE": {
+      "bytes": 27729,
+      "executable": false,
+      "sha256": "7de658e2401fe36e2a3965a5a11a560d2fffe768194849718a4b58c75bf84bda"
+    },
+    "LICENSES/third-party/internmap-2.0.3--package__LICENSE": {
+      "bytes": 726,
+      "executable": false,
+      "sha256": "9ea8903938dab5f12c4572d60725069bec2d1b0dc3bcc210b09bae946a5ebb1f"
+    },
+    "LICENSES/third-party/js-tokens-4.0.0--LICENSE": {
+      "bytes": 1103,
+      "executable": false,
+      "sha256": "2213d91c606205c71eb051a199478cdc2adde945893404d7f1421436dd6d5cc1"
+    },
+    "LICENSES/third-party/js-yaml-4.1.0--package__LICENSE": {
+      "bytes": 1084,
+      "executable": false,
+      "sha256": "a07bc24468b9654ce76a547d47a2db282d07733b715db4c73a98bd63961f9550"
+    },
+    "LICENSES/third-party/katex-0.16.11--package__LICENSE": {
+      "bytes": 1107,
+      "executable": false,
+      "sha256": "766ccc1f306c885aa45542a9846bbd0a505b27a0374f146778171c2254ce18e3"
+    },
+    "LICENSES/third-party/khroma-2.1.0--package__license": {
+      "bytes": 1105,
+      "executable": false,
+      "sha256": "66b333b0f66759a0b710459e03f7029abe17f4358114a128d2c972e642961b49"
+    },
+    "LICENSES/third-party/langium-3.0.0--package__LICENSE": {
+      "bytes": 1052,
+      "executable": false,
+      "sha256": "599bf70b4e55f06250571d103dbd8441e0c47cb7f858c0147ca312ce38e9ef2a"
+    },
+    "LICENSES/third-party/layout-base-1.0.2--package__LICENSE": {
+      "bytes": 1069,
+      "executable": false,
+      "sha256": "eabb762d8a95109a39c9be3247325529a5239a7aca327d909c3ccdc41f3a06bf"
+    },
+    "LICENSES/third-party/layout-base-2.0.1--package__LICENSE": {
+      "bytes": 1069,
+      "executable": false,
+      "sha256": "eabb762d8a95109a39c9be3247325529a5239a7aca327d909c3ccdc41f3a06bf"
+    },
+    "LICENSES/third-party/lodash-es-4.17.21--package__LICENSE": {
+      "bytes": 1952,
+      "executable": false,
+      "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc"
+    },
+    "LICENSES/third-party/loose-envify-1.4.0--LICENSE": {
+      "bytes": 1100,
+      "executable": false,
+      "sha256": "4eb7543b08d955a6d23fcc224601d43ff566e775be918805e26210d7f6eb4893"
+    },
+    "LICENSES/third-party/marked-13.0.3--package__LICENSE.md": {
+      "bytes": 2942,
+      "executable": false,
+      "sha256": "8e3a3f82f59a60958f56ca08f445647c32a4733dc7ca6c2c46f6eb898471ab9c"
+    },
+    "LICENSES/third-party/ms-2.1.3--package__license.md": {
+      "bytes": 1079,
+      "executable": false,
+      "sha256": "1662fae9b5314d11cf51284e2dcd1f006a354f7343f08712a730fcff9a359801"
+    },
+    "LICENSES/third-party/react-18.3.1--LICENSE": {
+      "bytes": 1086,
+      "executable": false,
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    "LICENSES/third-party/react-dom-18.3.1--LICENSE": {
+      "bytes": 1086,
+      "executable": false,
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    "LICENSES/third-party/react-router-7.18.2--LICENSE.md": {
+      "bytes": 1161,
+      "executable": false,
+      "sha256": "77c9ee6a9c5d5782fb0c50b50d101189116314c14f7df0a1b0d385fc96a7ba49"
+    },
+    "LICENSES/third-party/react-router-dom-7.18.2--LICENSE.md": {
+      "bytes": 1161,
+      "executable": false,
+      "sha256": "77c9ee6a9c5d5782fb0c50b50d101189116314c14f7df0a1b0d385fc96a7ba49"
+    },
+    "LICENSES/third-party/roughjs-4.6.6--package__LICENSE": {
+      "bytes": 1068,
+      "executable": false,
+      "sha256": "dca9a392272606ac748ac0976a2a1133f14eef841c27beaa51a844d53c56a09d"
+    },
+    "LICENSES/third-party/scheduler-0.23.2--LICENSE": {
+      "bytes": 1086,
+      "executable": false,
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    "LICENSES/third-party/set-cookie-parser-2.7.2--LICENSE": {
+      "bytes": 1126,
+      "executable": false,
+      "sha256": "c5c6c5183a789d122f267c405f685037efb87e27fcde28ab1dd7378a2d2f5962"
+    },
+    "LICENSES/third-party/stylis-4.3.4--package__LICENSE": {
+      "bytes": 1078,
+      "executable": false,
+      "sha256": "88c579c6ee44b41137a21321190d177982e5b17d4fa1b83a4a2e3ea325a8fc9a"
+    },
+    "LICENSES/third-party/ts-dedent-2.2.0--package__LICENSE": {
+      "bytes": 1073,
+      "executable": false,
+      "sha256": "eff13095d9d762c3bd9dda74370c81e2130c28f2691bc455603abf973bac25b9"
+    },
+    "LICENSES/third-party/uuid-9.0.1--package__LICENSE.md": {
+      "bytes": 1109,
+      "executable": false,
+      "sha256": "beaa6b04fb82e41dd2ad679e19e27953afb5999b1abbb455b6564e78ebfeb332"
+    },
+    "LICENSES/third-party/vscode-jsonrpc-8.2.0--package__License.txt": {
+      "bytes": 1095,
+      "executable": false,
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0"
+    },
+    "LICENSES/third-party/vscode-languageserver-textdocument-1.0.12--package__License.txt": {
+      "bytes": 1095,
+      "executable": false,
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0"
+    },
+    "LICENSES/third-party/vscode-languageserver-types-3.17.5--package__License.txt": {
+      "bytes": 1095,
+      "executable": false,
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0"
+    },
+    "LICENSES/third-party/vscode-uri-3.0.8--package__LICENSE.md": {
+      "bytes": 1070,
+      "executable": false,
+      "sha256": "c669138cb1eb01fbb745e8e460b291e4f2869c14a40061390b6095d845ed4c82"
+    },
+    "NOTICE": {
+      "bytes": 426,
+      "executable": false,
+      "sha256": "44454fd3d7568d08eb5c391dddcac538d745e61a39bce83dd8067115c3120037"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 4527,
+      "executable": false,
+      "sha256": "4a54b777dd65ae436206c4cf42a076ff7077611fdb5fa352886ffb9aab14ed20"
+    },
+    "connectors/directory/budget_test.go": {
+      "bytes": 4110,
+      "executable": false,
+      "sha256": "52e8c7f7d3c20536268c0f8f8016b474e4715ab8f5a94a06543765d8e8d8adba"
+    },
+    "connectors/directory/directory": {
+      "bytes": 3174076,
+      "executable": true,
+      "sha256": "00d32b4666a4ccbc378faa7ab68464def18cfebe467c5d3f8f319574676e0f0b"
+    },
+    "connectors/directory/directory.go": {
+      "bytes": 13644,
+      "executable": false,
+      "sha256": "af162d90d859fdf3705ee7441b171dda71226ffce41a1f8a2a2c77d3b5f25c94"
+    },
+    "connectors/directory/directory_test.go": {
+      "bytes": 3847,
+      "executable": false,
+      "sha256": "89f02d5ccefc8892d9bdb0558ced808f6596e376d4f4362867c8593b84f1b673"
+    },
+    "connectors/directory/go.mod": {
+      "bytes": 161,
+      "executable": false,
+      "sha256": "62b4b78f993b27a395d970df76747e5d9d84584ead3be583b4d29d983e53f24b"
+    },
+    "connectors/directory/open_regular_other.go": {
+      "bytes": 119,
+      "executable": false,
+      "sha256": "cffe100ff1f7ed80a2c750a23bf08e6e8aef78020896376bb1caa7887b6f0a09"
+    },
+    "connectors/directory/open_regular_unix.go": {
+      "bytes": 382,
+      "executable": false,
+      "sha256": "21b46c9634954a231c63457f4daf4bb92b3c69d0043f23fa36024318aab497b9"
+    },
+    "connectors/directory/skill_ancestry_linux_test.go": {
+      "bytes": 1486,
+      "executable": false,
+      "sha256": "b4b0cf611631c6277caa5223472867d0e37fc9b880e661ce914ceac45d171888"
+    },
+    "connectors/directory/skills_linux.go": {
+      "bytes": 5729,
+      "executable": false,
+      "sha256": "a995275f64f292b693581ea34c09a60318e98872f94097f17106451d3e501719"
+    },
+    "connectors/directory/skills_linux_test.go": {
+      "bytes": 5971,
+      "executable": false,
+      "sha256": "a13da1889fc8fa9b60b7810e225bb992ac95e9891ba60a06afceea5d8c0b56e9"
+    },
+    "connectors/directory/skills_other.go": {
+      "bytes": 494,
+      "executable": false,
+      "sha256": "45b8ad0a4f8e95cd7fc7f908f6cb9260d1f94903046f35fd608dac3db8e2b5fd"
+    },
+    "connectors/hermes/consent_scope_test.go": {
+      "bytes": 2558,
+      "executable": false,
+      "sha256": "7e3803f80cfdd1883596aa23eaaf07ac5d0e2b68e155f894140d44aff8465fe4"
+    },
+    "connectors/hermes/framework_source_test.go": {
+      "bytes": 2812,
+      "executable": false,
+      "sha256": "a26ee9bf940391da032b7061853d5ebb36e2183613d3e02446972d2bd64e61dc"
+    },
+    "connectors/hermes/go.mod": {
+      "bytes": 158,
+      "executable": false,
+      "sha256": "02e56a98a3505ba64f1113979c9afc425d589acac4b3a5d1e426dd743dc4deab"
+    },
+    "connectors/hermes/hermes": {
+      "bytes": 3178163,
+      "executable": true,
+      "sha256": "6241bc55ed1ba6b88ecad40e35eaf207e5fbe088e9b90cba7c644703d4ed4c86"
+    },
+    "connectors/hermes/hermes.go": {
+      "bytes": 22240,
+      "executable": false,
+      "sha256": "2cf22b5d5f148c505f0652a873e2d99918b4810a303d9e62c92ed5216c2e1623"
+    },
+    "connectors/hermes/hermes_test.go": {
+      "bytes": 10339,
+      "executable": false,
+      "sha256": "c7c12cc7852973ffbc6194be0a4b08094ac1d97a49dd601e12deb534de121fdd"
+    },
+    "connectors/hermes/native_protocol_linux_test.go": {
+      "bytes": 4106,
+      "executable": false,
+      "sha256": "b73f77f1035fa1f1639372430b16f94efb2676a2967b38028f0684746af83d3a"
+    },
+    "connectors/hermes/native_protocol_test.go": {
+      "bytes": 51759,
+      "executable": false,
+      "sha256": "a2f39ef2b075b57aff6911a91dca66f32e255e2512903fb3583a8cbca38f9c25"
+    },
+    "connectors/hermes/native_source_roots_test.go": {
+      "bytes": 3553,
+      "executable": false,
+      "sha256": "4a371c5df883158b25bd414155bbaa8c4fb8dba401190b77acea9a7b9a54d227"
+    },
+    "connectors/hermes/open_regular_other.go": {
+      "bytes": 262,
+      "executable": false,
+      "sha256": "4060e3723e065d377865b34ec24e15d03ec3ab44cd7d13aeb4db316d83592431"
+    },
+    "connectors/hermes/open_regular_unix.go": {
+      "bytes": 412,
+      "executable": false,
+      "sha256": "6e307c2eba5d610fc1242de57b36c0d075c546e25d30e8db0bcec7777aee47c3"
+    },
+    "connectors/hermes/profile_identity_test.go": {
+      "bytes": 3239,
+      "executable": false,
+      "sha256": "20f3ca18c22cee51eb325709f8dc0a01c844471f7446a56a1f944accdd76923c"
+    },
+    "connectors/hermes/truncation_test.go": {
+      "bytes": 702,
+      "executable": false,
+      "sha256": "c157b9a6ac8f138a54f60f5e515a81995ba5dfdee9f8d575a317b9f75bb3c11a"
+    },
+    "connectors/openclaw/collection_status.go": {
+      "bytes": 409,
+      "executable": false,
+      "sha256": "e84b3d99da25e80c874046cd3a03c1d1eb0e7abe78502d3bd509fe44325828c1"
+    },
+    "connectors/openclaw/collection_status_test.go": {
+      "bytes": 2307,
+      "executable": false,
+      "sha256": "b435dbc16053cb2ecb337940ddd6d4b866f48e0cf0b0c303bd387f4369e70a8b"
+    },
+    "connectors/openclaw/config_integrity_test.go": {
+      "bytes": 2902,
+      "executable": false,
+      "sha256": "26e47a3c9f444df53f6d59e61a1ee2d7c1c4cee12442d49d789178d0fd4a13bd"
+    },
+    "connectors/openclaw/config_parse.go": {
+      "bytes": 4208,
+      "executable": false,
+      "sha256": "d8559b8d8b73e90d2b3a1224e3fd93e8797bd115209fc97639c5c4e867946a76"
+    },
+    "connectors/openclaw/consent_scope_test.go": {
+      "bytes": 1020,
+      "executable": false,
+      "sha256": "2b248e7d10a9d2a9026297eaf891065db52ff4b8170127ce1ccc2bccd15b8dcb"
+    },
+    "connectors/openclaw/default_role_test.go": {
+      "bytes": 5789,
+      "executable": false,
+      "sha256": "081ae551987817d81b88542027b07bbadc3ddef681468d0295ee65fa766ac99c"
+    },
+    "connectors/openclaw/framework_source.go": {
+      "bytes": 500,
+      "executable": false,
+      "sha256": "011c46a61addbf3b2d551eb9238c0136592ff0c832c210440d59d7d4145d6470"
+    },
+    "connectors/openclaw/framework_source_test.go": {
+      "bytes": 1640,
+      "executable": false,
+      "sha256": "8f9f56fb7eee34223ed16ec5e0d05236c523f408a71f9dbdd12017bd1b7a31bd"
+    },
+    "connectors/openclaw/go.mod": {
+      "bytes": 160,
+      "executable": false,
+      "sha256": "917a205cd91a2c45ef06576f860369cefd64966464f6c6bc17d603e875b41750"
+    },
+    "connectors/openclaw/identity_test.go": {
+      "bytes": 4686,
+      "executable": false,
+      "sha256": "64af6cf48fc08bbfe1539f74979ddd113e9acd095c315e412a329c1dd8345e6d"
+    },
+    "connectors/openclaw/json5.go": {
+      "bytes": 6636,
+      "executable": false,
+      "sha256": "cac71aca68f92cb7c0eb5347ff2a994843dc083492d36c9f35c9cb9890076b93"
+    },
+    "connectors/openclaw/json5_test.go": {
+      "bytes": 3877,
+      "executable": false,
+      "sha256": "734330f286ca837a253d81114ac7d3ea981951f3c9b4d9e188229569ad576f0c"
+    },
+    "connectors/openclaw/native_contract_linux_test.go": {
+      "bytes": 3366,
+      "executable": false,
+      "sha256": "c298049706a159b15490ff3826ac5175a82c25ad89cb6db3db0a51d0e7f7efc5"
+    },
+    "connectors/openclaw/native_contract_test.go": {
+      "bytes": 54129,
+      "executable": false,
+      "sha256": "b2fea584151b94d2e1e470471748c0f062fbceb6a838a4f63be48602293a776d"
+    },
+    "connectors/openclaw/open_regular_other.go": {
+      "bytes": 255,
+      "executable": false,
+      "sha256": "2d4b463245bdea0353f8a17d382514531926aa6886daafc0bfc55d5d460f9cc5"
+    },
+    "connectors/openclaw/open_regular_unix.go": {
+      "bytes": 427,
+      "executable": false,
+      "sha256": "a1689f046a20229b222a0e8c16a684597a7fae47a890694221e4d708baf1bdbf"
+    },
+    "connectors/openclaw/openclaw": {
+      "bytes": 3160421,
+      "executable": true,
+      "sha256": "a70c08aae65af89ad871fd46b99abb5fed0a9233d1c4adc3e76039710e2dc448"
+    },
+    "connectors/openclaw/openclaw.go": {
+      "bytes": 14841,
+      "executable": false,
+      "sha256": "8e5fed82bd5dad11d475161c2fa06491d54eb20b916d9d8731cdb8a1bc67cba2"
+    },
+    "connectors/openclaw/openclaw_test.go": {
+      "bytes": 4834,
+      "executable": false,
+      "sha256": "6f109ef473326cae2f1f3441faa5c89778ef4d71c36cfeee1ab8c597dd82e350"
+    },
+    "connectors/openclaw/skill_roots.go": {
+      "bytes": 1249,
+      "executable": false,
+      "sha256": "7e16cc32ab3c25b1e3570f22194461c1d330e686bac0f65b0ebd2cc52a37c0f4"
+    },
+    "connectors/openclaw/skill_roots_test.go": {
+      "bytes": 2449,
+      "executable": false,
+      "sha256": "04b72d9063f33fbd7340eb4e15f10107a94986af36e8e245010786ea6cce3b6c"
+    },
+    "connectors/openclaw/skill_selection.go": {
+      "bytes": 2451,
+      "executable": false,
+      "sha256": "9d5c03213a196e73ff8213f83105861e69212037632710e93950b7dbeff0786e"
+    },
+    "connectors/openclaw/skill_selection_test.go": {
+      "bytes": 3881,
+      "executable": false,
+      "sha256": "a84c8572f370458f9c61fcc349f9e92ef35dcf6d68d96ed355c28260da95b6ba"
+    },
+    "edge/agent/README.md": {
+      "bytes": 16764,
+      "executable": false,
+      "sha256": "6a0173ec76a351241a3fc4208b4453811c9c3e8b24ad4a37ebc259489b00b316"
+    },
+    "edge/agent/batch_upload_test.go": {
+      "bytes": 2102,
+      "executable": false,
+      "sha256": "fd2bf33ff35b2a3ba7000b29df64138dd5652ac245f4618ac3e2701e87956c9a"
+    },
+    "edge/agent/canon/canon.go": {
+      "bytes": 6708,
+      "executable": false,
+      "sha256": "fd40f5b649debb79d937ac4763b13d097364708836535ab733445f497da644ae"
+    },
+    "edge/agent/canon/canon_test.go": {
+      "bytes": 2032,
+      "executable": false,
+      "sha256": "4457cd6fd7e2d30ce26e9dc943a7fbdb911d0049e35b55ffdfae0732ea20f5b8"
+    },
+    "edge/agent/capability_heartbeat_test.go": {
+      "bytes": 1578,
+      "executable": false,
+      "sha256": "7f3cc8903f7642eda7088a46e6a6422bb24e46167d01d7aa632be9f7c3d7e61e"
+    },
+    "edge/agent/capability_refresh.go": {
+      "bytes": 1164,
+      "executable": false,
+      "sha256": "1474ccb43be1719ba5229eee3035156b156c17c45f8a5fe4549643b001170c91"
+    },
+    "edge/agent/capability_refresh_linux.go": {
+      "bytes": 1977,
+      "executable": false,
+      "sha256": "d9268c85194306bb9e07eeeef6a353654ada7a6407df7a9b0f70ada30f1ed409"
+    },
+    "edge/agent/capability_refresh_linux_test.go": {
+      "bytes": 2377,
+      "executable": false,
+      "sha256": "98bb43c336b9750b6dac4a54a0b697ee2b771ed6b91c6046f9f0366db1b8d546"
+    },
+    "edge/agent/capability_refresh_other.go": {
+      "bytes": 174,
+      "executable": false,
+      "sha256": "2ed963e74cd41643a6d8001aa922daba158ab97252dc62f80daf08f8bff86504"
+    },
+    "edge/agent/capability_refresh_test.go": {
+      "bytes": 1849,
+      "executable": false,
+      "sha256": "bef2b68a7fcf5b4bf241eeb6ddbebb9129577c1dc61fe639d04800dca8f53248"
+    },
+    "edge/agent/client.go": {
+      "bytes": 12576,
+      "executable": false,
+      "sha256": "593a168321c0ec25ab3abdfa4bfd1517063a750689fad614d1b8ee6929709b59"
+    },
+    "edge/agent/client_test.go": {
+      "bytes": 722,
+      "executable": false,
+      "sha256": "dc90fe3f74892f8e733249ff8ee238dc3682aeef661db34ee3ff37288d502c54"
+    },
+    "edge/agent/confirm_discovery_linux.go": {
+      "bytes": 1692,
+      "executable": false,
+      "sha256": "9fdc65363212731e690c9855f772a6009a30947f8d2ac6a4c0c935667a261d4f"
+    },
+    "edge/agent/confirm_discovery_linux_test.go": {
+      "bytes": 1332,
+      "executable": false,
+      "sha256": "a9f8b9b08c508df734920178f9649e26325345beaf441cdf7d9fbfa1d57a67e2"
+    },
+    "edge/agent/confirm_discovery_other.go": {
+      "bytes": 110,
+      "executable": false,
+      "sha256": "bbfb4a31fec259045fa37c1a7140f44e95b30fd8d0e5b94f7fe0bed5181e540c"
+    },
+    "edge/agent/confirm_schedule_linux.go": {
+      "bytes": 11856,
+      "executable": false,
+      "sha256": "7929461ae93bdcb9e2c0911c22a17b1aca8427b7cca5b296d352f194fdffa2d6"
+    },
+    "edge/agent/confirm_schedule_linux_test.go": {
+      "bytes": 25319,
+      "executable": false,
+      "sha256": "72aaabe0c16e218056ff12d603609c8761f3e492c516cde56961cc97e4f40800"
+    },
+    "edge/agent/confirm_schedule_other.go": {
+      "bytes": 140,
+      "executable": false,
+      "sha256": "d4fde621634e6e333154e87ed48c19b00de86b442ca480e8b8f6b991b5eaedb3"
+    },
+    "edge/agent/connector.go": {
+      "bytes": 15116,
+      "executable": false,
+      "sha256": "4fd50d90c0bd28cc9f6356bc075c22fd9f166f785f1ff3efe07244215355c9a3"
+    },
+    "edge/agent/connector_fixture_test.go": {
+      "bytes": 1179,
+      "executable": false,
+      "sha256": "68767e43b5afe45d127373ed99a2742c11d6f2fb2171afdf889e8f3680144239"
+    },
+    "edge/agent/connector_test.go": {
+      "bytes": 7385,
+      "executable": false,
+      "sha256": "d057c0b86d8c16e4d4a80496cff8493d8d8913f2eb4beca7483c8e7ce5f8afbc"
+    },
+    "edge/agent/connector_trust_linux.go": {
+      "bytes": 3563,
+      "executable": false,
+      "sha256": "4d7e62d7d54454cb2515d879deadc33e2de5efa23516909da6f0e94eb928dc67"
+    },
+    "edge/agent/connector_trust_linux_test.go": {
+      "bytes": 7141,
+      "executable": false,
+      "sha256": "9b7d8a82e96b20970b15548fb442073be310f4e32000fb9dc6456ef7de193ee9"
+    },
+    "edge/agent/connector_trust_other.go": {
+      "bytes": 414,
+      "executable": false,
+      "sha256": "20eb4c80a60f5480dd1f253404e56a69595e2e13abc3238fa71ad40a6d4e1182"
+    },
+    "edge/agent/credential_rotation.go": {
+      "bytes": 6685,
+      "executable": false,
+      "sha256": "580a9170a98323db56366d2f24bbcaa3b34e4534d7ccb800323fcc09d571a1fc"
+    },
+    "edge/agent/credential_rotation_journal_linux.go": {
+      "bytes": 4213,
+      "executable": false,
+      "sha256": "88766c3ec8ffc31c3764aa8057c577f99d01782d466663b153e6e3e03aa4ac36"
+    },
+    "edge/agent/credential_rotation_journal_linux_test.go": {
+      "bytes": 3929,
+      "executable": false,
+      "sha256": "fdc89e48c309ed65dcecfc8041bf7ac377ff6f6d81045540c7752b699c311385"
+    },
+    "edge/agent/credential_rotation_test.go": {
+      "bytes": 7213,
+      "executable": false,
+      "sha256": "30f8f30bcba657d521aa590137007f32a4ebce79e188cd1e2b6d2e8476b83e49"
+    },
+    "edge/agent/discovery_consent.go": {
+      "bytes": 2155,
+      "executable": false,
+      "sha256": "63799b3309cde1840b03be65a89fd91adf1e27be14cd2ced1c94d6f1bae7e7f8"
+    },
+    "edge/agent/discovery_consent_test.go": {
+      "bytes": 5292,
+      "executable": false,
+      "sha256": "66238749645710c50e60d69066601e6c95c5ba72011247fcc3720c338fb12ac5"
+    },
+    "edge/agent/discovery_schedule.go": {
+      "bytes": 6803,
+      "executable": false,
+      "sha256": "7054dc855d5ffdfa84971efeda744ecaa68f8eee57847698589f6b5a926f6080"
+    },
+    "edge/agent/discovery_schedule_fetch_linux.go": {
+      "bytes": 4124,
+      "executable": false,
+      "sha256": "ba8d264e1b94ec8524170983d3fe7c9941509a63662e005a65dc3317109c0620"
+    },
+    "edge/agent/discovery_schedule_fetch_linux_test.go": {
+      "bytes": 4935,
+      "executable": false,
+      "sha256": "613b6a5a9c81fa9c177dbddefb8e6129535193067f7f7a663ef3105d483983b8"
+    },
+    "edge/agent/discovery_schedule_journal_linux.go": {
+      "bytes": 5462,
+      "executable": false,
+      "sha256": "63a95bfe00306ba7baa6bcb18c3ba9eadd022758bdd2874d2835cfe624be4019"
+    },
+    "edge/agent/discovery_schedule_journal_linux_test.go": {
+      "bytes": 4615,
+      "executable": false,
+      "sha256": "4f0f87c70a8d64ade1ccf11e9e80b5425e3fcc00745e2dcb2613ba6fa3faf2bf"
+    },
+    "edge/agent/discovery_schedule_list_linux.go": {
+      "bytes": 10433,
+      "executable": false,
+      "sha256": "ae4366c02d5498c53a75fb3131b09f513ca265e24ff68afea6f8c56456f98a42"
+    },
+    "edge/agent/discovery_schedule_list_linux_test.go": {
+      "bytes": 19969,
+      "executable": false,
+      "sha256": "cc93fff73736b360607a2aef5d4cdb89de1a227115aa0e87a3f602a4ec0ddb15"
+    },
+    "edge/agent/discovery_schedule_poll_linux.go": {
+      "bytes": 5464,
+      "executable": false,
+      "sha256": "997ad5a170da9fa46138fbb2d604cf1f43de6b28612c29a93743a55f2df3afed"
+    },
+    "edge/agent/discovery_schedule_poll_linux_test.go": {
+      "bytes": 7742,
+      "executable": false,
+      "sha256": "62fd22e305e83a56fb653717a9f3f52a6e25e34aa95912a1d3f0e809e419bae0"
+    },
+    "edge/agent/discovery_schedule_poll_other.go": {
+      "bytes": 199,
+      "executable": false,
+      "sha256": "4eeef48113d654494ff69347a52a96bd42a1c2db97162156033c93b99cedbeec"
+    },
+    "edge/agent/discovery_schedule_retirement_cli_linux.go": {
+      "bytes": 8840,
+      "executable": false,
+      "sha256": "bf4f6f510c8d7b971a32192dbaa3ed17e0a3f6f6a285e5ff1768caaa137870c5"
+    },
+    "edge/agent/discovery_schedule_retirement_cli_linux_test.go": {
+      "bytes": 20313,
+      "executable": false,
+      "sha256": "42925053c9971d24bc4c05ee413abdadbf36471fb607f939cd40480f89d5d27f"
+    },
+    "edge/agent/discovery_schedule_retirement_cli_other.go": {
+      "bytes": 139,
+      "executable": false,
+      "sha256": "bfc207c126508586f5dde2253f2dcde77ac0b6c06a5ae7551ed060f0bf55388b"
+    },
+    "edge/agent/discovery_schedule_retirement_linux.go": {
+      "bytes": 12324,
+      "executable": false,
+      "sha256": "b520d551139dfdac731d02f06d6c8aee25362763dc92ee263cbaf9163f244419"
+    },
+    "edge/agent/discovery_schedule_retirement_linux_test.go": {
+      "bytes": 9453,
+      "executable": false,
+      "sha256": "f9a3737aa708519e8263645c8a1f5d04bcfa1ab3e316560f555c389b0e237b20"
+    },
+    "edge/agent/discovery_schedule_test.go": {
+      "bytes": 5422,
+      "executable": false,
+      "sha256": "c54edb74b6561ec4441fb374ad7827359b4333bdec8af891ef8eb5e206c27385"
+    },
+    "edge/agent/discovery_schedule_transport.go": {
+      "bytes": 3594,
+      "executable": false,
+      "sha256": "1c01688df6b87d95fd8b32964456a490f975c918529a9c15d29fca5f5c394222"
+    },
+    "edge/agent/discovery_schedule_transport_test.go": {
+      "bytes": 4248,
+      "executable": false,
+      "sha256": "1a4d77f1f67e759c55141860fc948e352aa65a6da2a6fae986977dde22b467d1"
+    },
+    "edge/agent/enrollment_input_test.go": {
+      "bytes": 2555,
+      "executable": false,
+      "sha256": "44c2a07eb68c598765b83da44e6fc45392cf67b13567e88ad36de9714cbc3853"
+    },
+    "edge/agent/evidence.go": {
+      "bytes": 6274,
+      "executable": false,
+      "sha256": "37f5018210791e8e11489498424a65e3a6b6619235788d373984deefc2e492ca"
+    },
+    "edge/agent/evidence_embedded_schema_test.go": {
+      "bytes": 2999,
+      "executable": false,
+      "sha256": "90d3e65361c9534e7af2b17ee703d5c9b7da2e4eaa2b5f5a72d047b611c0f561"
+    },
+    "edge/agent/evidence_signature_test.go": {
+      "bytes": 3225,
+      "executable": false,
+      "sha256": "b310c20e10da08e1218340bde632f616c0949a2d7361c3de6e943ae59490496b"
+    },
+    "edge/agent/evidence_test.go": {
+      "bytes": 8232,
+      "executable": false,
+      "sha256": "5a9e35e7284fe4d487b18dfcd1664729440b4b50f3832950ec3e56f0d5807f41"
+    },
+    "edge/agent/execution_ledger.go": {
+      "bytes": 4731,
+      "executable": false,
+      "sha256": "3cf85f33cfc20b98d08a0172ccb29b3bb041f26f7bba9c0e6409c29beedb9177"
+    },
+    "edge/agent/execution_ledger_test.go": {
+      "bytes": 2589,
+      "executable": false,
+      "sha256": "8207ae5b1a20f97e64436c3b680bd162fb76caedd3fcb1ff9368f15122865e42"
+    },
+    "edge/agent/go.mod": {
+      "bytes": 46,
+      "executable": false,
+      "sha256": "d085d0228d91353fe86bf8f328837fd56d71dc00208e4980c5890eb65c28ef8d"
+    },
+    "edge/agent/host_inspection.go": {
+      "bytes": 4723,
+      "executable": false,
+      "sha256": "d5c9fb7a979e93965d641eb22b02725cc62d3f718d5f2a207794f228efccbd4b"
+    },
+    "edge/agent/host_inspection_linux.go": {
+      "bytes": 1058,
+      "executable": false,
+      "sha256": "252536ea33baadef34fa5ae724b056da1ba200b7f12643f81f4979b47b5426b8"
+    },
+    "edge/agent/host_inspection_linux_test.go": {
+      "bytes": 878,
+      "executable": false,
+      "sha256": "46d53dce8a97a8e4e36857ad290ecfee99c82a6cb607f9854a0e1ae150d1b444"
+    },
+    "edge/agent/host_inspection_other.go": {
+      "bytes": 142,
+      "executable": false,
+      "sha256": "a28cb90b4b59ebaa8aadda1a5a7e7e58a4fbadef7aeab3b7dbd924d61a554020"
+    },
+    "edge/agent/host_inspection_test.go": {
+      "bytes": 3572,
+      "executable": false,
+      "sha256": "b72c49ec9bad298c32cbda84e4c53423e8bac99949d841cada7090e1d3fe1623"
+    },
+    "edge/agent/initial_scan.go": {
+      "bytes": 3755,
+      "executable": false,
+      "sha256": "cb1ea1366ee1a891add646bb9cd59b6c6191287e688e891a62183b7da147d1b9"
+    },
+    "edge/agent/initial_scan_test.go": {
+      "bytes": 6848,
+      "executable": false,
+      "sha256": "bf53b37aeb6c2b10c7cb75e3bc44b31ca311ff6fb9e9a468611870e97aa78cb5"
+    },
+    "edge/agent/install_user_service_linux.go": {
+      "bytes": 7409,
+      "executable": false,
+      "sha256": "30458671b0f4cc0efdae96debab0a624c5a72f9ed0222f18389f2645a326238f"
+    },
+    "edge/agent/install_user_service_linux_test.go": {
+      "bytes": 7902,
+      "executable": false,
+      "sha256": "909e908a7bf79ccff769640da3d61bb928ec804a3d9210cc7726f648569aef50"
+    },
+    "edge/agent/install_user_service_other.go": {
+      "bytes": 197,
+      "executable": false,
+      "sha256": "1581fa78932b22bed9f4eabb0aeda056fffa4861908af4441e8261058b5d5ba4"
+    },
+    "edge/agent/installed_capabilities.go": {
+      "bytes": 4406,
+      "executable": false,
+      "sha256": "56141e4fe43c70341355915cdcd5a34a63bc932780d48cf11d84efdec7801b22"
+    },
+    "edge/agent/installed_capabilities_test.go": {
+      "bytes": 6810,
+      "executable": false,
+      "sha256": "c55e5e9c325a1b3bee28e16f7b4d9064f9d653887984b48184e83d9076cb80e5"
+    },
+    "edge/agent/installplan/bundle_linux.go": {
+      "bytes": 3879,
+      "executable": false,
+      "sha256": "a5c4262e5217e8e8d5e2d22e855feb7b93f32c6758c49bc4b7059df3105c180f"
+    },
+    "edge/agent/installplan/bundle_linux_test.go": {
+      "bytes": 4781,
+      "executable": false,
+      "sha256": "5e1ffc4859ddc76b28154750f771921b5bd0f2bfa13dc0881c3ad6f4f2c421a0"
+    },
+    "edge/agent/installplan/bundle_other.go": {
+      "bytes": 459,
+      "executable": false,
+      "sha256": "22c6d0d42d01f1c85cfb9c148bfef5d2ec8199275280dda826822b0f339b854c"
+    },
+    "edge/agent/installplan/plan.go": {
+      "bytes": 8348,
+      "executable": false,
+      "sha256": "7574657eda034f09d45adf1be13f59031034d37a3cd8fabf41c5eda2584176e6"
+    },
+    "edge/agent/installplan/plan_test.go": {
+      "bytes": 3543,
+      "executable": false,
+      "sha256": "e3c5d23f3ebd2af64106b8140087353971f90ec82114b94128a9f83e287f730a"
+    },
+    "edge/agent/installplan/release.go": {
+      "bytes": 4476,
+      "executable": false,
+      "sha256": "530f0fbc8755c3c97a5a2b9253a1247d806e33457a1e6870a4e28a0ad4f09912"
+    },
+    "edge/agent/installplan/release_test.go": {
+      "bytes": 5919,
+      "executable": false,
+      "sha256": "0b18e2b7de524c4c549f95faa3acc42f9ade4951def50baad895699a07b66f92"
+    },
+    "edge/agent/installplan/resume_linux.go": {
+      "bytes": 1724,
+      "executable": false,
+      "sha256": "8338d791e0eacb067bba5e5883098372970d4ecb26974916aec47a6b63ca1324"
+    },
+    "edge/agent/installplan/stage_linux.go": {
+      "bytes": 3630,
+      "executable": false,
+      "sha256": "428e6aeec00315facad267a4c164c994d4dd3a78cfa706017f0e4ef9032f287b"
+    },
+    "edge/agent/installplan/stage_linux_test.go": {
+      "bytes": 4737,
+      "executable": false,
+      "sha256": "f7b62d4e464a0f7587df6aa16484557c4613e5b1456fbcdcdab1984384dc2d31"
+    },
+    "edge/agent/installplan/testdata/plan.json": {
+      "bytes": 858,
+      "executable": false,
+      "sha256": "7eeb3e97d2cb6b225ba5a20004059677f35ed4fb184d0286a799f8ed731b2398"
+    },
+    "edge/agent/main.go": {
+      "bytes": 15116,
+      "executable": false,
+      "sha256": "0041b37b0340dc5e9dcc2c839b3f9573f81439d632bb38b6059da185ce2cf732"
+    },
+    "edge/agent/pending_receipt.go": {
+      "bytes": 4649,
+      "executable": false,
+      "sha256": "8ab8c884a69befe2754d320bcb0f80f3ffbf6cd4cd21a76da3ce8e9f1527ddea"
+    },
+    "edge/agent/pending_receipt_test.go": {
+      "bytes": 2498,
+      "executable": false,
+      "sha256": "6d63a075338763b22ce1653207c737f287a841d727cd8a0c56a4c9914160c025"
+    },
+    "edge/agent/prepare_install_linux.go": {
+      "bytes": 3920,
+      "executable": false,
+      "sha256": "7a923dba2cc993a3a50aac598a15a523ea07013219f2dd2e228000c24d9d9454"
+    },
+    "edge/agent/prepare_install_linux_test.go": {
+      "bytes": 6394,
+      "executable": false,
+      "sha256": "1ef404f33ca9a9ce56a5401930888f8620d5d8383adf167802457a84d366d5e2"
+    },
+    "edge/agent/prepare_install_other.go": {
+      "bytes": 154,
+      "executable": false,
+      "sha256": "38e10814f92f27227c40841eaa121d080e9ff945eef1d787d4d4bd2bf8ec073e"
+    },
+    "edge/agent/protocol/protocol.go": {
+      "bytes": 12060,
+      "executable": false,
+      "sha256": "7bc9de7c3a3dff45f8c1e8f29042cc8ee785737d065fc3eeefd6a100fb9cb7f7"
+    },
+    "edge/agent/protocol/redact.go": {
+      "bytes": 3546,
+      "executable": false,
+      "sha256": "6a9d35f922913c3425f55fcfdcf7de7aafe4c608db90ccd96f87bff4f5a3789b"
+    },
+    "edge/agent/protocol/skill_collection.go": {
+      "bytes": 1027,
+      "executable": false,
+      "sha256": "c25ad19fe59eb4c542081644d0ca27782a6bdc89c9aa471ffc7afe46db9c682a"
+    },
+    "edge/agent/protocol/skill_manifest.go": {
+      "bytes": 3965,
+      "executable": false,
+      "sha256": "047af0ed7ad21402089ef1cf3d5280141031ffc2e8f5b09e01c711fd79c01531"
+    },
+    "edge/agent/protocol/skill_manifest_test.go": {
+      "bytes": 3838,
+      "executable": false,
+      "sha256": "542aea37162d00116650926eb549daed0d8a6236cf7cd0df1b3a237af709a7b8"
+    },
+    "edge/agent/registration_environment_test.go": {
+      "bytes": 1861,
+      "executable": false,
+      "sha256": "680faedf8f944c690215da2fa32f9ff0d862b8e7692b38732c580b348f5dca18"
+    },
+    "edge/agent/registration_journal.go": {
+      "bytes": 1725,
+      "executable": false,
+      "sha256": "d75ab4e8bcd694f0669682e0e5d6983c1dd9b2fa961bbd0961844971bb6a6ed9"
+    },
+    "edge/agent/registration_journal_test.go": {
+      "bytes": 2877,
+      "executable": false,
+      "sha256": "0cbd0e9aade11706f33369233faad1d0d24cdaf19d1332cc65ef108a6d1d3ec1"
+    },
+    "edge/agent/registration_recovery_linux.go": {
+      "bytes": 6007,
+      "executable": false,
+      "sha256": "3e5fbd6a0db253b5f66ab05b0478f6384ec7e9977c96a24fa1458264543a6900"
+    },
+    "edge/agent/registration_recovery_linux_test.go": {
+      "bytes": 4388,
+      "executable": false,
+      "sha256": "1d177aa597237da4524e0c6b7fdf9d3042e385f2bbe85852d7101f55feb0e386"
+    },
+    "edge/agent/registration_recovery_other.go": {
+      "bytes": 199,
+      "executable": false,
+      "sha256": "1ff1ebcb3f721ba998c258759711c454083d5d238d654260ea929558b5bae2e2"
+    },
+    "edge/agent/registration_sync_linux.go": {
+      "bytes": 260,
+      "executable": false,
+      "sha256": "8e091407366fc65237387f6d8caa2b435308f22cdfeff44b89e253b1b2729efe"
+    },
+    "edge/agent/registration_sync_other.go": {
+      "bytes": 254,
+      "executable": false,
+      "sha256": "0214749e3db9a6daae3ad6a6d922cfbdc71569d6355870e4c27af2d80e8587dc"
+    },
+    "edge/agent/release_verify_linux.go": {
+      "bytes": 1652,
+      "executable": false,
+      "sha256": "9e7a69b2857a01791dd55f6e2a156983dc6aa695be0b6d53cc8ab479b1962aeb"
+    },
+    "edge/agent/release_verify_linux_test.go": {
+      "bytes": 1450,
+      "executable": false,
+      "sha256": "d7970bbfd9d4857e8969f07e559033ee5457dbb4d39979364f00345340601b02"
+    },
+    "edge/agent/release_verify_other.go": {
+      "bytes": 171,
+      "executable": false,
+      "sha256": "2a31071548d4d1842a426cb031b5fab4683bd4fa17e7926e3c189dd3d25aa312"
+    },
+    "edge/agent/rotate_credential_linux.go": {
+      "bytes": 4244,
+      "executable": false,
+      "sha256": "74bb07dc6888d7b9f19587d3aa8f7dad3a1e0ea6d3505a19ed29ee953b19ff8a"
+    },
+    "edge/agent/rotate_credential_linux_test.go": {
+      "bytes": 6508,
+      "executable": false,
+      "sha256": "66401379a54082a52be0d4328292eb21101c87b5197addd881f632fb32c9bc19"
+    },
+    "edge/agent/rotate_credential_other.go": {
+      "bytes": 185,
+      "executable": false,
+      "sha256": "96e166ab12f6a0c1c533a00bc92610692ca74d799469436330eff12ed2309ddb"
+    },
+    "edge/agent/rotation_activation_linux_test.go": {
+      "bytes": 3189,
+      "executable": false,
+      "sha256": "0d6d02581ac6757033713f0a02f5ca4141738ff8968059f6b922d16eb101bdbd"
+    },
+    "edge/agent/rotation_json_linux.go": {
+      "bytes": 784,
+      "executable": false,
+      "sha256": "c1b60648edae902709e12873c651399edf6b0d336e37a5229e63751ab187c4db"
+    },
+    "edge/agent/rotation_json_linux_test.go": {
+      "bytes": 2482,
+      "executable": false,
+      "sha256": "b4c7d8e3e8c62620f77b6894a137799a6eea00a87beacc6345bc4214e9c641f6"
+    },
+    "edge/agent/serve.go": {
+      "bytes": 2211,
+      "executable": false,
+      "sha256": "e85a466a96d9cfd49409b752c0501da8a2968fe7b6a084b0b1c527d118f1ae90"
+    },
+    "edge/agent/serve_process_linux_test.go": {
+      "bytes": 4390,
+      "executable": false,
+      "sha256": "1a3b1bb0a9230b534f09262db60001bd4ecdfb19230cdc1ed6a7c340740dd93f"
+    },
+    "edge/agent/serve_test.go": {
+      "bytes": 1752,
+      "executable": false,
+      "sha256": "1471e6ac2c2d1e8f159dc12e4f86b9f642e45fba37d65d40836f90b7aa96dff9"
+    },
+    "edge/agent/service_unit.go": {
+      "bytes": 2145,
+      "executable": false,
+      "sha256": "4e4abd6dd7bca0e881dfd75caa986e0efd41e9549f6af621c22af93f110a0922"
+    },
+    "edge/agent/service_unit_test.go": {
+      "bytes": 2925,
+      "executable": false,
+      "sha256": "9079a62411309e444b6ee8833554b8c81bd9e687af18d5305dbc874af3e90864"
+    },
+    "edge/agent/setup_enterprise_linux.go": {
+      "bytes": 13648,
+      "executable": false,
+      "sha256": "e315ef8236c8391f8a7cf45aecb7e3adc82bb2fcbee970c036a280d56342aa8b"
+    },
+    "edge/agent/setup_enterprise_linux_test.go": {
+      "bytes": 13443,
+      "executable": false,
+      "sha256": "92295864506d658507ba8ecdace261d4a1ff012b61bd148ede8135c78d0708ec"
+    },
+    "edge/agent/setup_enterprise_other.go": {
+      "bytes": 190,
+      "executable": false,
+      "sha256": "d833104c15715d8d819f2251daba80e446efd35f6acc079903ae52933a50dc90"
+    },
+    "edge/agent/setup_interactive_linux.go": {
+      "bytes": 3473,
+      "executable": false,
+      "sha256": "02d6957ef0ce4a2d6d44b0a868f438ada75f19a2073867163e50e8cfc8a3f6f2"
+    },
+    "edge/agent/setup_interactive_linux_test.go": {
+      "bytes": 8450,
+      "executable": false,
+      "sha256": "30da32e3301ea8e7899c79f461ffd535056572a3f188b7d5af60865bfe1e93be"
+    },
+    "edge/agent/setup_review_linux_test.go": {
+      "bytes": 3450,
+      "executable": false,
+      "sha256": "c28289f92b53cc6a33ce278539362f55b3fef7af0f65f79a1a517d8ae97006de"
+    },
+    "edge/agent/signature_test.go": {
+      "bytes": 4784,
+      "executable": false,
+      "sha256": "d4e6ef2e714929d8e5130cf8ba0120dd73ec1ba040a82b2a5500f67563bc14bd"
+    },
+    "edge/agent/skill_ancestry_journal_linux_test.go": {
+      "bytes": 1378,
+      "executable": false,
+      "sha256": "70a65ad8c180e57e6dd9c3b6a23816d5d881a7b746d1574d4c5169b5a997c82a"
+    },
+    "edge/agent/skill_ancestry_native_linux_test.go": {
+      "bytes": 3021,
+      "executable": false,
+      "sha256": "ca349620b75d552b03d8f28cf08f5fb9afd4f46c7a4c6acb4e9de9ba565baf9e"
+    },
+    "edge/agent/skill_ancestry_test.go": {
+      "bytes": 1943,
+      "executable": false,
+      "sha256": "2241c6fb37ec8dcd0f3384befc5443fc4cebe90099449b5060113c66b78a4a3a"
+    },
+    "edge/agent/skill_collector.go": {
+      "bytes": 1604,
+      "executable": false,
+      "sha256": "d3fd8f96850f1e98f21efec7b4377274088b70f59e60db2d53f01b8dfbd5ac11"
+    },
+    "edge/agent/skill_execution.go": {
+      "bytes": 4280,
+      "executable": false,
+      "sha256": "0c7cb9adff1d9a1d5bbf210e9dab888a4044b590353c42e9a80c22bb52bcae64"
+    },
+    "edge/agent/skill_execution_linux_test.go": {
+      "bytes": 5343,
+      "executable": false,
+      "sha256": "3319f005d2f1d960ec8946ffff06234ad5b00c2e7e379d81707d05e9ab1af922"
+    },
+    "edge/agent/skill_journal.go": {
+      "bytes": 2958,
+      "executable": false,
+      "sha256": "e27952966541484e41b6b27668f0e7d2f5054f930db2867f8252beacb6c641e1"
+    },
+    "edge/agent/skill_journal_linux.go": {
+      "bytes": 4722,
+      "executable": false,
+      "sha256": "1dd9ddcd29b027370e999c33689bea5e0c70233e725e1dd362df71472369c04e"
+    },
+    "edge/agent/skill_journal_linux_test.go": {
+      "bytes": 6405,
+      "executable": false,
+      "sha256": "fdbac6bf51b66dd9bc57799c8c5f797451415d084588f0aa0308920f447509a1"
+    },
+    "edge/agent/skill_journal_other.go": {
+      "bytes": 250,
+      "executable": false,
+      "sha256": "a8ee4dc3993fec56577df693cf7f159e2cae5b67caebec0e47f183a5158b1601"
+    },
+    "edge/agent/skill_runner_linux_test.go": {
+      "bytes": 3489,
+      "executable": false,
+      "sha256": "321f6bf85db1ae47c5541312e5544aa13370add32f39dedac12e87a4e5fbb0d7"
+    },
+    "edge/agent/skill_upload.go": {
+      "bytes": 6301,
+      "executable": false,
+      "sha256": "d138a3453b52758dac228cdce7389c0411bf01e0e37aad9c748316561c0ac402"
+    },
+    "edge/agent/skill_upload_test.go": {
+      "bytes": 4660,
+      "executable": false,
+      "sha256": "be57e790c99a9e798ee8df322ffafe79ed2f116aa93f64ba86f09b0e3148ba52"
+    },
+    "edge/agent/state.go": {
+      "bytes": 3773,
+      "executable": false,
+      "sha256": "f197699115de1c869a036530eb844c1dcf2a35eeeacc6305638c9a0d074a9308"
+    },
+    "edge/agent/state_read_linux.go": {
+      "bytes": 3557,
+      "executable": false,
+      "sha256": "773a3517131cd57a975fe660040c40eb4150ec656f2b0c118f3949a619cec660"
+    },
+    "edge/agent/state_read_linux_test.go": {
+      "bytes": 2444,
+      "executable": false,
+      "sha256": "076ae2f9a279ff284ecb33d4c0711c6dfc8200a3b08b29e94923c7e8eef5b379"
+    },
+    "edge/agent/state_read_other.go": {
+      "bytes": 201,
+      "executable": false,
+      "sha256": "fe58c1a0f8a9b271368bbebc15f1ad1ca6efe453d52c160e87c460ea3256d772"
+    },
+    "edge/agent/targeted_task_test.go": {
+      "bytes": 2171,
+      "executable": false,
+      "sha256": "f5bf5dc1fda39e765dc2916610d15a05cec258437091a0921ae50dcc818a40dc"
+    },
+    "edge/agent/task.go": {
+      "bytes": 12836,
+      "executable": false,
+      "sha256": "87954d66172b930ee2b1b2c312001d679ac305e84d0149cd1532041d3ac9ff9f"
+    },
+    "edge/agent/task_expiry_test.go": {
+      "bytes": 1897,
+      "executable": false,
+      "sha256": "f634ba1b827aca4c49146ceaa4af0965de0afb4f79a7e9ba282f6c509884acb6"
+    },
+    "edge/agent/task_lock_linux.go": {
+      "bytes": 1229,
+      "executable": false,
+      "sha256": "84a55db714fad470bc91499626eabe9fe406e6af039033ab6f6eb3c01f839186"
+    },
+    "edge/agent/task_lock_linux_test.go": {
+      "bytes": 1485,
+      "executable": false,
+      "sha256": "15294f5d3a3b4fbb2e482dde63d750d5bc93c02aaa89f6692c60d94318cefece"
+    },
+    "edge/agent/task_lock_other.go": {
+      "bytes": 256,
+      "executable": false,
+      "sha256": "868d47b772dc48fc73031ec0382eed796ab981c4287f8b3b8de5304ea581ccc6"
+    },
+    "edge/agent/testdata/connector-helper/main.go": {
+      "bytes": 1417,
+      "executable": false,
+      "sha256": "2ffad3ac29b02b792ab8f508d10c5b845d3dce636c6a69760a0c664105a3bc04"
+    },
+    "edge/agent/user_service_status_linux.go": {
+      "bytes": 4204,
+      "executable": false,
+      "sha256": "80ceb8cfdd69a053a4a739d6c8b431c72b760b683f672ce5dfb4e45a6225c113"
+    },
+    "edge/agent/user_service_status_linux_test.go": {
+      "bytes": 5467,
+      "executable": false,
+      "sha256": "2b6f0641c1552a65a824e967c8d4d838b89179ca1c3dd59d95ce5d12bfb4ff5b"
+    },
+    "edge/agent/user_service_status_other.go": {
+      "bytes": 196,
+      "executable": false,
+      "sha256": "7a29d106ae7d49623d38aa33c9bbb8fe80e56d55e99d2044f35c880b2d1f5839"
+    },
+    "edge/agent/uuid.go": {
+      "bytes": 616,
+      "executable": false,
+      "sha256": "f3ef9b08d5a775b195a9ef0dd20d9bef63c8ebc501a3a9fa6bb739eabc0ab894"
+    }
+  },
+  "schema_version": "siq-release-source-inventory/v1"
+}

@@ -1,0 +1,135 @@
+{
+  "schema_version": "optimization-enterprise-release-preparation/v1",
+  "recorded_at": "2026-10-08T02:04:04.109342+00:00",
+  "source_commit": "a9a8e91e7f7701363f8a99328dd573e402c43fb6",
+  "source_review": {
+    "source_commit": "a9a8e91e7f7701363f8a99328dd573e402c43fb6",
+    "reviewed_paths": [
+      "edge/agent",
+      "connectors/hermes",
+      "connectors/openclaw",
+      "connectors/directory",
+      "LICENSE",
+      "NOTICE",
+      "LICENSES",
+      "THIRD_PARTY_NOTICES.md"
+    ],
+    "files": 285,
+    "method": "Git blob inventory fixed independently of packaging output; source boundary/dependency/required trust and test inputs reviewed; no independent human sign-off claimed",
+    "untracked_excluded": [
+      "edge/agent/crash_recovery_test.go"
+    ],
+    "source_inventory_sha256": "359bf2344cfa88345c6f11e392c6dd9b993b6c3a7b9cccc82611f70a6d32d621"
+  },
+  "test_only_input_sha256": {
+    "packages/contracts/fixtures/credential_rotation_vector_v1.json": "c8a0816002aadb70b369e12c203434613128f80a2a4f3cf739ee002d52fc281b",
+    "packages/contracts/fixtures/evidence_embedded_schema_vectors_v1.json": "f86694b0388a37a44d10137fd620759d10302e451f58bf1a5e432c2cbde101b9",
+    "packages/contracts/fixtures/evidence_signature_vectors_v1.json": "d9bc51ea1422e8d2f193eb547190834f88e715440c10c6fbf588e5fdea3b93d3",
+    "packages/contracts/fixtures/task_signature_vectors_v1.json": "1425303e54212eb92e643711613f52fe54ea05c75a0bc5aa2163390dea0f8ee2",
+    "apps/agentshield/internal/skillmanifest/manifest.go": "4e1c98041c354e16d4a7db9aa50b6a31125196177c6a6e37923f5d38aad14395"
+  },
+  "preflight": {
+    "candidates": [
+      {
+        "artifact_count": 8,
+        "artifact_sha256": {
+          "bin/amd64/directory-connector": "08b9d3350f613b87cf8f337def776b30a288cd14d2eb13983970c078234cbd73",
+          "bin/amd64/edge-agent": "f049d2eeb7565574077f4f94756a0b8869164d4aca891b5617dcb9db7cc92b3b",
+          "bin/amd64/hermes-connector": "3a5da42913d8f9b2a4abd34b54c18ab6badd127ba8eef420d938d154c3d87863",
+          "bin/amd64/openclaw-connector": "83566a1e68f70e032e8d5dc2ea99cbc5d5352d896260cc17a86fd917294c2f63",
+          "bin/arm64/directory-connector": "c8572ed1ae0b0605172966ceb245a865129773b9430df500affae9dbb015fc92",
+          "bin/arm64/edge-agent": "726d43362702b7a964d5949b5bf39b69250ae124bb759b505430bfc5241ee77f",
+          "bin/arm64/hermes-connector": "5cc75566f728285b2f3dd8fcfc1640f980402216aa796c8cde9940a5035e33c9",
+          "bin/arm64/openclaw-connector": "42e176ae041d0ddf17f518f6b33932b05206c9f2f4264f6a2f0c9915c870ddc6"
+        },
+        "explicit_development_scan": true,
+        "finalizer_rejected_without_output": true,
+        "native_describe": {
+          "directory": true,
+          "hermes": true,
+          "openclaw": true
+        },
+        "path": "/home/maoyd/siq-artifacts/optimization-20261008-enterprise/a9a8e91e-candidate-1",
+        "setup_rejected_before_state_registration_stage": true,
+        "signing_input_sha256": "b2c0d74f0b9f5120eca301630a4af64ffda7ea02230d0962164bfa3ca229ea80",
+        "unsigned_and_forged_signature_rejected": true,
+        "version": "0.1.0-opt11.20261008.1",
+        "zip_sha256": "5ba2db547024f1ab218a4a76e324902c3c672d8fc88d70c97e477f4468743da7"
+      },
+      {
+        "artifact_count": 8,
+        "artifact_sha256": {
+          "bin/amd64/directory-connector": "64235e4d51c587a25608ce680f03f9cc626dd504b9a5756e0e1bd3d2d823b3f8",
+          "bin/amd64/edge-agent": "b9799c3be9c55aa20f079f9c0324d3547ba766ff1cb2ba9538687888b43e78be",
+          "bin/amd64/hermes-connector": "119ff670d0a69fcc13892d41a53f88d4b06418ceda70f722893a8318c6f3a5bf",
+          "bin/amd64/openclaw-connector": "ea3f135b0cddb5e61015ae7a15d3cfd1ddf970b4fafe076df5dc8934788d5668",
+          "bin/arm64/directory-connector": "745f7b07391e0776f2942daaee8bdd5e4cb049a88fe540d2752c76d391fffb7e",
+          "bin/arm64/edge-agent": "a1b95609b79fb1d25760d38ce9ac033ddc73f767f6d2b2c4adb3dada596f1021",
+          "bin/arm64/hermes-connector": "d9a69b67cbda1356f68ee8eb6e48db0b0e334c21f3129e7610609d7c5a7cb85b",
+          "bin/arm64/openclaw-connector": "e5c415e4c602d7591e8f854ee04b1c08d6f94acd8b36f9c6d9a5e2814eee0333"
+        },
+        "explicit_development_scan": true,
+        "finalizer_rejected_without_output": true,
+        "native_describe": {
+          "directory": true,
+          "hermes": true,
+          "openclaw": true
+        },
+        "path": "/home/maoyd/siq-artifacts/optimization-20261008-enterprise/a9a8e91e-candidate-2",
+        "setup_rejected_before_state_registration_stage": true,
+        "signing_input_sha256": "929b31cd0f2e2316ca7e78838f0fc459529913e94fafc4b9583228745dcbba51",
+        "unsigned_and_forged_signature_rejected": true,
+        "version": "0.1.0-opt11.20261008.2",
+        "zip_sha256": "65a59f46fb5159a3d702ea0ff6ac1666920f7f3ae1852826a44507959809a065"
+      }
+    ],
+    "owned_receiver_closed": true,
+    "registration_requests_observed": 0,
+    "source_commit": "a9a8e91e7f7701363f8a99328dd573e402c43fb6",
+    "status": "unsigned_preflight_passed_not_installation_acceptance",
+    "verifier_sha256": "c38efcb3dd56aa1ae66c835d0c723ea3f26ff1d468b97138dc926f4568126298"
+  },
+  "source_inventory_sha256": "359bf2344cfa88345c6f11e392c6dd9b993b6c3a7b9cccc82611f70a6d32d621",
+  "edge_tests": {
+    "initial_full_exit": 1,
+    "initial_failed_top_level": 9,
+    "cause": "five exact-commit test fixtures live outside the minimal production source export",
+    "focused_restored_exit": 0,
+    "final_top_level_passed": 220,
+    "final_top_level_skipped": 2,
+    "final_pass_events_including_subtests": 689,
+    "skipped": [
+      "TestInstallPlanWireParity",
+      "TestSkillAncestryNativeExport"
+    ],
+    "scope": "committed-source tests; no untracked crash_recovery_test.go"
+  },
+  "tool_source_sha256": {
+    "scripts/release/enterprise_candidate.py": "1f59718ce80bbd59948eac746749eed6f1cf3bbeacf14737cb841e7c0a26d693",
+    "scripts/release/enterprise_finalize.py": "35d2076c3bea071e37b03b0767444a42889abb12027fa0f3f7dad7c92145e992",
+    "scripts/release/package.py": "13788f9ec855c24c02604bf32ccb2bf5b97739ee3921987bcd6d0e8b2defc0e0"
+  },
+  "raw_sha256": {
+    "var/optimization-20261007/opt11-release-preparation/review.json": "79cb5d0f7768ca9af6a1776b785c1be6ebed071b403dba8986a3277f1a7e78c3",
+    "var/optimization-20261007/opt11-release-preparation/test-only-inputs.json": "af62ae00581228178a15ade1998336e6e515ceb6392806b62a1a7c1c0c3d1441",
+    "var/optimization-20261007/opt11-release-preparation/edge-committed-tests.jsonl": "74aa4456e8603922114989e5fd53a4623bd56575bcbed9183ffd42d479af5a80",
+    "var/optimization-20261007/opt11-release-preparation/edge-test-inputs-restored.jsonl": "a41f7ae1f388a1ea9ad2a14bf038760a47a45176e27a34741c6e932630f72425",
+    "var/optimization-20261007/opt11-release-preparation/candidate-1.log": "95ae7c38beaf3b793259c8d5eee62ba0823db403fec94e6bb4b34203dddcabe0",
+    "var/optimization-20261007/opt11-release-preparation/candidate-2.log": "95ae7c38beaf3b793259c8d5eee62ba0823db403fec94e6bb4b34203dddcabe0",
+    "var/optimization-20261007/opt11-release-preparation/preflight.py": "63f247527d05d1054c12b55cb0fc290a8bce9c9404d4df623b453e9c27c26b01",
+    "var/optimization-20261007/opt11-release-preparation/preflight.log": "3a863555d3a834eca2977eff9a00526a9b4cf4cc0c409847fa309b827b26d0cc",
+    "var/optimization-20261007/opt11-release-preparation/preflight-result.json": "724f97cd6917e3f94d3b3c18fd0363952586326ead0e44b66e78bc03eda629b0"
+  },
+  "signed": false,
+  "installable": false,
+  "published": false,
+  "installation_acceptance": "not_run",
+  "upgrade_acceptance": "not_run",
+  "limits": [
+    "Two versions share one source commit and differ in release version stamping; not a claim of functional version migration.",
+    "16 artifacts include Linux amd64 cross-builds only; actual native checks ran Linux arm64.",
+    "Pinned publisher identity unchanged. No private publisher material read or newly issued signature.",
+    "Native describe and run-once are explicitly development execution; not signed managed installation.",
+    "Full native setup, legacy device migration, service upgrade/recovery and final platform delivery remain open."
+  ]
+}
