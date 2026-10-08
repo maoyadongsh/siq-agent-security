@@ -74,10 +74,16 @@ def transform(name, text):
                        '    require_registry_dispatch(agent, function_name)\n'
                        '    if not isinstance(function_args, dict):\n        function_args = {}\n')
     elif name == "agent/tool_executor.py":
-        text = replace(text, '            return execute(final_args)\n',
-                       '            from siq_native_runtime import require_registry_dispatch\n'
-                       '            require_registry_dispatch(agent, function_name)\n'
-                       '            return execute(final_args)\n')
+        # Reject host routes before pre-tool hooks, checkpoints, or execute.
+        text = replace(
+            text,
+            "    def _authorized_dispatch(final_args: dict[str, Any]) -> Any:\n"
+            "        with dispatch_lock:\n",
+            "    def _authorized_dispatch(final_args: dict[str, Any]) -> Any:\n"
+            "        from siq_native_runtime import require_registry_dispatch\n"
+            "        require_registry_dispatch(agent, function_name)\n"
+            "        with dispatch_lock:\n",
+        )
     compile(text, name, "exec")
     return text
 
