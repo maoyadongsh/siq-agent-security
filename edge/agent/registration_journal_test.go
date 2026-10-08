@@ -14,7 +14,11 @@ import (
 )
 
 func TestRegistrationUnknownOutcomePreservesIdentity(t *testing.T) {
-	dir := filepath.Join(t.TempDir(), "private")
+	root := t.TempDir()
+	if err := os.Chmod(root, 0700); err != nil {
+		t.Fatal(err)
+	}
+	dir := filepath.Join(root, "private")
 	t.Setenv("SIQ_EDGE_STATE_DIR", dir)
 	var calls atomic.Int32
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

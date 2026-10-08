@@ -25,15 +25,15 @@ func cmdServe(ctx context.Context, args []string) error {
 	if runtime.GOOS != "linux" {
 		return errors.New("serve currently requires Linux")
 	}
-	state, err := LoadState()
-	if err != nil {
-		return err
-	}
 	release, err := acquireTaskLock()
 	if err != nil {
 		return err
 	}
 	defer release()
+	state, err := LoadState()
+	if err != nil {
+		return err
+	}
 	client := newAuthedClient(state)
 	heartbeat := initialScanHeartbeat(state, measureServiceCapabilities, client.HeartbeatWithCapabilities, client.RequestInitialScan)
 	heartbeat, err = scheduledHeartbeat(state, client, heartbeat)

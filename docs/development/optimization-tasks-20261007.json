@@ -300,10 +300,12 @@
         "docs/development/optimization-opt11-validation-20261007.md",
         "docs/development/evidence/optimization-20261007/connector-execution.json",
         "docs/development/optimization-opt11-release-preparation-20261008.md",
-        "docs/development/optimization-opt11-upgrade-review-validation-20261008.md"
+        "docs/development/optimization-opt11-upgrade-review-validation-20261008.md",
+        "docs/development/optimization-opt11-upgrade-journal-validation-20261008.md"
       ],
       "residual_limits": [
-        "Linux 描述符固定启动、签名安装来源接线、开发显式配置、资源边界和迁移拒绝已实现；Edge 689 项通过、2 项条件跳过，定向 race、vet、四目标构建通过。新摘要升级仅合成程序组件验证，正式签名包安装/升级与真实设备迁移未验收；Windows/macOS 受管入口明确 unsupported，未运行原生平台验收。"
+        "Linux 描述符固定启动、签名安装来源接线、开发显式配置、资源边界和迁移拒绝已实现；Edge 689 项通过、2 项条件跳过，定向 race、vet、四目标构建通过。新摘要升级仅合成程序组件验证，正式签名包安装/升级与真实设备迁移未验收；Windows/macOS 受管入口明确 unsupported，未运行原生平台验收。",
+        "已实现升级 pending 日志、已知中间态只读恢复核验、任务阻断与先锁后读；本批 238 个顶层测试累计通过（784 含子测试，2 条既有条件跳过），其中全量首轮两份夹具权限失败经修复定向 race 通过。尚无配置切换/恢复 CLI、正式签名升级或实际设备迁移验收，不能把此组件记录当成升级完成。"
       ]
     },
     {

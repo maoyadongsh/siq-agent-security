@@ -84,6 +84,8 @@ Linux 用户服务安装开发入口：`install-user-service --release FILE --st
 
 升级前核验入口：`review-enterprise-upgrade --plan FILE --from-stage OLD --to-stage NEW --tenant ID`。它读取现有私密状态，但仅输出不含凭据的完整新旧计划及摘要；复验两份暂存的发布签名，拒绝自定义/漂移的旧单元与跨环境迁移。旧安装窗口可已过期，新计划必须当前有效。目前完成的是[升级核验](../../docs/development/optimization-opt11-upgrade-review-validation-20261008.md)，事务切换、中断恢复、实际停止/启动与正式签名包验收仍待完成，不能通过重新执行 setup 替代。
 
+升级恢复基础组件已加入 [pending 合同](../../packages/contracts/enterprise-upgrade-journal.v1.md)：任何未完成升级记录都会阻断 `tasks`/`serve` 及正常身份/授权变更，先锁后读避免使用旧内存状态。日志严格绑定旧/新计划和状态摘要，不复制设备令牌或签名 seed；遇损坏记录应保留现场。当前尚无公开切换/恢复命令，勿手工生成或删除 pending。周期确认须通过既有撤销及归档流程退出，不能自动迁移到新安装计划。见[本批验证与限制](../../docs/development/optimization-opt11-upgrade-journal-validation-20261008.md)。
+
 Linux 范围确认底层入口：`confirm-discovery-plan --plan FILE --tenant ID --confirm-plan-sha256 DIGEST`。核对已注册状态、当前计划与明确确认后，仅保存本机扫描限制；不注册、不扫描、不授权业务。需先停止 serve/tasks 以取得排他锁，确认后重新启动服务。已确认设备的签名任务仍必须使用明确采集器及允许的 roots/include 子集，超范围返回 discovery_scope_denied；旧设备未保存计划时仍属 legacy，不能声称已验证范围。统一安装入口已复用该确认阶段，但制品信任、设备注册和周期计划仍保持独立核验。
 
 注册失败注意：首次请求发送前会保存私密 `registration-pending.json`，含设备签名种子，切勿上传、提交或在聊天中粘贴。注册不会自动重试；若结果不确定，再次注册会停在 `registration_pending`。请保留该身份，不要删除后盲目重注册。成功身份仍使用 state.json。

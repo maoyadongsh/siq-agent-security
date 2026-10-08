@@ -5,22 +5,31 @@ package main
 import (
 	"errors"
 	"os"
-	"path/filepath"
 	"syscall"
 )
 
-// Kernel-owned lock survives stale lock files, but never process exit.
-// The lock inode is deliberately retained; unlinking would split ownership.
+// Ordinary task and state mutation commands must not consume mixed upgrade state.
 func acquireTaskLock() (func(), error) {
-	dir, err := StateDir()
+	release, err := acquireRawTaskLock()
 	if err != nil {
 		return nil, err
 	}
-	info, err := os.Lstat(dir)
-	if err != nil || !info.IsDir() || info.Mode().Perm()&0077 != 0 {
+	if err := requireNoUpgradePending(); err != nil {
+		release()
+		return nil, err
+	}
+	return release, nil
+}
+
+// Internal recovery lock, never exposed as a CLI bypass. The kernel-owned lock
+// survives stale files but not process exit. Retain its inode to avoid split owners.
+func acquireRawTaskLock() (func(), error) {
+	dir, err := scheduleStateDirectory()
+	if err != nil {
 		return nil, errors.New("unsafe edge state directory")
 	}
-	fd, err := syscall.Open(filepath.Join(dir, "tasks.lock"), syscall.O_CREAT|syscall.O_RDWR|syscall.O_CLOEXEC|syscall.O_NOFOLLOW|syscall.O_NONBLOCK, 0600)
+	defer dir.Close()
+	fd, err := syscall.Openat(int(dir.Fd()), "tasks.lock", syscall.O_CREAT|syscall.O_RDWR|syscall.O_CLOEXEC|syscall.O_NOFOLLOW|syscall.O_NONBLOCK, 0600)
 	if err != nil {
 		return nil, errors.New("edge task lock unavailable")
 	}

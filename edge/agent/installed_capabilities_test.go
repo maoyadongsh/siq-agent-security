@@ -7,6 +7,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -19,7 +20,12 @@ import (
 )
 
 func TestRegistrationUsesMeasuredCapabilities(t *testing.T) {
-	t.Setenv("SIQ_EDGE_STATE_DIR", filepath.Join(t.TempDir(), "private"))
+	root := t.TempDir()
+	// Registration now validates ancestors before acquiring the device lock.
+	if err := os.Chmod(root, 0700); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("SIQ_EDGE_STATE_DIR", filepath.Join(root, "private"))
 	caps, err := installedCapabilities(context.Background(), t.TempDir(), capabilityFixture(), func(context.Context, string, installplan.Connector) (*protocol.ConnectorCapabilities, *protocol.ValidationResult, error) {
 		return describedFixture(), &protocol.ValidationResult{Valid: true}, nil
 	})

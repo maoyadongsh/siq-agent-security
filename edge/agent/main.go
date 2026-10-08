@@ -314,16 +314,16 @@ func cmdTasks(ctx context.Context, args []string) error {
 	if err := parseFlags(fs, args); err != nil {
 		return err
 	}
-	state, err := LoadState()
-	if err != nil {
-		return err
-	}
-	cli := newAuthedClient(state)
 	release, err := acquireTaskLock()
 	if err != nil {
 		return err
 	}
 	defer release()
+	state, err := LoadState()
+	if err != nil {
+		return err
+	}
+	cli := newAuthedClient(state)
 	return executePendingTasks(ctx, state, cli)
 }
 
