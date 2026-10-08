@@ -261,4 +261,6 @@ OPT-08 镜像内程序（业务仓库 `scripts/openshell/build_siq_analysis_moun
 
 [OPT-08 镜像内固定程序](evidence/optimization-20261007/native-request-image-generator-20261008p.json)：只读进入上述镜像。生成器要求的 17 个流水线程序均为 root、`nlink` 1、`0444` 或 `0555`。实现检查不会因这些文件可写而拒绝。没有执行流水线，没有连接数据代理，没有调用模型。放行后的网络效果仍要一次包含该工具授权的日常请求。总体仍为 11/16（68.75%）。
 
+OPT-08 日常授权形状：`TestReportGenerationAllowsDesiredPatch` 按 patch-desired 写入公司与 `_meta` 只读、`analysis/runs` 父目录可写，以及 `http.request` `host.openshell.internal:18794`。该形状返回 allow，兄弟公司的写目录不放行。这是引擎决定，没有日常入口，没有连接数据代理，没有调用模型。总体仍为 11/16（68.75%）。
+
 [OPT-12 当前覆盖层受保护加载](optimization-opt12-current-overlay-hook-20261008.md)：源码 `1a07fa8a` 在独立 OpenShell 中构建镜像 `sha256:12f1c8d9`，制品 `8573522e`。18 项检查为真，钩子和清单的六次写、删、替换被拒绝。三条 allow 回执由真实 Go 权限服务验签。`registry.py` 与 `tool_executor.py` 的摘要和已登记镜像 `sha256:534d18c9` 的覆盖层一致。这次没有调用模型，Skill 是合成夹具，镜像也不是那张已登记请求镜像。发行签名身份以及 Windows/macOS 原生安装仍未验收。总体仍为 11/16（68.75%）。
