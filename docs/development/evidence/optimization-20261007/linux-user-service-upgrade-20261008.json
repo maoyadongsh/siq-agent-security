@@ -1,0 +1,30 @@
+{
+  "schema_version": "siq-linux-user-service-upgrade/v1",
+  "checked_at_utc": "2026-10-08T07:53:00Z",
+  "source_sha": "877948bd",
+  "binary_sha256": "aa25999e50226f9758976a149350086294b21ab737a42aa910bdb5345d07aea5",
+  "binary_version": "0.0.0-dev",
+  "target": "linux/arm64",
+  "manager": "systemd-user",
+  "tests": [
+    {
+      "name": "TestNativeUserServiceUpgrade",
+      "result": "passed",
+      "elapsed_seconds": 1.917
+    },
+    {
+      "name": "TestNativeUserServiceUpgradeTransientFailure",
+      "result": "passed",
+      "elapsed_seconds": 2.687
+    }
+  ],
+  "observed": [
+    "temporary instance-scoped user unit started from the current binary",
+    "development-signed manifest was rejected and the running process stayed in place",
+    "same-byte candidate replaced the process and preserved config.json",
+    "injected port conflict failed the upgrade and returned a recovery transaction",
+    "explicit recovery completed, then rollback restored the prior unit and health",
+    "temporary units were absent after the tests"
+  ],
+  "scope": "personal user-service process switch and rollback on this Linux host; old and new paths hold the same binary bytes. Not an enterprise signed package, device migration, version-compatibility upgrade, authorization denial, Windows, or macOS acceptance."
+}

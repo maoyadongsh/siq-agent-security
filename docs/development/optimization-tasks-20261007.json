@@ -399,7 +399,8 @@
         "Linux 描述符固定启动、签名安装来源接线、开发显式配置、资源边界和迁移拒绝已实现；Edge 689 项通过、2 项条件跳过，定向 race、vet、四目标构建通过。新摘要升级仅合成程序组件验证，正式签名包安装/升级与真实设备迁移未验收；Windows/macOS 受管入口明确 unsupported，未运行原生平台验收。",
         "已实现升级 pending 日志、已知中间态只读恢复核验、任务阻断与先锁后读；本批 238 个顶层测试累计通过（784 含子测试，2 条既有条件跳过），其中全量首轮两份夹具权限失败经修复定向 race 通过。尚无配置切换/恢复 CLI、正式签名升级或实际设备迁移验收，不能把此组件记录当成升级完成。",
         "后续增量已实现 apply/recover CLI、签名来源程序的描述符固定恢复协议探测、停服条件解析、持久切换和完成归档；组件正向仍用验签/服务管理器替身。最终全量 251 顶层通过（820 含子测试、2 既有跳过），进程直接退出恢复与协议精确匹配 race、38 合同、最终四目标构建与真实 CLI 10 检查通过。正式签名包与真实 systemd/迁移验收仍缺，保持 implementing；替代上一批尚无 CLI 的阶段描述。",
-        "63a8cfc0 固定 297 个 Git 输入，生成未签名企业候选 .3/.4 与候选外独立构建验证器。原生恢复协议及版本读回、16 ELF/ZIP 摘要、6 connector describe、2 开发扫描、伪造签名/setup/finalize 拒绝通过；独立导出 31 顶层/131 含子测试升级回归通过。旧 .1/.2 缺恢复入口已实际确认并保留。仍缺受控签发、真实服务与设备迁移验收，不计为完成。"
+        "63a8cfc0 固定 297 个 Git 输入，生成未签名企业候选 .3/.4 与候选外独立构建验证器。原生恢复协议及版本读回、16 ELF/ZIP 摘要、6 connector describe、2 开发扫描、伪造签名/setup/finalize 拒绝通过；独立导出 31 顶层/131 含子测试升级回归通过。旧 .1/.2 缺恢复入口已实际确认并保留。仍缺受控签发、真实服务与设备迁移验收，不计为完成。",
+        "个人客户端用户单元的同字节切换与回滚已在 OPT-15 另记，不能代替企业候选 .3/.4 的受控签发、真实企业服务升级或设备迁移。OPT-11 保持 implementing。"
       ]
     },
     {
@@ -469,7 +470,9 @@
         "docs/development/optimization-opt15-closure-validation-20261008.md",
         "docs/development/optimization-opt15-request-limit-validation-20261008.md",
         "docs/development/optimization-opt15-bounded-cleanup-20261008.md",
-        "docs/development/evidence/optimization-20261007/skill-source-smoke-linux-arm64.json"
+        "docs/development/evidence/optimization-20261007/skill-source-smoke-linux-arm64.json",
+        "docs/development/optimization-opt15-linux-upgrade-20261008.md",
+        "docs/development/evidence/optimization-20261007/linux-user-service-upgrade-20261008.json"
       ],
       "residual_limits": [
         "新在线 decision 使用 rcp- 加 128 位密码学随机值；固定时钟重复请求、引擎重建和历史重复 ID 审批拒绝已复现并修复。receipt/server/skillcontext 最终复测通过，合同样例未改写。审批仍是管理路径的线性验签，未证明大型历史库性能；任务追踪等只按 ReceiptID 取值的入口尚未逐项确认；token 哈希、依赖锁定、生产 assert 与请求超限状态码未在本子项改动。四目标构建不等于 Windows/macOS 原生验收。OPT-15 保持 implementing，总体仍为 11/16。",
@@ -477,7 +480,8 @@
         "同一预留的第二条签名对账或观察不再按末条采信：修复前 deny 之后的 allow 被任务查询选中。现返回 openshell_receipt_ambiguous。单条对照、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、请求超限状态码、token 哈希和原生平台验收仍未收口。",
         "decide/observe 超限正文修复前返回 400 invalid decision request，现返回 413 decision_request_too_large，不进入引擎。hold 超限返回 413，畸形仍为 400，链头不变。定向测试、OpenShell server 回归、vet 及四目标编译通过。线性扫描性能、生产 assert、token 哈希、依赖锁定和原生平台验收仍未收口。",
         "有界清理已核对且不改代码：Go 模块无第三方 require，故无 go.sum；web package-lock 与 control-api uv.lock 已固定实际版本。审批线性过程是验签本身，验签前索引会重新引入重复 ID 取值。三处 panic 仍是规范编码或启动随机源失败。观察者、刷新和管理配对码已是 SHA-256；access token 仍须留在刷新记录中才能恢复会话，只改 map 键不能从内存去掉它。Windows/macOS 无原生机器，记为 blocked，不用交叉编译代替。OPT-15 保持 implementing，11/16 不变。",
-        "当前二进制 aa25999e 在本机 linux/arm64 隔离状态完成一次源码启动检查：未签名 Skill 引导拒绝且不写状态；admit_with_conditions；start 与 init/serve 的 status、pair、控制台和停止通过；SSH 指导不回显连接串。工作树另有无关未提交文件，source_dirty 为 true。这不是签名安装包、宿主集成、越权拒绝、升级或后台服务验收。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。"
+        "当前二进制 aa25999e 在本机 linux/arm64 隔离状态完成一次源码启动检查：未签名 Skill 引导拒绝且不写状态；admit_with_conditions；start 与 init/serve 的 status、pair、控制台和停止通过；SSH 指导不回显连接串。工作树另有无关未提交文件，source_dirty 为 true。这不是签名安装包、宿主集成、越权拒绝、升级或后台服务验收。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。",
+        "当前二进制 aa25999e 在本机 systemd 用户会话完成临时实例升级与回滚：开发清单不打断原进程；同一字节候选替换进程且配置不变；端口冲突失败后按恢复事务完成，再回滚到健康原单元。临时单元已消失。这不是企业签名包、版本兼容升级、设备迁移或越权决定拒绝。Windows/macOS 仍 blocked。OPT-15 保持 implementing，11/16 不变。"
       ]
     }
   ],
