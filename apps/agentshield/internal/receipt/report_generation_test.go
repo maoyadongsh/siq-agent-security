@@ -28,7 +28,7 @@ func TestReportGenerationRequiresEveryScope(t *testing.T) {
 			add("company", "filesystem", "fs.read", "path", company)
 			add("metadata", "filesystem", "fs.read", "path", root+"/data/wiki/_meta")
 			add("output", "filesystem", "fs.write", "path", company+"/analysis/runs/"+run)
-			add("network", "network", "net.connect", "endpoint", runtimeaction.ResearchGenerateBroker)
+			add("network", "network", "http.request", "endpoint", runtimeaction.ResearchGenerateBroker)
 			adm := admission.Admission{AdmissionID: "adm-generate", ContentHash: strings.Repeat("b", 64), Verdict: "admit_with_conditions", EvidenceIDs: []string{"ev-generate"}, DeclaredFacts: facts}
 			built, err := grant.Build(adm, grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: "inst_1"}, Platform: "hermes", Key: key(t)})
 			if err != nil {
@@ -54,5 +54,56 @@ func TestReportGenerationRequiresEveryScope(t *testing.T) {
 				t.Fatal(err)
 			}
 		})
+	}
+}
+
+func TestReportGenerationAllowsDesiredPatch(t *testing.T) {
+	root := "/fixture/research"
+	company := root + "/data/wiki/companies/600418-example"
+	run := "qwen-request-0123456789abcdef"
+	decide := func(write string) *Decision {
+		t.Helper()
+		adm := admission.Admission{AdmissionID: "adm-generate-patch", ContentHash: strings.Repeat("c", 64), Verdict: "admit_with_conditions", EvidenceIDs: []string{"ev-generate"}, DeclaredFacts: []admission.DeclaredFact{
+			{Domain: "tool", Action: "tool.invoke", Resource: admission.Resource{Type: "tool", Value: "read_file"}, Effect: "allow", State: "declared", Authority: "skill_manifest", SourceField: "fixture", EvidenceIDs: []string{"ev-generate"}},
+		}}
+		built, err := grant.Build(adm, grant.Options{Subject: grant.Subject{Type: "agent_instance", ID: "inst_1"}, Platform: "hermes", Key: key(t)})
+		if err != nil {
+			t.Fatal(err)
+		}
+		patched, _, err := grant.PatchDesired(built.Grant, grant.DesiredPatch{
+			HasTools: true, Tools: []string{runtimeaction.ResearchGenerateTool},
+			HasFilesystem: true, Filesystem: &grant.FilesystemPatch{
+				ReadOnly:  []string{company, root + "/data/wiki/_meta"},
+				ReadWrite: []string{write},
+			},
+			HasNetwork: true, Network: []grant.NetworkPatch{{Endpoint: runtimeaction.ResearchGenerateBroker, Effect: "allow"}},
+		}, key(t))
+		if err != nil {
+			t.Fatal(err)
+		}
+		g, err := grant.Approve(patched, grant.Approval{ActorType: "human", ActorID: "u", ApprovedAt: "2026-09-04T06:00:00Z"}, key(t))
+		if err != nil {
+			t.Fatal(err)
+		}
+		g, err = grant.MarkDeployed(g, key(t))
+		if err != nil {
+			t.Fatal(err)
+		}
+		allow, _ := grant.RuntimeToolSets(&g)
+		if !allow[runtimeaction.ResearchGenerateTool] {
+			t.Fatal("report tool stripped from the runtime set")
+		}
+		fx := newFixture(t, "block", &g, false)
+		d, err := fx.eng.Decide(req("hermes", runtimeaction.ResearchGenerateTool, map[string]any{"company_path": company, "run_id": run, "year": 2025}))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return d
+	}
+	if allowed := decide(company + "/analysis/runs"); allowed.Action != ActionAllow {
+		t.Fatalf("desired patch: %s %s", allowed.Action, allowed.Receipt.ReasonCode)
+	}
+	if sibling := decide(root + "/data/wiki/companies/600104-other/analysis/runs"); sibling.Action == ActionAllow {
+		t.Fatal("sibling company write grant allowed this company")
 	}
 }
